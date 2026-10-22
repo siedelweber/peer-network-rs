@@ -23,7 +23,7 @@ metrics = "Counters: compiled acts, sparse products, rung attempts, iterations, 
 name = "pn-host"
 labels = ["sig:design:host", "sig:design:storage", "proto:design:encoding"]
 operations = "assemble/validate/encode/decode publication and, under the storage-placement proposal, open-store, load-boundary, append-effective-successor, commit-admitted-epoch"
-metrics = "Counters: encoded/decoded bytes, queries, successor attempts, commits, rollbacks, retries and refusals (count). Gauges: active transactions and queue depth (count). Histograms: package bytes, query/transaction elapsed seconds. No database connection fields, statement text or parameters."
+metrics = "Counters: encoded/decoded bytes, queries, successor attempts, commits, rollbacks, retries and refusals (count). Gauges: active transactions and queue depth (count). Histograms: package bytes, query/transaction elapsed seconds. Metric attributes use bounded categories for cardinality; traces record full SQL, parameters, public results and errors, with private configuration represented by its secret role and marker."
 
 [[rows]]
 name = "pn-replay"
