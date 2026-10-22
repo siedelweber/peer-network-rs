@@ -7,7 +7,8 @@ import re
 import tomllib
 
 
-# Bare short all-decimal runs are numbers unless a commit-shaped context says otherwise.
+# Short bare words need digits or an identity context; explicit literals and full
+# identifiers keep their original boundary. Ordinary decimal quantities are not hashes.
 # Explicit Rust integer suffixes belong to the representation, not to its value.
 HEX = re.compile(
     r"(?<![A-Za-z0-9_])(?:"
@@ -15,13 +16,41 @@ HEX = re.compile(
     r"|\\x[0-9A-Fa-f]{2}|\\u\{[0-9A-Fa-f]+\}|\\u[0-9A-Fa-f]{4}"
     r"|%x[0-9A-Fa-f]+(?:-[0-9A-Fa-f]+)?"
     r"|(?=[0-9A-Fa-f]*[A-Fa-f])[0-9A-Fa-f]{6,}"
-    r"|[0-9]{64}|[0-9]{40}|(?<=\()[0-9]{6,40}(?= )"
+    r"|[0-9]{6,}"
     r")(?![A-Za-z0-9_])"
 )
 
 
+IDENTITY_CONTEXT = re.compile(r"\b(?:commit|digest|checksum|sha(?:-?(?:1|256|512))?)\b", re.I)
+BARE = re.compile(r"[0-9a-f]+", re.I)
+
+
 def occurrences(text):
-    return list(HEX.finditer(text))
+    """Read values, not short English words that happen to use hex letters.
+
+    An explicit commit/digest/checksum field or prose context is scoped to the
+    candidate's physical line, just as the family readers scope their evidence.
+    Parenthesized tool-version tuples also carry abbreviated commit identity.
+    This changes recognition only; every recognized value still needs a family.
+    """
+    found = []
+    for match in HEX.finditer(text):
+        value = match.group()
+        if (not BARE.fullmatch(value) or len(value) in {40, 64}
+                or (any(c.isalpha() for c in value) and (len(value) >= 40 or any(c.isdigit() for c in value)))):
+            found.append(match)
+            continue
+        start = text.rfind("\n", 0, match.start()) + 1
+        end = text.find("\n", match.end())
+        line = text[start:end if end >= 0 else len(text)]
+        version = (text[max(start, match.start() - 1):match.start()] == "("
+                   and re.match(r" \d{4}-\d{2}-\d{2}\)", text[match.end():]))
+        decimal_version = (value.isdecimal() and len(value) <= 40
+                           and text[max(start, match.start() - 1):match.start()] == "("
+                           and text[match.end():match.end() + 1] == " ")
+        if IDENTITY_CONTEXT.search(line) or version or decimal_version:
+            found.append(match)
+    return found
 
 
 def relative_file(root, name):

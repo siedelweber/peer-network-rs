@@ -1,4 +1,13 @@
-"""Regression witnesses for first-party source discipline checks."""
+"""Regression witnesses for first-party source discipline checks.
+
+Claim-area register: hash-citations protects public provenance accounting without
+forcing prose writers to avoid ordinary words. A failed claim in this area means
+either an identity can escape accounting or ordinary text can fail the gate.
+New hash-reader sites use the gloss, authored claim, test-inventory order of
+record 017. Python is outside the registered linter scanners (record 001);
+the local inventory uses area discipline and the function name with underscores
+hyphenated. The suite checks this form without claiming linter profile coverage.
+"""
 
 from pathlib import Path
 import unittest
@@ -72,10 +81,89 @@ class HashCitations(unittest.TestCase):
                       "definition": "ASCII control, euro-sign UTF-8, excluded UTF-8 byte or visible payload pattern.", "paths": ["sample.rs"]}],
         }
 
-    # Claim: explicit hexadecimal forms, Rust suffixes and commit-shaped bare values are scanned without treating ordinary decimals as hashes.
     def test_hex_boundary(self):
+        """Explicit literals and version tokens remain visible without classifying ordinary quantities as identities.
+        ´claim:hash-citations:literal-and-version-boundaries´
+        ´test:discipline:test-hex-boundary´
+        """
         text = r"0xff 0xe2_u8 \x1f \u{fffd} %x30-39 abcdef (123456 date) 123456 20261021"
-        self.assertEqual([match.group() for match in occurrences(text)], [r"0xff", "0xe2_u8", r"\x1f", r"\u{fffd}", "%x30-39", "abcdef", "123456"])
+        self.assertEqual([match.group() for match in occurrences(text)], [r"0xff", "0xe2_u8", r"\x1f", r"\u{fffd}", "%x30-39", "123456"])
+
+    def test_hex_words(self):
+        """Hex-letter English words remain prose, so the reader does not dictate vocabulary.
+        ´claim:hash-citations:ordinary-words-are-not-identities´
+        ´test:discipline:test-hex-words´
+        """
+        for text in ["facade", "deadbeef-free prose", "accede", "decade", "effaced", "bead", "cafe",
+                     "FACADE", "a facade beside an effaced wall", "prefix_abcdef", "abcdef_suffix"]:
+            with self.subTest(text=text):
+                self.assertEqual(occurrences(text), [])
+
+    def test_hex_identity_context(self):
+        """Short identity fields and dated tool-version tokens remain accounted even when their digits are all letters.
+        ´claim:hash-citations:identity-context-retains-short-values´
+        ´test:discipline:test-hex-identity-context´
+        """
+        word = "ab" + "cdef"
+        for text in ["commit " + word, "COMMIT: `" + word + "`", 'digest = "' + word + '"',
+                     "checksum: " + word, "SHA-256 " + word, "sha1=" + word, "sha512=" + word,
+                     "https://example.test/commit/" + word, "rustc nightly (" + word + " 2026-10-22)"]:
+            with self.subTest(text=text):
+                self.assertEqual([m.group() for m in occurrences(text)], [word])
+        digits = "12" + "3456"
+        self.assertEqual([m.group() for m in occurrences("commit " + digits)], [digits])
+        self.assertEqual(occurrences(digits), [])
+        self.assertEqual([m.group() for m in occurrences("commit " + word + "\nfacade")], [word])
+
+    def test_hex_full_identifiers(self):
+        """Full identifiers and mixed short values remain visible without contextual keywords, preserving provenance checks.
+        ´claim:hash-citations:full-and-mixed-identifiers-remain-visible´
+        ´test:discipline:test-hex-full-identifiers´
+        """
+        values = ["a" * 40, "F" * 64, "1" * 40, "2" * 64, "a" * 39 + "1", "a" * 41,
+                  "abc123", "abc" + "12a", "1" + "abcde"]
+        for value in values:
+            with self.subTest(value=value):
+                self.assertEqual([m.group() for m in occurrences(value)], [value])
+        self.assertEqual(occurrences("a" * 39), [])
+        self.assertEqual(occurrences("9" * 39), [])
+
+    def test_hex_context_accounting(self):
+        """Recognition never authorizes an identity: unaccounted short, full and pathname values still fail the audit.
+        ´claim:hash-citations:recognized-identities-still-need-evidence´
+        ´test:discipline:test-hex-context-accounting´
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            sample = root / "sample.rs"
+            sample.write_text("0xff\nfacade accede decade effaced bead cafe\n")
+            self.assertEqual(audit(root, ["sample.rs"], self.table()), ([], 1))
+            for value in ["ab" + "cdef", "abc123", "a" * 40, "f" * 64]:
+                sample.write_text("0xff\ncommit " + value + "\n")
+                findings, count = audit(root, ["sample.rs"], self.table())
+                self.assertEqual(count, 2)
+                self.assertTrue(any("unaccounted hexadecimal value " + value in f for f in findings))
+            name = "abc123.txt"
+            (root / name).write_text("")
+            findings, _ = audit(root, [name], self.table())
+            self.assertTrue(any("pathname" in f for f in findings))
+
+    def test_hex_claim_sites(self):
+        """Hash-reader claim sites carry a checkable gloss, one authored claim and the local inventory label in order.
+        ´claim:hash-citations:probe-documentation-has-ordered-claims´
+        ´test:discipline:test-hex-claim-sites´
+        """
+        names = [name for name in vars(type(self)) if name.startswith("test_hex_")]
+        claims = set()
+        for name in names:
+            lines = [line.strip() for line in getattr(type(self), name).__doc__.strip().splitlines()]
+            self.assertEqual(len(lines), 3)
+            self.assertTrue(lines[0].endswith("."))
+            self.assertTrue(lines[1].startswith("´claim:hash-citations:"))
+            self.assertTrue(lines[1].endswith("´"))
+            self.assertNotIn(lines[1], claims)
+            claims.add(lines[1])
+            self.assertEqual(lines[2], "´test:discipline:" + name.replace("_", "-") + "´")
 
     # Claim: an uncovered value, a stale family and a reader establishment the checker cannot validate each fail the audit.
     def test_hash_accounting(self):

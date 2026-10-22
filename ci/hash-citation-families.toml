@@ -2,11 +2,14 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 # Boundary: explicit hexadecimal integers (including Rust suffixes), byte and
-# Unicode escapes, ABNF hexadecimal ranges, bare runs of at least six hexadecimal
-# characters containing a letter, full 40/64-digit runs, and shorter decimal-only
-# commit tokens in parenthesized version strings. Ordinary decimal numbers are
-# outside this boundary. Every tracked byte and pathname is read, including tests
-# and vendor members; generated copies have the same accounting as their source.
+# Unicode escapes and ABNF hexadecimal ranges always participate. Bare runs have
+# at least six characters. Short mixed letter/digit runs participate; letter-only
+# short runs require a commit, digest, checksum or SHA context on their physical
+# line, or a parenthesized dated tool-version tuple. Full 40/64-character runs
+# participate without context, as do longer letter-bearing runs. Decimal-only
+# short quantities require identity context or the existing parenthesized version
+# form. Recognition does not establish a value: the same families below must do
+# that. Every tracked byte and pathname is read, including tests and vendor code.
 
 [[rows]]
 family = "crate-archives"
