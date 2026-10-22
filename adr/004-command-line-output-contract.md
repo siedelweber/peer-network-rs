@@ -1,0 +1,11 @@
+## Command-line output contract · `sec:output:record`
+
+**Record (Command-line output contract)** · `rec:output:decision` Status: accepted. Scope: First-party command-line results, controls, diagnostics and exit classes. Depends on: (`rec:labels:decision`). Does not establish: Command-line streams establish no externally consumed interchange format.
+
+**Setup (Context)** · `setup:output:context` Automation cannot reliably consume a stream that mixes result data with diagnostics or human help.
+
+**Decision (Policy)** · `dec:output:policy` First-party executables use cli-common to parse arguments, install the JSON panic hook before startup, initialize JSON tracing and refuse terminal stdout before work. Successful result output is one JSON object followed by a newline; diagnostics, help, version, usage errors and panic reports use JSON stderr. Help and version return zero with empty stdout. Usage and terminal refusal return two. Runtime failure returns one and leaves stdout empty. Document findings return three, including files refreshed by write. The process wrapper may relay child bytes as its explicit result contract.
+
+**Consequence (Tradeoffs)** · `cor:output:tradeoffs` The `documents-panic-probe` binary exists only to exercise the same panic-hook installation function as the real command in a piped subprocess; its conventional integration test owns the claim and test labels. Commands return ExitCode, and controlled emission belongs to the shared crate. Usage errors omit argument values. Panic payloads remain hidden until parsed debug mode enables detail; classified secrets and raw child arguments are never diagnostic fields. Tracing prefers a nonempty RUST_LOG, then debug, then the command default. Automatic terminal pretty-printing and command-specific reinterpretations of the reserved statuses are rejected because callers need stable branches.
+
+**Gate (Verification)** · `gate:output:verification` Subprocess tests verify JSON help, version and usage failures, terminal refusal before mutation, and a panic with empty stdout and one JSON diagnostic. Clippy denies uncontrolled printing and process termination.

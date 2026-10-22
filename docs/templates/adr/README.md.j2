@@ -1,0 +1,8 @@
+## Decision records · `sec:records:index`
+
+**Table (Accepted decisions)** · `tab:records:index`
+
+| Decision | Status | Record |
+| --- | --- | --- |
+{% for record in rows('org.peer-network.records.index') %}{{ require(record.status == 'accepted', 'records index requires accepted decisions') }}| {{ record.title }} | {{ record.status }} | (`{{ record.label }}`) |
+{% endfor %}

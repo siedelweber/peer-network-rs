@@ -1,0 +1,98 @@
+{
+  "namespace": "org.peer-network.design.crates",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "dependencies": [],
+      "name": "pn-records",
+      "responsibility": "Immutable public inputs: identities, acts, ledger/burn data and declared constants",
+      "surfaces": [
+        "def:graph:act-identifier",
+        "def:graph:act-edge-projection",
+        "def:comparator:burn-interface"
+      ]
+    },
+    {
+      "dependencies": [
+        "pn-records"
+      ],
+      "name": "pn-graph",
+      "responsibility": "Structural formation, shared graph algebra and title folds",
+      "surfaces": [
+        "post:nodes:canonical-tensor-pipeline",
+        "def:graph:verified-act",
+        "thm:graph:epoch-title-fold"
+      ]
+    },
+    {
+      "dependencies": [
+        "pn-records",
+        "pn-graph"
+      ],
+      "name": "pn-epoch",
+      "responsibility": "Compile and certify one final epoch state and its admission result",
+      "surfaces": [
+        "alg:epoch:conserved-standing-computation",
+        "post:epoch:final-act-sequence-write-rule"
+      ]
+    },
+    {
+      "dependencies": [
+        "pn-records",
+        "pn-graph",
+        "pn-epoch"
+      ],
+      "name": "pn-readouts",
+      "responsibility": "Expose published standing/title and optional exact raw views to terminal consumers",
+      "surfaces": [
+        "def:graph:raw-traversal-snapshot",
+        "rem:network:taxonomy-subtleties"
+      ]
+    },
+    {
+      "dependencies": [
+        "pn-records",
+        "pn-graph",
+        "pn-epoch"
+      ],
+      "name": "pn-host",
+      "responsibility": "Encode the complete seven-part public package",
+      "surfaces": [
+        "post:network:host-contract"
+      ]
+    },
+    {
+      "dependencies": [
+        "pn-records",
+        "pn-graph",
+        "pn-epoch",
+        "pn-host"
+      ],
+      "name": "pn-replay",
+      "responsibility": "Reconstruct and compare the binding package from public inputs",
+      "surfaces": [
+        "subsec:deployment:conserved-standing-reproducibility",
+        "post:deployment:public-object-replay"
+      ]
+    },
+    {
+      "dependencies": [
+        "pn-records",
+        "pn-graph",
+        "pn-epoch",
+        "pn-readouts",
+        "pn-host",
+        "pn-replay"
+      ],
+      "name": "pn-verification",
+      "responsibility": "Maintain labelled integrated fixtures and independent public-surface checks",
+      "surfaces": [
+        "rem:verification:certificate-reproducibility"
+      ]
+    }
+  ]
+}

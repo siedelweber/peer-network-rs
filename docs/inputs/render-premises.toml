@@ -1,0 +1,6 @@
+namespace = "org.peer-network.documents.premises"
+version = [1, 0, 0]
+
+rows = [
+  { name = "questions-without-status", ids = ["Q07", "Q22"] },
+]

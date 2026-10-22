@@ -1,0 +1,152 @@
+{
+  "namespace": "org.peer-network.records.index",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "depends_on": [],
+      "does_not_establish": "Labels establish no semantic, build or release identity.",
+      "label": "rec:labels:decision",
+      "path": "adr/001-label-calculus.md",
+      "scope": "The documentation and source-label graph over the declared carrier.",
+      "status": "accepted",
+      "title": "Label calculus"
+    },
+    {
+      "depends_on": [],
+      "does_not_establish": "A catalogued kind creates no obligation to use that genre.",
+      "label": "rec:kinds:decision",
+      "path": "adr/002-environment-kinds.md",
+      "scope": "Environment names, kind assignments and the enforced classification relation.",
+      "status": "accepted",
+      "title": "Environment kinds"
+    },
+    {
+      "depends_on": [
+        "rec:labels:decision",
+        "rec:kinds:decision"
+      ],
+      "does_not_establish": "A current rendering establishes no correctness of the facts its input asserts.",
+      "label": "rec:render:decision",
+      "path": "adr/003-templated-documentation.md",
+      "scope": "TOML inputs, committed dataset projections, templates and rendered text.",
+      "status": "accepted",
+      "title": "Templated documentation"
+    },
+    {
+      "depends_on": [
+        "rec:labels:decision"
+      ],
+      "does_not_establish": "Command-line streams establish no externally consumed interchange format.",
+      "label": "rec:output:decision",
+      "path": "adr/004-command-line-output-contract.md",
+      "scope": "First-party command-line results, controls, diagnostics and exit classes.",
+      "status": "accepted",
+      "title": "Command-line output contract"
+    },
+    {
+      "depends_on": [
+        "rec:labels:decision",
+        "rec:render:decision",
+        "rec:output:decision"
+      ],
+      "does_not_establish": "A clean gate establishes no implementation of the paper.",
+      "label": "rec:lint:decision",
+      "path": "adr/005-lint-discipline.md",
+      "scope": "Compiler lints, source disciplines and the foundation gate.",
+      "status": "accepted",
+      "title": "Lint discipline"
+    },
+    {
+      "depends_on": [],
+      "does_not_establish": "Matching hashes establish no authenticity, correctness, independence or deployment readiness.",
+      "label": "rec:identity:decision",
+      "path": "adr/006-identity-adjudication.md",
+      "scope": "Proposed digests, provenance identities, exact comparisons and their admission discipline.",
+      "status": "accepted",
+      "title": "Identity adjudication"
+    },
+    {
+      "depends_on": [
+        "rec:labels:decision",
+        "rec:kinds:decision",
+        "rec:render:decision",
+        "rec:output:decision",
+        "rec:lint:decision"
+      ],
+      "does_not_establish": "The decomposition establishes no implementation or proof of the inventoried mathematics.",
+      "label": "rec:decomposition:decision",
+      "path": "adr/007-crate-decomposition.md",
+      "scope": "Paper correspondence, proposed crate boundaries and implementation order.",
+      "status": "accepted",
+      "title": "Crate decomposition"
+    },
+    {
+      "depends_on": [],
+      "does_not_establish": "Adoption assigns no namespace, theory or identity; pn-interchange implements the conventions without establishing an external consumer.",
+      "label": "rec:interchange:decision",
+      "path": "adr/008-interchange-conventions.md",
+      "scope": "Documents emitted for consumption outside this repository.",
+      "status": "accepted",
+      "title": "Interchange conventions"
+    },
+    {
+      "depends_on": [
+        "rec:interchange:decision"
+      ],
+      "does_not_establish": "Implementation readiness establishes no external consumer or namespace allocation.",
+      "label": "rec:xchg:concept-record",
+      "path": "adr/009-interchange-concept.md",
+      "scope": "The pn-interchange concept and its implementation obligations.",
+      "status": "accepted",
+      "title": "Interchange concept"
+    },
+    {
+      "depends_on": [
+        "rec:interchange:decision"
+      ],
+      "does_not_establish": "Implementation readiness establishes no external consumer or namespace allocation.",
+      "label": "rec:xchg:design-record",
+      "path": "adr/010-interchange-design.md",
+      "scope": "The pn-interchange design and its implementation obligations.",
+      "status": "accepted",
+      "title": "Interchange design"
+    },
+    {
+      "depends_on": [
+        "rec:interchange:decision"
+      ],
+      "does_not_establish": "Implementation readiness establishes no external consumer or namespace allocation.",
+      "label": "rec:xchg:audit-record",
+      "path": "adr/011-interchange-audit.md",
+      "scope": "The pn-interchange audit and its implementation obligations.",
+      "status": "accepted",
+      "title": "Interchange audit"
+    },
+    {
+      "depends_on": [
+        "rec:interchange:decision"
+      ],
+      "does_not_establish": "Implementation readiness establishes no external consumer or namespace allocation.",
+      "label": "rec:xchg:commissioning-record",
+      "path": "adr/012-interchange-commissioning.md",
+      "scope": "The pn-interchange commissioning and its implementation obligations.",
+      "status": "accepted",
+      "title": "Interchange commissioning"
+    },
+    {
+      "depends_on": [
+        "rec:lint:decision"
+      ],
+      "does_not_establish": "Tracking nightly establishes no reproducible compiler pin or measured dev and test optimisation policy.",
+      "label": "rec:toolchain:decision",
+      "path": "adr/013-toolchain-and-build-profile.md",
+      "scope": "The workspace compiler channel, compiler minimum and release optimisation policy.",
+      "status": "accepted",
+      "title": "Toolchain and build profile"
+    }
+  ]
+}

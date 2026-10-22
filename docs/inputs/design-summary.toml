@@ -1,0 +1,31 @@
+namespace = "org.peer-network.design.summary"
+version = [1, 0, 0]
+
+rows = [
+  { category = "chapter", name = "01 Introduction", count = 19 },
+  { category = "chapter", name = "02 Comparator", count = 38 },
+  { category = "chapter", name = "03 Network", count = 13 },
+  { category = "chapter", name = "04 Graph", count = 168 },
+  { category = "chapter", name = "05 Nodes and edges", count = 98 },
+  { category = "chapter", name = "6 Epoch", count = 149 },
+  { category = "chapter", name = "7 Sorting", count = 28 },
+  { category = "chapter", name = "8 Transport", count = 15 },
+  { category = "chapter", name = "9 Content", count = 7 },
+  { category = "chapter", name = "10 Scalability", count = 24 },
+  { category = "chapter", name = "A Gates", count = 14 },
+  { category = "chapter", name = "B Compositional attribution", count = 46 },
+  { category = "chapter", name = "C Bridge", count = 55 },
+  { category = "chapter", name = "D Dynamics", count = 78 },
+  { category = "chapter", name = "E Symbols and binding ledger", count = 4 },
+  { category = "chapter", name = "F Verification", count = 200 },
+  { category = "chapter", name = "G Frontiers", count = 62 },
+  { category = "chapter", name = "H Necessity", count = 57 },
+  { category = "chapter", name = "Appendix I — Deployment", count = 18 },
+  { category = "constants", name = "", home = "pn-verification", count = 357 },
+  { category = "constants", name = "defaulted", home = "none", count = 3 },
+  { category = "constants", name = "defaulted", home = "pn-records", count = 41 },
+  { category = "constants", name = "defaulted", home = "pn-verification", count = 101 },
+  { category = "constants", name = "locked", home = "pn-records", count = 4 },
+  { category = "totals", name = "inventory", count = 1093 },
+  { category = "totals", name = "constants", count = 506 },
+]

@@ -1,0 +1,22 @@
+[package]
+name = "regexml"
+version = "0.2.2"
+edition = "2021"
+authors = ["Regexml contributors"]
+license = "Apache-2.0 OR MPL-2.0"
+description = "XPath compatible regex engine"
+documentation = "https://docs.rs/regexml"
+repository = "https://github.com/Paligo/regexml"
+readme = "README.md"
+keywords = ["regex", "xml", "xpath", "xml-schema"]
+categories = ["text-processing"]
+
+[dependencies]
+ahash = "0.8.11"
+enum_dispatch = "0.3.13"
+icu_casemap = "1.5.1"
+icu_collections = "1.5.0"
+icu_properties = "1.5.1"
+
+[dev-dependencies]
+insta = { version = "1.42.2", features = ["yaml", "glob"] }

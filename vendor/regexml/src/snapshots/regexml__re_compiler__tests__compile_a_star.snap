@@ -1,0 +1,27 @@
+---
+source: regexml/src/re_compiler.rs
+expression: "compiled(\"a*\").operation"
+---
+Sequence(
+    Sequence {
+        operations: [
+            UnambiguousRepeat(
+                UnambiguousRepeat {
+                    operation: Atom(
+                        Atom {
+                            atom: [
+                                'a',
+                            ],
+                            len: 1,
+                        },
+                    ),
+                    min: 0,
+                    max: 18446744073709551615,
+                },
+            ),
+            EndProgram(
+                EndProgram,
+            ),
+        ],
+    },
+)

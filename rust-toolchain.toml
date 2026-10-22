@@ -1,0 +1,6 @@
+[toolchain]
+# Every workspace build, test and gate runs on compute nodes whose shared toolchain
+# root carries the current nightly. Workers cannot install a toolchain there, so
+# name the channel the nodes carry rather than a date they may not carry.
+channel = "nightly"
+components = ["rustfmt", "clippy"]

@@ -1,0 +1,119 @@
+namespace = "org.peer-network.records.index"
+version = [1, 0, 0]
+
+[[rows]]
+label = "rec:labels:decision"
+path = "adr/001-label-calculus.md"
+status = "accepted"
+title = "Label calculus"
+scope = "The documentation and source-label graph over the declared carrier."
+depends_on = []
+does_not_establish = "Labels establish no semantic, build or release identity."
+
+[[rows]]
+label = "rec:kinds:decision"
+path = "adr/002-environment-kinds.md"
+status = "accepted"
+title = "Environment kinds"
+scope = "Environment names, kind assignments and the enforced classification relation."
+depends_on = []
+does_not_establish = "A catalogued kind creates no obligation to use that genre."
+
+[[rows]]
+label = "rec:render:decision"
+path = "adr/003-templated-documentation.md"
+status = "accepted"
+title = "Templated documentation"
+scope = "TOML inputs, committed dataset projections, templates and rendered text."
+depends_on = ["rec:labels:decision", "rec:kinds:decision"]
+does_not_establish = "A current rendering establishes no correctness of the facts its input asserts."
+
+[[rows]]
+label = "rec:output:decision"
+path = "adr/004-command-line-output-contract.md"
+status = "accepted"
+title = "Command-line output contract"
+scope = "First-party command-line results, controls, diagnostics and exit classes."
+depends_on = ["rec:labels:decision"]
+does_not_establish = "Command-line streams establish no externally consumed interchange format."
+
+[[rows]]
+label = "rec:lint:decision"
+path = "adr/005-lint-discipline.md"
+status = "accepted"
+title = "Lint discipline"
+scope = "Compiler lints, source disciplines and the foundation gate."
+depends_on = ["rec:labels:decision", "rec:render:decision", "rec:output:decision"]
+does_not_establish = "A clean gate establishes no implementation of the paper."
+
+[[rows]]
+label = "rec:identity:decision"
+path = "adr/006-identity-adjudication.md"
+status = "accepted"
+title = "Identity adjudication"
+scope = "Proposed digests, provenance identities, exact comparisons and their admission discipline."
+depends_on = []
+does_not_establish = "Matching hashes establish no authenticity, correctness, independence or deployment readiness."
+
+[[rows]]
+label = "rec:decomposition:decision"
+path = "adr/007-crate-decomposition.md"
+status = "accepted"
+title = "Crate decomposition"
+scope = "Paper correspondence, proposed crate boundaries and implementation order."
+depends_on = ["rec:labels:decision", "rec:kinds:decision", "rec:render:decision", "rec:output:decision", "rec:lint:decision"]
+does_not_establish = "The decomposition establishes no implementation or proof of the inventoried mathematics."
+
+[[rows]]
+label = "rec:interchange:decision"
+path = "adr/008-interchange-conventions.md"
+status = "accepted"
+title = "Interchange conventions"
+scope = "Documents emitted for consumption outside this repository."
+depends_on = []
+does_not_establish = "Adoption assigns no namespace, theory or identity; pn-interchange implements the conventions without establishing an external consumer."
+
+[[rows]]
+label = "rec:xchg:concept-record"
+path = "adr/009-interchange-concept.md"
+status = "accepted"
+title = "Interchange concept"
+scope = "The pn-interchange concept and its implementation obligations."
+depends_on = ["rec:interchange:decision"]
+does_not_establish = "Implementation readiness establishes no external consumer or namespace allocation."
+
+[[rows]]
+label = "rec:xchg:design-record"
+path = "adr/010-interchange-design.md"
+status = "accepted"
+title = "Interchange design"
+scope = "The pn-interchange design and its implementation obligations."
+depends_on = ["rec:interchange:decision"]
+does_not_establish = "Implementation readiness establishes no external consumer or namespace allocation."
+
+[[rows]]
+label = "rec:xchg:audit-record"
+path = "adr/011-interchange-audit.md"
+status = "accepted"
+title = "Interchange audit"
+scope = "The pn-interchange audit and its implementation obligations."
+depends_on = ["rec:interchange:decision"]
+does_not_establish = "Implementation readiness establishes no external consumer or namespace allocation."
+
+[[rows]]
+label = "rec:xchg:commissioning-record"
+path = "adr/012-interchange-commissioning.md"
+status = "accepted"
+title = "Interchange commissioning"
+scope = "The pn-interchange commissioning and its implementation obligations."
+depends_on = ["rec:interchange:decision"]
+does_not_establish = "Implementation readiness establishes no external consumer or namespace allocation."
+
+[[rows]]
+label = "rec:toolchain:decision"
+path = "adr/013-toolchain-and-build-profile.md"
+status = "accepted"
+title = "Toolchain and build profile"
+scope = "The workspace compiler channel, compiler minimum and release optimisation policy."
+depends_on = ["rec:lint:decision"]
+does_not_establish = "Tracking nightly establishes no reproducible compiler pin or measured dev and test optimisation policy."

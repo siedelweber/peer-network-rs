@@ -1,0 +1,6 @@
+namespace = "org.peer-network.linter.reserved"
+version = [1, 0, 0]
+
+rows = [
+  { name = "reserved", kinds = ["alert", "api", "bench", "class", "cli", "dataschema", "dataset", "endpoint", "envvar", "errcode", "event", "fixture", "flag", "func", "fuzz", "iface", "job", "lib", "lint", "macro", "metric", "migr", "mod", "ns", "pipeline", "pkg", "query", "role", "runex", "script", "setting", "snapshot", "suite", "svc", "test", "type"], extensions = [] },
+]

@@ -1,0 +1,191 @@
+namespace = "class.linter.lists"
+version = [1, 0, 0]
+
+[VENDOR."labels.mints-well-formed"]
+allowances = []
+
+[VENDOR."labels.mints-unique"]
+allowances = []
+
+[VENDOR."labels.citations-local-resolve"]
+allowances = []
+
+[ROOT."labels.citations-import-form"]
+allowances = []
+
+[ROOT."labels.citations-imported-resolve"]
+allowances = []
+
+[ROOT."labels.citations-layer-conform"]
+allowances = []
+
+[ROOT."labels.citations-local-resolve"]
+allowances = []
+
+[ROOT."labels.generated-regions-conform"]
+allowances = []
+
+[ROOT."labels.heads-conform"]
+allowances = []
+
+[ROOT."labels.mints-kind-conform"]
+allowances = []
+
+[ROOT."labels.mints-unique"]
+allowances = []
+
+[ROOT."labels.mints-well-formed"]
+allowances = []
+
+[ROOT."labels.outlines-conform"]
+allowances = []
+
+[DOCUMENTS."labels.citations-import-form"]
+allowances = []
+
+[DOCUMENTS."labels.citations-imported-resolve"]
+allowances = []
+
+[DOCUMENTS."labels.citations-layer-conform"]
+allowances = []
+
+[DOCUMENTS."labels.citations-local-resolve"]
+allowances = []
+
+[DOCUMENTS."labels.generated-regions-conform"]
+allowances = []
+
+[DOCUMENTS."labels.heads-conform"]
+allowances = []
+
+[DOCUMENTS."labels.mints-kind-conform"]
+allowances = []
+
+[DOCUMENTS."labels.mints-unique"]
+allowances = []
+
+[DOCUMENTS."labels.mints-well-formed"]
+allowances = []
+
+[DOCUMENTS."labels.outlines-conform"]
+allowances = []
+
+[ROOT."owners.reach-conform"]
+allowances = []
+
+[ROOT."owners.crate-names-conform"]
+allowances = []
+
+[DOCUMENTS."profile.tests-conform"]
+allowances = []
+
+[DOCUMENTS."profile.claims-conform"]
+allowances = []
+
+[INTERCHANGE."labels.citations-import-form"]
+allowances = []
+
+[INTERCHANGE."labels.citations-imported-resolve"]
+allowances = []
+
+[INTERCHANGE."labels.citations-layer-conform"]
+allowances = []
+
+[INTERCHANGE."labels.citations-local-resolve"]
+allowances = []
+
+[INTERCHANGE."labels.generated-regions-conform"]
+allowances = []
+
+[INTERCHANGE."labels.heads-conform"]
+allowances = []
+
+[INTERCHANGE."labels.mints-kind-conform"]
+allowances = []
+
+[INTERCHANGE."labels.mints-unique"]
+allowances = []
+
+[INTERCHANGE."labels.mints-well-formed"]
+allowances = []
+
+[INTERCHANGE."labels.outlines-conform"]
+allowances = []
+
+[INTERCHANGE."profile.tests-conform"]
+allowances = []
+
+[INTERCHANGE."profile.claims-conform"]
+allowances = []
+
+[CLICOMMON."labels.citations-import-form"]
+allowances = []
+
+[CLICOMMON."labels.citations-imported-resolve"]
+allowances = []
+
+[CLICOMMON."labels.citations-layer-conform"]
+allowances = []
+
+[CLICOMMON."labels.citations-local-resolve"]
+allowances = []
+
+[CLICOMMON."labels.generated-regions-conform"]
+allowances = []
+
+[CLICOMMON."labels.heads-conform"]
+allowances = []
+
+[CLICOMMON."labels.mints-kind-conform"]
+allowances = []
+
+[CLICOMMON."labels.mints-unique"]
+allowances = []
+
+[CLICOMMON."labels.mints-well-formed"]
+allowances = []
+
+[CLICOMMON."labels.outlines-conform"]
+allowances = []
+
+[CLICOMMON."profile.tests-conform"]
+allowances = []
+
+[CLICOMMON."profile.claims-conform"]
+allowances = []
+
+[EXECWRAP."labels.citations-import-form"]
+allowances = []
+
+[EXECWRAP."labels.citations-imported-resolve"]
+allowances = []
+
+[EXECWRAP."labels.citations-layer-conform"]
+allowances = []
+
+[EXECWRAP."labels.citations-local-resolve"]
+allowances = []
+
+[EXECWRAP."labels.generated-regions-conform"]
+allowances = []
+
+[EXECWRAP."labels.heads-conform"]
+allowances = []
+
+[EXECWRAP."labels.mints-kind-conform"]
+allowances = []
+
+[EXECWRAP."labels.mints-unique"]
+allowances = []
+
+[EXECWRAP."labels.mints-well-formed"]
+allowances = []
+
+[EXECWRAP."labels.outlines-conform"]
+allowances = []
+
+[EXECWRAP."profile.tests-conform"]
+allowances = []
+
+[EXECWRAP."profile.claims-conform"]
+allowances = []

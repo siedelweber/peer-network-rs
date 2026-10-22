@@ -1,0 +1,1 @@
+**Record ({{ record.title }})** · `{{ record.label }}` Status: {{ record.status }}. Scope: {{ record.scope }} Depends on:{% for label in record.depends_on %} (`{{ label }}`){% if not loop.last %},{% endif %}{% else %} none{% endfor %}.{% if record.does_not_establish %} Does not establish: {{ record.does_not_establish }}{% endif %}

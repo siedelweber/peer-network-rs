@@ -1,0 +1,17 @@
+{
+  "namespace": "org.peer-network.documents.premises",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "ids": [
+        "Q07",
+        "Q22"
+      ],
+      "name": "questions-without-status"
+    }
+  ]
+}

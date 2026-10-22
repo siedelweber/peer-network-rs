@@ -1,0 +1,6 @@
+namespace = "class.linter.lists"
+version = [1, 0, 0]
+{% for item in rows('org.peer-network.linter.policies') %}
+[{{ item.owner }}.{{ item.policy | toml_string }}]
+allowances = []
+{% endfor %}

@@ -1,0 +1,14 @@
+{% set questions = rows('org.peer-network.design.questions') %}{% set publication = row('org.peer-network.design.publication', name='questions') %}{% set missing_status = row('org.peer-network.documents.premises', name='questions-without-status').ids %}# Implementation question register · `reg:questions:overview`
+
+## Premises · `sec:questions:premises`
+
+**Setup (Sources)** · `setup:questions:sources` {{ require(questions | length == 38, 'question register requires Q01 through Q38') }}{% for item in rows('org.peer-network.design.inventory') %}{% if item.added_at is defined %}{{ require(item.added_at == publication.tag, 'inventory added_at must match publication tag') }}{% endif %}{% endfor %}{% for item in rows('org.peer-network.design.constants') %}{% if item.refreshed_at is defined %}{{ require(item.refreshed_at == publication.tag, 'constants refreshed_at must match publication tag') }}{% endif %}{% endfor %}{{ require(questions | rejectattr('status', 'defined') | map(attribute='id') | sort == missing_status | sort, 'questions without status must match the declared ids') }}The register preserves the study's thirty-eight readings alongside the maintainers' classifications and implementer instructions. The paper release is {{ publication.tag }}. {{ publication.source }} Status paragraphs are transcribed verbatim, including their bold marker; {{ missing_status | join(' and ') }} have no status paragraph in the answers document and no status field here. Section records each question section heading verbatim, and ambiguity preserves the study cell verbatim. Study readings remain proposals; a classification or instruction does not itself amend the paper. The record (`rec:decomposition:decision`) retains the implementation holds. No question-to-bite mapping is inferred.
+
+**Convention (Presentation)** · `conv:questions:presentation` The topic and reading retain the study's wording; class and instruction retain the maintainers' wording. Paper labels are exhibited with doubled delimiters, never minted or cited here. ANSWERED, DEFECT and OWNER-CALL are the maintainers' classifications, not implementation completion states.
+
+## Questions · `sec:questions:entries`
+
+| Id | Topic | Section | Study ambiguity | Study reading | Class | To the implementer | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+{% for question in questions %}| {{ question.id }} | {{ question.topic }} | {{ question.section }} | {{ question.ambiguity | exhibit(question.ambiguity | split(' ') | map('replace', '(', '') | map('replace', ')', '') | list) }} | {{ question.reading }} | {{ question.class }} | {{ question.instruction }} | {{ question.status | default('') }} |
+{% endfor -%}

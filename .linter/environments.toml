@@ -1,0 +1,804 @@
+namespace = "org.peer-network.linter.environments"
+version = [1, 0, 0]
+
+reserved_kinds = ["alert", "api", "bench", "class", "cli", "dataschema", "dataset", "endpoint", "envvar", "errcode", "event", "fixture", "flag", "func", "fuzz", "iface", "job", "lib", "lint", "macro", "metric", "migr", "mod", "ns", "pipeline", "pkg", "query", "role", "runex", "script", "setting", "snapshot", "suite", "svc", "test", "type"]
+reserved_extensions = []
+environments = [
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "API item", kind = "api" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Abstract", kind = "abst" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Abuse of notation", kind = "abuse" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Acknowledgment", kind = "ack" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Activity", kind = "exer" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Addendum", kind = "adden" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Address", kind = "address" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Afterword", kind = "adden" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Agenda", kind = "agenda" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Alert", kind = "alert" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Algorithm", kind = "alg" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Amendment", kind = "amend" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Anecdote", kind = "story" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Annals", kind = "chron" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Annex", kind = "app" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Annotation", kind = "gloss" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Ansatz", kind = "ansatz" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Answer", kind = "sol" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Appendix", kind = "app" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Application", kind = "appl" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Argument", kind = "arg" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Array", kind = "mat" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Article", kind = "article" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Aside", kind = "aside" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Assertion", kind = "claim" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Assignment", kind = "exer" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Assumption", kind = "assum" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Attribution", kind = "credit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Axiom", kind = "ax" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Axiom schema", kind = "axschema" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Benchmark", kind = "bench" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Bogus proof", kind = "fallacy" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Book", kind = "book" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Bound", kind = "bound" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "CLI command", kind = "cli" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Calculation", kind = "calc" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Caption", kind = "caption" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Case", kind = "case" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Case study", kind = "casestudy" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Catalogue", kind = "reg" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Caution", kind = "warn" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Caveat", kind = "cav" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Challenge", kind = "puzzle" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Changelog", kind = "log" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Chapter", kind = "chap" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Characterization", kind = "crit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Chart", kind = "fig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Check", kind = "verif" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Chronicle", kind = "chron" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Claim", kind = "claim" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Class", kind = "class" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Clause", kind = "sec" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Code", kind = "listing" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Comment", kind = "rem" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Computation", kind = "calc" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Computational note", kind = "impl" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Condition", kind = "cond" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Confession", kind = "confess" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Conjecture", kind = "conj" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Consequence", kind = "cor" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Construction", kind = "constr" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Convention", kind = "conv" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Corollary", kind = "cor" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Corollary (of the proof)", kind = "por" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Corrigendum", kind = "errat" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Counterexample", kind = "cex" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Courtesy line", kind = "credit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Credit", kind = "credit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Criterion", kind = "crit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Curiosity", kind = "fact" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Data", kind = "data" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Dataset", kind = "dataset" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Decision", kind = "dec" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Dedication", kind = "dedic" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Definition", kind = "def" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:hybrids): Adopted edition evidence; no status strengthening.
+  { environment = "Definition–Proposition", kind = "defprop" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:hybrids): Adopted edition evidence; no status strengthening.
+  { environment = "Definition–Theorem", kind = "defthm" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Demonstration", kind = "ex" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Demonstration", kind = "pf" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Derivation", kind = "calc" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Desideratum", kind = "goal" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Diagram", kind = "diag" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Diary", kind = "jour" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Dictum", kind = "slogan" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Digression", kind = "aside" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Discussion", kind = "disc" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Disproof", kind = "refut" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Dissertation", kind = "diss" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Document", kind = "doc" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Dossier", kind = "dossier" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Dream", kind = "dream" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Drill", kind = "exer" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Endpoint", kind = "endpoint" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Entry", kind = "entry" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Environment variable", kind = "envvar" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Epigraph", kind = "epigraph" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Epilogue", kind = "adden" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Equation", kind = "eq" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Erratum", kind = "errat" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Error code", kind = "errcode" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Essay", kind = "essay" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Estimate", kind = "bound" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Event", kind = "event" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Example", kind = "ex" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Excursus", kind = "aside" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Exercise", kind = "exer" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Exhibit", kind = "exhibit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Expectation", kind = "pred" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Experiment", kind = "expt" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Explanation", kind = "expl" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Exploration", kind = "proj" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Fact", kind = "fact" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Fallacy", kind = "fallacy" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "False proof", kind = "fallacy" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Fantasy", kind = "dream" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Feature flag", kind = "flag" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Figure", kind = "fig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Fixture", kind = "fixture" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Folklore", kind = "folk" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Foreword", kind = "pref" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Formulation", kind = "formul" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Fun fact", kind = "fact" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Function", kind = "func" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Fuzz target", kind = "fuzz" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Gate", kind = "gate" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Generalization", kind = "gen" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Given data", kind = "data" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Gloss", kind = "gloss" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Goal", kind = "goal" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Grammar", kind = "gram" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Graph", kind = "fig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Guess", kind = "guess" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Heuristic", kind = "heur" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Heuristic argument", kind = "heur" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Hint", kind = "hint" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Historical note", kind = "hist" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Historical remark", kind = "hist" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Homework", kind = "exer" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Hope", kind = "hope" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Hypothesis", kind = "hyp" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Idea of proof", kind = "sketch" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Identity", kind = "ident" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Illustration", kind = "ex" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Illustration", kind = "fig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Image", kind = "fig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Implementation remark", kind = "impl" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Indexing convention", kind = "conv" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Inequality", kind = "bound" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Inference rule", kind = "inf" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Insight", kind = "intuit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Interface", kind = "iface" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Interlude", kind = "aside" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Intermezzo", kind = "aside" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Intuition", kind = "intuit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Invariant", kind = "inv" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Inventory", kind = "reg" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Job", kind = "job" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Joke", kind = "joke" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Journal", kind = "jour" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Judgment", kind = "judg" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Justification", kind = "just" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Key", kind = "legend" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Keynote", kind = "address" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Language", kind = "lang" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Law", kind = "law" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Lecture", kind = "lect" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Ledger", kind = "ledger" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Legend", kind = "legend" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Legend", kind = "story" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Lemma", kind = "lem" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:hybrids): Adopted edition evidence; no status strengthening.
+  { environment = "Lemma–Definition", kind = "lemdef" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Library", kind = "lib" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Lint rule", kind = "lint" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Listing", kind = "listing" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Log", kind = "log" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Macro", kind = "macro" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Marginal gloss", kind = "gloss" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Matrix", kind = "mat" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Maxim", kind = "slogan" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Meeting", kind = "session" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Memo", kind = "memo" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Memorandum", kind = "memo" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Meta-conjecture", kind = "metaconj" },
+  # borderline; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Meta-question", kind = "metaq" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Meta-theorem", kind = "metathm" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Metric", kind = "metric" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Migration", kind = "migr" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Minutes", kind = "minutes" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Miracle", kind = "miracle" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Misconception", kind = "myth" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Model", kind = "constr" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Model", kind = "model" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Module", kind = "mod" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Module", kind = "sec" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Monograph", kind = "mono" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Moral", kind = "moral" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Motion", kind = "motion" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Motivation", kind = "mot" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Motto", kind = "slogan" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Myth", kind = "myth" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "N.B.", kind = "rem" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Namespace", kind = "ns" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Nomenclature", kind = "term" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Non-example", kind = "nonex" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Notation", kind = "ntn" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Note", kind = "rem" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Objection", kind = "obj" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Observation", kind = "data" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Observation", kind = "obs" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Open Problem", kind = "open" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Open Question", kind = "open" },
+  # borderline; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Oration", kind = "address" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Outline of proof", kind = "sketch" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Outlook", kind = "outlook" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Overview", kind = "preview" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Package", kind = "pkg" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Paper", kind = "article" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Parable", kind = "story" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Paradox", kind = "paradox" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Paragraph", kind = "para" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Part", kind = "part" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Perspective", kind = "persp" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Philosophy", kind = "persp" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Photograph", kind = "fig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Picture", kind = "fig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Pipeline", kind = "pipeline" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Pitfall", kind = "warn" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Plausibility argument", kind = "heur" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Plot", kind = "fig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Porism", kind = "por" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Postcondition", kind = "postc" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Postmortem", kind = "postmortem" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Postscript", kind = "adden" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Postulate", kind = "ax" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Practice", kind = "exer" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Prayer", kind = "hope" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Preamble", kind = "pref" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Precondition", kind = "pre" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Prediction", kind = "pred" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Preface", kind = "pref" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Preprint", kind = "article" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Preview", kind = "preview" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Principle", kind = "prin" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Problem", kind = "prob" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Problem formulation", kind = "formul" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Procedure", kind = "alg" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Proceedings", kind = "proc" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Project", kind = "proj" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Prologue", kind = "pref" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Promise", kind = "promise" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Proof", kind = "pf" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Proof idea", kind = "sketch" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Proof outline", kind = "sketch" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Proof sketch", kind = "sketch" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Property", kind = "property" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Proposal", kind = "proposal" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Proposition", kind = "prop" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Protocol", kind = "minutes" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Protocol", kind = "proto" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Pseudocode", kind = "listing" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Punchline", kind = "moral" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Puzzle", kind = "puzzle" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Query", kind = "query" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Question", kind = "q" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Quiz", kind = "quiz" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Recall", kind = "recall" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Record", kind = "rec" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Reduction", kind = "red" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Refrain", kind = "refrain" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Refutation", kind = "refut" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Register", kind = "reg" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Registry", kind = "reg" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Release notes", kind = "relnotes" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Remark", kind = "rem" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Reminder", kind = "recall" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Reply", kind = "reply" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Report", kind = "rep" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Requirement", kind = "req" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Research problem", kind = "open" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Research question", kind = "open" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Resolution", kind = "resol" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Result", kind = "result" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Retrospective", kind = "retro" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Review", kind = "rep" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Review", kind = "sec" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Revision", kind = "ver" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Riddle", kind = "puzzle" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Roadmap", kind = "preview" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Role", kind = "role" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Route", kind = "endpoint" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Rule", kind = "rule" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Rule of thumb", kind = "heur" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Runnable example", kind = "runex" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Sanity check", kind = "verif" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Saying", kind = "slogan" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Scenario", kind = "scenario" },
+  # borderline; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Schema", kind = "dataschema" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Schema", kind = "schema" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Scheme", kind = "fig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Scheme", kind = "scheme" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Scholium", kind = "schol" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Script", kind = "script" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Section", kind = "sec" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Service", kind = "svc" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Session", kind = "session" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Setting", kind = "setting" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Setting", kind = "setup" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Setup", kind = "setup" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Sidebar", kind = "aside" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Sign convention", kind = "conv" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Signature", kind = "sig" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Simulation", kind = "expt" },
+  # borderline; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Sitting", kind = "session" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Situation", kind = "setup" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Sketch", kind = "sketch" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Sketch of proof", kind = "sketch" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Slogan", kind = "slogan" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Snapshot", kind = "snapshot" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Solution", kind = "sol" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Sorites", kind = "sorites" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:apparatus): Adopted edition evidence; no status strengthening.
+  { environment = "Source line", kind = "credit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Special case", kind = "spcase" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Specification", kind = "spec" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Speculation", kind = "guess" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Speech", kind = "address" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Standing hypothesis", kind = "assum" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Statement", kind = "stmt" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Step", kind = "step" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Story", kind = "scenario" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Story", kind = "story" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Strategy", kind = "strat" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Struct", kind = "class" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Structure", kind = "class" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Structure", kind = "constr" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Structure", kind = "schema" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Suite", kind = "suite" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Summary", kind = "summ" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Supplement", kind = "adden" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Surprise", kind = "miracle" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:front-matter): Adopted edition evidence; no status strengthening.
+  { environment = "Synopsis", kind = "abst" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:displays): Adopted edition evidence; no status strengthening.
+  { environment = "Table", kind = "tab" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Takeaway", kind = "moral" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Task", kind = "exer" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Task", kind = "job" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Terminology", kind = "term" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Test", kind = "quiz" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Test", kind = "test" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Textbook", kind = "textbook" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Theorem", kind = "thm" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Theorem schema", kind = "thmschema" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:works): Adopted edition evidence; no status strengthening.
+  { environment = "Thesis", kind = "diss" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Thesis", kind = "thesis" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Thought experiment", kind = "gedanken" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Transcript", kind = "transcript" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Type", kind = "type" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Unit", kind = "unit" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Upshot", kind = "moral" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:computation): Adopted edition evidence; no status strengthening.
+  { environment = "Use case", kind = "scenario" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:results): Adopted edition evidence; no status strengthening.
+  { environment = "Variant", kind = "variant" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:proofs): Adopted edition evidence; no status strengthening.
+  { environment = "Verification", kind = "verif" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:records): Adopted edition evidence; no status strengthening.
+  { environment = "Version", kind = "ver" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Vignette", kind = "story" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:structure): Adopted edition evidence; no status strengthening.
+  { environment = "Volume", kind = "vol" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:examples): Adopted edition evidence; no status strengthening.
+  { environment = "Warm-up", kind = "exer" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:commentary): Adopted edition evidence; no status strengthening.
+  { environment = "Warning", kind = "warn" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Wish", kind = "hope" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:assets): Adopted edition evidence; no status strengthening.
+  { environment = "Workflow", kind = "pipeline" },
+  # firm; adr/002-environment-kinds.md (conv:kinds:setup): Adopted edition evidence; no status strengthening.
+  { environment = "Working hypothesis", kind = "assum" },
+  # borderline; adr/002-environment-kinds.md (conv:kinds:whimsy): Adopted edition evidence; no status strengthening.
+  { environment = "Yoga", kind = "yoga" },
+]
+extensions = [
+  # firm; Deployed linter Document title convention, adopted by this repository declaration (docs/inputs/kinds-registry.toml: Document/guide): Document/guide is a declared title kind. The document census uses it in README.md, title Peer Network, and packages/documents/README.md, title Documents.
+  { environment = "Document", kind = "guide" },
+  # firm; Deployed linter Document title convention, adopted by this repository declaration (docs/inputs/kinds-registry.toml: Document/plan): Document/plan is a declared title kind whether or not a document uses it yet.
+  { environment = "Document", kind = "plan" },
+  # firm; Deployed linter Document title convention, adopted by this repository declaration (docs/inputs/kinds-registry.toml: Document/proposal): Document/proposal is a declared title kind whether or not a document uses it yet.
+  { environment = "Document", kind = "proposal" },
+  # firm; Deployed linter Document title convention, adopted by this repository declaration (docs/inputs/kinds-registry.toml: Document/rec): Document/rec is a declared title kind whether or not a document uses it yet.
+  { environment = "Document", kind = "rec" },
+  # firm; Deployed linter Document title convention, adopted by this repository declaration (docs/inputs/kinds-registry.toml: Document/reg): Document/reg is a declared title kind. The document census uses it in docs/design/inventory.md, title Paper statement inventory, and docs/design/questions.md, title Implementation question register.
+  { environment = "Document", kind = "reg" },
+  # firm; Deployed linter Document title convention, adopted by this repository declaration (docs/inputs/kinds-registry.toml: Document/rep): Document/rep is a declared title kind whether or not a document uses it yet.
+  { environment = "Document", kind = "rep" },
+  # firm; Deployed linter Document title convention, adopted by this repository declaration (docs/inputs/kinds-registry.toml: Document/spec): Document/spec is a declared title kind whether or not a document uses it yet.
+  { environment = "Document", kind = "spec" },
+]
+
+# Hom(C_A), ordered by name and kind; a view of the same effective pairs.
+# Demonstration: ex
+# Demonstration: pf
+# Document: doc
+# Document: guide
+# Document: plan
+# Document: proposal
+# Document: rec
+# Document: reg
+# Document: rep
+# Document: spec
+# Illustration: ex
+# Illustration: fig
+# Legend: legend
+# Legend: story
+# Model: constr
+# Model: model
+# Module: mod
+# Module: sec
+# Observation: data
+# Observation: obs
+# Protocol: minutes
+# Protocol: proto
+# Review: rep
+# Review: sec
+# Schema: dataschema
+# Schema: schema
+# Scheme: fig
+# Scheme: scheme
+# Setting: setting
+# Setting: setup
+# Story: scenario
+# Story: story
+# Structure: class
+# Structure: constr
+# Structure: schema
+# Task: exer
+# Task: job
+# Test: quiz
+# Test: test
+# Thesis: diss
+# Thesis: thesis

@@ -1,0 +1,8 @@
+namespace = "org.peer-network.linter.shape"
+version = [1, 0, 0]
+
+universe = "tracked-exclusive"
+ignore = [
+  { name = "build", pattern = '%s"target/" *VCHAR' },
+  { name = "lane", pattern = '[ *VCHAR "/" ] %s".lane/" *VCHAR' },
+]

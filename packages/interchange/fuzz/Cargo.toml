@@ -1,0 +1,43 @@
+[package]
+name = "pn-interchange-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+# Detached from the crate's workspace: the fuzz crate builds only on the
+# nightly cargo-fuzz lane, never as a member of the version-1 tree, and
+# `bash ci/gate.sh` also uses nightly; cargo-fuzz sanitizer instrumentation
+# and its open-ended run time keep fuzzing outside the gate.
+# From packages/interchange/fuzz: cargo +nightly fuzz run decode_canonical -- -max_total_time=60
+# Repeat for cddl_parse and accept_document; run bash seed.sh first to seed the corpora.
+[workspace]
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.pn-interchange]
+path = ".."
+
+[[bin]]
+name = "decode_canonical"
+path = "fuzz_targets/decode_canonical.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "cddl_parse"
+path = "fuzz_targets/cddl_parse.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "accept_document"
+path = "fuzz_targets/accept_document.rs"
+test = false
+doc = false
+bench = false

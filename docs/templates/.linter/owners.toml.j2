@@ -1,0 +1,9 @@
+namespace = "org.peer-network.linter.owners"
+version = [1, 0, 0]
+
+{% set declaration = row('org.peer-network.linter.owners', name='declaration') %}owners = [{% for owner in declaration.owners %}{{ owner | toml_string }}{% if not loop.last %}, {% endif %}{% endfor %}]
+imports = [{% for item in declaration.imports %}{ owner = {{ item.owner | toml_string }}, registry = {{ item.registry | toml_string }} }{% if not loop.last %}, {% endif %}{% endfor %}]
+partitions = [
+{% for item in declaration.partitions %}  { name = {{ item.name | toml_string }}, owner = {{ item.owner | toml_string }}, pattern = {{ item.pattern | toml_string }} },
+{% endfor %}]
+may_cite = [{% for item in declaration.may_cite %}{ owner = {{ item.owner | toml_string }}, target = {{ item.target | toml_string }} }{% if not loop.last %}, {% endif %}{% endfor %}]

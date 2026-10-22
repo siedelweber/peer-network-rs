@@ -1,0 +1,6 @@
+namespace = "org.peer-network.linter.policies"
+version = [1, 0, 0]
+
+policies = [
+{% for item in rows('org.peer-network.linter.policies') %}  { owner = {{ item.owner | toml_string }}, policy = {{ item.policy | toml_string }} },
+{% endfor %}]

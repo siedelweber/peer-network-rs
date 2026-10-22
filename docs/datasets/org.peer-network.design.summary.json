@@ -1,0 +1,145 @@
+{
+  "namespace": "org.peer-network.design.summary",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "category": "chapter",
+      "count": 19,
+      "name": "01 Introduction"
+    },
+    {
+      "category": "chapter",
+      "count": 38,
+      "name": "02 Comparator"
+    },
+    {
+      "category": "chapter",
+      "count": 13,
+      "name": "03 Network"
+    },
+    {
+      "category": "chapter",
+      "count": 168,
+      "name": "04 Graph"
+    },
+    {
+      "category": "chapter",
+      "count": 98,
+      "name": "05 Nodes and edges"
+    },
+    {
+      "category": "chapter",
+      "count": 149,
+      "name": "6 Epoch"
+    },
+    {
+      "category": "chapter",
+      "count": 28,
+      "name": "7 Sorting"
+    },
+    {
+      "category": "chapter",
+      "count": 15,
+      "name": "8 Transport"
+    },
+    {
+      "category": "chapter",
+      "count": 7,
+      "name": "9 Content"
+    },
+    {
+      "category": "chapter",
+      "count": 24,
+      "name": "10 Scalability"
+    },
+    {
+      "category": "chapter",
+      "count": 14,
+      "name": "A Gates"
+    },
+    {
+      "category": "chapter",
+      "count": 46,
+      "name": "B Compositional attribution"
+    },
+    {
+      "category": "chapter",
+      "count": 55,
+      "name": "C Bridge"
+    },
+    {
+      "category": "chapter",
+      "count": 78,
+      "name": "D Dynamics"
+    },
+    {
+      "category": "chapter",
+      "count": 4,
+      "name": "E Symbols and binding ledger"
+    },
+    {
+      "category": "chapter",
+      "count": 200,
+      "name": "F Verification"
+    },
+    {
+      "category": "chapter",
+      "count": 62,
+      "name": "G Frontiers"
+    },
+    {
+      "category": "chapter",
+      "count": 57,
+      "name": "H Necessity"
+    },
+    {
+      "category": "chapter",
+      "count": 18,
+      "name": "Appendix I — Deployment"
+    },
+    {
+      "category": "constants",
+      "count": 357,
+      "home": "pn-verification",
+      "name": ""
+    },
+    {
+      "category": "constants",
+      "count": 3,
+      "home": "none",
+      "name": "defaulted"
+    },
+    {
+      "category": "constants",
+      "count": 41,
+      "home": "pn-records",
+      "name": "defaulted"
+    },
+    {
+      "category": "constants",
+      "count": 101,
+      "home": "pn-verification",
+      "name": "defaulted"
+    },
+    {
+      "category": "constants",
+      "count": 4,
+      "home": "pn-records",
+      "name": "locked"
+    },
+    {
+      "category": "totals",
+      "count": 1093,
+      "name": "inventory"
+    },
+    {
+      "category": "totals",
+      "count": 506,
+      "name": "constants"
+    }
+  ]
+}

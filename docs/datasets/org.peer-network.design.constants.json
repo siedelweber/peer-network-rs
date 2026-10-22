@@ -1,0 +1,3612 @@
+{
+  "namespace": "org.peer-network.design.constants",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "cites": "ax:epoch:thermodynamic-boundary",
+      "class": "locked",
+      "home": "pn-records",
+      "id": "const.activation.beta_2ln2",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "def:graph:path-view-extraction",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.activation.eta_sq",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "def:graph:path-view-extraction",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.graph.bleed",
+      "kind": "absolute"
+    },
+    {
+      "cites": "def:graph:svd-path-score",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.graph.divergence_preference",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "tbl:verification:constants",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.comparator.numeraire",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "tbl:verification:constants",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.comparator.policy_floor",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "tbl:verification:reference-constants",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.margin",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "eq:epoch:responsive-vouch-activation",
+      "class": "locked",
+      "home": "pn-records",
+      "id": "const.epoch.hop_depth_4",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "def:sorting:relevance-score",
+      "class": "locked",
+      "home": "pn-records",
+      "id": "const.raw.feed_depth_4",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "post:epoch:final-edge-set",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.epochlen",
+      "kind": "absolute"
+    },
+    {
+      "cites": "post:epoch:final-edge-set",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.snapbuf",
+      "kind": "absolute"
+    },
+    {
+      "cites": "def:can:void-node",
+      "class": "defaulted",
+      "home": "none",
+      "id": "const.can.void_base",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "def:graph:path-view-extraction",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.graph.halffloor",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "def:epoch:safety-threshold",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.fenceslack",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "lem:dynamics:elasticity-cap",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.dynamics.elastcap",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "lem:dynamics:elasticity-cap",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.dynamics.rate_cap",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "ax:epoch:thermodynamic-boundary",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.activation.maxent_damping",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "eq:dynamics:projected-schwarzian",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.dynamics.schwarz_coeff",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "rem:dynamics:rival-factor-two",
+      "class": "locked",
+      "home": "pn-records",
+      "id": "const.standing.rival_factor_2",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "def:dynamics:tilt-gain-coordinates",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.standing.activation_exponent",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "cor:dynamics:tilt-profile-prior-screen",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.standing.prior_screen_cap",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "cor:dynamics:tilt-profile-prior-screen",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.standing.profile_l1",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "cor:dynamics:tilt-profile-prior-screen",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.standing.profile_slack",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "cor:dynamics:tilt-profile-prior-screen",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.standing.screen_margin",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "thm:scalability:conserved-equilibrium-cost",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.standing.worst_contraction",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "cor:dynamics:tilt-profile-prior-screen",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.standing.critical_decay",
+      "kind": "computed"
+    },
+    {
+      "cites": "lem:graph:non-vanishing-norm",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.graph.fpl_baseline",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "subsec:graph:sentiment-slice",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.graph.sigmoid_floor",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "prop:epoch:damped-weight-bounds",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.activation.g_half",
+      "kind": "computed"
+    },
+    {
+      "cites": "prop:epoch:crossover-location",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.activation.tau_star",
+      "kind": "computed"
+    },
+    {
+      "cites": "def:epoch:responsive-vouch-activation",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.activation.qcore_cap",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "rem:dynamics:elasticity-profile",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.dynamics.loggain_1",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "prop:dynamics:clean-gain-domination",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.dynamics.vouchgain_1",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "subsec:necessity:eta-softening",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.graph.softening_gap",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:necessity:always-active-baseline",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.graph.corner_norm",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "lem:dynamics:core-schwarzian-factorization",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.dynamics.psi2_bound",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "prop:dynamics:core-schwarzian-negativity",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.dynamics.mq_clean_limit",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "prop:dynamics:core-schwarzian-negativity",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.dynamics.mq_clean_slope",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "prop:dynamics:core-schwarzian-negativity",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.dynamics.mq_deployed_limit",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.kernel.p1",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.kernel.p2",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.kernel.p3",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.ridge.p_lo",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.ridge.p_hi",
+      "kind": "absolute"
+    },
+    {
+      "cites": "rem:dynamics:elasticity-profile",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.dynamics.ridge_alpha_lo",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "rem:dynamics:elasticity-profile",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.dynamics.ridge_alpha_hi",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "rem:dynamics:elasticity-profile",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.dynamics.elastmax_lo",
+      "kind": "computed"
+    },
+    {
+      "cites": "lem:dynamics:elasticity-cap",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.dynamics.elastmax_hi",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "prop:graph:rank-two-constraint",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.graph.svd_ratio_grid",
+      "kind": "computed"
+    },
+    {
+      "cites": "prop:graph:rank-two-constraint",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.graph.svd_energy_grid",
+      "kind": "computed"
+    },
+    {
+      "cites": "prop:graph:rank-two-constraint",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.graph.svd_energy_grid_restricted",
+      "kind": "computed"
+    },
+    {
+      "cites": "thm:graph:raw-weight-ceiling",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.raw.wmax",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.raw.wmaxop",
+      "kind": "computed"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.raw.bridge_ceiling",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "thm:graph:raw-weight-ceiling",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "bound.raw.wmax_marginal",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "subsec:verification:parasitic-wrapper",
+      "class": "defaulted",
+      "home": "none",
+      "id": "fixture.wrapper.norm",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:parasitic-wrapper",
+      "class": "defaulted",
+      "home": "none",
+      "id": "fixture.curator.norm",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.wall.width",
+      "kind": "absolute"
+    },
+    {
+      "cites": "def:epoch:safety-threshold",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.safefloor",
+      "kind": "computed"
+    },
+    {
+      "cites": "def:epoch:safety-threshold",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.safethresh",
+      "kind": "computed"
+    },
+    {
+      "cites": "ver:boundary:safety-replay",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.safefloor_m1",
+      "kind": "computed",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "ver:boundary:safety-replay",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.safethresh_m1",
+      "kind": "computed",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.seed.alice_rate",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.seed.bob_rate",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.seed.carol_rate",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.seed.dave_rate",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.seed.alice_rate_extra",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.seed.bob_rate_extra",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "thm:graph:maturity-amplification",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.activation.coherence_cap",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "prop:epoch:dilution-cost",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.capacity_per_burn_unit",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "def:epoch:safety-threshold",
+      "class": "defaulted",
+      "home": "pn-records",
+      "id": "const.epoch.margin_sqrt",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.seed.carol_rate_revised",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "result.seed.alice_refstanding",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "result.seed.alice_boost",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.bob_mean",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.bob_trans",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.bob_norm_sum",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.bob_depweight_a",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.bob_depweight_b",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.bob",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.bob_share",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.carol_trans",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.carol",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.can.carol_share",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wrapper.trans",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wrapper.can",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.curator.trans",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.curator.can",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bond.cycle",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.tier.gap_lo",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.tier.gap_hi",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.gap",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.path.alice_ratio",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.parity.prod_a",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.parity.prod_b",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.parity.prod_c",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.parity.prod_d",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.parity.prod_det",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.parity.register",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.tier_ratio",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.path.relevance",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.path.bob_streetart",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.path.alice_long",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.scaling.rep_ratio",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.scaling.bridged_low",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.scaling.bridged_high",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.scaling.flow_low",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.scaling.flow_high",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.conduit",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.epoch.floor_margin",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.tier.edge_gap",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.tier.frob_ratio",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.path.tau_ceiling",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge.affinity",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge.endorsement",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge.circqual",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge.consent_double",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge.circqual_double",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.g_08",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.g_093",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.maturity_ratio",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.g_094",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.g_095",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.g4_half",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.g4_08",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.g4_094",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.g4_095",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.tier.svd2_inflation",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.schwarz.k_half",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.schwarz.k_p23",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.schwarz.k_p34",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.schwarz.k_p1",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.schwarz.s_half",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.schwarz.s_p23",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.schwarz.s_p34",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.schwarz.s_p1",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.tau_star_beta1",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.activation.tau_star_beta2",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.promotion.ratio",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.promotion.half_ratio",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.tier.len2_gap",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.tier.len3_gap",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.tier.len4_gap",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.tier.len2_frac",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.activation",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.gain",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.act_08",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.gain_08",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.act_10",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.gain_10",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.act_12",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.gain_12",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.act_30",
+      "kind": "computed"
+    },
+    {
+      "cites": "subsec:can:worked-example",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.wall.gain_30",
+      "kind": "computed"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e1.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e1.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e1.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e1r.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e1r.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e1r.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1r.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1r.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1r.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1r.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1r.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1r.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e2.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e2.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e2.maturity",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e3.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e3.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e3.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e3.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e3.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e3.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e3.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e3.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e3.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e4.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e4.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e4.maturity",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e4.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e4.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e4.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e4.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e4.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e4.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e5.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e5.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e5.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e6.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e6.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e6.maturity",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e6.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e6.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e6.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e6.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e6.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e6.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e7.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e7.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e7.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e8.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e8.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.e8.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "tbl:verification:reference-edges",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.accept.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.accept.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.accept.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.accept.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.accept.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.accept.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.accept.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.accept.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.accept.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bid.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bid.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bid.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:tier-discrimination",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:settlement-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bid_full.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:settlement-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bid_full.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:settlement-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bid_full.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:settlement-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid_full.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:settlement-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid_full.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:settlement-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid_full.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:settlement-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid_full.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:settlement-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid_full.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:settlement-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid_full.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.join.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.join.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.join.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.join.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.join.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.join.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.join.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.join.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.join.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:spam-resistance",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.spam.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:spam-resistance",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.spam.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:spam-resistance",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.spam.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:spam-resistance",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:spam-resistance",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:spam-resistance",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:spam-resistance",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:spam-resistance",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:spam-resistance",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:mask-promotion-impact",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.owner_econ.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:mask-promotion-impact",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.owner_econ.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:mask-promotion-impact",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.owner_econ.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "subsec:verification:mask-promotion-impact",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.owner_econ.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:mask-promotion-impact",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.owner_econ.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:mask-promotion-impact",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.owner_econ.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:mask-promotion-impact",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.owner_econ.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:mask-promotion-impact",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.owner_econ.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:mask-promotion-impact",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.owner_econ.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.ratify.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.ratify.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.ratify.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ratify.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ratify.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ratify.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ratify.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ratify.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ratify.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bridge_ca.direct",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bridge_ca.indirect",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bridge_ca.maturity",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ca.frobenius",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ca.detscore",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ca.coherence",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ca.entropy",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ca.boltz",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ca.weight",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bridge_ad.direct",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bridge_ad.indirect",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bridge_ad.maturity",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ad.frobenius",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ad.detscore",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ad.coherence",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ad.entropy",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ad.boltz",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_ad.weight",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bridge_da.direct",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bridge_da.indirect",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.bridge_da.maturity",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_da.frobenius",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_da.detscore",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_da.coherence",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_da.entropy",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_da.boltz",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bridge_da.weight",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.rep_half.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.rep_half.indirect",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.rep_half.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_half.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_half.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_half.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_half.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_half.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_half.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.rep_carol.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.rep_carol.indirect",
+      "kind": "symbolic"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.rep_carol.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_carol.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_carol.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_carol.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_carol.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_carol.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_carol.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "ver:proposals:invitation",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.invite.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "ver:proposals:invitation",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.invite.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "ver:proposals:invitation",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.invite.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "ver:proposals:invitation",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "ver:proposals:invitation",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "ver:proposals:invitation",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "ver:proposals:invitation",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "ver:proposals:invitation",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "ver:proposals:invitation",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.rep_dave.direct",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.rep_dave.indirect",
+      "kind": "symbolic",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.rep_dave.maturity",
+      "kind": "absolute",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_dave.frobenius",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_dave.detscore",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_dave.coherence",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_dave.entropy",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_dave.boltz",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:bridge-campaign-walkthrough",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.rep_dave.weight",
+      "kind": "edge_result",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.control.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.control.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.control.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.control.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.control.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.control.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.control.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.control.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.control.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.minimal.direct",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.minimal.indirect",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "defaulted",
+      "home": "pn-verification",
+      "id": "fixture.minimal.maturity",
+      "kind": "absolute"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.frobenius",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.detscore",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.coherence",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.entropy",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.boltz",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.weight",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.alice.final_balance",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.alice.final_source",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.alice.final_count",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.alice.epoch_acts",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bob.final_balance",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bob.final_source",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bob.final_count",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bob.epoch_acts",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.carol.final_balance",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.carol.final_source",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.carol.final_count",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.carol.epoch_acts",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.dave.final_balance",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.dave.final_source",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.dave.settled_burn",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.dave.final_count",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.dave.epoch_acts",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.eve.final_balance",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.eve.final_source",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.eve.final_count",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "subsec:verification:final-epoch-fixture",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.eve.epoch_acts",
+      "kind": "actor_result"
+    },
+    {
+      "cites": "def:epoch:effective-act-contribution",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.vouch.alice_bob",
+      "kind": "vouch_coeff",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "def:epoch:effective-act-contribution",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.vouch.alice_carol",
+      "kind": "vouch_coeff",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "def:epoch:effective-act-contribution",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.vouch.bob_carol",
+      "kind": "vouch_coeff",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "def:epoch:effective-act-contribution",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.vouch.bob_dave",
+      "kind": "vouch_coeff",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "def:epoch:effective-act-contribution",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.vouch.carol_dave",
+      "kind": "vouch_coeff",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "def:epoch:effective-act-contribution",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.vouch.carol_eve",
+      "kind": "vouch_coeff",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "def:epoch:effective-act-contribution",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.vouch.dave_eve",
+      "kind": "vouch_coeff",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "def:epoch:effective-act-contribution",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.vouch.alice_eve",
+      "kind": "vouch_coeff",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "def:epoch:effective-act-contribution",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.vouch.bob_eve",
+      "kind": "vouch_coeff",
+      "refreshed_at": "network-v0.25.1"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.alice_x",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.bob_x",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.carol_x",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.dave_x",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.eve_x",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.iterations",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.row_sum_defect",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ballast.full_pair",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ballast.emitted",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ballast.lift",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ballast.giant_emission",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ballast.export_slack",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.emission_alice",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.emission_eve",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.standing.ledger_defect",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.crowding.bare",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.crowding.loaded",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.crowding.drop",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.gates.rho_ep",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "subsec:verification:conserved-standing",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.gates.headroom",
+      "kind": "epoch_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.inner",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.core_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.core_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.marg_ind_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.marg_ind_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.marg_dir_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.marg_dir_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.pv_ad",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.pv_bc",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.frobenius_sq",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.inner",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.core_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.core_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.marg_ind_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.marg_ind_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.marg_dir_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.marg_dir_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.pv_a",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.pv_ad",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.pv_bc",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.inner",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.core_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.core_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.core_bracket",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1.core_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1.core_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e1.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.core_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.core_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.marg_ind_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.marg_ind_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.pv_condnum",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.spam.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.join.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e4.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.core_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.core_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.invite.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.psi_svd1",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.psi_svd2",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e5.psi_svd3",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e7.pv_condnum",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.pv_condnum",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.core_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.core_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e8.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.owner_econ.pv_a",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.owner_econ.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.control.core_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.control.core_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.control.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.pv_a",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.core_pm",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.core_pl",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.bid.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.accept.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.ratify.pv_det",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.pv_svd1",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.pv_svd2",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.pv_frob_sq",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.pv_cohratio",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.pv_condnum",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.pv_modeangle",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.psi_svd1",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.psi_svd2",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.psi_svd3",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.e2.psi_svd_ratio",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.psi_svd1",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.psi_svd2",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.psi_svd3",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.psi_svd_ratio",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.frobenius_sq",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.psi_svd1_sq",
+      "kind": "edge_result"
+    },
+    {
+      "cites": "",
+      "class": "",
+      "home": "pn-verification",
+      "id": "result.minimal.psi_svd2_sq",
+      "kind": "edge_result"
+    }
+  ]
+}

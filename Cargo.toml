@@ -1,0 +1,68 @@
+[workspace]
+resolver = "3"
+exclude = ["packages/interchange/fuzz"]
+members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap"]
+
+[workspace.package]
+authors = ["Peer Network contributors"]
+edition = "2024"
+publish = false
+version = "0.1.0"
+# Code is AGPL-3.0-only; documents carry CC0-1.0 (see LICENSE-DOCS).
+license = "AGPL-3.0-only"
+
+[workspace.dependencies]
+# The anchored matcher and operation budget exist only in the fork (Paligo/regexml#15).
+# Retire this vendored copy when upstream releases both capabilities.
+regexml = { path = "vendor/regexml" }
+# Property obligations require shrinking and prop_recursive over the recursive Value model.
+proptest = "1"
+cli-common = { path = "packages/cli-common" }
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+# Interchange tests load the vector corpus; the library data model does not depend on serde.
+serde_json = { version = "1", features = ["raw_value"] }
+tempfile = "3"
+thiserror = "2"
+# Pre-1.0 minor lines preserve the API used by the public pack.
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+textwrap = "0.16"
+url = "2"
+# Keep the renderer on its reviewed major line with default features and dataset serialization.
+minijinja = { version = "3", features = ["serde"] }
+# TOML is pre-1.0; its 0.9 minor line preserves this input parser's API.
+toml = "0.9"
+
+[workspace.lints.rust]
+deprecated_safe = { level = "deny", priority = -1 }
+future_incompatible = { level = "deny", priority = -1 }
+let_underscore = { level = "deny", priority = -1 }
+nonstandard_style = { level = "deny", priority = -1 }
+rust_2018_compatibility = { level = "deny", priority = -1 }
+rust_2018_idioms = { level = "deny", priority = -1 }
+rust_2021_compatibility = { level = "deny", priority = -1 }
+rust_2024_compatibility = { level = "deny", priority = -1 }
+unsafe_code = "deny"
+unused = { level = "deny", priority = -2 }
+warnings = { level = "deny", priority = -1 }
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+complexity = { level = "deny", priority = -1 }
+correctness = { level = "deny", priority = -1 }
+exit = { level = "deny", priority = 0 }
+nursery = { level = "allow", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+perf = { level = "deny", priority = -1 }
+print_stderr = { level = "deny", priority = 0 }
+print_stdout = { level = "deny", priority = 0 }
+style = { level = "deny", priority = -1 }
+suspicious = { level = "deny", priority = -1 }
+
+# Thin LTO provides most full-LTO cross-crate inlining at a fraction of link time.
+# One codegen unit lets the optimiser see each crate whole. Dev and test retain
+# Cargo defaults so gate builds preserve incremental speed.
+[profile.release]
+lto = "thin"
+codegen-units = 1

@@ -1,0 +1,5 @@
+SPDX-License-Identifier: AGPL-3.0-only
+
+First-party repository code is licensed under the GNU Affero General Public License, version 3 only (AGPL-3.0-only), and the repository is distributed under it. The engine at vendor/regexml is taken under MPL-2.0 from its Apache-2.0 OR MPL-2.0 alternatives, and its files remain under MPL-2.0 within the repository's work, as stated in the README's engine provenance rule. The first-party packages at packages/cli-common and packages/execwrap keep their origin's MIT notice in their respective LICENSE-MIT files.
+
+The license terms are available at https://www.gnu.org/licenses/agpl-3.0.txt.

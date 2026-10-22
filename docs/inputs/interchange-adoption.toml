@@ -1,0 +1,8 @@
+namespace = "org.peer-network.interchange.adoption"
+version = [1, 0, 0]
+
+[[rows]]
+name = "implementation"
+package = "pn-interchange"
+path = "packages/interchange"
+decode_fuzz_millions = 6

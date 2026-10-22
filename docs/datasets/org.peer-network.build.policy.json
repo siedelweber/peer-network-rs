@@ -1,0 +1,23 @@
+{
+  "namespace": "org.peer-network.build.policy",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "channel": "nightly",
+      "codegen_units": 1,
+      "components": [
+        "rustfmt",
+        "clippy"
+      ],
+      "lto": "thin",
+      "name": "workspace",
+      "profile_gate": "build-policy",
+      "tests_gate": "discipline-tests",
+      "toolchain_gate": "toolchain"
+    }
+  ]
+}

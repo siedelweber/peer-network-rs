@@ -1,0 +1,179 @@
+namespace = "org.peer-network.ci.hash-citations"
+version = [1, 0, 0]
+
+# Boundary: explicit hexadecimal integers (including Rust suffixes), byte and
+# Unicode escapes, ABNF hexadecimal ranges, bare runs of at least six hexadecimal
+# characters containing a letter, full 40/64-digit runs, and shorter decimal-only
+# commit tokens in parenthesized version strings. Ordinary decimal numbers are
+# outside this boundary. Every tracked byte and pathname is read, including tests
+# and vendor members; generated copies have the same accounting as their source.
+
+[[rows]]
+family = "crate-archives"
+group = "external packages"
+measures = "SHA-256 of a registry crate archive"
+producer = "cargo generate-lockfile"
+establishment = "resolvable"
+reader = "cargo-archive"
+source = "Cargo.lock"
+definition = "The package name and version locate https://static.crates.io/crates/{name}/{name}-{version}.crate; the registry checksum measures those archive bytes."
+paths = ["Cargo.lock"]
+
+[[rows]]
+family = "correspondence-pins"
+group = "first-party"
+measures = "Normalized accepted decomposition and release-derived dataset projections"
+producer = "ci/design.py:digest"
+establishment = "recomputable"
+reader = "projection-pin"
+source = "ci/design.py"
+function = "digest"
+algorithm = "SHA-256 over the digest function's canonical JSON rows"
+definition = "Run ci/design.py: inventory excludes rows with added_at and the citable field; constants excludes rows with refreshed_at; questions excludes status, section and ambiguity; crates and bites use their full rows. The release_projection function separately selects added inventory rows, refreshed constants rows, and question id/status/section/ambiguity fields, preserving absence of status. The gate owns recomputation, while this audit verifies the named producer and subjects."
+paths = ["ci/design.py"]
+subjects = { ADDED_INVENTORY_PIN = "docs/datasets/org.peer-network.design.inventory.json", REFRESHED_CONSTANTS_PIN = "docs/datasets/org.peer-network.design.constants.json", RELEASE_QUESTIONS_PIN = "docs/datasets/org.peer-network.design.questions.json", INVENTORY_PIN = "docs/datasets/org.peer-network.design.inventory.json", CONSTANTS_PIN = "docs/datasets/org.peer-network.design.constants.json", CRATES_PIN = "docs/datasets/org.peer-network.design.crates.json", BITES_PIN = "docs/datasets/org.peer-network.design.bites.json", QUESTIONS_PIN = "docs/datasets/org.peer-network.design.questions.json" }
+
+[[rows]]
+family = "first-party-byte-literals"
+group = "first-party"
+measures = "Explicit integer bytes and control characters, not digests"
+producer = "None; authored input"
+establishment = "defined"
+reader = "byte"
+definition = "ASCII NUL, SOH, ESC and US have assigned control values; UTF-8 excludes its two highest byte values; the euro sign fixes its three UTF-8 code units. The byte reader accepts these assignments and the pack payload pattern only."
+paths = ["ci/discipline.py", "ci/test_discipline.py", "packages/documents/tests/behaviour.rs"]
+
+[[rows]]
+family = "cbor-integer-headers"
+group = "first-party"
+measures = "CBOR unsigned-integer initial bytes used in the bounded-determination proof"
+producer = "None; RFC 8949 section 3.1 encoding assignments"
+establishment = "defined"
+reader = "cbor-header"
+definition = "Major type zero encodes arguments zero through 23 directly; additional-information values 24, 25, 26 and 27 introduce one, two, four and eight argument bytes. The proof prints the direct range endpoints and these four initial bytes."
+paths = ["docs/templates/adr/008-interchange-conventions.md.j2", "adr/008-interchange-conventions.md"]
+
+[[rows]]
+family = "pack-byte-literals"
+group = "first-party tools"
+measures = "Explicit bytes in stream, UTF-8 and control-record witnesses"
+producer = "None; authored input"
+establishment = "defined"
+reader = "byte"
+definition = "ASCII NUL, SOH and ESC have assigned values; UTF-8 excludes its two highest byte values; the euro sign fixes its three UTF-8 code units. The subprocess payload repeats the visible binary pattern 10 10 01 01. The byte reader accepts these assignments and that pattern only."
+paths = ["packages/cli-common/src/tests/mod.rs", "packages/execwrap/src/tests/mod.rs", "packages/execwrap/tests/subprocess_contract.rs"]
+
+[[rows]]
+family = "unicode-scalars"
+group = "first-party tools"
+measures = "Unicode scalar values spelled as escapes"
+producer = "None; published character assignments"
+establishment = "defined"
+reader = "unicode"
+definition = "Unicode assigns the scalar value; surrogate code points are excluded from scalar values."
+paths = ["ci/test_discipline.py", "packages/execwrap/src/tests/mod.rs"]
+
+[[rows]]
+family = "unicode-boundaries"
+group = "first-party"
+measures = "Unicode scalar upper bound and surrogate interval endpoints"
+producer = "None; published Unicode code-space boundaries"
+establishment = "defined"
+reader = "unicode-bound"
+definition = "The Unicode code space ends at 0x10ffff and its surrogate interval runs from 0xd800 through 0xdfff; these mathematical boundaries define the scalar test."
+paths = ["ci/hash_citations.py", "ci/hash-citation-families.toml"]
+
+[[rows]]
+family = "abnf-characters"
+group = "first-party"
+measures = "ASCII character ranges in the namespace grammar"
+producer = "None; RFC 5234 numeric ABNF terminals"
+establishment = "defined"
+reader = "abnf"
+definition = "The explicit range endpoints identify ASCII code points under RFC 5234's hexadecimal terminal syntax."
+paths = ["docs/templates/adr/008-interchange-conventions.md.j2", "adr/008-interchange-conventions.md", "ci/test_discipline.py"]
+
+[[rows]]
+family = "first-party-placeholder-patterns"
+group = "first-party"
+measures = "Visible placeholder patterns in toolchain and audit regression witnesses"
+producer = "None; authored visible patterns"
+establishment = "defined"
+reader = "fixture-pattern"
+definition = "Consecutive alphabetic hexadecimal letters, optionally followed by consecutive digits, or consecutive digits alone define these placeholders; they identify no Git object."
+patterns = ["abc123", "abcdef", "abcdef123", "123456"]
+paths = ["ci/test_discipline.py", "ci/hash_citations.py", "ci/hash-citation-families.toml"]
+
+[[rows]]
+family = "pack-placeholder-patterns"
+group = "first-party tools"
+measures = "Visible placeholder commit text in version-output witnesses"
+producer = "None; authored visible pattern"
+establishment = "defined"
+reader = "fixture-pattern"
+definition = "The first three alphabetic hexadecimal letters followed by the first three positive digits define the version-output placeholder; it identifies no Git object."
+patterns = ["abc123"]
+paths = ["packages/cli-common/src/tests/mod.rs"]
+
+[[rows]]
+family = "regexml-provenance"
+group = "vendored engine"
+measures = "Public Git commit containing the anchored matcher and operation budget"
+producer = "Git"
+establishment = "resolvable"
+reader = "public-git"
+locator = "https://github.com/helping-kaiser/regexml/commit/feddb83dfdacceff2e81e86e7618ca31acccf910"
+commit = "feddb83dfdacceff2e81e86e7618ca31acccf910"
+definition = "The public fork commit is reachable on anchored-plus-budget; compare the vendored subtree with its regexml directory and the four root licence and credit files, allowing only the documented scalar aliases."
+paths = ["README.md", "docs/templates/README.md.j2", "ci/hash-citation-families.toml"]
+
+[[rows]]
+family = "fuzz-crate-archives"
+group = "detached fuzz dependencies"
+measures = "SHA-256 of registry crate archives"
+producer = "Cargo"
+establishment = "resolvable"
+reader = "cargo-archive"
+source = "packages/interchange/fuzz/Cargo.lock"
+definition = "Package name and version locate the crates.io archive, whose checksum Cargo records."
+paths = ["packages/interchange/fuzz/Cargo.lock"]
+
+[[rows]]
+family = "interchange-numeric-data"
+group = "interchange implementation and vendored engine"
+measures = "Numeric constants, character escapes, and ABNF terminals; not identities"
+producer = "Rust and RFC 8610 grammar literals"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "Explicit integer constants denote their numeric value, escapes denote code units including refusal witnesses, binary literals denote bits, and ABNF ranges denote code points. Bounds are checked; bare identity-shaped strings are excluded."
+paths = ["packages/interchange/**/*.rs", "packages/interchange/tests/corpus/*.json", "packages/interchange/tests/corpus/*.txt", "packages/interchange/tests/corpus/*.cddl", "vendor/regexml/**/*.rs", "vendor/regexml/**/*.snap", "docs/templates/adr/009-*.md.j2", "docs/templates/adr/010-*.md.j2", "docs/templates/adr/011-*.md.j2", "docs/templates/adr/012-*.md.j2", "adr/009-*.md", "adr/010-*.md", "adr/011-*.md", "adr/012-*.md"]
+
+[[rows]]
+family = "interchange-vector-data"
+group = "RFC 8949 corpus and refusal witnesses"
+measures = "CBOR byte encodings and their displayed values"
+producer = "RFC 8949 Appendix A and explicitly constructed refusal examples"
+establishment = "defined"
+reader = "cbor-vectors"
+definition = "The quoted hex test input is its own byte sequence, checked by canonical decoding or the expected refusal; diagnostic numeric and text fields denote visible values, not hashes."
+paths = ["packages/interchange/tests/corpus/rfc8949-vectors.json", "packages/interchange/tests/deterministic_encoding.rs"]
+
+[[rows]]
+family = "regexml-test-subjects"
+group = "upstream regular-expression tests"
+measures = "Visible match and replacement subjects and Unicode range endpoints"
+producer = "Upstream QT test transcription"
+establishment = "defined"
+reader = "regexp-subject"
+definition = "Short alphabetic subjects, an alphabetic subject containing the digits one and two, the descending-digit replacement subject, and the Unicode endpoint are literal matching inputs. Digest and commit contexts are refused."
+paths = ["vendor/regexml/tests/*.rs", "ci/hash_citations.py"]
+
+[[rows]]
+family = "interchange-property-seeds"
+group = "property regressions"
+measures = "ChaCha random generator seed, not a content digest or identity"
+producer = "proptest failure persistence"
+establishment = "defined"
+reader = "proptest-seed"
+definition = "The cc record supplies the literal 256-bit random generator state to replay a failing label generator case; the comment records the shrunk counterexample. It asserts no content identity."
+paths = ["packages/interchange/proptest-regressions/cddl/mod.txt"]

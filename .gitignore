@@ -1,0 +1,5 @@
+/target/
+/packages/interchange/fuzz/target/
+/packages/interchange/fuzz/corpus/
+/packages/interchange/fuzz/artifacts/
+**/.lane/

@@ -1,0 +1,515 @@
+//! Minor inclusion: the additive-minor check, key by key.
+//!
+//! The rows the design sizes: legal additions, illegal widening, relaxed
+//! and tightened requiredness, a changed type, a dropped key, a required
+//! new key, and the rule-rename case that the ruled literal reading of type
+//! identity makes a major boundary (´[ROOT-tab:xchg:test-sizing]´).
+
+use pn_interchange::{Inclusion, InclusionBreach, Theory, TheoryError, check_inclusion};
+
+fn parse(source: &str) -> Theory {
+    match Theory::parse(source) {
+        Ok(theory) => theory,
+        Err(error) => panic!("expected {source:?} to be an assigned theory, but: {error}"),
+    }
+}
+
+/// The verdict between two theories that are comparable.
+fn between(earlier: &str, later: &str) -> Inclusion {
+    match check_inclusion(&parse(earlier), &parse(later)) {
+        Ok(verdict) => verdict,
+        Err(error) => panic!("expected the two theories to be comparable, but: {error}"),
+    }
+}
+
+fn breaches(earlier: &str, later: &str) -> Vec<InclusionBreach> {
+    match between(earlier, later) {
+        Inclusion::Violated(breaches) => breaches,
+        Inclusion::Holds => panic!("expected a breach, but the inclusion holds"),
+    }
+}
+
+fn holds(earlier: &str, later: &str) {
+    assert_eq!(between(earlier, later), Inclusion::Holds, "expected the inclusion to hold");
+}
+
+const BASE: &str = r#"e = {0 => "com.example", 1 => [1, 0, uint], 2 => tstr, ? 7 => bstr}"#;
+
+/// Claim: A minor that changes nothing but its own number includes the minor before it.
+/// ´claim:inclusion:a-minor-changing-only-its-number-includes-its-predecessor´
+/// ´test:integration:a-minor-that-changes-nothing-but-its-own-number-includes-its-predecessor´
+#[test]
+fn a_minor_that_changes_nothing_but_its_own_number_includes_its_predecessor() {
+    holds(BASE, r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => tstr, ? 7 => bstr}"#);
+}
+
+/// Claim: A key added at a later minor and optional there keeps the inclusion.
+/// ´claim:inclusion:adding-an-optional-key-is-additive´
+/// ´test:integration:adding-an-optional-key-is-additive´
+#[test]
+fn adding_an_optional_key_is_additive() {
+    holds(
+        BASE,
+        r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => tstr, ? 7 => bstr, ? 9 => uint}"#,
+    );
+}
+
+/// (´claim:inclusion:adding-an-optional-key-is-additive´)
+/// ´test:integration:adding-several-optional-keys-at-once-is-additive´
+#[test]
+fn adding_several_optional_keys_at_once_is_additive() {
+    holds(
+        BASE,
+        concat!(
+            r#"e = {0 => "com.example", 1 => [1, 4, uint], 2 => tstr, ? 7 => bstr, "#,
+            r#"? 9 => uint, ? 11 => [* tstr], ? 12 => {a: 1}}"#,
+        ),
+    );
+}
+
+/// Minors need not be consecutive: the check is between two theories, and
+/// the registry's own choice of which pair to compare is its business.
+///
+/// Claim: The check is between two theories, so the minors it is given need not be consecutive.
+/// ´claim:inclusion:the-compared-minors-need-not-be-consecutive´
+/// ´test:integration:the-two-minors-need-not-be-consecutive´
+#[test]
+fn the_two_minors_need_not_be_consecutive() {
+    holds(BASE, r#"e = {0 => "com.example", 1 => [1, 9, uint], 2 => tstr, ? 7 => bstr}"#);
+}
+
+/// A rule the compared types do not reach is not part of any type's
+/// identity, so a later minor may carry vocabulary of its own.
+///
+/// Claim: A rule the compared types do not reach is no part of any type's identity.
+/// ´claim:inclusion:an-unreached-rule-is-no-difference´
+/// ´test:integration:an-unreached-rule-added-at-the-later-minor-is-not-a-difference´
+#[test]
+fn an_unreached_rule_added_at_the_later_minor_is_not_a_difference() {
+    holds(
+        BASE,
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 1, uint], 2 => tstr, ? 7 => bstr, ? 8 => later}\n",
+            "later = [* uint]\n",
+        ),
+    );
+}
+
+/// Identity of type is the normalized printer's question, never the
+/// source's: two spellings of one type are one type.
+///
+/// Claim: Two spellings of one type are one type, identity being asked of the normalized form.
+/// ´claim:inclusion:identity-of-type-is-the-printers-question´
+/// ´test:integration:a-respelled-type-is-the-same-type´
+#[test]
+fn a_respelled_type_is_the_same_type() {
+    holds(
+        r#"e = {0 => "com.example", 1 => [1, 0, uint], 2 => uint  /  tstr}"#,
+        r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => uint/tstr}"#,
+    );
+}
+
+/// The rules a type reaches are compared by their printed definitions, so a
+/// chain that is written differently and means the same is the same.
+///
+/// (´claim:inclusion:identity-of-type-is-the-printers-question´)
+/// ´test:integration:a-reached-rule-chain-respelled-is-the-same-type´
+#[test]
+fn a_reached_rule_chain_respelled_is_the_same_type() {
+    holds(
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 0, uint], 2 => outer}\n",
+            "outer = [ * inner ]\n",
+            "inner   =   tstr\n",
+        ),
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 1, uint], 2 => outer}\n",
+            "outer = [* inner]\n",
+            "inner = tstr\n",
+        ),
+    );
+}
+
+/// Claim: A content key the earlier minor named and the later one drops is a breach at that key.
+/// ´claim:inclusion:dropping-a-key-is-a-breach´
+/// ´test:integration:dropping-a-content-key-is-a-breach´
+#[test]
+fn dropping_a_content_key_is_a_breach() {
+    let found = breaches(BASE, r#"e = {0 => "com.example", 1 => [1, 1, uint], ? 7 => bstr}"#);
+    assert!(matches!(
+        found.as_slice(),
+        [InclusionBreach::KeyDropped { key }] if key.get() == 2
+    ));
+}
+
+/// Claim: A shared key whose type changed is a breach naming both spellings.
+/// ´claim:inclusion:changing-a-shared-keys-type-is-a-breach´
+/// ´test:integration:changing-a-shared-keys-type-is-a-breach´
+#[test]
+fn changing_a_shared_keys_type_is_a_breach() {
+    let found = breaches(BASE, r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => uint, ? 7 => bstr}"#);
+    match found.as_slice() {
+        [InclusionBreach::TypeChanged { key, earlier, later }] => {
+            assert_eq!(key.get(), 2);
+            assert_eq!(earlier, "tstr");
+            assert_eq!(later, "uint");
+        }
+        other => panic!("expected one changed type, got {other:?}"),
+    }
+}
+
+/// Widening is a change like any other: the invariant asks for the type
+/// *verbatim*, not for a larger one, so a widened key is a major boundary
+/// however compatible it looks.
+///
+/// Claim: A widened type is a breach too, the invariant asking for the type verbatim and not for a larger one.
+/// ´claim:inclusion:widening-is-a-change-like-any-other´
+/// ´test:integration:widening-a-shared-keys-type-is-a-breach´
+#[test]
+fn widening_a_shared_keys_type_is_a_breach() {
+    let found = breaches(
+        BASE,
+        r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => tstr / uint, ? 7 => bstr}"#,
+    );
+    assert!(matches!(
+        found.as_slice(),
+        [InclusionBreach::TypeChanged { key, .. }] if key.get() == 2
+    ));
+}
+
+/// The same, one level down: the expression at the key is untouched and a
+/// rule it reaches was widened.
+///
+/// Claim: A change in a rule the key reaches is a breach, and the reported form carries the chain.
+/// ´claim:inclusion:a-change-below-the-key-is-a-breach´
+/// ´test:integration:widening-a-reached-rule-is-a-breach´
+#[test]
+fn widening_a_reached_rule_is_a_breach() {
+    let found = breaches(
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 0, uint], 2 => payload}\n",
+            "payload = tstr\n",
+        ),
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 1, uint], 2 => payload}\n",
+            "payload = tstr / uint\n",
+        ),
+    );
+    match found.as_slice() {
+        [InclusionBreach::TypeChanged { key, earlier, later }] => {
+            assert_eq!(key.get(), 2);
+            assert_eq!(earlier, "payload\npayload = tstr");
+            assert_eq!(later, "payload\npayload = tstr / uint");
+        }
+        other => panic!("expected one changed type, got {other:?}"),
+    }
+}
+
+/// Claim: A required key made optional at the later minor is a breach.
+/// ´claim:inclusion:relaxing-requiredness-is-a-breach´
+/// ´test:integration:relaxing-a-keys-requiredness-is-a-breach´
+#[test]
+fn relaxing_a_keys_requiredness_is_a_breach() {
+    let found = breaches(
+        BASE,
+        r#"e = {0 => "com.example", 1 => [1, 1, uint], ? 2 => tstr, ? 7 => bstr}"#,
+    );
+    assert!(matches!(
+        found.as_slice(),
+        [InclusionBreach::RequirednessChanged {
+            key,
+            earlier: true,
+            later: false,
+        }] if key.get() == 2
+    ));
+}
+
+/// Claim: An optional key made required at the later minor is a breach.
+/// ´claim:inclusion:tightening-requiredness-is-a-breach´
+/// ´test:integration:tightening-a-keys-requiredness-is-a-breach´
+#[test]
+fn tightening_a_keys_requiredness_is_a_breach() {
+    let found = breaches(BASE, r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => tstr, 7 => bstr}"#);
+    assert!(matches!(
+        found.as_slice(),
+        [InclusionBreach::RequirednessChanged {
+            key,
+            earlier: false,
+            later: true,
+        }] if key.get() == 7
+    ));
+}
+
+/// Claim: A key first named at the later minor and required there is a breach.
+/// ´claim:inclusion:a-required-new-key-is-a-breach´
+/// ´test:integration:a-new-key-that-is-required-is-a-breach´
+#[test]
+fn a_new_key_that_is_required_is_a_breach() {
+    let found = breaches(
+        BASE,
+        r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => tstr, ? 7 => bstr, 9 => uint}"#,
+    );
+    assert!(matches!(
+        found.as_slice(),
+        [InclusionBreach::NewKeyRequired { key }] if key.get() == 9
+    ));
+}
+
+/// Every breach the two theories carry is reported, not just the first, and
+/// the shared keys come in ascending order with the new keys after them.
+///
+/// Claim: Every breach the pair carries is reported, the shared keys ascending and the new keys after them.
+/// ´claim:inclusion:every-breach-is-reported-in-key-order´
+/// ´test:integration:every-breach-is-reported-in-key-order´
+#[test]
+fn every_breach_is_reported_in_key_order() {
+    let found = breaches(
+        r#"e = {0 => "com.example", 1 => [1, 0, uint], 2 => tstr, 3 => uint, ? 7 => bstr}"#,
+        r#"e = {0 => "com.example", 1 => [1, 1, uint], ? 2 => uint, ? 7 => bstr, 9 => uint}"#,
+    );
+    assert_eq!(found.len(), 4);
+    assert!(matches!(
+        found[0],
+        InclusionBreach::TypeChanged { ref key, .. } if key.get() == 2
+    ));
+    assert!(matches!(
+        found[1],
+        InclusionBreach::RequirednessChanged { ref key, .. } if key.get() == 2
+    ));
+    assert!(matches!(
+        found[2],
+        InclusionBreach::KeyDropped { ref key } if key.get() == 3
+    ));
+    assert!(matches!(
+        found[3],
+        InclusionBreach::NewKeyRequired { ref key } if key.get() == 9
+    ));
+}
+
+/// The ruled reading: a pure rule rename between minors, with identical
+/// definitions standing behind both names, is no additive minor. The cost
+/// is deliberate — it calls a rename a major boundary, which is stricter
+/// than the invariant's intent and conservative in the safe direction
+/// (´[ROOT-dec:xchg:type-identity]´).
+///
+/// Claim: A pure rule rename is a breach, type identity being read literally.
+/// ´claim:inclusion:a-pure-rule-rename-is-a-breach´
+/// ´test:integration:a-pure-rule-rename-is-a-breach´
+#[test]
+fn a_pure_rule_rename_is_a_breach() {
+    let found = breaches(
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 0, uint], 2 => color}\n",
+            "color = tstr .size 6\n",
+        ),
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 1, uint], 2 => colour}\n",
+            "colour = tstr .size 6\n",
+        ),
+    );
+    match found.as_slice() {
+        [InclusionBreach::TypeChanged { key, earlier, later }] => {
+            assert_eq!(key.get(), 2);
+            assert_eq!(earlier, "color\ncolor = tstr .size 6");
+            assert_eq!(later, "colour\ncolour = tstr .size 6");
+        }
+        other => panic!("expected the rename to be a changed type, got {other:?}"),
+    }
+}
+
+/// The rename is a breach one level down too: the key's own expression is
+/// identical and the rule *it* reaches was renamed.
+///
+/// (´claim:inclusion:a-pure-rule-rename-is-a-breach´)
+/// ´test:integration:a-rename-below-the-key-is-a-breach´
+#[test]
+fn a_rename_below_the_key_is_a_breach() {
+    let found = breaches(
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 0, uint], 2 => outer}\n",
+            "outer = [* color]\n",
+            "color = tstr\n",
+        ),
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 1, uint], 2 => outer}\n",
+            "outer = [* colour]\n",
+            "colour = tstr\n",
+        ),
+    );
+    assert!(matches!(
+        found.as_slice(),
+        [InclusionBreach::TypeChanged { key, .. }] if key.get() == 2
+    ));
+}
+
+/// Same name, different definition: the other half of "rule references
+/// matched by name, same-named rules required to be identical".
+///
+/// Claim: A rule of one name with a different definition is a breach, references being matched by name.
+/// ´claim:inclusion:a-same-named-rule-must-be-identical´
+/// ´test:integration:a-same-named-rule-with-a-different-definition-is-a-breach´
+#[test]
+fn a_same_named_rule_with_a_different_definition_is_a_breach() {
+    let found = breaches(
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 0, uint], 2 => color}\n",
+            "color = tstr\n",
+        ),
+        concat!(
+            "e = {0 => \"com.example\", 1 => [1, 1, uint], 2 => color}\n",
+            "color = uint\n",
+        ),
+    );
+    assert!(matches!(
+        found.as_slice(),
+        [InclusionBreach::TypeChanged { key, .. }] if key.get() == 2
+    ));
+}
+
+/// A prelude name is the same rule in every theory, so it is left out of
+/// the comparison — but a theory that *shadows* one defines a rule of its
+/// own, and dropping the shadow is a difference.
+///
+/// Claim: A theory shadowing a prelude name defines a rule of its own, and dropping that shadow is a difference.
+/// ´claim:inclusion:a-shadow-is-a-rule-of-the-theorys-own´
+/// ´test:integration:shadowing-a-prelude-name-at-one-minor-and-not-the-next-is-a-breach´
+#[test]
+fn shadowing_a_prelude_name_at_one_minor_and_not_the_next_is_a_breach() {
+    let found = breaches(
+        concat!("e = {0 => \"com.example\", 1 => [1, 0, uint], 2 => tstr}\n", "tstr = uint\n",),
+        r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => tstr}"#,
+    );
+    assert!(matches!(
+        found.as_slice(),
+        [InclusionBreach::TypeChanged { key, .. }] if key.get() == 2
+    ));
+}
+
+/// Two theories reaching the same prelude type compare equal without the
+/// prelude entering the comparison at all — and `text = tstr` in the prelude
+/// leaves the two spellings different all the same, the comparison being over
+/// the expression as written.
+///
+/// Claim: A prelude type never enters the comparison, so two names for it stay two spellings.
+/// ´claim:inclusion:a-prelude-name-is-compared-as-written´
+/// ´test:integration:a-prelude-type-is-not-part-of-the-compared-form´
+#[test]
+fn a_prelude_type_is_not_part_of_the_compared_form() {
+    let found = breaches(
+        r#"e = {0 => "com.example", 1 => [1, 0, uint], 2 => tstr}"#,
+        r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => text}"#,
+    );
+    match found.as_slice() {
+        [InclusionBreach::TypeChanged { earlier, later, .. }] => {
+            assert_eq!(earlier, "tstr");
+            assert_eq!(later, "text");
+        }
+        other => panic!("expected one changed type, got {other:?}"),
+    }
+}
+
+/// The worked instance of the property in `tests/properties.rs`: the
+/// registry compares an acquired minor against the greatest held theory
+/// below it and against no lower one, which is sound because "verbatim"
+/// composes. Here it composes over three named minors, with the endpoint
+/// pair checked as well as the two consecutive ones.
+///
+/// Claim: Inclusion composes: holding at every consecutive step, it holds between the endpoints.
+/// ´claim:inclusion:inclusion-composes-along-a-chain´
+/// ´test:integration:inclusion-composes-over-three-minors´
+#[test]
+fn inclusion_composes_over_three_minors() {
+    let first = r#"e = {0 => "com.example", 1 => [1, 0, uint], 2 => tstr}"#;
+    let second = r#"e = {0 => "com.example", 1 => [1, 1, uint], 2 => tstr, ? 3 => uint}"#;
+    let third = r#"e = {0 => "com.example", 1 => [1, 2, uint], 2 => tstr, ? 3 => uint, ? 4 => bstr}"#;
+
+    holds(first, second);
+    holds(second, third);
+    holds(first, third);
+}
+
+/// And it fails to compose only where a consecutive pair already failed: a
+/// chain whose middle step drops a key is broken at that step, and the
+/// endpoint pair reports the same key.
+///
+/// Claim: A chain broken at one step reports the same breach between its endpoints.
+/// ´claim:inclusion:a-break-in-the-middle-shows-at-the-endpoints´
+/// ´test:integration:a-break-in-the-middle-is-visible-at-the-endpoints´
+#[test]
+fn a_break_in_the_middle_is_visible_at_the_endpoints() {
+    let first = r#"e = {0 => "com.example", 1 => [1, 0, uint], 2 => tstr}"#;
+    let second = r#"e = {0 => "com.example", 1 => [1, 1, uint]}"#;
+    let third = r#"e = {0 => "com.example", 1 => [1, 2, uint], ? 3 => uint}"#;
+
+    holds(second, third);
+    for (earlier, later) in [(first, second), (first, third)] {
+        assert!(matches!(
+            breaches(earlier, later).as_slice(),
+            [InclusionBreach::KeyDropped { key }] if key.get() == 2
+        ));
+    }
+}
+
+fn incomparable(earlier: &str, later: &str) {
+    match check_inclusion(&parse(earlier), &parse(later)) {
+        Err(TheoryError::Incomparable) => {}
+        Err(other) => panic!("expected Incomparable, got {other}"),
+        Ok(verdict) => panic!("expected Incomparable, got the verdict {verdict:?}"),
+    }
+}
+
+/// Claim: Two theories differing in label or in major are not comparable at all.
+/// ´claim:inclusion:theories-of-different-lines-are-incomparable´
+/// ´test:integration:two-labels-are-not-comparable´
+#[test]
+fn two_labels_are_not_comparable() {
+    incomparable(BASE, r#"e = {0 => "com.other", 1 => [1, 1, uint], 2 => tstr, ? 7 => bstr}"#);
+}
+
+/// (´claim:inclusion:theories-of-different-lines-are-incomparable´)
+/// ´test:integration:two-majors-are-not-comparable´
+#[test]
+fn two_majors_are_not_comparable() {
+    incomparable(BASE, r#"e = {0 => "com.example", 1 => [2, 1, uint], 2 => tstr, ? 7 => bstr}"#);
+}
+
+/// (´claim:inclusion:the-earlier-minor-must-be-the-lesser´)
+/// ´test:integration:one-minor-is-not-comparable-with-itself´
+#[test]
+fn one_minor_is_not_comparable_with_itself() {
+    incomparable(BASE, BASE);
+}
+
+/// The check has a direction: the earlier theory's minor must be the
+/// lesser, and a pair offered the wrong way round is not comparable rather
+/// than quietly compared backwards.
+///
+/// Claim: The earlier theory's minor must be strictly the lesser, a pair the wrong way round being incomparable rather than compared backwards.
+/// ´claim:inclusion:the-earlier-minor-must-be-the-lesser´
+/// ´test:integration:the-later-minor-may-not-be-the-lesser´
+#[test]
+fn the_later_minor_may_not_be_the_lesser() {
+    incomparable(
+        r#"e = {0 => "com.example", 1 => [1, 3, uint], 2 => tstr}"#,
+        r#"e = {0 => "com.example", 1 => [1, 2, uint], 2 => tstr}"#,
+    );
+}
+
+/// A breach is a verdict and travels as one; only incomparability is an
+/// error. The two answers are told apart by the type, not by inspection.
+///
+/// Claim: A breach travels as a verdict where incomparability is an error, the two told apart by type.
+/// ´claim:inclusion:a-breach-is-a-verdict-and-incomparability-an-error´
+/// ´test:integration:a-breach-is-a-verdict-and-incomparability-is-an-error´
+#[test]
+fn a_breach_is_a_verdict_and_incomparability_is_an_error() {
+    let dropped = check_inclusion(
+        &parse(BASE),
+        &parse(r#"e = {0 => "com.example", 1 => [1, 1, uint], ? 7 => bstr}"#),
+    );
+    assert!(matches!(dropped, Ok(Inclusion::Violated(_))));
+    assert!(!matches!(dropped, Ok(Inclusion::Holds)));
+
+    let other_label = check_inclusion(&parse(BASE), &parse(r#"e = {0 => "com.other", 1 => [1, 1, uint]}"#));
+    assert!(other_label.is_err());
+}

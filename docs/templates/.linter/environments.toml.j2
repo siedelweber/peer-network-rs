@@ -1,0 +1,17 @@
+namespace = "org.peer-network.linter.environments"
+version = [1, 0, 0]
+
+{% set reserved = row('org.peer-network.linter.reserved', name='reserved') %}reserved_kinds = [{% for kind in reserved.kinds %}{{ kind | toml_string }}{% if not loop.last %}, {% endif %}{% endfor %}]
+reserved_extensions = [{% for kind in reserved.extensions %}{{ kind | toml_string }}{% if not loop.last %}, {% endif %}{% endfor %}]
+{% set registry = kinds_registry() %}environments = [
+{% for item in registry.catalogue %}  # {{ item.status }}; {{ item.source }} ({{ item.locator }}): {{ item.evidence }}
+  { environment = {{ item.environment | toml_string }}, kind = {{ item.kind | toml_string }} },
+{% endfor %}]
+extensions = [
+{% for item in registry.extensions %}  # {{ item.status }}; {{ item.source }} ({{ item.locator }}): {{ item.evidence }}
+  { environment = {{ item.environment | toml_string }}, kind = {{ item.kind | toml_string }} },
+{% endfor %}]
+
+# Hom(C_A), ordered by name and kind; a view of the same effective pairs.
+{% for item in registry.homonyms %}# {{ item.environment }}: {{ item.kind }}
+{% endfor %}

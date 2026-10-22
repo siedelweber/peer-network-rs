@@ -1,0 +1,26 @@
+{% set inventory = rows('org.peer-network.design.inventory') %}{% set constants = rows('org.peer-network.design.constants') %}{% set summary = rows('org.peer-network.design.summary') %}{% set publication = row('org.peer-network.design.publication', name='paper') %}# Paper statement inventory · `reg:inventory:overview`
+
+**Setup (Scope)** · `setup:inventory:scope` {{ require(inventory | length == row('org.peer-network.design.summary', category='totals', name='inventory').count, 'inventory total must match its rows') }}{{ require(constants | length == row('org.peer-network.design.summary', category='totals', name='constants').count, 'constants total must match its rows') }}{% for item in rows('org.peer-network.design.inventory') %}{% if item.added_at is defined %}{{ require(item.added_at == publication.tag, 'inventory added_at must match publication tag') }}{% endif %}{% endfor %}{% for item in rows('org.peer-network.design.constants') %}{% if item.refreshed_at is defined %}{{ require(item.refreshed_at == publication.tag, 'constants refreshed_at must match publication tag') }}{% endif %}{% endfor %}The inventory preserves {{ row('org.peer-network.design.summary', category='totals', name='inventory').count | number }} statement rows and {{ row('org.peer-network.design.summary', category='totals', name='constants').count | number }} constant entries. The paper release is {{ publication.tag }}. {{ publication.source }} Every inventory row without added_at preserves the study cell verbatim; a row with added_at was added at that named release. Every constant row without refreshed_at preserves the study cell verbatim; a row with refreshed_at takes its class and citation from that named release, preserving its other study cells. Implementation kinds and proposed homes are study judgements, not claims that code exists or that a paper question is settled. The decomposition is recorded in (`rec:decomposition:decision`). A kind or home of none assigns no new implementation item or no Layer 1 home, respectively; documentation can still have an owner.
+
+**Convention (Label presentation)** · `conv:inventory:labels` {% if publication.imported %}Citable labels resolve through the PAPER owner; unsupported kinds are exhibited with doubled delimiters.{% else %}Paper labels are exhibited with doubled delimiters because the imported registry format is unavailable under the repository namespace. The citable field preserves eligibility under the adopted kind relation for a project-neutral import format; it does not claim that an import is active.{% endif %} Paper label kinds remain unchanged. Environment text is the inventory's recorded description, while implementation kind describes a proposed code responsibility.
+
+## Statements · `sec:inventory:statements`
+
+| Chapter | Paper label | Environment | Statement | Implementation kind | Proposed crate | Citable | Added at |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+{% for item in inventory %}| {{ item.chapter }} | {% if publication.imported and item.citable %}(`[PAPER-{{ item.label }}]`){% else %}``{{ item.label }}``{% endif %} | {{ item.environment }} | {{ item.statement }} | {{ item.kind }} | {{ item.crate }} | {{ item.citable }} | {{ item.added_at | default('') }} |
+{% endfor %}
+## Chapter totals · `sec:inventory:chapters`
+
+| Chapter | Rows |
+| --- | ---: |
+{% for item in summary %}{% if item.category == 'chapter' %}| {{ item.name }} | {{ item.count | number }} |
+{% endif %}{% endfor %}
+## Constants · `sec:inventory:constants`
+
+**Observation (Preserved source gaps)** · `obs:inventory:constants` Empty class fields preserve the absence of a locked/defaulted classification for generated results; empty citation fields preserve absent citations. Empty and dangling citations preserve the released collection exactly; value-only changes do not change this collection, which carries no values. The constant dataset retains every id, recorded kind, class, citation and proposed home; no similarly named paper label is substituted. Missing citations are findings for the paper's maintainers, and generated decimal results supply no certificate merely by being present.
+
+| Recorded class | Proposed home | Entries |
+| --- | --- | ---: |
+{% for item in summary %}{% if item.category == 'constants' %}| {% if item.name == '' %}Absent (generated result){% else %}{{ item.name }}{% endif %} | {{ item.home }} | {{ item.count | number }} |
+{% endif %}{% endfor -%}
