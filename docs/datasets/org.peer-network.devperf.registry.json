@@ -1,0 +1,24 @@
+{
+  "namespace": "org.peer-network.devperf.registry",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "budget_ms": 25000,
+      "label": "expt:devperf:design-correspondence",
+      "measured_ms": 20000,
+      "measurement": "Owner-reported quiet observation, approximately twenty seconds; no controlled raw baseline attached yet",
+      "name": "design-correspondence",
+      "operation": "full design correspondence check",
+      "ordinary_budget": "ordinary-check",
+      "owner": "foundation implementer and repository reviewer",
+      "placement": "existing per-change gate; retain the check while the warning is investigated",
+      "reason": "The complete label, dataset and document relation must be checked; deleting cases or replacing the full scan with a partial check would weaken evidence. Whether indexing or shared parsing makes this fast remains to be measured, so unavoidable cost is not yet established.",
+      "settlement": "Profile the full workload, publish repeated quiet samples and attempted reductions, then admit the measured residual or withdraw the candidate; until admission the ordinary-check budget remains effective",
+      "status": "candidate; admission held"
+    }
+  ]
+}

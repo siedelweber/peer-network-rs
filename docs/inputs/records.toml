@@ -180,3 +180,12 @@ title = "Testing harness"
 scope = "Test levels, shared conformance, functional substitutes, properties, benchmarks and public clients."
 depends_on = ["rec:testing:decision", "rec:storage:decision", "rec:devnet:decision", "rec:api:decision", "rec:observe:decision", "rec:lint:decision", "rec:output:decision"]
 does_not_establish = "No harness, mock, client, benchmark baseline or service conformance has been implemented or executed by this record."
+
+[[rows]]
+label = "rec:devperf:decision"
+path = "adr/021-development-performance.md"
+status = "accepted"
+title = "Development performance"
+scope = "Wall-time budgets, nonverdict findings, measured build choices and registered expensive work."
+depends_on = ["rec:toolchain:decision", "rec:observe:decision", "rec:testing:decision", "rec:harness:decision", "rec:compatibility:decision"]
+does_not_establish = "The policy establishes no profile change, controlled baseline, admitted expensive exception or implemented timing collector."

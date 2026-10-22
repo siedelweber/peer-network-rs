@@ -1,0 +1,136 @@
+{
+  "namespace": "org.peer-network.devperf.budgets",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "budget_ms": 100,
+      "category": "case",
+      "name": "unit",
+      "reason": "Local invariants need no service wait; small inputs keep the feedback loop immediate.",
+      "scope": "one unit test"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "crate",
+      "reason": "Allow public encoding and validation while exposing accidental broad fixtures.",
+      "scope": "one public-surface test"
+    },
+    {
+      "budget_ms": 2000,
+      "category": "case",
+      "name": "integration",
+      "reason": "Allow composition and fault histories without a real-service wait.",
+      "scope": "one pure or mock integration test"
+    },
+    {
+      "budget_ms": 2000,
+      "category": "case",
+      "name": "conformance",
+      "reason": "The same predicate needs a small bounded history on every implementation.",
+      "scope": "one pure or mock shared-contract case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "property",
+      "reason": "Bound construction and evaluation by declared sizes; shrinking is included in the campaign below.",
+      "scope": "one generated property case"
+    },
+    {
+      "budget_ms": 10000,
+      "category": "case",
+      "name": "real-case",
+      "reason": "Allow actual transactions, RPC and controlled settlement while exposing unnecessary sleeps.",
+      "scope": "one real-service case"
+    },
+    {
+      "budget_ms": 5000,
+      "category": "suite",
+      "name": "pure-suite",
+      "reason": "A bounded selection of cases should stay interactive; this also covers bounded property generation and shrinking.",
+      "scope": "one named pure suite or level group"
+    },
+    {
+      "budget_ms": 10000,
+      "category": "suite",
+      "name": "mock-suite",
+      "reason": "Permit model histories and controlled fault schedules without paying service startup cost.",
+      "scope": "one named mock-backed suite"
+    },
+    {
+      "budget_ms": 30000,
+      "category": "suite",
+      "name": "postgresql-suite",
+      "reason": "Reserve time for isolated history, concurrency and restart cases on a provisioned instance.",
+      "scope": "one real PostgreSQL suite"
+    },
+    {
+      "budget_ms": 60000,
+      "category": "suite",
+      "name": "elements-suite",
+      "reason": "Allow signed blocks, depth, forks and recovery; measure controllable settlement rather than arbitrary sleep.",
+      "scope": "one real Elements suite"
+    },
+    {
+      "budget_ms": 90000,
+      "category": "suite",
+      "name": "combined-suite",
+      "reason": "Allow the combined durable and chain recovery path without hiding the cost in fast tests.",
+      "scope": "one PostgreSQL and Elements end-to-end suite"
+    },
+    {
+      "budget_ms": 10000,
+      "category": "aggregate",
+      "name": "test-command",
+      "reason": "The reported quiet test step is about nine seconds; keep a small margin and investigate growth.",
+      "scope": "the per-change pure and mock test command"
+    },
+    {
+      "budget_ms": 5000,
+      "category": "aggregate",
+      "name": "ordinary-check",
+      "reason": "Make repeated repository checks interactive; retained full-corpus work needs explicit registry review.",
+      "scope": "one ordinary non-test gate check"
+    },
+    {
+      "budget_ms": 30000,
+      "category": "suite",
+      "name": "benchmark",
+      "reason": "Allow warmup and multiple samples with deterministic work counts; larger campaigns need registry admission.",
+      "scope": "one bounded benchmark workload campaign"
+    },
+    {
+      "budget_ms": 120000,
+      "category": "build",
+      "name": "clean-build",
+      "reason": "A two-minute initial allowance permits dependency compilation; it is a target awaiting a controlled cold measurement, not an observed result.",
+      "scope": "clean workspace dev or test build"
+    },
+    {
+      "budget_ms": 5000,
+      "category": "build",
+      "name": "incremental-build",
+      "reason": "An ordinary implementation-file edit should preserve a short feedback loop; profile and dependency fan-out are diagnosed separately.",
+      "scope": "one-file incremental rebuild"
+    },
+    {
+      "budget_ms": 60000,
+      "category": "aggregate",
+      "name": "gate",
+      "reason": "The reported quiet gate takes fifty to fifty-eight seconds; a minute retains that feedback target without normalizing contention.",
+      "scope": "warm per-change repository gate"
+    },
+    {
+      "budget_ms": 180000,
+      "category": "aggregate",
+      "name": "service-gate",
+      "reason": "Allow the warm gate and combined real-service cases; the service matrix is separate from the fast local path.",
+      "scope": "full required provisioned-service matrix"
+    }
+  ]
+}

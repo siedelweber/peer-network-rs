@@ -1,0 +1,128 @@
+namespace = "org.peer-network.devperf.budgets"
+version = [1, 0, 0]
+
+[[rows]]
+name = "unit"
+category = "case"
+budget_ms = 100
+scope = "one unit test"
+reason = "Local invariants need no service wait; small inputs keep the feedback loop immediate."
+
+[[rows]]
+name = "crate"
+category = "case"
+budget_ms = 500
+scope = "one public-surface test"
+reason = "Allow public encoding and validation while exposing accidental broad fixtures."
+
+[[rows]]
+name = "integration"
+category = "case"
+budget_ms = 2000
+scope = "one pure or mock integration test"
+reason = "Allow composition and fault histories without a real-service wait."
+
+[[rows]]
+name = "conformance"
+category = "case"
+budget_ms = 2000
+scope = "one pure or mock shared-contract case"
+reason = "The same predicate needs a small bounded history on every implementation."
+
+[[rows]]
+name = "property"
+category = "case"
+budget_ms = 1000
+scope = "one generated property case"
+reason = "Bound construction and evaluation by declared sizes; shrinking is included in the campaign below."
+
+[[rows]]
+name = "real-case"
+category = "case"
+budget_ms = 10000
+scope = "one real-service case"
+reason = "Allow actual transactions, RPC and controlled settlement while exposing unnecessary sleeps."
+
+[[rows]]
+name = "pure-suite"
+category = "suite"
+budget_ms = 5000
+scope = "one named pure suite or level group"
+reason = "A bounded selection of cases should stay interactive; this also covers bounded property generation and shrinking."
+
+[[rows]]
+name = "mock-suite"
+category = "suite"
+budget_ms = 10000
+scope = "one named mock-backed suite"
+reason = "Permit model histories and controlled fault schedules without paying service startup cost."
+
+[[rows]]
+name = "postgresql-suite"
+category = "suite"
+budget_ms = 30000
+scope = "one real PostgreSQL suite"
+reason = "Reserve time for isolated history, concurrency and restart cases on a provisioned instance."
+
+[[rows]]
+name = "elements-suite"
+category = "suite"
+budget_ms = 60000
+scope = "one real Elements suite"
+reason = "Allow signed blocks, depth, forks and recovery; measure controllable settlement rather than arbitrary sleep."
+
+[[rows]]
+name = "combined-suite"
+category = "suite"
+budget_ms = 90000
+scope = "one PostgreSQL and Elements end-to-end suite"
+reason = "Allow the combined durable and chain recovery path without hiding the cost in fast tests."
+
+[[rows]]
+name = "test-command"
+category = "aggregate"
+budget_ms = 10000
+scope = "the per-change pure and mock test command"
+reason = "The reported quiet test step is about nine seconds; keep a small margin and investigate growth."
+
+[[rows]]
+name = "ordinary-check"
+category = "aggregate"
+budget_ms = 5000
+scope = "one ordinary non-test gate check"
+reason = "Make repeated repository checks interactive; retained full-corpus work needs explicit registry review."
+
+[[rows]]
+name = "benchmark"
+category = "suite"
+budget_ms = 30000
+scope = "one bounded benchmark workload campaign"
+reason = "Allow warmup and multiple samples with deterministic work counts; larger campaigns need registry admission."
+
+[[rows]]
+name = "clean-build"
+category = "build"
+budget_ms = 120000
+scope = "clean workspace dev or test build"
+reason = "A two-minute initial allowance permits dependency compilation; it is a target awaiting a controlled cold measurement, not an observed result."
+
+[[rows]]
+name = "incremental-build"
+category = "build"
+budget_ms = 5000
+scope = "one-file incremental rebuild"
+reason = "An ordinary implementation-file edit should preserve a short feedback loop; profile and dependency fan-out are diagnosed separately."
+
+[[rows]]
+name = "gate"
+category = "aggregate"
+budget_ms = 60000
+scope = "warm per-change repository gate"
+reason = "The reported quiet gate takes fifty to fifty-eight seconds; a minute retains that feedback target without normalizing contention."
+
+[[rows]]
+name = "service-gate"
+category = "aggregate"
+budget_ms = 180000
+scope = "full required provisioned-service matrix"
+reason = "Allow the warm gate and combined real-service cases; the service matrix is separate from the fast local path."

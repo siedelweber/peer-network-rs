@@ -1,0 +1,38 @@
+{
+  "namespace": "org.peer-network.devperf.measurements",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "correspondence_s": 20,
+      "gate_high_s": 58,
+      "gate_low_s": 50,
+      "name": "quiet",
+      "source": "Owner-reported quiet compute-node gate observations for the current documentation corpus",
+      "status": "reported approximate observations; raw baseline dossier still required",
+      "tests_s": 9
+    },
+    {
+      "correspondence_high_s": 95,
+      "correspondence_low_s": 20,
+      "gate_high_s": 260,
+      "gate_low_s": 50,
+      "name": "contention",
+      "source": "Owner-reported same-kind-of-tree observations on a shared compute node",
+      "status": "contention context, not replacement budgets",
+      "tests_high_s": 60,
+      "tests_low_s": 9
+    },
+    {
+      "absolute_ms": 100,
+      "before_bite": 1,
+      "name": "comparison",
+      "relative_percent": 20,
+      "samples": 5,
+      "status": "declared comparison policy; not a measurement"
+    }
+  ]
+}

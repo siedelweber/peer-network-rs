@@ -246,6 +246,21 @@
       "scope": "Test levels, shared conformance, functional substitutes, properties, benchmarks and public clients.",
       "status": "accepted",
       "title": "Testing harness"
+    },
+    {
+      "depends_on": [
+        "rec:toolchain:decision",
+        "rec:observe:decision",
+        "rec:testing:decision",
+        "rec:harness:decision",
+        "rec:compatibility:decision"
+      ],
+      "does_not_establish": "The policy establishes no profile change, controlled baseline, admitted expensive exception or implemented timing collector.",
+      "label": "rec:devperf:decision",
+      "path": "adr/021-development-performance.md",
+      "scope": "Wall-time budgets, nonverdict findings, measured build choices and registered expensive work.",
+      "status": "accepted",
+      "title": "Development performance"
     }
   ]
 }

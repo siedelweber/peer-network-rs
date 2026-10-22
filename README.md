@@ -49,3 +49,5 @@
 **Section (devnet)** · `sec:foundation:area-devnet` If development-network contracts fail, grants can be mistaken for destruction, history can count a burn twice, or test evidence can be mistaken for production assurance. (`rec:devnet:decision`) fixes the test-chain realization and bounded faucet.
 
 **Section (harness)** · `sec:foundation:area-harness` If harness discipline fails, a fast substitute can conceal a real-service defect, a passing test can lack a claim, or a client retry can repeat an irreversible effect. (`rec:harness:decision`) fixes test levels, shared suites, functional substitutes and client evidence.
+
+**Section (devperf)** · `sec:foundation:area-devperf` If development performance fails, slow feedback hides defects or noisy timings make correct evidence appear unreliable. (`rec:devperf:decision`) requires measured budgets, owned findings and registered expensive work while keeping timing outside test and gate verdicts.
