@@ -66,3 +66,5 @@ The document practices the labeling discipline: the label at each heading or env
 - the requirements (`tab:xchg:functional`), (`req:xchg:workspace-discipline`), (`req:xchg:std-only`), (`req:xchg:determinism`) are confirmed complete against the conventions document, or amended;
 - the scope boundary (`conv:xchg:out-of-scope`) is confirmed;
 - the verification approach (`conv:xchg:metatheorems-as-tests`) is confirmed as the test plan's frame.
+
+**Amendment (Release support)** · `amend:xchg:pre-one-009` The implementation surface of (`spec:xchg:concept`) follows (`rule:compatibility:pre-one`). The within-major compatibility metatheorems tested here remain laws of an assigned theory, not a promise to retain old library interfaces or old-major readers across project releases.

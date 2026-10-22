@@ -706,7 +706,7 @@ Absence below the ceiling is knowledge and not ignorance (`def:interchange:accep
 
 **Decision (The registry owns its theories)** · `dec:xchg:theory-sharing`
 
-`Registry` owns its `Theory` objects and hands out `&Theory`; a consumer wanting a registry on another thread clones the registry. No known consumer (`sig:xchg:consumers`) shares one across threads, and the move to `Arc<Theory>` — which permanence makes the natural shape whenever one does (`inv:interchange:permanence`) — is source-compatible for every accessor that returns `&Theory`, so it is recorded future work rather than a version-1 cost.
+`Registry` owns its `Theory` objects and hands out `&Theory`; a consumer wanting a registry on another thread clones the registry. No known consumer (`sig:xchg:consumers`) shares one across threads, and the move to `Arc<Theory>` — which permanence makes the natural shape whenever one does (`inv:interchange:permanence`) — preserves the source interface of every accessor that returns `&Theory`, so it is recorded future work rather than a version-1 cost. This observation creates no promise to retain that API across pre-1.0 releases (`rule:compatibility:pre-one`).
 
 **Algorithm (Stamping)** · `alg:xchg:stamping`
 
@@ -1044,3 +1044,5 @@ The slice boundaries are the commit boundaries, since each slice leaves `bash ci
 - every dependency version of (`tab:xchg:dependencies`) is re-verified against docs.rs at the moment implementation starts, rather than against this document;
 - the guard duty (`req:xchg:regexp-guard`) is discharged: `regexml`'s runtime on pathological patterns is characterized and the finding recorded in the crate's documentation, with a match budget standing at the seam if the finding demands one;
 - every citation in this document resolves — checked by the deployed linter in the repository gate.
+
+**Amendment (Release support)** · `amend:xchg:pre-one-010` The implementation and source-interface choices of (`spec:xchg:design`) follow (`rule:compatibility:pre-one`). Its within-major acceptance laws remain unchanged; an implementation may drop support for an earlier assigned major without revising that theory (`conv:compatibility:interchange`).

@@ -13,3 +13,5 @@
 **Section (render)** · `sec:documents:area-render` If rendering claims fail, committed documents can silently drift from their inputs or conceal unsupported premises.
 
 **Section (cli)** · `sec:documents:area-cli` If command contract claims fail, machine callers cannot distinguish results from diagnostics or rely on process status before using an output.
+
+**Convention (Release support)** · `conv:documents:release-support` Dataset admission and command contracts describe the current engine. They carry no promise of cross-release compatibility or migrations before 1.0 (`[ROOT-rule:compatibility:pre-one]`).

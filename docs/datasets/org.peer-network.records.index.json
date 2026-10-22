@@ -147,6 +147,28 @@
       "scope": "The workspace compiler channel, compiler minimum and release optimisation policy.",
       "status": "accepted",
       "title": "Toolchain and build profile"
+    },
+    {
+      "depends_on": [
+        "rec:interchange:decision"
+      ],
+      "does_not_establish": "The policy establishes no implemented upgrade path or retrospective support for pre-1.0 stores.",
+      "label": "rec:compatibility:decision",
+      "path": "adr/014-forward-only-development.md",
+      "scope": "Pre-1.0 change, assigned interchange majors and the transition to supported upgrades.",
+      "status": "accepted",
+      "title": "Forward-only development"
+    },
+    {
+      "depends_on": [
+        "rec:compatibility:decision"
+      ],
+      "does_not_establish": "The storage contract establishes no provisioned database, schema implementation or operational assurance.",
+      "label": "rec:storage:decision",
+      "path": "adr/015-durable-storage.md",
+      "scope": "PostgreSQL, connection configuration, effective history and persistence ownership.",
+      "status": "accepted",
+      "title": "Durable storage"
     }
   ]
 }

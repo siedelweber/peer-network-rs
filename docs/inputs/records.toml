@@ -117,3 +117,21 @@ title = "Toolchain and build profile"
 scope = "The workspace compiler channel, compiler minimum and release optimisation policy."
 depends_on = ["rec:lint:decision"]
 does_not_establish = "Tracking nightly establishes no reproducible compiler pin or measured dev and test optimisation policy."
+
+[[rows]]
+label = "rec:compatibility:decision"
+path = "adr/014-forward-only-development.md"
+status = "accepted"
+title = "Forward-only development"
+scope = "Pre-1.0 change, assigned interchange majors and the transition to supported upgrades."
+depends_on = ["rec:interchange:decision"]
+does_not_establish = "The policy establishes no implemented upgrade path or retrospective support for pre-1.0 stores."
+
+[[rows]]
+label = "rec:storage:decision"
+path = "adr/015-durable-storage.md"
+status = "accepted"
+title = "Durable storage"
+scope = "PostgreSQL, connection configuration, effective history and persistence ownership."
+depends_on = ["rec:compatibility:decision"]
+does_not_establish = "The storage contract establishes no provisioned database, schema implementation or operational assurance."

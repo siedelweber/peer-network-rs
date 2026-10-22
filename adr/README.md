@@ -17,3 +17,5 @@
 | Interchange audit | accepted | (`rec:xchg:audit-record`) |
 | Interchange commissioning | accepted | (`rec:xchg:commissioning-record`) |
 | Toolchain and build profile | accepted | (`rec:toolchain:decision`) |
+| Forward-only development | accepted | (`rec:compatibility:decision`) |
+| Durable storage | accepted | (`rec:storage:decision`) |

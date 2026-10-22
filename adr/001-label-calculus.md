@@ -212,3 +212,5 @@ Side conditions: U ranges over the owners designated upstream of D, and citation
 **Decision (Policy)** · `dec:labels:policy` The repository names no other repository as the source of its practices. The owner, profile, reserved-kind and scanning declarations above fix the adoption data; no migration, retired label or identity chain is part of this adoption.
 
 **Gate (Verification)** · `gate:labels:verification` The deployed linter checks label syntax, unique mints, heads, resolution, imports, outlines and owner reach over the declared carrier.
+
+**Amendment (Release support)** · `amend:labels:pre-one` As adoption data, repository label retention across releases follows (`rule:compatibility:pre-one`). The presentation-invariance metatheorem concerns a transformation preserving its premises, not an obligation to retain labels; current citations must still resolve after a rename. No retired-label aliases or compatibility migration are owed.

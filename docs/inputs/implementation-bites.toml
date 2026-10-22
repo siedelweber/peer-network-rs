@@ -9,9 +9,9 @@ evidence = "Freeze structural identity, public references and complete projectio
 
 [[rows]]
 ordinal = 2
-contracts = ["model:design:burn", "model:design:declarations", "inv:design:charged-value", "sig:design:numeric-kernel"]
+contracts = ["model:design:burn", "model:design:declarations", "inv:design:charged-value", "sig:design:numeric-kernel", "proposal:design:storage-placement", "sig:design:storage", "verif:design:storage-history"]
 requirements = ["burn-boundary", "ledger-vintages", "constants"]
-evidence = "Introduce nrz-scalar, nrz-accuracy and nrz-cas as git dependencies from the public Naturrhythmuszentrum repository on branch main; review the lockfile resolution and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases."
+evidence = "Introduce nrz-scalar, nrz-accuracy and nrz-cas as git dependencies from the public Naturrhythmuszentrum repository on branch main; review the lockfile resolution and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases. Subject to storage-placement acceptance, introduce the host storage slice with real PostgreSQL beta history tests from its first implementation; no pre-1.0 migration support is promised."
 
 [[rows]]
 ordinal = 3
@@ -29,7 +29,7 @@ evidence = "Publish complete-act and title outputs; pass cancellation ties, conf
 ordinal = 5
 contracts = ["alg:design:ledger", "alg:design:cells", "alg:design:recipients", "alg:design:base"]
 requirements = ["final-state", "ledger-vintages", "conservation"]
-evidence = "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, revocation ties and dependency-permutation invariance."
+evidence = "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, revocation ties and dependency-permutation invariance. Extend real PostgreSQL tests to immutable debit vintages, atomic result references and earlier verdicts unaffected by later-effective rules."
 
 [[rows]]
 ordinal = 6
@@ -47,7 +47,7 @@ evidence = "Require the published total calibration procedure; verify units, lea
 ordinal = 8
 contracts = ["sig:design:host", "model:design:package", "proto:design:encoding"]
 requirements = ["publication", "public-inputs"]
-evidence = "Use the accepted encoding and infrastructure dependency, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases."
+evidence = "Use the accepted encoding and infrastructure dependency, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases. Complete atomic admitted-result persistence and public-input rebuild evidence against the real PostgreSQL beta."
 
 [[rows]]
 ordinal = 9

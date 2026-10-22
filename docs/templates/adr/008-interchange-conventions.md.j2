@@ -114,3 +114,5 @@ Extension is by restriction: the envelope keys are pinned, and the base theory's
 ## References · `sec:interchange:references`
 
 RFC 8949, _Concise Binary Object Representation (CBOR)_, §4.2 in particular. RFC 8610, _Concise Data Definition Language (CDDL)_, admitted entire together with the control-operator registry it establishes; of its operators this document itself employs only `.size`, `.regexp`, and `.gt`, all of §3.8. RFC 5234, _Augmented BNF for Syntax Specifications_. Semantic Versioning 2.0.0 (semver.org), genealogical only. This section is authored, annotated prose — a References division, not a generated bibliography register.
+
+**Amendment (Release support)** · `amend:interchange:pre-one-008` As repository adoption data, (`rule:compatibility:pre-one`) governs implementation support across project releases. (`conv:compatibility:interchange`) assigns experimental external documents positive majors and requires a fresh major for incompatible changes. It preserves the immutable assignments, minor inclusion and major-boundary law of this calculus; no mathematical statement above is amended, and major zero acquires no exemption.
