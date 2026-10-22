@@ -6,6 +6,8 @@
 
 ## Design areas · `sec:foundation:design-areas`
 
+**Section (vision)** · `sec:foundation:area-vision` If the implementation concept fails, later packages can satisfy local contracts without delivering a complete, publicly recomputable epoch result. The concept (`spec:vision:concept`) states the purpose, obligations, boundaries, verification and phases of the whole implementation.
+
 **Section (interchange)** · `sec:foundation:area-interchange` If interchange conformance fails, an external reader cannot determine a document's governing theory or acceptance. The conventions (`rec:interchange:decision`) fix that boundary and the implementation (`spec:xchg:concept`) supplies its canonical bytes and acceptance verdicts.
 
 **Section (identity)** · `sec:foundation:area-identity` If identity adjudication fails, a digest can assert a role or assurance its recipe and consumer do not establish. The procedure (`rec:identity:decision`) classifies provenance, comparisons and proposed identities.

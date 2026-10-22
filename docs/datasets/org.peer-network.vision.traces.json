@@ -1,0 +1,131 @@
+{
+  "namespace": "org.peer-network.vision.traces",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "labels": [
+        "post:network:host-contract",
+        "prop:deployment:allocation-input-completeness"
+      ],
+      "name": "public-inputs"
+    },
+    {
+      "labels": [
+        "def:comparator:burn-interface",
+        "subsec:deployment:realization-obligations"
+      ],
+      "name": "burn-boundary"
+    },
+    {
+      "labels": [
+        "def:graph:act-identifier",
+        "def:graph:act-edge-projection",
+        "post:epoch:universal-act-weighing"
+      ],
+      "name": "complete-acts"
+    },
+    {
+      "labels": [
+        "post:nodes:canonical-tensor-pipeline",
+        "thm:graph:epoch-title-fold",
+        "post:epoch:settlement-standing-title-coupling"
+      ],
+      "name": "formation-title"
+    },
+    {
+      "labels": [
+        "post:epoch:act-debit",
+        "def:epoch:safety-threshold"
+      ],
+      "name": "ledger-vintages"
+    },
+    {
+      "labels": [
+        "post:epoch:standing-epoch-set-determinism",
+        "post:epoch:standing-memorylessness",
+        "prop:deployment:allocation-input-completeness",
+        "def:epoch:standing-domain-profile"
+      ],
+      "name": "final-state"
+    },
+    {
+      "labels": [
+        "def:epoch:conserved-standing-equilibrium",
+        "ver:standing:conservation"
+      ],
+      "name": "conservation"
+    },
+    {
+      "labels": [
+        "def:dynamics:conserved-standing-certificate",
+        "thm:dynamics:certified-conserved-standing-uniqueness",
+        "lem:dynamics:fixed-point-residual-enclosure"
+      ],
+      "name": "certificate"
+    },
+    {
+      "labels": [
+        "def:epoch:tilt-backoff-grid",
+        "rem:epoch:certificate-failure-versus-indecisive-enclosure"
+      ],
+      "name": "rung-verdicts"
+    },
+    {
+      "labels": [
+        "post:epoch:final-act-sequence-write-rule",
+        "post:network:host-contract",
+        "def:epoch:final-act-stamps"
+      ],
+      "name": "admission"
+    },
+    {
+      "labels": [
+        "def:epoch:safety-threshold",
+        "def:epoch:policy-floor",
+        "subsec:deployment:transparency-of-protocol-formulas"
+      ],
+      "name": "policy-schedules"
+    },
+    {
+      "labels": [
+        "post:network:host-contract",
+        "post:deployment:canonical-standing-publication"
+      ],
+      "name": "publication"
+    },
+    {
+      "labels": [
+        "post:deployment:public-object-replay",
+        "subsec:deployment:conserved-standing-reproducibility",
+        "rem:deployment:completeness-safety-orthogonal"
+      ],
+      "name": "replay"
+    },
+    {
+      "labels": [
+        "subsec:deployment:transparency-of-protocol-formulas",
+        "rem:verification:numerical-rounding"
+      ],
+      "name": "constants"
+    },
+    {
+      "labels": [
+        "def:network:object-taxonomy",
+        "rem:network:taxonomy-subtleties",
+        "post:transport:guild-grant"
+      ],
+      "name": "terminal-separation"
+    },
+    {
+      "labels": [
+        "def:graph:raw-traversal-snapshot",
+        "alg:epoch:exact-signed-raw-traversal"
+      ],
+      "name": "raw-readings"
+    }
+  ]
+}

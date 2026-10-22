@@ -1,0 +1,147 @@
+# Peer Network implementation concept · `spec:vision:concept`
+
+## Purpose and audience · `sec:vision:purpose`
+
+**Goal (Implementation)** · `goal:vision:implementation` The implementation makes the paper's public standing and admission contract executable: from disclosed accepted acts, boundary facts and declared rules, it produces a certified final epoch result that another reader can recompute. Its purpose is to make a host's claim inspectable, so participation need not depend on trusting a private calculation.
+
+**Definition (Concept boundary)** · `def:vision:concept-boundary` This concept states the implementation's responsibilities, obligations and evidence at maturity. Following (`spec:xchg:concept`), it gives the design a contract to satisfy; it selects no crate boundary, representation, algorithm or interface. The existing decomposition (`rec:decomposition:decision`) supplies a responsibility map and implementation order, not a claim that the mathematics is implemented.
+
+**Setup (Authority)** · `setup:vision:authority` The normative paper edition is network-v0.25.1. The inventory (`reg:inventory:overview`) and question register (`reg:questions:overview`) preserve correspondence and interpretation evidence; an older study reading does not override the released rule or the answer's status. Paper labels here are exhibitions, not repository citations or new mints. Local labels and their genres follow (`rec:labels:decision`) and (`rec:kinds:decision`); data-dependent prose follows (`rec:render:decision`).
+
+**Goal (Participants)** · `goal:vision:participants` Participants consume published standing, title, admission verdicts and effective schedules together with the evidence that explains them. They can inspect the treatment of their acts and reproduce a disputed result; recomputation is an audit right, not a right to replace the published closure value with a preferred one.
+
+**Goal (Hosts)** · `goal:vision:hosts` Hosts use the implementation to assess a proposed final epoch, publish its complete certified result and expose a failure or an undecided comparison without inventing a passing result. The implementation establishes the calculation's obligations; the host remains responsible for the boundary it operates and the facts it supplies.
+
+**Goal (Auditors and later packages)** · `goal:vision:auditors` Auditors consume public inputs and publication evidence to reconstruct and compare results independently of host caches. Later repository packages consume the same labelled obligations and verified outputs, with the interchange contract (`rec:interchange:decision`) governing externally consumed documents. Neither successful replay nor an accepted envelope alone establishes authenticity or deployment readiness (`rec:identity:decision`).
+
+## Principles · `sec:vision:principles`
+
+**Principle (Exactness)** · `prin:vision:exactness` Preserve what the paper makes exact, and distinguish an exact declared value from an enclosure or a displayed approximation. Binding comparisons need certified evidence because a rounded display cannot decide which side of a threshold the underlying value occupies (`dec:decomposition:numbers`). A deployment's certified charged value is preserved as charged; its defining target is not a licence to rewrite a consummated debit.
+
+**Principle (Determinism)** · `prin:vision:determinism` Fixed public inputs and declared procedures determine the published result and its verdicts. Optimization may reduce work but may not select another standing answer, because independent reproduction loses its meaning if private solver history changes the outcome (`dec:decomposition:encoding`).
+
+**Principle (Public causes)** · `prin:vision:public-causes` Every input that determines a binding output must be disclosed with its effective edition, and all required verification evidence must remain available. Evidence does not become an extra computational input merely because it must be published: the distinction is necessary to check both completeness and safety (`dec:decomposition:burn`).
+
+**Principle (Declared freedom)** · `prin:vision:declared-freedom` Preserve the deployment's freedom wherever the paper leaves a choice, together with the duty to publish that choice and satisfy its constraints. An implementation convenience cannot become an undeclared protocol rule, and a permitted default cannot authorize changing a locked declaration (`dec:decomposition:constants`).
+
+**Principle (Evidence before claims)** · `prin:vision:evidence` A requirement is complete only when its claim, premises and evidence can be inspected together. Keep held cases and failed comparisons visible, since passing a different example does not discharge the original obligation (`dec:decomposition:fixtures`). A clean repository gate establishes its stated discipline, not mathematical correctness (`rec:lint:decision`).
+
+## The system at maturity · `sec:vision:maturity`
+
+**Definition (Responsibility map)** · `def:vision:responsibility-map` The following responsibilities retain the homes named by (`dec:decomposition:crates`). These are the adopted map's names and purposes, not new implementation boundaries; the design must explain how they satisfy this concept and record any disagreement before changing the map.
+
+**Definition (pn-records)** · `def:vision:pn-records` Immutable public inputs: identities, acts, ledger/burn data and declared constants (`dec:decomposition:crates`).
+
+**Definition (pn-graph)** · `def:vision:pn-graph` Structural formation, shared graph algebra and title folds (`dec:decomposition:crates`).
+
+**Definition (pn-epoch)** · `def:vision:pn-epoch` Compile and certify one final epoch state and its admission result (`dec:decomposition:crates`).
+
+**Definition (pn-readouts)** · `def:vision:pn-readouts` Expose published standing/title and optional exact raw views to terminal consumers (`dec:decomposition:crates`).
+
+**Definition (pn-host)** · `def:vision:pn-host` Encode the complete seven-part public package (`dec:decomposition:crates`).
+
+**Definition (pn-replay)** · `def:vision:pn-replay` Reconstruct and compare the binding package from public inputs (`dec:decomposition:crates`).
+
+**Definition (pn-verification)** · `def:vision:pn-verification` Maintain labelled integrated fixtures and independent public-surface checks (`dec:decomposition:crates`).
+
+**Definition (Integrated result)** · `def:vision:integrated-result` At maturity, records, structural meaning, final standing, admission, publication and replay agree on one final epoch. A publication can be checked without the publisher's mutable state; terminal consumers receive public readings without feeding their preferences back into admission. The integrated corpus tests that composition as well as its parts (`dec:decomposition:fixtures`).
+
+## Requirements · `sec:vision:requirements`
+
+**Requirement (Complete public causes)** · `req:vision:public-inputs` Every binding result shall be reproducible from complete accepted records, the completed final ledger, effective constants and formula editions, and the declared procedures they require. Projection completeness shall be checked separately from numerical safety; no unreported local state may supply a missing cause. Paper grounding: ``post:network:host-contract``, ``prop:deployment:allocation-input-completeness``.
+
+**Requirement (Imported burn and evidence)** · `req:vision:burn-boundary` The implementation shall consume the mathematical burn interface and preserve the settlement, provenance and conditional-bound evidence required to audit it. Required disclosures shall not silently add a mathematical input or become a claim that the implementation itself proves destruction. Paper grounding: ``def:comparator:burn-interface``, ``subsec:deployment:realization-obligations``.
+
+**Requirement (Whole-act accounting)** · `req:vision:complete-acts` Every accepted authored act shall retain its identity, author and complete projection evidence and shall be weighed. Projections and folded stance shall not multiply or erase the act count or its debit; omitted acts shall be detectable by replay. Paper grounding: ``def:graph:act-identifier``, ``def:graph:act-edge-projection``, ``post:epoch:universal-act-weighing``.
+
+**Requirement (Formation and title)** · `req:vision:formation-title` Structural formation and title recognition shall follow the canonical rules on complete accepted acts. Settlement standing shall respect the specified title coupling, while title remains independent of sentiment; a terminal preference shall not substitute for a recognition verdict. Paper grounding: ``post:nodes:canonical-tensor-pipeline``, ``thm:graph:epoch-title-fold``, ``post:epoch:settlement-standing-title-coupling``.
+
+**Requirement (Charged values and vintages)** · `req:vision:ledger-vintages` The published charged value shall be the value used consistently by debit, solvency, safety, emission and capacity under its effective epoch. Consummated debits shall preserve their original vintages. A declared representation or practical accuracy is admissible only with the required certification of the charged value; recomputation shall not retrospectively reprice history. Paper grounding: ``post:epoch:act-debit``, ``def:epoch:safety-threshold``.
+
+**Requirement (One final state)** · `req:vision:final-state` Standing shall use the completed final ledger, accepted membership, derived title fold, effective constants and published domain-profile rule. Each family profile shall be nonnegative, sum to one and be supported on its projection domains; no equal split is assumed. Base allocation and emission shall remain fixed during the solve. Dependency-compliant permutations shall preserve standing when those inputs are fixed, without erasing order where formation or dependency validity reads it. Paper grounding: ``post:epoch:standing-epoch-set-determinism``, ``post:epoch:standing-memorylessness``, ``prop:deployment:allocation-input-completeness``, ``def:epoch:standing-domain-profile``.
+
+**Requirement (Conserved standing)** · `req:vision:conservation` The final result shall be the conserved standing equilibrium, with transported balance and count conserved across recipients and self. Conservation shall not be asserted for the sum of standing ratios, nor interpreted as a transfer of ledger assets. Paper grounding: ``def:epoch:conserved-standing-equilibrium``, ``ver:standing:conservation``.
+
+**Requirement (Certified equilibrium)** · `req:vision:certificate` The certificate shall evaluate the specified width fence with sound numerical bounds, not replace it with a different sensitivity measure. A passing certificate and residual evidence shall justify the claimed unique equilibrium and its enclosure under their stated premises; an approximate iterate alone shall not stand as the result. Paper grounding: ``def:dynamics:conserved-standing-certificate``, ``thm:dynamics:certified-conserved-standing-uniqueness``, ``lem:dynamics:fixed-point-residual-enclosure``.
+
+**Requirement (Published certification choice)** · `req:vision:rung-verdicts` The accepted rung shall be the greatest rung the published certification procedure proves passing. Attempted higher rungs shall retain distinct FAIL and INDECISIVE verdicts, with the declared refinement policy reproduced by replay. Indecision shall not be reported as mathematical failure, and an unproved rung shall not be accepted. Paper grounding: ``def:epoch:tilt-backoff-grid``, ``rem:epoch:certificate-failure-versus-indecisive-enclosure``.
+
+**Requirement (Final admission only)** · `req:vision:admission` A proposed write set shall take effect only after its completed final package satisfies solvency, individual safety and epoch policy conditions with the prescribed units and capacity. Individual safety shall not be averaged away. A binding threshold straddled by its enclosure requires refinement or rejection, and no gate may read a partial standing solution. Paper grounding: ``post:epoch:final-act-sequence-write-rule``, ``post:network:host-contract``, ``def:epoch:final-act-stamps``.
+
+**Requirement (Declared boundary schedules)** · `req:vision:policy-schedules` Safety-threshold calibration shall satisfy the paper requirements, including the required lead and certification for the value actually charged; it shall not become a discretionary host input. Policy floors and other permitted schedules shall be public, valid at their declared effective boundary and subject to the no-silent-change rule. Paper grounding: ``def:epoch:safety-threshold``, ``def:epoch:policy-floor``, ``subsec:deployment:transparency-of-protocol-formulas``.
+
+**Requirement (Self-contained publication)** · `req:vision:publication` Every accepted boundary shall expose the complete host-contract package, including accepted records, final ledger, semantic projection, transport and rung evidence, standing and admission, shared closure outputs and policy, and reproduction evidence. Its canonical encoding shall be declared and versioned, with ordering, exact-value representations and rounding disclosures sufficient for an attributable comparison. Paper grounding: ``post:network:host-contract``, ``post:deployment:canonical-standing-publication``.
+
+**Requirement (Independent reconstruction)** · `req:vision:replay` A reader shall be able to reconstruct the binding package from public inputs and compare it under the declared publication and replay contract, reporting attributable discrepancies. Replay shall check accepted-act completeness as well as certificate safety and shall not trust a host cache, iteration count or aggregate summary in place of the required object. Paper grounding: ``post:deployment:public-object-replay``, ``subsec:deployment:conserved-standing-reproducibility``, ``rem:deployment:completeness-safety-orthogonal``.
+
+**Requirement (Effective declarations)** · `req:vision:constants` Every computation shall use identifiable effective formulas and constants with announced permitted overrides and their effective boundary. Locked declarations shall remain locked. Defining formulas and certified evidence, rather than printed decimal examples, shall govern numerical expectations. Paper grounding: ``subsec:deployment:transparency-of-protocol-formulas``, ``rem:verification:numerical-rounding``.
+
+**Requirement (Closure and terminal use)** · `req:vision:terminal-separation` The implementation shall distinguish imported interface values, admission closure, required verification evidence, optional by-products and terminal readings by their read-sites. Terminal replacements and optional caches shall not select binding outputs; required evidence shall not become optional because no formula consumes it. Paper grounding: ``def:network:object-taxonomy``, ``rem:network:taxonomy-subtleties``, ``post:transport:guild-grant``.
+
+**Requirement (Optional exact raw service)** · `req:vision:raw-readings` If the optional raw service is supplied, its Self readings shall derive from the final snapshot and its bounded traversal shall satisfy the specified exact simple-path and parity semantics. Its availability shall not be necessary to establish standing or admission, and a cheaper approximation shall not be advertised as that exact service. Paper grounding: ``def:graph:raw-traversal-snapshot``, ``alg:epoch:exact-signed-raw-traversal``.
+
+## Scope boundary · `sec:vision:scope`
+
+**Convention (Deployment declarations)** · `conv:vision:deployment-declarations` The closed owner calls Q03, Q04, Q05, Q15 in (`reg:questions:overview`) leave charged-value representation, serialization, certification refinement and domain profiles to declared deployment choices. This concept requires their constraints and reproducibility; it chooses none of their realizations. The design must reconcile the corresponding older holds in (`cor:decomposition:holds`) with those statuses rather than treating a closed choice as an unanswered paper defect.
+
+**Convention (Operational boundary)** · `conv:vision:operations` The implementation supplies calculation and audit evidence. Consensus, transport, persistence operations, host availability and the choice of proposed membership belong to the deployment and surrounding stack; a valid computed result cannot itself guarantee their honesty or liveness. Boundary misconduct remains demonstrable evidence, not prevention. This boundary preserves (`dec:decomposition:fixtures`) and does not excuse required public availability.
+
+**Convention (Burn realization)** · `conv:vision:burn-realization` The comparator's realization, settlement and external assurance remain below the imported burn boundary. The implementation checks and exposes what its contract requires without claiming to manufacture the backing it consumes (`dec:decomposition:burn`).
+
+**Convention (Terminal systems)** · `conv:vision:terminal-systems` Guild ranking, bridge and CAN engines, rewards, licence enforcement and terminal membership or revision policy are outside this implementation. It exposes the specified standing, title and optional raw readings those systems may consume; their freedom stops where an output re-enters admission (`dec:decomposition:fixtures`).
+
+**Convention (Representation decisions)** · `conv:vision:representation-decisions` Numeric backends, layouts, encodings, interfaces and cryptographic mechanisms belong to design and deployment decisions under the adopted records. The provisional package proposal in (`dec:decomposition:encoding`) is not the paper's mandated codec; the design must satisfy both the deployment's published contract and (`rec:interchange:decision`) wherever an external document is emitted.
+
+## Verification · `sec:vision:verification`
+
+**Convention (Executable obligations)** · `conv:vision:executable-obligations` Treat the paper's theorems and invariants as labelled executable obligations with their premises intact, following (`conv:xchg:metatheorems-as-tests`). The existence and uniqueness claims exhibited in ``thm:dynamics:conserved-standing-existence`` and ``thm:dynamics:certified-conserved-standing-uniqueness`` call for hull and certified-contraction checks; ``lem:dynamics:fixed-point-residual-enclosure`` calls for a justified enclosure. Tests exercise those obligations without claiming a proof of the general theorem merely by passing examples.
+
+**Convention (Vectors and properties)** · `conv:vision:vectors-properties` Retain exact fixture inputs, units, formula editions and expected enclosures beside the owning claims. Properties cover complete-act accounting, conservation, fixed-input permutation invariance, initialization independence, boundary equality and terminal insulation; adversarial vectors cover missing acts, inconsistent vintages, altered disclosures and undecided gates. Independent small-case oracles and property testing complement the paper's vectors (`dec:decomposition:fixtures`).
+
+**Convention (Independent reader)** · `conv:vision:independent-reader` Verification includes replay from a fresh public input set with no private host state, and comparison of each binding result and verdict. Shared numerical machinery does not establish independent mathematical implementation: use independent small-case calculations and conserved-map agreement evidence to test that additional claim, as the limitation in (`dec:decomposition:crates`) requires.
+
+**Convention (Evidence ledger)** · `conv:vision:evidence-ledger` Record each implemented claim's premises, fixtures, property evidence, failures and remaining holds. The answer status and released rule govern whether an older fixture is usable; neither silently repairing its inputs nor counting an incompatible expectation as passing is acceptable (`reg:questions:overview`). Audit and commissioning must report the actual supported surface, following (`rec:xchg:audit-record`) and (`rec:xchg:commissioning-record`).
+
+## Phases · `sec:vision:phases`
+
+**Goal (Design first)** · `goal:vision:design-first` The next phase is the implementation design: it maps this concept's labels to contracts and verification obligations, resolves the design-owned questions below and names the deployment declarations needed before affected work can claim compliance. This extends the concept, design, audit and commissioning progression in (`preview:xchg:phase-plan`) to the whole implementation; it does not start a domain implementation in place of design.
+
+**Setup (Plan correspondence)** · `setup:vision:plan-correspondence` The execution sequence below groups the repository's adopted bite plan (`dec:decomposition:bites`) by the evidence each phase makes possible. It preserves that plan's dependencies and holds; the verification corpus grows throughout, and optional raw service does not become an admission dependency. Each bite carries its decision, label mapping, fixture inputs and gate evidence.
+
+**Goal (Public inputs)** · `goal:vision:phase-inputs` Establish the public input and declaration basis before claiming a computation over it. Mapped bites: 1 (pn-records: identities and accepted act/edge envelopes); 2 (pn-records: burn data, numeric representation and constants edition).
+
+**Goal (Structural meaning)** · `goal:vision:phase-structure` Establish formation and title evidence before standing consumes their results. Mapped bites: 3 (pn-graph: geometry and formation); 4 (pn-graph: complete-act structural folds and title).
+
+**Goal (Certified epoch)** · `goal:vision:phase-epoch` Establish the completed ledger and compiled standing obligations, then certified equilibrium, then final admission and schedules. Mapped bites: 5 (pn-epoch: final ledger and standing compiler); 6 (pn-epoch: certified numerical kernel and conserved solve); 7 (pn-epoch: final admission and schedules).
+
+**Goal (Publication and replay)** · `goal:vision:phase-publication` Close the externally checkable contract by publishing and independently reconstructing the binding result. Mapped bites: 8 (pn-host: canonical seven-part package); 9 (pn-replay).
+
+**Goal (Service and corpus closure)** · `goal:vision:phase-closure` Add the optional exact raw surface and close the integrated public-surface corpus only when its claims have evidence. Audit and commissioning follow the implemented scope rather than treating a prototype or an unexercised requirement as ready. Mapped bites: 10 (pn-readouts: optional raw publication service); 11 (pn-verification: complete public-surface corpus).
+
+## Risks and open questions · `sec:vision:questions`
+
+**Warning (False confidence)** · `warn:vision:false-confidence` A self-consistent package can omit required acts, and shared host and replay arithmetic can share a defect. The design lane settles the coverage risk with separate completeness, safety and independent-oracle evidence under (`conv:vision:independent-reader`); successful replay alone cannot settle it.
+
+**Warning (Premature performance claims)** · `warn:vision:performance` The cost of exact traversal, certified refinement and public evidence may dominate useful deployment sizes. The design lane settles feasibility claims with declared workloads, resource limits and measurements that preserve the required semantics. A resource limit must expose an unsupported or indecisive case, not weaken an exactness claim.
+
+**Open Question (Numerical evidence)** · `open:vision:numerical-evidence` Which numerical contracts and evidence make every supported operation's enclosure and equality decision trustworthy? Owner: the design lane. Settlement requires a reviewed numeric design and adversarial threshold cases satisfying (`req:vision:certificate`) and (`req:vision:admission`), including a declared outcome when the available evidence cannot decide.
+
+**Open Question (Deployment profile)** · `open:vision:deployment-profile` Which charged-value representation, refinement limits, domain profiles and calibration procedure will a concrete deployment declare? Owner: the deployment. Settlement requires public, versioned choices and conformance evidence for the charged value and effective schedules under (`req:vision:ledger-vintages`), (`req:vision:rung-verdicts`) and (`req:vision:policy-schedules`), including empty or zero-width cases and failure of a next-boundary width bound.
+
+**Open Question (Publication agreement)** · `open:vision:publication-agreement` Which canonical publication and replay contract will a deployment adopt, including exact-value representation, rounding disclosure, equality and any replay tolerance? Owner: the deployment. Settlement requires a published contract with independently reproducible comparison cases under (`req:vision:publication`) and (`req:vision:replay`); a tolerated numerical comparison must not decide an uncertified admission gate.
+
+**Open Question (Design reconciliation)** · `open:vision:design-reconciliation` How will the design reconcile the adopted provisional package proposal and its holds with the released deployment choices and the repository's interchange conventions? Owner: the design lane. Settlement requires an explicit compatibility account of (`dec:decomposition:encoding`), (`rec:interchange:decision`) and (`conv:vision:deployment-declarations`), recording any proposed disagreement for review rather than silently revising the decomposition.
+
+**Open Question (Evidence coverage)** · `open:vision:evidence-coverage` Which supported cases have current vectors, independent oracles and integration evidence, and which remain held? Owner: the design lane. Settlement requires the claim-to-evidence ledger of (`conv:vision:evidence-ledger`) checked against the released paper and answer statuses; corrected paper wording does not by itself supply a passing implementation fixture.
+
+**Open Question (Residual paper conflict)** · `open:vision:paper-conflict` If a design or fixture review finds an unresolved contradiction between released normative claims, which statement and premises govern the affected case? Owner: the paper's maintainers. Settlement requires their clarification or a released correction naming the conflicting claims. This is an escalation rule, not an assertion that every historical defect remains open; the affected claim waits under (`cor:decomposition:holds`).
+
+**Open Question (Operational adoption)** · `open:vision:operational-adoption` Which finality, public availability, burn assurance and boundary-accountability arrangements make a particular deployment's supplied facts usable? Owner: the deployment. Settlement requires declared operational obligations and audit evidence at the boundary in (`conv:vision:operations`) and (`conv:vision:burn-realization`); the implementation's tests alone cannot certify those arrangements.
+
+## Concept gate · `sec:vision:gate`
+
+**Gate (Reviewable contract)** · `gate:vision:contract` Before design starts, review must accept the purpose, responsibility map, paper-grounded requirements and exclusions as the intended whole. Every requirement has exhibited paper grounding, every statement has its own label, and no unresolved representation or mechanism choice is smuggled in as a requirement. Any disagreement with the adopted decomposition is recorded as an owned question.
+
+**Gate (Owned uncertainty)** · `gate:vision:uncertainty` Every open question has an owner and settlement evidence; design may begin with deployment choices still open only by identifying the dependent contracts and the claims they hold. An unresolved normative conflict blocks the affected claim, while unrelated design can proceed. The design's first responsibility is to make those dependencies explicit.
+
+**Gate (Current evidence)** · `gate:vision:current-evidence` The document and its datasets must be a rendering fixed point, the label graph and environment kinds must pass the linter, and the repository gate must pass under the adopted toolchain (`rec:toolchain:decision`). These checks establish the reviewable concept baseline under (`gate:render:verification`) and (`gate:foundation:verification`); they do not certify an implementation that has yet to be designed.

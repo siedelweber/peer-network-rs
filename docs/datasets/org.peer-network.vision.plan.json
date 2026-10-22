@@ -1,0 +1,67 @@
+{
+  "namespace": "org.peer-network.vision.plan",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "crates": [
+        "pn-records",
+        "pn-graph",
+        "pn-epoch",
+        "pn-readouts",
+        "pn-host",
+        "pn-replay",
+        "pn-verification"
+      ],
+      "name": "responsibilities"
+    },
+    {
+      "bites": [
+        1,
+        2
+      ],
+      "name": "inputs"
+    },
+    {
+      "bites": [
+        3,
+        4
+      ],
+      "name": "structure"
+    },
+    {
+      "bites": [
+        5,
+        6,
+        7
+      ],
+      "name": "epoch"
+    },
+    {
+      "bites": [
+        8,
+        9
+      ],
+      "name": "publication"
+    },
+    {
+      "bites": [
+        10,
+        11
+      ],
+      "name": "closure"
+    },
+    {
+      "name": "deployment-choices",
+      "questions": [
+        "Q03",
+        "Q04",
+        "Q05",
+        "Q15"
+      ]
+    }
+  ]
+}
