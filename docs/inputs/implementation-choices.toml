@@ -1,0 +1,38 @@
+namespace = "org.peer-network.design.implementation-choices"
+version = [1, 0, 0]
+
+[[rows]]
+question = "Q03"
+name = "charged-value"
+fields = "charged representation, practical accuracy, units and certification for the value actually debited; historical vintage identity"
+settlement = "Closed deployment choice; a grid charge is usable only with its own certification, never as an unproved replacement for the target."
+
+[[rows]]
+question = "Q04"
+name = "publication-codec"
+fields = "canonical ordering, numeric representation, schema edition, rounding disclosure and replay comparison"
+settlement = "Closed deployment choice; this implementation proposes the CBOR profile, without calling it the paper codec."
+
+[[rows]]
+question = "Q05"
+name = "certification"
+fields = "finite rung order, deterministic precision sequence, operation budgets, equality witnesses, residual stopping and each indecision outcome"
+settlement = "Closed deployment choice; choose the greatest rung this procedure proves passing, retaining higher INDECISIVE results."
+
+[[rows]]
+question = "Q07"
+name = "authentication"
+fields = "proposal binding, author approval, allowed projection removal and public protocol reference preservation; adapter edition and verification material"
+settlement = "Answered formation obligation; cryptographic realization is deployment-owned and does not redefine structural identity."
+
+[[rows]]
+question = "Q15"
+name = "domain-profiles"
+fields = "family-indexed nonnegative unit-sum profiles supported on projection domains, together with effective domain weights"
+settlement = "Closed deployment choice; normalized does not mean equal and profiles are disclosed even when a reference profile is uniform."
+
+[[rows]]
+question = "Q20"
+name = "calibration"
+fields = "positive zero-width and empty-domain behavior, trigger/cap/escalation order, calibration window, next-width failure rule and boundary snapshot convention"
+settlement = "Corrected defect assigning a total procedure to the deployment under the fixed target and X1–X7; no unsafe clipping or retroactive price change."

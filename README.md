@@ -6,6 +6,8 @@
 
 ## Design areas · `sec:foundation:design-areas`
 
+**Section (design)** · `sec:foundation:area-design` If the implementation design fails, locally correct crates can disagree on public inputs, numerical verdicts or replay and cannot establish the concept as a whole. The design (`spec:design:implementation`) fixes contracts, mechanisms and the evidence required before their claims are implemented.
+
 **Section (vision)** · `sec:foundation:area-vision` If the implementation concept fails, later packages can satisfy local contracts without delivering a complete, publicly recomputable epoch result. The concept (`spec:vision:concept`) states the purpose, obligations, boundaries, verification and phases of the whole implementation.
 
 **Section (interchange)** · `sec:foundation:area-interchange` If interchange conformance fails, an external reader cannot determine a document's governing theory or acceptance. The conventions (`rec:interchange:decision`) fix that boundary and the implementation (`spec:xchg:concept`) supplies its canonical bytes and acceptance verdicts.

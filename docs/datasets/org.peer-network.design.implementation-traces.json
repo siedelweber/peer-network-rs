@@ -1,0 +1,316 @@
+{
+  "namespace": "org.peer-network.design.implementation-traces",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "cases": "Remove a disclosed act, declaration or boundary sample in turn; reconstruction must identify the missing cause before solving.",
+      "decision": "dec:design:public-inputs",
+      "fixture": "complete-cause-package",
+      "hold": "No executable completeness corpus exists until the records and replay bites.",
+      "labels": [
+        "post:network:host-contract",
+        "prop:deployment:allocation-input-completeness"
+      ],
+      "name": "public-inputs",
+      "oracle": "A separately written inventory walk over the full accepted-act sequence and references, without compiler summaries.",
+      "property": "Reordering unordered input collections preserves the compiled object; removing a cause cannot preserve a complete verdict.",
+      "requirements": [
+        "public-inputs"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Exercise complete and missing address samples, settlement depth, provenance and conditional operator-bound evidence.",
+      "decision": "dec:design:burn-boundary",
+      "fixture": "burn-disclosures",
+      "hold": "External destruction and settlement assurance remain deployment obligations.",
+      "labels": [
+        "def:comparator:burn-interface",
+        "subsec:deployment:realization-obligations"
+      ],
+      "name": "burn-boundary",
+      "oracle": "Manual four-object boundary inventory and independent disclosure checklist against the declared realization.",
+      "property": "Changing evidence cannot add a fifth mathematical input; required evidence omission prevents publication readiness.",
+      "requirements": [
+        "burn-boundary"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Use a hyper-act, repeated netting acts, a zero fold and a control act; retain all identities and charge each once.",
+      "decision": "dec:design:complete-acts",
+      "fixture": "whole-act-counting",
+      "hold": "Exact fixtures must be transcribed and reviewed before the compiler is claimed complete.",
+      "labels": [
+        "def:graph:act-identifier",
+        "def:graph:act-edge-projection",
+        "post:epoch:universal-act-weighing"
+      ],
+      "name": "complete-acts",
+      "oracle": "Direct enumeration of authored identities and rational debit sums, independent of the cell builder.",
+      "property": "Cell partition covers accepted authored acts exactly once while counts follow members, not cells or legs.",
+      "requirements": [
+        "complete-acts"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Missing co-leg, dangling recipient, Registration, conflicting sales, co-epoch cancellation and later cancellation cases.",
+      "decision": "dec:design:formation-title",
+      "fixture": "formation-title-cases",
+      "hold": "Authentication realization conformance waits for a declared deployment adapter.",
+      "labels": [
+        "def:graph:identifier-algebra",
+        "def:network:admission-closure",
+        "def:graph:act-edge-projection",
+        "thm:graph:epoch-title-fold",
+        "post:epoch:settlement-standing-title-coupling",
+        "def:graph:settlement-recognition"
+      ],
+      "name": "formation-title",
+      "oracle": "Small exhaustive settlement candidate enumeration with a boundary-by-boundary title table.",
+      "property": "Valid dependency permutations preserve title; sentiment perturbation cannot change a recognized transfer.",
+      "requirements": [
+        "formation-title"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Charge two successive declared prices, then change the current price; prior debits must remain unchanged.",
+      "decision": "dec:design:ledger-vintages",
+      "fixture": "charged-vintage-cases",
+      "hold": "Non-rational charged-value support is held until its equality and certification contract is reviewed.",
+      "labels": [
+        "post:epoch:act-debit",
+        "def:epoch:safety-threshold"
+      ],
+      "name": "ledger-vintages",
+      "oracle": "Independent exact rational ledger for representable profiles, plus reviewed expression witnesses for any added profile.",
+      "property": "Debit totals, emission and capacity read the same charged value and epoch; full/reduced unit conversion commutes.",
+      "requirements": [
+        "ledger-vintages"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Unequal domain profiles, Invitation A-leg versus T-leg, repeated fold cells, home-resolved acts and revocation ties.",
+      "decision": "dec:design:final-state",
+      "fixture": "compiler-cases",
+      "hold": "Released corrections require new expected values; legacy staged expectations are not substitutes.",
+      "labels": [
+        "post:epoch:standing-epoch-set-determinism",
+        "post:epoch:standing-memorylessness",
+        "prop:deployment:allocation-input-completeness",
+        "def:epoch:standing-domain-profile"
+      ],
+      "name": "final-state",
+      "oracle": "Small direct cell and recipient tables written independently of production aggregation.",
+      "property": "Dependency-compliant permutations preserve the compiled base, emission and hull when all stated inputs are fixed.",
+      "requirements": [
+        "final-state"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "A depleted relay, zero-emission source, closed cluster and retained diagonal with nonzero incoming mass.",
+      "decision": "dec:design:conservation",
+      "fixture": "transport-cases",
+      "hold": "Transcendental cases require the reviewed numerical backend and certified oracle.",
+      "labels": [
+        "def:epoch:conserved-standing-equilibrium",
+        "post:epoch:standing-pair-mass-conservation",
+        "rem:epoch:transport-is-not-ledger-transfer",
+        "rem:gates:standing-safety-scope"
+      ],
+      "name": "conservation",
+      "oracle": "Dense rational matrix products at zero tilt, independently compared with sparse factor application.",
+      "property": "Row sums and transported balance/count totals are conserved; exported count obeys the emission bound.",
+      "requirements": [
+        "conservation"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Equal-width graphs of different shape, a zero-width case and fences below, at and above the margin boundary.",
+      "decision": "dec:design:certificate",
+      "fixture": "fence-residual-cases",
+      "hold": "Backend soundness and adversarial executions remain held until the numerical bite.",
+      "labels": [
+        "def:dynamics:conserved-standing-certificate",
+        "thm:dynamics:certified-conserved-standing-uniqueness",
+        "lem:dynamics:fixed-point-residual-enclosure"
+      ],
+      "name": "certificate",
+      "oracle": "Independent high-precision directed evaluation plus exact zero-tilt and rational analytic cases; shared kernel output alone is insufficient.",
+      "property": "Equal width at fixed wall/profile/rung yields equal fence; residual enclosure contains the independently certified equilibrium.",
+      "requirements": [
+        "certificate"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "An indecisive high rung, a proved failed rung and a lower pass under one published finite refinement policy.",
+      "decision": "dec:design:rung-verdicts",
+      "fixture": "rung-policy-cases",
+      "hold": "Canonical rung agreement waits for the deployment procedure and its execution vectors.",
+      "labels": [
+        "def:epoch:tilt-backoff-grid",
+        "rem:epoch:certificate-failure-versus-indecisive-enclosure"
+      ],
+      "name": "rung-verdicts",
+      "oracle": "A linear reference scan evaluating each rung independently from disclosed factors.",
+      "property": "Replay selects the greatest procedure-proved pass and preserves each higher attempted verdict and budget.",
+      "requirements": [
+        "rung-verdicts"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Overlapping principal closures sharing a parent, interleaved blocks, missing parent, target/minimum and maximum-duration closures.",
+      "decision": "dec:design:final-membership",
+      "fixture": "closure-partition-cases",
+      "hold": "Earliest host determination is attested boundary evidence; replay cannot reconstruct unwritten demand.",
+      "labels": [
+        "def:network:write",
+        "post:epoch:final-act-sequence-closure",
+        "post:network:host-contract"
+      ],
+      "name": "final-membership",
+      "oracle": "Exhaustive closure-set intersection and component enumeration on small proposed histories.",
+      "property": "Component partition is disjoint, covers the union and is invariant to processing order; authoritative positions remain checked.",
+      "requirements": [
+        "final-membership"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Individual failure hidden by a positive average, exact equality, threshold straddling, empty epoch and target overflow.",
+      "decision": "dec:design:admission",
+      "fixture": "gate-unit-cases",
+      "hold": "Final numerical threshold evidence waits for the supported profile; missing evidence is never counted as passing.",
+      "labels": [
+        "post:epoch:final-act-sequence-write-rule",
+        "post:network:host-contract",
+        "def:epoch:final-act-stamps"
+      ],
+      "name": "admission",
+      "oracle": "Hand-derived rational W1/W2 cases with explicit numeraire, counts, prices and reduced stamps.",
+      "property": "Only a fully certified final state can accept; no member of a rejected or indecisive proposed set takes effect.",
+      "requirements": [
+        "admission"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Zero width, empty live domain, trigger/cap/escalation order, stale next-width bound and downward migration.",
+      "decision": "dec:design:policy-schedules",
+      "fixture": "calibration-cases",
+      "hold": "Deployment must supply a total procedure and certified results; no paper-maintainer calibration hold remains.",
+      "labels": [
+        "def:epoch:safety-threshold",
+        "def:epoch:policy-floor",
+        "subsec:deployment:transparency-of-protocol-formulas"
+      ],
+      "name": "policy-schedules",
+      "oracle": "Independent boundary-sequence model evaluating the declared procedure and explicit invariant predicates.",
+      "property": "Lead, positive charge, step and hysteresis constraints and X1–X7 hold for the published charge, including exceptional cases.",
+      "requirements": [
+        "policy-schedules"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references.",
+      "decision": "dec:design:publication",
+      "fixture": "canonical-package-cases",
+      "hold": "Namespace assignment, complete CDDL theory and CBOR dependency proposal require review before the publication bite.",
+      "labels": [
+        "post:network:host-contract",
+        "post:deployment:canonical-standing-publication"
+      ],
+      "name": "publication",
+      "oracle": "Independently authored byte vectors and a section-by-section semantic inventory.",
+      "property": "Equivalent normalized structures encode identically; optional diagnostic data cannot change binding fields.",
+      "requirements": [
+        "publication"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Mutate each package section, omit an act and alter a charged vintage, rung verdict or rounding disclosure.",
+      "decision": "dec:design:replay",
+      "fixture": "reconstruction-mutations",
+      "hold": "Cross-implementation agreement is held until an independent implementation runs the declared profile.",
+      "labels": [
+        "post:deployment:public-object-replay",
+        "subsec:deployment:conserved-standing-reproducibility",
+        "rem:deployment:completeness-safety-orthogonal",
+        "post:network:host-contract",
+        "rem:graph:authentication-realization-out-of-scope"
+      ],
+      "name": "replay",
+      "oracle": "A public-input verifier and independently implemented small-case mathematics, not a host-cache comparison.",
+      "property": "Every mismatch is attributed to a section and claim; valid envelope acceptance cannot stand for mathematical verification.",
+      "requirements": [
+        "replay"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Locked override, late announcement, exact literal mismatch and computed constant with an uncertified decimal.",
+      "decision": "dec:design:constants",
+      "fixture": "effective-edition-cases",
+      "hold": "Dependency versions and numerical constant witnesses require review before use.",
+      "labels": [
+        "subsec:deployment:transparency-of-protocol-formulas",
+        "rem:verification:numerical-rounding"
+      ],
+      "name": "constants",
+      "oracle": "Read-only correspondence against defining declarations and independently enclosed computed values.",
+      "property": "Effective-boundary lookup preserves historical values; locked constants cannot change through generic override carriers.",
+      "requirements": [
+        "constants"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "Change raw caches, terminal preferences and optional diagnostics while fixing the binding inputs.",
+      "decision": "dec:design:terminal-separation",
+      "fixture": "read-site-cases",
+      "hold": "Terminal engines, operational availability and external assurances remain outside the implemented surface.",
+      "labels": [
+        "def:network:object-taxonomy",
+        "rem:network:taxonomy-subtleties",
+        "post:transport:guild-grant"
+      ],
+      "name": "terminal-separation",
+      "oracle": "Dependency/read-site audit and differential package runs with all optional data varied.",
+      "property": "Binding fields and admission remain unchanged; required evidence stays mandatory even when no formula reads it.",
+      "requirements": [
+        "terminal-separation"
+      ],
+      "status": "planned; execution evidence pending"
+    },
+    {
+      "cases": "A negative cycle, parallel projections, tied products, zero determinant and a route revisiting the source.",
+      "decision": "dec:design:raw-readings",
+      "fixture": "simple-path-cases",
+      "hold": "Unresolved scalar comparisons return INDECISIVE; resource exhaustion never returns an exact-service result.",
+      "labels": [
+        "def:graph:raw-traversal-snapshot",
+        "alg:epoch:exact-signed-raw-traversal"
+      ],
+      "name": "raw-readings",
+      "oracle": "Exhaustive independent simple-path enumeration on tiny graphs with exact products and separate parity calculation.",
+      "property": "All and only bounded simple paths contribute to parity maxima; raw Self is derived, never appended as an act.",
+      "requirements": [
+        "raw-readings"
+      ],
+      "status": "planned; execution evidence pending"
+    }
+  ]
+}

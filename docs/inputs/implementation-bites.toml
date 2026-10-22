@@ -1,0 +1,68 @@
+namespace = "org.peer-network.design.implementation-bites"
+version = [1, 0, 0]
+
+[[rows]]
+ordinal = 1
+contracts = ["sig:design:records", "model:design:accepted-act", "alg:design:dependency-partition"]
+requirements = ["complete-acts", "final-membership"]
+evidence = "Freeze structural identity, public references and complete projection validation; demonstrate duplicate, missing co-leg and overlapping-closure cases through the records public surface."
+
+[[rows]]
+ordinal = 2
+contracts = ["model:design:burn", "model:design:declarations", "inv:design:charged-value", "sig:design:numeric-kernel"]
+requirements = ["burn-boundary", "ledger-vintages", "constants"]
+evidence = "Review numeric dependency and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases."
+
+[[rows]]
+ordinal = 3
+contracts = ["sig:design:graph", "alg:design:formation", "alg:design:geometry"]
+requirements = ["formation-title"]
+evidence = "Freeze family census, endpoint typing and tensor pipeline; compare exact geometry and independently enclosed nonlinear probes, rejecting partial formation."
+
+[[rows]]
+ordinal = 4
+contracts = ["alg:design:recognition", "alg:design:title", "inv:design:settlement-standing"]
+requirements = ["formation-title", "complete-acts"]
+evidence = "Publish complete-act and title outputs; pass cancellation ties, conflict consumption, prior-owner authorization and sentiment-independence fixtures."
+
+[[rows]]
+ordinal = 5
+contracts = ["alg:design:ledger", "alg:design:cells", "alg:design:recipients", "alg:design:base"]
+requirements = ["final-state", "ledger-vintages", "conservation"]
+evidence = "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, revocation ties and dependency-permutation invariance."
+
+[[rows]]
+ordinal = 6
+contracts = ["alg:design:fence", "alg:design:rungs", "alg:design:solve", "alg:design:residual"]
+requirements = ["certificate", "rung-verdicts", "conservation"]
+evidence = "Discharge backend soundness and deterministic refinement review; run dense independent cases, equal-width fences, residual containment and adversarial boundary verdicts."
+
+[[rows]]
+ordinal = 7
+contracts = ["alg:design:admission", "alg:design:schedules", "inv:design:atomic-admission"]
+requirements = ["admission", "policy-schedules", "final-membership"]
+evidence = "Require the published total calibration procedure; verify units, lead, exceptional widths, individual safety and atomic final-set rejection."
+
+[[rows]]
+ordinal = 8
+contracts = ["sig:design:host", "model:design:package", "proto:design:encoding"]
+requirements = ["publication", "public-inputs"]
+evidence = "Approve the encoding and infrastructure dependency proposal, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases."
+
+[[rows]]
+ordinal = 9
+contracts = ["sig:design:replay", "alg:design:reconstruction", "rule:design:comparison"]
+requirements = ["replay", "public-inputs"]
+evidence = "Reconstruct from public causes and attribute section mutations; compare independent small-case results and replay the declared refinement policy."
+
+[[rows]]
+ordinal = 10
+contracts = ["sig:design:readouts", "alg:design:raw-paths", "rule:design:raw-comparison"]
+requirements = ["raw-readings", "terminal-separation"]
+evidence = "Keep the service optional; pass exhaustive simple-path/parity comparisons and all limit refusals without changing standing or admission."
+
+[[rows]]
+ordinal = 11
+contracts = ["sig:design:verification", "ledger:design:evidence", "gate:design:implementation-evidence"]
+requirements = ["public-inputs", "burn-boundary", "complete-acts", "formation-title", "ledger-vintages", "final-state", "conservation", "certificate", "rung-verdicts", "final-membership", "admission", "policy-schedules", "publication", "replay", "constants", "terminal-separation", "raw-readings"]
+evidence = "Close the ledger only for executed, independently checked supported cases; audit and commission the actual surface, retaining every unresolved claim as a hold."

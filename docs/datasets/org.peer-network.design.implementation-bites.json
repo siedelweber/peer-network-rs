@@ -1,0 +1,174 @@
+{
+  "namespace": "org.peer-network.design.implementation-bites",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "contracts": [
+        "sig:design:records",
+        "model:design:accepted-act",
+        "alg:design:dependency-partition"
+      ],
+      "evidence": "Freeze structural identity, public references and complete projection validation; demonstrate duplicate, missing co-leg and overlapping-closure cases through the records public surface.",
+      "ordinal": 1,
+      "requirements": [
+        "complete-acts",
+        "final-membership"
+      ]
+    },
+    {
+      "contracts": [
+        "model:design:burn",
+        "model:design:declarations",
+        "inv:design:charged-value",
+        "sig:design:numeric-kernel"
+      ],
+      "evidence": "Review numeric dependency and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases.",
+      "ordinal": 2,
+      "requirements": [
+        "burn-boundary",
+        "ledger-vintages",
+        "constants"
+      ]
+    },
+    {
+      "contracts": [
+        "sig:design:graph",
+        "alg:design:formation",
+        "alg:design:geometry"
+      ],
+      "evidence": "Freeze family census, endpoint typing and tensor pipeline; compare exact geometry and independently enclosed nonlinear probes, rejecting partial formation.",
+      "ordinal": 3,
+      "requirements": [
+        "formation-title"
+      ]
+    },
+    {
+      "contracts": [
+        "alg:design:recognition",
+        "alg:design:title",
+        "inv:design:settlement-standing"
+      ],
+      "evidence": "Publish complete-act and title outputs; pass cancellation ties, conflict consumption, prior-owner authorization and sentiment-independence fixtures.",
+      "ordinal": 4,
+      "requirements": [
+        "formation-title",
+        "complete-acts"
+      ]
+    },
+    {
+      "contracts": [
+        "alg:design:ledger",
+        "alg:design:cells",
+        "alg:design:recipients",
+        "alg:design:base"
+      ],
+      "evidence": "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, revocation ties and dependency-permutation invariance.",
+      "ordinal": 5,
+      "requirements": [
+        "final-state",
+        "ledger-vintages",
+        "conservation"
+      ]
+    },
+    {
+      "contracts": [
+        "alg:design:fence",
+        "alg:design:rungs",
+        "alg:design:solve",
+        "alg:design:residual"
+      ],
+      "evidence": "Discharge backend soundness and deterministic refinement review; run dense independent cases, equal-width fences, residual containment and adversarial boundary verdicts.",
+      "ordinal": 6,
+      "requirements": [
+        "certificate",
+        "rung-verdicts",
+        "conservation"
+      ]
+    },
+    {
+      "contracts": [
+        "alg:design:admission",
+        "alg:design:schedules",
+        "inv:design:atomic-admission"
+      ],
+      "evidence": "Require the published total calibration procedure; verify units, lead, exceptional widths, individual safety and atomic final-set rejection.",
+      "ordinal": 7,
+      "requirements": [
+        "admission",
+        "policy-schedules",
+        "final-membership"
+      ]
+    },
+    {
+      "contracts": [
+        "sig:design:host",
+        "model:design:package",
+        "proto:design:encoding"
+      ],
+      "evidence": "Approve the encoding and infrastructure dependency proposal, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases.",
+      "ordinal": 8,
+      "requirements": [
+        "publication",
+        "public-inputs"
+      ]
+    },
+    {
+      "contracts": [
+        "sig:design:replay",
+        "alg:design:reconstruction",
+        "rule:design:comparison"
+      ],
+      "evidence": "Reconstruct from public causes and attribute section mutations; compare independent small-case results and replay the declared refinement policy.",
+      "ordinal": 9,
+      "requirements": [
+        "replay",
+        "public-inputs"
+      ]
+    },
+    {
+      "contracts": [
+        "sig:design:readouts",
+        "alg:design:raw-paths",
+        "rule:design:raw-comparison"
+      ],
+      "evidence": "Keep the service optional; pass exhaustive simple-path/parity comparisons and all limit refusals without changing standing or admission.",
+      "ordinal": 10,
+      "requirements": [
+        "raw-readings",
+        "terminal-separation"
+      ]
+    },
+    {
+      "contracts": [
+        "sig:design:verification",
+        "ledger:design:evidence",
+        "gate:design:implementation-evidence"
+      ],
+      "evidence": "Close the ledger only for executed, independently checked supported cases; audit and commission the actual surface, retaining every unresolved claim as a hold.",
+      "ordinal": 11,
+      "requirements": [
+        "public-inputs",
+        "burn-boundary",
+        "complete-acts",
+        "formation-title",
+        "ledger-vintages",
+        "final-state",
+        "conservation",
+        "certificate",
+        "rung-verdicts",
+        "final-membership",
+        "admission",
+        "policy-schedules",
+        "publication",
+        "replay",
+        "constants",
+        "terminal-separation",
+        "raw-readings"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+namespace = "org.peer-network.design.implementation-package"
+version = [1, 0, 0]
+
+[[rows]]
+key = 2
+name = "accepted-records"
+contents = "Ordered acts, complete edge union, prior-history references, disjoint dependent blocks, authoritative positions, realized size, closure cause and attested timestamp."
+
+[[rows]]
+key = 3
+name = "final-ledger"
+contents = "Settled burn view, residual balances, final action counts, increments and charged debit vintages, preserving units and effective boundaries."
+
+[[rows]]
+key = 4
+name = "semantic-projection"
+contents = "All accepted authored acts with cell membership, coefficient, recipient, revocation result, family domain profiles and sparse base allocation."
+
+[[rows]]
+key = 5
+name = "allocation-transport"
+contents = "Tilt shape and accepted rung, every attempted higher verdict, depth mass, source emission and the complete factorized emitted operator."
+
+[[rows]]
+key = 6
+name = "standing-admission"
+contents = "Rate hull, evaluated fence and its verdict, certified fixed-point enclosure, standing, action and epoch stamps, headroom and W1/W2 results."
+
+[[rows]]
+key = 7
+name = "closure-policy"
+contents = "Title certificate, recognition and consumption evidence, target size, duration bounds, led safety threshold, policy schedule and margin."
+
+[[rows]]
+key = 8
+name = "reproduction"
+contents = "Formula and constant editions, deployment declaration, numerical procedure, interval and residual witnesses, rounding disclosures and required burn audit evidence."
