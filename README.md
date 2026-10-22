@@ -45,3 +45,5 @@
 **Section (testing)** · `sec:foundation:area-testing` If testing claims fail, passing suites can conceal unevidenced requirements or unsupported contracts. (`rec:testing:decision`) ties authored test-site statements and meaningful glosses to requirement coverage, execution results and explicit holds.
 
 **Section (api)** · `sec:foundation:area-api` If the public API fails, callers can confuse a partial query with a published result, lose exact evidence bytes or repeat an uncertain submission. (`rec:api:decision`) separates typed CBOR requests from canonical documents and requires bounded, traced and claim-tested execution.
+
+**Section (devnet)** · `sec:foundation:area-devnet` If development-network contracts fail, grants can be mistaken for destruction, history can count a burn twice, or test evidence can be mistaken for production assurance. (`rec:devnet:decision`) fixes the test-chain realization and bounded faucet.

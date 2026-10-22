@@ -180,3 +180,12 @@ requirements = ["complete-acts", "admission", "final-membership", "final-state",
 bites = [8, 9, 10, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+
+[[rows]]
+name = "devnet-conformance"
+owner = "pn-host"
+claim = "claim:devnet:only-settled-destruction-feeds-test-burn"
+requirements = ["burn-boundary", "public-inputs", "ledger-vintages", "publication", "replay"]
+bites = [2, 5, 8, 9, 11]
+hold = "open:design:claim-evidence"
+status = "held; no test-site mint or execution yet"

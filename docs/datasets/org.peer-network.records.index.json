@@ -214,6 +214,21 @@
       "scope": "GraphQL queries and types carried as CBOR, exact document bytes, execution bounds and public API evidence.",
       "status": "accepted",
       "title": "Public API"
+    },
+    {
+      "depends_on": [
+        "rec:api:decision",
+        "rec:storage:decision",
+        "rec:observe:decision",
+        "rec:testing:decision",
+        "rec:compatibility:decision"
+      ],
+      "does_not_establish": "No chain, wallet, adapter or faucet is provisioned or implemented; test asset does not establish economic burn assurance.",
+      "label": "rec:devnet:decision",
+      "path": "adr/019-development-network.md",
+      "scope": "Elements signed development chain, test burn evidence, bounded faucet and history.",
+      "status": "accepted",
+      "title": "Development network"
     }
   ]
 }

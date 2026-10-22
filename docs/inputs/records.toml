@@ -162,3 +162,12 @@ title = "Public API"
 scope = "GraphQL queries and types carried as CBOR, exact document bytes, execution bounds and public API evidence."
 depends_on = ["rec:interchange:decision", "rec:xchg:design-record", "rec:compatibility:decision", "rec:storage:decision", "rec:observe:decision", "rec:testing:decision"]
 does_not_establish = "No server, schema artifact, dependency integration or executed API conformance is established; placement and dependency proposals require review."
+
+[[rows]]
+label = "rec:devnet:decision"
+path = "adr/019-development-network.md"
+status = "accepted"
+title = "Development network"
+scope = "Elements signed development chain, test burn evidence, bounded faucet and history."
+depends_on = ["rec:api:decision", "rec:storage:decision", "rec:observe:decision", "rec:testing:decision", "rec:compatibility:decision"]
+does_not_establish = "No chain, wallet, adapter or faucet is provisioned or implemented; test asset does not establish economic burn assurance."

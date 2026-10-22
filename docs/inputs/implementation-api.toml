@@ -40,3 +40,11 @@ contracts = ["sig:design:readouts", "alg:design:raw-paths", "rule:design:raw-com
 behavior = "Dispatch only when the optional exact raw service is enabled for the selected snapshot. Report unsupported when absent and preserve its explicit resource or comparison outcomes. Never substitute an approximate partial traversal for the exact service or feed terminal results into admission."
 requirements = ["raw-readings", "terminal-separation"]
 bite = 10
+
+[[rows]]
+name = "faucet"
+operation = "Grant development test asset"
+contracts = ["sig:devnet:faucet", "sig:design:devnet", "rule:devnet:grant-outcomes"]
+behavior = "Only in the declared development run, validate the recipient and exact amount, reserve the published quotas and funds, and return the durable grant state or its attributable refusal. Recover by run/request identifier; a grant is not a burn and supplies no standing."
+requirements = ["burn-boundary", "public-inputs"]
+bite = 8

@@ -1,0 +1,26 @@
+namespace = "org.peer-network.devnet.profile"
+version = [1, 0, 0]
+
+[[rows]]
+name = "testnet-signet"
+repository = "https://github.com/ElementsProject/elements"
+release_line = "29.4"
+initial_tag = "elements-29.4.1rc1"
+units_per_token = 100000000
+initial_units = 1000000000000
+unit_cost_test_units = 1
+settlement_blocks = 6
+snapshot_buffer_blocks = 7
+window_blocks = 10
+grant_units = 100000000
+recipient_grants_per_window = 1
+global_grants_per_window = 100
+fee_reserve_units = 100000000
+max_pending_grants = 100
+adapter_bite = 2
+ledger_bite = 5
+faucet_bite = 8
+replay_bite = 9
+corpus_bite = 11
+adapter_owner = "pn-host"
+status = "declared; implementation and chain evidence held"

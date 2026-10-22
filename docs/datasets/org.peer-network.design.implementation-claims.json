@@ -311,6 +311,27 @@
         "raw-readings"
       ],
       "status": "held; no test-site mint or execution yet"
+    },
+    {
+      "bites": [
+        2,
+        5,
+        8,
+        9,
+        11
+      ],
+      "claim": "claim:devnet:only-settled-destruction-feeds-test-burn",
+      "hold": "open:design:claim-evidence",
+      "name": "devnet-conformance",
+      "owner": "pn-host",
+      "requirements": [
+        "burn-boundary",
+        "public-inputs",
+        "ledger-vintages",
+        "publication",
+        "replay"
+      ],
+      "status": "held; no test-site mint or execution yet"
     }
   ]
 }
