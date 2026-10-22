@@ -16,7 +16,7 @@
       "fields": "canonical ordering, numeric representation, schema edition, rounding disclosure and replay comparison",
       "name": "publication-codec",
       "question": "Q04",
-      "settlement": "Closed deployment choice; this implementation proposes the CBOR profile, without calling it the paper codec."
+      "settlement": "Closed deployment choice; this implementation offers the accepted CBOR profile, without calling it the paper codec."
     },
     {
       "fields": "finite rung order, deterministic precision sequence, operation budgets, equality witnesses, residual stopping and each indecision outcome",

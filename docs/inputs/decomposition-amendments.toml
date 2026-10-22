@@ -1,0 +1,10 @@
+namespace = "org.peer-network.design.decomposition-amendments"
+version = [1, 0, 0]
+
+[[rows]]
+name = "publication"
+status = "accepted"
+encoding = "proto:design:encoding"
+host = "pn-host"
+infrastructure_dependencies = ["pn-interchange"]
+consumer = "pn-replay"

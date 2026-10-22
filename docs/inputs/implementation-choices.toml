@@ -11,7 +11,7 @@ settlement = "Closed deployment choice; a grid charge is usable only with its ow
 question = "Q04"
 name = "publication-codec"
 fields = "canonical ordering, numeric representation, schema edition, rounding disclosure and replay comparison"
-settlement = "Closed deployment choice; this implementation proposes the CBOR profile, without calling it the paper codec."
+settlement = "Closed deployment choice; this implementation offers the accepted CBOR profile, without calling it the paper codec."
 
 [[rows]]
 question = "Q05"

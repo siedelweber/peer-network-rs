@@ -109,7 +109,7 @@
         "model:design:package",
         "proto:design:encoding"
       ],
-      "evidence": "Approve the encoding and infrastructure dependency proposal, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases.",
+      "evidence": "Use the accepted encoding and infrastructure dependency, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases.",
       "ordinal": 8,
       "requirements": [
         "publication",

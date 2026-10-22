@@ -47,7 +47,7 @@ evidence = "Require the published total calibration procedure; verify units, lea
 ordinal = 8
 contracts = ["sig:design:host", "model:design:package", "proto:design:encoding"]
 requirements = ["publication", "public-inputs"]
-evidence = "Approve the encoding and infrastructure dependency proposal, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases."
+evidence = "Use the accepted encoding and infrastructure dependency, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases."
 
 [[rows]]
 ordinal = 9

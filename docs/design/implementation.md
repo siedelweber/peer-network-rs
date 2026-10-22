@@ -14,17 +14,17 @@
 
 ## Architecture and data flow · `sec:design:architecture`
 
-**Model (Crate graph)** · `model:design:crates` The adopted domain graph contains 7 crates, with the direct prerequisites below taken from (`conv:decomposition:dependencies`). Every name must occur in the concept responsibility map; this graph excludes infrastructure dependencies addressed by (`proposal:design:interchange-dependency`).
+**Model (Crate graph)** · `model:design:crates` The adopted domain graph contains 7 crates, with the direct prerequisites below taken from (`conv:decomposition:dependencies`). Every domain name must occur in the concept responsibility map; the infrastructure column includes the accepted amendment (`amend:decomposition:publication`).
 
-| Crate | Responsibility | Direct domain prerequisites |
-| --- | --- | --- |
-| pn-records | Immutable public inputs: identities, acts, ledger/burn data and declared constants | None |
-| pn-graph | Structural formation, shared graph algebra and title folds | pn-records |
-| pn-epoch | Compile and certify one final epoch state and its admission result | pn-records, pn-graph |
-| pn-readouts | Expose published standing/title and optional exact raw views to terminal consumers | pn-records, pn-graph, pn-epoch |
-| pn-host | Encode the complete seven-part public package | pn-records, pn-graph, pn-epoch |
-| pn-replay | Reconstruct and compare the binding package from public inputs | pn-records, pn-graph, pn-epoch, pn-host |
-| pn-verification | Maintain labelled integrated fixtures and independent public-surface checks | pn-records, pn-graph, pn-epoch, pn-readouts, pn-host, pn-replay |
+| Crate | Responsibility | Direct domain prerequisites | Direct infrastructure prerequisites |
+| --- | --- | --- | --- |
+| pn-records | Immutable public inputs: identities, acts, ledger/burn data and declared constants | None | None |
+| pn-graph | Structural formation, shared graph algebra and title folds | pn-records | None |
+| pn-epoch | Compile and certify one final epoch state and its admission result | pn-records, pn-graph | None |
+| pn-readouts | Expose published standing/title and optional exact raw views to terminal consumers | pn-records, pn-graph, pn-epoch | None |
+| pn-host | Encode the complete seven-part public package | pn-records, pn-graph, pn-epoch | pn-interchange |
+| pn-replay | Reconstruct and compare the binding package from public inputs | pn-records, pn-graph, pn-epoch, pn-host | None |
+| pn-verification | Maintain labelled integrated fixtures and independent public-surface checks | pn-records, pn-graph, pn-epoch, pn-readouts, pn-host, pn-replay | None |
 
 **Model (Boundary pipeline)** · `model:design:pipeline` Records enter graph formation and dependent-closure validation, then title reconstruction. The epoch compiler freezes the completed ledger, cells, recipients, base allocation and emission; certification selects a rung, the solve encloses its equilibrium, and admission checks the final state. Host publication encodes that state and its causes. Replay starts from those causes and reconstructs each stage. Readouts consume the immutable final snapshot. Verification consumes public surfaces as a development-only leaf (`dec:decomposition:crates`).
 
@@ -178,9 +178,9 @@
 
 **Rule (Version evolution)** · `rule:design:evolution` Namespace assignment and immutable CDDL theories obey (`sig:interchange:theory-assignment`) and (`inv:interchange:minor-inclusion`). A semantic change to binding fields or their comparison requires the appropriate major boundary; additive optional diagnostic fields cannot change their meaning. Decode and validate the full canonical document before full verification, even if envelope dispatch can decide routing from a prefix.
 
-**Proposal (Encoding reconciliation)** · `proposal:design:encoding` For review under (`open:vision:design-reconciliation`), replace the provisional UTF-8 JSON choice in (`dec:decomposition:encoding`) with (`proto:design:encoding`) for the external package. Deterministic ordering, exact values, complete references and explicit interval endpoints survive; fixed JSON field order does not. The reason is the binding CBOR data language of (`rec:interchange:decision`). Record 007 remains unchanged, and package implementation waits for acceptance of this proposal and the complete profile.
+**Proposal (Encoding reconciliation)** · `proposal:design:encoding` Accepted under (`amend:decomposition:publication`): (`dec:decomposition:encoding`) replaces its provisional UTF-8 JSON choice with (`proto:design:encoding`) for the external package, offered as the deployment's Q04 profile. Deterministic ordering, exact values, complete references and explicit interval endpoints survive; fixed JSON field order does not. The reason is the binding CBOR data language of (`rec:interchange:decision`). Record 007 carries the accepted choice; full byte-compatibility claims still require the complete profile (`open:design:publication-profile`).
 
-**Proposal (Interchange dependency)** · `proposal:design:interchange-dependency` For review, add pn-interchange as an infrastructure dependency of pn-host, with pn-replay consuming the host's public decoding/profile surface and its existing domain dependencies. This extends the direct dependency list in (`conv:decomposition:dependencies`) without changing domain crate boundaries or bite order. It avoids a competing canonical encoder and preserves the shared implementation required by (`spec:xchg:concept`). No new production dependency on pn-verification or pn-readouts follows.
+**Proposal (Interchange dependency)** · `proposal:design:interchange-dependency` Accepted under (`amend:decomposition:publication`): pn-interchange is an infrastructure dependency of pn-host, with pn-replay consuming the host's public decoding/profile surface and its existing domain dependencies. This extends the direct dependency list in (`conv:decomposition:dependencies`) without changing domain crate boundaries or bite order. It avoids a competing canonical encoder and preserves the shared implementation required by (`spec:xchg:concept`). No new production dependency on pn-verification or pn-readouts follows.
 
 **Signature (Replay)** · `sig:design:replay` pn-replay offers decode-publication, reconstruct-boundary and compare-publication. It consumes only public package bytes, declared profile/theory holdings and the disclosed history/evidence closure. It rebuilds formation, ledger, title, compiler, rung selection, standing and admission through public surfaces and returns attributable completeness, numerical and publication reports; it never accepts a host cache as a reconstruction.
 
@@ -192,7 +192,7 @@
 
 **Invariant (Identity and authentication)** · `inv:design:identity` Hashes may support a declared authentication realization subject to (`rec:identity:decision`), but do not replace structural identity, select among valid mathematical objects or substitute for replay. Canonical byte equality establishes equality of the encoded structure under the assigned profile; it does not establish authenticity, completeness or mathematical correctness.
 
-**Open Question (Publication profile completion)** · `open:design:publication-profile` Owner: the publication-bite maintainer and adopting deployment. Settlement requires accepted encoding/dependency proposals, allocated namespace, immutable complete CDDL theory, explicit nested field ordering and exact/equality/rounding vectors. The semantic package and initial numeric encoding are settled here; full byte-compatibility claims remain held until those artifacts exist. This is the deployment agreement still required by (`open:vision:publication-agreement`).
+**Open Question (Publication profile completion)** · `open:design:publication-profile` Owner: the publication-bite maintainer and adopting deployment. The encoding and infrastructure dependency are accepted in (`amend:decomposition:publication`). Settlement still requires allocated namespace, immutable complete CDDL theory, explicit nested field ordering and exact/equality/rounding vectors. The semantic package and initial numeric encoding are settled here; full byte-compatibility claims remain held until those artifacts exist. This is the deployment agreement still required by (`open:vision:publication-agreement`).
 
 ## Readouts and optional exact raw service · `sec:design:readouts`
 
@@ -212,7 +212,7 @@
 
 **Setting (Q03)** · `setup:design:charged-value` Declare charged representation, practical accuracy, units and certification for the value actually debited; historical vintage identity. Closed deployment choice; a grid charge is usable only with its own certification, never as an unproved replacement for the target.
 
-**Setting (Q04)** · `setup:design:publication-codec` Declare canonical ordering, numeric representation, schema edition, rounding disclosure and replay comparison. Closed deployment choice; this implementation proposes the CBOR profile, without calling it the paper codec.
+**Setting (Q04)** · `setup:design:publication-codec` Declare canonical ordering, numeric representation, schema edition, rounding disclosure and replay comparison. Closed deployment choice; this implementation offers the accepted CBOR profile, without calling it the paper codec.
 
 **Setting (Q05)** · `setup:design:certification` Declare finite rung order, deterministic precision sequence, operation budgets, equality witnesses, residual stopping and each indecision outcome. Closed deployment choice; choose the greatest rung this procedure proves passing, retaining higher INDECISIVE results.
 
@@ -276,7 +276,7 @@
 
 **Verification (policy-schedules)** · `verif:design:calibration-cases` Status: planned; execution evidence pending. Cases: Zero width, empty live domain, trigger/cap/escalation order, stale next-width bound and downward migration. Property: Lead, positive charge, step and hysteresis constraints and X1–X7 hold for the published charge, including exceptional cases. Independent oracle: Independent boundary-sequence model evaluating the declared procedure and explicit invariant predicates. Hold: Deployment must supply a total procedure and certified results; no paper-maintainer calibration hold remains. Traces to (`dec:design:policy-schedules`).
 
-**Verification (publication)** · `verif:design:canonical-package-cases` Status: planned; execution evidence pending. Cases: Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references. Property: Equivalent normalized structures encode identically; optional diagnostic data cannot change binding fields. Independent oracle: Independently authored byte vectors and a section-by-section semantic inventory. Hold: Namespace assignment, complete CDDL theory and CBOR dependency proposal require review before the publication bite. Traces to (`dec:design:publication`).
+**Verification (publication)** · `verif:design:canonical-package-cases` Status: planned; execution evidence pending. Cases: Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references. Property: Equivalent normalized structures encode identically; optional diagnostic data cannot change binding fields. Independent oracle: Independently authored byte vectors and a section-by-section semantic inventory. Hold: The encoding and infrastructure dependency are accepted; namespace assignment, complete CDDL theory and independent byte vectors remain required for canonical compatibility. Traces to (`dec:design:publication`).
 
 **Verification (replay)** · `verif:design:reconstruction-mutations` Status: planned; execution evidence pending. Cases: Mutate each package section, omit an act and alter a charged vintage, rung verdict or rounding disclosure. Property: Every mismatch is attributed to a section and claim; valid envelope acceptance cannot stand for mathematical verification. Independent oracle: A public-input verifier and independently implemented small-case mathematics, not a host-cache comparison. Hold: Cross-implementation agreement is held until an independent implementation runs the declared profile. Traces to (`dec:design:replay`).
 
@@ -320,7 +320,7 @@
 
 **Gate (Bite 7)** · `gate:design:bite-7` pn-epoch: final admission and schedules. Contracts: (`alg:design:admission`), (`alg:design:schedules`), (`inv:design:atomic-admission`). Evidence: Require the published total calibration procedure; verify units, lead, exceptional widths, individual safety and atomic final-set rejection. Requirement coverage: (`req:vision:admission`), (`req:vision:policy-schedules`), (`req:vision:final-membership`).
 
-**Gate (Bite 8)** · `gate:design:bite-8` pn-host: canonical seven-part package. Contracts: (`sig:design:host`), (`model:design:package`), (`proto:design:encoding`). Evidence: Approve the encoding and infrastructure dependency proposal, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases. Requirement coverage: (`req:vision:publication`), (`req:vision:public-inputs`).
+**Gate (Bite 8)** · `gate:design:bite-8` pn-host: canonical seven-part package. Contracts: (`sig:design:host`), (`model:design:package`), (`proto:design:encoding`). Evidence: Use the accepted encoding and infrastructure dependency, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases. Requirement coverage: (`req:vision:publication`), (`req:vision:public-inputs`).
 
 **Gate (Bite 9)** · `gate:design:bite-9` pn-replay. Contracts: (`sig:design:replay`), (`alg:design:reconstruction`), (`rule:design:comparison`). Evidence: Reconstruct from public causes and attribute section mutations; compare independent small-case results and replay the declared refinement policy. Requirement coverage: (`req:vision:replay`), (`req:vision:public-inputs`).
 
@@ -332,7 +332,7 @@
 
 ## Risks, reconciliation and open questions · `sec:design:questions`
 
-**Resolution (Design reconciliation)** · `resol:design:reconciliation` (`open:vision:design-reconciliation`) is settled as an explicit compatibility account: the semantic package remains complete, deployment choices remain declared, older calibration holds follow the released status, and external encoding follows interchange through the proposals (`proposal:design:encoding`) and (`proposal:design:interchange-dependency`). Acceptance of those proposals and completion of the byte profile remain owned review gates, not silently amended records.
+**Resolution (Design reconciliation)** · `resol:design:reconciliation` (`open:vision:design-reconciliation`) is settled as an explicit compatibility account: the semantic package remains complete, deployment choices remain declared, older calibration holds follow the released status, and external encoding follows interchange through the accepted proposals (`proposal:design:encoding`) and (`proposal:design:interchange-dependency`). Record 007 carries their acceptance in (`amend:decomposition:publication`); completion of the byte profile remains the publication-bite obligation (`open:design:publication-profile`).
 
 **Resolution (Evidence coverage)** · `resol:design:coverage` (`open:vision:evidence-coverage`) is settled at the planning level by (`ledger:design:evidence`): every concept requirement has fixtures, properties, an independent-oracle route and a stated hold. Execution coverage remains held until the corresponding bites populate that ledger with actual results; no domain fixture is represented as already passing.
 
@@ -342,7 +342,7 @@
 
 **Warning (Performance)** · `warn:design:performance` The response to (`warn:vision:performance`) is the declared workload, limit and measurement contract. Feasibility remains held because no domain implementation has measured those workloads. Owner: each bite's implementer, with the commissioning reviewer accepting the resulting deployment budget; settlement requires (`expt:design:measurement-gate`) without relaxing exact semantics.
 
-**Open Question (Proposal acceptance)** · `open:design:proposal-review` Owner: repository maintainers. Review the encoding replacement and pn-host infrastructure dependency against record 007 and the adopted interchange records. Acceptance records why the proposals preserve the semantic package and domain boundaries; rejection requires a compatible publication design before the package bite. No other crate boundary, dependency or bite-order change is proposed.
+**Open Question (Proposal acceptance)** · `open:design:proposal-review` Settled by the repository owner's acceptance, recorded with its reasons in (`amend:decomposition:publication`), (`dec:decomposition:encoding`) and (`conv:decomposition:dependencies`). Owner: repository maintainers. The encoding replacement and pn-host infrastructure dependency preserve the semantic package, domain boundaries and bite order; no proposal-acceptance hold remains. The separate profile-completion obligation is (`open:design:publication-profile`).
 
 **Open Question (Deployment instantiation)** · `open:design:deployment-profile` Owner: the deployment. Supply public effective choices for (`model:design:profile`), including a total calibration procedure and supported numerical policy, then demonstrate their constraints on exact boundary fixtures. Until then the design supports contracts and reference cases but cannot certify a concrete deployment. This preserves (`open:vision:deployment-profile`) and (`open:vision:operational-adoption`).
 
@@ -352,6 +352,6 @@
 
 **Gate (Before the first domain bite)** · `gate:design:domain-entry` Review and accept the concept-to-design coverage, domain contracts, frozen-state model, verdict algebra and scoped holds. Every requirement must have a realizing decision and evidence plan; every known unsupported choice must identify the dependent claim and owner. The first structural records bite may proceed with later numerical and publication evidence held only where its carriers preserve the contracts and make no unsupported claim.
 
-**Gate (Dependency readiness)** · `gate:design:dependency-readiness` Before the affected bite, resolve its deployment declaration, numeric backend or publication proposal gate and transcribe its independent fixtures. Do not lock a charged-value encoding without its interpretation and certification contract, execute calibration without a total published procedure, or claim external byte compatibility before the assigned theory and vectors exist. These are bite-specific prerequisites, not a reason to disguise unfinished evidence as complete.
+**Gate (Dependency readiness)** · `gate:design:dependency-readiness` Before the affected bite, resolve its deployment declaration, numeric backend or publication profile gate and transcribe its independent fixtures. Do not lock a charged-value encoding without its interpretation and certification contract, execute calibration without a total published procedure, or claim external byte compatibility before the assigned theory and vectors exist. These are bite-specific prerequisites, not a reason to disguise unfinished evidence as complete.
 
 **Gate (Document integrity)** · `gate:design:document-integrity` Render all inputs and documents to a fixed point, check every repository citation and environment kind, and pass the repository gate under (`gate:foundation:verification`). The coverage premises must fail on a missing requirement mapping or unrendered traced decision. These checks establish a reviewable design and its correspondence; the later implementation evidence gate remains (`gate:design:implementation-evidence`).

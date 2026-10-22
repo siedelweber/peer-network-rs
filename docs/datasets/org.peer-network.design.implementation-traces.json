@@ -227,7 +227,7 @@
       "cases": "Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references.",
       "decision": "dec:design:publication",
       "fixture": "canonical-package-cases",
-      "hold": "Namespace assignment, complete CDDL theory and CBOR dependency proposal require review before the publication bite.",
+      "hold": "The encoding and infrastructure dependency are accepted; namespace assignment, complete CDDL theory and independent byte vectors remain required for canonical compatibility.",
       "labels": [
         "post:network:host-contract",
         "post:deployment:canonical-standing-publication"

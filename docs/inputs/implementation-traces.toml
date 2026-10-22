@@ -154,7 +154,7 @@ fixture = "canonical-package-cases"
 cases = "Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references."
 property = "Equivalent normalized structures encode identically; optional diagnostic data cannot change binding fields."
 oracle = "Independently authored byte vectors and a section-by-section semantic inventory."
-hold = "Namespace assignment, complete CDDL theory and CBOR dependency proposal require review before the publication bite."
+hold = "The encoding and infrastructure dependency are accepted; namespace assignment, complete CDDL theory and independent byte vectors remain required for canonical compatibility."
 status = "planned; execution evidence pending"
 
 [[rows]]

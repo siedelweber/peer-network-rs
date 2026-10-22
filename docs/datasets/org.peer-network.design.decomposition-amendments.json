@@ -1,0 +1,20 @@
+{
+  "namespace": "org.peer-network.design.decomposition-amendments",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "consumer": "pn-replay",
+      "encoding": "proto:design:encoding",
+      "host": "pn-host",
+      "infrastructure_dependencies": [
+        "pn-interchange"
+      ],
+      "name": "publication",
+      "status": "accepted"
+    }
+  ]
+}
