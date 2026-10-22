@@ -169,6 +169,21 @@
       "scope": "PostgreSQL, connection configuration, effective history and persistence ownership.",
       "status": "accepted",
       "title": "Durable storage"
+    },
+    {
+      "depends_on": [
+        "rec:labels:decision",
+        "rec:output:decision",
+        "rec:lint:decision",
+        "rec:compatibility:decision",
+        "rec:storage:decision"
+      ],
+      "does_not_establish": "The discipline establishes no implemented instrumentation census, exporter, metric collection or operational assurance.",
+      "label": "rec:observe:decision",
+      "path": "adr/016-observability.md",
+      "scope": "Labelled tracing, metering, metrics, observation independence and their foundation gate.",
+      "status": "accepted",
+      "title": "Observability"
     }
   ]
 }

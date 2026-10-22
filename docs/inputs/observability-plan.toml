@@ -1,0 +1,7 @@
+namespace = "org.peer-network.observe.plan"
+version = [1, 0, 0]
+
+[[rows]]
+name = "foundation"
+packages = ["documents", "pn-interchange", "cli-common", "execwrap"]
+before_bite = 1

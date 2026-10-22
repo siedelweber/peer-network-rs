@@ -1,0 +1,44 @@
+namespace = "org.peer-network.design.implementation-observability"
+version = [1, 0, 0]
+
+[[rows]]
+name = "pn-records"
+labels = ["sig:design:records"]
+operations = "validate-record, resolve-public-reference, assemble-boundary-inputs, select-effective-declaration"
+metrics = "Counters: validated records, resolved references and refusals (count). Gauges: active validation and live carrier bytes. Histograms: records per boundary (count), input bytes and elapsed seconds."
+
+[[rows]]
+name = "pn-graph"
+labels = ["sig:design:graph", "alg:design:formation", "alg:design:dependency-partition", "alg:design:geometry", "alg:design:recognition", "alg:design:title", "sig:design:numeric-kernel", "alg:design:enclosures"]
+operations = "formation, complete projection, closure partition, geometry, recognition, title folds and numeric enclosure operations"
+metrics = "Counters: acts, projections, visited edges, numeric primitives and refinements (count). Gauges: live nodes/edges (count), scratch bytes and requested precision (bits). Histograms: closure sizes (count), enclosure work (count) and elapsed seconds."
+
+[[rows]]
+name = "pn-epoch"
+labels = ["sig:design:epoch", "alg:design:ledger", "alg:design:cells", "alg:design:recipients", "alg:design:base", "alg:design:emission-support", "alg:design:transport", "alg:design:fence", "alg:design:rungs", "alg:design:solve", "alg:design:residual", "alg:design:admission", "alg:design:schedules"]
+operations = "compile ledger/cells/recipients/base, certify fence, search rungs, solve, check residual, admission and schedule validation"
+metrics = "Counters: compiled acts, sparse products, rung attempts, iterations, refinements and outcomes (count). Gauges: active solves, support nonzeros (count) and scratch bytes. Histograms: primitive work (count), precision (bits) and elapsed seconds. Deterministic budget counters are mirrored one way."
+
+[[rows]]
+name = "pn-host"
+labels = ["sig:design:host", "sig:design:storage", "proto:design:encoding"]
+operations = "assemble/validate/encode/decode publication and, under the storage-placement proposal, open-store, load-boundary, append-effective-successor, commit-admitted-epoch"
+metrics = "Counters: encoded/decoded bytes, queries, successor attempts, commits, rollbacks, retries and refusals (count). Gauges: active transactions and queue depth (count). Histograms: package bytes, query/transaction elapsed seconds. No database connection fields, statement text or parameters."
+
+[[rows]]
+name = "pn-replay"
+labels = ["sig:design:replay", "alg:design:reconstruction", "rule:design:comparison"]
+operations = "decode input, reconstruct each stage and compare canonical/semantic evidence"
+metrics = "Counters: reconstructed sections, compared fields and mismatches by bounded class (count), input bytes. Gauges: active replays (count) and working bytes. Histograms: reconstruction work (count) and elapsed seconds; no binding comparison of observation output."
+
+[[rows]]
+name = "pn-readouts"
+labels = ["sig:design:readouts", "alg:design:raw-paths", "rule:design:raw-comparison"]
+operations = "enumerate raw path prefixes, emit readouts and report limit refusals"
+metrics = "Counters: visited prefixes, paths, emitted samples and limit outcomes (count). Gauges: active traversals (count) and working bytes. Histograms: path lengths (edges), traversal work (count) and elapsed seconds."
+
+[[rows]]
+name = "pn-verification"
+labels = ["sig:design:verification", "ledger:design:evidence"]
+operations = "execute fixtures, independent oracles, mutation checks and evidence classification"
+metrics = "Counters: executed cases and outcomes (count), never a passed count for skipped evidence. Gauges: active cases (count) and known fixture bytes. Histograms: case work (count) and elapsed seconds; bounded case classes, not arbitrary fixture identifiers, are metric attributes."

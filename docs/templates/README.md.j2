@@ -39,3 +39,5 @@
 **Section (compatibility)** · `sec:foundation:area-compatibility` If compatibility policy fails, accidental early interfaces become unsupported promises or assigned interchange laws are weakened by a release policy. The decision (`rec:compatibility:decision`) governs all repository surfaces through (`rule:compatibility:pre-one`).
 
 **Section (storage)** · `sec:foundation:area-storage` If storage fails, a later rule changes an earlier verdict or a partial write masquerades as durable admission. The decision (`rec:storage:decision`) fixes PostgreSQL and effective history separately from deployment operations; stored representations follow (`rule:compatibility:pre-one`).
+
+**Section (observe)** · `sec:foundation:area-observe` If observability fails, work and resource loss become invisible or diagnostics change a binding result. (`rec:observe:decision`) requires labelled spans, metering, metrics and observation independence before the first domain crate; trace and metric names follow (`rule:compatibility:pre-one`).

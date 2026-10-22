@@ -11,3 +11,5 @@
 **Gate (Verification)** · `gate:output:verification` Subprocess tests verify JSON help, version and usage failures, terminal refusal before mutation, and a panic with empty stdout and one JSON diagnostic. Clippy denies uncontrolled printing and process termination.
 
 **Amendment (Release support)** · `amend:output:pre-one-004` The stable branches in (`cor:output:tradeoffs`) are the current command contract. Across pre-1.0 repository releases, commands and their JSON surfaces follow (`rule:compatibility:pre-one`); this record creates no deprecation or migration path.
+
+**Amendment (Labelled observation)** · `amend:output:observability` The JSON tracing initialized under (`dec:output:policy`) carries the labelled operation, metering and metric-summary contract of (`rec:observe:decision`). It remains on stderr; result stdout, exit classes, filter precedence and secret redaction remain the command contract. Bootstrap and early help/refusal paths need the bounded observation treatment in (`proposal:observe:enforcement`); the current initializer alone establishes no complete instrumentation claim. Trace and metric names follow (`rule:compatibility:pre-one`).

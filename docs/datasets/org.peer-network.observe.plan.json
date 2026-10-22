@@ -1,0 +1,20 @@
+{
+  "namespace": "org.peer-network.observe.plan",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "before_bite": 1,
+      "name": "foundation",
+      "packages": [
+        "documents",
+        "pn-interchange",
+        "cli-common",
+        "execwrap"
+      ]
+    }
+  ]
+}

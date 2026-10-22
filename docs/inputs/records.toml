@@ -135,3 +135,12 @@ title = "Durable storage"
 scope = "PostgreSQL, connection configuration, effective history and persistence ownership."
 depends_on = ["rec:compatibility:decision"]
 does_not_establish = "The storage contract establishes no provisioned database, schema implementation or operational assurance."
+
+[[rows]]
+label = "rec:observe:decision"
+path = "adr/016-observability.md"
+status = "accepted"
+title = "Observability"
+scope = "Labelled tracing, metering, metrics, observation independence and their foundation gate."
+depends_on = ["rec:labels:decision", "rec:output:decision", "rec:lint:decision", "rec:compatibility:decision", "rec:storage:decision"]
+does_not_establish = "The discipline establishes no implemented instrumentation census, exporter, metric collection or operational assurance."

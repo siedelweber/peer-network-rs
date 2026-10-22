@@ -19,3 +19,4 @@
 | Toolchain and build profile | accepted | (`rec:toolchain:decision`) |
 | Forward-only development | accepted | (`rec:compatibility:decision`) |
 | Durable storage | accepted | (`rec:storage:decision`) |
+| Observability | accepted | (`rec:observe:decision`) |

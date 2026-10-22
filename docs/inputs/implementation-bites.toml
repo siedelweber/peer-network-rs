@@ -3,9 +3,9 @@ version = [1, 0, 0]
 
 [[rows]]
 ordinal = 1
-contracts = ["sig:design:records", "model:design:accepted-act", "alg:design:dependency-partition"]
+contracts = ["gate:design:observability-foundation", "sig:design:records", "model:design:accepted-act", "alg:design:dependency-partition"]
 requirements = ["complete-acts", "final-membership"]
-evidence = "Freeze structural identity, public references and complete projection validation; demonstrate duplicate, missing co-leg and overlapping-closure cases through the records public surface."
+evidence = "Require the completed foundation observability gate and extend its census and runtime evidence from the first domain entry point. Freeze structural identity, public references and complete projection validation; demonstrate duplicate, missing co-leg and overlapping-closure cases through the records public surface."
 
 [[rows]]
 ordinal = 2
