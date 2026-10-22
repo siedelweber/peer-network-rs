@@ -1,0 +1,25 @@
+{
+  "namespace": "org.peer-network.api.plan",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "core_bite": 8,
+      "corpus_bite": 11,
+      "dependencies": [
+        "pn-host",
+        "pn-records",
+        "pn-interchange"
+      ],
+      "name": "placement",
+      "optional_dependency": "pn-readouts",
+      "package": "pn-api",
+      "raw_bite": 10,
+      "replay_bite": 9,
+      "status": "proposed"
+    }
+  ]
+}

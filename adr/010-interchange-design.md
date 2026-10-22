@@ -1046,3 +1046,5 @@ The slice boundaries are the commit boundaries, since each slice leaves `bash ci
 - every citation in this document resolves — checked by the deployed linter in the repository gate.
 
 **Amendment (Release support)** · `amend:xchg:pre-one-010` The implementation and source-interface choices of (`spec:xchg:design`) follow (`rule:compatibility:pre-one`). Its within-major acceptance laws remain unchanged; an implementation may drop support for an earlier assigned major without revising that theory (`conv:compatibility:interchange`).
+
+**Amendment (API codec separation)** · `amend:xchg:api-codecs` The invocation messages of (`rec:api:decision`) use a separate bounded reader and writer under (`amend:interchange:api-messages`). pn-interchange continues to reject noncanonical document bytes, and (`ansatz:xchg:canonicalizing-decoder`) remains rejected. The API hands embedded document bytes unchanged to the canonical consumer and uses pn-interchange when it emits a new canonical artifact. No JSON or generic serde conversion becomes the authoritative document representation. This extends the integration boundary without changing the value model or acceptance calculus.

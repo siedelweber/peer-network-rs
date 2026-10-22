@@ -198,6 +198,22 @@
       "scope": "Test-site claims, meaningful glosses, owner registers and requirement-to-execution evidence.",
       "status": "accepted",
       "title": "Claim-based testing"
+    },
+    {
+      "depends_on": [
+        "rec:interchange:decision",
+        "rec:xchg:design-record",
+        "rec:compatibility:decision",
+        "rec:storage:decision",
+        "rec:observe:decision",
+        "rec:testing:decision"
+      ],
+      "does_not_establish": "No server, schema artifact, dependency integration or executed API conformance is established; placement and dependency proposals require review.",
+      "label": "rec:api:decision",
+      "path": "adr/018-public-api.md",
+      "scope": "GraphQL queries and types carried as CBOR, exact document bytes, execution bounds and public API evidence.",
+      "status": "accepted",
+      "title": "Public API"
     }
   ]
 }

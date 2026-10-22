@@ -171,3 +171,12 @@ requirements = ["ledger-vintages", "constants", "final-state", "publication", "p
 bites = [2, 5, 8, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+
+[[rows]]
+name = "api-conformance"
+owner = "pn-api"
+claim = "claim:api:typed-requests-preserve-domain-evidence"
+requirements = ["complete-acts", "admission", "final-membership", "final-state", "formation-title", "terminal-separation", "publication", "public-inputs", "replay", "raw-readings"]
+bites = [8, 9, 10, 11]
+hold = "open:design:claim-evidence"
+status = "held; no test-site mint or execution yet"

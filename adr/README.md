@@ -21,3 +21,4 @@
 | Durable storage | accepted | (`rec:storage:decision`) |
 | Observability | accepted | (`rec:observe:decision`) |
 | Claim-based testing | accepted | (`rec:testing:decision`) |
+| Public API | accepted | (`rec:api:decision`) |

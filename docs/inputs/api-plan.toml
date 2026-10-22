@@ -1,0 +1,13 @@
+namespace = "org.peer-network.api.plan"
+version = [1, 0, 0]
+
+[[rows]]
+name = "placement"
+status = "proposed"
+package = "pn-api"
+dependencies = ["pn-host", "pn-records", "pn-interchange"]
+optional_dependency = "pn-readouts"
+core_bite = 8
+replay_bite = 9
+raw_bite = 10
+corpus_bite = 11

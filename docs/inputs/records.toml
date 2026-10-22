@@ -153,3 +153,12 @@ title = "Claim-based testing"
 scope = "Test-site claims, meaningful glosses, owner registers and requirement-to-execution evidence."
 depends_on = ["rec:labels:decision", "rec:lint:decision", "rec:compatibility:decision", "rec:observe:decision"]
 does_not_establish = "The record establishes neither executed domain evidence nor an implemented coverage query; those remain bite gates."
+
+[[rows]]
+label = "rec:api:decision"
+path = "adr/018-public-api.md"
+status = "accepted"
+title = "Public API"
+scope = "GraphQL queries and types carried as CBOR, exact document bytes, execution bounds and public API evidence."
+depends_on = ["rec:interchange:decision", "rec:xchg:design-record", "rec:compatibility:decision", "rec:storage:decision", "rec:observe:decision", "rec:testing:decision"]
+does_not_establish = "No server, schema artifact, dependency integration or executed API conformance is established; placement and dependency proposals require review."

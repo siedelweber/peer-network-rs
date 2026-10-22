@@ -286,6 +286,31 @@
         "public-inputs"
       ],
       "status": "held; no test-site mint or execution yet"
+    },
+    {
+      "bites": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "claim": "claim:api:typed-requests-preserve-domain-evidence",
+      "hold": "open:design:claim-evidence",
+      "name": "api-conformance",
+      "owner": "pn-api",
+      "requirements": [
+        "complete-acts",
+        "admission",
+        "final-membership",
+        "final-state",
+        "formation-title",
+        "terminal-separation",
+        "publication",
+        "public-inputs",
+        "replay",
+        "raw-readings"
+      ],
+      "status": "held; no test-site mint or execution yet"
     }
   ]
 }

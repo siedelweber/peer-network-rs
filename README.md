@@ -43,3 +43,5 @@
 **Section (observe)** · `sec:foundation:area-observe` If observability fails, work and resource loss become invisible or diagnostics change a binding result. (`rec:observe:decision`) requires labelled spans, metering, metrics and observation independence before the first domain crate; trace and metric names follow (`rule:compatibility:pre-one`).
 
 **Section (testing)** · `sec:foundation:area-testing` If testing claims fail, passing suites can conceal unevidenced requirements or unsupported contracts. (`rec:testing:decision`) ties authored test-site statements and meaningful glosses to requirement coverage, execution results and explicit holds.
+
+**Section (api)** · `sec:foundation:area-api` If the public API fails, callers can confuse a partial query with a published result, lose exact evidence bytes or repeat an uncertain submission. (`rec:api:decision`) separates typed CBOR requests from canonical documents and requires bounded, traced and claim-tested execution.

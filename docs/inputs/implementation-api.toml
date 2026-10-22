@@ -1,0 +1,42 @@
+namespace = "org.peer-network.design.implementation-api"
+version = [1, 0, 0]
+
+[[rows]]
+name = "submit-act"
+operation = "Submit a proposed act"
+contracts = ["sig:design:records", "alg:design:admission", "sig:design:host"]
+behavior = "Validate the typed act and its public authentication evidence, preserve its structural identifier and record an atomic receipt. A receipt is not final membership, admission or publication; return its durable status and permit status recovery by act identifier."
+requirements = ["complete-acts", "admission", "final-membership"]
+bite = 8
+
+[[rows]]
+name = "read-published"
+operation = "Read published standing and title"
+contracts = ["sig:design:storage", "sig:design:host", "sig:design:readouts"]
+behavior = "Select an admitted published epoch at an explicit boundary and return its standing or title projection with epoch, declaration and publication references. Do not recompute with current declarations or expose a candidate as published."
+requirements = ["final-state", "formation-title", "terminal-separation"]
+bite = 8
+
+[[rows]]
+name = "fetch-publication"
+operation = "Fetch a publication package"
+contracts = ["sig:design:host", "proto:design:encoding"]
+behavior = "Return the entire stored canonical package as an exact byte string, together with its public reference. Refuse an unsupported size or unavailable package; field selection never edits the package bytes."
+requirements = ["publication"]
+bite = 8
+
+[[rows]]
+name = "replay-inputs"
+operation = "Fetch replay inputs"
+contracts = ["sig:design:host", "sig:design:replay", "alg:design:reconstruction"]
+behavior = "Return the disclosed causes, declaration editions and exact evidence documents named by a package. A bounded page states its scope and continuation; only the verifier can establish complete reconstruction. The replay crate consumes these public bytes without server-side replay authority."
+requirements = ["public-inputs", "replay"]
+bite = 9
+
+[[rows]]
+name = "raw-service"
+operation = "Read optional raw results"
+contracts = ["sig:design:readouts", "alg:design:raw-paths", "rule:design:raw-comparison"]
+behavior = "Dispatch only when the optional exact raw service is enabled for the selected snapshot. Report unsupported when absent and preserve its explicit resource or comparison outcomes. Never substitute an approximate partial traversal for the exact service or feed terminal results into admission."
+requirements = ["raw-readings", "terminal-separation"]
+bite = 10
