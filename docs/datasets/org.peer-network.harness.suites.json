@@ -43,7 +43,7 @@
       "name": "numeric"
     },
     {
-      "contract": "individual/final-set safety and total calibration",
+      "contract": "individual/final-set safety, fixed floor and wall-controller cases",
       "first_bite": 7,
       "implementations": "pure",
       "name": "admission"

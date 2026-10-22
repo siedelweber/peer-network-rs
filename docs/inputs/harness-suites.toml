@@ -41,7 +41,7 @@ contract = "representation, certified bounds and deterministic refinement"
 name = "admission"
 first_bite = 7
 implementations = "pure"
-contract = "individual/final-set safety and total calibration"
+contract = "individual/final-set safety, fixed floor and wall-controller cases"
 
 [[rows]]
 name = "publication"

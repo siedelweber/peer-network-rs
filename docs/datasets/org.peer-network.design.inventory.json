@@ -7770,7 +7770,7 @@
       "kind": "function",
       "label": "def:epoch:safety-floor",
       "label_source": "explicit",
-      "statement": "The reduced wall is the primary clamp position, fixed above its declared structural floor; its burn image is the action price."
+      "statement": "The reduced wall is the primary clamp position; its declared structural floor is fixed, and the wall moves at or above it. Its burn image is the action price."
     },
     {
       "added_at": "network-v0.26.3",
@@ -12319,34 +12319,34 @@
       "added_at": "network-v0.26.3",
       "chapter": "D Dynamics",
       "citable": true,
-      "crate": "pn-verification",
+      "crate": "none",
       "environment": "remark",
       "kind": "none",
       "label": "rem:dynamics:coordinate-realization",
       "label_source": "explicit",
-      "statement": "Track coordinate realization as a separately addressable remark."
+      "statement": "Record the quarantined, unproved selected-path oscillator claim with no asserted realization for the conserved map; a realization requires a separate derivation and this claim supplies no constructive witness."
     },
     {
       "added_at": "network-v0.26.3",
       "chapter": "D Dynamics",
       "citable": true,
-      "crate": "pn-verification",
+      "crate": "none",
       "environment": "equation",
-      "kind": "function",
+      "kind": "none",
       "label": "eq:dynamics:coordinate-realization",
       "label_source": "explicit",
-      "statement": "Retain the displayed apportionment construction without the withdrawn coordinate-realization theorem or an outer-bound claim."
+      "statement": "Record the unproved Lyapunov-coefficient equation of the quarantined selected-path claim, with no asserted realization for the conserved map."
     },
     {
       "added_at": "network-v0.26.3",
       "chapter": "D Dynamics",
       "citable": true,
-      "crate": "pn-verification",
+      "crate": "none",
       "environment": "equation",
-      "kind": "function",
+      "kind": "none",
       "label": "eq:dynamics:c-gppp",
       "label_source": "explicit",
-      "statement": "Inventory the printed cubic-derivative coefficient under its motif premises."
+      "statement": "Record the proposed cubic-derivative coefficient of the quarantined selected-path claim; neither the coefficient nor its claimed generic nonvanishing is proved, and no conserved-map realization is asserted."
     },
     {
       "added_at": "network-v0.26.3",
