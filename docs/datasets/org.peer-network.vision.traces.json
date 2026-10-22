@@ -30,9 +30,12 @@
     },
     {
       "labels": [
-        "post:nodes:canonical-tensor-pipeline",
+        "def:graph:identifier-algebra",
+        "def:network:admission-closure",
+        "def:graph:act-edge-projection",
         "thm:graph:epoch-title-fold",
-        "post:epoch:settlement-standing-title-coupling"
+        "post:epoch:settlement-standing-title-coupling",
+        "def:graph:settlement-recognition"
       ],
       "name": "formation-title"
     },
@@ -55,7 +58,9 @@
     {
       "labels": [
         "def:epoch:conserved-standing-equilibrium",
-        "ver:standing:conservation"
+        "post:epoch:standing-pair-mass-conservation",
+        "rem:epoch:transport-is-not-ledger-transfer",
+        "rem:comparator:conserved-allocation-scope"
       ],
       "name": "conservation"
     },
@@ -73,6 +78,14 @@
         "rem:epoch:certificate-failure-versus-indecisive-enclosure"
       ],
       "name": "rung-verdicts"
+    },
+    {
+      "labels": [
+        "def:network:write",
+        "post:epoch:final-act-sequence-closure",
+        "post:network:host-contract"
+      ],
+      "name": "final-membership"
     },
     {
       "labels": [
@@ -101,7 +114,9 @@
       "labels": [
         "post:deployment:public-object-replay",
         "subsec:deployment:conserved-standing-reproducibility",
-        "rem:deployment:completeness-safety-orthogonal"
+        "rem:deployment:completeness-safety-orthogonal",
+        "post:network:host-contract",
+        "rem:graph:authentication-realization-out-of-scope"
       ],
       "name": "replay"
     },

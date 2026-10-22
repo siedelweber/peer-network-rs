@@ -8,5 +8,12 @@ rows = [
   { name = "epoch", bites = [5, 6, 7] },
   { name = "publication", bites = [8, 9] },
   { name = "closure", bites = [10, 11] },
-  { name = "deployment-choices", questions = ["Q03", "Q04", "Q05", "Q15"] },
+  { name = "deployment-choices", choices = [
+    { question = "Q03", topic = "charged-value representation and accuracy", class = "OWNER-CALL" },
+    { question = "Q04", topic = "byte serialization", class = "OWNER-CALL" },
+    { question = "Q05", topic = "certification procedure and refinement policy", class = "OWNER-CALL" },
+    { question = "Q07", topic = "authentication realization subject to the binding formation properties", class = "ANSWERED" },
+    { question = "Q15", topic = "declared domain profiles", class = "OWNER-CALL" },
+  ] },
+  { name = "calibration-hold", question = "Q20", class = "DEFECT" },
 ]

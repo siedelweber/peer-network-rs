@@ -55,13 +55,39 @@
       "name": "closure"
     },
     {
-      "name": "deployment-choices",
-      "questions": [
-        "Q03",
-        "Q04",
-        "Q05",
-        "Q15"
-      ]
+      "choices": [
+        {
+          "class": "OWNER-CALL",
+          "question": "Q03",
+          "topic": "charged-value representation and accuracy"
+        },
+        {
+          "class": "OWNER-CALL",
+          "question": "Q04",
+          "topic": "byte serialization"
+        },
+        {
+          "class": "OWNER-CALL",
+          "question": "Q05",
+          "topic": "certification procedure and refinement policy"
+        },
+        {
+          "class": "ANSWERED",
+          "question": "Q07",
+          "topic": "authentication realization subject to the binding formation properties"
+        },
+        {
+          "class": "OWNER-CALL",
+          "question": "Q15",
+          "topic": "declared domain profiles"
+        }
+      ],
+      "name": "deployment-choices"
+    },
+    {
+      "class": "DEFECT",
+      "name": "calibration-hold",
+      "question": "Q20"
     }
   ]
 }
