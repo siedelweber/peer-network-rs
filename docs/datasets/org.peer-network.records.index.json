@@ -184,6 +184,20 @@
       "scope": "Labelled tracing, metering, metrics, observation independence and their foundation gate.",
       "status": "accepted",
       "title": "Observability"
+    },
+    {
+      "depends_on": [
+        "rec:labels:decision",
+        "rec:lint:decision",
+        "rec:compatibility:decision",
+        "rec:observe:decision"
+      ],
+      "does_not_establish": "The record establishes neither executed domain evidence nor an implemented coverage query; those remain bite gates.",
+      "label": "rec:testing:decision",
+      "path": "adr/017-claim-based-testing.md",
+      "scope": "Test-site claims, meaningful glosses, owner registers and requirement-to-execution evidence.",
+      "status": "accepted",
+      "title": "Claim-based testing"
     }
   ]
 }

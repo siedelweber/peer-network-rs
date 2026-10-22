@@ -1,0 +1,29 @@
+{
+  "namespace": "org.peer-network.testing.plan",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "before_bite": 1,
+      "name": "foundation",
+      "observation": "F-116",
+      "owners": [
+        "DOCUMENTS",
+        "INTERCHANGE",
+        "CLICOMMON",
+        "EXECWRAP"
+      ],
+      "packages": [
+        "documents",
+        "pn-interchange",
+        "cli-common",
+        "execwrap"
+      ],
+      "reported_glosses": 121,
+      "status": "held"
+    }
+  ]
+}

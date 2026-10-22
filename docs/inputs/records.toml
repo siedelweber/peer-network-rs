@@ -144,3 +144,12 @@ title = "Observability"
 scope = "Labelled tracing, metering, metrics, observation independence and their foundation gate."
 depends_on = ["rec:labels:decision", "rec:output:decision", "rec:lint:decision", "rec:compatibility:decision", "rec:storage:decision"]
 does_not_establish = "The discipline establishes no implemented instrumentation census, exporter, metric collection or operational assurance."
+
+[[rows]]
+label = "rec:testing:decision"
+path = "adr/017-claim-based-testing.md"
+status = "accepted"
+title = "Claim-based testing"
+scope = "Test-site claims, meaningful glosses, owner registers and requirement-to-execution evidence."
+depends_on = ["rec:labels:decision", "rec:lint:decision", "rec:compatibility:decision", "rec:observe:decision"]
+does_not_establish = "The record establishes neither executed domain evidence nor an implemented coverage query; those remain bite gates."

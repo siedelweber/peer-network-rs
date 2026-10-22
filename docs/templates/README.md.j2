@@ -41,3 +41,5 @@
 **Section (storage)** · `sec:foundation:area-storage` If storage fails, a later rule changes an earlier verdict or a partial write masquerades as durable admission. The decision (`rec:storage:decision`) fixes PostgreSQL and effective history separately from deployment operations; stored representations follow (`rule:compatibility:pre-one`).
 
 **Section (observe)** · `sec:foundation:area-observe` If observability fails, work and resource loss become invisible or diagnostics change a binding result. (`rec:observe:decision`) requires labelled spans, metering, metrics and observation independence before the first domain crate; trace and metric names follow (`rule:compatibility:pre-one`).
+
+**Section (testing)** · `sec:foundation:area-testing` If testing claims fail, passing suites can conceal unevidenced requirements or unsupported contracts. (`rec:testing:decision`) ties authored test-site statements and meaningful glosses to requirement coverage, execution results and explicit holds.

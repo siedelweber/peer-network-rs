@@ -20,3 +20,4 @@
 | Forward-only development | accepted | (`rec:compatibility:decision`) |
 | Durable storage | accepted | (`rec:storage:decision`) |
 | Observability | accepted | (`rec:observe:decision`) |
+| Claim-based testing | accepted | (`rec:testing:decision`) |
