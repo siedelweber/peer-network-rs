@@ -16,7 +16,7 @@
 | pn-replay | Reconstruct and compare the binding package from public inputs | ``subsec:deployment:conserved-standing-reproducibility`` ``post:deployment:public-object-replay`` |
 | pn-verification | Maintain labelled integrated fixtures and independent public-surface checks | ``rem:verification:certificate-reproducibility`` |
 
-**Convention (Dependency graph)** · `conv:decomposition:dependencies` Each indented child is a direct dependency of its parent; the infrastructure edge follows (`amend:decomposition:publication`). The verification crate is a development-only consumer; its integrated fixtures never become a production dependency. Optional raw data may travel as nonbinding package data without making host encoding depend on the raw computation engine.
+**Convention (Dependency graph)** · `conv:decomposition:dependencies` Each indented child is a direct dependency of its parent; the infrastructure edge follows (`amend:decomposition:publication`). The verification crate is a development-only consumer; its integrated fixtures never become a production dependency. Optional raw data may travel as nonbinding package data without making host encoding depend on the raw computation engine. The additional infrastructure dependencies and outer packages below follow (`amend:decomposition:infrastructure`); optional development edges are absent from non-development builds.
 
 - pn-records
 - pn-graph
@@ -33,6 +33,8 @@
   - pn-graph
   - pn-epoch
   - pn-interchange (infrastructure)
+  - reviewed PostgreSQL client (infrastructure)
+  - pn-wallet (optional development-network feature) (infrastructure)
 - pn-replay
   - pn-records
   - pn-graph
@@ -45,6 +47,22 @@
   - pn-readouts
   - pn-host
   - pn-replay
+- pn
+  - pn-host
+  - pn-records
+  - pn-interchange
+  - pn-readouts (optional)
+- pn-wallet
+  - reviewed Elements RPC client
+- pn-client
+  - pn-wallet
+  - pn-records
+  - pn-interchange
+- pn-command
+  - pn-client
+  - pn
+  - cli-common
+- pn-testkit
 
 **Decision (Numeric model)** · `dec:decomposition:numbers` Counts, identities, multiplicities and order positions remain exact discrete data. Declared finite ledger inputs and rational constants retain exact values; graph transcendental kernels and epoch solvers return outward enclosures. Every binding comparison is decided by an enclosure, never by an approximate iterate. The certificate encloses the evaluated width fence and its residual bound, rather than replacing that fence with a tighter shape-sensitive object. A threshold-straddling interval requires refinement or rejection under a specified indecision rule. Exact encoding of real-valued debits, equality witnesses and the numeric backend remain held until their contracts are settled; an interval is not silently rounded into a ledger value.
 
@@ -78,4 +96,24 @@
 
 **Gate (Correspondence)** · `gate:decomposition:correspondence` The gate checks current input projections and rendered outputs, inventory uniqueness and totals, crate and bite structure, and label presentation under the declared import state. The paper registry uses the project-neutral namespace `class.linter.labels`, but its loader is not deployed yet; paper labels are exhibited, and inventory eligibility remains data for a compatible export format. No paper citation resolution is claimed. A document fixed point and a clean linter verdict establish correspondence discipline, not implementation of the inventoried mathematics.
 
-**Amendment (Release support)** · `amend:decomposition:pre-one-007` Package, schema and interface evolution in (`dec:decomposition:encoding`) follows (`rule:compatibility:pre-one`), with assigned interchange majors governed by (`conv:compatibility:interchange`). The storage placement proposal (`proposal:design:storage-placement`) remains for review; it has not amended the adopted crate graph or bite contents.
+**Amendment (Release support)** · `amend:decomposition:pre-one-007` Package, schema and interface evolution in (`dec:decomposition:encoding`) follows (`rule:compatibility:pre-one`), with assigned interchange majors governed by (`conv:compatibility:interchange`). The accepted storage slice and infrastructure additions are recorded in (`amend:decomposition:infrastructure`).
+
+**Amendment (Infrastructure and bite refinement)** · `amend:decomposition:infrastructure` The accepted placements (`proposal:harness:packages`), (`proposal:design:storage-placement`), (`proposal:design:devnet-adapter`) and (`proposal:design:api-placement`) amend (`conv:decomposition:dependencies`) and refine the contents of (`dec:decomposition:bites`). The original study datasets, seven domain responsibilities and eleven-bite order remain intact. Outer infrastructure owns service, command and wallet effects rather than adding them to graph or epoch. Host storage starts early so history invariants are tested from their first use; its PostgreSQL client must pass (`open:design:secret-integrations`) before that slice lands. Only pn-wallet integrates Elements RPC, so chain inspection, settlement and faucet spending share one admitted boundary with client spending. pn-host's optional development-network feature enables its pn-wallet dependency; non-development builds omit the edge and runtime guards still refuse development operations. No node dependency on pn-client or pn-command is introduced, and replay consumes disclosed evidence without a live node. pn-testkit imports no production domain crate and production builds never import it; owning tests may use it as a development dependency. The added infrastructure roles and content refinements are rendered below from the accepted amendment data, with foundation shown as a prerequisite rather than a new domain bite.
+
+| Infrastructure crate | Role | Direct prerequisites | Optional prerequisites |
+| --- | --- | --- | --- |
+| pn | Node schema, service and lifecycle | pn-host, pn-records, pn-interchange | pn-readouts |
+| pn-wallet | Only Elements integration; chain evidence and wallet spending/recovery | reviewed Elements RPC client | None |
+| pn-client | GraphQL node counterpart and client workflows | pn-wallet, pn-records, pn-interchange | None |
+| pn-command | Node and client JSON command presentation | pn-client, pn, cli-common | None |
+| pn-testkit | Development-only generic runners, models and mocks; no production imports | None | None |
+
+| Slice | Accepted refinement |
+| --- | --- |
+| Before bite 1 | Foundation before bite 1: observability, claims, pn-testkit, harness and performance gates |
+| 2 | Host storage slice and secret-preserving PostgreSQL integration; pn-wallet chain/RPC slice, host development edge, mocks and real-service suites |
+| 5 | Pinned burn samples, immutable ledger vintages and storage evidence |
+| 8 | Host publication; pn-interchange transport mode; pn node/API and local control; pn-wallet spending/recovery; pn-client and both pn-command surfaces; faucet |
+| 9 | Independent package replay and client replay-input fetching without a live chain |
+| 10 | Optional node readout edge and raw service |
+| 11 | Complete supported integration corpus and evidence ledger |

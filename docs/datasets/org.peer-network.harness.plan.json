@@ -29,12 +29,13 @@
       "mock_bite": 2,
       "name": "placement",
       "node": "pn",
-      "status": "proposed",
+      "status": "accepted",
       "suite_owner": "pn-verification",
       "support": "pn-testkit",
       "wallet": "pn-wallet",
-      "wallet_bite": 8,
-      "wallet_dependency": "reviewed Elements RPC client"
+      "wallet_bite": 2,
+      "wallet_dependency": "reviewed Elements RPC client",
+      "wallet_spending_bite": 8
     }
   ]
 }

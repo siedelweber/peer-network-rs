@@ -3,7 +3,7 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "placement"
-status = "proposed"
+status = "accepted"
 before_bite = 1
 support = "pn-testkit"
 suite_owner = "pn-verification"
@@ -11,7 +11,8 @@ client = "pn-client"
 wallet = "pn-wallet"
 node = "pn"
 client_decision = "decided"
-wallet_bite = 8
+wallet_bite = 2
+wallet_spending_bite = 8
 command_node_bite = 8
 command_client_bite = 8
 command = "pn-command"

@@ -3,7 +3,7 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "placement"
-status = "proposed"
+status = "accepted"
 package = "pn"
 role_status = "decided"
 dependencies = ["pn-host", "pn-records", "pn-interchange"]

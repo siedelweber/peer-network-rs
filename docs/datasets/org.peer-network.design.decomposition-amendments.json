@@ -15,6 +15,92 @@
       ],
       "name": "publication",
       "status": "accepted"
+    },
+    {
+      "added_crates": [
+        {
+          "dependencies": [
+            "pn-host",
+            "pn-records",
+            "pn-interchange"
+          ],
+          "name": "pn",
+          "optional": [
+            "pn-readouts"
+          ],
+          "role": "Node schema, service and lifecycle"
+        },
+        {
+          "dependencies": [
+            "reviewed Elements RPC client"
+          ],
+          "name": "pn-wallet",
+          "optional": [],
+          "role": "Only Elements integration; chain evidence and wallet spending/recovery"
+        },
+        {
+          "dependencies": [
+            "pn-wallet",
+            "pn-records",
+            "pn-interchange"
+          ],
+          "name": "pn-client",
+          "optional": [],
+          "role": "GraphQL node counterpart and client workflows"
+        },
+        {
+          "dependencies": [
+            "pn-client",
+            "pn",
+            "cli-common"
+          ],
+          "name": "pn-command",
+          "optional": [],
+          "role": "Node and client JSON command presentation"
+        },
+        {
+          "dependencies": [],
+          "name": "pn-testkit",
+          "optional": [],
+          "role": "Development-only generic runners, models and mocks; no production imports"
+        }
+      ],
+      "host_dependencies": [
+        "reviewed PostgreSQL client",
+        "pn-wallet (optional development-network feature)"
+      ],
+      "name": "infrastructure",
+      "refinements": [
+        {
+          "bite": 0,
+          "work": "Foundation before bite 1: observability, claims, pn-testkit, harness and performance gates"
+        },
+        {
+          "bite": 2,
+          "work": "Host storage slice and secret-preserving PostgreSQL integration; pn-wallet chain/RPC slice, host development edge, mocks and real-service suites"
+        },
+        {
+          "bite": 5,
+          "work": "Pinned burn samples, immutable ledger vintages and storage evidence"
+        },
+        {
+          "bite": 8,
+          "work": "Host publication; pn-interchange transport mode; pn node/API and local control; pn-wallet spending/recovery; pn-client and both pn-command surfaces; faucet"
+        },
+        {
+          "bite": 9,
+          "work": "Independent package replay and client replay-input fetching without a live chain"
+        },
+        {
+          "bite": 10,
+          "work": "Optional node readout edge and raw service"
+        },
+        {
+          "bite": 11,
+          "work": "Complete supported integration corpus and evidence ledger"
+        }
+      ],
+      "status": "accepted"
     }
   ]
 }

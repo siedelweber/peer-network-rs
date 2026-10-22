@@ -23,4 +23,6 @@ faucet_bite = 8
 replay_bite = 9
 corpus_bite = 11
 adapter_owner = "pn-host"
+rpc_owner = "pn-wallet"
+host_feature = "development-network"
 status = "declared; implementation and chain evidence held"
