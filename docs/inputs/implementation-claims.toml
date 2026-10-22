@@ -9,6 +9,8 @@ requirements = ["public-inputs"]
 bites = [8, 9, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["integration", "conformance", "property"]
+suite = "publication"
 
 [[rows]]
 name = "burn-disclosures"
@@ -18,6 +20,8 @@ requirements = ["burn-boundary"]
 bites = [2, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "burn"
 
 [[rows]]
 name = "whole-act-counting"
@@ -27,6 +31,8 @@ requirements = ["complete-acts"]
 bites = [1, 4, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "records"
 
 [[rows]]
 name = "formation-title-cases"
@@ -36,6 +42,8 @@ requirements = ["formation-title"]
 bites = [3, 4, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "graph"
 
 [[rows]]
 name = "charged-vintage-cases"
@@ -45,6 +53,8 @@ requirements = ["ledger-vintages"]
 bites = [2, 5, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "ledger"
 
 [[rows]]
 name = "compiler-cases"
@@ -54,6 +64,8 @@ requirements = ["final-state"]
 bites = [5, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "compiler"
 
 [[rows]]
 name = "transport-cases"
@@ -63,6 +75,8 @@ requirements = ["conservation"]
 bites = [5, 6, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "numeric"
 
 [[rows]]
 name = "fence-residual-cases"
@@ -72,6 +86,8 @@ requirements = ["certificate"]
 bites = [6, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "numeric"
 
 [[rows]]
 name = "rung-policy-cases"
@@ -81,6 +97,8 @@ requirements = ["rung-verdicts"]
 bites = [6, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["crate", "integration", "conformance", "property"]
+suite = "numeric"
 
 [[rows]]
 name = "closure-partition-cases"
@@ -90,6 +108,8 @@ requirements = ["final-membership"]
 bites = [1, 7, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "graph"
 
 [[rows]]
 name = "gate-unit-cases"
@@ -99,6 +119,8 @@ requirements = ["admission"]
 bites = [7, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "admission"
 
 [[rows]]
 name = "calibration-cases"
@@ -108,6 +130,8 @@ requirements = ["policy-schedules"]
 bites = [7, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "admission"
 
 [[rows]]
 name = "canonical-package-cases"
@@ -117,6 +141,8 @@ requirements = ["publication"]
 bites = [8, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "publication"
 
 [[rows]]
 name = "reconstruction-mutations"
@@ -126,6 +152,8 @@ requirements = ["replay"]
 bites = [9, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["crate", "integration", "conformance", "property"]
+suite = "replay"
 
 [[rows]]
 name = "effective-edition-cases"
@@ -135,6 +163,8 @@ requirements = ["constants"]
 bites = [2, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "records"
 
 [[rows]]
 name = "read-site-cases"
@@ -144,6 +174,8 @@ requirements = ["terminal-separation"]
 bites = [10, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["crate", "integration", "conformance", "property"]
+suite = "readouts"
 
 [[rows]]
 name = "simple-path-cases"
@@ -153,6 +185,8 @@ requirements = ["raw-readings"]
 bites = [10, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "readouts"
 
 [[rows]]
 name = "numerical-boundaries"
@@ -162,6 +196,8 @@ requirements = ["certificate", "rung-verdicts"]
 bites = [2, 3, 6, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "numeric"
 
 [[rows]]
 name = "storage-history"
@@ -171,6 +207,8 @@ requirements = ["ledger-vintages", "constants", "final-state", "publication", "p
 bites = [2, 5, 8, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "storage"
 
 [[rows]]
 name = "api-conformance"
@@ -180,6 +218,8 @@ requirements = ["complete-acts", "admission", "final-membership", "final-state",
 bites = [8, 9, 10, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "api"
 
 [[rows]]
 name = "devnet-conformance"
@@ -189,3 +229,16 @@ requirements = ["burn-boundary", "public-inputs", "ledger-vintages", "publicatio
 bites = [2, 5, 8, 9, 11]
 hold = "open:design:claim-evidence"
 status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "devnet"
+
+[[rows]]
+name = "client-workflows"
+owner = "pn-client"
+claim = "claim:client:recoverable-workflows-preserve-targets-and-evidence"
+requirements = ["burn-boundary", "public-inputs", "publication", "replay"]
+bites = [8, 9, 11]
+hold = "open:design:claim-evidence"
+status = "held; no test-site mint or execution yet"
+levels = ["unit", "crate", "integration", "conformance", "property"]
+suite = "client"

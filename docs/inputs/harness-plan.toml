@@ -1,0 +1,17 @@
+namespace = "org.peer-network.harness.plan"
+version = [1, 0, 0]
+
+[[rows]]
+name = "placement"
+status = "proposed"
+before_bite = 1
+support = "pn-testkit"
+suite_owner = "pn-verification"
+client = "pn-client"
+command = "pn-command"
+client_dependencies = ["pn-records", "pn-interchange"]
+command_dependencies = ["pn-client", "cli-common"]
+mock_bite = 2
+client_bite = 8
+client_replay_bite = 9
+corpus_bite = 11

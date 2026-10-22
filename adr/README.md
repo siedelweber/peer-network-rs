@@ -23,3 +23,4 @@
 | Claim-based testing | accepted | (`rec:testing:decision`) |
 | Public API | accepted | (`rec:api:decision`) |
 | Development network | accepted | (`rec:devnet:decision`) |
+| Testing harness | accepted | (`rec:harness:decision`) |

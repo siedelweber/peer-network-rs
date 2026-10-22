@@ -229,6 +229,23 @@
       "scope": "Elements signed development chain, test burn evidence, bounded faucet and history.",
       "status": "accepted",
       "title": "Development network"
+    },
+    {
+      "depends_on": [
+        "rec:testing:decision",
+        "rec:storage:decision",
+        "rec:devnet:decision",
+        "rec:api:decision",
+        "rec:observe:decision",
+        "rec:lint:decision",
+        "rec:output:decision"
+      ],
+      "does_not_establish": "No harness, mock, client, benchmark baseline or service conformance has been implemented or executed by this record.",
+      "label": "rec:harness:decision",
+      "path": "adr/020-testing-harness.md",
+      "scope": "Test levels, shared conformance, functional substitutes, properties, benchmarks and public clients.",
+      "status": "accepted",
+      "title": "Testing harness"
     }
   ]
 }

@@ -1,0 +1,94 @@
+{
+  "namespace": "org.peer-network.harness.suites",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "contract": "identity, carrier validation and effective declarations",
+      "first_bite": 1,
+      "implementations": "pure",
+      "name": "records"
+    },
+    {
+      "contract": "four-object disclosures and permanent target provenance",
+      "first_bite": 2,
+      "implementations": "mock and Elements",
+      "name": "burn"
+    },
+    {
+      "contract": "formation, title folds and dependency closure",
+      "first_bite": 3,
+      "implementations": "pure",
+      "name": "graph"
+    },
+    {
+      "contract": "exact charged values and retained vintages",
+      "first_bite": 2,
+      "implementations": "pure",
+      "name": "ledger"
+    },
+    {
+      "contract": "fixed-input cells, recipients and emission",
+      "first_bite": 5,
+      "implementations": "pure",
+      "name": "compiler"
+    },
+    {
+      "contract": "representation, certified bounds and deterministic refinement",
+      "first_bite": 2,
+      "implementations": "pure",
+      "name": "numeric"
+    },
+    {
+      "contract": "individual/final-set safety and total calibration",
+      "first_bite": 7,
+      "implementations": "pure",
+      "name": "admission"
+    },
+    {
+      "contract": "complete causes and exact canonical package bytes",
+      "first_bite": 8,
+      "implementations": "pure and services",
+      "name": "publication"
+    },
+    {
+      "contract": "independent reconstruction and attributable mismatches",
+      "first_bite": 9,
+      "implementations": "pure and services",
+      "name": "replay"
+    },
+    {
+      "contract": "terminal separation and exact raw paths",
+      "first_bite": 10,
+      "implementations": "pure",
+      "name": "readouts"
+    },
+    {
+      "contract": "SCD2 as-of reads, intervals and atomic succession",
+      "first_bite": 2,
+      "implementations": "mock and PostgreSQL",
+      "name": "storage"
+    },
+    {
+      "contract": "native CBOR, exact bytes, limits and outcomes",
+      "first_bite": 8,
+      "implementations": "mock and services",
+      "name": "api"
+    },
+    {
+      "contract": "settled burns, grants, quotas and recovery",
+      "first_bite": 2,
+      "implementations": "mock and Elements plus PostgreSQL",
+      "name": "devnet"
+    },
+    {
+      "contract": "public workflows, command streams and retry safety",
+      "first_bite": 8,
+      "implementations": "mock and services",
+      "name": "client"
+    }
+  ]
+}

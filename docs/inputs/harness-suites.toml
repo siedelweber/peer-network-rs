@@ -1,0 +1,86 @@
+namespace = "org.peer-network.harness.suites"
+version = [1, 0, 0]
+
+[[rows]]
+name = "records"
+first_bite = 1
+implementations = "pure"
+contract = "identity, carrier validation and effective declarations"
+
+[[rows]]
+name = "burn"
+first_bite = 2
+implementations = "mock and Elements"
+contract = "four-object disclosures and permanent target provenance"
+
+[[rows]]
+name = "graph"
+first_bite = 3
+implementations = "pure"
+contract = "formation, title folds and dependency closure"
+
+[[rows]]
+name = "ledger"
+first_bite = 2
+implementations = "pure"
+contract = "exact charged values and retained vintages"
+
+[[rows]]
+name = "compiler"
+first_bite = 5
+implementations = "pure"
+contract = "fixed-input cells, recipients and emission"
+
+[[rows]]
+name = "numeric"
+first_bite = 2
+implementations = "pure"
+contract = "representation, certified bounds and deterministic refinement"
+
+[[rows]]
+name = "admission"
+first_bite = 7
+implementations = "pure"
+contract = "individual/final-set safety and total calibration"
+
+[[rows]]
+name = "publication"
+first_bite = 8
+implementations = "pure and services"
+contract = "complete causes and exact canonical package bytes"
+
+[[rows]]
+name = "replay"
+first_bite = 9
+implementations = "pure and services"
+contract = "independent reconstruction and attributable mismatches"
+
+[[rows]]
+name = "readouts"
+first_bite = 10
+implementations = "pure"
+contract = "terminal separation and exact raw paths"
+
+[[rows]]
+name = "storage"
+first_bite = 2
+implementations = "mock and PostgreSQL"
+contract = "SCD2 as-of reads, intervals and atomic succession"
+
+[[rows]]
+name = "api"
+first_bite = 8
+implementations = "mock and services"
+contract = "native CBOR, exact bytes, limits and outcomes"
+
+[[rows]]
+name = "devnet"
+first_bite = 2
+implementations = "mock and Elements plus PostgreSQL"
+contract = "settled burns, grants, quotas and recovery"
+
+[[rows]]
+name = "client"
+first_bite = 8
+implementations = "mock and services"
+contract = "public workflows, command streams and retry safety"

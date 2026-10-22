@@ -14,12 +14,18 @@
       ],
       "claim": "claim:publication:missing-public-causes-prevent-complete-verdicts",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "complete-cause-package",
       "owner": "pn-host",
       "requirements": [
         "public-inputs"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "publication"
     },
     {
       "bites": [
@@ -28,12 +34,20 @@
       ],
       "claim": "claim:burn:missing-required-burn-disclosures-prevent-readiness",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "burn-disclosures",
       "owner": "pn-records",
       "requirements": [
         "burn-boundary"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "burn"
     },
     {
       "bites": [
@@ -43,12 +57,20 @@
       ],
       "claim": "claim:acts:complete-acts-are-counted-once",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "whole-act-counting",
       "owner": "pn-records",
       "requirements": [
         "complete-acts"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "records"
     },
     {
       "bites": [
@@ -58,12 +80,20 @@
       ],
       "claim": "claim:formation:recognized-title-follows-complete-authorized-acts",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "formation-title-cases",
       "owner": "pn-graph",
       "requirements": [
         "formation-title"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "graph"
     },
     {
       "bites": [
@@ -73,12 +103,20 @@
       ],
       "claim": "claim:ledger:later-prices-preserve-charged-vintages",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "charged-vintage-cases",
       "owner": "pn-epoch",
       "requirements": [
         "ledger-vintages"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "ledger"
     },
     {
       "bites": [
@@ -87,12 +125,20 @@
       ],
       "claim": "claim:compiler:fixed-inputs-determine-the-compiled-state",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "compiler-cases",
       "owner": "pn-epoch",
       "requirements": [
         "final-state"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "compiler"
     },
     {
       "bites": [
@@ -102,12 +148,20 @@
       ],
       "claim": "claim:transport:transport-preserves-balance-and-count-mass",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "transport-cases",
       "owner": "pn-epoch",
       "requirements": [
         "conservation"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "numeric"
     },
     {
       "bites": [
@@ -116,12 +170,20 @@
       ],
       "claim": "claim:certificate:certified-residuals-enclose-the-selected-solution",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "fence-residual-cases",
       "owner": "pn-epoch",
       "requirements": [
         "certificate"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "numeric"
     },
     {
       "bites": [
@@ -130,12 +192,19 @@
       ],
       "claim": "claim:rungs:rung-selection-respects-certified-verdicts",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "rung-policy-cases",
       "owner": "pn-epoch",
       "requirements": [
         "rung-verdicts"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "numeric"
     },
     {
       "bites": [
@@ -145,12 +214,20 @@
       ],
       "claim": "claim:membership:dependency-closures-partition-the-final-act-set",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "closure-partition-cases",
       "owner": "pn-graph",
       "requirements": [
         "final-membership"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "graph"
     },
     {
       "bites": [
@@ -159,12 +236,20 @@
       ],
       "claim": "claim:admission:admission-checks-individual-and-final-set-safety",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "gate-unit-cases",
       "owner": "pn-epoch",
       "requirements": [
         "admission"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "admission"
     },
     {
       "bites": [
@@ -173,12 +258,20 @@
       ],
       "claim": "claim:calibration:declared-total-calibration-governs-boundary-cases",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "calibration-cases",
       "owner": "pn-epoch",
       "requirements": [
         "policy-schedules"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "admission"
     },
     {
       "bites": [
@@ -187,12 +280,20 @@
       ],
       "claim": "claim:publication:canonical-packages-preserve-complete-binding-sections",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "canonical-package-cases",
       "owner": "pn-host",
       "requirements": [
         "publication"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "publication"
     },
     {
       "bites": [
@@ -201,12 +302,19 @@
       ],
       "claim": "claim:replay:reconstruction-detects-public-claim-mutations",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "reconstruction-mutations",
       "owner": "pn-replay",
       "requirements": [
         "replay"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "replay"
     },
     {
       "bites": [
@@ -215,12 +323,20 @@
       ],
       "claim": "claim:declarations:effective-editions-preserve-historical-constants",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "effective-edition-cases",
       "owner": "pn-records",
       "requirements": [
         "constants"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "records"
     },
     {
       "bites": [
@@ -229,12 +345,19 @@
       ],
       "claim": "claim:separation:terminal-data-cannot-change-binding-results",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "read-site-cases",
       "owner": "pn-readouts",
       "requirements": [
         "terminal-separation"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "readouts"
     },
     {
       "bites": [
@@ -243,12 +366,20 @@
       ],
       "claim": "claim:paths:bounded-simple-paths-determine-raw-readings",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "simple-path-cases",
       "owner": "pn-readouts",
       "requirements": [
         "raw-readings"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "readouts"
     },
     {
       "bites": [
@@ -259,13 +390,21 @@
       ],
       "claim": "claim:numerics:boundary-comparisons-remain-sound-or-indecisive",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "numerical-boundaries",
       "owner": "pn-graph",
       "requirements": [
         "certificate",
         "rung-verdicts"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "numeric"
     },
     {
       "bites": [
@@ -276,6 +415,13 @@
       ],
       "claim": "claim:history:atomic-effective-rows-preserve-earlier-verdicts",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "storage-history",
       "owner": "pn-host",
       "requirements": [
@@ -285,7 +431,8 @@
         "publication",
         "public-inputs"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "storage"
     },
     {
       "bites": [
@@ -296,6 +443,13 @@
       ],
       "claim": "claim:api:typed-requests-preserve-domain-evidence",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "api-conformance",
       "owner": "pn-api",
       "requirements": [
@@ -310,7 +464,8 @@
         "replay",
         "raw-readings"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "api"
     },
     {
       "bites": [
@@ -322,6 +477,13 @@
       ],
       "claim": "claim:devnet:only-settled-destruction-feeds-test-burn",
       "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
       "name": "devnet-conformance",
       "owner": "pn-host",
       "requirements": [
@@ -331,7 +493,34 @@
         "publication",
         "replay"
       ],
-      "status": "held; no test-site mint or execution yet"
+      "status": "held; no test-site mint or execution yet",
+      "suite": "devnet"
+    },
+    {
+      "bites": [
+        8,
+        9,
+        11
+      ],
+      "claim": "claim:client:recoverable-workflows-preserve-targets-and-evidence",
+      "hold": "open:design:claim-evidence",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
+      "name": "client-workflows",
+      "owner": "pn-client",
+      "requirements": [
+        "burn-boundary",
+        "public-inputs",
+        "publication",
+        "replay"
+      ],
+      "status": "held; no test-site mint or execution yet",
+      "suite": "client"
     }
   ]
 }

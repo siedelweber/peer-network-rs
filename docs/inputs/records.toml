@@ -171,3 +171,12 @@ title = "Development network"
 scope = "Elements signed development chain, test burn evidence, bounded faucet and history."
 depends_on = ["rec:api:decision", "rec:storage:decision", "rec:observe:decision", "rec:testing:decision", "rec:compatibility:decision"]
 does_not_establish = "No chain, wallet, adapter or faucet is provisioned or implemented; test asset does not establish economic burn assurance."
+
+[[rows]]
+label = "rec:harness:decision"
+path = "adr/020-testing-harness.md"
+status = "accepted"
+title = "Testing harness"
+scope = "Test levels, shared conformance, functional substitutes, properties, benchmarks and public clients."
+depends_on = ["rec:testing:decision", "rec:storage:decision", "rec:devnet:decision", "rec:api:decision", "rec:observe:decision", "rec:lint:decision", "rec:output:decision"]
+does_not_establish = "No harness, mock, client, benchmark baseline or service conformance has been implemented or executed by this record."

@@ -47,3 +47,5 @@
 **Section (api)** · `sec:foundation:area-api` If the public API fails, callers can confuse a partial query with a published result, lose exact evidence bytes or repeat an uncertain submission. (`rec:api:decision`) separates typed CBOR requests from canonical documents and requires bounded, traced and claim-tested execution.
 
 **Section (devnet)** · `sec:foundation:area-devnet` If development-network contracts fail, grants can be mistaken for destruction, history can count a burn twice, or test evidence can be mistaken for production assurance. (`rec:devnet:decision`) fixes the test-chain realization and bounded faucet.
+
+**Section (harness)** · `sec:foundation:area-harness` If harness discipline fails, a fast substitute can conceal a real-service defect, a passing test can lack a claim, or a client retry can repeat an irreversible effect. (`rec:harness:decision`) fixes test levels, shared suites, functional substitutes and client evidence.
