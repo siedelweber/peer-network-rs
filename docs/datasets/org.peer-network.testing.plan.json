@@ -8,8 +8,8 @@
   "rows": [
     {
       "before_bite": 1,
+      "defect": "test glosses that merely respell their function identifiers with spaces",
       "name": "foundation",
-      "observation": "F-116",
       "owners": [
         "DOCUMENTS",
         "INTERCHANGE",
@@ -22,7 +22,6 @@
         "cli-common",
         "execwrap"
       ],
-      "reported_glosses": 121,
       "status": "held"
     }
   ]
