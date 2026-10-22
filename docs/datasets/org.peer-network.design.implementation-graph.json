@@ -1,0 +1,31 @@
+{
+  "namespace": "org.peer-network.design.implementation-graph",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "default_features": [
+        "std",
+        "graphmap",
+        "stable_graph",
+        "matrix_graph"
+      ],
+      "entry_bite": 3,
+      "extra_features": [
+        "serde-1"
+      ],
+      "graphmap_boundary": "GraphMap uses Copy + Ord + Hash node weights as keys and does not allow parallel edges, so it does not carry the complete projection multigraph.",
+      "intersection_reason": "Graph has compact indices suited to a temporary intersection graph built once and read without removals; removal can move the last node or edge into the vacated slot.",
+      "intersection_type": "petgraph::graph::UnGraph",
+      "license": "MIT OR Apache-2.0",
+      "name": "petgraph",
+      "projection_reason": "StableGraph preserves unrelated node and edge indices on removal and supports parallel edges; a removed slot is not a permanent identity and may be reused.",
+      "projection_type": "petgraph::stable_graph::StableDiGraph",
+      "release_line": "0.8",
+      "reviewed_release": "0.8.3"
+    }
+  ]
+}
