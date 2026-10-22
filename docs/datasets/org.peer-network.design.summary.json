@@ -8,72 +8,77 @@
   "rows": [
     {
       "category": "chapter",
-      "count": 19,
+      "count": 2,
+      "name": "00 Front matter"
+    },
+    {
+      "category": "chapter",
+      "count": 34,
       "name": "01 Introduction"
     },
     {
       "category": "chapter",
-      "count": 38,
+      "count": 81,
       "name": "02 Comparator"
     },
     {
       "category": "chapter",
-      "count": 13,
+      "count": 37,
       "name": "03 Network"
     },
     {
       "category": "chapter",
-      "count": 168,
+      "count": 247,
       "name": "04 Graph"
     },
     {
       "category": "chapter",
-      "count": 98,
+      "count": 127,
       "name": "05 Nodes and edges"
     },
     {
       "category": "chapter",
-      "count": 149,
+      "count": 208,
       "name": "6 Epoch"
     },
     {
       "category": "chapter",
-      "count": 28,
+      "count": 45,
       "name": "7 Sorting"
     },
     {
       "category": "chapter",
-      "count": 15,
+      "count": 21,
       "name": "8 Transport"
     },
     {
       "category": "chapter",
-      "count": 7,
+      "count": 8,
       "name": "9 Content"
     },
     {
       "category": "chapter",
-      "count": 24,
+      "count": 44,
       "name": "10 Scalability"
     },
     {
       "category": "chapter",
-      "count": 14,
+      "count": 19,
       "name": "A Gates"
     },
     {
       "category": "chapter",
-      "count": 46,
+      "count": 65,
       "name": "B Compositional attribution"
     },
     {
       "category": "chapter",
-      "count": 55,
+      "count": 82,
       "name": "C Bridge"
     },
     {
       "category": "chapter",
-      "count": 78,
+      "count": 102,
       "name": "D Dynamics"
     },
     {
@@ -83,27 +88,27 @@
     },
     {
       "category": "chapter",
-      "count": 200,
+      "count": 207,
       "name": "F Verification"
     },
     {
       "category": "chapter",
-      "count": 62,
+      "count": 71,
       "name": "G Frontiers"
     },
     {
       "category": "chapter",
-      "count": 57,
+      "count": 148,
       "name": "H Necessity"
     },
     {
       "category": "chapter",
-      "count": 18,
+      "count": 80,
       "name": "Appendix I — Deployment"
     },
     {
       "category": "constants",
-      "count": 357,
+      "count": 380,
       "home": "pn-verification",
       "name": ""
     },
@@ -115,13 +120,13 @@
     },
     {
       "category": "constants",
-      "count": 41,
+      "count": 49,
       "home": "pn-records",
       "name": "defaulted"
     },
     {
       "category": "constants",
-      "count": 101,
+      "count": 105,
       "home": "pn-verification",
       "name": "defaulted"
     },
@@ -132,14 +137,35 @@
       "name": "locked"
     },
     {
+      "category": "constants",
+      "count": 1,
+      "home": "pn-verification",
+      "name": "reference"
+    },
+    {
       "category": "totals",
-      "count": 1093,
+      "count": 1632,
       "name": "inventory"
     },
     {
       "category": "totals",
-      "count": 506,
+      "count": 542,
       "name": "constants"
+    },
+    {
+      "category": "labels",
+      "count": 1541,
+      "name": "explicit"
+    },
+    {
+      "category": "labels",
+      "count": 91,
+      "name": "environment"
+    },
+    {
+      "category": "constants-source",
+      "count": 541,
+      "name": "declarations"
     }
   ]
 }

@@ -84,8 +84,8 @@
         {
           "class": "DEFECT",
           "question": "Q20",
-          "status": "corrected",
-          "topic": "total calibration procedure under the paper's constraints"
+          "status": "two floors chartered; deployment declaration fixed; economic calibration, controller performance and snapshot timing open",
+          "topic": "fixed structural floor, published wall controller and boundary snapshot convention"
         }
       ],
       "name": "deployment-choices"

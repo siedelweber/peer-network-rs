@@ -43,9 +43,9 @@ def validate():
     # Claim: normalized inventory statements and constants preserve the reviewed source-data projection exactly.
     inventory = data('inventory')
     constants = data('constants')
-    if not (len(inventory) == 1093 and len({row['label'] for row in inventory}) == 1093):
+    if not (len(inventory) == 1632 and len({row['label'] for row in inventory}) == 1632):
         raise ValueError('inventory label census')
-    if not (len(constants) == 506 and len({row['id'] for row in constants}) == 506):
+    if not (len(constants) == 542 and len({row['id'] for row in constants}) == 542):
         raise ValueError('constants id census')
     if not (digest([{key: value for key, value in row.items() if key != 'citable'} for row in inventory if 'added_at' not in row]) == INVENTORY_PIN):
         raise ValueError('inventory source projection changed')
@@ -152,17 +152,17 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.25.1'
-ADDED_INVENTORY_PIN = '36f74bf0038206a4628d4a66445a370c84417c3c47bad8021a8ca4f7a6f8246b'
-REFRESHED_CONSTANTS_PIN = 'd66327759e021d4be187025c3c40d4bc2bb8cbec87d7de7d6e80e48b69a5316c'
-RELEASE_QUESTIONS_PIN = '4a1740585a741b0b205046fc4233f608d957a3afd41b0c8c5e9fcf8b4d4ea067'
+PAPER_TAG = 'network-v0.26.3'
+ADDED_INVENTORY_PIN = 'a52541b2234004e4d5776c2e049ae0c2952dbe4f4938a200d79e71a56e53da27'
+REFRESHED_CONSTANTS_PIN = 'a5f41236d2a66582ed4f02304893e62448b3b3c8e3551e27733bced8ac9203c9'
+RELEASE_QUESTIONS_PIN = 'd8af4170edd86c37815e5f67834caa6c144c58db6d92e0b63dc6b3fd97544ee5'
 
-INVENTORY_PIN = '0934b3bdc8454c363e03fd587a2158ad65fd8ab3b0dfe7b5dfddb394dbb3f4fe'
-CONSTANTS_PIN = 'ee2dc11120a6ba74c152a490eae5383acde66407a374f33b2c0dd1b7970611a0'
+INVENTORY_PIN = '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'
+CONSTANTS_PIN = '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'
 
 CRATES_PIN = 'b8188551b1f51e6afa88329f46b4a5d82391fdba4ecefea489043ceca227e476'
 BITES_PIN = '7d3dd7fffc7c74d89198e514c18889ab348188c016a18303e0fe42b894a6b600'
-QUESTIONS_PIN = 'ed9d853f709ebcb3b0344bfced2986988c5828c329493dfbd6a60816e23078db'
+QUESTIONS_PIN = 'a6bdc0cd22b0b536c450ceebf1ca75ff1ad567820f53851459cbd6da23a9cf78'
 
 if __name__ == '__main__':
     validate()

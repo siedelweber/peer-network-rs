@@ -33,7 +33,7 @@
       "instruction": "D-002(c) remains conditional, as you propose. Store no rounded rational as a substitute for the exact debit, and preserve the original debit vintage.",
       "reading": "Study judgment: Treat D-002(c) as conditional; never replace an exact debit with a rounded rational.",
       "section": "Q03 — Exact ledger values",
-      "status": "**Status: closed.** The charged debit's representation and accuracy are the deployment's because its certification re-establishes X1–X7 for the value it charges under def:epoch:safety-threshold, so neither Q03-A nor Q03-B enters the paper, which keeps one published charged value per epoch, never recalculated once consummated, shared by debit, W1, the safety floor, emission and capacity, and treats every stated precision, eight significant figures included, as an example of a level sufficient for fair pricing and certification, not a locked protocol value.",
+      "status": "**Status: closed.** The charged debit's representation and accuracy are the deployment's because its certification re-establishes the labelled conditions of ``def:epoch:safety-threshold`` for the value it charges, with in-epoch rung certification on that epoch's own width under def:epoch:safety-threshold, so neither Q03-A nor Q03-B enters the paper, which keeps one published charged value per epoch, never recalculated once consummated, shared by debit, W1, the safety floor, emission and capacity, and treats every stated precision, eight significant figures included, as an example of a level sufficient for fair pricing and certification, not a locked protocol value.",
       "topic": "Exact ledger values"
     },
     {
@@ -60,7 +60,7 @@
       "ambiguity": "The four-object interface coexists with settlement-depth, provenance and conditional operator-bound publication requirements. (def:comparator:burn-interface) (post:comparator:burn-primitive) (subsec:deployment:realization-obligations)",
       "class": "DEFECT",
       "id": "Q06",
-      "instruction": "Your separation of mathematical objects and required evidence is a safe provisional representation, provided none of the required disclosures is omitted. Hold any claim that R11 introduces a fifth computational input until the boundary wording is corrected.",
+      "instruction": "Your separation of mathematical objects and required evidence is a safe provisional representation, provided none of the required disclosures is omitted. Hold any claim that ``cond:comparator:burn-operator-audit-bound`` introduces a fifth computational input until the boundary wording is corrected.",
       "reading": "Study judgment: Represent the four mathematical objects and separate required public evidence; ask maintainers to confirm the record boundary.",
       "section": "Q06 — Burn disclosure boundary",
       "status": "**Status: corrected.** The paper preserves four mathematical burn-interface objects and requires settlement, provenance and the conditional operator bound with its proof as public audit evidence rather than additional computational inputs.",
@@ -199,10 +199,10 @@
       "ambiguity": "The inverse-gain interim rule, one-boundary width dominance, step bound and hysteresis do not fully specify a single replayable update for every case. (def:epoch:safety-threshold) (frontier:floor-calibration) (frontier:leverage-timing)",
       "class": "DEFECT",
       "id": "Q20",
-      "instruction": "Your calibration hold is safe. Do not make the next threshold a discretionary host input or silently clip an unsafe increase to satisfy the step bound.",
+      "instruction": "Certify ``cond:epoch:safety-declared-floor`` against the declared floor's exact defining object: enclosure refinement or rejection for the exact ridge, exact comparison with $3/37$ where the representation permits it. The wall remains computed, subject to the host contract's enclosure discipline. Publish the representation and comparison procedure, preserve one consummated debit vintage per epoch, and keep the declaration fixed; a change is public and structural with regenerated evidence, never a host-policy choice.",
       "reading": "Study judgment: Treat the next-threshold rule as a required calibration decision, including zero width and rapid width growth, not a free host choice.",
       "section": "Q20 — Threshold calibration",
-      "status": "**Status: corrected.** The deployment's published calibration procedure must specify zero-width and empty-domain behavior, trigger/cap/escalation order and window, next-epoch width-bound failure behavior and the boundary snapshot convention under X1–X7, while calibration reads the conserved fence and the interim target formula and constants remain fixed.",
+      "status": "**Status: two floors chartered; deployment declaration fixed; economic calibration, controller performance and snapshot timing open.** The exact ridge image and rational $3/37$ share one at-or-beyond-ridge proposition and one economics corollary for the declared floor. Before the first epoch the deployment publishes its fixed declaration and ``cond:epoch:safety-declared-floor`` comparison procedure. The published controller retains its zero-width and empty-domain target and floor/deadband/cap order; the greatest rung proved passing certifies each epoch on its own width under the labelled conditions of ``def:epoch:safety-threshold``.",
       "topic": "Threshold calibration"
     },
     {
