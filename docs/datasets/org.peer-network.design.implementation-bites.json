@@ -113,7 +113,7 @@
         "model:design:package",
         "proto:design:encoding"
       ],
-      "evidence": "Use the accepted encoding and infrastructure dependency, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases. Add the bounded API transport-reading mode to pn-interchange before the API adapter: mint scoped claims for equal decoded values, byte/item/depth/nesting bounds and strict rejection of the same noncanonical original bytes, without a second CBOR dependency or a changed canonical corpus. Complete atomic admitted-result persistence and public-input rebuild evidence against the real PostgreSQL beta.",
+      "evidence": "Use the accepted encoding and infrastructure dependency, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases. Add the bounded API transport-reading mode to pn-interchange before the API adapter: mint scoped claims for equal decoded values, byte/item/depth/nesting bounds and strict rejection of the same noncanonical original bytes, without a second CBOR dependency or a changed canonical corpus. Complete atomic admitted-result persistence and public-input rebuild evidence against the real PostgreSQL beta. Introduce pn-wallet with wallet-backed request recovery, pn-client with its GraphQL extension and unchanged node relays, and both pn-command surfaces over the pn and pn-client GraphQL executors; require the client-workflow plan before spending or administration is supported.",
       "ordinal": 8,
       "requirements": [
         "publication",

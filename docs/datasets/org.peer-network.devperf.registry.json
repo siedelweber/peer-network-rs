@@ -10,7 +10,7 @@
       "budget_ms": 25000,
       "label": "expt:devperf:design-correspondence",
       "measured_ms": 20000,
-      "measurement": "Owner-reported quiet observation, approximately twenty seconds; no controlled raw baseline attached yet",
+      "measurement": "Verification gate STEP log artifacts on the shared compute node over the documentation-only corpus measure about twenty seconds in quiet runs; a controlled profiling baseline remains to be established",
       "name": "design-correspondence",
       "operation": "full design correspondence check",
       "ordinary_budget": "ordinary-check",

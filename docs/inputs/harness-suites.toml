@@ -83,4 +83,4 @@ contract = "settled burns, grants, quotas and recovery"
 name = "client"
 first_bite = 8
 implementations = "mock and services"
-contract = "public workflows, command streams and retry safety"
+contract = "GraphQL node relays and client workflows, wallet request recovery and both command surfaces"

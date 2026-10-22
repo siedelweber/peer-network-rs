@@ -16,9 +16,10 @@
       ],
       "name": "placement",
       "optional_dependency": "pn-readouts",
-      "package": "pn-api",
+      "package": "pn",
       "raw_bite": 10,
       "replay_bite": 9,
+      "role_status": "decided",
       "status": "proposed"
     }
   ]

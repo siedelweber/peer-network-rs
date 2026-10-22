@@ -85,7 +85,7 @@
       "name": "devnet"
     },
     {
-      "contract": "public workflows, command streams and retry safety",
+      "contract": "GraphQL node relays and client workflows, wallet request recovery and both command surfaces",
       "first_bite": 8,
       "implementations": "mock and services",
       "name": "client"

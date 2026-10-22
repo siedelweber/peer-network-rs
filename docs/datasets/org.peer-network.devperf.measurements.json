@@ -11,8 +11,8 @@
       "gate_high_s": 58,
       "gate_low_s": 50,
       "name": "quiet",
-      "source": "Owner-reported quiet compute-node gate observations for the current documentation corpus",
-      "status": "reported approximate observations; raw baseline dossier still required",
+      "source": "Verification gate STEP and RUN-REPORT log artifacts from quiet runs on the shared compute node over the documentation-only corpus",
+      "status": "approximate measured range; controlled baseline dossier still required",
       "tests_s": 9
     },
     {
@@ -21,7 +21,7 @@
       "gate_high_s": 260,
       "gate_low_s": 50,
       "name": "contention",
-      "source": "Owner-reported same-kind-of-tree observations on a shared compute node",
+      "source": "Verification gate STEP and RUN-REPORT log artifacts from contended runs on the shared compute node over the documentation-only corpus",
       "status": "contention context, not replacement budgets",
       "tests_high_s": 60,
       "tests_low_s": 9

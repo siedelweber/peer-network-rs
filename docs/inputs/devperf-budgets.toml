@@ -83,7 +83,7 @@ name = "test-command"
 category = "aggregate"
 budget_ms = 10000
 scope = "the per-change pure and mock test command"
-reason = "The reported quiet test step is about nine seconds; keep a small margin and investigate growth."
+reason = "The measured quiet test step is about nine seconds; keep a small margin and investigate growth."
 
 [[rows]]
 name = "ordinary-check"
@@ -118,7 +118,7 @@ name = "gate"
 category = "aggregate"
 budget_ms = 60000
 scope = "warm per-change repository gate"
-reason = "The reported quiet gate takes fifty to fifty-eight seconds; a minute retains that feedback target without normalizing contention."
+reason = "The measured quiet gate takes fifty to fifty-eight seconds; a minute retains that feedback target without normalizing contention."
 
 [[rows]]
 name = "service-gate"

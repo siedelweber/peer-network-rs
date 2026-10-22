@@ -4,7 +4,8 @@ version = [1, 0, 0]
 [[rows]]
 name = "placement"
 status = "proposed"
-package = "pn-api"
+package = "pn"
+role_status = "decided"
 dependencies = ["pn-host", "pn-records", "pn-interchange"]
 optional_dependency = "pn-readouts"
 core_bite = 8

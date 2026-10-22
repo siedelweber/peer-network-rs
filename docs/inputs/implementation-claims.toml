@@ -212,7 +212,7 @@ suite = "storage"
 
 [[rows]]
 name = "api-conformance"
-owner = "pn-api"
+owner = "pn"
 claim = "claim:api:typed-requests-preserve-domain-evidence"
 requirements = ["complete-acts", "admission", "final-membership", "final-state", "formation-title", "terminal-separation", "publication", "public-inputs", "replay", "raw-readings"]
 bites = [8, 9, 10, 11]

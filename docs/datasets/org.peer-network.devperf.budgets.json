@@ -87,7 +87,7 @@
       "budget_ms": 10000,
       "category": "aggregate",
       "name": "test-command",
-      "reason": "The reported quiet test step is about nine seconds; keep a small margin and investigate growth.",
+      "reason": "The measured quiet test step is about nine seconds; keep a small margin and investigate growth.",
       "scope": "the per-change pure and mock test command"
     },
     {
@@ -122,7 +122,7 @@
       "budget_ms": 60000,
       "category": "aggregate",
       "name": "gate",
-      "reason": "The reported quiet gate takes fifty to fifty-eight seconds; a minute retains that feedback target without normalizing contention.",
+      "reason": "The measured quiet gate takes fifty to fifty-eight seconds; a minute retains that feedback target without normalizing contention.",
       "scope": "warm per-change repository gate"
     },
     {

@@ -451,7 +451,7 @@
         "property"
       ],
       "name": "api-conformance",
-      "owner": "pn-api",
+      "owner": "pn",
       "requirements": [
         "complete-acts",
         "admission",
