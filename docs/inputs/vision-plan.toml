@@ -14,6 +14,6 @@ rows = [
     { question = "Q05", topic = "certification procedure and refinement policy", class = "OWNER-CALL" },
     { question = "Q07", topic = "authentication realization subject to the binding formation properties", class = "ANSWERED" },
     { question = "Q15", topic = "declared domain profiles", class = "OWNER-CALL" },
+    { question = "Q20", topic = "total calibration procedure under the paper's constraints", class = "DEFECT", status = "corrected" },
   ] },
-  { name = "calibration-hold", question = "Q20", class = "DEFECT" },
 ]

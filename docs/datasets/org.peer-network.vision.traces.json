@@ -60,7 +60,7 @@
         "def:epoch:conserved-standing-equilibrium",
         "post:epoch:standing-pair-mass-conservation",
         "rem:epoch:transport-is-not-ledger-transfer",
-        "rem:comparator:conserved-allocation-scope"
+        "rem:gates:standing-safety-scope"
       ],
       "name": "conservation"
     },

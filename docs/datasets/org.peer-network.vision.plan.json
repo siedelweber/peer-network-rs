@@ -80,14 +80,15 @@
           "class": "OWNER-CALL",
           "question": "Q15",
           "topic": "declared domain profiles"
+        },
+        {
+          "class": "DEFECT",
+          "question": "Q20",
+          "status": "corrected",
+          "topic": "total calibration procedure under the paper's constraints"
         }
       ],
       "name": "deployment-choices"
-    },
-    {
-      "class": "DEFECT",
-      "name": "calibration-hold",
-      "question": "Q20"
     }
   ]
 }
