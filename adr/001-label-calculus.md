@@ -209,9 +209,9 @@ Side conditions: U ranges over the owners designated upstream of D, and citation
 - the gate is dischargeable from this document and the corpus's adoption data alone; no check consults another document;
 - the corpus-wide check passes in continuous integration.
 
-**Decision (Policy)** · `dec:labels:policy` The repository names no other repository as the source of its practices. The owner, profile, reserved-kind and scanning declarations above fix the adoption data; no migration, retired label or identity chain is part of this adoption.
+**Decision (Policy)** · `dec:labels:policy` As adoption data, the repository names no other repository as the source of its practices. The owner, profile, reserved-kind and scanning declarations above fix the adoption data; no migration, retired label or identity chain is part of this adoption.
 
-**Gate (Verification)** · `gate:labels:verification` The deployed linter checks label syntax, unique mints, heads, resolution, imports, outlines and owner reach over the declared carrier.
+**Gate (Verification)** · `gate:labels:verification` As adoption data, the deployed linter checks label syntax, unique mints, heads, resolution, imports, outlines and owner reach over the declared carrier.
 
 **Amendment (Release support)** · `amend:labels:pre-one` As adoption data, repository label retention across releases follows (`rule:compatibility:pre-one`). The presentation-invariance metatheorem concerns a transformation preserving its premises, not an obligation to retain labels; current citations must still resolve after a rename. No retired-label aliases or compatibility migration are owed.
 
