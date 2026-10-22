@@ -11,7 +11,7 @@ evidence = "Freeze structural identity, public references and complete projectio
 ordinal = 2
 contracts = ["model:design:burn", "model:design:declarations", "inv:design:charged-value", "sig:design:numeric-kernel"]
 requirements = ["burn-boundary", "ledger-vintages", "constants"]
-evidence = "Review numeric dependency and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases."
+evidence = "Introduce nrz-scalar, nrz-accuracy and nrz-cas as git dependencies from the public Naturrhythmuszentrum repository on branch main; review the lockfile resolution and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases."
 
 [[rows]]
 ordinal = 3
@@ -35,7 +35,7 @@ evidence = "Freeze the final ledger, base and emission; show whole-act accountin
 ordinal = 6
 contracts = ["alg:design:fence", "alg:design:rungs", "alg:design:solve", "alg:design:residual"]
 requirements = ["certificate", "rung-verdicts", "conservation"]
-evidence = "Discharge backend soundness and deterministic refinement review; run dense independent cases, equal-width fences, residual containment and adversarial boundary verdicts."
+evidence = "Consume the nrz integration introduced in bite 2; discharge backend soundness, supported-platform and deterministic refinement review, including refusal beyond available precision; run dense independent cases, equal-width fences, residual containment and adversarial boundary verdicts."
 
 [[rows]]
 ordinal = 7

@@ -1,0 +1,37 @@
+{
+  "namespace": "org.peer-network.design.implementation-backend",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "accuracy_crate": "nrz-accuracy",
+      "accuracy_limits": "No promotion beyond binary64 and no solver. Exceeded says the supplied error bound exceeds the tolerance, not that the true error does; it cannot be translated into a mathematical FAIL without a proved countercondition.",
+      "accuracy_operations": "Outward upper-bound composition, conservative tolerance assessment and bounded refinement/work accounting; explicit binary32-to-binary64 retry.",
+      "accuracy_types": "`Nonnegative<f64>`, `Budget`, `BudgetAssessment`, `RecoveryPolicy`, `Recovery`, `RecoveryEvidence`",
+      "branch": "main",
+      "cas_crate": "nrz-cas",
+      "cas_limits": "A constructed expression is not a proof; a conditional witness retains its domain obligations. Exact symbolic construction supplies no general certified transcendental enclosure evaluator.",
+      "cas_operations": "Normalized arbitrary-precision rational carriers with budgeted exact arithmetic, sign and comparison; exact expression graphs and checked symbolic derivations with expected-judgment replay.",
+      "cas_types": "`Rational`, `limits::Budget`, `Cas`, `proof::VerifiedWitness`",
+      "distribution": "It is in active development and is not published to crates.io.",
+      "entry_bite": 2,
+      "formats": [
+        "binary32",
+        "binary64"
+      ],
+      "license": "AGPL-3.0-only",
+      "name": "nrz",
+      "platform": "x86_64-unknown-linux-gnu",
+      "repository": "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum",
+      "scalar_crate": "nrz-scalar",
+      "scalar_limits": "No arbitrary-precision enclosure format or general logarithm, exponential or noninteger-power enclosure API. Literal conversion can refuse on resource, domain or finite-range limits; its candidate is not an exact ledger carrier.",
+      "scalar_operations": "Finite admission; outward-enclosed addition, subtraction, multiplication, division, square and square root; exact negation and absolute value; bounded literal conversion into an enclosure. The corresponding binary32 types are also available.",
+      "scalar_types": "`Finite<f64>`, `Enclosure<f64>`, `ArithmeticContext`, `NumericLiteral`",
+      "solve_bite": 6,
+      "title": "Naturrhythmuszentrum"
+    }
+  ]
+}
