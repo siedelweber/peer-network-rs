@@ -7583,7 +7583,7 @@
       "kind": "invariant check",
       "label": "cor:epoch:universal-burn-benchmarks",
       "label_source": "explicit",
-      "statement": "Compute the W1, safety and door burn benchmarks without promising admission."
+      "statement": "Compute the ``cond:epoch:write-own-balance-solvency``, safety and door burn benchmarks without promising admission."
     },
     {
       "added_at": "network-v0.26.3",

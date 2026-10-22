@@ -202,7 +202,7 @@
         "cond:epoch:write-epoch-admission"
       ],
       "name": "admission",
-      "oracle": "Hand-derived rational W1/W2 cases with explicit numeraire, counts, prices and reduced stamps.",
+      "oracle": "Hand-derived rational ``cond:epoch:write-own-balance-solvency``, ``cond:epoch:write-individual-safety`` and ``cond:epoch:write-epoch-admission`` cases with explicit numeraire, counts, prices and reduced stamps.",
       "property": "Only a fully certified final state can accept; no member of a rejected or indecisive proposed set takes effect.",
       "requirements": [
         "admission"

@@ -80,7 +80,7 @@
         "ver:epoch:final-stamps"
       ],
       "ordinal": 7,
-      "records": "Study judgment: action/epoch stamps, W1/W2, door headroom and declared next-boundary schedules; gate and boundary-policy fixture records (post:epoch:final-act-sequence-write-rule) (def:network:door-headroom) (def:epoch:safety-threshold) (ver:epoch:final-stamps).",
+      "records": "Study judgment: action/epoch stamps, ``cond:epoch:write-own-balance-solvency``, ``cond:epoch:write-individual-safety`` and ``cond:epoch:write-epoch-admission``, door headroom and declared next-boundary schedules; gate and boundary-policy fixture records (post:epoch:final-act-sequence-write-rule) (def:network:door-headroom) (def:epoch:safety-threshold) (ver:epoch:final-stamps).",
       "slice": "pn-epoch: final admission and schedules"
     },
     {

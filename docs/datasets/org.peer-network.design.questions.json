@@ -33,7 +33,7 @@
       "instruction": "D-002(c) remains conditional, as you propose. Store no rounded rational as a substitute for the exact debit, and preserve the original debit vintage.",
       "reading": "Study judgment: Treat D-002(c) as conditional; never replace an exact debit with a rounded rational.",
       "section": "Q03 — Exact ledger values",
-      "status": "**Status: closed.** The charged debit's representation and accuracy are the deployment's because its certification re-establishes the labelled conditions of ``def:epoch:safety-threshold`` for the value it charges, with in-epoch rung certification on that epoch's own width under ``def:epoch:safety-threshold``, so neither Q03-A nor Q03-B enters the paper, which keeps one published charged value per epoch, never recalculated once consummated, shared by debit, W1, the safety floor, emission and capacity, and treats every stated precision, eight significant figures included, as an example of a level sufficient for fair pricing and certification, not a locked protocol value.",
+      "status": "**Status: closed.** The charged debit's representation and accuracy are the deployment's because its certification re-establishes the labelled conditions of ``def:epoch:safety-threshold`` for the value it charges, with in-epoch rung certification on that epoch's own width under ``def:epoch:safety-threshold``, so neither Q03-A nor Q03-B enters the paper, which keeps one published charged value per epoch, never recalculated once consummated, shared by debit, ``cond:epoch:write-own-balance-solvency``, the safety floor, emission and capacity, and treats every stated precision, eight significant figures included, as an example of a level sufficient for fair pricing and certification, not a locked protocol value.",
       "topic": "Exact ledger values"
     },
     {
@@ -248,7 +248,7 @@
       "ambiguity": "The gates appendix says delegated view is not conserved across targets while the current epoch model conserves the transported pair. (rem:gates:standing-safety-scope) (post:epoch:standing-pair-mass-conservation)",
       "class": "DEFECT",
       "id": "Q25",
-      "instruction": "Your provisional separation is safe. Enforce pair-mass conservation and keep W1, W2 and contraction as distinct checks.",
+      "instruction": "Your provisional separation is safe. Enforce pair-mass conservation and keep ``cond:epoch:write-own-balance-solvency``, ``cond:epoch:write-individual-safety`` and ``cond:epoch:write-epoch-admission`` and contraction as distinct checks.",
       "reading": "Study judgment: Keep solvency and contraction separate, and hold the outdated disclaimer rather than weaken pair conservation.",
       "section": "Q25 — Conservation disclaimer",
       "status": "**Status: corrected.** The standing package conserves the transported balance/count pair across targets and self without transferring ledger assets, conserving the sum of standing ratios or supplying a target veto.",
@@ -381,7 +381,7 @@
       "instruction": "Your hold on the stated regime expectation is safe. Keep the literal inputs, enforce reduced-unit gates, and do not silently rescale values to make an example pass.",
       "reading": "Study judgment: Retain the displayed inputs and hold the regime expectation instead of rescaling them silently.",
       "section": "Q38 — Boundary fixture units",
-      "status": "**Status: corrected.** Boundary fixtures distinguish full standing, reduced stamps and burn prices, declare each margin and numeraire, show the transformed W2a stamp, and compute explicit act-weighted headroom and verdicts for the capacity-filled and slack inputs.",
+      "status": "**Status: corrected.** Boundary fixtures distinguish full standing, reduced stamps and burn prices, declare each margin and numeraire, show the transformed ``cond:epoch:write-individual-safety`` stamp, and compute explicit act-weighted headroom and verdicts for the capacity-filled and slack inputs.",
       "topic": "Boundary fixture units"
     }
   ]

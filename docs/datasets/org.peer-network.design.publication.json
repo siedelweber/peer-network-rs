@@ -25,6 +25,7 @@
       "name": "constants",
       "namespace": "org.peer-network.design.constants",
       "source": "Released paper declarations, with implementation classifications inherited from the accepted decomposition where still applicable.",
+      "source_schema": "peer-constants-2",
       "tag": "network-v0.26.3"
     },
     {
@@ -37,7 +38,7 @@
       "dispatch": "siedelweber/design-study/2026-10-21-1",
       "name": "bites",
       "namespace": "org.peer-network.design.bites",
-      "source": "The loop's accepted decomposition study."
+      "source": "The accepted decomposition study; positional write-gate references are expanded to the released paper labels without changing the study responsibilities or order."
     },
     {
       "dispatch": "siedelweber/design-study/2026-10-21-1",
