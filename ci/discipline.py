@@ -202,6 +202,8 @@ def vendor_members(root):
 
 def run_clippy(root, advisory=False):
     command = ["cargo", "clippy", "--workspace"]
+    if "gate" in tomllib.loads((root / "Cargo.toml").read_text()).get("profile", {}):
+        command.extend(["--profile", "gate"])
     # The vendored engine keeps its upstream Clippy policy.
     for _, package in vendor_members(root):
         command.extend(["--exclude", package])
@@ -272,21 +274,17 @@ def validate_build_policy(root):
     if policy != [expected]:
         raise ValueError("rendered build policy must state the enforced workspace policy")
     profiles = manifest.get("profile", {})
-    if profiles != {"release": {"lto": "thin", "codegen-units": 1}}:
-        raise ValueError("expected thin LTO and one release codegen unit; dev and test use defaults")
+    if profiles != {"release": {"lto": "thin", "codegen-units": 1},
+                    "gate": {"inherits": "dev", "opt-level": 1, "debug": 0,
+                             "debug-assertions": True, "overflow-checks": True}}:
+        raise ValueError("expected reviewed release and gate profiles; dev and test use defaults")
 
 
 def main():
     mode = sys.argv[1]
     if mode == "tests":
-        status = 0
-        for member in workspace_packages():
-            package = member["name"]
-            started = time.monotonic()
-            result = subprocess.run(["cargo", "test", "-p", package, "--locked"])
-            print(f"SUITE={package} STATUS={result.returncode} WALL={time.monotonic() - started:.6f}s", flush=True)
-            status |= int(result.returncode != 0)
-        return status
+        from run_tests import main as run_tests
+        return run_tests()
     if mode == "fmt":
         command = ["cargo", "fmt"]
         for package in workspace_packages():
@@ -301,6 +299,7 @@ def main():
             if package["name"] != "regexml":
                 command.extend(["-p", package["name"]])
         command.extend(["--no-default-features" if mode == "minimal" else "--no-deps", "--locked"])
+        command.extend(["--profile", "gate"])
         return subprocess.run(command).returncode
     if mode == "build-policy":
         validate_build_policy(pathlib.Path.cwd())

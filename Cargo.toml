@@ -62,7 +62,15 @@ suspicious = { level = "deny", priority = -1 }
 
 # Thin LTO provides most full-LTO cross-crate inlining at a fraction of link time.
 # One codegen unit lets the optimiser see each crate whole. Dev and test retain
-# Cargo defaults so gate builds preserve incremental speed.
+# Cargo defaults for interactive debugging; measured gate builds use gate below.
 [profile.release]
 lto = "thin"
 codegen-units = 1
+
+# Measured separately from ordinary debugging; assertions and checks remain on.
+[profile.gate]
+inherits = "dev"
+opt-level = 1
+debug = 0
+debug-assertions = true
+overflow-checks = true

@@ -1,0 +1,10 @@
+# Explicit repository policy; the gate selects this file and the default profile.
+nextest-version = "0.9.149"
+[store]
+dir = ".lane/nextest"
+[profile.default]
+retries = 0
+fail-fast = false
+slow-timeout = { period = "60s" }
+failure-output = "final"
+success-output = "never"

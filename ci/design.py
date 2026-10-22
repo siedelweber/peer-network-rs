@@ -39,6 +39,11 @@ def first_party_prose():
             and not any(path.is_relative_to(vendor) for vendor in vendors)]
 
 
+def bare_mint_pattern(labels):
+    # One compiled union preserves the exact literal and delimiter predicates.
+    return re.compile('(?<!`)`(' + '|'.join(re.escape(label) for label in sorted(labels)) + ')`(?!`)')
+
+
 def validate():
     # Claim: normalized inventory statements and constants preserve the reviewed source-data projection exactly.
     inventory = data('inventory')
@@ -140,11 +145,11 @@ def validate():
         if not (not imports and (not registry.exists()) and (not template.exists())):
             raise ValueError('withdrawn import remains present')
     labels.update(row['cites'] for row in constants if row['cites'])
+    bare_mint = bare_mint_pattern(labels)
     for path in first_party_prose():
         source = path.read_text()
-        for label in labels:
-            if not (not re.search('(?<!`)`' + re.escape(label) + '`(?!`)', source)):
-                raise ValueError(f'{path}: bare paper mint {label}')
+        if match := bare_mint.search(source):
+            raise ValueError(f'{path}: bare paper mint {match.group(1)}')
         if not publication['imported'] and path.suffix == '.md':
             if not ('[PAPER-' not in source):
                 raise ValueError(f'{path}: inactive imported citation')

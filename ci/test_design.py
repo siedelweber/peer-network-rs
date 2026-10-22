@@ -1,13 +1,17 @@
 """Exercise correspondence refusals in isolated tracked trees."""
 
 import json
+import itertools
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
 import time
 import unittest
+
+from design import bare_mint_pattern
 
 
 REPOSITORY = Path(__file__).resolve().parent.parent
@@ -20,6 +24,18 @@ def git(root, *args):
 
 
 class Correspondence(unittest.TestCase):
+    def test_indexed_mint_predicate(self):
+        """The compiled union retains every literal and backtick boundary refusal.
+        ´claim:devperf:correspondence-predicate-preserved´
+        ´test:design:test-indexed-mint-predicate´
+        """
+        labels = {'a', 'b', 'a.b', 'a+b', 'a:b:c'}
+        union = bare_mint_pattern(labels)
+        samples = (''.join(parts) for size in range(8) for parts in itertools.product('`ab.', repeat=size))
+        for source in itertools.chain(samples, ['`a+b`', '``a+b``', '`a:b:c`', '`a.b`', '`a`b`']):
+            expected = any(re.search('(?<!`)`' + re.escape(label) + '`(?!`)', source) for label in labels)
+            self.assertEqual(bool(union.search(source)), expected, source)
+
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)

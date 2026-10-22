@@ -40,7 +40,7 @@ class WorkspaceChecks(unittest.TestCase):
                 run.side_effect = [subprocess.CompletedProcess([], 0, json.dumps(metadata)), subprocess.CompletedProcess([], 7)]
                 self.assertEqual(main(), 7)
                 self.assertEqual(run.call_args_list[0].args[0], ["cargo", "metadata", "--no-deps", "--format-version=1", "--locked"])
-                self.assertEqual(run.call_args_list[1].args[0], ["cargo", subcommand, "-p", "documents", "-p", "new-tool", flag, "--locked"])
+                self.assertEqual(run.call_args_list[1].args[0], ["cargo", subcommand, "-p", "documents", "-p", "new-tool", flag, "--locked", "--profile", "gate"])
 
 
 class HashCitations(unittest.TestCase):
@@ -263,9 +263,13 @@ class HashCitations(unittest.TestCase):
 
 
 class SourceDiscipline(unittest.TestCase):
-    # Claim: minimum compiler claims, profile drift and stale policy data each fail the build policy.
     def test_build_policy(self):
+        """Gate profile drift and disabled runtime checks fail structural policy.
+        ´claim:devperf:gate-profile-guards´
+        ´test:discipline:test-build-policy´
+        """
         manifest = '[workspace]\nmembers=["packages/example"]\n[workspace.package]\n[profile.release]\nlto="thin"\ncodegen-units=1\n'
+        manifest += '[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\ndebug-assertions=true\noverflow-checks=true\n'
         member = '[package]\nname="example"\n'
         policy = Path('docs/inputs/build-policy.toml').read_text()
         with tempfile.TemporaryDirectory() as directory:
@@ -277,6 +281,9 @@ class SourceDiscipline(unittest.TestCase):
             (root / 'docs/inputs/build-policy.toml').write_text(policy)
             validate_build_policy(root)
             for changed in [manifest.replace('"thin"', '"fat"'), manifest.replace('units=1', 'units=2'),
+                            manifest.replace('debug-assertions=true', 'debug-assertions=false'),
+                            manifest.replace('overflow-checks=true', 'overflow-checks=false'),
+                            manifest.replace('opt-level=1', 'opt-level=2'), manifest.replace('debug=0', 'debug=2'),
                             manifest + '[profile.dev]\nopt-level=1\n', manifest + '[profile.test]\nopt-level=1\n',
                             manifest.replace('[workspace.package]', '[workspace.package]\nrust-version="1.90"')]:
                 (root / 'Cargo.toml').write_text(changed)
