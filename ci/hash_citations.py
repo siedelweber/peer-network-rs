@@ -21,15 +21,16 @@ HEX = re.compile(
 )
 
 
-IDENTITY_CONTEXT = re.compile(r"\b(?:commit|digest|checksum|sha(?:-?(?:1|256|512))?)\b", re.I)
+IDENTITY_CONTEXT = re.compile(r"\b(?:commit|digest|checksum|hash|rev|revision|tree|object|sha(?:-?(?:1|256|512))?)\b", re.I)
 BARE = re.compile(r"[0-9a-f]+", re.I)
 
 
 def occurrences(text):
     """Read values, not short English words that happen to use hex letters.
 
-    An explicit commit/digest/checksum field or prose context is scoped to the
-    candidate's physical line, just as the family readers scope their evidence.
+    An explicit identity field or prose context, including hash, rev, revision,
+    tree and object, is scoped to the candidate's physical line, just as the
+    family readers scope their evidence.
     Parenthesized tool-version tuples also carry abbreviated commit identity.
     This changes recognition only; every recognized value still needs a family.
     """

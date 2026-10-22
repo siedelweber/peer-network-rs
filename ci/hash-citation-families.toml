@@ -4,9 +4,10 @@ version = [1, 0, 0]
 # Boundary: explicit hexadecimal integers (including Rust suffixes), byte and
 # Unicode escapes and ABNF hexadecimal ranges always participate. Bare runs have
 # at least six characters. Short mixed letter/digit runs participate; letter-only
-# short runs require a commit, digest, checksum or SHA context on their physical
-# line, or a parenthesized dated tool-version tuple. Full 40/64-character runs
-# participate without context, as do longer letter-bearing runs. Decimal-only
+# short runs require a whole-word commit, digest, checksum, SHA, hash, rev,
+# revision, tree or object context on their physical line, or a parenthesized
+# dated tool-version tuple. Full 40/64-character runs participate without
+# context, as do longer letter-bearing runs. Decimal-only
 # short quantities require identity context or the existing parenthesized version
 # form. Recognition does not establish a value: the same families below must do
 # that. Every tracked byte and pathname is read, including tests and vendor code.
@@ -103,7 +104,7 @@ measures = "Visible placeholder patterns in toolchain and audit regression witne
 producer = "None; authored visible patterns"
 establishment = "defined"
 reader = "fixture-pattern"
-definition = "Consecutive alphabetic hexadecimal letters, optionally followed by consecutive digits, or consecutive digits alone define these placeholders; they identify no Git object."
+definition = "Consecutive alphabetic hexadecimal letters, optionally followed by consecutive digits, or consecutive digits alone define these placeholders; they identify no Git object. Letter-only values are counted only in identity context."
 patterns = ["abc123", "abcdef", "abcdef123", "123456"]
 paths = ["ci/test_discipline.py", "ci/hash_citations.py", "ci/hash-citation-families.toml"]
 
@@ -168,7 +169,7 @@ measures = "Visible match and replacement subjects and Unicode range endpoints"
 producer = "Upstream QT test transcription"
 establishment = "defined"
 reader = "regexp-subject"
-definition = "Short alphabetic subjects, an alphabetic subject containing the digits one and two, the descending-digit replacement subject, and the Unicode endpoint are literal matching inputs. Digest and commit contexts are refused."
+definition = "Short alphabetic subjects, an alphabetic subject containing the digits one and two, the descending-digit replacement subject, and the Unicode endpoint are literal matching inputs. Letter-only values are counted only in identity context; the reader still refuses digest and commit contexts."
 paths = ["vendor/regexml/tests/*.rs", "ci/hash_citations.py"]
 
 [[rows]]

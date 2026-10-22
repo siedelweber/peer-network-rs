@@ -115,6 +115,37 @@ class HashCitations(unittest.TestCase):
         self.assertEqual(occurrences(digits), [])
         self.assertEqual([m.group() for m in occurrences("commit " + word + "\nfacade")], [word])
 
+    def test_hex_additional_identity_context(self):
+        """Each additional identity keyword retains short values, so common provenance fields cannot evade accounting.
+        ´claim:hash-citations:additional-context-retains-short-values´
+        ´test:discipline:test-hex-additional-identity-context´
+        """
+        word = "ab" + "cdef"
+        for context in ["hash", "rev", "revision", "tree", "object"]:
+            with self.subTest(context=context):
+                for spelling in [context, context.upper()]:
+                    self.assertEqual([m.group() for m in occurrences(spelling + ' = "' + word + '"')], [word])
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    (root / "sample.rs").write_text("0xff\n" + context + " " + word + "\n")
+                    findings, count = audit(root, ["sample.rs"], self.table())
+                    self.assertEqual(count, 2)
+                    self.assertTrue(any("unaccounted hexadecimal value " + word in f for f in findings))
+
+    def test_hex_context_word_and_line_boundaries(self):
+        """Context words alone, short prose words and keywords on other lines do not turn ordinary prose into identities.
+        ´claim:hash-citations:context-respects-word-and-line-boundaries´
+        ´test:discipline:test-hex-context-word-and-line-boundaries´
+        """
+        for text in ["The hash map stores the cafe menu.", "The rev counter sits beside a bead.",
+                     "The revision describes a cafe.", "A tree shades the cafe.", "The object is a bead."]:
+            with self.subTest(text=text):
+                self.assertEqual(occurrences(text), [])
+                self.assertEqual(occurrences(text + "\nAn effaced facade stands nearby."), [])
+        for text in ["hashes", "revving", "revisionist", "treehouse", "objects"]:
+            with self.subTest(text=text):
+                self.assertEqual(occurrences(text + " beside an effaced facade"), [])
+
     def test_hex_full_identifiers(self):
         """Full identifiers and mixed short values remain visible without contextual keywords, preserving provenance checks.
         ´claim:hash-citations:full-and-mixed-identifiers-remain-visible´
