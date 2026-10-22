@@ -27,12 +27,12 @@
       "name": "allocation-transport"
     },
     {
-      "contents": "Rate hull, evaluated fence and its verdict, certified fixed-point enclosure, standing, action and epoch stamps, headroom and W1/W2 results.",
+      "contents": "Rate hull, contributing width, evaluated fence and verdict, certified fixed-point enclosure, standing, action and epoch stamps, headroom and final-set solvency, individual-safety and epoch-admission results.",
       "key": 6,
       "name": "standing-admission"
     },
     {
-      "contents": "Title certificate, recognition and consumption evidence, target size, duration bounds, led safety threshold, policy schedule and margin.",
+      "contents": "Title and recognition evidence, target size, duration bounds, fixed structural floor, in-force wall and price, controller edition/constants, completed width and accepted rung, next wall proposal and delivered wall with lead, policy schedule and margin.",
       "key": 7,
       "name": "closure-policy"
     },

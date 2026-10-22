@@ -100,7 +100,7 @@
       "cases": "Unequal domain profiles, Invitation A-leg versus T-leg, repeated fold cells, home-resolved acts and revocation ties.",
       "decision": "dec:design:final-state",
       "fixture": "compiler-cases",
-      "hold": "Released corrections require new expected values; legacy staged expectations are not substitutes.",
+      "hold": "The released reference conserved fixture supplies an oracle; implementation executions and other input families remain held. Legacy staged expectations are not substitutes.",
       "labels": [
         "post:epoch:standing-epoch-set-determinism",
         "post:epoch:standing-memorylessness",
@@ -135,17 +135,18 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Equal-width graphs of different shape, a zero-width case and fences below, at and above the margin boundary.",
+      "cases": "Equal-width graphs of different shape, a zero-width case and fences below, at and above the margin boundary. Transcribe the exact released reference Actor, vouch and standing_profile inputs and the independent conserved-equilibrium certificate.",
       "decision": "dec:design:certificate",
       "fixture": "fence-residual-cases",
       "hold": "Backend soundness and adversarial executions remain held until the numerical bite.",
       "labels": [
         "def:dynamics:conserved-standing-certificate",
         "thm:dynamics:certified-conserved-standing-uniqueness",
-        "lem:dynamics:fixed-point-residual-enclosure"
+        "lem:dynamics:fixed-point-residual-enclosure",
+        "ver:standing:conserved-equilibrium-enclosure"
       ],
       "name": "certificate",
-      "oracle": "Independent high-precision directed evaluation plus exact zero-tilt and rational analytic cases; shared kernel output alone is insufficient.",
+      "oracle": "Independent high-precision directed evaluation plus exact zero-tilt and rational analytic cases; shared kernel output alone is insufficient. Check the released global residual and local Krawczyk evidence independently, preserving their distinct centres and radii.",
       "property": "Equal width at fixed wall/profile/rung yields equal fence; residual enclosure contains the independently certified equilibrium.",
       "requirements": [
         "certificate"
@@ -188,14 +189,17 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Individual failure hidden by a positive average, exact equality, threshold straddling, empty epoch and target overflow.",
+      "cases": "Individual failure hidden by a positive average, exact equality, threshold straddling, empty epoch and target overflow. Check the reference certificate final-set intervals and charge the revising act before forming its revised rate.",
       "decision": "dec:design:admission",
       "fixture": "gate-unit-cases",
       "hold": "Final numerical threshold evidence waits for the supported profile; missing evidence is never counted as passing.",
       "labels": [
         "post:epoch:final-act-sequence-write-rule",
         "post:network:host-contract",
-        "def:epoch:final-act-stamps"
+        "def:epoch:final-act-stamps",
+        "cond:epoch:write-own-balance-solvency",
+        "cond:epoch:write-individual-safety",
+        "cond:epoch:write-epoch-admission"
       ],
       "name": "admission",
       "oracle": "Hand-derived rational W1/W2 cases with explicit numeraire, counts, prices and reduced stamps.",
@@ -206,18 +210,30 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Zero width, empty live domain, trigger/cap/escalation order, stale next-width bound and downward migration.",
+      "cases": "Both chartered floors, exact ridge comparison, zero width, empty live domain, deadband equality, capped upward/downward steps, recoinage, fixed-ledger numeraire change and a next epoch wider than its predecessor.",
       "decision": "dec:design:policy-schedules",
-      "fixture": "calibration-cases",
-      "hold": "Deployment must supply a total procedure and certified results; no paper-maintainer calibration hold remains.",
+      "fixture": "wall-controller-cases",
+      "hold": "Deployment declarations and snapshot evidence remain required; economics and controller performance are open separately from in-epoch safety.",
       "labels": [
         "def:epoch:safety-threshold",
         "def:epoch:policy-floor",
-        "subsec:deployment:transparency-of-protocol-formulas"
+        "subsec:deployment:transparency-of-protocol-formulas",
+        "def:epoch:safety-wall-floor",
+        "def:epoch:wall-controller",
+        "def:epoch:canonical-interim-wall-controller",
+        "cond:epoch:safety-derivability",
+        "cond:epoch:safety-in-epoch-certification",
+        "cond:epoch:safety-wall-step-bound",
+        "cond:epoch:safety-wall-hysteresis",
+        "cond:epoch:safety-publication-lead",
+        "cond:epoch:safety-controller-publication",
+        "cond:epoch:safety-numeraire-covariance",
+        "cond:epoch:safety-declared-floor",
+        "cond:epoch:safety-input-quarantine"
       ],
       "name": "policy-schedules",
-      "oracle": "Independent boundary-sequence model evaluating the declared procedure and explicit invariant predicates.",
-      "property": "Lead, positive charge, step and hysteresis constraints and X1–X7 hold for the published charge, including exceptional cases.",
+      "oracle": "Independent exact boundary-sequence model with separately certified gain inversion and ridge bounds; compare the floor, proposal, deadband branch, cap and delivered wall separately.",
+      "property": "The actual wall and charge satisfy the labelled floor, controller and lead conditions; each epoch certifies its own width and never reads demand or an escalation window.",
       "requirements": [
         "policy-schedules"
       ],

@@ -33,7 +33,7 @@
       "instruction": "D-002(c) remains conditional, as you propose. Store no rounded rational as a substitute for the exact debit, and preserve the original debit vintage.",
       "reading": "Study judgment: Treat D-002(c) as conditional; never replace an exact debit with a rounded rational.",
       "section": "Q03 — Exact ledger values",
-      "status": "**Status: closed.** The charged debit's representation and accuracy are the deployment's because its certification re-establishes the labelled conditions of ``def:epoch:safety-threshold`` for the value it charges, with in-epoch rung certification on that epoch's own width under def:epoch:safety-threshold, so neither Q03-A nor Q03-B enters the paper, which keeps one published charged value per epoch, never recalculated once consummated, shared by debit, W1, the safety floor, emission and capacity, and treats every stated precision, eight significant figures included, as an example of a level sufficient for fair pricing and certification, not a locked protocol value.",
+      "status": "**Status: closed.** The charged debit's representation and accuracy are the deployment's because its certification re-establishes the labelled conditions of ``def:epoch:safety-threshold`` for the value it charges, with in-epoch rung certification on that epoch's own width under ``def:epoch:safety-threshold``, so neither Q03-A nor Q03-B enters the paper, which keeps one published charged value per epoch, never recalculated once consummated, shared by debit, W1, the safety floor, emission and capacity, and treats every stated precision, eight significant figures included, as an example of a level sufficient for fair pricing and certification, not a locked protocol value.",
       "topic": "Exact ledger values"
     },
     {
@@ -43,7 +43,7 @@
       "instruction": "JSON and rational endpoints are safe as explicitly provisional study choices only. Do not advertise them as the paper's canonical encoding or treat an equality-straddling interval as a passing comparison.",
       "reading": "Study judgment: Propose JSON and rational endpoints as study judgments only; hold bitwise and equality claims until the canonical contract is declared.",
       "section": "Q04 — Canonical bytes and equality",
-      "status": "**Status: closed.** Byte serialization is a deployment concern under post:deployment:canonical-standing-publication, so neither codec draft (Q04-T, Q04-B) enters the paper and the shared profile's semantic parts (exact values, comparison and refinement) remain with Q03 and Q05.",
+      "status": "**Status: closed.** Byte serialization is a deployment concern under ``post:deployment:canonical-standing-publication``, so neither codec draft (Q04-T, Q04-B) enters the paper and the shared profile's semantic parts (exact values, comparison and refinement) remain with Q03 and Q05.",
       "topic": "Canonical bytes and equality"
     },
     {
@@ -53,7 +53,7 @@
       "instruction": "Your failure/indecision distinction is safe and necessary. Hold canonical replay pending the shared policy; a safe lower rung alone is not evidence of compliant greatest-rung selection.",
       "reading": "Study judgment: Keep failure and indecision distinct and require the unresolved canonical refinement rule before accepting a replay implementation.",
       "section": "Q05 — Greatest rung versus indecision",
-      "status": "**Status: closed.** Under def:epoch:tilt-backoff-grid, the accepted rung is the greatest one the deployment's published certification procedure proves passing, indecisive higher rungs are published as INDECISIVE, and the refinement policy is the deployment's published choice, so neither Q05-R nor Q05-C enters the paper as drafted: the outcome is Q05-C's selection rule with the procedure left to the deployment.",
+      "status": "**Status: closed.** Under ``def:epoch:tilt-backoff-grid``, the accepted rung is the greatest one the deployment's published certification procedure proves passing, indecisive higher rungs are published as INDECISIVE, and the refinement policy is the deployment's published choice, so neither Q05-R nor Q05-C enters the paper as drafted: the outcome is Q05-C's selection rule with the procedure left to the deployment.",
       "topic": "Greatest rung versus indecision"
     },
     {

@@ -28,9 +28,10 @@
         "sig:design:numeric-kernel",
         "proposal:design:storage-placement",
         "sig:design:storage",
-        "verif:design:storage-history"
+        "verif:design:storage-history",
+        "model:design:wall-floor"
       ],
-      "evidence": "Introduce nrz-scalar, nrz-accuracy and nrz-cas as git dependencies from the public Naturrhythmuszentrum repository on branch main; review the lockfile resolution and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases. Under the accepted infrastructure amendment, introduce the host storage slice with real PostgreSQL beta history tests from its first implementation; first pass whole-configuration secret typing through PostgreSQL driver state and errors. Introduce the sole Elements RPC integration in pn-wallet and the optional development-network host edge with its runtime guard; real-service and mock suites begin here. No pre-1.0 migration support is promised.",
+      "evidence": "Introduce nrz-scalar, nrz-accuracy and nrz-cas as git dependencies from the public Naturrhythmuszentrum repository on branch main; review the lockfile resolution and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases. Under the accepted infrastructure amendment, introduce the host storage slice with real PostgreSQL beta history tests from its first implementation; first pass whole-configuration secret typing through PostgreSQL driver state and errors. Introduce the sole Elements RPC integration in pn-wallet and the optional development-network host edge with its runtime guard; real-service and mock suites begin here. No pre-1.0 migration support is promised. Retain the exact declared floor, controller edition and source constant definitions; distinguish them from evaluated values and rounded displays.",
       "ordinal": 2,
       "requirements": [
         "burn-boundary",
@@ -85,7 +86,7 @@
         "alg:design:solve",
         "alg:design:residual"
       ],
-      "evidence": "Consume the nrz integration introduced in bite 2; discharge backend soundness, supported-platform and deterministic refinement review, including refusal beyond available precision; run dense independent cases, equal-width fences, residual containment and adversarial boundary verdicts.",
+      "evidence": "Consume the nrz integration introduced in bite 2; discharge backend soundness, supported-platform and deterministic refinement review, including refusal beyond available precision; run dense independent cases, equal-width fences, residual containment and adversarial boundary verdicts. Transcribe the released exact standing profile and independent conserved-equilibrium certificate; verify global residual and local Krawczyk witnesses without importing retired staged bounds.",
       "ordinal": 6,
       "requirements": [
         "certificate",
@@ -99,7 +100,7 @@
         "alg:design:schedules",
         "inv:design:atomic-admission"
       ],
-      "evidence": "Require the published total calibration procedure; verify units, lead, exceptional widths, individual safety and atomic final-set rejection.",
+      "evidence": "Require the fixed floor, published controller and exact comparison procedure; verify both floor declarations, zero/empty width, deadband equality, signed caps, lead, input quarantine and numeraire covariance. Certify each epoch on its own width, exercise the reference final-set gate evidence and preserve atomic rejection. Keep economic, tracking and snapshot holds explicit.",
       "ordinal": 7,
       "requirements": [
         "admission",
@@ -126,7 +127,7 @@
         "alg:design:reconstruction",
         "rule:design:comparison"
       ],
-      "evidence": "Reconstruct from public causes and attribute section mutations; compare independent small-case results and replay the declared refinement policy.",
+      "evidence": "Reconstruct from public causes and attribute section mutations; compare independent small-case results and replay the declared refinement policy. Reconstruct the wall proposal and delivered charge, exact floor comparison, contributing width, fence and reference certificate comparisons.",
       "ordinal": 9,
       "requirements": [
         "replay",
