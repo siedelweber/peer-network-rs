@@ -32,6 +32,69 @@
 
 **Amendment (Timing findings)** · `amend:harness:performance-findings` The benchmark rule and foundation probes now separate performance findings from correctness (`rule:harness:benchmarks`), (`gate:harness:foundation`). This supersedes the earlier instruction that repeatable benchmark regressions fail a required tier: timing never fails a test, tier or gate under (`rule:devperf:nonverdict`). Required runs, baselines, retained samples and finding ownership remain obligations; an inconclusive comparison is a disclosed performance-evidence hold, not a timing-derived functional failure. The performance foundation adds the collector and the warning path while preserving claim-based semantic results.
 
+**Amendment (Foundation registry and join)** · `amend:harness:registry-join` This implements the registry and result-join portion of (`gate:harness:foundation`) and (`gate:design:harness-foundation`), refining (`dec:harness:levels`) and (`rule:harness:tiers`). The committed harness registry declares four levels, each active suite's complete case roster, implementation and evidence class, tier and case/suite budget references. It replaces the interim location rule in (`amend:devperf:foundation-reporting`). Public-surface declarations preserve the existing crate-labelled tests, including those currently located in internal test modules; declaration does not claim their later layout audit complete. Unknown cases, missing declarations, unregistered implementations, ignored or incomplete required cases, dropped cases, changed source/configuration and mock evidence labelled as real are structural errors. The nextest inventory must equal the declared roster before results join. Doctests join against their committed prior inventory, including cases that never start; CI unittest discovery and results use the same accounting. Every joined case retains its source, configuration, level, suite, implementation, evidence class, tier, applicable budgets, raw outcome and duration in milliseconds. A suite name is not an authored claim; the claim-site audit and obligation join remain under (`gate:testing:foundation`).
+
+**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 53 suites and 6 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
+
+| Suite | Status | Level | Implementation | Tier | Cases |
+| --- | --- | --- | --- | --- | --- |
+| cli-common | active | public-surface | cli-common-rust | fast | 73 |
+| cli-common::public_api | active | integration | cli-common-rust | fast | 5 |
+| documents::behaviour | active | integration | documents-rust | fast | 28 |
+| documents::panic_contract | active | integration | documents-rust | fast | 1 |
+| execwrap | active | public-surface | execwrap-rust | fast | 25 |
+| execwrap::subprocess_contract | active | integration | execwrap-rust | fast | 18 |
+| pn-interchange | active | unit | pn-interchange-rust | fast | 223 |
+| pn-interchange::acceptance | active | integration | pn-interchange-rust | fast | 14 |
+| pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |
+| pn-interchange::deterministic_encoding | active | integration | pn-interchange-rust | fast | 13 |
+| pn-interchange::documents | active | integration | pn-interchange-rust | fast | 11 |
+| pn-interchange::inclusion | active | integration | pn-interchange-rust | fast | 27 |
+| pn-interchange::labels | active | integration | pn-interchange-rust | fast | 10 |
+| pn-interchange::prefix | active | integration | pn-interchange-rust | fast | 12 |
+| pn-interchange::properties | active | integration | pn-interchange-rust | fast | 25 |
+| pn-interchange::registry | active | integration | pn-interchange-rust | fast | 23 |
+| pn-interchange::restraint | active | integration | pn-interchange-rust | fast | 26 |
+| pn-interchange::satisfaction | active | integration | pn-interchange-rust | fast | 72 |
+| pn-interchange::theories | active | integration | pn-interchange-rust | fast | 21 |
+| pn-interchange::vectors | active | integration | pn-interchange-rust | fast | 3 |
+| pn-interchange::versions | active | integration | pn-interchange-rust | fast | 6 |
+| regexml | active | unit | regexml-rust | fast | 16 |
+| regexml::test_backtrack | active | integration | regexml-rust | fast | 16 |
+| regexml::test_problems | active | integration | regexml-rust | fast | 6 |
+| regexml::test_qt_analyze_string | active | integration | regexml-rust | fast | 25 |
+| regexml::test_qt_matches | active | integration | regexml-rust | fast | 151 |
+| regexml::test_qt_matches_re | active | integration | regexml-rust | fast | 1 |
+| regexml::test_qt_perl_matches | active | integration | regexml-rust | fast | 678 |
+| regexml::test_qt_replace | active | integration | regexml-rust | fast | 73 |
+| regexml::test_qt_tokenize | active | integration | regexml-rust | fast | 37 |
+| regexml::test_regexml | active | integration | regexml-rust | fast | 39 |
+| cli-common-doctests | active | doctest | cli-common-rust | fast | 2 |
+| execwrap-doctests | active | doctest | execwrap-rust | fast | 2 |
+| pn-interchange-doctests | active | doctest | pn-interchange-rust | fast | 174 |
+| regexml-doctests | active | doctest | regexml-rust | fast | 1 |
+| ci::test_design | active | integration | ci-python | fast | 6 |
+| ci::test_devperf | active | unit | ci-python | fast | 14 |
+| ci::test_discipline | active | integration | ci-python | fast | 25 |
+| ci::test_harness | active | unit | ci-python | fast | 8 |
+| planned-records | held | held | none | fast | 0 |
+| planned-burn | held | held | none | service | 0 |
+| planned-graph | held | held | none | fast | 0 |
+| planned-ledger | held | held | none | fast | 0 |
+| planned-compiler | held | held | none | fast | 0 |
+| planned-numeric | held | held | none | fast | 0 |
+| planned-admission | held | held | none | fast | 0 |
+| planned-publication | held | held | none | service | 0 |
+| planned-replay | held | held | none | service | 0 |
+| planned-readouts | held | held | none | fast | 0 |
+| planned-storage | held | held | none | service | 0 |
+| planned-api | held | held | none | service | 0 |
+| planned-devnet | held | held | none | service | 0 |
+| planned-client | held | held | none | service | 0 |
+
+
+**Amendment (Matrix and remaining support)** · `amend:harness:matrix-evidence` The untracked .lane/harness-matrix.json artifact and HARNESS-MATRIX gate summary publish source/configuration/implementation/tier results and explicit holds under (`rule:harness:tiers`). The service tier has no provisioned worker and remains held, never passed by fast evidence. Planned storage, burn and API suites remain held with no implementation, as do the other unimplemented domain contracts in (`model:design:harness-suites`). The measured performance tier remains held for benchmark workloads and reviewed baselines. The support package, accepted dependency conditions, property seed/replay conventions, benchmark conventions and correctness probes, and completion of each package's required test-level coverage/layout remain for the support step; (`gate:harness:foundation`) and (`gate:design:harness-foundation`) remain open. Registry declaration and successful rendering do not create service conformance or executed claims.
+
 **Decision (Client packages)** · `dec:harness:client-packages` pn-wallet is the development wallet crate and owns test-asset funding and spending, permanent-target burn construction, signing, broadcast and wallet-backed recovery. pn-client is the GraphQL counterpart of pn, depending on pn-wallet, pn-records and pn-interchange; its sole caller protocol and its node protocol are CBOR-native GraphQL. pn-command depends on pn-client and pn's library surface and presents both through the command output contract. The node's library and executable are named pn; its schema, service and lifecycle responsibilities remain outside domain computation. pn-wallet depends on the Elements RPC client and receives a narrowly scoped node GraphQL transport supplied by its caller for faucet funding; it has no dependency on pn-client or pn, so this callback creates no package cycle. Funding chooses and retains the wallet recipient and request association in pn-wallet while pn-client transports the GraphQL exchange. Ordinary node reads need not contact a wallet. These boundaries concentrate spend authority in one place and keep the node independent of its clients; placement is accepted in (`proposal:harness:packages`). pn-wallet also supplies the host's development burn inspection, settlement and faucet spending through the single admitted Elements integration (`amend:devnet:wallet-authority`); neither host nor client acquires another RPC client.
 
 **Decision (Client GraphQL schema)** · `dec:harness:client-schema` Use the selected node schema edition as an unchanged subset of a client schema extension, so callers use the same fields, types, arguments, scalars and outcomes for relayed operations. Add distinctly named client workflow roots for funding, burn-new, burn-existing and recovery; their names must not shadow a node field. Review and publish the extension and its required node edition under (`dec:api:schema`), and check the node subset for exact schema equality before serving it. A selected operation is either a node relay or one client workflow, never a mixed local/remote mutation or an implied distributed transaction. Client introspection identifies the extension and node edition. Relay node operations without rewriting their meaning, domain outcomes, error paths or binding byte strings; return the node's response content unchanged, with local transport failure reported as an explicitly client-originated outcome instead of a fabricated node verdict. Outer CBOR spelling has no identity; canonical documents keep their exact bytes through pn-interchange's strict path and message reading uses its bounded mode. Client resource limits independently bound message bytes, selection depth/breadth, work, RPC concurrency, polls and response size under (`rule:api:limits`); refusal, partial reads, cancellation and uncertain effects follow (`rule:api:outcomes`). A local workflow returns stage and request status in GraphQL and never upgrades a grant or pending burn into admission. Publish client editions, limits and workload claims; before 1.0 the extension may change under (`rule:compatibility:pre-one`).

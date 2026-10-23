@@ -1,0 +1,88 @@
+"""Inventory and meter unittest cases, preserving the unittest verdict."""
+
+import json
+from pathlib import Path
+import sys
+import time
+import unittest
+
+from devperf import StructuralError, budgets, report
+from harness import CONFIGURATION, load, source_id
+from run_tests import event, join_case
+
+
+def flatten(suite):
+    for test in suite:
+        if isinstance(test, unittest.TestSuite):
+            yield from flatten(test)
+        else:
+            yield test
+
+
+def main(module):
+    registry = load()
+    source = source_id()
+    suite_name = 'ci::' + module
+    declared = registry.suites[suite_name]
+    suite = unittest.defaultTestLoader.loadTestsFromName(module)
+    inventory = ['ci::'+test.id() for test in flatten(suite)]
+    if len(inventory) != len(set(inventory)) or set(inventory) != set(declared['cases']):
+        raise StructuralError('CI inventory differs from declared suite cases')
+    records = []
+
+    class Result(unittest.TextTestResult):
+        def startTest(self, test):
+            self.started = time.monotonic()
+            self.outcome = 'passed'
+            super().startTest(test)
+
+        def addFailure(self, test, err):
+            self.outcome = 'failed'
+            super().addFailure(test, err)
+
+        def addError(self, test, err):
+            self.outcome = 'failed'
+            super().addError(test, err)
+
+        def addSkip(self, test, reason):
+            self.outcome = 'ignored'
+            super().addSkip(test, reason)
+
+        def addExpectedFailure(self, test, err):
+            self.outcome = 'failed'
+            super().addExpectedFailure(test, err)
+
+        def addUnexpectedSuccess(self, test):
+            self.outcome = 'failed'
+            super().addUnexpectedSuccess(test)
+
+        def addSubTest(self, test, subtest, err):
+            if err is not None:
+                self.outcome = 'failed'
+            super().addSubTest(test, subtest, err)
+
+        def stopTest(self, test):
+            duration = (time.monotonic()-self.started)*1000
+            raw = event('ci::'+test.id(), registry.levels[declared['level']]['budget'], duration,
+                        self.outcome, source, CONFIGURATION)
+            records.append(join_case(registry, raw, source, CONFIGURATION))
+            super().stopTest(test)
+
+    start = time.monotonic()
+    result = unittest.TextTestRunner(resultclass=Result).run(suite)
+    records.append(registry.suite_event(suite_name, (time.monotonic()-start)*1000,
+                                       'passed' if result.wasSuccessful() else 'failed', source))
+    Path('.lane').mkdir(exist_ok=True)
+    Path(f'.lane/harness-ci-{module}.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in records))
+    report(records, budgets('docs/inputs/devperf-budgets.toml'), '.lane/performance-findings.jsonl')
+    if any(r['outcome'] in {'ignored', 'incomplete'} for r in records):
+        raise StructuralError('ignored or incomplete required CI test')
+    return int(not result.wasSuccessful())
+
+
+if __name__ == '__main__':
+    try:
+        sys.exit(main(sys.argv[1]))
+    except (ValueError, KeyError, TypeError, OSError) as error:
+        print(f'HARNESS-STRUCTURAL-ERROR {error}', file=sys.stderr)
+        sys.exit(2)

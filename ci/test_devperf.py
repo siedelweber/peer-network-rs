@@ -15,7 +15,9 @@ import tomllib
 import unittest
 from unittest.mock import patch
 
-from devperf import StructuralError, assess, budgets, report, utc
+from devperf import StructuralError, assess, assessment, budgets, inclusive_ms, report, utc
+from harness import CONFIGURATION
+from test_harness import declarations, fixture
 import run_tests
 
 
@@ -34,6 +36,73 @@ def inventory_fixture(kind='lib', location='src/lib.rs'):
 
 
 class Performance(unittest.TestCase):
+    def test_noisy_clock(self):
+        """Noisy timing remains inconclusive without changing a completed predicate or hiding an excess.
+        ´claim:devperf:noisy-clock-is-nonverdict´
+        ´test:devperf:test-noisy-clock´
+        """
+        for outcome in ['passed', 'failed']:
+            record = {**execution(1000, outcome), 'clock_quality': 'noisy', 'baseline_ms': 1}
+            original = copy.deepcopy(record)
+            self.assertEqual(assessment(record)['reason'], 'noisy-clock')
+            self.assertEqual([f['kind'] for f in assess(record, declarations())], ['budget-excess'])
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / 'findings.jsonl'
+                self.assertEqual(report([record], declarations(), path, io.StringIO()), 0)
+                evidence = json.loads(path.with_name('performance-assessments.jsonl').read_text())
+                self.assertEqual(evidence['assessment'], 'inconclusive')
+                self.assertNotIn('assessment', json.loads(path.read_text()))
+            self.assertEqual(record, original)
+
+    def test_cold_cache(self):
+        """A cold run cannot replace warm baseline evidence, while its excess remains visible.
+        ´claim:devperf:cold-cache-is-nonverdict´
+        ´test:devperf:test-cold-cache´
+        """
+        for outcome in ['passed', 'failed']:
+            record = {**execution(1000, outcome), 'baseline_ms': 1, 'cache_state': 'cold', 'baseline_cache': 'warm'}
+            self.assertEqual(assessment(record)['reason'], 'incompatible-cache')
+            self.assertEqual(assess(record, declarations())[0]['outcome'], outcome)
+
+    def test_overlapping_spans(self):
+        """Inclusive suite timing never sums overlapping work, preventing inflated budget findings.
+        ´claim:devperf:overlap-is-not-summed´
+        ´test:devperf:test-overlapping-spans´
+        """
+        self.assertEqual(inclusive_ms([(0, 10), (5, 15)]), 15)
+        self.assertEqual(inclusive_ms([(0, 5), (10, 15)]), 15)
+        self.assertIsNone(inclusive_ms([]))
+        for outcome in ['passed', 'failed']:
+            record = execution(inclusive_ms([(0, 100), (50, 150)]), outcome)
+            with tempfile.TemporaryDirectory() as directory:
+                self.assertEqual(report([record], declarations(), Path(directory)/'findings.jsonl', io.StringIO()), 0)
+            self.assertEqual(record['outcome'], outcome)
+        with self.assertRaises(StructuralError):
+            inclusive_ms([(2, 1)])
+
+    def test_admitted_budget(self):
+        """Admission changes only the warning threshold; an excess still preserves a failing predicate.
+        ´claim:devperf:admission-is-nonverdict´
+        ´test:devperf:test-admitted-budget´
+        """
+        admission = dict(name='probe', status='admitted', ordinary_budget='unit', budget_ms=200,
+                         label='expt:fixture:probe', owner='fixture', reason='bounded work',
+                         measurement='injected milliseconds', placement='fixture', settlement='fixture admission')
+        self.assertEqual(assess(execution(150), declarations(), [admission]), [])
+        finding, = assess(execution(201, 'failed'), declarations(), [admission])
+        self.assertEqual((finding['budget_ms'], finding['outcome'], finding['verdict_effect']), (200, 'failed', 'none'))
+        admission['status'] = 'candidate'
+        self.assertEqual(assess(execution(150), declarations(), [admission])[0]['budget_ms'], 100)
+
+    def test_budget_category(self):
+        """Classification follows declared categories, so renamed build budgets remain configuration findings.
+        ´claim:devperf:category-controls-classification´
+        ´test:devperf:test-budget-category´
+        """
+        for category in ['build', 'aggregate']:
+            finding, = assess(execution(101), {'unit': {'budget_ms': 100, 'category': category}})
+            self.assertEqual(finding['classification'], 'build-or-aggregate-misconfiguration')
+
     def test_version_mismatch(self):
         """An unreviewed stream version is refused before tests, preventing silent schema drift.
         ´claim:devperf:exact-runner-version´
@@ -47,7 +116,7 @@ class Performance(unittest.TestCase):
                     self.assertEqual(argv, ['cargo', 'nextest', '--version'])
                     stdout.write('cargo-nextest 0.9.150')
                     return SimpleNamespace(returncode=0)
-                with patch('run_tests.subprocess.check_output', return_value='fixture'), patch('run_tests.subprocess.run', side_effect=execute) as invoked:
+                with patch('run_tests.subprocess.check_output', return_value='fixture'), patch('run_tests.load_registry', return_value=fixture()), patch('run_tests.invoke', side_effect=execute) as invoked:
                     self.assertEqual(run_tests.main(), 2)
                     self.assertEqual(invoked.call_count, 1)
             finally:
@@ -62,7 +131,7 @@ class Performance(unittest.TestCase):
             for duration in [0, 1, 100, 101, 100000]:
                 record = execution(duration, outcome)
                 original = copy.deepcopy(record)
-                findings = assess(record, {'unit': 100})
+                findings = assess(record, declarations())
                 self.assertEqual(record, original)
                 self.assertEqual(len(findings), int(duration > 100))
                 for finding in findings:
@@ -80,7 +149,7 @@ class Performance(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'findings.jsonl'
             warnings = io.StringIO()
-            self.assertEqual(report(records, {'unit': 100}, path, warnings), 0)
+            self.assertEqual(report(records, declarations(), path, warnings), 0)
             findings = [json.loads(line) for line in path.read_text().splitlines()]
             self.assertEqual([f['outcome'] for f in findings], ['passed', 'failed', 'passed'])
             self.assertEqual(len(warnings.getvalue().splitlines()), 3)
@@ -90,13 +159,13 @@ class Performance(unittest.TestCase):
         ´claim:devperf:missing-measurement-is-explicit´
         ´test:devperf:test-missing´
         """
-        finding, = assess(execution(None), {'unit': 100})
+        finding, = assess(execution(None), declarations())
         self.assertEqual(finding['kind'], 'missing-measurement')
         self.assertIsNone(finding['duration_ms'])
         self.assertIsNone(finding['baseline_ms'])
         record = execution()
         del record['duration_ms']
-        self.assertEqual(assess(record, {'unit': 100})[0]['kind'], 'missing-measurement')
+        self.assertEqual(assess(record, declarations())[0]['kind'], 'missing-measurement')
 
     def test_structural(self):
         """Missing and malformed declarations differ from an exceeded budget.
@@ -106,14 +175,14 @@ class Performance(unittest.TestCase):
         for record in [{}, {**execution(), 'budget': 'absent'}, {**execution(), 'owner': ''},
                        execution(-1), execution(float('nan')), execution(True)]:
             with self.assertRaises(StructuralError):
-                assess(record, {'unit': 100})
+                assess(record, declarations())
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'budgets.toml'
             for source in ['', '[[rows]]\nname="unit"\nbudget_ms=-1\n']:
                 path.write_text(source)
                 with self.assertRaises(StructuralError):
                     budgets(path)
-        self.assertEqual(assess(execution(101), {'unit': 100})[0]['kind'], 'budget-excess')
+        self.assertEqual(assess(execution(101), declarations())[0]['kind'], 'budget-excess')
 
     def test_utc(self):
         """Naive and offset instants are refused without assigning a zone.
@@ -161,7 +230,7 @@ class Performance(unittest.TestCase):
                         os.chdir(directory)
                         Path('ci').mkdir()
                         Path('ci/nextest.toml').write_text(config)
-                        with patch('run_tests.subprocess.check_output', return_value='fixture'), patch('run_tests.subprocess.run', side_effect=execute):
+                        with patch('run_tests.subprocess.check_output', return_value='fixture'), patch('run_tests.load_registry', return_value=fixture()), patch('run_tests.invoke', side_effect=execute):
                             self.assertEqual(run_tests.main(), outcome)
                         self.assertEqual(len(calls), 6)
                         self.assertIn('binaries-only', calls[2])
@@ -186,13 +255,13 @@ class Performance(unittest.TestCase):
         ´test:devperf:test-result-accounting´
         """
         inventory, metadata = inventory_fixture('test', 'tests/example.rs')
-        record, = run_tests.nextest_events('', inventory, metadata, 'fixture', 'test')
+        record, = run_tests.nextest_events('', inventory, metadata, 'fixture', 'test', fixture(level='integration'))
         self.assertEqual(record['outcome'], 'incomplete')
         self.assertIsNone(record['duration_ms'])
         self.assertEqual(record['budget'], 'integration')
         raw = json.dumps({'type': 'test', 'name': 'unknown', 'event': 'ok'})
         with self.assertRaises(StructuralError):
-            run_tests.nextest_events(raw, inventory, metadata, 'fixture', 'test')
+            run_tests.nextest_events(raw, inventory, metadata, 'fixture', 'test', fixture(level='integration'))
 
     def test_raw_duration(self):
         """Invalid raw durations cannot become valid normalized measurements.

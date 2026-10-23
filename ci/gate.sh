@@ -11,7 +11,7 @@ mkdir -p .lane
 gate_started=$(date -u +%s.%N)
 source_id=$(time git rev-parse HEAD)
 export CARGO_NET_OFFLINE=true
-rm -f .lane/performance-events.jsonl
+rm -f .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json
 run_step() {
     local name=$1
     shift
@@ -28,14 +28,19 @@ run_step() {
     # Reporting has its own structural status; elapsed time never changes status.
     local budget=ordinary-check
     if [ "$name" = tests ]; then budget=test-command; fi
+    case "$name" in
+        clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests) budget=incremental-build ;;
+    esac
     python3 -B ci/devperf.py --operation "$name" --duration-s "$wall" \
         --outcome "exit:$status" --source "$source_id" --budget "$budget" \
         --findings .lane/performance-findings.jsonl
     if [ "$?" -ne 0 ]; then failed=1; fi
 }
 run_step toolchain python3 ci/discipline.py toolchain
-run_step discipline-tests env FOUNDATION_COMPUTE_TESTS=1 python3 -B ci/test_discipline.py
-run_step devperf-tests python3 -B ci/test_devperf.py
+run_step discipline-tests env FOUNDATION_COMPUTE_TESTS=1 python3 -B ci/run_ci.py test_discipline
+run_step harness-registry python3 -B ci/harness.py
+run_step harness-tests python3 -B ci/run_ci.py test_harness
+run_step devperf-tests python3 -B ci/run_ci.py test_devperf
 run_step build-policy python3 ci/discipline.py build-policy
 run_step cargo-config python3 ci/discipline.py cargo-config
 run_step cargo-config-measurement python3 -B ci/measure_rustflags.py
@@ -59,7 +64,8 @@ run_step documents cargo run -p documents --locked --profile gate -- check
 run_step determinism-datasets cargo run -p documents --locked --profile gate -- generate --check
 run_step determinism-documents cargo run -p documents --locked --profile gate -- check
 run_step design-correspondence python3 -B ci/design.py
-run_step design-tests python3 -B ci/test_design.py
+run_step design-tests python3 -B ci/run_ci.py test_design
+run_step harness-matrix python3 -B ci/harness.py --matrix
 run_step linter "${LINTER_BIN:-/workspace/loops/siedelweber/tools/bin/orchestration-linter}" check --root .
 run_step token python3 ci/discipline.py token
 run_step hash-citations python3 -B ci/discipline.py hash-citations
