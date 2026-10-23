@@ -455,7 +455,7 @@ mod tests {
     /// A refusal must never be disguised as "no match", since callers need
     /// to distinguish an exhausted search from a completed predicate.
     ///
-    /// Claim: Nested a-plus, nested x-plus, overlapping a-or-b-or-ab, and nested character-class plus refuse at both operation limits; nested a-star and duplicate alternatives complete false, and nullable counted optionals complete true, within 1000 operations, matching the independent oracle.
+    /// Claim: At 1000 operations five guard shapes refuse while duplicate alternatives complete false and nullable counted optionals complete true; at 100000 only the nested two-run x pattern refuses, and every completed result agrees with the independent oracle. Routing every XSD repetition through the counted search trades nested a-star on thirty a characters from 225 to 26450 operations, so it now refuses at 1000 and completes false at 100000.
     /// ´claim:regexp:the-budget-bounds-every-walk´
     /// ´test:unit:pathological-patterns´
     #[test]
@@ -498,13 +498,13 @@ mod tests {
         assert_eq!(
             refusals,
             vec![
-                (true, true),
+                (true, false),
+                (true, false),
                 (false, false),
-                (false, false),
                 (true, true),
-                (true, true),
+                (true, false),
                 (false, false),
-                (true, true)
+                (true, false)
             ]
         );
     }

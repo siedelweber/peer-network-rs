@@ -15,7 +15,8 @@ pub(crate) struct Repeat {
     pub(crate) min: usize,
     pub(crate) max: usize,
     pub(crate) greedy: bool,
-    nullable_xsd: bool,
+    xsd: bool,
+    nullable: bool,
 }
 
 impl Repeat {
@@ -25,7 +26,8 @@ impl Repeat {
             min,
             max,
             greedy,
-            nullable_xsd: false,
+            xsd: false,
+            nullable: false,
         }
     }
 }
@@ -51,9 +53,9 @@ impl OperationControl for Repeat {
 
     fn optimize(self, flags: &ReFlags) -> Operation {
         let operation = self.operation.optimize(flags);
-        let nullable_xsd = flags.language() == Language::XSD
-            && operation.matches_empty_string() == MATCHES_ZLS_ANYWHERE;
-        let min = if self.min == 0 && operation.matches_empty_string() == MATCHES_ZLS_ANYWHERE {
+        let xsd = flags.language() == Language::XSD;
+        let nullable = operation.matches_empty_string() == MATCHES_ZLS_ANYWHERE;
+        let min = if !xsd && self.min == 0 && nullable {
             // turns (a?)* into (a?)+
             1
         } else {
@@ -64,7 +66,8 @@ impl OperationControl for Repeat {
             min,
             max: self.max,
             greedy: self.greedy,
-            nullable_xsd,
+            xsd,
+            nullable,
         })
     }
 
@@ -86,8 +89,8 @@ impl OperationControl for Repeat {
         matcher: &'a ReMatcher,
         position: usize,
     ) -> Box<dyn Iterator<Item = usize> + 'a> {
-        if self.nullable_xsd {
-            return self.nullable_matches(matcher, position);
+        if self.xsd {
+            return self.xsd_matches(matcher, position);
         }
         let mut iterators: Vec<Box<dyn Iterator<Item = usize>>> = Vec::new();
         let mut positions = Vec::new();
@@ -130,8 +133,6 @@ impl OperationControl for Repeat {
                     bound,
                     self.min,
                 )),
-                position,
-                matcher.program.flags.language(),
             ))
         } else {
             // reluctant (non-greedy) repeat.
@@ -143,8 +144,6 @@ impl OperationControl for Repeat {
                     self.min,
                     self.max,
                 )),
-                position,
-                matcher.program.flags.language(),
             ))
         }
     }
@@ -155,39 +154,46 @@ impl OperationControl for Repeat {
 }
 
 impl Repeat {
-    // Local fork correction alongside the anchored matcher and operation budget
-    // (Paligo/regexml#15): nullable repetition for anchored and unanchored XSD matching.
-    // This correction has not been submitted upstream. Copyright and MPL-2.0
-    // terms remain in COPYRIGHT and LICENSE-MPL2 without alteration.
+    // Local XSD correction alongside the public anchored matcher and budget
+    // (Paligo/regexml#15). Copyright and MPL-2.0 terms in COPYRIGHT and
+    // LICENSE-MPL2 are unchanged. This correction is not submitted upstream.
     //
-    // In XSD there are no backreferences or position-dependent empty matches.
-    // If epsilon is in L, L{min,max} equals (L minus epsilon){0,max}:
-    // empty iterations can pad any shorter derivation to the minimum.
-    // Breadth-first discovery records the fewest consuming iterations to each
-    // position. Revisiting it cannot permit a new suffix within max, so each
-    // position is expanded once, without enumerating duplicate empty paths.
-    // This also avoids the old subject-length cap on mandatory empty iterations
-    // and ForceProgressIterator's premature end after duplicate endpoints.
-    // All XSD entry points use this path, including the empty-string probe.
-    // Endpoint sets are preserved, but capture order inside nullable repetition
-    // need not agree with upstream. XPath retains its original traversal and
-    // its known nullable-count and duplicate-endpoint membership defects.
-    fn nullable_matches<'a>(
+    // XSD has no backreferences or position-dependent empty matches, so a
+    // (position, iteration count) state has the same continuations on every
+    // visit. Expand each state once instead of walking duplicate derivations.
+    // For nullable L, L{min,max} = (L minus epsilon){0,max}: ignore empty
+    // transitions and pad the minimum. Otherwise retain the exact minimum.
+    // Every explored transition consumes at least one subject character.
+    // An unbounded maximum is therefore capped at subject length plus one;
+    // finite maxima can use the same cap. Empty padding needs no states even
+    // when the declared minimum exceeds that cap. There are at most
+    // (remaining length + 1) * (count bound + 1) states per invocation.
+    // Every operand evaluation and pull still uses Operation::matches_iter.
+    // This bounds repeated derivations, not arbitrary operand evaluation cost.
+    //
+    // Yield distinct endpoints in descending position order. XSD promises no
+    // greedy-first preference: replace_all, tokenize and analyze may report a
+    // different valid match. Captures inside repetitions can retain spans from
+    // an explored path, not the reported derivation. XPath keeps its traversal.
+    fn xsd_matches<'a>(
         &'a self,
         matcher: &'a ReMatcher,
         position: usize,
     ) -> Box<dyn Iterator<Item = usize> + 'a> {
-        let mut reached = std::collections::BTreeSet::from([position]);
+        let bound = self.max.min(matcher.search.len().saturating_add(1));
+        let minimum = if self.nullable { 0 } else { self.min };
+        let mut reached = std::collections::BTreeSet::new();
+        let mut seen = std::collections::BTreeSet::from([(position, 0)]);
         let mut pending = std::collections::VecDeque::from([(position, 0)]);
         while let Some((start, count)) = pending.pop_front() {
-            if reached.len() == matcher.search.len() - position + 1 {
-                break;
+            if count >= minimum {
+                reached.insert(start);
             }
-            if count == self.max {
+            if count == bound {
                 continue;
             }
             for end in self.operation.matches_iter(matcher, start) {
-                if end > start && reached.insert(end) {
+                if end > start && seen.insert((end, count + 1)) {
                     pending.push_back((end, count + 1));
                 }
             }
@@ -350,6 +356,50 @@ mod tests {
 
     #[test]
     fn test_nullable_counted_xsd() {
+        // Minimum completing budget measures engine operations, not wall time.
+        let operations = |regex: &Regex, subject: &str| {
+            let mut high = 10_000;
+            assert!(regex.is_full_match_bounded(subject, high).is_ok(), "operation ceiling: {subject:?}");
+            let mut low = 0;
+            while low + 1 < high {
+                let middle = low + (high - low) / 2;
+                if regex.is_full_match_bounded(subject, middle).is_err() {
+                    low = middle;
+                } else {
+                    high = middle;
+                }
+            }
+            high
+        };
+        let costly = Regex::xsd("(a|a|a|a|a|aa)+c", "").unwrap();
+        for length in [3, 5, 7, 12, 30] {
+            let subject = "a".repeat(length);
+            let count = operations(&costly, &subject);
+            let full = costly.is_full_match(&subject);
+            let search = costly.is_match(&subject);
+            let bounded = costly.is_full_match_bounded(&subject, 10_000);
+            println!("COST length={length} operations={count} full={full} search={search} bounded={bounded:?}");
+            assert!(!full && !search, "length={length}");
+            assert_eq!(bounded, Ok(false), "length={length}, operations={count}");
+            assert_eq!(costly.replace_all(&subject, "X"), Ok(subject.clone()));
+            assert_eq!(costly.tokenize(&subject).unwrap().collect::<Vec<_>>(), vec![subject.clone()]);
+            assert_eq!(costly.analyze(&subject).unwrap().collect::<Vec<_>>(), vec![crate::analyze_string::AnalyzeEntry::NonMatch(subject)]);
+        }
+        let preference = Regex::xsd("(a|ab|){1,2}.", "").unwrap();
+        println!("PREFERENCE replace={:?} tokens={:?} analyze={:?} operations={}",
+            preference.replace_all("abc", "X"),
+            preference.tokenize("abc").unwrap().collect::<Vec<_>>(),
+            preference.analyze("abc").unwrap().collect::<Vec<_>>(),
+            operations(&preference, "abc"));
+        assert_eq!(preference.replace_all("abc", "X"), Ok("X".to_owned()));
+        assert_eq!(preference.tokenize("abc").unwrap().collect::<Vec<_>>(), vec!["", ""]);
+        assert_eq!(preference.analyze("abc").unwrap().collect::<Vec<_>>(), vec![
+            crate::analyze_string::AnalyzeEntry::Match(vec![
+                crate::analyze_string::MatchEntry::String("ab".to_owned()),
+                crate::analyze_string::MatchEntry::Group { nr: 1, value: vec![] },
+                crate::analyze_string::MatchEntry::String("c".to_owned()),
+            ])
+        ]);
         let nullable = Regex::xsd("(a?){5}", "").unwrap();
         let found = nullable.is_match("aa");
         println!("XSD nullable is_match aa: {found}");
@@ -389,6 +439,13 @@ mod tests {
             Err(crate::Error::BudgetExceeded)
         );
         for (pattern, subject, expected) in [
+            ("(a|aa){2}", "aa", true),
+            ("(a|aa){2}", "a", false),
+            ("(a|aa){2}", "aaaa", true),
+            ("(a|aa){2}", "aaaaa", false),
+            ("(a|aa){20,}", "aaa", false),
+            ("(a?){20,}", "a", true),
+            ("(|a){1000000}", "aa", true),
             ("(a?){0}a{0}", "a", false),
             ("(a?){2}", "", true),
             ("(a?){2}", "aa", true),

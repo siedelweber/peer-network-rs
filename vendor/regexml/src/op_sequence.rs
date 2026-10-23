@@ -9,7 +9,7 @@ use crate::{
         MATCHES_ZLS_AT_START, MATCHES_ZLS_NEVER,
     },
     re_compiler::ReCompiler,
-    re_flags::ReFlags,
+    re_flags::{Language, ReFlags},
     re_matcher::{CaptureState, ReMatcher},
 };
 
@@ -66,7 +66,10 @@ impl OperationControl for Sequence {
                         let optimized = o.optimize(flags);
                         // we can never further optimize the last operation,
                         // as it has no adjacent operation
-                        if i == l - 1 {
+                        // Keep every XSD repetition on its endpoint search;
+                        // only XPath retains the unambiguous-repeat shortcut.
+                        // Local correction; COPYRIGHT and LICENSE-MPL2 apply.
+                        if i == l - 1 || flags.language() == Language::XSD {
                             return optimized;
                         }
                         // now if this is a repeat operation, we may be able

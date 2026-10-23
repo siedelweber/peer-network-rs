@@ -12,8 +12,8 @@ version = "0.1.0"
 license = "AGPL-3.0-only"
 
 [workspace.dependencies]
-# Public anchored-plus-budget fork (Paligo/regexml#15), scalar aliases and local XSD repetition corrections; see README.
-# Retire when upstream releases the anchored matcher, budget and both repetition corrections.
+# Public anchored-plus-budget fork (Paligo/regexml#15), scalar aliases and local XSD count-preserving endpoint search; see README.
+# Retire when upstream releases the anchored matcher, budget and count-preserving endpoint search.
 regexml = { path = "vendor/regexml" }
 # Property obligations require shrinking and prop_recursive over the recursive Value model.
 proptest = "1"

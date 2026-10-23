@@ -844,7 +844,7 @@ fn regexp_reaches_its_pattern_through_a_rule_reference() {
 #[test]
 fn an_exhausted_regexp_budget_is_a_located_mismatch() {
     let theory = theory_of(r#"tstr .regexp "(a+)+b""#);
-    let subject = "a".repeat(30);
+    let subject = "a".repeat(100);
     let verdict = satisfies(&document_of(text(&subject)), &theory);
 
     let mismatches = mismatches(verdict);

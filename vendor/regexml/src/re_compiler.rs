@@ -801,6 +801,9 @@ impl ReCompiler {
             Ok(Operation::from(Nothing))
         } else if min == 1 && max == 1 {
             Ok(ret)
+        } else if self.re_flags.language() == Language::XSD {
+            // All XSD repetitions share the count-indexed endpoint search.
+            Ok(Operation::from(Repeat::new(ret, min, max, true)))
         } else if greedy {
             // actually do the quantifier now
             if let Some(match_length) = ret.get_match_length() {

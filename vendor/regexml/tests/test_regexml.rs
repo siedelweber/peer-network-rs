@@ -314,8 +314,8 @@ fn test_is_full_match_bounded_ordinary_patterns() {
 
 #[test]
 fn test_is_full_match_bounded_refuses_catastrophic_backtracking() {
-    // (a+)+ against a subject with no b takes exponential time unbounded: the
-    // engine tries every way of splitting the a's between the two repeats
+    // XSD endpoint search removes duplicate repetition walks. A small budget
+    // still refuses; a larger budget now completes the same negative language answer.
     let regex = Regex::xsd("(a+)+b", "").unwrap();
     let haystack = "a".repeat(30);
 
@@ -326,10 +326,16 @@ fn test_is_full_match_bounded_refuses_catastrophic_backtracking() {
     );
     assert!(start.elapsed() < Duration::from_millis(100));
 
-    // a budget a hundred times larger buys no answer either, it only takes
-    // longer to give up
+    // The count-indexed search must finish instead of exhausting this budget.
     assert_eq!(
         regex.is_full_match_bounded(&haystack, 1_000_000),
+        Ok(false)
+    );
+    assert!(!regex.is_full_match(&haystack));
+    // The same algorithm still refuses when a larger state space exceeds
+    // the configured allowance; completion must never disguise exhaustion.
+    assert_eq!(
+        regex.is_full_match_bounded(&"a".repeat(100), 100_000),
         Err(Error::BudgetExceeded)
     );
 }
