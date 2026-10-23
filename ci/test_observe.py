@@ -25,7 +25,7 @@ class Admission(unittest.TestCase):
     def test_omitted_instrumentation(self):
         """Claim: A registered public function whose parsed body has no reviewed boundary refuses, even when its declaration and semantic review remain present.
         ´claim:discipline:public-bodies-require-parsed-boundaries´
-        ´test:discipline:test-omitted-instrumentation´
+        ´test:integration:test-omitted-instrumentation´
         """
         args=fixture()
         self.assertEqual(validate(*args)['instrumented'],1)
@@ -35,7 +35,7 @@ class Admission(unittest.TestCase):
     def test_wrong_identity(self):
         """Claim: A boundary cannot claim another owner or an unresolved or different label while retaining a valid source item and review.
         ´claim:discipline:operation-identity-matches-its-source´
-        ´test:discipline:test-wrong-identity´
+        ´test:integration:test-wrong-identity´
         """
         for field,value in [('owner','FOREIGN'),('claim','ROOT::rule:missing:label')]:
             args=fixture();args[1]['operations'][0][field]=value
@@ -48,7 +48,7 @@ class Admission(unittest.TestCase):
     def test_stale_operation(self):
         """Claim: Deleting a public function or changing its signature leaves a structural stale mapping; duplicating its registry row cannot conceal the mismatch.
         ´claim:discipline:operation-roster-cannot-retain-stale-items´
-        ´test:discipline:test-stale-operation´
+        ´test:integration:test-stale-operation´
         """
         args=fixture();args[0]['functions']=[]
         with self.assertRaisesRegex(StructuralError,'stale operation'):validate(*args)
@@ -60,7 +60,7 @@ class Admission(unittest.TestCase):
     def test_duplicate_metric(self):
         """Claim: Two declarations of one metric name refuse even when their units agree, preventing ambiguous ownership of a runtime series.
         ´claim:discipline:metric-names-have-one-declaration´
-        ´test:discipline:test-duplicate-metric´
+        ´test:integration:test-duplicate-metric´
         """
         args=fixture();args[1]['metrics'].append(copy.deepcopy(args[1]['metrics'][0]))
         with self.assertRaisesRegex(StructuralError,'duplicate metric'):validate(*args)
@@ -68,7 +68,7 @@ class Admission(unittest.TestCase):
     def test_undeclared_dimension(self):
         """Claim: A metric with an undeclared time unit or an unbounded request attribute refuses before it can be represented as a declared bounded series.
         ´claim:discipline:metric-units-and-attributes-are-declared´
-        ´test:discipline:test-undeclared-dimension´
+        ´test:integration:test-undeclared-dimension´
         """
         for field,value in [('unit','ticks'),('attributes',{'request':['arbitrary']})]:
             args=fixture();args[1]['metrics'][0][field]=value
@@ -77,7 +77,7 @@ class Admission(unittest.TestCase):
     def test_invalid_exception(self):
         """Claim: An exception cannot waive multiple rules, omit an item-local justification or cite a missing boundary witness; a runtime body cannot claim const evaluation.
         ´claim:discipline:coverage-exceptions-are-local-and-witnessed´
-        ´test:discipline:test-invalid-exception´
+        ´test:integration:test-invalid-exception´
         """
         reason='Justified: The fixture is evaluated within its declared caller.'
         base=fixture();function=base[0]['functions'][0];row=base[1]['operations'][0]
@@ -100,7 +100,7 @@ class Admission(unittest.TestCase):
     def test_semantic_review(self):
         """Claim: Full-recording, secret-flow and exposure assessments remain separately reviewer-confirmed and bound to the inspected body; absent negative evidence or a changed body refuses mechanical admission.
         ´claim:discipline:semantic-review-is-bound-to-source´
-        ´test:discipline:test-semantic-review´
+        ´test:integration:test-semantic-review´
         """
         args=fixture();self.assertIn('not mechanical proof',validate(*args)['semantic_status'])
         for field in ('full_recording','secret_flow','exposure_consumers'):
@@ -114,7 +114,7 @@ class Admission(unittest.TestCase):
     def test_generated_mapping(self):
         """Claim: A newly generated entry point cannot disappear from the census join or be admitted by copying its syntax without an expansion review and enclosing boundaries.
         ´claim:discipline:generated-entry-points-need-explicit-admission´
-        ´test:discipline:test-generated-mapping´
+        ´test:integration:test-generated-mapping´
         """
         args=fixture();generator=dict(package='fixture',path='packages/fixture/src/lib.rs',item='State',kind='derive',syntax='#[derive(Debug)]')
         args[0]['generators']=[generator]

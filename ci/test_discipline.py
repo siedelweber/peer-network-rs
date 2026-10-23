@@ -30,7 +30,7 @@ class WorkspaceChecks(unittest.TestCase):
     def test_secret_carrier_traits(self):
         """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles, preventing accidental output opt-in.
         ´claim:discipline:secret-carriers-reject-printable-traits´
-        ´test:discipline:test-secret-carrier-traits´
+        ´test:integration:test-secret-carrier-traits´
         """
         if os.environ.get('FOUNDATION_COMPUTE_TESTS') != '1':
             self.skipTest('requires the provisioned compute toolchain')
@@ -57,7 +57,7 @@ class WorkspaceChecks(unittest.TestCase):
     def test_discovered_members(self):
         """feature-minimal and documentation checks include a new binary-only member, exclude the engine and ignore nonmembers.
         ´claim:discipline:new-members-receive-feature-checks´
-        ´test:discipline:test-discovered-members´
+        ´test:integration:test-discovered-members´
         """
         metadata = {"workspace_members": ["engine", "new", "existing"], "packages": [
             {"id": "engine", "name": "regexml"},
@@ -77,7 +77,7 @@ class HashCitations(unittest.TestCase):
     def test_interchange_literal_boundaries(self):
         """imported literal families distinguish replay and encoding data from identity claims.
         ´claim:discipline:literal-warrants-are-bounded´
-        ´test:discipline:test-interchange-literal-boundaries´
+        ´test:integration:test-interchange-literal-boundaries´
         """
         root = Path.cwd()
         def reader(name):
@@ -96,7 +96,7 @@ class HashCitations(unittest.TestCase):
     def test_public_git_locator(self):
         """a provenance family requires the exact declared public Git commit locator.
         ´claim:discipline:public-locators-identify-objects´
-        ´test:discipline:test-public-git-locator´
+        ´test:integration:test-public-git-locator´
         """
         commit = "f" * 40
         rule = {"reader": "public-git", "establishment": "resolvable", "commit": commit,
@@ -119,16 +119,16 @@ class HashCitations(unittest.TestCase):
 
     def test_hex_boundary(self):
         """Explicit literals and version tokens remain visible without classifying ordinary quantities as identities.
-        ´claim:hash-citations:literal-and-version-boundaries´
-        ´test:discipline:test-hex-boundary´
+        ´claim:hashcitations:literal-and-version-boundaries´
+        ´test:integration:test-hex-boundary´
         """
         text = r"0xff 0xe2_u8 \x1f \u{fffd} %x30-39 abcdef (123456 date) 123456 20261021"
         self.assertEqual([match.group() for match in occurrences(text)], [r"0xff", "0xe2_u8", r"\x1f", r"\u{fffd}", "%x30-39", "123456"])
 
     def test_hex_words(self):
         """Hex-letter English words remain prose, so the reader does not dictate vocabulary.
-        ´claim:hash-citations:ordinary-words-are-not-identities´
-        ´test:discipline:test-hex-words´
+        ´claim:hashcitations:ordinary-words-are-not-identities´
+        ´test:integration:test-hex-words´
         """
         for text in ["facade", "deadbeef-free prose", "accede", "decade", "effaced", "bead", "cafe",
                      "FACADE", "a facade beside an effaced wall", "prefix_abcdef", "abcdef_suffix"]:
@@ -137,8 +137,8 @@ class HashCitations(unittest.TestCase):
 
     def test_hex_identity_context(self):
         """Short identity fields and dated tool-version tokens remain accounted even when their digits are all letters.
-        ´claim:hash-citations:identity-context-retains-short-values´
-        ´test:discipline:test-hex-identity-context´
+        ´claim:hashcitations:identity-context-retains-short-values´
+        ´test:integration:test-hex-identity-context´
         """
         word = "ab" + "cdef"
         for text in ["commit " + word, "COMMIT: `" + word + "`", 'digest = "' + word + '"',
@@ -153,8 +153,8 @@ class HashCitations(unittest.TestCase):
 
     def test_hex_additional_identity_context(self):
         """Each additional identity keyword retains short values, so common provenance fields cannot evade accounting.
-        ´claim:hash-citations:additional-context-retains-short-values´
-        ´test:discipline:test-hex-additional-identity-context´
+        ´claim:hashcitations:additional-context-retains-short-values´
+        ´test:integration:test-hex-additional-identity-context´
         """
         word = "ab" + "cdef"
         for context in ["hash", "rev", "revision", "tree", "object"]:
@@ -170,8 +170,8 @@ class HashCitations(unittest.TestCase):
 
     def test_hex_context_word_and_line_boundaries(self):
         """Context words alone, short prose words and keywords on other lines do not turn ordinary prose into identities.
-        ´claim:hash-citations:context-respects-word-and-line-boundaries´
-        ´test:discipline:test-hex-context-word-and-line-boundaries´
+        ´claim:hashcitations:context-respects-word-and-line-boundaries´
+        ´test:integration:test-hex-context-word-and-line-boundaries´
         """
         for text in ["The hash map stores the facade.", "The rev counter sits beside an effaced facade.",
                      "The revision describes a decade.", "A tree shades the facade.", "The object is effaced."]:
@@ -184,8 +184,8 @@ class HashCitations(unittest.TestCase):
 
     def test_hex_full_identifiers(self):
         """Full identifiers and mixed short values remain visible without contextual keywords, preserving provenance checks.
-        ´claim:hash-citations:full-and-mixed-identifiers-remain-visible´
-        ´test:discipline:test-hex-full-identifiers´
+        ´claim:hashcitations:full-and-mixed-identifiers-remain-visible´
+        ´test:integration:test-hex-full-identifiers´
         """
         values = ["a" * 40, "F" * 64, "1" * 40, "2" * 64, "a" * 39 + "1", "a" * 41,
                   "abc123", "abc" + "12a", "1" + "abcde"]
@@ -197,8 +197,8 @@ class HashCitations(unittest.TestCase):
 
     def test_hex_context_accounting(self):
         """Recognition never authorizes an identity: unaccounted short, full and pathname values still fail the audit.
-        ´claim:hash-citations:recognized-identities-still-need-evidence´
-        ´test:discipline:test-hex-context-accounting´
+        ´claim:hashcitations:recognized-identities-still-need-evidence´
+        ´test:integration:test-hex-context-accounting´
         """
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -217,8 +217,8 @@ class HashCitations(unittest.TestCase):
 
     def test_hex_claim_sites(self):
         """Hash-reader claim sites carry a checkable gloss, one authored claim and the local inventory label in order.
-        ´claim:hash-citations:probe-documentation-has-ordered-claims´
-        ´test:discipline:test-hex-claim-sites´
+        ´claim:hashcitations:probe-documentation-has-ordered-claims´
+        ´test:integration:test-hex-claim-sites´
         """
         names = [name for name in vars(type(self)) if name.startswith("test_hex_")]
         claims = set()
@@ -226,16 +226,16 @@ class HashCitations(unittest.TestCase):
             lines = [line.strip() for line in getattr(type(self), name).__doc__.strip().splitlines()]
             self.assertEqual(len(lines), 3)
             self.assertTrue(lines[0].endswith("."))
-            self.assertTrue(lines[1].startswith("´claim:hash-citations:"))
+            self.assertTrue(lines[1].startswith("´claim:hashcitations:"))
             self.assertTrue(lines[1].endswith("´"))
             self.assertNotIn(lines[1], claims)
             claims.add(lines[1])
-            self.assertEqual(lines[2], "´test:discipline:" + name.replace("_", "-") + "´")
+            self.assertEqual(lines[2], "´test:integration:" + name.replace("_", "-") + "´")
 
     def test_hash_accounting(self):
         """an uncovered value, a stale family and a reader establishment the checker cannot validate each fail the audit.
         ´claim:discipline:identity-occurrences-need-warrants´
-        ´test:discipline:test-hash-accounting´
+        ´test:integration:test-hash-accounting´
         """
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -266,7 +266,7 @@ class HashCitations(unittest.TestCase):
     def test_hash_carrier(self):
         """the complete tracked set includes binary content and hexadecimal pathnames, with read failures surfaced.
         ´claim:discipline:identity-warrants-bind-carriers´
-        ´test:discipline:test-hash-carrier´
+        ´test:integration:test-hash-carrier´
         """
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -283,7 +283,7 @@ class HashCitations(unittest.TestCase):
     def test_hash_tracked_cli(self):
         """every CLI audit discovers Git's tracked set anew; an untracked hexadecimal value enters the verdict only after staging.
         ´claim:discipline:tracked-identities-are-checked´
-        ´test:discipline:test-hash-tracked-cli´
+        ´test:integration:test-hash-tracked-cli´
         """
         script = Path(__file__).with_name("discipline.py").resolve()
         with tempfile.TemporaryDirectory() as directory:
@@ -311,7 +311,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_build_policy(self):
         """Gate profile drift and disabled runtime checks fail structural policy.
         ´claim:devperf:gate-profile-guards´
-        ´test:discipline:test-build-policy´
+        ´test:integration:test-build-policy´
         """
         manifest = '[workspace]\nmembers=["packages/example"]\n[workspace.package]\n[profile.release]\nlto="thin"\ncodegen-units=1\n'
         manifest += '[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\ndebug-assertions=true\noverflow-checks=true\n'
@@ -346,7 +346,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_controlled_stream_boundaries(self):
         """controlled stream boundaries admit only their named operation; printing and unrelated items still refuse.
         ´claim:discipline:output-exceptions-stay-local´
-        ´test:discipline:test-controlled-stream-boundaries´
+        ´test:integration:test-controlled-stream-boundaries´
         """
         path = Path('packages/cli-common/src/lib.rs')
         self.assertFalse(source_findings(path, 'pub fn emit() { io::stdout(); }', 'printing'))
@@ -358,7 +358,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_printing(self):
         """direct calls, imported aliases and inactive printing all refuse.
         ´claim:discipline:uncontrolled-output-is-refused´
-        ´test:discipline:test-printing´
+        ´test:integration:test-printing´
         """
         for source in [
             'fn main() { process::exit(3); }',
@@ -375,7 +375,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_suppressions(self):
         """inner, conditional and inline-test suppressions refuse, including nesting.
         ´claim:discipline:test-lints-cannot-be-suppressed´
-        ´test:discipline:test-suppressions´
+        ´test:integration:test-suppressions´
         """
         for source in [
             '#![cfg_attr(all(), allow(clippy::pedantic))]',
@@ -395,7 +395,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_literals(self):
         """examples in comments and literals are not executable source.
         ´claim:discipline:comments-and-strings-are-not-code´
-        ´test:discipline:test-literals´
+        ´test:integration:test-literals´
         """
         source = '/* outer /* nested */ print!("x"); */ const X: &str = r###"exit(1)"###;'
         self.assertFalse(source_findings(Path('src/lib.rs'), source, 'printing'))
@@ -403,7 +403,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_member_lints(self):
         """missing inheritance and any member-local lint table fail the manifest rule.
         ´claim:discipline:members-inherit-workspace-lints´
-        ´test:discipline:test-member-lints´
+        ´test:integration:test-member-lints´
         """
         self.assertTrue(inherits_lints(tomllib.loads('[lints]\nworkspace = true\n')))
         for source in ['', '[lints]\nworkspace = false\n', '[lints]\nworkspace = true\n[lints.rust]\nunused = "allow"\n']:
@@ -412,7 +412,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_external_test_modules(self):
         """out-of-line test modules and their descendants are suppression-free test trees.
         ´claim:discipline:external-test-modules-keep-lints´
-        ´test:discipline:test-external-test-modules´
+        ´test:integration:test-external-test-modules´
         """
         sources = {
             Path('src/lib.rs'): '#[cfg(test)] mod checks;',
@@ -427,7 +427,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_other_test_items(self):
         """any test-configured item, including impls and constants, rejects suppressions.
         ´claim:discipline:test-implementations-keep-lints´
-        ´test:discipline:test-other-test-items´
+        ´test:integration:test-other-test-items´
         """
         for source in [
             '#[cfg(test)] impl Thing { // Justified: Exact values are required.\n#[allow(clippy::float_cmp)] fn exact() {} }',
@@ -439,7 +439,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_cargo_config(self):
         """tracked Cargo settings cannot supply rustflags or lint-level command flags.
         ´claim:discipline:configuration-cannot-relax-lints´
-        ´test:discipline:test-cargo-config´
+        ´test:integration:test-cargo-config´
         """
         for source in [
             '[build]\nrustflags = ["-A", "clippy::pedantic"]',
@@ -453,7 +453,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_toolchain_versions(self):
         """only undated nightly with both answering components satisfies the policy.
         ´claim:discipline:toolchain-family-is-consistent´
-        ´test:discipline:test-toolchain-versions´
+        ´test:integration:test-toolchain-versions´
         """
         versions = ['rustc 1.101.0-nightly (abcdef 2026-10-16)', 'cargo 1.101.0-nightly', 'clippy 0.1.101', 'rustfmt 1.9.0-nightly']
         validate_toolchain('nightly', versions, ['rustfmt', 'clippy'])
@@ -475,7 +475,7 @@ class SourceDiscipline(unittest.TestCase):
     def test_nursery_warning(self):
         """The real advisory invocation emits and counts a known nursery warning despite warnings-deny in the manifest.
         ´claim:discipline:advisory-invocation-counts-real-warnings´
-        ´test:discipline:test-nursery-warning´
+        ´test:integration:test-nursery-warning´
         """
         with crate('foundation-nursery-probe', 'pub fn candidate(value: u32) -> u32 { value + 1 }\n', '[lints.rust]\nwarnings = "deny"\n[lints.clippy]\nnursery = "allow"\n') as root:
             result, count = run_clippy(root, advisory=True)

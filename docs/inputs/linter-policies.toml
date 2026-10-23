@@ -2,6 +2,8 @@ namespace = "org.peer-network.linter.policies"
 version = [1, 0, 0]
 
 rows = [
+  { owner = "ROOT", policy = "profile.tests-conform" },
+  { owner = "ROOT", policy = "profile.claims-conform" },
   { owner = "VENDOR", policy = "labels.mints-well-formed" },
   { owner = "VENDOR", policy = "labels.mints-unique" },
   { owner = "VENDOR", policy = "labels.citations-local-resolve" },

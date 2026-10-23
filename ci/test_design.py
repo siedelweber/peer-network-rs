@@ -28,7 +28,7 @@ class Correspondence(unittest.TestCase):
     def test_empty_selections(self):
         """Empty label and pin selections refuse vacuous correspondence evidence.
         ´claim:design:nonempty-correspondence-evidence´
-        ´test:design:test-empty-selections´
+        ´test:integration:test-empty-selections´
         """
         with self.assertRaisesRegex(ValueError, 'empty paper label set'):
             bare_mint_pattern(set())
@@ -39,7 +39,7 @@ class Correspondence(unittest.TestCase):
     def test_indexed_mint_predicate(self):
         """The compiled union retains every literal and backtick boundary refusal.
         ´claim:devperf:correspondence-predicate-preserved´
-        ´test:design:test-indexed-mint-predicate´
+        ´test:integration:test-indexed-mint-predicate´
         """
         labels = {'a', 'b', 'a.b', 'a+b', 'a:b:c'}
         union = bare_mint_pattern(labels)
@@ -65,7 +65,7 @@ class Correspondence(unittest.TestCase):
     def test_release_tags(self):
         """both rendered release tags are pinned independently of accepted-study projections.
         ´claim:design:release-identities-are-pinned´
-        ´test:design:test-release-tags´
+        ´test:integration:test-release-tags´
         """
         path = self.root / 'docs/datasets/org.peer-network.design.publication.json'
         original = path.read_text()
@@ -82,7 +82,7 @@ class Correspondence(unittest.TestCase):
     def test_release_projections(self):
         """release additions, refreshed fields and answer fields cannot drift behind the study projections.
         ´claim:design:release-fields-cannot-drift´
-        ´test:design:test-release-projections´
+        ´test:integration:test-release-projections´
         """
         for name, marker, field in [('inventory', 'added_at', 'label'), ('constants', 'refreshed_at', 'cites'), ('constants', 'refreshed_at', 'class'), ('constants', 'refreshed_at', 'home'), ('questions', 'status', 'status'), ('questions', 'status', 'section'), ('questions', 'status', 'ambiguity')]:
             with self.subTest(name=name, field=field):
@@ -99,7 +99,7 @@ class Correspondence(unittest.TestCase):
     def test_pinned_decisions_under_optimization(self):
         """optimized Python still rejects changed crate responsibilities and bite order through their pins.
         ´claim:design:optimized-validation-keeps-pins´
-        ´test:design:test-pinned-decisions-under-optimization´
+        ´test:integration:test-pinned-decisions-under-optimization´
         """
         for name, field in [('crates', 'responsibility'), ('bites', 'slice')]:
             with self.subTest(name=name):
@@ -116,7 +116,7 @@ class Correspondence(unittest.TestCase):
     def test_tracked_prose_boundaries(self):
         """tracked first-party documents and templates refuse bare paper labels while vendored members remain excluded.
         ´claim:design:paper-mints-stay-exhibited´
-        ´test:design:test-tracked-prose-boundaries´
+        ´test:integration:test-tracked-prose-boundaries´
         """
         vendor = self.root / 'vendor/example/README.md'
         vendor.parent.mkdir(parents=True)

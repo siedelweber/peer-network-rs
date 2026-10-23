@@ -39,7 +39,7 @@ class Performance(unittest.TestCase):
     def test_noisy_clock(self):
         """The reporter contract keeps injected noisy evidence inconclusive without changing a predicate or hiding an excess.
         ´claim:devperf:noisy-clock-is-nonverdict´
-        ´test:devperf:test-noisy-clock´
+        ´test:integration:test-noisy-clock´
         """
         for outcome in ['passed', 'failed']:
             record = {**execution(1000, outcome), 'clock_quality': 'noisy', 'baseline_ms': 1}
@@ -57,7 +57,7 @@ class Performance(unittest.TestCase):
     def test_cold_cache(self):
         """The reporter contract keeps injected cold/warm comparisons inconclusive while their excess remains visible.
         ´claim:devperf:cold-cache-is-nonverdict´
-        ´test:devperf:test-cold-cache´
+        ´test:integration:test-cold-cache´
         """
         for outcome in ['passed', 'failed']:
             record = {**execution(1000, outcome), 'baseline_ms': 1, 'cache_state': 'cold', 'baseline_cache': 'warm'}
@@ -67,7 +67,7 @@ class Performance(unittest.TestCase):
     def test_overlapping_spans(self):
         """Inclusive suite timing never sums overlapping work, preventing inflated budget findings.
         ´claim:devperf:overlap-is-not-summed´
-        ´test:devperf:test-overlapping-spans´
+        ´test:integration:test-overlapping-spans´
         """
         self.assertEqual(inclusive_ms([(0, 10), (5, 15)]), 15)
         self.assertEqual(inclusive_ms([(0, 5), (10, 15)]), 15)
@@ -83,7 +83,7 @@ class Performance(unittest.TestCase):
     def test_admitted_budget(self):
         """Admission changes only the warning threshold; an excess still preserves a failing predicate.
         ´claim:devperf:admission-is-nonverdict´
-        ´test:devperf:test-admitted-budget´
+        ´test:integration:test-admitted-budget´
         """
         admission = dict(name='probe', status='admitted', ordinary_budget='unit', budget_ms=200,
                          label='expt:fixture:probe', owner='fixture', reason='bounded work',
@@ -97,7 +97,7 @@ class Performance(unittest.TestCase):
     def test_budget_category(self):
         """Declared categories keep build/aggregate configuration findings distinct from case/suite performance findings.
         ´claim:devperf:category-controls-classification´
-        ´test:devperf:test-budget-category´
+        ´test:integration:test-budget-category´
         """
         for category in ['build', 'aggregate']:
             finding, = assess(execution(101), {'unit': {'budget_ms': 100, 'category': category}})
@@ -109,7 +109,7 @@ class Performance(unittest.TestCase):
     def test_version_mismatch(self):
         """An unreviewed stream version is refused before tests, preventing silent schema drift.
         ´claim:devperf:exact-runner-version´
-        ´test:devperf:test-version-mismatch´
+        ´test:integration:test-version-mismatch´
         """
         with tempfile.TemporaryDirectory() as directory:
             original = Path.cwd()
@@ -128,7 +128,7 @@ class Performance(unittest.TestCase):
     def test_predicates(self):
         """Fast and slow passing and failing results retain their predicates.
         ´claim:devperf:timing-preserves-predicates´
-        ´test:devperf:test-predicates´
+        ´test:integration:test-predicates´
         """
         for outcome in ['passed', 'failed']:
             for duration in [0, 1, 100, 101, 100000]:
@@ -144,7 +144,7 @@ class Performance(unittest.TestCase):
     def test_roster(self):
         """Findings preserve input outcomes and order, keeping evidence attributable.
         ´claim:devperf:findings-preserve-outcome-order´
-        ´test:devperf:test-roster´
+        ´test:integration:test-roster´
         """
         def run(label, outcome):
             return {**execution(1000, outcome), 'operation': label}
@@ -160,7 +160,7 @@ class Performance(unittest.TestCase):
     def test_missing(self):
         """Missing measurements are findings with null duration and baseline.
         ´claim:devperf:missing-measurement-is-explicit´
-        ´test:devperf:test-missing´
+        ´test:integration:test-missing´
         """
         finding, = assess(execution(None), declarations())
         self.assertEqual(finding['kind'], 'missing-measurement')
@@ -173,7 +173,7 @@ class Performance(unittest.TestCase):
     def test_structural(self):
         """Missing and malformed declarations differ from an exceeded budget.
         ´claim:devperf:structural-errors-distinct´
-        ´test:devperf:test-structural´
+        ´test:integration:test-structural´
         """
         for record in [{}, {**execution(), 'budget': 'absent'}, {**execution(), 'owner': ''},
                        execution(-1), execution(float('nan')), execution(True)]:
@@ -190,7 +190,7 @@ class Performance(unittest.TestCase):
     def test_utc(self):
         """Naive and offset instants are refused without assigning a zone.
         ´claim:devperf:utc-is-explicit´
-        ´test:devperf:test-utc´
+        ´test:integration:test-utc´
         """
         self.assertEqual(utc('2026-10-22T12:30:00.123Z'), '2026-10-22T12:30:00.123Z')
         for value in ['2026-10-22T12:30:00', '2026-10-22T12:30:00+00:00', 'badZ']:
@@ -200,7 +200,7 @@ class Performance(unittest.TestCase):
     def test_runner_policy(self):
         """Runner execution and original failure status do not depend on durations.
         ´claim:devperf:runner-policy-is-nonverdict´
-        ´test:devperf:test-runner-policy´
+        ´test:integration:test-runner-policy´
         """
         config = (Path(__file__).parent / 'nextest.toml').read_text()
         policy = tomllib.loads(config)['profile']['default']
@@ -255,7 +255,7 @@ class Performance(unittest.TestCase):
     def test_result_accounting(self):
         """A missing case remains incomplete and unknown results are structural errors.
         ´claim:devperf:result-accounting-is-explicit´
-        ´test:devperf:test-result-accounting´
+        ´test:integration:test-result-accounting´
         """
         inventory, metadata = inventory_fixture('test', 'tests/example.rs')
         record, = run_tests.nextest_events('', inventory, metadata, 'fixture', 'test', fixture(level='integration'))
@@ -269,7 +269,7 @@ class Performance(unittest.TestCase):
     def test_raw_duration(self):
         """Invalid raw durations cannot become valid normalized measurements.
         ´claim:devperf:raw-duration-validation´
-        ´test:devperf:test-raw-duration´
+        ´test:integration:test-raw-duration´
         """
         for value in [True, -1, float('inf'), '1']:
             with self.assertRaises(StructuralError):

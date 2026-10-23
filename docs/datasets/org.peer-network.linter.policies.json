@@ -7,6 +7,14 @@
   ],
   "rows": [
     {
+      "owner": "ROOT",
+      "policy": "profile.tests-conform"
+    },
+    {
+      "owner": "ROOT",
+      "policy": "profile.claims-conform"
+    },
+    {
       "owner": "VENDOR",
       "policy": "labels.mints-well-formed"
     },

@@ -12,7 +12,7 @@ class Syntax(unittest.TestCase):
     def test_parsed_boundaries(self):
         """Claim: The Rust parser follows cfg and distinguishes an uninstrumented body, a retained scoped guard, an abandoned guard and an argument-skipping attribute from actual syntax; a generator remains visible for separate admission.
         ´claim:discipline:coverage-recognition-comes-from-rust-syntax´
-        ´test:discipline:test-parsed-boundaries´
+        ´test:integration:test-parsed-boundaries´
         """
         started=time.monotonic()
         built=subprocess.run(['cargo','build','--offline','--locked','--profile','gate','-p','cli-common','--example','observe_census'],capture_output=True)

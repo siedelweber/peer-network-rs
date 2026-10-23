@@ -224,7 +224,7 @@
       "stake": "If harness claims fail, undeclared, missing or misidentified executions can appear as passing evidence."
     },
     {
-      "area": "hash-citations",
+      "area": "hashcitations",
       "contract": "ROOT::sec:foundation:claim-area-hash-citations",
       "owner": "ROOT",
       "register": "ROOT::sec:foundation:claim-area-hash-citations",

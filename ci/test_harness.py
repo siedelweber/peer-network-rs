@@ -35,7 +35,7 @@ class Harness(unittest.TestCase):
     def test_nextest_suite_span(self):
         """Interleaved suite arrivals retain their own envelope, never summed case work.
         ´claim:harness:nextest-suite-arrival-envelope´
-        ´test:harness:test-nextest-suite-span´
+        ´test:integration:test-nextest-suite-span´
         """
         from run_tests import suite_events
         registry = fixture()
@@ -53,7 +53,7 @@ class Harness(unittest.TestCase):
     def test_missing_level(self):
         """A missing level is structural, preventing an undeclared scope from borrowing evidence.
         ´claim:harness:missing-level-refused´
-        ´test:harness:test-missing-level´
+        ´test:integration:test-missing-level´
         """
         declared = rows()
         del declared[-1]['level']
@@ -63,7 +63,7 @@ class Harness(unittest.TestCase):
     def test_unregistered_implementation(self):
         """An unknown implementation cannot supply evidence under an admitted identity.
         ´claim:harness:unregistered-implementation-refused´
-        ´test:harness:test-unregistered-implementation´
+        ´test:integration:test-unregistered-implementation´
         """
         declared = rows()
         declared[-1]['implementation'] = 'unknown'
@@ -73,7 +73,7 @@ class Harness(unittest.TestCase):
     def test_dropped_case(self):
         """Both inventory and result joins refuse a missing case, preserving the whole suite contract.
         ´claim:harness:dropped-case-refused´
-        ´test:harness:test-dropped-case´
+        ´test:integration:test-dropped-case´
         """
         registry = fixture()
         with self.assertRaisesRegex(StructuralError, 'inventory differs'):
@@ -84,7 +84,7 @@ class Harness(unittest.TestCase):
     def test_ignored_case(self):
         """An ignored required case cannot make its suite pass without executing its predicate.
         ´claim:harness:ignored-case-refused´
-        ´test:harness:test-ignored-case´
+        ´test:integration:test-ignored-case´
         """
         registry = fixture()
         record = result(registry)
@@ -95,7 +95,7 @@ class Harness(unittest.TestCase):
     def test_mock_as_real(self):
         """Mock evidence cannot be relabelled as real service evidence and discharge its hold.
         ´claim:harness:mock-is-not-real´
-        ´test:harness:test-mock-as-real´
+        ´test:integration:test-mock-as-real´
         """
         declared = rows()
         declared[4]['evidence'] = 'mock'
@@ -109,7 +109,7 @@ class Harness(unittest.TestCase):
     def test_stale_source(self):
         """A result for another source cannot certify the current tree.
         ´claim:harness:stale-source-refused´
-        ´test:harness:test-stale-source´
+        ´test:integration:test-stale-source´
         """
         registry = fixture()
         record = result(registry)
@@ -126,7 +126,7 @@ class Harness(unittest.TestCase):
     def test_service_hold(self):
         """An unavailable service tier remains visibly held even when all fast cases pass.
         ´claim:harness:service-hold-visible´
-        ´test:harness:test-service-hold´
+        ´test:integration:test-service-hold´
         """
         registry = fixture()
         matrix = registry.matrix([result(registry)], 'current')
@@ -136,7 +136,7 @@ class Harness(unittest.TestCase):
     def test_doctest_inventory(self):
         """A never-started or unfinished doctest remains missing, preventing a partial run from passing.
         ´claim:harness:doctest-inventory-complete´
-        ´test:harness:test-doctest-inventory´
+        ´test:integration:test-doctest-inventory´
         """
         from run_tests import doctest_events
         registry = fixture('doctest', 'doctest::src/lib.rs - fixture [example 1]', 'doctest')
@@ -150,7 +150,7 @@ class Harness(unittest.TestCase):
     def test_doctest_identity(self):
         """Unrelated line shifts preserve item/example identity; ambiguous source positions refuse.
         ´claim:harness:doctest-identity-survives-line-shifts´
-        ´test:harness:test-doctest-identity´
+        ´test:integration:test-doctest-identity´
         """
         from doctest_identity import identities
         from run_tests import doctest_events

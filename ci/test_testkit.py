@@ -17,7 +17,7 @@ class SupportGuard(unittest.TestCase):
     def test_benchmark_terminal(self):
         """A benchmark command refuses terminal stdout before building, sampling or creating artifacts.
         ´claim:harness:benchmark-terminal-preflight´
-        ´test:harness:test-benchmark-terminal´
+        ´test:integration:test-benchmark-terminal´
         """
         class Terminal(io.StringIO):
             def isatty(self):
@@ -37,7 +37,7 @@ class SupportGuard(unittest.TestCase):
     def test_benchmark_correctness(self):
         """A benchmark correctness failure remains failing regardless of its duration or findings.
         ´claim:harness:benchmark-correctness-fails´
-        ´test:harness:test-benchmark-correctness´
+        ´test:integration:test-benchmark-correctness´
         """
         with tempfile.TemporaryDirectory() as directory:
             declared = {'integration': {'budget_ms': 2000, 'category': 'case'}}
@@ -46,7 +46,7 @@ class SupportGuard(unittest.TestCase):
     def test_benchmark_regression(self):
         """An injected comparable regression produces a persistent warning while preserving a passing benchmark.
         ´claim:harness:benchmark-regression-is-nonverdict´
-        ´test:harness:test-benchmark-regression´
+        ´test:integration:test-benchmark-regression´
         """
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -61,7 +61,7 @@ class SupportGuard(unittest.TestCase):
     def test_benchmark_streams(self):
         """Raw benchmark child output is retained in two artifacts and cannot pollute the runner's JSON channel.
         ´claim:harness:benchmark-stream-ownership´
-        ´test:harness:test-benchmark-streams´
+        ´test:integration:test-benchmark-streams´
         """
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -93,7 +93,7 @@ class SupportGuard(unittest.TestCase):
     def test_property_seed(self):
         """Missing property seeds are structural; a passing predicate cannot invent replay evidence.
         ´claim:harness:property-seed-required´
-        ´test:harness:test-property-seed´
+        ´test:integration:test-property-seed´
         """
         rows = properties.declarations()
         self.assertNotIn('PROPTEST_DISABLE_FAILURE_PERSISTENCE', properties.environment(rows, 'fixture'))
@@ -107,7 +107,7 @@ class SupportGuard(unittest.TestCase):
     def test_support_edges(self):
         """Normal and build edges to renamed support cannot enter a production graph; dev edges remain allowed.
         ´claim:harness:development-only-support´
-        ´test:harness:test-support-edges´
+        ´test:integration:test-support-edges´
         """
         for kind in (None, 'build', 'dev'):
             metadata = {'packages': [{'name': 'consumer', 'dependencies': [
@@ -123,7 +123,7 @@ class PropertyDeclarations(unittest.TestCase):
     def test_undeclared_property(self):
         """A property discovered from its macro cannot silently run without replay declarations.
         ´claim:harness:undeclared-property-refused´
-        ´test:harness:test-undeclared-property´
+        ´test:integration:test-undeclared-property´
         """
         from source_sites import rust_sites, property_roster
         text = 'proptest! { #[test] fn hidden(value in 0..8) { assert!(value < 8); } }'
@@ -136,7 +136,7 @@ class PropertyDeclarations(unittest.TestCase):
     def test_source_seed(self):
         """Source-derived seeds repeat for replay and change across source identities to retain exploration.
         ´claim:harness:source-seed-exploration´
-        ´test:harness:test-source-seed´
+        ´test:integration:test-source-seed´
         """
         self.assertEqual(properties.seed('source-one'), properties.seed('source-one'))
         self.assertNotEqual(properties.seed('source-one'), properties.seed('source-two'))

@@ -1392,6 +1392,30 @@
       "before": "Claim: A private connection aggregate stays secret-owned during acquisition and a failed parse, including its host and numeric port; diagnostics retain only its marker, and SecretBox zeroizes the entire aggregate before its destructor observes it.",
       "after": "Claim: A private connection aggregate stays secret-owned during acquisition and a failed parse, including its host and numeric port; diagnostics retain only its marker, and the secret carrier zeroizes the entire aggregate before its destructor observes it.",
       "review": "Checked direct protected reads, numeric parse refusal, secret-owned error retention and the destructor assertion after whole-aggregate zeroization; the wording avoids a documentation-style violation without changing the proposition."
+    },
+    {
+      "operation": "ci::test_claims.Evidence.test_python_exhibits",
+      "path": "ci/test_claims.py",
+      "before": "Designated evidence exhibits resolve only to Python-minted claims; unknown or Rust names refuse while unrelated planned names remain outside support.",
+      "claim": "ROOT::claim:testing:evidence-exhibits-cannot-claim-support",
+      "after": "Evidence requires checked citations for both carriers; an exhibited known or unknown claim cannot establish support, while planned names outside evidence remain harmless.",
+      "review": "Read the changed carrier fixture assertions: citations now support both carriers, exhibitions cannot establish support, and property macro documentation remains an independently joined Rust carrier. Python commentary placement is delegated to the deployed linter."
+    },
+    {
+      "operation": "ci::test_claims.Evidence.test_unknown_evidence_edge",
+      "path": "ci/test_claims.py",
+      "before": "An unknown data edge refuses even beside valid Python evidence, and removing the matching exhibit cannot leave a supported row.",
+      "claim": "ROOT::claim:testing:python-edges-require-known-claims",
+      "after": "An unknown data edge refuses even beside valid Python evidence, and removing the matching citation cannot leave a supported row.",
+      "review": "Read the changed carrier fixture assertions: citations now support both carriers, exhibitions cannot establish support, and property macro documentation remains an independently joined Rust carrier. Python commentary placement is delegated to the deployed linter."
+    },
+    {
+      "operation": "ci::test_claims.Evidence.test_source_carriers",
+      "path": "ci/test_claims.py",
+      "before": "Strings cannot invent Rust tests, and unattached Python docstrings remain visible to mint reconciliation.",
+      "claim": "ROOT::claim:testing:source-carriers-are-lexically-checked",
+      "after": "Strings cannot invent Rust tests, while property macro doc attributes retain their claim and review bindings outside the deployed Rust profile.",
+      "review": "Read the changed carrier fixture assertions: citations now support both carriers, exhibitions cannot establish support, and property macro documentation remains an independently joined Rust carrier. Python commentary placement is delegated to the deployed linter."
     }
   ]
 }

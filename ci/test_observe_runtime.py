@@ -19,7 +19,7 @@ class Processes(unittest.TestCase):
     def test_four_mode_results(self):
         """Claim: Disabled, enabled, selected-out and locally failing-export executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes.
         ´claim:discipline:four-observation-modes-preserve-command-results´
-        ´test:discipline:test-four-mode-results´
+        ´test:integration:test-four-mode-results´
         """
         target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'
         build=run(['cargo','build','--offline','--locked','--profile','gate','-p','execwrap','--example','observation_compare'])

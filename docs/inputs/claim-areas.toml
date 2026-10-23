@@ -220,7 +220,7 @@ contract = "ROOT::sec:foundation:claim-area-harness"
 
 [[rows]]
 owner = "ROOT"
-area = "hash-citations"
+area = "hashcitations"
 stake = "If identity-citation claims fail, unresolved identities can enter tracked prose or ordinary words can be refused as identities."
 register = "ROOT::sec:foundation:claim-area-hash-citations"
 contract = "ROOT::sec:foundation:claim-area-hash-citations"

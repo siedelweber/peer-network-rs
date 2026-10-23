@@ -965,7 +965,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 name = "ROOT::gate:design:claim-foundation"
 path = "docs/design/implementation.md"
 status = "scoped-supported"
-claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:python-exhibits-resolve-to-source", "ROOT::claim:testing:python-edges-require-known-claims", "ROOT::claim:testing:evidence-paragraphs-have-exact-edges", "ROOT::claim:testing:every-rewritten-gloss-has-review"]
+claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:evidence-exhibits-cannot-claim-support", "ROOT::claim:testing:python-edges-require-known-claims", "ROOT::claim:testing:evidence-paragraphs-have-exact-edges", "ROOT::claim:testing:every-rewritten-gloss-has-review"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
@@ -1074,7 +1074,7 @@ closing_condition = "Current foundation support is source-matched; discharge eac
 closing_step = "Service provisioning, assigned domain bites and client slices"
 
 premises = "Four production packages on the declared host configuration, public fixed inputs, controlled clocks and local exporters; syntax coverage and source-bound semantic reviews are distinct, generic capabilities retain their declared representation limits, and no real collector or service is assumed."
-evidence_paragraph = "EXECWRAP::amend:observe:foundation-evidence"
+evidence_paragraph = "EXECWRAP::amend:observe:foundation-operation-evidence"
 
 [[rows]]
 name = "ROOT::gate:design:performance-foundation"
@@ -1215,7 +1215,7 @@ closing_condition = "Current foundation support is source-matched; discharge eac
 closing_step = "Service provisioning, assigned domain bites and client slices"
 
 premises = "Four production packages on the declared host configuration, public fixed inputs, controlled clocks and local exporters; syntax coverage and source-bound semantic reviews are distinct, generic capabilities retain their declared representation limits, and no real collector or service is assumed."
-evidence_paragraph = "EXECWRAP::amend:observe:foundation-evidence"
+evidence_paragraph = "EXECWRAP::amend:observe:foundation-operation-evidence"
 
 [[rows]]
 name = "ROOT::gate:output:verification"
@@ -1257,7 +1257,7 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 name = "ROOT::gate:testing:foundation"
 path = "adr/017-claim-based-testing.md"
 status = "scoped-supported"
-claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:python-exhibits-resolve-to-source", "ROOT::claim:testing:python-edges-require-known-claims", "ROOT::claim:testing:evidence-paragraphs-have-exact-edges", "ROOT::claim:testing:every-rewritten-gloss-has-review"]
+claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:evidence-exhibits-cannot-claim-support", "ROOT::claim:testing:python-edges-require-known-claims", "ROOT::claim:testing:evidence-paragraphs-have-exact-edges", "ROOT::claim:testing:every-rewritten-gloss-has-review"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"

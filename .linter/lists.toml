@@ -1,6 +1,12 @@
 namespace = "class.linter.lists"
 version = [1, 0, 0]
 
+[ROOT."profile.tests-conform"]
+allowances = []
+
+[ROOT."profile.claims-conform"]
+allowances = []
+
 [VENDOR."labels.mints-well-formed"]
 allowances = []
 

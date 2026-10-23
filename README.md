@@ -68,7 +68,7 @@
 **Section (harness)** · `sec:foundation:claim-area-harness` If harness claims fail, undeclared, missing or misidentified executions can appear as passing evidence.
 
 
-**Section (hash-citations)** · `sec:foundation:claim-area-hash-citations` If identity-citation claims fail, unresolved identities can enter tracked prose or ordinary words can be refused as identities.
+**Section (hashcitations)** · `sec:foundation:claim-area-hash-citations` If identity-citation claims fail, unresolved identities can enter tracked prose or ordinary words can be refused as identities.
 
 
 **Section (testing)** · `sec:foundation:claim-area-testing` If evidence-gate claims fail, missing obligations, unowned claims or failed siblings can be hidden by coverage totals.

@@ -14,8 +14,7 @@ from source_sites import census, claim_mints, OWNERS
 
 LABEL = r'[a-z][a-z0-9-]*:[a-z0-9-]+:[a-z0-9.-]+'
 OBLIGATION_KINDS = {'req', 'dec', 'verif', 'plan', 'gate'}
-PYTHON_AREAS = {'test_design':'design','test_discipline':'discipline','test_devperf':'devperf',
-                'test_harness':'harness','test_testkit':'harness','test_claims':'testing','test_observe':'discipline','test_observe_runtime':'discipline','test_observe_syntax':'discipline'}
+
 
 
 def owner_of(path):
@@ -57,6 +56,15 @@ def prose(root):
 
 def site_claim(site):
     lines = site['doc'].strip().splitlines()
+    if site['language']=='python':
+        # Carrier validity and derived identity are owned by the checked linter.
+        # Retain only the binding needed for source/result and semantic-review joins.
+        carrier=lines[-2].strip(); label=carrier.strip('()´')
+        gloss='\n'.join(lines[:-2]).strip()
+        explicit=[line.strip() for line in lines[:-2] if line.strip().startswith('Claim:')]
+        if explicit: gloss=explicit[0]
+        return {**site,'claim':qualify(label,site['owner']),'mint':not carrier.startswith('('),
+                'test_label':lines[-1].strip(' ´'),'gloss':gloss,'area':label.split(':')[1]}
     claim_lines = [(i, re.fullmatch(r'(\()?´('+LABEL+r')´(\))?', line.strip())) for i,line in enumerate(lines)]
     claims = [(i,m) for i,m in claim_lines if m and m[2].startswith('claim:')]
     if len(claims) != 1: raise StructuralError('site requires one claim mint or citation: '+site['operation'])
@@ -71,8 +79,6 @@ def site_claim(site):
     test_label = lines[-1].strip(' ´')
     if test_label.split(':',2)[2] != site['function'].replace('_','-'):
         raise StructuralError('test label differs from function identity: '+site['operation'])
-    if site['language']=='python' and test_label.split(':')[1] != PYTHON_AREAS.get(Path(site['path']).stem):
-        raise StructuralError('Python test area differs from module mapping')
     return {**site, 'claim': qualify(match[2], site['owner']), 'mint': not bool(match[1]),
             'test_label': test_label, 'gloss': gloss, 'area': match[2].split(':')[1]}
 
@@ -85,7 +91,7 @@ def respells(site):
 
 
 def reconcile_mints(sites, minted):
-    expected=Counter(s['claim'] for s in sites if s['mint'])
+    expected=Counter(s['claim'] for s in sites if s['mint'] and s['language']=='rust')
     if expected != minted: raise StructuralError('orphan or missing source claim mint')
 
 
@@ -105,19 +111,16 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     mints = Counter(s['claim'] for s in sites if s['mint'])
     for site in sites: claims[site['claim']].append(site)
     if set(mints) != set(claims) or any(v != 1 for v in mints.values()): raise StructuralError('unresolved or duplicate claim mint')
-    python_claims = {s['claim'] for s in sites if s['mint'] and s['language']=='python'}
     if any('::claim:' in name for name in paragraphs): raise StructuralError('orphan prose claim mint outside a test site')
     for paragraph in paragraphs.values():
         if any('::claim:' in name and name not in claims for name in paragraph['citations']):
             raise StructuralError('unresolved prose claim citation')
-        if paragraph['citations'] & python_claims:
-            raise StructuralError('Python claim requires exhibition, not a linter citation')
     # Only designated evidence paragraphs assert support. Planned design names
     # remain exhibits, never mints or evidence merely because they are displayed.
     for name in {r.get('evidence_paragraph') for r in declared if r.get('evidence_paragraph')}:
         exhibits = paragraphs.get(name, {}).get('exhibits', set())
-        if exhibits - python_claims:
-            raise StructuralError('evidence exhibit does not resolve to a Python claim: '+str(sorted(exhibits-python_claims)))
+        if exhibits:
+            raise StructuralError('evidence exhibits cannot claim support; use checked citations')
     if len({r['operation'] for r in results}) != len(results): raise StructuralError('duplicate result')
     actual = {r['operation']:r for r in results}
     missing = set(expected_sites)-set(actual)
@@ -146,7 +149,7 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
             if claim not in claims: raise StructuralError('planned name or unresolved claim presented as evidence')
             paragraph = paragraphs.get(row.get('evidence_paragraph'), {})
             citations = paragraph.get('citations', set())
-            evidence = paragraph.get('exhibits', set()) if claim in python_claims else citations
+            evidence = citations
             if claim not in evidence or name not in citations: raise StructuralError('uncited evidence presented as coverage')
         if row['status']=='scoped-supported' and not row['claims']: raise StructuralError('supported obligation lacks claims')
         if name.split('::',1)[1].startswith('req:'):
@@ -181,9 +184,9 @@ def checked_linter(path,sites):
         except ValueError: continue
         if isinstance(row,dict) and 'clean' in row and 'profile' in row: summaries.append(row)
     if len(summaries)!=1 or not summaries[0]['clean']: raise StructuralError('checked linter census is missing or failed')
-    rust=[s for s in sites if s['language']=='rust' and not s['property']]
-    if summaries[0]['profile']['covered']!=len(rust) or summaries[0]['claim']['mints']!=sum(s['mint'] for s in rust):
-        raise StructuralError('independent source census differs from checked Rust profile')
+    covered=sites
+    if summaries[0]['profile']['covered']!=len(covered) or summaries[0]['claim']['mints']!=sum(s['mint'] for s in covered):
+        raise StructuralError('independent source census differs from checked Rust and Python profiles')
 
 
 def reviewed_sites(sites, manifest, baseline=None):

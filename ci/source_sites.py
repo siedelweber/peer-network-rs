@@ -6,12 +6,10 @@ attributes or unaccounted runnable cases fail the later inventory equality.
 
 import ast
 from collections import Counter
-import io
 import json
 from pathlib import Path
 import re
 import tomllib
-import tokenize
 
 from devperf import StructuralError
 
@@ -165,10 +163,4 @@ def claim_mints(root):
                 if masked[attribute.start():].startswith('#[doc'):
                     comments.append(json.loads(attribute[1]))
             collect(owner,comments)
-    for path in (root/'ci').glob('*.py'):
-        source=path.read_text()
-        tree=ast.parse(source)
-        carriers=[ast.get_docstring(n) or '' for n in ast.walk(tree) if isinstance(n,(ast.Module,ast.ClassDef,ast.FunctionDef,ast.AsyncFunctionDef))]
-        carriers.extend(t.string for t in tokenize.generate_tokens(io.StringIO(source).readline) if t.type==tokenize.COMMENT)
-        collect('ROOT',carriers)
     return mints
