@@ -80,6 +80,12 @@ impl ContentKey {
         ret
     )]
     pub fn new(key: u64) -> Result<ContentKey, EnvelopeError> {
+        Self::new_checked(key).inspect_err(|_| {
+            tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+        })
+    }
+
+    fn new_checked(key: u64) -> Result<ContentKey, EnvelopeError> {
         if key <= 1 {
             return Err(EnvelopeError::ReservedContentKey { key });
         }
@@ -419,6 +425,12 @@ impl Envelope {
         ret
     )]
     pub fn peek(prefix: &[u8]) -> Result<(Envelope, usize), EnvelopeError> {
+        Self::peek_checked(prefix).inspect_err(|_| {
+            tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+        })
+    }
+
+    fn peek_checked(prefix: &[u8]) -> Result<(Envelope, usize), EnvelopeError> {
         let given = prefix.len();
         let window = &prefix[..given.min(MAX_ENVELOPE_PREFIX)];
         let mut position = 0usize;
@@ -758,6 +770,12 @@ impl Document {
         ret
     )]
     pub fn try_from_value(v: &Value) -> Result<Document, EnvelopeError> {
+        Self::try_from_value_checked(v).inspect_err(|_| {
+            tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+        })
+    }
+
+    fn try_from_value_checked(v: &Value) -> Result<Document, EnvelopeError> {
         let Value::Map(map) = v else {
             return Err(EnvelopeError::NotAMap);
         };

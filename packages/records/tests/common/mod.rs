@@ -1,5 +1,7 @@
-use pn_records::{ActId, CandidateAct, EdgeId, Layout, Projection, PublicReference, Quantity, Removal, Role, StructuralBody};
-use std::collections::BTreeSet;
+use pn_records::{
+    ActId, CandidateAct, CandidateLeg, DependencyProjection, EdgeId, Layout, PublicReference, Quantity, Removal, Role,
+    StructuralBody, ValidatedHistory, validate_history,
+};
 
 pub fn named(name: &str) -> PublicReference {
     PublicReference::Named {
@@ -8,8 +10,8 @@ pub fn named(name: &str) -> PublicReference {
     }
 }
 
-pub fn resolved() -> BTreeSet<PublicReference> {
-    [named("left"), named("right")].into()
+pub fn resolved() -> ValidatedHistory {
+    validate_history(&[], &[named("left"), named("right")]).unwrap()
 }
 
 pub fn act(sequence: u64, layout: Layout) -> CandidateAct {
@@ -36,7 +38,7 @@ pub fn act(sequence: u64, layout: Layout) -> CandidateAct {
         },
         legs: roles
             .iter()
-            .map(|role| Projection {
+            .map(|role| CandidateLeg {
                 id: EdgeId {
                     act: id.clone(),
                     role: *role,
@@ -48,7 +50,7 @@ pub fn act(sequence: u64, layout: Layout) -> CandidateAct {
             .collect(),
         projections: pn_records::RemovableProjections {
             content: Removal::Live,
-            dependency: Removal::Live,
+            dependency: DependencyProjection::FullEmpty,
         },
         protocol_references: vec![named("left")],
         authentication_evidence: vec![1, 2, 3],

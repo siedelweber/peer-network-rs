@@ -224,7 +224,9 @@ pub fn dispatch<'r>(reg: &'r Registry, env: &Envelope) -> Instrument<'r> {
     ret
 )]
 pub fn dispatch_prefix<'r>(reg: &'r Registry, prefix: &[u8]) -> Result<Instrument<'r>, EnvelopeError> {
-    let (envelope, _) = Envelope::peek(prefix)?;
+    let (envelope, _) = Envelope::peek(prefix).inspect_err(|_| {
+        tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+    })?;
     let instrument = dispatch(reg, &envelope);
     if matches!(instrument, Instrument::Refused(_)) {
         tracing::event!(tracing::Level::TRACE, outcome = "refusal");

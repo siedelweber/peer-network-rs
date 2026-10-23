@@ -8,7 +8,7 @@
   "rows": [
     {
       "exceptions": 80,
-      "generators": 40,
+      "generators": 41,
       "helpers": 3,
       "instrumented": 30,
       "name": "cli-common",
@@ -40,11 +40,11 @@
     },
     {
       "exceptions": 0,
-      "generators": 17,
+      "generators": 26,
       "helpers": 0,
-      "instrumented": 4,
+      "instrumented": 7,
       "name": "pn-records",
-      "operations": 4
+      "operations": 7
     }
   ]
 }

@@ -5,7 +5,8 @@ mod common;
 
 use cli_common::observation::{BootstrapError, bootstrap};
 use pn_records::{
-    Declaration, DeclarationId, Layout, PublicReference, resolve_public_reference, select_effective_declaration, validate_record,
+    Declaration, DeclarationId, DependencyStatus, Layout, PublicReference, assemble_boundary_inputs, dependency_status,
+    resolve_public_reference, select_effective_declaration, validate_record,
 };
 use std::process::ExitCode;
 
@@ -31,8 +32,10 @@ fn main() -> ExitCode {
         announced_at: 1,
         effective_at: 2,
     }];
-    let accepted = validate_record(&records, &common::resolved(), &declarations).expect("complete fixture");
+    let history = common::resolved();
+    let accepted = validate_record(&records, &history, &declarations).expect("complete fixture");
     let count = accepted.acts().len();
+    let empty_dependencies = dependency_status(&accepted, &records[0].legs[0].id).unwrap() == DependencyStatus::FullEmpty;
     let reference = PublicReference::Act(records[0].id.clone());
     let resolved = resolve_public_reference(&accepted, &reference).is_ok();
     let unresolved = resolve_public_reference(&accepted, &common::named("absent")).is_err();
@@ -43,8 +46,10 @@ fn main() -> ExitCode {
     let no_edition = select_effective_declaration(&accepted, "rules", "edition", 0).is_err();
     let mut missing = common::act(3, Layout::Paired);
     missing.legs.pop();
-    let refused = validate_record(&[missing], &common::resolved(), &[]).is_err();
-    let exit = if cli_common::emit(&serde_json::json!({"accepted_acts":count,"missing_co_leg_refused":refused,"resolved":resolved,"unresolved":unresolved,"edition":selected,"no_edition":no_edition})).is_ok() {
+    let refused = validate_record(&[missing], &history, &[]).is_err();
+    let assembled = assemble_boundary_inputs(&accepted, 8).unwrap().acts.len();
+    let misplaced = assemble_boundary_inputs(&accepted, 9).is_err();
+    let exit = if cli_common::emit(&serde_json::json!({"empty_dependencies":empty_dependencies,"assembled":assembled,"misplaced":misplaced,"accepted_acts":count,"missing_co_leg_refused":refused,"resolved":resolved,"unresolved":unresolved,"edition":selected,"no_edition":no_edition})).is_ok() {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE

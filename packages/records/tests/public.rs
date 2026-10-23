@@ -1,9 +1,11 @@
 mod common;
 use common::{act, named, resolved};
 use pn_records::{
-    Declaration, DeclarationId, InvalidCause, Layout, PublicReference, ReferenceOrigin, Removal, Role, ValidationError,
-    resolve_public_reference, select_effective_declaration, validate_record,
+    Declaration, DeclarationCause, DeclarationId, DependencyProjection, DependencyStatus, InvalidCause, Layout, PublicReference,
+    ReferenceOrigin, Removal, Role, ValidationError, resolve_public_reference, select_effective_declaration, validate_history,
+    validate_record,
 };
+use pn_records::{DependencyCause, MAX_DEPENDENCIES, assemble_boundary_inputs, dependency_status};
 
 /// Claim: Distinct structural act identifiers preserve parallel endpoint-equal projections, while an identical repeated act or repeated parent/role edge refuses ambiguity instead of silently deduplicating input.
 /// ´claim:acts:duplicates-refuse-and-parallel-identities-survive´
@@ -54,7 +56,7 @@ fn missing_co_legs() {
 #[test]
 fn required_references() {
     let mut record = act(1, Layout::Binary);
-    record.projections.dependency = Removal::Tombstoned(9);
+    record.projections.dependency = DependencyProjection::Tombstoned(9);
     let edge = PublicReference::Edge(record.legs[0].id.clone());
     record.protocol_references.push(edge.clone());
     record.protocol_references.push(named("missing"));
@@ -62,11 +64,11 @@ fn required_references() {
         validate_record(&[record.clone()], &resolved(), &[]).unwrap_err(),
         ValidationError::UnresolvedReference(named("missing"))
     );
-    let mut available = resolved();
-    available.insert(named("missing"));
+    let available = validate_history(&[], &[named("left"), named("right"), named("missing")]).unwrap();
     let records = [record.clone()];
     let view = validate_record(&records, &available, &[]).unwrap();
-    assert_eq!(view.acts(), &[record]);
+    assert_eq!(view.acts()[0].id, record.id);
+    assert_eq!(view.acts()[0].projections, record.projections);
     assert_eq!(resolve_public_reference(&view, &edge), Ok(ReferenceOrigin::Batch));
 }
 
@@ -136,7 +138,7 @@ fn projection_removal() {
             if content {
                 record.projections.content = Removal::Tombstoned(position);
             } else {
-                record.projections.dependency = Removal::Tombstoned(position);
+                record.projections.dependency = DependencyProjection::Tombstoned(position);
             }
             let expected = ValidationError::InvalidRepresentation {
                 act: record.id.clone(),
@@ -146,12 +148,12 @@ fn projection_removal() {
         }
     }
     let mut record = act(1, Layout::Paired);
-    record.projections.dependency = Removal::Tombstoned(9);
+    record.projections.dependency = DependencyProjection::Tombstoned(9);
     let records = [record];
     let view = validate_record(&records, &resolved(), &[]).unwrap();
     assert_eq!(view.acts()[0].legs.len(), 2);
     for leg in &view.acts()[0].legs {
-        assert_eq!(leg.removal, None);
+        assert_eq!(dependency_status(&view, &leg.id), Ok(DependencyStatus::Tombstoned(9)));
         assert_eq!(
             resolve_public_reference(&view, &PublicReference::Edge(leg.id.clone())),
             Ok(ReferenceOrigin::Batch)
@@ -166,14 +168,19 @@ fn projection_removal() {
 fn reference_resolution() {
     let records = [act(1, Layout::Binary)];
     let identity = PublicReference::Act(records[0].id.clone());
-    let mut history = resolved();
-    history.insert(identity.clone());
+    let history = validate_history(&records, &[named("left"), named("right")]).unwrap();
     assert_eq!(
         validate_record(&records, &history, &[]).unwrap_err(),
         ValidationError::DuplicateAct(records[0].id.clone())
     );
     let view = validate_record(&records, &resolved(), &[]).unwrap();
     assert_eq!(resolve_public_reference(&view, &identity), Ok(ReferenceOrigin::Batch));
+    let leg = PublicReference::Edge(records[0].legs[0].id.clone());
+    assert_eq!(resolve_public_reference(&view, &leg), Ok(ReferenceOrigin::Batch));
+    assert_eq!(
+        validate_history(&[], std::slice::from_ref(&leg)).unwrap_err(),
+        ValidationError::InvalidReference(leg)
+    );
     assert_eq!(resolve_public_reference(&view, &named("left")), Ok(ReferenceOrigin::History));
     assert_eq!(
         resolve_public_reference(&view, &named("absent")),
@@ -183,9 +190,8 @@ fn reference_resolution() {
         resolve_public_reference(&view, &named("")),
         Err(ValidationError::InvalidReference(named("")))
     );
-    history.insert(named(""));
     assert_eq!(
-        validate_record(&records, &history, &[]).unwrap_err(),
+        validate_history(&records, &[named("")]).unwrap_err(),
         ValidationError::InvalidReference(named(""))
     );
 }
@@ -246,6 +252,15 @@ fn effective_declarations() {
 /// ´test:integration:invalid-declarations´
 #[test]
 fn invalid_declarations() {
+    let view = validate_record(&[], &resolved(), &[]).unwrap();
+    assert_eq!(
+        select_effective_declaration(&view, "", "key", 1),
+        Err(ValidationError::InvalidSelectionKey(DeclarationCause::EmptyNamespace))
+    );
+    assert_eq!(
+        select_effective_declaration(&view, "rules", "", 1),
+        Err(ValidationError::InvalidSelectionKey(DeclarationCause::EmptyName))
+    );
     let old = declaration(1, 1, 2);
     assert_eq!(
         validate_record(&[], &resolved(), &[old.clone(), old.clone()]).unwrap_err(),
@@ -260,8 +275,223 @@ fn invalid_declarations() {
     no_name.id.name.clear();
     let mut no_namespace = declaration(3, 1, 2);
     no_namespace.id.namespace.clear();
-    for bad in [declaration(3, 4, 2), no_name, no_namespace] {
-        let expected = ValidationError::InvalidDeclaration(bad.id.clone());
+    for (bad, cause) in [
+        (declaration(3, 4, 2), DeclarationCause::LateAnnouncement),
+        (no_name, DeclarationCause::EmptyName),
+        (no_namespace, DeclarationCause::EmptyNamespace),
+    ] {
+        let expected = ValidationError::InvalidDeclaration {
+            id: bad.id.clone(),
+            cause,
+        };
         assert_eq!(validate_record(&[], &resolved(), &[bad]).unwrap_err(), expected);
     }
+}
+
+/// Claim: Dependency content distinguishes complete empty from missing tombstoned data, rejects empty Full, excessive, duplicate, unsorted and self lists, and only act identifiers can enter the declared dependency vector.
+/// ´claim:acts:dependency-lists-have-canonical-content´
+/// ´test:integration:dependency-content´
+#[test]
+fn dependency_content() {
+    let mut parent = act(1, Layout::Binary);
+    parent.authoritative_position = 1;
+    let mut other = act(2, Layout::Binary);
+    other.authoritative_position = 2;
+    let history = validate_history(&[other.clone(), parent.clone()], &[named("left"), named("right")]).unwrap();
+    let root = act(3, Layout::Paired);
+    let cases = [
+        (vec![], DependencyCause::EmptyFull),
+        (vec![parent.id.clone(), parent.id.clone()], DependencyCause::NonCanonical),
+        (vec![other.id.clone(), parent.id.clone()], DependencyCause::NonCanonical),
+        (vec![root.id.clone()], DependencyCause::SelfDependency),
+        (
+            (0..=MAX_DEPENDENCIES)
+                .map(|n| {
+                    let mut id = parent.id.clone();
+                    id.sequence = u64::try_from(n).unwrap();
+                    id
+                })
+                .collect(),
+            DependencyCause::TooMany,
+        ),
+    ];
+    for (dependencies, cause) in cases {
+        let mut candidate = root.clone();
+        candidate.projections.dependency = DependencyProjection::Full(dependencies);
+        let expected = ValidationError::Dependency {
+            act: root.id.clone(),
+            dependency: (cause == DependencyCause::SelfDependency).then(|| root.id.clone()),
+            cause,
+        };
+        assert_eq!(validate_record(&[candidate], &history, &[]).unwrap_err(), expected);
+    }
+    let empty = validate_record(std::slice::from_ref(&root), &history, &[]).unwrap();
+    assert_eq!(
+        dependency_status(&empty, &empty.acts()[0].legs[0].id),
+        Ok(DependencyStatus::FullEmpty)
+    );
+    let mut full = root;
+    full.projections.dependency = DependencyProjection::Full(vec![parent.id, other.id]);
+    let view = validate_record(&[full], &history, &[]).unwrap();
+    assert!(
+        view.acts()[0]
+            .legs
+            .iter()
+            .all(|leg| dependency_status(&view, &leg.id) == Ok(DependencyStatus::Full))
+    );
+}
+
+/// Claim: Missing dependency acts and dependencies at or after a dependent's position refuse distinct typed causes, while a strictly earlier dependency validates.
+/// ´claim:acts:dependencies-require-earlier-accepted-acts´
+/// ´test:integration:dependency-placement´
+#[test]
+fn dependency_placement() {
+    let parent = act(1, Layout::Binary);
+    let mut root = act(2, Layout::Binary);
+    root.projections.dependency = DependencyProjection::Full(vec![parent.id.clone()]);
+    assert_eq!(
+        validate_record(std::slice::from_ref(&root), &resolved(), &[]).unwrap_err(),
+        ValidationError::Dependency {
+            act: root.id.clone(),
+            dependency: Some(parent.id.clone()),
+            cause: DependencyCause::Missing
+        }
+    );
+    let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
+    for position in [7, 8] {
+        root.authoritative_position = position;
+        assert_eq!(
+            validate_record(std::slice::from_ref(&root), &history, &[]).unwrap_err(),
+            ValidationError::Dependency {
+                act: root.id.clone(),
+                dependency: Some(parent.id.clone()),
+                cause: DependencyCause::NotEarlier
+            }
+        );
+    }
+    root.authoritative_position = 9;
+    assert!(validate_record(&[root], &history, &[]).is_ok());
+}
+
+/// Claim: Whole validated history derives an act and both co-leg identities together, refuses edge-only history input and reintroduced identities through the validated snapshot.
+/// ´claim:acts:history-owns-its-structural-references´
+/// ´test:integration:whole-history´
+#[test]
+fn whole_history() {
+    let parent = act(1, Layout::Paired);
+    let edge = PublicReference::Edge(parent.legs[0].id.clone());
+    assert_eq!(
+        validate_history(&[], std::slice::from_ref(&edge)).unwrap_err(),
+        ValidationError::InvalidReference(edge.clone())
+    );
+    let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
+    let view = validate_record(&[], &history, &[]).unwrap();
+    assert_eq!(dependency_status(&view, &parent.legs[0].id), Ok(DependencyStatus::FullEmpty));
+    let mut missing = parent.legs[0].id.clone();
+    missing.act.sequence += 1;
+    assert_eq!(
+        dependency_status(&view, &missing),
+        Err(ValidationError::UnresolvedReference(PublicReference::Edge(missing.clone())))
+    );
+    missing.act.author.clear();
+    assert_eq!(
+        dependency_status(&view, &missing),
+        Err(ValidationError::InvalidReference(PublicReference::Edge(missing)))
+    );
+    for reference in [
+        PublicReference::Act(parent.id.clone()),
+        edge,
+        PublicReference::Edge(parent.legs[1].id.clone()),
+    ] {
+        assert_eq!(resolve_public_reference(&view, &reference), Ok(ReferenceOrigin::History));
+    }
+    assert_eq!(
+        validate_record(std::slice::from_ref(&parent), &history, &[]).unwrap_err(),
+        ValidationError::DuplicateAct(parent.id)
+    );
+}
+
+/// Claim: Two proposed closures sharing a paired ancestor each retain its transitive complete acts in authoritative order, preserve the overlap and produce one whole-act union independently of candidate and history input order, without computing partition blocks.
+/// ´claim:acts:overlapping-closures-retain-complete-inputs´
+/// ´test:integration:overlapping-closures´
+#[test]
+fn overlapping_closures() {
+    let mut first = act(1, Layout::Binary);
+    first.authoritative_position = 1;
+    let mut shared = act(2, Layout::Paired);
+    shared.authoritative_position = 2;
+    shared.projections.dependency = DependencyProjection::Full(vec![first.id.clone()]);
+    let mut left = act(3, Layout::Paired);
+    left.authoritative_position = 10;
+    left.projections.dependency = DependencyProjection::Full(vec![shared.id.clone()]);
+    let mut right = act(4, Layout::Binary);
+    right.authoritative_position = 11;
+    right.projections.dependency = DependencyProjection::Full(vec![first.id.clone(), shared.id.clone()]);
+    for reversed in [false, true] {
+        let history_acts = if reversed {
+            vec![shared.clone(), first.clone()]
+        } else {
+            vec![first.clone(), shared.clone()]
+        };
+        let proposals = if reversed {
+            vec![right.clone(), left.clone()]
+        } else {
+            vec![left.clone(), right.clone()]
+        };
+        let history = validate_history(&history_acts, &[named("left"), named("right")]).unwrap();
+        let view = validate_record(&proposals, &history, &[]).unwrap();
+        let inputs = assemble_boundary_inputs(&view, 10).unwrap();
+        assert_eq!(inputs.boundary, 10);
+        assert_eq!(
+            inputs.acts.iter().map(|a| &a.id).collect::<Vec<_>>(),
+            vec![&first.id, &shared.id, &left.id, &right.id]
+        );
+        assert_eq!(inputs.closures[0].root, left.id);
+        assert_eq!(
+            inputs.closures[0].members,
+            vec![first.id.clone(), shared.id.clone(), left.id.clone()]
+        );
+        assert_eq!(inputs.closures[1].root, right.id);
+        assert_eq!(
+            inputs.closures[1].members,
+            vec![first.id.clone(), shared.id.clone(), right.id.clone()]
+        );
+        assert_eq!(inputs.acts[1].legs.len(), 2);
+        assert_eq!(inputs.acts[2].legs.len(), 2);
+    }
+}
+
+/// Claim: Assembly refuses history on or beyond the fixed cut, proposals before it, and a tombstoned dependency list reached transitively; unavailable content is never guessed empty.
+/// ´claim:acts:incomplete-boundary-inputs-refuse´
+/// ´test:integration:boundary-refusals´
+#[test]
+fn boundary_refusals() {
+    let mut parent = act(1, Layout::Binary);
+    parent.authoritative_position = 1;
+    let mut root = act(2, Layout::Paired);
+    root.authoritative_position = 10;
+    root.projections.dependency = DependencyProjection::Full(vec![parent.id.clone()]);
+    let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
+    let view = validate_record(std::slice::from_ref(&root), &history, &[]).unwrap();
+    for (cut, id) in [(1, parent.id.clone()), (11, root.id.clone())] {
+        assert_eq!(
+            assemble_boundary_inputs(&view, cut).unwrap_err(),
+            ValidationError::Dependency {
+                act: id,
+                dependency: None,
+                cause: DependencyCause::BoundaryPlacement
+            }
+        );
+    }
+    parent.projections.dependency = DependencyProjection::Tombstoned(2);
+    let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
+    let view = validate_record(&[root], &history, &[]).unwrap();
+    assert_eq!(
+        assemble_boundary_inputs(&view, 10).unwrap_err(),
+        ValidationError::Dependency {
+            act: parent.id,
+            dependency: None,
+            cause: DependencyCause::Unavailable
+        }
+    );
 }

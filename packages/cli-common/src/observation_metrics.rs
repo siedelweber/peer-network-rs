@@ -8,6 +8,8 @@ use std::sync::{Arc, Mutex};
 use metrics::{Counter, CounterFn, Gauge, GaugeFn, Histogram, HistogramFn, Key, KeyName, Metadata, Recorder, SharedString, Unit};
 use serde_json::{Value, json};
 
+include!("observation_operations.rs");
+
 pub(super) const STEMS: [&str; 8] = [
     "clicommon__root__rule__observe__metering",
     "execwrap__root__rule__observe__privacy",
@@ -173,7 +175,7 @@ impl HistogramFn for Instrument {
 /// One local recorder shared by metrics API handles and JSON snapshots.
 #[derive(Clone)]
 pub(super) struct JsonRecorder {
-    instruments: Arc<BTreeMap<(String, String), Arc<Instrument>>>,
+    instruments: Arc<BTreeMap<(String, String, String), Arc<Instrument>>>,
     pub(super) lost: Arc<AtomicU64>,
 }
 
@@ -193,37 +195,52 @@ impl JsonRecorder {
             };
             for (measure, kind, unit) in MEASURES.into_iter().chain(extra.iter().copied()) {
                 let outcomes: &[&str] = if measure == "completed_operations" { &OUTCOMES } else { &[""] };
-                for outcome in outcomes {
-                    // The finite outcome is part of the SDK instrument name; no
-                    // unbounded label can create a provider series.
-                    let sdk_name = format!("{stem}__{measure}{}{}", if outcome.is_empty() { "" } else { "__" }, outcome);
-                    let bounds = if unit == "seconds" {
-                        [0.001, 0.01, 0.1, 1.0]
-                    } else {
-                        [1.0, 1024.0, 65_536.0, 1_048_576.0]
-                    };
-                    let sdk = meter.map(|meter| match kind {
-                        "counter" => SdkInstrument::Counter(meter.u64_counter(sdk_name).with_unit(unit).build()),
-                        "gauge" => SdkInstrument::Gauge(meter.f64_gauge(sdk_name).with_unit(unit).build()),
-                        _ => SdkInstrument::Histogram(
-                            meter
-                                .f64_histogram(sdk_name)
-                                .with_unit(unit)
-                                .with_boundaries(bounds.to_vec())
-                                .build(),
-                        ),
-                    });
-                    instruments.insert(
-                        (format!("{stem}__{measure}"), (*outcome).into()),
-                        Arc::new(Instrument {
-                            kind,
-                            unit,
-                            bounds,
-                            totals: Mutex::new(Totals::default()),
-                            lost: lost.clone(),
-                            sdk,
-                        }),
-                    );
+                let operations: &[&str] = if stem == "records__root__sig__design__records"
+                    && matches!(measure, "started_operations" | "completed_operations")
+                {
+                    &RECORDS_OPERATIONS
+                } else {
+                    &[""]
+                };
+                for operation in operations {
+                    for outcome in outcomes {
+                        // The finite outcome is part of the SDK instrument name; no
+                        // unbounded label can create a provider series.
+                        let sdk_name = format!(
+                            "{stem}__{measure}{}{}{}{}",
+                            if operation.is_empty() { "" } else { "__" },
+                            operation,
+                            if outcome.is_empty() { "" } else { "__" },
+                            outcome
+                        );
+                        let bounds = if unit == "seconds" {
+                            [0.001, 0.01, 0.1, 1.0]
+                        } else {
+                            [1.0, 1024.0, 65_536.0, 1_048_576.0]
+                        };
+                        let sdk = meter.map(|meter| match kind {
+                            "counter" => SdkInstrument::Counter(meter.u64_counter(sdk_name).with_unit(unit).build()),
+                            "gauge" => SdkInstrument::Gauge(meter.f64_gauge(sdk_name).with_unit(unit).build()),
+                            _ => SdkInstrument::Histogram(
+                                meter
+                                    .f64_histogram(sdk_name)
+                                    .with_unit(unit)
+                                    .with_boundaries(bounds.to_vec())
+                                    .build(),
+                            ),
+                        });
+                        instruments.insert(
+                            (format!("{stem}__{measure}"), (*outcome).into(), (*operation).into()),
+                            Arc::new(Instrument {
+                                kind,
+                                unit,
+                                bounds,
+                                totals: Mutex::new(Totals::default()),
+                                lost: lost.clone(),
+                                sdk,
+                            }),
+                        );
+                    }
                 }
             }
         }
@@ -234,19 +251,29 @@ impl JsonRecorder {
     }
 
     fn instrument(&self, key: &Key, kind: &str) -> Option<Arc<Instrument>> {
-        let mut labels = key.labels();
-        let outcome = match (labels.next(), labels.next()) {
-            (None, None) => "",
-            (Some(label), None) if label.key() == "outcome" => label.value(),
-            _ => {
+        let mut outcome = "";
+        let mut operation = "";
+        let mut seen = std::collections::BTreeSet::new();
+        for label in key.labels() {
+            if label.value().is_empty() || !seen.insert(label.key()) {
                 self.lost.fetch_add(1, Ordering::Relaxed);
                 return None;
             }
-        };
+            match label.key() {
+                "outcome" => outcome = label.value(),
+                "operation" => operation = label.value(),
+                _ => {
+                    self.lost.fetch_add(1, Ordering::Relaxed);
+                    return None;
+                }
+            }
+        }
         let instrument = self
             .instruments
             .iter()
-            .find(|((name, attribute), instrument)| name == key.name() && attribute == outcome && instrument.kind == kind)
+            .find(|((name, attribute, op), instrument)| {
+                name == key.name() && attribute == outcome && op == operation && instrument.kind == kind
+            })
             .map(|(_, instrument)| instrument.clone());
         if instrument.is_none() {
             self.lost.fetch_add(1, Ordering::Relaxed);
@@ -255,7 +282,7 @@ impl JsonRecorder {
     }
 
     fn describe(&self, key: &KeyName, unit: Option<Unit>, kind: &str) {
-        let valid = self.instruments.iter().any(|((name, _), i)| {
+        let valid = self.instruments.iter().any(|((name, _, _), i)| {
             name == key.as_str()
                 && i.kind == kind
                 && unit.is_some_and(|u| u.as_str() == i.unit || (i.unit == "operations" && u == Unit::Count))
@@ -268,7 +295,7 @@ impl JsonRecorder {
     pub(super) fn snapshot(&self, full_trace: bool) -> Value {
         let mut rows = Vec::new();
         let mut unobserved = 0;
-        for ((name, outcome), instrument) in self.instruments.iter() {
+        for ((name, outcome, operation), instrument) in self.instruments.iter() {
             if let Ok(t) = instrument.totals.try_lock() {
                 if !t.observed {
                     unobserved += 1;
@@ -276,8 +303,15 @@ impl JsonRecorder {
                         continue;
                     }
                 }
+                // Operation-attributed records series are counters. Do not repeat
+                // inapplicable histogram, gauge or resource fields per operation.
+                if !operation.is_empty() {
+                    rows.push(json!({"name":name,"kind":instrument.kind,"unit":instrument.unit,
+                        "outcome":outcome,"operation":operation,"counter":t.counter}));
+                    continue;
+                }
                 rows.push(
-                    json!({"name":name,"kind":instrument.kind,"unit":instrument.unit,"outcome":outcome,
+                    json!({"name":name,"kind":instrument.kind,"unit":instrument.unit,"outcome":outcome,"operation":operation,
                     "counter":if name.ends_with("work_bytes") && !t.observed {None}else{Some(t.counter)},"gauge":if name.ends_with("resource_current_bytes") && !t.observed {None}else{Some(t.gauge)},"count":t.count,"sum":t.sum,"buckets":t.buckets,
                     "resource_scope":"reported operation-owned bytes only; unavailable contexts excluded",
                     "boundaries":instrument.bounds,"bucket_aggregation":"disjoint; final bucket is above last boundary"}),

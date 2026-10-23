@@ -820,6 +820,12 @@
     "pn-records::public::invalid_declarations": "Claim: Declaration validation refuses duplicate edition identities, ambiguous simultaneous successors, empty keys and an effective boundary before announcement, so as-of selection cannot silently choose by vector order.",
     "ci::test_observe.Admission.test_records_operation_field": "Claim: A records boundary must carry the operation declared by its registry row; removing or changing the parsed field refuses coverage even when owner, label and result capture still agree.",
     "cli-common::observation::tests::explicit_refusal_precedence": "Claim: At default and trace, an explicit refusal survives a later Err return event, while an unclassified Err remains an error, preserving the distinction between rejected input and a genuine failure.",
-    "ci::test_observe_runtime.Processes.test_interchange_refusal": "Claim: Canonical decode and unheld acceptance refuse unchanged inputs at default and trace; the two decoder boundaries and dispatch/accept each book refusal, no error, with identical complete outcome distributions."
+    "ci::test_observe_runtime.Processes.test_interchange_refusal": "Claim: Canonical decode and unheld acceptance refuse unchanged inputs at default and trace; the two decoder boundaries and dispatch/accept each book refusal, no error, with identical complete outcome distributions.",
+    "pn-records::integration::shared_ancestor_counts_once": "",
+    "pn-records::public::dependency_content": "Claim: Dependency content distinguishes complete empty from missing tombstoned data, rejects empty Full, excessive, duplicate, unsorted and self lists, and only act identifiers can enter the declared dependency vector.",
+    "pn-records::public::dependency_placement": "Claim: Missing dependency acts and dependencies at or after a dependent's position refuse distinct typed causes, while strictly earlier dependencies validate regardless of history input order.",
+    "pn-records::public::whole_history": "Claim: Whole validated history derives an act and both co-leg identities together, refuses edge-only history input and reintroduced identities through the validated snapshot.",
+    "pn-records::public::overlapping_closures": "Claim: Two proposed closures sharing a paired ancestor each retain its transitive complete acts in authoritative order, preserve the overlap and produce one whole-act union independently of candidate and history input order, without computing partition blocks.",
+    "pn-records::public::boundary_refusals": "Claim: Assembly refuses history on or beyond the fixed cut, proposals before it, and a tombstoned dependency list reached transitively; unavailable content is never guessed empty."
   }
 }

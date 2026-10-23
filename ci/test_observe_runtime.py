@@ -1,5 +1,6 @@
 """Process comparisons using the same four-package workload and local export failure."""
 import json
+import hashlib
 import os
 from pathlib import Path
 import subprocess
@@ -80,14 +81,34 @@ def compare(argv, mode, env, deadline=60, injected=False):
     return subprocess.CompletedProcess(argv,status,b''.join(stdout),b''.join(stderr))
 
 
+def expanded(value):
+    """Read and verify lossless JSON object references before judging measurements."""
+    if isinstance(value, dict):
+        if value.get('encoding') == 'json' and 'artifact' in value:
+            artifact = value['artifact']
+            payload = Path(artifact['path']).read_bytes()
+            assert artifact['algorithm'] == 'sha256'
+            assert len(payload) == artifact['length_bytes']
+            assert hashlib.sha256(payload).hexdigest() == artifact['digest']
+            return expanded(json.loads(payload))
+        return {key: expanded(child) for key, child in value.items()}
+    if isinstance(value, list):
+        return [expanded(child) for child in value]
+    return value
+
+
 def distribution(summary):
-    return {(row['name'],row.get('outcome','')):row['counter'] for row in summary['instruments']
-            if row['name'].endswith(('started_operations','completed_operations')) and row['counter']>0}
+    result={}
+    for row in summary['instruments']:
+        if row['name'].endswith(('started_operations','completed_operations')) and row['counter']>0:
+            key=(row['name'],row.get('outcome',''))
+            result[key]=result.get(key,0)+row['counter']
+    return result
 
 
 class Processes(unittest.TestCase):
     def test_interchange_refusal(self):
-        """Claim: Canonical decode and unheld acceptance refuse unchanged inputs at default and trace; the two decoder boundaries and dispatch/accept each book refusal, no error, with identical complete outcome distributions.
+        """Claim: Canonical value/document decode, content-key and prefix validation, routing and unheld acceptance retain their exact rejection predicates at default and trace, booking fifteen boundary refusals and no errors with identical complete outcome distributions; a truncated prefix still returns its original error.
         ´claim:discipline:interchange-refusals-have-contract-outcomes´
         ´test:integration:test-interchange-refusal´
         """
@@ -100,19 +121,19 @@ class Processes(unittest.TestCase):
             self.assertEqual(build.returncode,0,build.stderr.decode())
             distributions={}
             for mode in ('default','trace'):
-                result=run([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/interchange-outcome-probe')],env=os.environ|{'PN_OBSERVE_LEVEL':mode})
+                result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/interchange-outcome-probe')],mode,os.environ|{'PN_OBSERVE_LEVEL':mode})
                 self.assertEqual(result.returncode,0,result.stderr.decode())
                 rows=[json.loads(line) for line in result.stderr.splitlines()]
-                summary=next(row['metrics'] for row in rows if row.get('kind')=='metric_summary')
+                summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
                 stem='interchange__root__rule__observe__spans__'
                 distributions[mode]={k:v for k,v in distribution(summary).items() if k[0].startswith(stem)}
-                self.assertEqual(distributions[mode][stem+'completed_operations','refusal'],4)
+                self.assertEqual(distributions[mode][stem+'completed_operations','refusal'],15)
                 self.assertNotIn((stem+'completed_operations','error'),distributions[mode])
                 print('INTERCHANGE-OBSERVATION level='+mode+' distribution='+json.dumps({str(k):v for k,v in distributions[mode].items()},sort_keys=True))
             self.assertEqual(distributions['default'],distributions['trace'])
 
     def test_records_entry(self):
-        """Claim: The first domain entry counts and times successful validation, complete-act access, reference resolution and historical edition selection, plus their typed refusals at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.
+        """Claim: The first domain entry counts and times successful validation, complete-act access, reference resolution and historical edition selection, validated history and boundary assembly, plus their typed refusals at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.
         ´claim:discipline:records-entry-is-observed-without-changing-results´
         ´test:integration:test-records-entry´
         """
@@ -131,18 +152,25 @@ class Processes(unittest.TestCase):
             (artifact/(mode+'.stdout')).write_bytes(result.stdout)
             rows=[json.loads(line) for line in result.stderr.splitlines()]
             if mode=='disabled':continue
-            summary=next(row['metrics'] for row in rows if row.get('kind')=='metric_summary')
+            summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
             accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith('records__')}
             stem='records__root__sig__design__records__'
-            self.assertEqual(accounting[mode],{(stem+'started_operations',''):7,(stem+'completed_operations','success'):4,(stem+'completed_operations','refusal'):3})
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):11,(stem+'completed_operations','success'):7,(stem+'completed_operations','refusal'):4})
             elapsed=next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')
-            self.assertEqual(elapsed['count'],7)
+            self.assertEqual(elapsed['count'],11)
+            per_operation={(row['operation'],row['outcome']):row['counter'] for row in summary['instruments'] if row['name']==stem+'completed_operations' and row['counter']}
+            expected={('dependency-status','success'):1,('validate-history','success'):1,('validate-record','success'):1,('validate-record','refusal'):1,('complete-act-access','success'):1,('resolve-public-reference','success'):1,('resolve-public-reference','refusal'):1,('select-effective-declaration','success'):1,('select-effective-declaration','refusal'):1,('assemble-boundary-inputs','success'):1,('assemble-boundary-inputs','refusal'):1}
+            self.assertEqual(per_operation,expected)
+            starts={row['operation']:row['counter'] for row in summary['instruments'] if row['name']==stem+'started_operations' and row['counter']}
+            self.assertEqual(starts,{operation:sum(count for (name,_),count in expected.items() if name==operation) for operation,_ in expected})
             instruments={row['name']:row for row in summary['instruments']}
-            for name,value in [('validated_records',2),('resolved_references',1),('refusals',3)]:
+            for name,value in [('validated_records',2),('resolved_references',1),('refusals',4)]:
                 self.assertEqual(instruments[stem+name]['counter'],value)
             for name in ('active_validation','live_carrier_bytes'):
                 self.assertEqual(instruments[stem+name]['gauge'],0)
-            self.assertEqual(instruments[stem+'input_bytes']['count'],2)
+            self.assertEqual(instruments[stem+'input_bytes']['count'],3)
+            self.assertEqual(instruments[stem+'records_per_boundary']['count'],1)
+            self.assertEqual(instruments[stem+'records_per_boundary']['sum'],2)
             self.assertEqual(summary['lost_updates'],0)
             status=next(row for row in rows if row.get('kind')=='observation_status')
             self.assertEqual(status['delivered_records'],len(rows)-1)
@@ -152,7 +180,7 @@ class Processes(unittest.TestCase):
                 self.assertIn(b'authentication_evidence',result.stderr)
                 for operation in (b'validate-record',b'resolve-public-reference',b'select-effective-declaration'):
                     self.assertIn(operation,result.stderr)
-            print('RECORDS-OBSERVATION level='+mode+' started=7 success=4 refusal=3 error=0 timed=7 validated=2 resolved=1 refusals=3')
+            print('RECORDS-OBSERVATION level='+mode+' started=11 success=7 refusal=4 error=0 timed=11 validated=2 resolved=1 refusals=4 assembled=2')
         self.assertTrue(all(value==samples['disabled'] for value in samples.values()))
         self.assertEqual(accounting['default'],accounting['trace'])
 
@@ -216,7 +244,7 @@ class Processes(unittest.TestCase):
                 (artifact/(mode+'.jsonl')).write_bytes(result.stderr)
                 rows=[json.loads(line) for line in result.stderr.splitlines()]
                 if mode!='disabled':
-                    summary=next(row['metrics'] for row in rows if row.get('kind')=='metric_summary')
+                    summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
                     accounting[mode]=distribution(summary)
                     for owner in ('documents','interchange','execwrap','clicommon'):
                         self.assertTrue(any(name[0].startswith(owner+'__') and count>0 for name,count in accounting[mode].items()))
@@ -247,7 +275,7 @@ class Processes(unittest.TestCase):
                 document_runs[level]=(result.returncode,result.stdout)
                 (artifact/("documents-"+level+".jsonl")).write_bytes(result.stderr)
                 rows=[json.loads(line) for line in result.stderr.splitlines()]
-                summary=next(row["metrics"] for row in rows if row.get("kind")=="metric_summary")
+                summary=expanded(next(row["metrics"] for row in rows if row.get("kind")=="metric_summary"))
                 document_outcomes[level]=distribution(summary)
             self.assertEqual(document_runs["default"],document_runs["trace"])
             self.assertEqual(document_outcomes["default"],document_outcomes["trace"])

@@ -226,7 +226,9 @@ fn explicit_refusal_precedence() {
                 if refusal {
                     tracing::event!(tracing::Level::TRACE, outcome = "refusal");
                 }
-                let failure = serde_json::from_str::<Value>("{").unwrap_err();
+                let mut unavailable_output: &mut [u8] = &mut [];
+                let failure = unavailable_output.write_all(b"public").unwrap_err();
+                assert_eq!(failure.kind(), io::ErrorKind::WriteZero);
                 tracing::event!(tracing::Level::TRACE, r#return = ?Err::<(), _>(failure));
             }
         });
@@ -237,8 +239,17 @@ fn explicit_refusal_precedence() {
         drained.recv().unwrap();
         let rows = records(&observation, &capture);
         let summary = rows.iter().find(|row| row["kind"] == "metric_summary").unwrap();
+        let mut instruments = summary["metrics"]["instruments"].clone();
+        if instruments["encoding"] == "json" {
+            use sha2::{Digest, Sha256};
+            let artifact = &instruments["artifact"];
+            let payload = std::fs::read(artifact["path"].as_str().unwrap()).unwrap();
+            assert_eq!(artifact["length_bytes"], payload.len());
+            assert_eq!(artifact["digest"], format!("{:x}", Sha256::digest(&payload)));
+            instruments = serde_json::from_slice(&payload).unwrap();
+        }
         for outcome in ["refusal", "error"] {
-            let row = summary["metrics"]["instruments"]
+            let row = instruments
                 .as_array()
                 .unwrap()
                 .iter()
@@ -1078,9 +1089,23 @@ fn metric_registry() {
         metrics::counter!(format!("{}__work_bytes",STEMS[0]),"request"=>"unbounded").increment(11);
         metrics::gauge!(format!("{}__work_bytes", STEMS[0])).set(12.0);
     });
+    metrics::with_local_recorder(&recorder, || {
+        metrics::counter!("records__root__sig__design__records__started_operations", "operation" => "validate-record")
+            .increment(1);
+        metrics::counter!("records__root__sig__design__records__started_operations", "operation" => "unregistered").increment(1);
+    });
     let snapshot = recorder.snapshot(true);
+    assert!(serde_json::to_vec(&snapshot).unwrap().len() < 65_536);
     let rows = snapshot["instruments"].as_array().unwrap();
-    assert_eq!(rows.len(), 119);
+    assert_eq!(rows.len(), 161);
+    assert!(!rows.iter().any(|row| row["operation"] == "unregistered"));
+    assert_eq!(
+        rows.iter()
+            .find(|row| row["name"] == "records__root__sig__design__records__started_operations"
+                && row["operation"] == "validate-record")
+            .unwrap()["counter"],
+        1
+    );
     for stem in STEMS {
         let count = rows
             .iter()
@@ -1089,13 +1114,13 @@ fn metric_registry() {
         assert_eq!(
             count,
             if stem == "records__root__sig__design__records" {
-                21
+                63
             } else {
                 14
             }
         );
     }
-    assert_eq!(snapshot["lost_updates"], 3);
+    assert_eq!(snapshot["lost_updates"], 4);
     assert_eq!(
         rows.iter()
             .find(|r| r["name"] == format!("{}__work_bytes", STEMS[0]))

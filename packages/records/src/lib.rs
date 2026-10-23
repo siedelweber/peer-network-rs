@@ -1,7 +1,7 @@
 //! Internal carriers; no codec, host admission or graph algorithm.
 //! (´[ROOT-amend:design:bite-one-internal-envelopes]´)
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// Authored identity before finalization or host ordering.
 /// (´def:acts:identity´)
@@ -77,7 +77,7 @@ pub enum Removal {
 /// One owned edge projection; never an independent accounting record.
 /// (´def:acts:projection´)
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Projection {
+pub struct CandidateLeg {
     /// Structural identity, checked against the owning act and layout.
     pub id: EdgeId,
     /// Exact source reference.
@@ -85,7 +85,7 @@ pub struct Projection {
     /// Exact target reference.
     pub target: PublicReference,
     /// Untrusted input only: any supplied leg removal fact is refused.
-    /// Validated legs always carry None; dependency status derives from the act.
+    /// Validated legs have no such field; dependency status derives from the act.
     pub removal: Option<Removal>,
 }
 
@@ -120,7 +120,7 @@ pub struct CandidateAct {
     /// Unchanged structural body with units and vintages.
     pub body: StructuralBody,
     /// Immutable structural legs, always owned together by this candidate.
-    pub legs: Vec<Projection>,
+    pub legs: Vec<CandidateLeg>,
     /// One-way removal facts for the act, never for an individual co-leg.
     pub projections: RemovableProjections,
     /// Immutable protocol references, independently required even after removal.
@@ -135,12 +135,128 @@ pub struct CandidateAct {
 
 /// Act-level content and dependency projections, independent of structural legs.
 /// (´def:acts:projection´)
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct RemovableProjections {
     /// Content removal does not erase structural identity or public references.
     pub content: Removal,
     /// Every dependency edge derives this single act-owned removal fact.
-    pub dependency: Removal,
+    pub dependency: DependencyProjection,
+}
+
+/// Canonical dependency content; empty is available content, not absence.
+/// (´def:acts:dependencies´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum DependencyProjection {
+    /// Complete empty dependency set.
+    FullEmpty,
+    /// Complete nonempty sorted, duplicate-free, self-free act identifiers.
+    Full(Vec<ActId>),
+    /// Content unavailable after this position; never interpreted as empty.
+    Tombstoned(u64),
+}
+
+/// Declared local bound on one act's dependency list.
+/// (´def:acts:dependencies´)
+pub const MAX_DEPENDENCIES: usize = 1024;
+
+/// Status derived from the owning act, not an independently supplied removal fact.
+/// (´def:acts:dependencies´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DependencyStatus {
+    /// Complete empty content.
+    FullEmpty,
+    /// Complete nonempty content.
+    Full,
+    /// The act's dependency content is unavailable at this position.
+    Tombstoned(u64),
+}
+
+/// Validated structural leg; no candidate removal field exists here.
+/// (´def:acts:projection´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ValidatedLeg {
+    /// Parent-and-role identity.
+    pub id: EdgeId,
+    /// Immutable source reference.
+    pub source: PublicReference,
+    /// Immutable target reference.
+    pub target: PublicReference,
+}
+
+/// Immutable view owned by a validated snapshot, distinct from unchecked candidates.
+/// (´def:acts:carrier´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ValidatedAct {
+    /// Structural identity, containing the sole author and family representation.
+    pub id: ActId,
+    /// Retained quantities, units, vintage and layout.
+    pub body: StructuralBody,
+    /// All required legs together, with act-derived dependency status.
+    pub legs: Vec<ValidatedLeg>,
+    /// Act-owned removable projections.
+    pub projections: RemovableProjections,
+    /// Immutable required public references.
+    pub protocol_references: Vec<PublicReference>,
+    /// Public evidence retained without cryptographic certification.
+    pub authentication_evidence: Vec<u8>,
+    /// Finalization epoch, not identity.
+    pub finalization_epoch: u64,
+    /// Authoritative position, not identity.
+    pub authoritative_position: u64,
+}
+
+/// Previously accepted whole acts and external names, checked locally before use.
+/// The constructor checks representation, not host admission or authentication.
+/// (´def:acts:history´)
+#[derive(Clone, Debug)]
+pub struct ValidatedHistory {
+    acts: Vec<ValidatedAct>,
+    references: BTreeSet<PublicReference>,
+}
+
+/// Finite declaration representation causes.
+/// (´def:acts:declarations´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
+pub enum DeclarationCause {
+    /// A key requires a namespace.
+    #[error("empty declaration namespace")]
+    EmptyNamespace,
+    /// A key requires a name.
+    #[error("empty declaration name")]
+    EmptyName,
+    /// Retrospective announcements would change historical answers.
+    #[error("effective boundary before announcement")]
+    LateAnnouncement,
+}
+
+/// Dependency and boundary refusals preserve missing information as missing.
+/// (´def:acts:dependencies´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
+pub enum DependencyCause {
+    /// Full-empty has its own explicit representation.
+    #[error("empty full list; use full-empty")]
+    EmptyFull,
+    /// Input exceeds the declared local bound.
+    #[error("dependency list exceeds bound")]
+    TooMany,
+    /// The list must increase strictly by structural act identity.
+    #[error("dependency list is not canonical")]
+    NonCanonical,
+    /// An act cannot depend on itself.
+    #[error("self dependency")]
+    SelfDependency,
+    /// A dependency is absent from fixed accepted history.
+    #[error("missing dependency")]
+    Missing,
+    /// Each dependency must strictly precede its dependent act.
+    #[error("dependency does not precede act")]
+    NotEarlier,
+    /// A closure needs content that has been tombstoned.
+    #[error("dependency content unavailable")]
+    Unavailable,
+    /// Fixed history must precede the boundary, and proposals must not precede it.
+    #[error("act on wrong side of boundary")]
+    BoundaryPlacement,
 }
 
 /// Finite local representation causes, suitable for exhaustive matching.
@@ -206,8 +322,18 @@ pub enum ValidationError {
     #[error("invalid structural reference: {0:?}")]
     InvalidReference(PublicReference),
     /// Declaration identities and boundaries must be locally well formed.
-    #[error("invalid declaration: {0:?}")]
-    InvalidDeclaration(DeclarationId),
+    #[error("invalid declaration {id:?}: {cause}")]
+    InvalidDeclaration { id: DeclarationId, cause: DeclarationCause },
+    /// A selection key is malformed independently of edition availability.
+    #[error("invalid declaration query: {0}")]
+    InvalidSelectionKey(DeclarationCause),
+    /// A dependency or boundary representation cannot supply a complete closure.
+    #[error("invalid dependencies of {act:?}, target {dependency:?}: {cause}")]
+    Dependency {
+        act: ActId,
+        dependency: Option<ActId>,
+        cause: DependencyCause,
+    },
     /// Repeated identities cannot silently replace old editions.
     #[error("duplicate declaration identity: {0:?}")]
     DuplicateDeclaration(DeclarationId),
@@ -256,13 +382,13 @@ pub enum ReferenceOrigin {
 /// Read-only complete acts; borrowing prevents mutation after validation.
 /// (´def:acts:validation´)
 #[derive(Debug)]
-pub struct ValidatedRecords<'a> {
-    acts: &'a [CandidateAct],
-    history: BTreeSet<PublicReference>,
+pub struct ValidatedRecords {
+    acts: Vec<ValidatedAct>,
+    history: ValidatedHistory,
     declarations: Vec<Declaration>,
 }
 
-impl ValidatedRecords<'_> {
+impl ValidatedRecords {
     /// Return whole acts, never a flattened list of accounting co-legs.
     /// (´def:acts:validation´)
     #[must_use]
@@ -273,12 +399,12 @@ impl ValidatedRecords<'_> {
             claim_owner = "ROOT",
             claim_label = "sig:design:records",
             operation = "complete-act-access",
-            source_item = "ValidatedRecords < '_ >::acts"
+            source_item = "ValidatedRecords::acts"
         ),
         ret
     )]
-    pub fn acts(&self) -> &[CandidateAct] {
-        self.acts
+    pub fn acts(&self) -> &[ValidatedAct] {
+        &self.acts
     }
 }
 
@@ -312,25 +438,34 @@ fn valid_reference(reference: &PublicReference) -> bool {
     ),
     ret
 )]
-pub fn validate_record<'a>(
-    acts: &'a [CandidateAct],
-    history: &BTreeSet<PublicReference>,
+pub fn validate_record(
+    acts: &[CandidateAct],
+    history: &ValidatedHistory,
     declarations: &[Declaration],
-) -> Result<ValidatedRecords<'a>, ValidationError> {
+) -> Result<ValidatedRecords, ValidationError> {
+    let bytes = validation_started(acts);
+    let result = validate(acts, history, declarations);
+    validation_finished(bytes, acts.len(), result.is_ok());
+    result
+}
+
+fn validation_started(acts: &[CandidateAct]) -> f64 {
     let bytes = carrier_bytes(acts);
     metrics::gauge!("records__root__sig__design__records__active_validation").increment(1.0);
     metrics::gauge!("records__root__sig__design__records__live_carrier_bytes").increment(bytes);
     metrics::histogram!("records__root__sig__design__records__input_bytes").record(bytes);
-    let result = validate(acts, history, declarations);
+    bytes
+}
+
+fn validation_finished(bytes: f64, count: usize, success: bool) {
     metrics::gauge!("records__root__sig__design__records__live_carrier_bytes").decrement(bytes);
     metrics::gauge!("records__root__sig__design__records__active_validation").decrement(1.0);
-    if result.is_ok() {
+    if success {
         metrics::counter!("records__root__sig__design__records__validated_records")
-            .increment(u64::try_from(acts.len()).unwrap_or(u64::MAX));
+            .increment(u64::try_from(count).unwrap_or(u64::MAX));
     } else {
         refused();
     }
-    result
 }
 
 fn refused() {
@@ -346,20 +481,15 @@ fn carrier_bytes(acts: &[CandidateAct]) -> f64 {
     f64::from(bounded)
 }
 
-fn validate<'a>(
-    acts: &'a [CandidateAct],
-    history: &BTreeSet<PublicReference>,
+fn validate(
+    acts: &[CandidateAct],
+    history: &ValidatedHistory,
     declarations: &[Declaration],
-) -> Result<ValidatedRecords<'a>, ValidationError> {
-    for reference in history {
-        if !valid_reference(reference) {
-            return Err(ValidationError::InvalidReference(reference.clone()));
-        }
-    }
+) -> Result<ValidatedRecords, ValidationError> {
     let mut identities = BTreeSet::new();
-    let mut references = history.clone();
+    let mut references = history.references.clone();
     for act in acts {
-        if history.contains(&PublicReference::Act(act.id.clone())) || !identities.insert(&act.id) {
+        if history.references.contains(&PublicReference::Act(act.id.clone())) || !identities.insert(&act.id) {
             return Err(ValidationError::DuplicateAct(act.id.clone()));
         }
         references.insert(PublicReference::Act(act.id.clone()));
@@ -368,72 +498,62 @@ fn validate<'a>(
         }
     }
     for act in acts {
-        let invalid = |cause| ValidationError::InvalidRepresentation {
-            act: act.id.clone(),
-            cause,
-        };
-        if act.id.author.is_empty() {
-            return Err(invalid(InvalidCause::EmptyAuthor));
+        validate_act(act, &references)?;
+        validate_dependencies(act, &history.acts)?;
+    }
+    validate_declarations(declarations)?;
+    Ok(ValidatedRecords {
+        acts: acts.iter().map(validated_act).collect(),
+        history: history.clone(),
+        declarations: declarations.to_vec(),
+    })
+}
+
+fn validate_act(act: &CandidateAct, references: &BTreeSet<PublicReference>) -> Result<(), ValidationError> {
+    let invalid = |cause| ValidationError::InvalidRepresentation {
+        act: act.id.clone(),
+        cause,
+    };
+    if act.id.author.is_empty() {
+        return Err(invalid(InvalidCause::EmptyAuthor));
+    }
+    if act.id.family.is_empty() {
+        return Err(invalid(InvalidCause::EmptyFamily));
+    }
+    if act.authentication_evidence.is_empty() {
+        return Err(invalid(InvalidCause::EmptyAuthentication));
+    }
+    let mut fields = BTreeSet::new();
+    for (name, quantity) in &act.body.quantities {
+        if name.is_empty() {
+            return Err(invalid(InvalidCause::EmptyQuantityName));
         }
-        if act.id.family.is_empty() {
-            return Err(invalid(InvalidCause::EmptyFamily));
+        if quantity.unit.is_empty() {
+            return Err(invalid(InvalidCause::EmptyUnit));
         }
-        if act.authentication_evidence.is_empty() {
-            return Err(invalid(InvalidCause::EmptyAuthentication));
+        if !fields.insert(name) {
+            return Err(invalid(InvalidCause::DuplicateQuantityName));
         }
-        let mut fields = BTreeSet::new();
-        for (name, quantity) in &act.body.quantities {
-            if name.is_empty() {
-                return Err(invalid(InvalidCause::EmptyQuantityName));
-            }
-            if quantity.unit.is_empty() {
-                return Err(invalid(InvalidCause::EmptyUnit));
-            }
-            if !fields.insert(name) {
-                return Err(invalid(InvalidCause::DuplicateQuantityName));
-            }
+    }
+    let required: &[Role] = match act.body.layout {
+        Layout::Binary => &[Role::Binary],
+        Layout::Paired => &[Role::A, Role::T],
+    };
+    let mut roles = BTreeSet::new();
+    for leg in &act.legs {
+        if leg.id.act != act.id {
+            return Err(invalid(InvalidCause::ProjectionParent));
         }
-        let required: &[Role] = match act.body.layout {
-            Layout::Binary => &[Role::Binary],
-            Layout::Paired => &[Role::A, Role::T],
-        };
-        let mut roles = BTreeSet::new();
-        for leg in &act.legs {
-            if leg.id.act != act.id {
-                return Err(invalid(InvalidCause::ProjectionParent));
-            }
-            if !required.contains(&leg.id.role) {
-                return Err(invalid(InvalidCause::ProjectionRole));
-            }
-            if !roles.insert(leg.id.role) {
-                return Err(ValidationError::DuplicateEdge(leg.id.clone()));
-            }
-            if leg.removal.is_some() {
-                return Err(invalid(InvalidCause::CoLegRemoval));
-            }
-            for reference in [&leg.source, &leg.target] {
-                if !valid_reference(reference) {
-                    return Err(invalid(InvalidCause::ReferenceComponent));
-                }
-                if !references.contains(reference) {
-                    return Err(ValidationError::UnresolvedReference(reference.clone()));
-                }
-            }
+        if !required.contains(&leg.id.role) {
+            return Err(invalid(InvalidCause::ProjectionRole));
         }
-        for state in [act.projections.content, act.projections.dependency] {
-            if matches!(state, Removal::Tombstoned(position) if position <= act.authoritative_position) {
-                return Err(invalid(InvalidCause::TombstonePosition));
-            }
+        if !roles.insert(leg.id.role) {
+            return Err(ValidationError::DuplicateEdge(leg.id.clone()));
         }
-        for role in required {
-            if !roles.contains(role) {
-                return Err(ValidationError::MissingCoLeg {
-                    act: act.id.clone(),
-                    role: *role,
-                });
-            }
+        if leg.removal.is_some() {
+            return Err(invalid(InvalidCause::CoLegRemoval));
         }
-        for reference in &act.protocol_references {
+        for reference in [&leg.source, &leg.target] {
             if !valid_reference(reference) {
                 return Err(invalid(InvalidCause::ReferenceComponent));
             }
@@ -442,12 +562,32 @@ fn validate<'a>(
             }
         }
     }
-    validate_declarations(declarations)?;
-    Ok(ValidatedRecords {
-        acts,
-        history: history.clone(),
-        declarations: declarations.to_vec(),
-    })
+    let dependency_removal = match act.projections.dependency {
+        DependencyProjection::Tombstoned(position) => Removal::Tombstoned(position),
+        _ => Removal::Live,
+    };
+    for state in [act.projections.content, dependency_removal] {
+        if matches!(state, Removal::Tombstoned(position) if position <= act.authoritative_position) {
+            return Err(invalid(InvalidCause::TombstonePosition));
+        }
+    }
+    for role in required {
+        if !roles.contains(role) {
+            return Err(ValidationError::MissingCoLeg {
+                act: act.id.clone(),
+                role: *role,
+            });
+        }
+    }
+    for reference in &act.protocol_references {
+        if !valid_reference(reference) {
+            return Err(invalid(InvalidCause::ReferenceComponent));
+        }
+        if !references.contains(reference) {
+            return Err(ValidationError::UnresolvedReference(reference.clone()));
+        }
+    }
+    Ok(())
 }
 
 fn validate_declarations(declarations: &[Declaration]) -> Result<(), ValidationError> {
@@ -455,8 +595,10 @@ fn validate_declarations(declarations: &[Declaration]) -> Result<(), ValidationE
     let mut boundaries = BTreeSet::new();
     for declaration in declarations {
         let id = &declaration.id;
-        if id.namespace.is_empty() || id.name.is_empty() || declaration.effective_at < declaration.announced_at {
-            return Err(ValidationError::InvalidDeclaration(id.clone()));
+        let cause = invalid_key(&id.namespace, &id.name)
+            .or_else(|| (declaration.effective_at < declaration.announced_at).then_some(DeclarationCause::LateAnnouncement));
+        if let Some(cause) = cause {
+            return Err(ValidationError::InvalidDeclaration { id: id.clone(), cause });
         }
         if !editions.insert(id) {
             return Err(ValidationError::DuplicateDeclaration(id.clone()));
@@ -486,12 +628,12 @@ fn validate_declarations(declarations: &[Declaration]) -> Result<(), ValidationE
     ret
 )]
 pub fn resolve_public_reference(
-    records: &ValidatedRecords<'_>,
+    records: &ValidatedRecords,
     reference: &PublicReference,
 ) -> Result<ReferenceOrigin, ValidationError> {
     let result = if !valid_reference(reference) {
         Err(ValidationError::InvalidReference(reference.clone()))
-    } else if records.history.contains(reference) {
+    } else if records.history.references.contains(reference) {
         Ok(ReferenceOrigin::History)
     } else if records.acts.iter().any(|act| match reference {
         PublicReference::Act(id) => id == &act.id,
@@ -515,7 +657,7 @@ pub fn resolve_public_reference(
 /// (´def:acts:declarations´)
 ///
 /// # Errors
-/// Returns `MissingDeclaration` if no announced and effective edition exists.
+/// Returns `InvalidSelectionKey` for malformed keys, or `MissingDeclaration` if no announced and effective edition exists.
 #[tracing::instrument(
     name = "sig:design:records",
     fields(
@@ -528,11 +670,15 @@ pub fn resolve_public_reference(
     ret
 )]
 pub fn select_effective_declaration<'a>(
-    records: &'a ValidatedRecords<'_>,
+    records: &'a ValidatedRecords,
     namespace: &str,
     name: &str,
     boundary: u64,
 ) -> Result<&'a Declaration, ValidationError> {
+    if let Some(cause) = invalid_key(namespace, name) {
+        refused();
+        return Err(ValidationError::InvalidSelectionKey(cause));
+    }
     let selected = records
         .declarations
         .iter()
@@ -545,6 +691,274 @@ pub fn select_effective_declaration<'a>(
             name: name.into(),
             boundary,
         }
+    })
+}
+
+fn invalid_key(namespace: &str, name: &str) -> Option<DeclarationCause> {
+    if namespace.is_empty() {
+        Some(DeclarationCause::EmptyNamespace)
+    } else if name.is_empty() {
+        Some(DeclarationCause::EmptyName)
+    } else {
+        None
+    }
+}
+
+fn validated_act(act: &CandidateAct) -> ValidatedAct {
+    ValidatedAct {
+        id: act.id.clone(),
+        body: act.body.clone(),
+        projections: act.projections.clone(),
+        legs: act
+            .legs
+            .iter()
+            .map(|leg| ValidatedLeg {
+                id: leg.id.clone(),
+                source: leg.source.clone(),
+                target: leg.target.clone(),
+            })
+            .collect(),
+        protocol_references: act.protocol_references.clone(),
+        authentication_evidence: act.authentication_evidence.clone(),
+        finalization_epoch: act.finalization_epoch,
+        authoritative_position: act.authoritative_position,
+    }
+}
+
+fn dependency_error(act: &ActId, dependency: Option<&ActId>, cause: DependencyCause) -> ValidationError {
+    ValidationError::Dependency {
+        act: act.clone(),
+        dependency: dependency.cloned(),
+        cause,
+    }
+}
+
+fn validate_dependencies(act: &CandidateAct, history: &[ValidatedAct]) -> Result<(), ValidationError> {
+    let DependencyProjection::Full(dependencies) = &act.projections.dependency else {
+        return Ok(());
+    };
+    if dependencies.is_empty() {
+        return Err(dependency_error(&act.id, None, DependencyCause::EmptyFull));
+    }
+    if dependencies.len() > MAX_DEPENDENCIES {
+        return Err(dependency_error(&act.id, None, DependencyCause::TooMany));
+    }
+    if dependencies.windows(2).any(|pair| pair[0] >= pair[1]) {
+        return Err(dependency_error(&act.id, None, DependencyCause::NonCanonical));
+    }
+    for dependency in dependencies {
+        if dependency == &act.id {
+            return Err(dependency_error(&act.id, Some(dependency), DependencyCause::SelfDependency));
+        }
+        let target = history
+            .iter()
+            .find(|target| &target.id == dependency)
+            .ok_or_else(|| dependency_error(&act.id, Some(dependency), DependencyCause::Missing))?;
+        if target.authoritative_position >= act.authoritative_position {
+            return Err(dependency_error(&act.id, Some(dependency), DependencyCause::NotEarlier));
+        }
+    }
+    Ok(())
+}
+
+/// Check caller-supplied accepted whole history and separately supplied external names.
+/// Act and edge references are derived together; free-standing act/edge names refuse.
+/// This checks representation and dependencies, not cryptographic or host admission.
+/// (´def:acts:history´)
+///
+/// # Errors
+/// Returns typed local, dependency, duplicate or invalid external-name refusals.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "validate-history",
+        source_item = "validate_history"
+    ),
+    ret
+)]
+pub fn validate_history(acts: &[CandidateAct], names: &[PublicReference]) -> Result<ValidatedHistory, ValidationError> {
+    let bytes = validation_started(acts);
+    let result = history_snapshot(acts, names);
+    validation_finished(bytes, acts.len(), result.is_ok());
+    result
+}
+
+fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<ValidatedHistory, ValidationError> {
+    let mut references = BTreeSet::new();
+    for name in names {
+        if !matches!(name, PublicReference::Named { .. }) || !valid_reference(name) {
+            return Err(ValidationError::InvalidReference(name.clone()));
+        }
+        references.insert(name.clone());
+    }
+    for act in acts {
+        if !references.insert(PublicReference::Act(act.id.clone())) {
+            return Err(ValidationError::DuplicateAct(act.id.clone()));
+        }
+        for leg in &act.legs {
+            references.insert(PublicReference::Edge(leg.id.clone()));
+        }
+    }
+    for act in acts {
+        validate_act(act, &references)?;
+    }
+    let validated: Vec<_> = acts.iter().map(validated_act).collect();
+    for act in acts {
+        validate_dependencies(act, &validated)?;
+    }
+    Ok(ValidatedHistory {
+        acts: validated,
+        references,
+    })
+}
+
+/// Derive a validated edge's dependency status from its owning whole act.
+/// The validated leg has no independent status or candidate removal field.
+/// (´def:acts:dependencies´)
+///
+/// # Errors
+/// Refuses malformed or unresolved structural edge identities.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "dependency-status",
+        source_item = "dependency_status"
+    ),
+    ret
+)]
+pub fn dependency_status(records: &ValidatedRecords, edge: &EdgeId) -> Result<DependencyStatus, ValidationError> {
+    let reference = PublicReference::Edge(edge.clone());
+    let result = if !valid_id(&edge.act) {
+        Err(ValidationError::InvalidReference(reference))
+    } else if let Some(act) = records
+        .acts
+        .iter()
+        .chain(&records.history.acts)
+        .find(|act| act.legs.iter().any(|leg| &leg.id == edge))
+    {
+        Ok(match &act.projections.dependency {
+            DependencyProjection::FullEmpty => DependencyStatus::FullEmpty,
+            DependencyProjection::Full(_) => DependencyStatus::Full,
+            DependencyProjection::Tombstoned(position) => DependencyStatus::Tombstoned(*position),
+        })
+    } else {
+        Err(ValidationError::UnresolvedReference(reference))
+    };
+    if result.is_err() {
+        refused();
+    }
+    result
+}
+
+/// One proposed root and its complete principal closure, without partition membership.
+/// (´def:acts:boundary-inputs´)
+#[derive(Debug)]
+pub struct PrincipalClosure {
+    /// Proposed structural root.
+    pub root: ActId,
+    /// Whole-act identities in authoritative order, with no duplicate within a closure.
+    pub members: Vec<ActId>,
+}
+
+/// Read-only whole-act inputs for the later graph partition.
+/// (´def:acts:boundary-inputs´)
+#[derive(Debug)]
+pub struct BoundaryInputs<'a> {
+    /// Fixed pre-epoch cut: history lies before it and proposals at or after it.
+    pub boundary: u64,
+    /// Union of all closures, each whole act carried once in authoritative order.
+    pub acts: Vec<&'a ValidatedAct>,
+    /// Overlap is retained; no connected components or disjoint blocks are computed.
+    pub closures: Vec<PrincipalClosure>,
+}
+
+/// Assemble principal closures against fixed pre-epoch history, preserving overlaps.
+/// Structural sorting never substitutes for authoritative placement; co-legs travel
+/// only inside their act. This supplies inputs, not the partition or its membership claim.
+/// (´def:acts:boundary-inputs´)
+///
+/// # Errors
+/// Refuses invalid placement, missing dependency content or tombstoned closure inputs.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "assemble-boundary-inputs",
+        source_item = "assemble_boundary_inputs"
+    ),
+    ret
+)]
+pub fn assemble_boundary_inputs(records: &ValidatedRecords, boundary: u64) -> Result<BoundaryInputs<'_>, ValidationError> {
+    let result = assemble(records, boundary);
+    match &result {
+        Ok(inputs) => metrics::histogram!("records__root__sig__design__records__records_per_boundary")
+            .record(carrier_count(inputs.acts.len())),
+        Err(_) => refused(),
+    }
+    result
+}
+
+fn carrier_count(count: usize) -> f64 {
+    f64::from(u32::try_from(count).unwrap_or(u32::MAX))
+}
+
+fn assemble(records: &ValidatedRecords, boundary: u64) -> Result<BoundaryInputs<'_>, ValidationError> {
+    for act in &records.history.acts {
+        if act.authoritative_position >= boundary {
+            return Err(dependency_error(&act.id, None, DependencyCause::BoundaryPlacement));
+        }
+    }
+    for act in &records.acts {
+        if act.authoritative_position < boundary {
+            return Err(dependency_error(&act.id, None, DependencyCause::BoundaryPlacement));
+        }
+    }
+    let history: BTreeMap<_, _> = records.history.acts.iter().map(|act| (&act.id, act)).collect();
+    let mut roots: Vec<_> = records.acts.iter().collect();
+    roots.sort_by_key(|act| (act.authoritative_position, &act.id));
+    let mut union = BTreeMap::new();
+    let mut closures = Vec::new();
+    for root in roots {
+        let mut members = BTreeMap::new();
+        let mut pending = vec![root];
+        while let Some(act) = pending.pop() {
+            if members.insert(&act.id, act).is_some() {
+                continue;
+            }
+            let dependencies = match &act.projections.dependency {
+                DependencyProjection::FullEmpty => &[][..],
+                DependencyProjection::Full(ids) => ids.as_slice(),
+                DependencyProjection::Tombstoned(_) => return Err(dependency_error(&act.id, None, DependencyCause::Unavailable)),
+            };
+            for dependency in dependencies {
+                let target = history
+                    .get(dependency)
+                    .ok_or_else(|| dependency_error(&act.id, Some(dependency), DependencyCause::Missing))?;
+                pending.push(*target);
+            }
+        }
+        let mut ordered: Vec<_> = members.values().copied().collect();
+        ordered.sort_by_key(|act| (act.authoritative_position, &act.id));
+        closures.push(PrincipalClosure {
+            root: root.id.clone(),
+            members: ordered.iter().map(|act| act.id.clone()).collect(),
+        });
+        union.extend(members);
+    }
+    let mut acts: Vec<_> = union.into_values().collect();
+    acts.sort_by_key(|act| (act.authoritative_position, &act.id));
+    Ok(BoundaryInputs {
+        boundary,
+        acts,
+        closures,
     })
 }
 

@@ -3970,20 +3970,20 @@
     {
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "item": "ValidatedRecords < '_ >::acts",
+      "item": "dependency_status",
       "owner": "RECORDS",
-      "signature": "fn acts (& self) -> & [CandidateAct]",
+      "signature": "fn dependency_status (records : & ValidatedRecords , edge : & EdgeId) -> Result < DependencyStatus , ValidationError >",
       "claim": "ROOT::sig:design:records",
       "mode": "instrumented",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "operation": "dependency-status"
     },
     {
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
       "item": "validate_record",
       "owner": "RECORDS",
-      "signature": "fn validate_record < 'a > (acts : & 'a [CandidateAct] , history : & BTreeSet < PublicReference > , declarations : & [Declaration] ,) -> Result < ValidatedRecords < 'a > , ValidationError >",
+      "signature": "fn validate_record (acts : & [CandidateAct] , history : & ValidatedHistory , declarations : & [Declaration] ,) -> Result < ValidatedRecords , ValidationError >",
       "claim": "ROOT::sig:design:records",
       "mode": "instrumented",
       "shape": "shape-records",
@@ -3992,9 +3992,20 @@
     {
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
+      "item": "ValidatedRecords::acts",
+      "owner": "RECORDS",
+      "signature": "fn acts (& self) -> & [ValidatedAct]",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
       "item": "resolve_public_reference",
       "owner": "RECORDS",
-      "signature": "fn resolve_public_reference (records : & ValidatedRecords < '_ > , reference : & PublicReference ,) -> Result < ReferenceOrigin , ValidationError >",
+      "signature": "fn resolve_public_reference (records : & ValidatedRecords , reference : & PublicReference ,) -> Result < ReferenceOrigin , ValidationError >",
       "mode": "instrumented",
       "shape": "shape-records",
       "claim": "ROOT::sig:design:records",
@@ -4005,11 +4016,33 @@
       "path": "packages/records/src/lib.rs",
       "item": "select_effective_declaration",
       "owner": "RECORDS",
-      "signature": "fn select_effective_declaration < 'a > (records : & 'a ValidatedRecords < '_ > , namespace : & str , name : & str , boundary : u64 ,) -> Result < & 'a Declaration , ValidationError >",
+      "signature": "fn select_effective_declaration < 'a > (records : & 'a ValidatedRecords , namespace : & str , name : & str , boundary : u64 ,) -> Result < & 'a Declaration , ValidationError >",
       "mode": "instrumented",
       "shape": "shape-records",
       "claim": "ROOT::sig:design:records",
       "operation": "select-effective-declaration"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "validate_history",
+      "owner": "RECORDS",
+      "signature": "fn validate_history (acts : & [CandidateAct] , names : & [PublicReference]) -> Result < ValidatedHistory , ValidationError >",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "validate-history"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "assemble_boundary_inputs",
+      "owner": "RECORDS",
+      "signature": "fn assemble_boundary_inputs (records : & ValidatedRecords , boundary : u64) -> Result < BoundaryInputs < '_ > , ValidationError >",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "assemble-boundary-inputs"
     }
   ],
   "metrics": [
@@ -4458,7 +4491,17 @@
       "name": "records__root__sig__design__records__started_operations",
       "kind": "counter",
       "unit": "operations",
-      "attributes": {}
+      "attributes": {
+        "operation": [
+          "assemble-boundary-inputs",
+          "complete-act-access",
+          "dependency-status",
+          "resolve-public-reference",
+          "select-effective-declaration",
+          "validate-history",
+          "validate-record"
+        ]
+      }
     },
     {
       "name": "records__root__sig__design__records__completed_operations",
@@ -4472,6 +4515,15 @@
           "cancelled",
           "unwinding",
           "incomplete"
+        ],
+        "operation": [
+          "assemble-boundary-inputs",
+          "complete-act-access",
+          "dependency-status",
+          "resolve-public-reference",
+          "select-effective-declaration",
+          "validate-history",
+          "validate-record"
         ]
       }
     },
@@ -4574,9 +4626,9 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/accept.rs::accept::dispatch_prefix",
-      "body": "{ let (envelope , _) = Envelope :: peek (prefix) ? ; let instrument = dispatch (reg , & envelope) ; if matches ! (instrument , Instrument :: Refused (_)) { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } Ok (instrument) }",
+      "body": "{ let (envelope , _) = Envelope :: peek (prefix) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) ? ; let instrument = dispatch (reg , & envelope) ; if matches ! (instrument , Instrument :: Refused (_)) { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } Ok (instrument) }",
       "class_decision": "public-interchange",
-      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for accept::dispatch_prefix.",
+      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for accept::dispatch_prefix. The bounded records operation vocabulary is generated from the operation registry; started/completed metric handles cannot allocate unregistered series. Refusal events change only observation classification.",
       "assessments": {
         "full_recording": "review-004",
         "secret_flow": "review-002",
@@ -5102,9 +5154,9 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::ContentKey::new",
-      "body": "{ if key <= 1 { return Err (EnvelopeError :: ReservedContentKey { key }) ; } Ok (ContentKey (key)) }",
+      "body": "{ Self :: new_checked (key) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
       "class_decision": "public-interchange",
-      "item_premise": "This body inherits the public-interchange decision for envelope::ContentKey::new.",
+      "item_premise": "This body inherits the public-interchange decision for envelope::ContentKey::new. The bounded records operation vocabulary is generated from the operation registry; started/completed metric handles cannot allocate unregistered series. Refusal events change only observation classification.",
       "assessments": {
         "full_recording": "review-052",
         "secret_flow": "review-002",
@@ -5234,9 +5286,9 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Envelope::peek",
-      "body": "{ let given = prefix . len () ; let window = & prefix [.. given . min (MAX_ENVELOPE_PREFIX)] ; let mut position = 0usize ; let head = bounded_head (window , & mut position , given) ? ; if head . major != 5 { return Err (EnvelopeError :: NotAMap) ; } if head . argument == 0 { return Err (EnvelopeError :: MissingKey { key : 0 }) ; } expect_envelope_key (window , & mut position , 0 , given) ? ; let label = read_label (window , & mut position , given) ? ; if head . argument == 1 { return Err (EnvelopeError :: MissingKey { key : 1 }) ; } expect_envelope_key (window , & mut position , 1 , given) ? ; let version = read_version (window , & mut position , given) ? ; Ok ((Envelope :: new (label , version) , position)) }",
+      "body": "{ Self :: peek_checked (prefix) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
       "class_decision": "public-interchange",
-      "item_premise": "This body inherits the public-interchange decision for envelope::Envelope::peek.",
+      "item_premise": "This body inherits the public-interchange decision for envelope::Envelope::peek. The bounded records operation vocabulary is generated from the operation registry; started/completed metric handles cannot allocate unregistered series. Refusal events change only observation classification.",
       "assessments": {
         "full_recording": "review-064",
         "secret_flow": "review-002",
@@ -5311,9 +5363,9 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Document::try_from_value",
-      "body": "{ let Value :: Map (map) = v else { return Err (EnvelopeError :: NotAMap) ; } ; let mut label = None ; let mut version = None ; let mut content = Content :: new () ; for (key , value) in map . iter () { let Value :: Unsigned (key) = key else { return Err (EnvelopeError :: NonIntegerKey { key : format ! (\"{key:?}\") }) ; } ; match * key { 0 => { let Value :: Text (text) = value else { return Err (EnvelopeError :: BadLabelType) ; } ; label = Some (NamespaceLabel :: parse (text . as_str ()) . map_err (EnvelopeError :: BadLabel) ?) ; } 1 => version = Some (Version :: from_value (value) ?) , key => { content . insert (ContentKey :: new (key) ? , value . clone ()) ; } } } let label = label . ok_or (EnvelopeError :: MissingKey { key : 0 }) ? ; let version = version . ok_or (EnvelopeError :: MissingKey { key : 1 }) ? ; Ok (Document :: new (Envelope :: new (label , version) , content)) }",
+      "body": "{ Self :: try_from_value_checked (v) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
       "class_decision": "public-interchange",
-      "item_premise": "This body inherits the public-interchange decision for envelope::Document::try_from_value.",
+      "item_premise": "This body inherits the public-interchange decision for envelope::Document::try_from_value. The bounded records operation vocabulary is generated from the operation registry; started/completed metric handles cannot allocate unregistered series. Refusal events change only observation classification.",
       "assessments": {
         "full_recording": "review-071",
         "secret_flow": "review-002",
@@ -7818,48 +7870,81 @@
       }
     },
     {
-      "operation": "pn-records::packages/records/src/lib.rs::ValidatedRecords < '_ >::acts",
-      "body": "{ self . acts }",
+      "operation": "pn-records::packages/records/src/lib.rs::dependency_status",
+      "body": "{ let reference = PublicReference :: Edge (edge . clone ()) ; let result = if ! valid_id (& edge . act) { Err (ValidationError :: InvalidReference (reference)) } else if let Some (act) = records . acts . iter () . chain (& records . history . acts) . find (| act | act . legs . iter () . any (| leg | & leg . id == edge)) { Ok (match & act . projections . dependency { DependencyProjection :: FullEmpty => DependencyStatus :: FullEmpty , DependencyProjection :: Full (_) => DependencyStatus :: Full , DependencyProjection :: Tombstoned (position) => DependencyStatus :: Tombstoned (* position) , }) } else { Err (ValidationError :: UnresolvedReference (reference)) } ; if result . is_err () { refused () ; } result }",
       "class_decision": "public-records",
-      "item_premise": "The borrowed validated batch returns whole candidate acts, without flattening legs or promoting cryptographic authentication.",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
-      }
+      },
+      "item_premise": "Derives an existing structural leg status from the owning whole act in the private validated snapshot. No leg stores its own removal or status field; malformed and missing identities refuse explicitly."
     },
     {
       "operation": "pn-records::packages/records/src/lib.rs::validate_record",
-      "body": "{ let bytes = carrier_bytes (acts) ; metrics :: gauge ! (\"records__root__sig__design__records__active_validation\") . increment (1.0) ; metrics :: gauge ! (\"records__root__sig__design__records__live_carrier_bytes\") . increment (bytes) ; metrics :: histogram ! (\"records__root__sig__design__records__input_bytes\") . record (bytes) ; let result = validate (acts , history , declarations) ; metrics :: gauge ! (\"records__root__sig__design__records__live_carrier_bytes\") . decrement (bytes) ; metrics :: gauge ! (\"records__root__sig__design__records__active_validation\") . decrement (1.0) ; if result . is_ok () { metrics :: counter ! (\"records__root__sig__design__records__validated_records\") . increment (u64 :: try_from (acts . len ()) . unwrap_or (u64 :: MAX)) ; } else { refused () ; } result }",
+      "body": "{ let bytes = validation_started (acts) ; let result = validate (acts , history , declarations) ; validation_finished (bytes , acts . len () , result . is_ok ()) ; result }",
       "class_decision": "public-records",
-      "item_premise": "The candidate representation has one identity, immutable structural legs and act-owned removal facts; validation records full public inputs and typed errors. Metrics receive only counts and explicitly partial byte estimates and never control validation.",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
-      }
+      },
+      "item_premise": "Locally validates complete candidates against immutable whole-act history and opaque declarations. Public inputs and typed refusals are captured; counters never influence acceptance."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+      "body": "{ & self . acts }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows owned validated acts, never candidate legs, preserving complete act accounting and act-derived dependency status."
     },
     {
       "operation": "pn-records::packages/records/src/lib.rs::resolve_public_reference",
+      "body": "{ let result = if ! valid_reference (reference) { Err (ValidationError :: InvalidReference (reference . clone ())) } else if records . history . references . contains (reference) { Ok (ReferenceOrigin :: History) } else if records . acts . iter () . any (| act | match reference { PublicReference :: Act (id) => id == & act . id , PublicReference :: Edge (id) => act . legs . iter () . any (| leg | & leg . id == id) , PublicReference :: Named { .. } => false , }) { Ok (ReferenceOrigin :: Batch) } else { Err (ValidationError :: UnresolvedReference (reference . clone ())) } ; if result . is_ok () { metrics :: counter ! (\"records__root__sig__design__records__resolved_references\") . increment (1) ; } else { refused () ; } result }",
       "class_decision": "public-records",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "body": "{ let result = if ! valid_reference (reference) { Err (ValidationError :: InvalidReference (reference . clone ())) } else if records . history . contains (reference) { Ok (ReferenceOrigin :: History) } else if records . acts . iter () . any (| act | match reference { PublicReference :: Act (id) => id == & act . id , PublicReference :: Edge (id) => act . legs . iter () . any (| leg | & leg . id == id) , PublicReference :: Named { .. } => false , }) { Ok (ReferenceOrigin :: Batch) } else { Err (ValidationError :: UnresolvedReference (reference . clone ())) } ; if result . is_ok () { metrics :: counter ! (\"records__root__sig__design__records__resolved_references\") . increment (1) ; } else { refused () ; } result }",
-      "item_premise": "The immutable view contains accepted history and the batch. Structural identities remain resolvable after dependency removal; full queries and typed origins or refusals are public."
+      "item_premise": "Resolves act and leg identities derived from whole validated history or the batch; full query and typed origin or refusal are public."
     },
     {
       "operation": "pn-records::packages/records/src/lib.rs::select_effective_declaration",
+      "body": "{ if let Some (cause) = invalid_key (namespace , name) { refused () ; return Err (ValidationError :: InvalidSelectionKey (cause)) ; } let selected = records . declarations . iter () . filter (| d | d . id . namespace == namespace && d . id . name == name && d . announced_at <= boundary && d . effective_at <= boundary) . max_by_key (| d | d . effective_at) ; selected . ok_or_else (| | { refused () ; ValidationError :: MissingDeclaration { namespace : namespace . into () , name : name . into () , boundary , } }) }",
       "class_decision": "public-records",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "body": "{ let selected = records . declarations . iter () . filter (| d | d . id . namespace == namespace && d . id . name == name && d . announced_at <= boundary && d . effective_at <= boundary) . max_by_key (| d | d . effective_at) ; selected . ok_or_else (| | { refused () ; ValidationError :: MissingDeclaration { namespace : namespace . into () , name : name . into () , boundary , } }) }",
-      "item_premise": "The immutable view contains only validated opaque editions. Selection uses announcement and effective boundaries without declaration content semantics; full key, boundary and result are public."
+      "item_premise": "Rejects malformed keys and selects a validated opaque edition by its effective boundary. Late announcements refused during validation cannot rewrite historical answers."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::validate_history",
+      "body": "{ let bytes = validation_started (acts) ; let result = history_snapshot (acts , names) ; validation_finished (bytes , acts . len () , result . is_ok ()) ; result }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Checks public history candidates and external names before deriving references. Names cannot inject an act or edge, and dependencies require complete earlier act identities."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::assemble_boundary_inputs",
+      "body": "{ let result = assemble (records , boundary) ; match & result { Ok (inputs) => metrics :: histogram ! (\"records__root__sig__design__records__records_per_boundary\") . record (carrier_count (inputs . acts . len ())) , Err (_) => refused () , } result }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Traverses complete dependency content iteratively against fixed pre-epoch history, refusing missing or tombstoned content. Returns whole-act union and overlapping identity closures without partitioning."
     }
   ],
   "generators": [
@@ -9214,13 +9299,22 @@
       "class_decision": "public-execwrap"
     },
     {
+      "item": "observation_metrics::",
+      "kind": "item-macro",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation_metrics.rs",
+      "syntax": "include ! (\"observation_operations.rs\") ;",
+      "class_decision": "delivery",
+      "expansion_review": "The included generated file contains only the finite string constant for the records operation vocabulary. The gate compares it byte-for-byte with registry derivation; it expands no function or secret access."
+    },
+    {
       "item": "ActId",
       "kind": "derive",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "Role",
@@ -9229,7 +9323,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "EdgeId",
@@ -9238,7 +9332,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "PublicReference",
@@ -9247,7 +9341,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "Layout",
@@ -9256,7 +9350,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "Removal",
@@ -9265,16 +9359,16 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
-      "item": "Projection",
+      "item": "CandidateLeg",
       "kind": "derive",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "Quantity",
@@ -9283,7 +9377,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "StructuralBody",
@@ -9292,7 +9386,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "CandidateAct",
@@ -9301,16 +9395,79 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "RemovableProjections",
       "kind": "derive",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
+      "item": "DependencyProjection",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
+      "item": "DependencyStatus",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
+      "item": "ValidatedLeg",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
+      "item": "ValidatedAct",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
+      "item": "ValidatedHistory",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
+      "item": "DeclarationCause",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
+      "item": "DependencyCause",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "InvalidCause",
@@ -9319,7 +9476,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "ValidationError",
@@ -9328,7 +9485,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "DeclarationId",
@@ -9337,7 +9494,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "Declaration",
@@ -9346,7 +9503,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "ReferenceOrigin",
@@ -9355,7 +9512,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
       "item": "ValidatedRecords",
@@ -9364,7 +9521,25 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
+      "item": "PrincipalClosure",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
+      "item": "BoundaryInputs",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     }
   ],
   "reviewed_types": [
@@ -10086,7 +10261,7 @@
       "item": "observation::Operation",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "# [doc = \" Inclusive elapsed accounting that never supplies values to binding computation.\"] pub struct Operation { observation : Observation , kind : OperationKind , id : u64 , parent : Option < u64 > , started : Duration , work : u64 , work_observed : bool , work_overflow : bool , current : Resource , high_water : Resource , cumulative : Resource , finished : bool , }"
+      "syntax": "# [doc = \" Inclusive elapsed accounting that never supplies values to binding computation.\"] pub struct Operation { observation : Observation , kind : OperationKind , id : u64 , parent : Option < u64 > , metric_label : String , started : Duration , work : u64 , work_observed : bool , work_overflow : bool , current : Resource , high_water : Resource , cumulative : Resource , finished : bool , }"
     },
     {
       "item": "observation::Fields",
@@ -10206,7 +10381,7 @@
       "item": "observation_metrics::JsonRecorder",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation_metrics.rs",
-      "syntax": "# [doc = \" One local recorder shared by metrics API handles and JSON snapshots.\"] # [derive (Clone)] pub (super) struct JsonRecorder { instruments : Arc < BTreeMap < (String , String) , Arc < Instrument > > > , pub (super) lost : Arc < AtomicU64 > , }"
+      "syntax": "# [doc = \" One local recorder shared by metrics API handles and JSON snapshots.\"] # [derive (Clone)] pub (super) struct JsonRecorder { instruments : Arc < BTreeMap < (String , String , String) , Arc < Instrument > > > , pub (super) lost : Arc < AtomicU64 > , }"
     },
     {
       "item": "publication::PublicationMode",
@@ -10479,10 +10654,10 @@
       "syntax": "# [doc = \" A dependency projection's versioned removal fact, distinct from identity.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Removal { # [doc = \" Present in this accepted snapshot.\"] Live , # [doc = \" Removed at the given authoritative position; the identity remains.\"] Tombstoned (u64) , }"
     },
     {
-      "item": "Projection",
+      "item": "CandidateLeg",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" One owned edge projection; never an independent accounting record.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Projection { # [doc = \" Structural identity, checked against the owning act and layout.\"] pub id : EdgeId , # [doc = \" Exact source reference.\"] pub source : PublicReference , # [doc = \" Exact target reference.\"] pub target : PublicReference , # [doc = \" Untrusted input only: any supplied leg removal fact is refused.\"] # [doc = \" Validated legs always carry None; dependency status derives from the act.\"] pub removal : Option < Removal > , }"
+      "syntax": "# [doc = \" One owned edge projection; never an independent accounting record.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateLeg { # [doc = \" Structural identity, checked against the owning act and layout.\"] pub id : EdgeId , # [doc = \" Exact source reference.\"] pub source : PublicReference , # [doc = \" Exact target reference.\"] pub target : PublicReference , # [doc = \" Untrusted input only: any supplied leg removal fact is refused.\"] # [doc = \" Validated legs have no such field; dependency status derives from the act.\"] pub removal : Option < Removal > , }"
     },
     {
       "item": "Quantity",
@@ -10500,13 +10675,55 @@
       "item": "CandidateAct",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" An unchecked act candidate; downstream operations require `ValidatedRecords`.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateAct { # [doc = \" Authored structural identity.\"] pub id : ActId , # [doc = \" Unchanged structural body with units and vintages.\"] pub body : StructuralBody , # [doc = \" Immutable structural legs, always owned together by this candidate.\"] pub legs : Vec < Projection > , # [doc = \" One-way removal facts for the act, never for an individual co-leg.\"] pub projections : RemovableProjections , # [doc = \" Immutable protocol references, independently required even after removal.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public authentication evidence; retained, not cryptographically certified.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Accepted finalization epoch, not identity or a quantity's vintage.\"] pub finalization_epoch : u64 , # [doc = \" Host-authoritative order; never used for identity equality.\"] pub authoritative_position : u64 , }"
+      "syntax": "# [doc = \" An unchecked act candidate; downstream operations require `ValidatedRecords`.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateAct { # [doc = \" Authored structural identity.\"] pub id : ActId , # [doc = \" Unchanged structural body with units and vintages.\"] pub body : StructuralBody , # [doc = \" Immutable structural legs, always owned together by this candidate.\"] pub legs : Vec < CandidateLeg > , # [doc = \" One-way removal facts for the act, never for an individual co-leg.\"] pub projections : RemovableProjections , # [doc = \" Immutable protocol references, independently required even after removal.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public authentication evidence; retained, not cryptographically certified.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Accepted finalization epoch, not identity or a quantity's vintage.\"] pub finalization_epoch : u64 , # [doc = \" Host-authoritative order; never used for identity equality.\"] pub authoritative_position : u64 , }"
     },
     {
       "item": "RemovableProjections",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Act-level content and dependency projections, independent of structural legs.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct RemovableProjections { # [doc = \" Content removal does not erase structural identity or public references.\"] pub content : Removal , # [doc = \" Every dependency edge derives this single act-owned removal fact.\"] pub dependency : Removal , }"
+      "syntax": "# [doc = \" Act-level content and dependency projections, independent of structural legs.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RemovableProjections { # [doc = \" Content removal does not erase structural identity or public references.\"] pub content : Removal , # [doc = \" Every dependency edge derives this single act-owned removal fact.\"] pub dependency : DependencyProjection , }"
+    },
+    {
+      "item": "DependencyProjection",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Canonical dependency content; empty is available content, not absence.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum DependencyProjection { # [doc = \" Complete empty dependency set.\"] FullEmpty , # [doc = \" Complete nonempty sorted, duplicate-free, self-free act identifiers.\"] Full (Vec < ActId >) , # [doc = \" Content unavailable after this position; never interpreted as empty.\"] Tombstoned (u64) , }"
+    },
+    {
+      "item": "DependencyStatus",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Status derived from the owning act, not an independently supplied removal fact.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum DependencyStatus { # [doc = \" Complete empty content.\"] FullEmpty , # [doc = \" Complete nonempty content.\"] Full , # [doc = \" The act's dependency content is unavailable at this position.\"] Tombstoned (u64) , }"
+    },
+    {
+      "item": "ValidatedLeg",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Validated structural leg; no candidate removal field exists here.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedLeg { # [doc = \" Parent-and-role identity.\"] pub id : EdgeId , # [doc = \" Immutable source reference.\"] pub source : PublicReference , # [doc = \" Immutable target reference.\"] pub target : PublicReference , }"
+    },
+    {
+      "item": "ValidatedAct",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Immutable view owned by a validated snapshot, distinct from unchecked candidates.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedAct { # [doc = \" Structural identity, containing the sole author and family representation.\"] pub id : ActId , # [doc = \" Retained quantities, units, vintage and layout.\"] pub body : StructuralBody , # [doc = \" All required legs together, with act-derived dependency status.\"] pub legs : Vec < ValidatedLeg > , # [doc = \" Act-owned removable projections.\"] pub projections : RemovableProjections , # [doc = \" Immutable required public references.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public evidence retained without cryptographic certification.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Finalization epoch, not identity.\"] pub finalization_epoch : u64 , # [doc = \" Authoritative position, not identity.\"] pub authoritative_position : u64 , }"
+    },
+    {
+      "item": "ValidatedHistory",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Previously accepted whole acts and external names, checked locally before use.\"] # [doc = \" The constructor checks representation, not host admission or authentication.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug)] pub struct ValidatedHistory { acts : Vec < ValidatedAct > , references : BTreeSet < PublicReference > , }"
+    },
+    {
+      "item": "DeclarationCause",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Finite declaration representation causes.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum DeclarationCause { # [doc = \" A key requires a namespace.\"] # [error (\"empty declaration namespace\")] EmptyNamespace , # [doc = \" A key requires a name.\"] # [error (\"empty declaration name\")] EmptyName , # [doc = \" Retrospective announcements would change historical answers.\"] # [error (\"effective boundary before announcement\")] LateAnnouncement , }"
+    },
+    {
+      "item": "DependencyCause",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Dependency and boundary refusals preserve missing information as missing.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum DependencyCause { # [doc = \" Full-empty has its own explicit representation.\"] # [error (\"empty full list; use full-empty\")] EmptyFull , # [doc = \" Input exceeds the declared local bound.\"] # [error (\"dependency list exceeds bound\")] TooMany , # [doc = \" The list must increase strictly by structural act identity.\"] # [error (\"dependency list is not canonical\")] NonCanonical , # [doc = \" An act cannot depend on itself.\"] # [error (\"self dependency\")] SelfDependency , # [doc = \" A dependency is absent from fixed accepted history.\"] # [error (\"missing dependency\")] Missing , # [doc = \" Each dependency must strictly precede its dependent act.\"] # [error (\"dependency does not precede act\")] NotEarlier , # [doc = \" A closure needs content that has been tombstoned.\"] # [error (\"dependency content unavailable\")] Unavailable , # [doc = \" Fixed history must precede the boundary, and proposals must not precede it.\"] # [error (\"act on wrong side of boundary\")] BoundaryPlacement , }"
     },
     {
       "item": "InvalidCause",
@@ -10518,7 +10735,7 @@
       "item": "ValidationError",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Typed local refusal; exhaustive while this workspace package is unpublished.\"] # [doc = \" Consumers must handle new variants at compile time. No standing verdict is implied.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ValidationError { # [doc = \" Duplicate batch or previously accepted identity, even with different host positions.\"] # [error (\"ambiguous act identity: {0:?}\")] DuplicateAct (ActId) , # [doc = \" Two legs claim the same parent and role.\"] # [error (\"ambiguous edge identity: {0:?}\")] DuplicateEdge (EdgeId) , # [doc = \" A required reference is absent from accepted history and the validated batch.\"] # [error (\"unresolved required reference: {0:?}\")] UnresolvedReference (PublicReference) , # [doc = \" The layout's complete role set is absent.\"] # [error (\"missing {role:?} co-leg of {act:?}\")] MissingCoLeg { act : ActId , role : Role } , # [doc = \" A local structural field is invalid for the named typed reason.\"] # [error (\"invalid local representation of {act:?}: {cause}\")] InvalidRepresentation { act : ActId , cause : InvalidCause } , # [doc = \" Previously accepted history or a query contains an invalid reference.\"] # [error (\"invalid structural reference: {0:?}\")] InvalidReference (PublicReference) , # [doc = \" Declaration identities and boundaries must be locally well formed.\"] # [error (\"invalid declaration: {0:?}\")] InvalidDeclaration (DeclarationId) , # [doc = \" Repeated identities cannot silently replace old editions.\"] # [error (\"duplicate declaration identity: {0:?}\")] DuplicateDeclaration (DeclarationId) , # [doc = \" Two editions would take effect at the same boundary for the same key.\"] # [error (\"ambiguous effective declaration: {0:?}\")] AmbiguousDeclaration (DeclarationId) , # [doc = \" No announced and effective edition exists at the requested boundary.\"] # [error (\"no effective declaration for {namespace}/{name} at {boundary}\")] MissingDeclaration { namespace : String , name : String , boundary : u64 } , }"
+      "syntax": "# [doc = \" Typed local refusal; exhaustive while this workspace package is unpublished.\"] # [doc = \" Consumers must handle new variants at compile time. No standing verdict is implied.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ValidationError { # [doc = \" Duplicate batch or previously accepted identity, even with different host positions.\"] # [error (\"ambiguous act identity: {0:?}\")] DuplicateAct (ActId) , # [doc = \" Two legs claim the same parent and role.\"] # [error (\"ambiguous edge identity: {0:?}\")] DuplicateEdge (EdgeId) , # [doc = \" A required reference is absent from accepted history and the validated batch.\"] # [error (\"unresolved required reference: {0:?}\")] UnresolvedReference (PublicReference) , # [doc = \" The layout's complete role set is absent.\"] # [error (\"missing {role:?} co-leg of {act:?}\")] MissingCoLeg { act : ActId , role : Role } , # [doc = \" A local structural field is invalid for the named typed reason.\"] # [error (\"invalid local representation of {act:?}: {cause}\")] InvalidRepresentation { act : ActId , cause : InvalidCause } , # [doc = \" Previously accepted history or a query contains an invalid reference.\"] # [error (\"invalid structural reference: {0:?}\")] InvalidReference (PublicReference) , # [doc = \" Declaration identities and boundaries must be locally well formed.\"] # [error (\"invalid declaration {id:?}: {cause}\")] InvalidDeclaration { id : DeclarationId , cause : DeclarationCause } , # [doc = \" A selection key is malformed independently of edition availability.\"] # [error (\"invalid declaration query: {0}\")] InvalidSelectionKey (DeclarationCause) , # [doc = \" A dependency or boundary representation cannot supply a complete closure.\"] # [error (\"invalid dependencies of {act:?}, target {dependency:?}: {cause}\")] Dependency { act : ActId , dependency : Option < ActId > , cause : DependencyCause , } , # [doc = \" Repeated identities cannot silently replace old editions.\"] # [error (\"duplicate declaration identity: {0:?}\")] DuplicateDeclaration (DeclarationId) , # [doc = \" Two editions would take effect at the same boundary for the same key.\"] # [error (\"ambiguous effective declaration: {0:?}\")] AmbiguousDeclaration (DeclarationId) , # [doc = \" No announced and effective edition exists at the requested boundary.\"] # [error (\"no effective declaration for {namespace}/{name} at {boundary}\")] MissingDeclaration { namespace : String , name : String , boundary : u64 } , }"
     },
     {
       "item": "DeclarationId",
@@ -10542,7 +10759,19 @@
       "item": "ValidatedRecords",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Read-only complete acts; borrowing prevents mutation after validation.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Debug)] pub struct ValidatedRecords < 'a > { acts : & 'a [CandidateAct] , history : BTreeSet < PublicReference > , declarations : Vec < Declaration > , }"
+      "syntax": "# [doc = \" Read-only complete acts; borrowing prevents mutation after validation.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Debug)] pub struct ValidatedRecords { acts : Vec < ValidatedAct > , history : ValidatedHistory , declarations : Vec < Declaration > , }"
+    },
+    {
+      "item": "PrincipalClosure",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" One proposed root and its complete principal closure, without partition membership.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct PrincipalClosure { # [doc = \" Proposed structural root.\"] pub root : ActId , # [doc = \" Whole-act identities in authoritative order, with no duplicate within a closure.\"] pub members : Vec < ActId > , }"
+    },
+    {
+      "item": "BoundaryInputs",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] pub boundary : u64 , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] pub acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] pub closures : Vec < PrincipalClosure > , }"
     }
   ],
   "class_decisions": [

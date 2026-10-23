@@ -7,7 +7,7 @@ operations = 113
 instrumented = 30
 exceptions = 80
 helpers = 3
-generators = 40
+generators = 41
 
 [[rows]]
 name = "documents"
@@ -35,8 +35,8 @@ generators = 89
 
 [[rows]]
 name = "pn-records"
-operations = 4
-instrumented = 4
+operations = 7
+instrumented = 7
 exceptions = 0
 helpers = 0
-generators = 17
+generators = 26

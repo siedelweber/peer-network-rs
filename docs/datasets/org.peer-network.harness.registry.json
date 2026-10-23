@@ -3094,7 +3094,12 @@
         "pn-records::public::projection_removal",
         "pn-records::public::reference_resolution",
         "pn-records::public::effective_declarations",
-        "pn-records::public::invalid_declarations"
+        "pn-records::public::invalid_declarations",
+        "pn-records::public::dependency_content",
+        "pn-records::public::dependency_placement",
+        "pn-records::public::whole_history",
+        "pn-records::public::overlapping_closures",
+        "pn-records::public::boundary_refusals"
       ],
       "implementation": "pn-records-rust",
       "kind": "suite",
@@ -3107,7 +3112,8 @@
     {
       "budget": "pure-suite",
       "cases": [
-        "pn-records::integration::complete_acts_count_once"
+        "pn-records::integration::complete_acts_count_once",
+        "pn-records::integration::shared_ancestor_counts_once"
       ],
       "implementation": "pn-records-rust",
       "kind": "suite",

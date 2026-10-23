@@ -82,12 +82,22 @@ def validate(census, registry, labels, claims):
         expected={stem+'__'+measure:(kind,unit,{'outcome':constants['OUTCOMES']} if measure=='completed_operations' else {})
                   for stem in constants['STEMS'] for measure,kind,unit in constants['MEASURES']}
         expected.update({'records__root__sig__design__records__'+measure:(kind,unit,{}) for measure,kind,unit in constants.get('RECORDS_MEASURES',[])})
+        for measure in ('started_operations','completed_operations'):
+            name='records__root__sig__design__records__'+measure
+            if name in expected:
+                kind,unit,attributes=expected[name]
+                expected[name]=(kind,unit,dict(attributes,operation=operation_vocabulary(registry)))
         actual={name:(row['kind'],row['unit'],row['attributes']) for name,row in metrics.items()}
         if actual!=expected:raise StructuralError('runtime metric declarations differ from registry')
     for metric in metrics.values():
         if metric['unit'] not in {'bytes','seconds','operations','count'}:raise StructuralError('undeclared metric unit')
         if metric['kind'] not in {'counter','gauge','histogram'}:raise StructuralError('undeclared metric kind')
-        if metric['attributes'] not in ({},{'outcome':['success','refusal','error','cancelled','unwinding','incomplete']}):
+        allowed=({},{'outcome':['success','refusal','error','cancelled','unwinding','incomplete']})
+        attrs=metric['attributes'].copy()
+        if 'operation' in attrs:
+            if not metric['name'].startswith('records__') or attrs.pop('operation')!=operation_vocabulary(registry):
+                raise StructuralError('unregistered metric operation vocabulary')
+        if attrs not in allowed:
             raise StructuralError('undeclared metric attribute')
     reviews={row['operation']:row for row in registry['reviews']}
     if len(reviews)!=len(registry['reviews']) or set(reviews)!=required:raise StructuralError('missing or duplicate semantic review')
@@ -193,11 +203,28 @@ def syntax_census():
     return result
 
 
+def operation_vocabulary(registry):
+    return sorted({row['operation'] for row in registry['operations'] if row['package']=='pn-records' and row['mode']=='instrumented'})
+
+
+def operation_source(registry):
+    values=operation_vocabulary(registry)
+    return '// Generated from ci/observation-registry.json by ci/observe.py --write-operation-vocabulary.\n'+'pub(super) const RECORDS_OPERATIONS: [&str; '+str(len(values))+'] = [\n'+''.join('    '+json.dumps(value)+',\n' for value in values)+'];\n'
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--census-only',action='store_true')
+    parser.add_argument('--write-operation-vocabulary',action='store_true')
     args=parser.parse_args()
+    raw_registry=json.loads(Path('ci/observation-registry.json').read_text())
+    vocabulary_path=Path('packages/cli-common/src/observation_operations.rs')
+    if args.write_operation_vocabulary:
+        vocabulary_path.write_text(operation_source(raw_registry))
+        return 0
     try:
+        if vocabulary_path.read_text()!=operation_source(raw_registry):
+            raise StructuralError('operation vocabulary differs from registry; regenerate with --write-operation-vocabulary')
         data=syntax_census()
         Path('.lane/observation-syntax.json').write_text(json.dumps(data,indent=2)+'\n')
         if not args.census_only:

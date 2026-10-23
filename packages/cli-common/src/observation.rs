@@ -426,6 +426,7 @@ impl Observation {
             kind,
             id,
             parent,
+            metric_label: arguments.get("operation").and_then(Value::as_str).unwrap_or("").to_owned(),
             started: self.clock.elapsed(),
             work: 0,
             work_observed: false,
@@ -436,7 +437,12 @@ impl Observation {
             finished: false,
         };
         metrics::with_local_recorder(&self.recorder, || {
-            metrics::counter!(format!("{}__started_operations", kind.stem())).increment(1);
+            if matches!(kind, OperationKind::Records) {
+                metrics::counter!(format!("{}__started_operations", kind.stem()), "operation" => operation.metric_label.clone())
+                    .increment(1);
+            } else {
+                metrics::counter!(format!("{}__started_operations", kind.stem())).increment(1);
+            }
             metrics::counter!(format!("{}__work_operations", kind.stem())).increment(1);
             metrics::gauge!(format!("{}__active_operations", kind.stem())).increment(1.0);
         });
@@ -578,6 +584,7 @@ pub struct Operation {
     kind: OperationKind,
     id: u64,
     parent: Option<u64>,
+    metric_label: String,
     started: Duration,
     work: u64,
     work_observed: bool,
@@ -699,7 +706,11 @@ impl Operation {
         detail["result"] = result;
         self.record("completion", detail);
         metrics::with_local_recorder(&self.observation.recorder, || {
-            metrics::counter!(format!("{}__completed_operations",self.kind.stem()),"outcome"=>outcome).increment(1);
+            if matches!(self.kind, OperationKind::Records) {
+                metrics::counter!(format!("{}__completed_operations",self.kind.stem()),"outcome"=>outcome,"operation"=>self.metric_label.clone()).increment(1);
+            } else {
+                metrics::counter!(format!("{}__completed_operations",self.kind.stem()),"outcome"=>outcome).increment(1);
+            }
             metrics::gauge!(format!("{}__active_operations", self.kind.stem())).decrement(1.0);
             metrics::histogram!(format!("{}__workload_operations", self.kind.stem())).record(1.0);
             if let Some(current) = self.current.value {

@@ -894,7 +894,7 @@ level = "public-surface"
 implementation = "pn-records-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-records::public::structural_duplicates", "pn-records::public::missing_co_legs", "pn-records::public::required_references", "pn-records::public::invalid_local_fields", "pn-records::public::projection_removal", "pn-records::public::reference_resolution", "pn-records::public::effective_declarations", "pn-records::public::invalid_declarations"]
+cases = ["pn-records::public::structural_duplicates", "pn-records::public::missing_co_legs", "pn-records::public::required_references", "pn-records::public::invalid_local_fields", "pn-records::public::projection_removal", "pn-records::public::reference_resolution", "pn-records::public::effective_declarations", "pn-records::public::invalid_declarations", "pn-records::public::dependency_content", "pn-records::public::dependency_placement", "pn-records::public::whole_history", "pn-records::public::overlapping_closures", "pn-records::public::boundary_refusals"]
 
 [[rows]]
 kind = "suite"
@@ -905,4 +905,4 @@ level = "integration"
 implementation = "pn-records-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-records::integration::complete_acts_count_once"]
+cases = ["pn-records::integration::complete_acts_count_once", "pn-records::integration::shared_ancestor_counts_once"]
