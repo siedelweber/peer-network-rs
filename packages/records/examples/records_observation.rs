@@ -34,7 +34,8 @@ fn main() -> ExitCode {
     }];
     let history = common::resolved();
     let accepted = validate_record(&records, &history, &declarations).expect("complete fixture");
-    let count = accepted.acts().len();
+    let complete = accepted.acts();
+    let count = complete.len();
     let empty_dependencies = dependency_status(&accepted, &records[0].legs[0].id).unwrap() == DependencyStatus::FullEmpty;
     let reference = PublicReference::Act(records[0].id.clone());
     let resolved = resolve_public_reference(&accepted, &reference).is_ok();
@@ -47,7 +48,29 @@ fn main() -> ExitCode {
     let mut missing = common::act(3, Layout::Paired);
     missing.legs.pop();
     let refused = validate_record(&[missing], &history, &[]).is_err();
-    let assembled = assemble_boundary_inputs(&accepted, 8).unwrap().acts().len();
+    let boundary = assemble_boundary_inputs(&accepted, 8).unwrap();
+    let assembled = boundary.acts().len();
+    for _ in 0..3 {
+        for act in complete {
+            std::hint::black_box((
+                act.id(),
+                act.body(),
+                act.legs(),
+                act.projections(),
+                act.protocol_references(),
+                act.authentication_evidence(),
+                act.finalization_epoch(),
+                act.authoritative_position(),
+            ));
+            for leg in act.legs() {
+                std::hint::black_box((leg.id(), leg.source(), leg.target()));
+            }
+        }
+        for closure in boundary.closures() {
+            std::hint::black_box((closure.root(), closure.members()));
+        }
+        std::hint::black_box((boundary.boundary(), boundary.acts(), boundary.closures(), boundary.work()));
+    }
     let misplaced = assemble_boundary_inputs(&accepted, 9).is_err();
     let exit = if cli_common::emit(&serde_json::json!({"empty_dependencies":empty_dependencies,"assembled":assembled,"misplaced":misplaced,"accepted_acts":count,"missing_co_leg_refused":refused,"resolved":resolved,"unresolved":unresolved,"edition":selected,"no_edition":no_edition})).is_ok() {
         ExitCode::SUCCESS

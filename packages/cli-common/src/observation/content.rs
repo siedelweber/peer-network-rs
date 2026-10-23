@@ -246,7 +246,7 @@ pub(super) fn compact(record: &mut Value, root: &Path) -> io::Result<()> {
     // operation totals cannot cause another copy of identical public content.
     if let Value::Object(fields) = record {
         for value in fields.values_mut() {
-            compact_value(value, root)?;
+            compact_value(value, root, 0)?;
         }
     }
     let encoded = serde_json::to_vec(record)?;
@@ -256,25 +256,22 @@ pub(super) fn compact(record: &mut Value, root: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn compact_value(value: &mut Value, root: &Path) -> io::Result<()> {
-    if serde_json::to_vec(value)?.len() <= INLINE_BYTES {
-        return Ok(());
-    }
+fn compact_value(value: &mut Value, root: &Path, depth: usize) -> io::Result<()> {
     match value {
         Value::Object(fields) => {
             for child in fields.values_mut() {
-                compact_value(child, root)?;
+                compact_value(child, root, (depth + 1) % 32)?;
             }
         }
         Value::Array(values) => {
             for child in values {
-                compact_value(child, root)?;
+                compact_value(child, root, (depth + 1) % 32)?;
             }
         }
         _ => {}
     }
     let encoded = serde_json::to_vec(value)?;
-    if encoded.len() > INLINE_BYTES {
+    if encoded.len() > INLINE_BYTES || (depth == 31 && value.is_object()) || (depth == 31 && value.is_array()) {
         *value = artifact(&encoded, root)?;
     }
     Ok(())

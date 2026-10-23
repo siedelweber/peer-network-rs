@@ -124,6 +124,9 @@ class Admission(unittest.TestCase):
             finding=json.loads(output.read_text())
             self.assertEqual((finding['kind'],finding['outcome'],finding['verdict_effect']),('observation-loss','exit:7','none'))
             self.assertIn('PERFORMANCE-WARNING',warnings.getvalue())
+            self.assertEqual(report_loss(record | {'lost_records':0,'undelivered_records':2},output,warnings),0)
+            pending=json.loads(output.read_text().splitlines()[-1])
+            self.assertEqual((pending['lost_records'],pending['undelivered_records'],pending['verdict_effect']),(0,2,'none'))
         from test_observe_runtime import witness
         from contextlib import redirect_stdout
         status={'kind':'observation_status','process_id':8,'delivered_records':1,'lost_records':0,'level':'trace'}

@@ -999,7 +999,7 @@ fn assemble(records: &ValidatedRecords, boundary: u64) -> Result<BoundaryInputs<
     let mut work = Some(0_u64);
     let mut count = || {
         work = work.and_then(|total| total.checked_add(1));
-        metrics::counter!("records__root__sig__design__records__work_operations").increment(1);
+        metrics::counter!("records__root__sig__design__records__assembly_steps").increment(1);
     };
     for root in &roots {
         count();
@@ -1044,51 +1044,21 @@ impl ValidatedLeg {
     /// Read the validated id without permitting replacement.
     /// (´def:acts:projection´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedLeg::id"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn id(&self) -> &EdgeId {
         &self.id
     }
     /// Read the validated source without permitting replacement.
     /// (´def:acts:projection´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedLeg::source"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn source(&self) -> &PublicReference {
         &self.source
     }
     /// Read the validated target without permitting replacement.
     /// (´def:acts:projection´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedLeg::target"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn target(&self) -> &PublicReference {
         &self.target
     }
@@ -1098,136 +1068,56 @@ impl ValidatedAct {
     /// Read the validated id without permitting replacement.
     /// (´def:acts:carrier´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedAct::id"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn id(&self) -> &ActId {
         &self.id
     }
     /// Read the validated body without permitting replacement.
     /// (´def:acts:carrier´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedAct::body"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn body(&self) -> &StructuralBody {
         &self.body
     }
     /// Read the validated legs without permitting replacement.
     /// (´def:acts:carrier´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedAct::legs"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn legs(&self) -> &[ValidatedLeg] {
         &self.legs
     }
     /// Read the validated projections without permitting replacement.
     /// (´def:acts:carrier´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedAct::projections"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn projections(&self) -> &RemovableProjections {
         &self.projections
     }
     /// Read the validated protocol references without permitting replacement.
     /// (´def:acts:carrier´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedAct::protocol_references"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn protocol_references(&self) -> &[PublicReference] {
         &self.protocol_references
     }
     /// Read the validated authentication evidence without permitting replacement.
     /// (´def:acts:carrier´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedAct::authentication_evidence"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn authentication_evidence(&self) -> &[u8] {
         &self.authentication_evidence
     }
     /// Read the validated finalization epoch without permitting replacement.
     /// (´def:acts:carrier´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedAct::finalization_epoch"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn finalization_epoch(&self) -> u64 {
         self.finalization_epoch
     }
     /// Read the validated authoritative position without permitting replacement.
     /// (´def:acts:carrier´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "ValidatedAct::authoritative_position"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn authoritative_position(&self) -> u64 {
         self.authoritative_position
     }
@@ -1237,34 +1127,14 @@ impl PrincipalClosure {
     /// Read the validated root without permitting replacement.
     /// (´def:acts:boundary-inputs´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "PrincipalClosure::root"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn root(&self) -> &ActId {
         &self.root
     }
     /// Read the validated members without permitting replacement.
     /// (´def:acts:boundary-inputs´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "PrincipalClosure::members"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn members(&self) -> &[ActId] {
         &self.members
     }
@@ -1274,68 +1144,28 @@ impl<'a> BoundaryInputs<'a> {
     /// Read the validated boundary without permitting replacement.
     /// (´def:acts:boundary-inputs´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "BoundaryInputs < 'a >::boundary"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn boundary(&self) -> u64 {
         self.boundary
     }
     /// Read the validated acts without permitting replacement.
     /// (´def:acts:boundary-inputs´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "BoundaryInputs < 'a >::acts"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn acts(&self) -> &[&'a ValidatedAct] {
         &self.acts
     }
     /// Read the validated closures without permitting replacement.
     /// (´def:acts:boundary-inputs´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "BoundaryInputs < 'a >::closures"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn closures(&self) -> &[PrincipalClosure] {
         &self.closures
     }
     /// Read the validated work without permitting replacement.
     /// (´def:acts:boundary-inputs´)
     #[must_use]
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "complete-act-access",
-            source_item = "BoundaryInputs < 'a >::work"
-        ),
-        ret
-    )]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
     pub fn work(&self) -> Option<u64> {
         self.work
     }

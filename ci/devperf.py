@@ -144,7 +144,9 @@ def report_loss(record, output, warnings=sys.stderr):
     for key in ('delivered_records','lost_records'):
         if type(record.get(key)) is not int or record[key]<0:raise StructuralError('malformed '+key)
     utc(record['utc'])
-    if record['level']!='trace' or record['lost_records']==0:return 0
+    pending=record.get('undelivered_records',0)
+    if type(pending) is not int or pending<0:raise StructuralError('malformed undelivered_records')
+    if record['level']!='trace' or record['lost_records']+pending==0:return 0
     finding={**record,'kind':'observation-loss','classification':'observation-completeness','verdict_effect':'none'}
     with Path(output).open('a') as stream:stream.write(json.dumps(finding,sort_keys=True)+'\n')
     print('PERFORMANCE-WARNING '+json.dumps(finding,sort_keys=True),file=warnings)

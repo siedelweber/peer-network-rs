@@ -829,6 +829,8 @@
     "pn-records::public::boundary_refusals": "Claim: Assembly refuses history on or beyond the fixed cut, proposals before it, and a tombstoned dependency list reached transitively; unavailable content is never guessed empty.",
     "pn-records::public::asserted_parents": "Claim: Asserted parents are canonical structural identifiers independent of removable dependency content; missing, self, duplicate, unsorted, excessive and non-earlier parents refuse their typed cause, while an earlier in-epoch parent is accepted.",
     "cli-common::observation::tests::trace_burst_capacity": "Claim: A 241-record trace burst including its reserved metric summary survives a completely stalled writer without blocking the producer or losing records; final delivery counts equal captured rows after a rendezvous releases the writer.",
-    "pn-records::tests::history_storage_is_shared": "Claim: Validating a batch retains the same immutable history allocations, so repeated consumers do not copy the accepted history's act bodies or reference roster."
+    "pn-records::tests::history_storage_is_shared": "Claim: Validating a batch retains the same immutable history allocations, so repeated consumers do not copy the accepted history's act bodies or reference roster.",
+    "cli-common::observation::tests::exit_reports_pending_delivery": "Claim: When an injected exit deadline expires with a stalled writer, guard destruction synchronously reports every attempted record as delivered, lost or undelivered before any reader release, so process exit needs no status rendezvous and cannot hide its queued tail.",
+    "cli-common::observation::tests::deep_payload_delivery": "Claim: Deep structured public values cross delivery without a JSON reparse limit; compact objects preserve every nested array and leaf while each inline envelope remains parseable by the ordinary JSON reader."
   }
 }

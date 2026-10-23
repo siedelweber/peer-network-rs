@@ -4051,9 +4051,16 @@
       "owner": "RECORDS",
       "signature": "fn id (& self) -> & EdgeId",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4062,9 +4069,16 @@
       "owner": "RECORDS",
       "signature": "fn source (& self) -> & PublicReference",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4073,9 +4087,16 @@
       "owner": "RECORDS",
       "signature": "fn target (& self) -> & PublicReference",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4084,9 +4105,16 @@
       "owner": "RECORDS",
       "signature": "fn id (& self) -> & ActId",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4095,9 +4123,16 @@
       "owner": "RECORDS",
       "signature": "fn body (& self) -> & StructuralBody",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4106,9 +4141,16 @@
       "owner": "RECORDS",
       "signature": "fn legs (& self) -> & [ValidatedLeg]",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4117,9 +4159,16 @@
       "owner": "RECORDS",
       "signature": "fn projections (& self) -> & RemovableProjections",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4128,9 +4177,16 @@
       "owner": "RECORDS",
       "signature": "fn protocol_references (& self) -> & [PublicReference]",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4139,9 +4195,16 @@
       "owner": "RECORDS",
       "signature": "fn authentication_evidence (& self) -> & [u8]",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4150,9 +4213,16 @@
       "owner": "RECORDS",
       "signature": "fn finalization_epoch (& self) -> u64",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4161,9 +4231,16 @@
       "owner": "RECORDS",
       "signature": "fn authoritative_position (& self) -> u64",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4172,9 +4249,16 @@
       "owner": "RECORDS",
       "signature": "fn root (& self) -> & ActId",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4183,9 +4267,16 @@
       "owner": "RECORDS",
       "signature": "fn members (& self) -> & [ActId]",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4194,9 +4285,16 @@
       "owner": "RECORDS",
       "signature": "fn boundary (& self) -> u64",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4205,9 +4303,16 @@
       "owner": "RECORDS",
       "signature": "fn acts (& self) -> & [& 'a ValidatedAct]",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4216,9 +4321,16 @@
       "owner": "RECORDS",
       "signature": "fn closures (& self) -> & [PrincipalClosure]",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     },
     {
       "package": "pn-records",
@@ -4227,9 +4339,16 @@
       "owner": "RECORDS",
       "signature": "fn work (& self) -> Option < u64 >",
       "claim": "ROOT::sig:design:records",
-      "mode": "instrumented",
+      "mode": "exception",
       "shape": "shape-records",
-      "operation": "complete-act-access"
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     }
   ],
   "metrics": [
@@ -4796,6 +4915,12 @@
       "name": "records__root__sig__design__records__input_bytes",
       "kind": "histogram",
       "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__sig__design__records__assembly_steps",
+      "kind": "counter",
+      "unit": "count",
       "attributes": {}
     }
   ],
@@ -7024,9 +7149,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_new_span",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
       "class_decision": "delivery",
-      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_new_span. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation. The RECORDS owner selects its own declared operation metric stem; payload gating and terminal classification are unchanged.",
+      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure.",
       "assessments": {
         "full_recording": "review-204",
         "secret_flow": "review-002",
@@ -7035,9 +7160,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_record",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () && self . 0 . full_trace { values . record (& mut account . fields) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () && self . 0 . full_trace { values . record (& mut account . fields) ; } }",
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_record. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure.",
       "assessments": {
         "full_recording": "review-205",
         "secret_flow": "review-002",
@@ -7046,9 +7171,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_event",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; let mut fields = Fields :: default () ; let diagnostic = * event . metadata () . level () <= tracing :: Level :: WARN ; if self . 0 . full_trace || diagnostic { event . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; event . record (& mut summary) ; fields = summary . 0 ; } if let Some (span) = context . event_span (event) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () { if let Some (value) = fields . 0 . get (\"return\") { account . result = Some (value . clone ()) ; } if ! account . explicit_outcome { account . outcome = fields . 3 . or (account . outcome) ; } let explicit = match fields . 0 . get (\"outcome\") . and_then (Value :: as_str) { Some (\"success\") => Some (\"success\") , Some (\"refusal\") => Some (\"refusal\") , Some (\"error\") => Some (\"error\") , Some (\"cancelled\") => Some (\"cancelled\") , Some (\"unwinding\") => Some (\"unwinding\") , _ => None , } ; if let Some (outcome) = explicit { account . outcome = Some (outcome) ; account . explicit_outcome = true ; } if let Some (bytes) = fields . 0 . get (\"work_bytes\") . and_then (Value :: as_u64) && let Some (operation) = & mut account . operation { operation . work_bytes (bytes) ; } } if ! self . 0 . full_trace && ! diagnostic { return ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } if self . 1 . as_ref () . is_some_and (| filter | { ! < tracing_subscriber :: EnvFilter as Layer < S > > :: enabled (filter , event . metadata () , context . clone ()) }) { return ; } let mut spans = Vec :: new () ; if let Some (scope) = context . event_scope (event) { for span in scope . from_root () { if let Some (account) = span . extensions () . get :: < SpanAccount > () { if account . fields . 2 || spans . len () == 64 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } spans . push (json ! ({ \"name\" : span . name () , \"fields\" : account . fields . 0 })) ; } } } self . 0 . emit (json ! ({ \"kind\" : \"trace\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"origin\" : event . metadata () . target () , \"name\" : \"rule:observe:spans\" , \"origin_name\" : event . metadata () . name () , \"level\" : event . metadata () . level () . as_str () , \"fields\" : fields . 0 , \"spans\" : spans })) ; }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; let mut fields = Fields :: default () ; let diagnostic = * event . metadata () . level () <= tracing :: Level :: WARN ; if self . 0 . full_trace || diagnostic { event . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; event . record (& mut summary) ; fields = summary . 0 ; } if let Some (span) = context . event_span (event) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () { if let Some (value) = fields . 0 . get (\"return\") { account . result = Some (value . clone ()) ; } if ! account . explicit_outcome { account . outcome = fields . 3 . or (account . outcome) ; } let explicit = match fields . 0 . get (\"outcome\") . and_then (Value :: as_str) { Some (\"success\") => Some (\"success\") , Some (\"refusal\") => Some (\"refusal\") , Some (\"error\") => Some (\"error\") , Some (\"cancelled\") => Some (\"cancelled\") , Some (\"unwinding\") => Some (\"unwinding\") , _ => None , } ; if let Some (outcome) = explicit { account . outcome = Some (outcome) ; account . explicit_outcome = true ; } if let Some (bytes) = fields . 0 . get (\"work_bytes\") . and_then (Value :: as_u64) && let Some (operation) = & mut account . operation { operation . work_bytes (bytes) ; } } if ! self . 0 . full_trace && ! diagnostic { return ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } if self . 1 . as_ref () . is_some_and (| filter | { ! < tracing_subscriber :: EnvFilter as Layer < S > > :: enabled (filter , event . metadata () , context . clone ()) }) { return ; } let mut spans = Vec :: new () ; if let Some (scope) = context . event_scope (event) { for span in scope . from_root () { if let Some (account) = span . extensions () . get :: < SpanAccount > () { if account . fields . 2 || spans . len () == 64 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , if account . fields . 2 { 3 } else { 4 }) ; return ; } spans . push (json ! ({ \"name\" : span . name () , \"fields\" : account . fields . 0 })) ; } } } self . 0 . emit (json ! ({ \"kind\" : \"trace\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"origin\" : event . metadata () . target () , \"name\" : \"rule:observe:spans\" , \"origin_name\" : event . metadata () . name () , \"level\" : event . metadata () . level () . as_str () , \"fields\" : fields . 0 , \"spans\" : spans })) ; }",
       "class_decision": "delivery",
-      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_event. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure.",
       "assessments": {
         "full_recording": "review-206",
         "secret_flow": "review-002",
@@ -7057,9 +7182,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_close",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (& id) && let Some (account) = span . extensions_mut () . remove :: < SpanAccount > () { if let Some (mut operation) = account . operation { let outcome = if std :: thread :: panicking () { \"unwinding\" } else if let Some (outcome) = account . outcome { outcome } else if account . result . as_ref () . is_some_and (| value | value [\"constructor\"] == \"Err\") { \"error\" } else if account . result . is_some () { \"success\" } else if account . fields . 0 . get (\"asynchronous\") . and_then (Value :: as_bool) == Some (true) { \"cancelled\" } else { \"incomplete\" } ; operation . complete (outcome , account . result . unwrap_or (Value :: Null)) ; } if ! self . 0 . full_trace { return ; } if account . fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } self . 0 . emit (json ! ({ \"kind\" : \"span_envelope\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"name\" : \"rule:observe:spans\" , \"origin_name\" : span . name () , \"fields\" : account . fields . 0 , \"duration_seconds\" : self . 0 . clock . elapsed () . checked_sub (account . started) . map (| d | d . as_secs_f64 ()) , \"outcome\" : \"unobservable; explicit operation completion is authoritative\" })) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (& id) && let Some (account) = span . extensions_mut () . remove :: < SpanAccount > () { if let Some (mut operation) = account . operation { let outcome = if std :: thread :: panicking () { \"unwinding\" } else if let Some (outcome) = account . outcome { outcome } else if account . result . as_ref () . is_some_and (| value | value [\"constructor\"] == \"Err\") { \"error\" } else if account . result . is_some () { \"success\" } else if account . fields . 0 . get (\"asynchronous\") . and_then (Value :: as_bool) == Some (true) { \"cancelled\" } else { \"incomplete\" } ; operation . complete (outcome , account . result . unwrap_or (Value :: Null)) ; } if ! self . 0 . full_trace { return ; } if account . fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } self . 0 . emit (json ! ({ \"kind\" : \"span_envelope\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"name\" : \"rule:observe:spans\" , \"origin_name\" : span . name () , \"fields\" : account . fields . 0 , \"duration_seconds\" : self . 0 . clock . elapsed () . checked_sub (account . started) . map (| d | d . as_secs_f64 ()) , \"outcome\" : \"unobservable; explicit operation completion is authoritative\" })) ; } }",
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_close. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure.",
       "assessments": {
         "full_recording": "review-207",
         "secret_flow": "review-002",
@@ -7068,9 +7193,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<BootstrapGuard as Drop>::drop",
-      "body": "{ if let Some (observation) = & self . 0 { observation . summarize () ; observation . flush () ; observation . emit (json ! ({ \"kind\" : \"observation_status\" , \"availability\" : \"enabled\" , \"level\" : if observation . full_trace { \"trace\" } else { \"default\" } , \"count_scope\" : \"records preceding this status; status excluded\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"dec:observe:sinks\" , \"execution_owner\" : \"CLICOMMON\" })) ; observation . flush () ; } }",
+      "body": "{ if let Some (observation) = & self . 0 { observation . summarize () ; observation . final_status () ; } }",
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<BootstrapGuard as Drop>::drop. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation. Final status counts are assigned by the delivery worker after preceding records; drain timeout and unavailability are separate from record loss.",
+      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure.",
       "assessments": {
         "full_recording": "review-208",
         "secret_flow": "review-002",
@@ -9214,6 +9339,15 @@
       "class_decision": "public-documents"
     },
     {
+      "item": "observation::LossCauses",
+      "kind": "derive",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [derive (Default)]",
+      "class_decision": "delivery",
+      "expansion_review": "Default initializes finite atomic loss counters to zero; no public payload or secret consumer is generated."
+    },
+    {
       "item": "observation::",
       "kind": "item-macro",
       "package": "cli-common",
@@ -9374,6 +9508,15 @@
       "syntax": "# [derive (Debug)]",
       "expansion_review": "The explicit generator syntax and complete containing type declaration are bound to this admission. Standard derives supply structural value or formatting traits; serde and clap derives supply adapters under their caller boundaries. The private thread-local declaration is nonrecursive recorder state. Unknown or changed generator syntax requires renewed admission.",
       "class_decision": "public-cli"
+    },
+    {
+      "item": "observation_metrics::",
+      "kind": "item-macro",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation_metrics.rs",
+      "syntax": "include ! (\"observation_operations.rs\") ;",
+      "class_decision": "delivery",
+      "expansion_review": "The included generated file contains only the finite string constant for the records operation vocabulary. The gate compares it byte-for-byte with registry derivation; it expands no function or secret access."
     },
     {
       "item": "observation_metrics::Totals",
@@ -9671,15 +9814,6 @@
       "syntax": "# [derive (Debug , Parser)]",
       "expansion_review": "The explicit generator syntax and complete containing type declaration are bound to this admission. Standard derives supply structural value or formatting traits; serde and clap derives supply adapters under their caller boundaries. The private thread-local declaration is nonrecursive recorder state. Unknown or changed generator syntax requires renewed admission.",
       "class_decision": "public-execwrap"
-    },
-    {
-      "item": "observation_metrics::",
-      "kind": "item-macro",
-      "package": "cli-common",
-      "path": "packages/cli-common/src/observation_metrics.rs",
-      "syntax": "include ! (\"observation_operations.rs\") ;",
-      "class_decision": "delivery",
-      "expansion_review": "The included generated file contains only the finite string constant for the records operation vocabulary. The gate compares it byte-for-byte with registry derivation; it expands no function or secret access."
     },
     {
       "item": "ActId",
@@ -10575,6 +10709,12 @@
       "syntax": "struct Parser < 'a > { text : & 'a str , position : usize , }"
     },
     {
+      "item": "observation::LossCauses",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [derive (Default)] struct LossCauses ([AtomicU64 ; 9]) ;"
+    },
+    {
       "item": "observation::Observing",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
@@ -10602,7 +10742,7 @@
       "item": "observation::Message",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "enum Message { Record (Vec < u8 >) , Wake , }"
+      "syntax": "enum Message { Record (Value , u64) , Wake , }"
     },
     {
       "item": "observation::Limited",
@@ -10614,7 +10754,13 @@
       "item": "observation::Observation",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "# [doc = \" Cloneable operation context; no initialization occurs in library operations.\"] # [derive (Clone)] pub struct Observation { sender : SyncSender < Message > , summary_sender : SyncSender < Vec < u8 > > , flush_sender : SyncSender < SyncSender < () > > , diagnostic_sender : SyncSender < Vec < u8 > > , queued_bytes : Arc < AtomicU64 > , lost : Arc < AtomicU64 > , drain_timeouts : Arc < AtomicU64 > , drain_unavailable : Arc < AtomicU64 > , # [cfg (test)] refuse_drain_wait : bool , full_trace : bool , clock : Arc < dyn Clock > , recorder : JsonRecorder , next_id : Arc < AtomicU64 > , bridge : Option < Arc < crate :: observation_export :: Bridge > > , }"
+      "syntax": "# [doc = \" Cloneable operation context; no initialization occurs in library operations.\"] # [derive (Clone)] pub struct Observation { sender : SyncSender < Message > , summary_sender : SyncSender < Value > , flush_sender : SyncSender < SyncSender < () > > , diagnostic_sender : SyncSender < Value > , queued_bytes : Arc < AtomicU64 > , lost : Arc < AtomicU64 > , loss_causes : Arc < LossCauses > , attempted : Arc < AtomicU64 > , delivered : Arc < AtomicU64 > , closing : Arc < std :: sync :: atomic :: AtomicBool > , final_writer : Arc < Mutex < Box < dyn Write + Send > > > , publication : Arc < Mutex < () > > , # [cfg (test)] paused_delivery : Arc < std :: sync :: atomic :: AtomicBool > , drain_timeouts : Arc < AtomicU64 > , drain_unavailable : Arc < AtomicU64 > , # [cfg (test)] refuse_drain_wait : bool , full_trace : bool , clock : Arc < dyn Clock > , recorder : JsonRecorder , next_id : Arc < AtomicU64 > , bridge : Option < Arc < crate :: observation_export :: Bridge > > , }"
+    },
+    {
+      "item": "observation::Delivery",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "struct Delivery { worker_delivered : Arc < AtomicU64 > , worker_lost : Arc < AtomicU64 > , worker_timeouts : Arc < AtomicU64 > , worker_unavailable : Arc < AtomicU64 > , worker_causes : Arc < LossCauses > , artifact_root : std :: path :: PathBuf , publication : Arc < Mutex < () > > , closing : Arc < std :: sync :: atomic :: AtomicBool > , worker_bridge : Option < Arc < crate :: observation_export :: Bridge > > , worker_queued : Arc < AtomicU64 > , # [cfg (test)] worker_paused : Arc < std :: sync :: atomic :: AtomicBool > , }"
     },
     {
       "item": "observation::OperationKind",
@@ -11344,7 +11490,8 @@
         "records__root__sig__design__records__active_validation",
         "records__root__sig__design__records__live_carrier_bytes",
         "records__root__sig__design__records__records_per_boundary",
-        "records__root__sig__design__records__input_bytes"
+        "records__root__sig__design__records__input_bytes",
+        "records__root__sig__design__records__assembly_steps"
       ]
     }
   },

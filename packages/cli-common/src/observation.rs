@@ -8,7 +8,7 @@ use std::fmt;
 use std::io::{self, Write};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::mpsc::{self, SyncSender};
-use std::sync::{Arc, OnceLock};
+use std::sync::{Arc, Mutex, OnceLock};
 use std::time::{Duration, Instant};
 
 use serde::Serialize;
@@ -58,12 +58,42 @@ pub fn trace_enabled() -> bool {
     GLOBAL.get().is_some_and(|observation| observation.full_trace)
 }
 
+const LOSS_NAMES: [&str; 9] = [
+    "queue_full",
+    "byte_charge",
+    "record_size",
+    "capture_overflow",
+    "span_depth",
+    "reserved_channel_full",
+    "recursive_observation",
+    "artifact",
+    "writer",
+];
+#[derive(Default)]
+struct LossCauses([AtomicU64; 9]);
+impl LossCauses {
+    fn note(&self, total: &AtomicU64, cause: usize) {
+        self.0[cause].fetch_add(1, Ordering::Relaxed);
+        total.fetch_add(1, Ordering::Relaxed);
+    }
+    fn snapshot(&self) -> Value {
+        Value::Object(
+            LOSS_NAMES
+                .iter()
+                .zip(&self.0)
+                .map(|(name, count)| ((*name).into(), json!(count.load(Ordering::Relaxed))))
+                .collect(),
+        )
+    }
+}
+
 thread_local! { static OBSERVING: std::cell::Cell<bool> = const { std::cell::Cell::new(false) }; }
 struct Observing;
 impl Observing {
-    fn enter(lost: &AtomicU64) -> Option<Self> {
+    fn enter(observation: &Observation) -> Option<Self> {
         if OBSERVING.replace(true) {
-            lost.fetch_add(1, Ordering::Relaxed);
+            observation.attempted.fetch_add(1, Ordering::Relaxed);
+            observation.loss_causes.note(&observation.lost, 6);
             None
         } else {
             Some(Self)
@@ -187,7 +217,7 @@ impl Clock for SystemClock {
 }
 
 enum Message {
-    Record(Vec<u8>),
+    Record(Value, u64),
     Wake,
 }
 
@@ -220,11 +250,19 @@ impl Write for Limited {
 #[derive(Clone)]
 pub struct Observation {
     sender: SyncSender<Message>,
-    summary_sender: SyncSender<Vec<u8>>,
+    summary_sender: SyncSender<Value>,
     flush_sender: SyncSender<SyncSender<()>>,
-    diagnostic_sender: SyncSender<Vec<u8>>,
+    diagnostic_sender: SyncSender<Value>,
     queued_bytes: Arc<AtomicU64>,
     lost: Arc<AtomicU64>,
+    loss_causes: Arc<LossCauses>,
+    attempted: Arc<AtomicU64>,
+    delivered: Arc<AtomicU64>,
+    closing: Arc<std::sync::atomic::AtomicBool>,
+    final_writer: Arc<Mutex<Box<dyn Write + Send>>>,
+    publication: Arc<Mutex<()>>,
+    #[cfg(test)]
+    paused_delivery: Arc<std::sync::atomic::AtomicBool>,
     drain_timeouts: Arc<AtomicU64>,
     drain_unavailable: Arc<AtomicU64>,
     #[cfg(test)]
@@ -234,6 +272,119 @@ pub struct Observation {
     recorder: JsonRecorder,
     next_id: Arc<AtomicU64>,
     bridge: Option<Arc<crate::observation_export::Bridge>>,
+}
+
+struct Delivery {
+    worker_delivered: Arc<AtomicU64>,
+    worker_lost: Arc<AtomicU64>,
+    worker_timeouts: Arc<AtomicU64>,
+    worker_unavailable: Arc<AtomicU64>,
+    worker_causes: Arc<LossCauses>,
+    artifact_root: std::path::PathBuf,
+    publication: Arc<Mutex<()>>,
+    closing: Arc<std::sync::atomic::AtomicBool>,
+    worker_bridge: Option<Arc<crate::observation_export::Bridge>>,
+    worker_queued: Arc<AtomicU64>,
+    #[cfg(test)]
+    worker_paused: Arc<std::sync::atomic::AtomicBool>,
+}
+impl Delivery {
+    fn run(
+        self,
+        mut writer: impl Write,
+        queues: (
+            mpsc::Receiver<Message>,
+            mpsc::Receiver<Value>,
+            mpsc::Receiver<Value>,
+            mpsc::Receiver<SyncSender<()>>,
+        ),
+    ) {
+        let (receiver, diagnostic_receiver, summary_receiver, flush_receiver) = queues;
+        let worker_closing = &self.closing;
+        let worker_queued = &self.worker_queued;
+        #[cfg(test)]
+        let worker_paused = &self.worker_paused;
+        let delivery = &self;
+        while let Ok(first) = receiver.recv() {
+            for message in std::iter::once(first).chain(receiver.try_iter().take(QUEUE_RECORDS)) {
+                #[cfg(test)]
+                while worker_paused.load(Ordering::Acquire) && !worker_closing.load(Ordering::Acquire) {
+                    std::thread::yield_now();
+                }
+                if worker_closing.load(Ordering::Acquire) {
+                    return;
+                }
+                for diagnostic in diagnostic_receiver.try_iter().take(8) {
+                    delivery.deliver(&mut writer, diagnostic);
+                }
+                for summary in summary_receiver.try_iter().take(2) {
+                    delivery.deliver(&mut writer, summary);
+                }
+                match message {
+                    Message::Record(record, charged) => {
+                        delivery.deliver(&mut writer, record);
+                        worker_queued.fetch_sub(charged, Ordering::Relaxed);
+                    }
+                    Message::Wake => {}
+                }
+            }
+            for done in flush_receiver.try_iter().take(1) {
+                for diagnostic in diagnostic_receiver.try_iter().take(8) {
+                    delivery.deliver(&mut writer, diagnostic);
+                }
+                for summary in summary_receiver.try_iter().take(2) {
+                    delivery.deliver(&mut writer, summary);
+                }
+                let _ignored = done.try_send(());
+            }
+        }
+    }
+
+    fn deliver(&self, writer: &mut impl Write, mut record: Value) {
+        let _publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        if self.closing.load(Ordering::Acquire) {
+            return;
+        }
+        let Self {
+            worker_delivered,
+            worker_lost,
+            worker_timeouts,
+            worker_unavailable,
+            worker_causes,
+            artifact_root,
+            worker_bridge,
+            ..
+        } = self;
+
+        let mut cause = 7;
+        let result = (|| -> io::Result<()> {
+            if record["kind"] == "observation_status" {
+                record["delivered_records"] = json!(worker_delivered.load(Ordering::Relaxed));
+                record["lost_records"] = json!(worker_lost.load(Ordering::Relaxed));
+                record["loss_causes"] = worker_causes.snapshot();
+                record["drain_timeouts"] = json!(worker_timeouts.load(Ordering::Relaxed));
+                record["drain_unavailable"] = json!(worker_unavailable.load(Ordering::Relaxed));
+            }
+            content::compact(&mut record, artifact_root)?;
+            let mut compact = serde_json::to_vec(&record)?;
+            compact.push(b'\n');
+            if compact.len() > RECORD_LIMIT {
+                cause = 2;
+                return Err(io::Error::other("observation delivery capacity"));
+            }
+            if let Some(bridge) = &worker_bridge {
+                bridge.record(&compact);
+            }
+            cause = 8;
+            writer.write_all(&compact)?;
+            writer.flush()
+        })();
+        if result.is_err() {
+            worker_causes.note(worker_lost, cause);
+        } else {
+            worker_delivered.fetch_add(1, Ordering::Relaxed);
+        }
+    }
 }
 
 impl Observation {
@@ -247,12 +398,23 @@ impl Observation {
         bridge: Option<Arc<crate::observation_export::Bridge>>,
     ) -> io::Result<Self> {
         let (sender, receiver) = mpsc::sync_channel(QUEUE_RECORDS);
-        let (summary_sender, summary_receiver) = mpsc::sync_channel::<Vec<u8>>(2);
+        let (summary_sender, summary_receiver) = mpsc::sync_channel::<Value>(2);
         let (flush_sender, flush_receiver) = mpsc::sync_channel::<SyncSender<()>>(1);
-        let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Vec<u8>>(8);
+        let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Value>(8);
         let lost = Arc::new(AtomicU64::new(0));
         let worker_lost = lost.clone();
-        let worker_delivered = AtomicU64::new(0);
+        let loss_causes = Arc::new(LossCauses::default());
+        let worker_causes = loss_causes.clone();
+        let delivered = Arc::new(AtomicU64::new(0));
+        let worker_delivered = delivered.clone();
+        let closing = Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let worker_closing = closing.clone();
+        let publication = Arc::new(Mutex::new(()));
+        let worker_publication = publication.clone();
+        #[cfg(test)]
+        let paused_delivery = Arc::new(std::sync::atomic::AtomicBool::new(false));
+        #[cfg(test)]
+        let worker_paused = paused_delivery.clone();
         let drain_timeouts = Arc::new(AtomicU64::new(0));
         let worker_timeouts = drain_timeouts.clone();
         let drain_unavailable = Arc::new(AtomicU64::new(0));
@@ -262,61 +424,21 @@ impl Observation {
         let artifact_root = content::root()?;
         let worker_bridge = bridge.clone();
         std::thread::Builder::new().name("observation-json".into()).spawn(move || {
-            let mut writer = writer;
-            let mut deliver = |bytes: &[u8]| {
-                let result = (|| -> io::Result<()> {
-                    let mut record: Value = serde_json::from_slice(bytes)?;
-                    if record["kind"] == "observation_status" {
-                        record["delivered_records"] = json!(worker_delivered.load(Ordering::Relaxed));
-                        record["lost_records"] = json!(worker_lost.load(Ordering::Relaxed));
-                        record["drain_timeouts"] = json!(worker_timeouts.load(Ordering::Relaxed));
-                        record["drain_unavailable"] = json!(worker_unavailable.load(Ordering::Relaxed));
-                    }
-                    content::compact(&mut record, &artifact_root)?;
-                    let mut compact = serde_json::to_vec(&record)?;
-                    compact.push(b'\n');
-                    if compact.len() > RECORD_LIMIT {
-                        return Err(io::Error::other("observation delivery capacity"));
-                    }
-                    if let Some(bridge) = &worker_bridge {
-                        bridge.record(&compact);
-                    }
-                    writer.write_all(&compact)?;
-                    writer.flush()
-                })();
-                if result.is_err() {
-                    worker_lost.fetch_add(1, Ordering::Relaxed);
-                } else {
-                    worker_delivered.fetch_add(1, Ordering::Relaxed);
-                }
+            let delivery = Delivery {
+                worker_delivered,
+                worker_lost,
+                worker_timeouts,
+                worker_unavailable,
+                worker_causes,
+                artifact_root,
+                worker_bridge,
+                publication: worker_publication,
+                closing: worker_closing.clone(),
+                worker_queued,
+                #[cfg(test)]
+                worker_paused,
             };
-            while let Ok(first) = receiver.recv() {
-                for message in std::iter::once(first).chain(receiver.try_iter().take(QUEUE_RECORDS)) {
-                    for diagnostic in diagnostic_receiver.try_iter().take(8) {
-                        deliver(&diagnostic);
-                    }
-                    for summary in summary_receiver.try_iter().take(2) {
-                        deliver(&summary);
-                    }
-                    match message {
-                        Message::Record(bytes) => {
-                            let charged = bytes.len() as u64;
-                            deliver(&bytes);
-                            worker_queued.fetch_sub(charged, Ordering::Relaxed);
-                        }
-                        Message::Wake => {}
-                    }
-                }
-                for done in flush_receiver.try_iter().take(1) {
-                    for diagnostic in diagnostic_receiver.try_iter().take(8) {
-                        deliver(&diagnostic);
-                    }
-                    for summary in summary_receiver.try_iter().take(2) {
-                        deliver(&summary);
-                    }
-                    let _ignored = done.try_send(());
-                }
-            }
+            delivery.run(writer, (receiver, diagnostic_receiver, summary_receiver, flush_receiver));
         })?;
         Ok(Self {
             sender,
@@ -325,6 +447,14 @@ impl Observation {
             diagnostic_sender,
             queued_bytes,
             lost,
+            loss_causes,
+            attempted: Arc::new(AtomicU64::new(0)),
+            delivered,
+            closing,
+            final_writer: Arc::new(Mutex::new(Box::new(StderrSink))),
+            publication,
+            #[cfg(test)]
+            paused_delivery,
             drain_timeouts,
             drain_unavailable,
             #[cfg(test)]
@@ -348,6 +478,9 @@ impl Observation {
     }
 
     fn emit(&self, mut record: Value) {
+        if record["kind"] != "observation_status" {
+            self.attempted.fetch_add(1, Ordering::Relaxed);
+        }
         record["process_id"] = json!(std::process::id());
         record["timestamp"] = json!(self.clock.utc());
         record["timestamp_accuracy"] = json!(if record["timestamp"].is_null() {
@@ -358,7 +491,7 @@ impl Observation {
         record["lost_records"] = json!(self.lost.load(Ordering::Relaxed));
         let mut bytes = Limited(Vec::new());
         if serde_json::to_writer(&mut bytes, &record).is_err() || bytes.write_all(b"\n").is_err() {
-            self.lost.fetch_add(1, Ordering::Relaxed);
+            self.loss_causes.note(&self.lost, 3);
             return;
         }
         let reserved = if record["kind"] == "metric_summary" || record["kind"] == "export_summary" {
@@ -369,8 +502,10 @@ impl Observation {
             None
         };
         if let Some(sender) = reserved {
-            if bytes.0.len() > RECORD_LIMIT || sender.try_send(bytes.0).is_err() {
-                self.lost.fetch_add(1, Ordering::Relaxed);
+            if bytes.0.len() > RECORD_LIMIT {
+                self.loss_causes.note(&self.lost, 2);
+            } else if sender.try_send(record).is_err() {
+                self.loss_causes.note(&self.lost, 5);
             } else {
                 let _wake = self.sender.try_send(Message::Wake);
             }
@@ -384,23 +519,26 @@ impl Observation {
             })
             .is_err()
         {
-            self.lost.fetch_add(1, Ordering::Relaxed);
+            self.loss_causes.note(&self.lost, 1);
             return;
         }
-        if self.sender.try_send(Message::Record(bytes.0)).is_err() {
+        if self.sender.try_send(Message::Record(record, charged)).is_err() {
             self.queued_bytes.fetch_sub(charged, Ordering::Relaxed);
-            self.lost.fetch_add(1, Ordering::Relaxed);
+            self.loss_causes.note(&self.lost, 0);
         }
     }
 
     fn flush(&self) {
+        self.flush_for(Duration::from_millis(100));
+    }
+
+    fn flush_for(&self, duration: Duration) {
         let (done, wait) = mpsc::sync_channel(1);
         if self.flush_sender.try_send(done).is_err() {
             self.drain_unavailable.fetch_add(1, Ordering::Relaxed);
             return;
         }
         let _wake = self.sender.try_send(Message::Wake);
-        let duration = Duration::from_millis(100);
         #[cfg(test)]
         let duration = if self.refuse_drain_wait { Duration::ZERO } else { duration };
         match wait.recv_timeout(duration) {
@@ -411,6 +549,38 @@ impl Observation {
             Err(mpsc::RecvTimeoutError::Disconnected) => {
                 self.drain_unavailable.fetch_add(1, Ordering::Relaxed);
             }
+        }
+    }
+
+    fn final_status(&self) {
+        // Exit drainage scales with the outstanding byte charge, up to the
+        // declared 64 MiB queue: one second plus one second per charged MiB.
+        // This permits full structured-content publication, including synced
+        // objects, while a stalled sink still has a finite 65-second deadline.
+        let charged = self.queued_bytes.load(Ordering::Relaxed);
+        let millis = 1000 + charged.div_ceil(1024 * 1024).min(64) * 1000;
+        self.flush_for(Duration::from_millis(millis));
+        self.closing.store(true, Ordering::Release);
+        let _publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        let delivered = self.delivered.load(Ordering::Acquire);
+        let lost = self.lost.load(Ordering::Acquire);
+        let attempted = self.attempted.load(Ordering::Acquire);
+        let undelivered = attempted.saturating_sub(delivered.saturating_add(lost));
+        let record = json!({"kind":"observation_status","availability":"enabled",
+            "level":if self.full_trace {"trace"} else {"default"},
+            "count_scope":"records preceding this status; status excluded; queued cutoff records are undelivered",
+            "delivered_records":delivered,"lost_records":lost,"undelivered_records":undelivered,
+            "attempted_records":attempted,"loss_causes":self.loss_causes.snapshot(),
+            "drain_timeouts":self.drain_timeouts.load(Ordering::Relaxed),
+            "drain_unavailable":self.drain_unavailable.load(Ordering::Relaxed),
+            "drain_deadline_milliseconds":millis,"process_id":std::process::id(),"timestamp":self.clock.utc(),
+            "claim_owner":"ROOT","claim_label":"dec:observe:sinks","execution_owner":"CLICOMMON"});
+        // A synchronous final status cannot be stranded behind the bounded queue.
+        if let Ok(mut writer) = self.final_writer.lock() {
+            let _reported = serde_json::to_writer(&mut *writer, &record)
+                .map_err(io::Error::other)
+                .and_then(|()| writer.write_all(b"\n"))
+                .and_then(|()| writer.flush());
         }
     }
 
@@ -868,7 +1038,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn on_new_span(&self, attributes: &Attributes<'_>, id: &Id, context: Context<'_, S>) {
-        let Some(_observing) = Observing::enter(&self.0.lost) else {
+        let Some(_observing) = Observing::enter(&self.0) else {
             return;
         };
         if let Some(span) = context.span(id) {
@@ -881,7 +1051,8 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                 fields = summary.0;
             }
             if fields.2 {
-                self.0.lost.fetch_add(1, Ordering::Relaxed);
+                self.0.attempted.fetch_add(1, Ordering::Relaxed);
+                self.0.loss_causes.note(&self.0.lost, 3);
                 return;
             }
             let command = matches!(
@@ -926,7 +1097,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn on_record(&self, id: &Id, values: &Record<'_>, context: Context<'_, S>) {
-        let Some(_observing) = Observing::enter(&self.0.lost) else {
+        let Some(_observing) = Observing::enter(&self.0) else {
             return;
         };
         if let Some(span) = context.span(id)
@@ -939,7 +1110,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn on_event(&self, event: &tracing::Event<'_>, context: Context<'_, S>) {
-        let Some(_observing) = Observing::enter(&self.0.lost) else {
+        let Some(_observing) = Observing::enter(&self.0) else {
             return;
         };
         let mut fields = Fields::default();
@@ -982,7 +1153,8 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
             return;
         }
         if fields.2 {
-            self.0.lost.fetch_add(1, Ordering::Relaxed);
+            self.0.attempted.fetch_add(1, Ordering::Relaxed);
+            self.0.loss_causes.note(&self.0.lost, 3);
             return;
         }
         if self.1.as_ref().is_some_and(|filter| {
@@ -995,7 +1167,8 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
             for span in scope.from_root() {
                 if let Some(account) = span.extensions().get::<SpanAccount>() {
                     if account.fields.2 || spans.len() == 64 {
-                        self.0.lost.fetch_add(1, Ordering::Relaxed);
+                        self.0.attempted.fetch_add(1, Ordering::Relaxed);
+                        self.0.loss_causes.note(&self.0.lost, if account.fields.2 { 3 } else { 4 });
                         return;
                     }
                     spans.push(json!({"name":span.name(),"fields":account.fields.0}));
@@ -1008,7 +1181,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn on_close(&self, id: Id, context: Context<'_, S>) {
-        let Some(_observing) = Observing::enter(&self.0.lost) else {
+        let Some(_observing) = Observing::enter(&self.0) else {
             return;
         };
         if let Some(span) = context.span(&id)
@@ -1034,7 +1207,8 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                 return;
             }
             if account.fields.2 {
-                self.0.lost.fetch_add(1, Ordering::Relaxed);
+                self.0.attempted.fetch_add(1, Ordering::Relaxed);
+                self.0.loss_causes.note(&self.0.lost, 3);
                 return;
             }
             self.0.emit(json!({"kind":"span_envelope","claim_owner":"ROOT","claim_label":"rule:observe:spans","execution_owner":"CLICOMMON",
@@ -1051,12 +1225,7 @@ impl Drop for BootstrapGuard {
     fn drop(&mut self) {
         if let Some(observation) = &self.0 {
             observation.summarize();
-            observation.flush();
-            observation.emit(json!({"kind":"observation_status","availability":"enabled",
-                "level":if observation.full_trace {"trace"} else {"default"},
-                "count_scope":"records preceding this status; status excluded",
-                "claim_owner":"ROOT","claim_label":"dec:observe:sinks","execution_owner":"CLICOMMON"}));
-            observation.flush();
+            observation.final_status();
         }
     }
 }

@@ -468,7 +468,7 @@ fn summary_capacity() {
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
 }
 
-/// Claim: With the writer stalled at guard drop and an injected drain timeout, the arranged backlog fits one worker iteration; after release the final status counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.
+/// Claim: With the writer stalled before a queued status and an injected drain timeout, the arranged backlog fits one worker iteration; after release the final status counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.
 /// ´claim:cli:status-counts-are-stamped-after-preceding-delivery´
 /// ´test:unit:status-after-stalled-delivery´
 #[test]
@@ -525,17 +525,17 @@ fn status_after_stalled_delivery() {
     for index in 0..8 {
         observation
             .diagnostic_sender
-            .try_send(serde_json::to_vec(&json!({"level":"WARN","public":index})).unwrap())
+            .try_send(json!({"level":"WARN","public":index}))
             .unwrap();
     }
     observation.emit(json!({"level":"WARN","public":"dropped"}));
-    observation
-        .summary_sender
-        .try_send(serde_json::to_vec(&json!({"kind":"export_summary"})).unwrap())
-        .unwrap();
+    observation.summary_sender.try_send(json!({"kind":"export_summary"})).unwrap();
     // 60 ordinary records, nine diagnostics (one dropped), export and metrics:
     // 71 attempts, with 69 records still queued behind the in-flight writer.
-    drop(BootstrapGuard(Some(observation.clone())));
+    observation.summarize();
+    observation.flush();
+    observation.emit(json!({"kind":"observation_status"}));
+    observation.flush();
     release.send(()).unwrap();
     seen.recv_timeout(Duration::from_secs(30)).unwrap();
     let bytes = capture.0.lock().unwrap();
@@ -609,7 +609,10 @@ fn trace_burst_capacity() {
         observation.emit(json!({"kind":"trace","public":index}));
     }
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
-    drop(BootstrapGuard(Some(observation.clone())));
+    observation.summarize();
+    observation.flush();
+    observation.emit(json!({"kind":"observation_status"}));
+    observation.flush();
     release.send(()).unwrap();
     seen.recv_timeout(Duration::from_secs(30)).unwrap();
     let bytes = capture.0.lock().unwrap();
@@ -884,7 +887,7 @@ fn async_context() {
 /// ´test:unit:recursive-observation´
 #[test]
 fn recursive_observation() {
-    struct Recursive<'a>(&'a AtomicU64);
+    struct Recursive<'a>(&'a Observation);
     impl std::fmt::Debug for Recursive<'_> {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
             tracing::info!(nested = "attempt");
@@ -894,7 +897,7 @@ fn recursive_observation() {
     }
     let (observation, _, capture) = fixture();
     let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
-    tracing::subscriber::with_default(subscriber, || tracing::info!(payload=?Recursive(&observation.lost)));
+    tracing::subscriber::with_default(subscriber, || tracing::info!(payload=?Recursive(&observation)));
     let rows = records(&observation, &capture);
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0]["fields"]["payload"], json!({"atom":"complete-public-field"}));
@@ -949,12 +952,95 @@ impl Write for Capture {
         Ok(())
     }
 }
+/// Claim: When an injected exit deadline expires with a one-byte writer held at an injected delivery pause, guard destruction synchronously reports every attempted record as delivered, lost or undelivered without a reader release, so process exit needs no status rendezvous and cannot hide its queued tail.
+/// ´claim:cli:exit-reports-the-undelivered-tail´
+/// ´test:unit:exit-reports-pending-delivery´
+#[test]
+fn exit_reports_pending_delivery() {
+    struct Slow;
+    impl Write for Slow {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            Ok(bytes.len().min(1))
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+    let status = Capture::default();
+    let mut observation = Observation::with_writer(Slow, Arc::new(ManualClock(AtomicU64::new(0)))).unwrap();
+    observation.final_writer = Arc::new(Mutex::new(Box::new(status.clone())));
+    observation.refuse_drain_wait = true;
+    observation.paused_delivery.store(true, Ordering::Release);
+    for index in 0..241 {
+        observation.emit(json!({"kind":"trace","index":index}));
+    }
+    drop(BootstrapGuard(Some(observation.clone())));
+    let row: Value = serde_json::from_slice(&status.0.lock().unwrap()).unwrap();
+    assert_eq!(row["attempted_records"], 242);
+    assert_eq!(row["delivered_records"], 0);
+    assert_eq!(row["lost_records"], 0);
+    assert_eq!(row["undelivered_records"], 242);
+    assert_eq!(row["drain_timeouts"], 1);
+    assert!(observation.closing.load(Ordering::Acquire));
+    // The logical delivery pause needs no reader acknowledgement or real sleep;
+    // closing lets the worker exit without publishing a post-status record.
+}
+
+/// Claim: Deep structured public values cross delivery without a JSON reparse limit; compact objects preserve every nested array and leaf while each inline envelope remains parseable by the ordinary JSON reader.
+/// ´claim:cli:deep-public-payloads-remain-lossless´
+/// ´test:unit:deep-payload-delivery´
+#[test]
+fn deep_payload_delivery() {
+    let (observation, _, capture) = fixture();
+    let mut value = json!("public-leaf");
+    for _ in 0..160 {
+        value = Value::Array(vec![value]);
+    }
+    let old_wire = serde_json::to_vec(&value).unwrap();
+    assert!(
+        serde_json::from_slice::<Value>(&old_wire)
+            .unwrap_err()
+            .to_string()
+            .contains("recursion limit exceeded")
+    );
+    observation.emit(json!({"kind":"trace","payload":value}));
+    let (done, drained) = mpsc::sync_channel(1);
+    observation.flush_sender.send(done).unwrap();
+    observation.sender.send(Message::Wake).unwrap();
+    drained.recv_timeout(Duration::from_secs(30)).unwrap();
+    let row: Value = serde_json::from_slice(&capture.0.lock().unwrap()).unwrap();
+    let mut current = row["payload"].clone();
+    let mut depth = 0;
+    loop {
+        if let Some(path) = current["artifact"]["path"].as_str() {
+            current = serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
+        } else if let Some(values) = current.as_array() {
+            assert_eq!(values.len(), 1);
+            current = values[0].clone();
+            depth += 1;
+        } else {
+            break;
+        }
+    }
+    assert_eq!(depth, 160);
+    assert_eq!(current, "public-leaf");
+    assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
+    assert!(
+        observation
+            .loss_causes
+            .0
+            .iter()
+            .all(|count| count.load(Ordering::Relaxed) == 0)
+    );
+}
+
 fn fixture() -> (Observation, Arc<ManualClock>, Capture) {
     let clock = Arc::new(ManualClock(AtomicU64::new(0)));
     let capture = Capture::default();
     (
         {
             let mut observation = Observation::with_writer(capture.clone(), clock.clone()).unwrap();
+            observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
             observation.full_trace = true;
             observation
         },
@@ -1166,7 +1252,7 @@ fn metric_registry() {
     let snapshot = recorder.snapshot(true);
     assert!(serde_json::to_vec(&snapshot).unwrap().len() < 65_536);
     let rows = snapshot["instruments"].as_array().unwrap();
-    assert_eq!(rows.len(), 161);
+    assert_eq!(rows.len(), 162);
     assert!(!rows.iter().any(|row| row["operation"] == "unregistered"));
     assert_eq!(
         rows.iter()
@@ -1183,7 +1269,7 @@ fn metric_registry() {
         assert_eq!(
             count,
             if stem == "records__root__sig__design__records" {
-                63
+                64
             } else {
                 14
             }

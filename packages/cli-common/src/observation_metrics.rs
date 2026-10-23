@@ -40,7 +40,8 @@ const MEASURES: [(&str, &str, &str); 9] = [
 ];
 
 // The records contract owns these additional instruments; other owners do not.
-const RECORDS_MEASURES: [(&str, &str, &str); 7] = [
+const RECORDS_MEASURES: [(&str, &str, &str); 8] = [
+    ("assembly_steps", "counter", "count"),
     ("validated_records", "counter", "count"),
     ("resolved_references", "counter", "count"),
     ("refusals", "counter", "count"),

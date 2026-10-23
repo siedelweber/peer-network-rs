@@ -1486,8 +1486,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:status-counts-are-stamped-after-preceding-delivery",
       "before": "Claim: With more than one delivery batch pending behind a stalled writer at guard drop, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.",
-      "after": "Claim: With the writer stalled at guard drop and an injected drain timeout, the arranged backlog fits one worker iteration; after release the final status counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.",
-      "review": "The writer is stalled before drop; injected drain refusal leaves the arranged backlog within one worker iteration. Release then exposes the final status and the deliberate reserved-channel loss, without proving a general exit guarantee."
+      "after": "Claim: With the writer stalled before a queued status and an injected drain timeout, the arranged backlog fits one worker iteration; after release the final status counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.",
+      "review": "A queued status follows the arranged backlog only after writer release; this fixture checks delivery-time stamping, while the separate exit fixture checks synchronous disclosure before release."
     },
     {
       "operation": "pn-records::public::missing_co_legs",
@@ -1510,8 +1510,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
       "before": "Claim: The first domain entry counts and times successful validation, complete-act access and a missing-co-leg refusal at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.",
-      "after": "Claim: The first domain entry counts and times successful validation, complete-act access, reference resolution and historical edition selection, validated history and boundary assembly, plus their typed refusals at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.",
-      "review": "The process checks history validation, record validation/access, resolution, selection and assembly under each configured observation mode. Per-operation terminal counts and the assembled-record histogram are asserted independently of stdout."
+      "after": "Claim: The first domain entry counts and times successful validation, complete-act access, reference resolution and historical edition selection, validated history and boundary assembly, plus their typed refusals at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content. Repeated reads through all seventeen pure field accessors create no additional operations or series, and assembly steps remain distinct from invocation work.",
+      "review": "The exact 11 invocation outcomes remain after every pure accessor is read repeatedly. Four assembly steps use a separate counter. Deep four-package trace payloads now arrive with zero decode loss."
     },
     {
       "operation": "pn-records::integration::complete_acts_count_once",
@@ -1552,6 +1552,14 @@
       "before": "Claim: Assembly refuses history on or beyond the fixed cut, proposals before it, and a tombstoned dependency list reached transitively; unavailable content is never guessed empty.",
       "after": "Claim: Assembly refuses history on or beyond the fixed cut and proposals before it, while a history dependency tombstone neither refuses assembly nor enters a proposal's closure.",
       "review": "Both invalid cuts have exact BoundaryPlacement causes. Replacing history dependency content with a tombstone still yields the root-only closure."
+    },
+    {
+      "operation": "cli-common::observation::tests::exit_reports_pending_delivery",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:exit-reports-the-undelivered-tail",
+      "before": "Claim: When an injected exit deadline expires with a stalled writer, guard destruction synchronously reports every attempted record as delivered, lost or undelivered before any reader release, so process exit needs no status rendezvous and cannot hide its queued tail.",
+      "after": "Claim: When an injected exit deadline expires with a one-byte writer held at an injected delivery pause, guard destruction synchronously reports every attempted record as delivered, lost or undelivered without a reader release, so process exit needs no status rendezvous and cannot hide its queued tail.",
+      "review": "The one-byte writer is held at an injected delivery pause. Guard drop reports 242 attempted and undelivered records, zero delivered and zero lost before any reader acknowledgement; closing releases the worker. The deadline is injected, not measured."
     }
   ]
 }
