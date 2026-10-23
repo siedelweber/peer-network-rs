@@ -34,6 +34,25 @@ def inventory_fixture(kind='lib', location='src/lib.rs'):
 
 
 class Performance(unittest.TestCase):
+    def test_version_mismatch(self):
+        """An unreviewed stream version is refused before tests, preventing silent schema drift.
+        ´claim:devperf:exact-runner-version´
+        ´test:devperf:test-version-mismatch´
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            original = Path.cwd()
+            try:
+                os.chdir(directory)
+                def execute(argv, stdout, stderr, env=None):
+                    self.assertEqual(argv, ['cargo', 'nextest', '--version'])
+                    stdout.write('cargo-nextest 0.9.150')
+                    return SimpleNamespace(returncode=0)
+                with patch('run_tests.subprocess.check_output', return_value='fixture'), patch('run_tests.subprocess.run', side_effect=execute) as invoked:
+                    self.assertEqual(run_tests.main(), 2)
+                    self.assertEqual(invoked.call_count, 1)
+            finally:
+                os.chdir(original)
+
     def test_predicates(self):
         """Fast and slow passing and failing results retain their predicates.
         ´claim:devperf:timing-preserves-predicates´
@@ -51,20 +70,17 @@ class Performance(unittest.TestCase):
                     self.assertEqual(finding['verdict_effect'], 'none')
 
     def test_roster(self):
-        """Warnings append findings without retries, skips or termination.
-        ´claim:devperf:warnings-preserve-roster´
+        """Findings preserve input outcomes and order, keeping evidence attributable.
+        ´claim:devperf:findings-preserve-outcome-order´
         ´test:devperf:test-roster´
         """
-        calls = []
         def run(label, outcome):
-            calls.append(label)
             return {**execution(1000, outcome), 'operation': label}
         records = [run('first', 'passed'), run('second', 'failed'), run('third', 'passed')]
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'findings.jsonl'
             warnings = io.StringIO()
             self.assertEqual(report(records, {'unit': 100}, path, warnings), 0)
-            self.assertEqual(calls, ['first', 'second', 'third'])
             findings = [json.loads(line) for line in path.read_text().splitlines()]
             self.assertEqual([f['outcome'] for f in findings], ['passed', 'failed', 'passed'])
             self.assertEqual(len(warnings.getvalue().splitlines()), 3)
@@ -130,6 +146,8 @@ class Performance(unittest.TestCase):
                         self.assertEqual(env['CARGO_NET_OFFLINE'], 'true')
                         if argv[1] == 'metadata':
                             stdout.write(json.dumps(metadata))
+                        elif argv[1:] == ['nextest', '--version']:
+                            stdout.write('cargo-nextest 0.9.149')
                         elif argv[1:3] == ['nextest', 'list']:
                             stdout.write(json.dumps(inventory))
                         elif argv[1:3] == ['nextest', 'run']:
@@ -145,15 +163,15 @@ class Performance(unittest.TestCase):
                         Path('ci/nextest.toml').write_text(config)
                         with patch('run_tests.subprocess.check_output', return_value='fixture'), patch('run_tests.subprocess.run', side_effect=execute):
                             self.assertEqual(run_tests.main(), outcome)
-                        self.assertEqual(len(calls), 5)
-                        self.assertIn('binaries-only', calls[1])
-                        self.assertIn('--binaries-metadata', calls[2])
-                        nextest = calls[3]
+                        self.assertEqual(len(calls), 6)
+                        self.assertIn('binaries-only', calls[2])
+                        self.assertIn('--binaries-metadata', calls[3])
+                        nextest = calls[4]
                         self.assertEqual(nextest[nextest.index('--retries') + 1], '0')
                         self.assertIn('--no-fail-fast', nextest)
                         self.assertNotIn('--locked', nextest)
                         self.assertNotIn('--offline', nextest)
-                        self.assertIn('--doc', calls[4])
+                        self.assertIn('--doc', calls[5])
                         records = [json.loads(line) for line in Path('.lane/performance-events.jsonl').read_text().splitlines()]
                         case, = [r for r in records if r['operation'] == 'example::case']
                         self.assertEqual(case['duration_ms'], duration * 1000)

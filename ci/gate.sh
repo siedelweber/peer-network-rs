@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # Run every foundation check and report one final verdict.
 set -u
+if [ -z "${TMPDIR:-}" ] || [ ! -d "$TMPDIR" ]; then
+    echo "GATE-STRUCTURAL-ERROR: TMPDIR must name an existing caller-provided temporary directory" >&2
+    exit 2
+fi
 failed=0
 statuses=()
 mkdir -p .lane
 gate_started=$(date -u +%s.%N)
 source_id=$(time git rev-parse HEAD)
 export CARGO_NET_OFFLINE=true
-# The deployed foundation wrapper does not set TMPDIR; keep probe artifacts on
-# the assigned workspace filesystem rather than the node's small temporary root.
-export TMPDIR="${FOUNDATION_TMPDIR:-/workspace/loops/siedelweber/lanes/foundation-bite-tmp}"
-mkdir -p "$TMPDIR"
 rm -f .lane/performance-events.jsonl
 run_step() {
     local name=$1

@@ -41,23 +41,24 @@ def first_party_prose():
 
 def bare_mint_pattern(labels):
     # One compiled union preserves the exact literal and delimiter predicates.
+    if not labels:
+        raise ValueError("empty paper label set")
     return re.compile('(?<!`)`(' + '|'.join(re.escape(label) for label in sorted(labels)) + ')`(?!`)')
 
 
 def validate():
-    # Claim: normalized inventory statements and constants preserve the reviewed source-data projection exactly.
+    # Claim: nonempty release pins cover every current inventory and constants field.
     inventory = data('inventory')
     constants = data('constants')
     if not (len(inventory) == 1632 and len({row['label'] for row in inventory}) == 1632):
         raise ValueError('inventory label census')
     if not (len(constants) == 542 and len({row['id'] for row in constants}) == 542):
         raise ValueError('constants id census')
-    if not (digest([{key: value for key, value in row.items() if key != 'citable'} for row in inventory if 'added_at' not in row]) == INVENTORY_PIN):
-        raise ValueError('inventory source projection changed')
-    if not (digest([row for row in constants if 'refreshed_at' not in row]) == CONSTANTS_PIN):
-        raise ValueError('constants source projection changed')
     for name, pin in [('inventory', ADDED_INVENTORY_PIN), ('constants', REFRESHED_CONSTANTS_PIN), ('questions', RELEASE_QUESTIONS_PIN)]:
-        if digest(release_projection(name, data(name))) != pin:
+        selection = release_projection(name, data(name))
+        if not selection:
+            raise ValueError(f'{name}: empty pin selection')
+        if digest(selection) != pin:
             raise ValueError(f'{name}: release projection changed')
     relation = tomllib.loads(Path('.linter/environments.toml').read_text())
     kinds = {row['kind'] for key in ('environments', 'extensions') for row in relation[key]}
@@ -98,14 +99,16 @@ def validate():
 
     # Claim: each correspondence pin identifies its accepted authority in the publication dataset.
     publications = data('publication')
-    for name, pin in [('inventory', INVENTORY_PIN), ('constants', CONSTANTS_PIN), ('crates', CRATES_PIN), ('bites', BITES_PIN), ('questions', QUESTIONS_PIN)]:
+    for name, pin in [('crates', CRATES_PIN), ('bites', BITES_PIN), ('questions', QUESTIONS_PIN)]:
         provenance = [row for row in publications if row['name'] == name]
         if len(provenance) != 1 or provenance[0]['namespace'] != f'org.peer-network.design.{name}':
             raise ValueError(f'{name}: missing unique pin provenance')
         if provenance[0]['dispatch'] != 'siedelweber/design-study/2026-10-21-1' or "accepted decomposition" not in provenance[0]['source']:
             raise ValueError(f'{name}: pin authority differs from the accepted study')
         projection = [{key: value for key, value in row.items() if key not in {'status', 'section', 'ambiguity'}} for row in data(name)] if name == 'questions' else data(name)
-        if name in {'crates', 'bites', 'questions'} and digest(projection) != pin:
+        if not projection:
+            raise ValueError(f'{name}: empty pin selection')
+        if digest(projection) != pin:
             raise ValueError(f'{name}: source projection changed')
     for name in ('paper', 'questions'):
         rows = [row for row in publications if row['name'] == name]
@@ -162,8 +165,6 @@ ADDED_INVENTORY_PIN = '168c857b172ffe8c10fbfe153977e7b0d83e96d20b1e5c0e2bd724682
 REFRESHED_CONSTANTS_PIN = 'a5f41236d2a66582ed4f02304893e62448b3b3c8e3551e27733bced8ac9203c9'
 RELEASE_QUESTIONS_PIN = 'f0f3591d8e48acf2dc94bdfa069da82b53ff136e63fe58e7491e740996f399e9'
 
-INVENTORY_PIN = '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'
-CONSTANTS_PIN = '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'
 
 CRATES_PIN = 'b8188551b1f51e6afa88329f46b4a5d82391fdba4ecefea489043ceca227e476'
 BITES_PIN = 'feb1a8a28938cb9edc599ea0769c471e6a2c2c3cb31b915b1c450aced1cd9fdc'

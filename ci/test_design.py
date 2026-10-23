@@ -10,8 +10,9 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 
-from design import bare_mint_pattern
+from design import bare_mint_pattern, validate
 
 
 REPOSITORY = Path(__file__).resolve().parent.parent
@@ -24,6 +25,17 @@ def git(root, *args):
 
 
 class Correspondence(unittest.TestCase):
+    def test_empty_selections(self):
+        """Empty label and pin selections refuse vacuous correspondence evidence.
+        ´claim:design:nonempty-correspondence-evidence´
+        ´test:design:test-empty-selections´
+        """
+        with self.assertRaisesRegex(ValueError, 'empty paper label set'):
+            bare_mint_pattern(set())
+        with patch('design.release_projection', return_value=[]):
+            with self.assertRaisesRegex(ValueError, 'empty pin selection'):
+                validate()
+
     def test_indexed_mint_predicate(self):
         """The compiled union retains every literal and backtick boundary refusal.
         ´claim:devperf:correspondence-predicate-preserved´

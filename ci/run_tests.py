@@ -132,6 +132,11 @@ def main():
             print((run / (name + '.stderr')).read_text(), file=sys.stderr)
         return result.returncode
     started = time.monotonic()
+    version_status = execute('nextest-version', ['cargo', 'nextest', '--version'])
+    version = (run / 'nextest-version.stdout').read_text().strip().split()
+    if version_status or version[:2] != ['cargo-nextest', '0.9.149']:
+        print('PERFORMANCE-STRUCTURAL-ERROR cargo-nextest version must be exactly 0.9.149', file=sys.stderr)
+        return 2
     metadata_status = execute('metadata', ['cargo', 'metadata', '--no-deps', '--locked', '--offline', '--format-version=1'])
     build_status = execute('build', ['cargo', 'nextest', 'list', '--workspace', '--locked', '--offline',
                                      '--cargo-profile', 'gate',

@@ -20,8 +20,10 @@ def run(command, root):
 
 @contextlib.contextmanager
 def crate(name, source, lints):
-    temporary_root = Path(os.environ.get("TMPDIR", str(Path.home() / ".cache/tmp")))
-    temporary_root.mkdir(parents=True, exist_ok=True)
+    declared = os.environ.get("TMPDIR")
+    if not declared or not Path(declared).is_dir():
+        raise ValueError("TMPDIR must name an existing caller-provided temporary directory")
+    temporary_root = Path(declared)
     with tempfile.TemporaryDirectory(prefix="foundation-", dir=temporary_root) as directory:
         root = Path(directory)
         print(f"SCRATCH-CRATE={root}")

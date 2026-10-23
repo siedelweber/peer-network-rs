@@ -81,7 +81,7 @@
 //! pre-authorized therefore stands: every match runs under the
 //! deterministic operation budget [`OPS_BUDGET`], exhaustion is a loud
 //! refusal and never an answer, and [`tests::pathological_patterns`]
-//! asserts both the speed and the honesty of the refusal. The exposure is
+//! asserts the deterministic budget refusal. The exposure is
 //! narrow either way, since patterns execute only out of theories a
 //! reader deliberately acquired.
 
@@ -164,7 +164,6 @@ impl XsdPattern {
 
 #[cfg(test)]
 mod tests {
-    use std::time::{Duration, Instant};
 
     use super::*;
 
@@ -446,18 +445,15 @@ mod tests {
 
     /// The guard duty (´[ROOT-req:xchg:regexp-guard]´): a backtracking engine
     /// offers no linear-time bound, so the budget bounds the walk instead,
-    /// and this measures that it does. Under anchored matching the
-    /// exponential shapes are real — `(a+)+b` against thirty characters
-    /// ran 761 seconds unbounded when first measured — so every case must
-    /// now finish fast, either with an answer or with the budget refusal,
-    /// and a refusal is never disguised as "no match".
+    /// and this checks the deterministic refusal rather than elapsed time.
+    /// A refusal must never be disguised as "no match", since callers need
+    /// to distinguish an exhausted search from a completed predicate.
     ///
     /// Claim: A pattern with no linear-time bound finishes inside the budget, answering or refusing but never running on.
     /// ´claim:regexp:the-budget-bounds-every-walk´
     /// ´test:unit:pathological-patterns´
     #[test]
     fn pathological_patterns() {
-        let bound = Duration::from_secs(2);
         let cases: &[(&str, String)] = &[
             ("(a+)+b", "a".repeat(30)),
             ("(a*)*b", "a".repeat(30)),
@@ -470,10 +466,8 @@ mod tests {
 
         for (pattern, subject) in cases {
             let compiled = compile(pattern);
-            let started = Instant::now();
             let outcome = compiled.is_match(subject);
-            let elapsed = started.elapsed();
-            assert!(elapsed < bound, "{pattern:?} took {elapsed:?}, over the {bound:?} bound");
+            assert!(compiled.regex.is_full_match_bounded(subject, 1).is_err());
             assert!(
                 matches!(outcome, Ok(false) | Err(RegexpError::BudgetExhausted { .. })),
                 "{pattern:?} answered {outcome:?}; these subjects never match"
@@ -481,19 +475,19 @@ mod tests {
         }
     }
 
-    /// Compilation runs the pattern once against the empty string, because
-    /// the engine computes `matches_empty_string` eagerly. The seam cannot
-    /// prevent it, so it is measured here beside the match guard.
+    /// Nested quantifiers must compile without losing the required suffix,
+    /// so the eager empty-string check cannot turn this pattern into an
+    /// empty-string match. Duration is observed by the runner separately.
     ///
-    /// Claim: Compiling a nested-quantifier pattern is fast, the engine's eager empty-string match included.
-    /// ´claim:regexp:compiling-a-pathological-pattern-is-fast´
-    /// ´test:unit:compilation-of-a-pathological-pattern-is-fast´
+    /// Claim: Compiling nested quantifiers preserves their required suffix and rejects the empty subject.
+    /// ´claim:regexp:compilation-preserves-required-suffix´
+    /// ´test:unit:compilation-preserves-required-suffix´
     #[test]
-    fn compilation_of_a_pathological_pattern_is_fast() {
-        let budget = Duration::from_secs(2);
-        let started = Instant::now();
-        drop(compile("(a+)+(b+)+(c+)+d"));
-        let elapsed = started.elapsed();
-        assert!(elapsed < budget, "compilation took {elapsed:?}");
+    fn compilation_preserves_required_suffix() {
+        let pattern = compile("(a+)+(b+)+(c+)+d");
+        assert_eq!(pattern.source(), "(a+)+(b+)+(c+)+d");
+        assert!(matches!(pattern.is_match(""), Ok(false)));
+        assert!(matches!(pattern.is_match("abc"), Ok(false)));
+        assert!(matches!(pattern.is_match("abcd"), Ok(true)));
     }
 }

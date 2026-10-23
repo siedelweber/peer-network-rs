@@ -74,11 +74,19 @@ pub(crate) fn parse(source: &str) -> Result<Cddl, SyntaxError> {
         tokens,
         pos: 0,
         depth: 0,
+        #[cfg(test)]
+        type1_visits: 0,
+        #[cfg(test)]
+        resumed_type1_visits: 0,
     };
     parser.cddl()
 }
 
 struct Parser {
+    #[cfg(test)]
+    type1_visits: usize,
+    #[cfg(test)]
+    resumed_type1_visits: usize,
     tokens: Vec<Token>,
     pos: usize,
     /// How many `type2` productions are open on the call stack: the guard
@@ -365,6 +373,10 @@ impl Parser {
     ///
     /// At most one operation: ranges and control operators do not chain.
     fn type1(&mut self) -> Result<Type1, SyntaxError> {
+        #[cfg(test)]
+        {
+            self.type1_visits += 1;
+        }
         let start = self.pos;
         let target = self.type2()?;
         let operator = match self.kind() {
@@ -645,7 +657,13 @@ impl Parser {
             return Ok(GroupEntryKind::Member { key: Some(key), value });
         }
         self.pos = after_first;
+        #[cfg(test)]
+        let visits_before_resume = self.type1_visits;
         let value = self.ty_from_first(first, start)?;
+        #[cfg(test)]
+        {
+            self.resumed_type1_visits += self.type1_visits - visits_before_resume;
+        }
         Ok(GroupEntryKind::Member { key: None, value })
     }
 
@@ -1463,10 +1481,10 @@ mod tests {
     /// entry's leading `type1` is parsed exactly once. A parser that parsed it
     /// twice — once to look for a `=>` and again as the value — would cost a
     /// depth-`d` entry 2^d work, and forty levels of any of these shapes would
-    /// not finish. The time bound is generous, so the guard survives a slow
-    /// machine without ever admitting a parser that doubles.
+    /// not finish. Test-only counters check that resuming these single-choice
+    /// members enters no new type1 production, so load cannot affect the oracle.
     ///
-    /// Claim: A group entry's leading type is parsed once, so deep nesting costs one descent and not an exponential walk.
+    /// Claim: A member's parsed leading type is reused on these nested single-choice inputs, preventing a duplicate descent.
     /// ´claim:parse:a-group-entry-is-parsed-once´
     /// ´test:unit:a-deeply-nested-group-entry-parses-without-reparsing´
     #[test]
@@ -1481,16 +1499,21 @@ mod tests {
         }
         let inline_groups = format!("a = [{inline}]");
 
-        let start = std::time::Instant::now();
-        accept(&arrays);
-        accept(&maps);
-        accept(&content_key);
-        accept(&inline_groups);
-        let elapsed = start.elapsed();
-        assert!(
-            elapsed < std::time::Duration::from_secs(2),
-            "deep group entries took {elapsed:?}, far past a single descent"
-        );
+        for source in [&arrays, &maps, &content_key, &inline_groups] {
+            let tokens = tokenize(source).expect("valid nested source");
+            let mut parser = Parser {
+                tokens,
+                pos: 0,
+                depth: 0,
+                type1_visits: 0,
+                resumed_type1_visits: 0,
+            };
+            assert!(parser.cddl().is_ok());
+            assert_eq!(
+                parser.resumed_type1_visits, 0,
+                "resuming a member must reuse its leading type"
+            );
+        }
     }
 
     /// The value after `=>` is a whole `type`, so its first `type1` — the one

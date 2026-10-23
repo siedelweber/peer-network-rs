@@ -33,9 +33,9 @@ reader = "projection-pin"
 source = "ci/design.py"
 function = "digest"
 algorithm = "SHA-256 over the digest function's canonical JSON rows"
-definition = "Run ci/design.py: inventory excludes rows with added_at and the citable field; constants excludes rows with refreshed_at; questions excludes status, section and ambiguity; crates and bites use their full rows. The release_projection function separately selects added inventory rows, refreshed constants rows, and question id/status/section/ambiguity fields, preserving absence of status. The gate owns recomputation, while this audit verifies the named producer and subjects."
+definition = "Run ci/design.py: questions excludes status, section and ambiguity; crates and bites use their full rows. The release_projection function selects all edition-marked inventory and constants rows, and question id/status/section/ambiguity fields, preserving absence of status. Every pin refuses an empty selection. The gate owns recomputation, while this audit verifies the named producer and subjects."
 paths = ["ci/design.py"]
-subjects = { ADDED_INVENTORY_PIN = "docs/datasets/org.peer-network.design.inventory.json", REFRESHED_CONSTANTS_PIN = "docs/datasets/org.peer-network.design.constants.json", RELEASE_QUESTIONS_PIN = "docs/datasets/org.peer-network.design.questions.json", INVENTORY_PIN = "docs/datasets/org.peer-network.design.inventory.json", CONSTANTS_PIN = "docs/datasets/org.peer-network.design.constants.json", CRATES_PIN = "docs/datasets/org.peer-network.design.crates.json", BITES_PIN = "docs/datasets/org.peer-network.design.bites.json", QUESTIONS_PIN = "docs/datasets/org.peer-network.design.questions.json" }
+subjects = { ADDED_INVENTORY_PIN = "docs/datasets/org.peer-network.design.inventory.json", REFRESHED_CONSTANTS_PIN = "docs/datasets/org.peer-network.design.constants.json", RELEASE_QUESTIONS_PIN = "docs/datasets/org.peer-network.design.questions.json", CRATES_PIN = "docs/datasets/org.peer-network.design.crates.json", BITES_PIN = "docs/datasets/org.peer-network.design.bites.json", QUESTIONS_PIN = "docs/datasets/org.peer-network.design.questions.json" }
 
 [[rows]]
 family = "first-party-byte-literals"
