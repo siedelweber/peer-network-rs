@@ -3099,7 +3099,8 @@
         "pn-records::public::dependency_placement",
         "pn-records::public::whole_history",
         "pn-records::public::overlapping_closures",
-        "pn-records::public::boundary_refusals"
+        "pn-records::public::boundary_refusals",
+        "pn-records::public::asserted_parents"
       ],
       "implementation": "pn-records-rust",
       "kind": "suite",

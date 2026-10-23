@@ -1,8 +1,8 @@
 mod common;
 use common::{act, named, resolved};
-use pn_records::{DependencyProjection, Layout, assemble_boundary_inputs, validate_history, validate_record};
+use pn_records::{Layout, assemble_boundary_inputs, validate_history, validate_record};
 
-/// Claim: The local whole-act fixtures retain each structural act once with all its legs and unchanged quantities, units, vintages and host metadata, including a paired ancestor shared by overlapping closures; this is structural input accounting, not a partition or ledger verdict.
+/// Claim: The local whole-act fixtures retain each structural act once with all its legs and unchanged quantities, units, vintages and host metadata, including a paired in-epoch ancestor shared by overlapping closures, while a shared history ancestor joins nothing; this is structural input accounting, not a partition or ledger verdict.
 /// ´claim:acts:complete-acts-are-counted-once´
 /// ´test:integration:complete-acts-count-once´
 #[test]
@@ -33,23 +33,29 @@ fn complete_acts_count_once() {
 #[test]
 fn shared_ancestor_counts_once() {
     let mut shared = act(1, Layout::Paired);
-    shared.authoritative_position = 1;
-    let history = validate_history(&[shared.clone()], &[named("left"), named("right")]).unwrap();
+    shared.authoritative_position = 8;
     let mut roots = [act(2, Layout::Binary), act(3, Layout::Paired)];
     for root in &mut roots {
-        root.projections.dependency = DependencyProjection::Full(vec![shared.id.clone()]);
+        root.authoritative_position = 9;
+        root.body.asserted_parents = vec![shared.id.clone()];
     }
-    let view = validate_record(&roots, &history, &[]).unwrap();
+    let proposals = [shared.clone(), roots[0].clone(), roots[1].clone()];
+    let view = validate_record(&proposals, &resolved(), &[]).unwrap();
     let inputs = assemble_boundary_inputs(&view, 8).unwrap();
-    assert_eq!(inputs.closures.len(), 2);
+    assert_eq!(inputs.closures.len(), 3);
     assert!(inputs.closures.iter().all(|closure| closure.members.contains(&shared.id)));
     assert_eq!(inputs.acts.len(), 3);
     assert_eq!(inputs.acts.iter().filter(|act| act.id == shared.id).count(), 1);
     assert_eq!(inputs.acts.iter().map(|act| act.legs.len()).sum::<usize>(), 5);
-    for (actual, expected) in inputs.acts.iter().zip([&shared, &roots[0], &roots[1]]) {
-        assert_eq!(actual.id, expected.id);
-        assert_eq!(actual.body, expected.body);
-        assert_eq!(actual.authoritative_position, expected.authoritative_position);
-        assert_eq!(actual.finalization_epoch, expected.finalization_epoch);
-    }
+    let history = validate_history(&[shared], &[named("left"), named("right")]).unwrap();
+    let view = validate_record(&roots, &history, &[]).unwrap();
+    let inputs = assemble_boundary_inputs(&view, 9).unwrap();
+    assert_eq!(inputs.acts.len(), 2);
+    assert!(
+        inputs
+            .closures
+            .iter()
+            .all(|closure| closure.members == vec![closure.root.clone()])
+    );
+    assert_eq!(inputs.acts.iter().map(|act| act.legs.len()).sum::<usize>(), 3);
 }

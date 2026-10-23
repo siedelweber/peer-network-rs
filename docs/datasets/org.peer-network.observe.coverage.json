@@ -40,7 +40,7 @@
     },
     {
       "exceptions": 0,
-      "generators": 26,
+      "generators": 27,
       "helpers": 0,
       "instrumented": 7,
       "name": "pn-records",

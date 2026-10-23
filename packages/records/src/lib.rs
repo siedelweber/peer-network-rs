@@ -105,6 +105,8 @@ pub struct Quantity {
 /// (´def:acts:body´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StructuralBody {
+    /// Non-removable asserted parents, sorted by derived `ActId` order.
+    pub asserted_parents: Vec<ActId>,
     /// Required role set; endpoint and family semantics are later contracts.
     pub layout: Layout,
     /// Named exact quantities; duplicate field names are ambiguous and refused.
@@ -155,9 +157,14 @@ pub enum DependencyProjection {
     Tombstoned(u64),
 }
 
-/// Declared local bound on one act's dependency list.
+/// Provisional representation bound, pending bite 2's published parameter.
+/// Identifier byte bounds are also held there; this is not a paper-derived limit.
 /// (´def:acts:dependencies´)
 pub const MAX_DEPENDENCIES: usize = 1024;
+
+/// Provisional asserted-parent count bound, pending bite 2 parameters and byte bounds.
+/// (´def:acts:dependencies´)
+pub const MAX_ASSERTED_PARENTS: usize = 1024;
 
 /// Status derived from the owning act, not an independently supplied removal fact.
 /// (´def:acts:dependencies´)
@@ -298,11 +305,39 @@ pub enum InvalidCause {
     TombstonePosition,
 }
 
+/// Canonical asserted-parent or causal placement refusal.
+/// (´def:acts:dependencies´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
+pub enum ParentCause {
+    /// The provisional count bound is exceeded.
+    #[error("too many asserted parents")]
+    TooMany,
+    /// Parent identifiers are not strictly increasing.
+    #[error("asserted parents are not canonical")]
+    NonCanonical,
+    /// An act asserts itself as parent.
+    #[error("self asserted parent")]
+    SelfParent,
+    /// The parent is absent from history and proposals.
+    #[error("unresolved asserted parent")]
+    Missing,
+    /// The parent is not strictly before the child.
+    #[error("asserted parent is not earlier")]
+    NotEarlier,
+}
+
 /// Typed local refusal; exhaustive while this workspace package is unpublished.
 /// Consumers must handle new variants at compile time. No standing verdict is implied.
 /// (´def:acts:validation´)
 #[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum ValidationError {
+    /// Asserted-parent metadata is noncanonical, unresolved or misplaced.
+    #[error("invalid asserted parents of {act:?}, target {parent:?}: {cause}")]
+    Parent {
+        act: ActId,
+        parent: Option<ActId>,
+        cause: ParentCause,
+    },
     /// Duplicate batch or previously accepted identity, even with different host positions.
     #[error("ambiguous act identity: {0:?}")]
     DuplicateAct(ActId),
@@ -497,9 +532,11 @@ fn validate(
             references.insert(PublicReference::Edge(leg.id.clone()));
         }
     }
+    let available: Vec<_> = history.acts.iter().cloned().chain(acts.iter().map(validated_act)).collect();
     for act in acts {
         validate_act(act, &references)?;
-        validate_dependencies(act, &history.acts)?;
+        validate_dependencies(act, &available)?;
+        validate_parents(act, &available)?;
     }
     validate_declarations(declarations)?;
     Ok(ValidatedRecords {
@@ -761,6 +798,34 @@ fn validate_dependencies(act: &CandidateAct, history: &[ValidatedAct]) -> Result
     Ok(())
 }
 
+fn validate_parents(act: &CandidateAct, available: &[ValidatedAct]) -> Result<(), ValidationError> {
+    let error = |parent: Option<&ActId>, cause| ValidationError::Parent {
+        act: act.id.clone(),
+        parent: parent.cloned(),
+        cause,
+    };
+    let parents = &act.body.asserted_parents;
+    if parents.len() > MAX_ASSERTED_PARENTS {
+        return Err(error(None, ParentCause::TooMany));
+    }
+    if parents.windows(2).any(|pair| pair[0] >= pair[1]) {
+        return Err(error(None, ParentCause::NonCanonical));
+    }
+    for parent in parents {
+        if parent == &act.id {
+            return Err(error(Some(parent), ParentCause::SelfParent));
+        }
+        let target = available
+            .iter()
+            .find(|target| &target.id == parent)
+            .ok_or_else(|| error(Some(parent), ParentCause::Missing))?;
+        if target.authoritative_position >= act.authoritative_position {
+            return Err(error(Some(parent), ParentCause::NotEarlier));
+        }
+    }
+    Ok(())
+}
+
 /// Check caller-supplied accepted whole history and separately supplied external names.
 /// Act and edge references are derived together; free-standing act/edge names refuse.
 /// This checks representation and dependencies, not cryptographic or host admission.
@@ -808,6 +873,7 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
     let validated: Vec<_> = acts.iter().map(validated_act).collect();
     for act in acts {
         validate_dependencies(act, &validated)?;
+        validate_parents(act, &validated)?;
     }
     Ok(ValidatedHistory {
         acts: validated,
@@ -870,6 +936,9 @@ pub struct PrincipalClosure {
 /// (´def:acts:boundary-inputs´)
 #[derive(Debug)]
 pub struct BoundaryInputs<'a> {
+    /// Node visits, parent inspections, inherited-member insert attempts and emitted members.
+    /// None means counter overflow, never a work-limit refusal.
+    pub work: Option<u64>,
     /// Fixed pre-epoch cut: history lies before it and proposals at or after it.
     pub boundary: u64,
     /// Union of all closures, each whole act carried once in authoritative order.
@@ -884,7 +953,7 @@ pub struct BoundaryInputs<'a> {
 /// (´def:acts:boundary-inputs´)
 ///
 /// # Errors
-/// Refuses invalid placement, missing dependency content or tombstoned closure inputs.
+/// Refuses invalid boundary placement. Parent resolution and order are checked at validation.
 #[tracing::instrument(
     name = "sig:design:records",
     fields(
@@ -921,44 +990,52 @@ fn assemble(records: &ValidatedRecords, boundary: u64) -> Result<BoundaryInputs<
             return Err(dependency_error(&act.id, None, DependencyCause::BoundaryPlacement));
         }
     }
-    let history: BTreeMap<_, _> = records.history.acts.iter().map(|act| (&act.id, act)).collect();
     let mut roots: Vec<_> = records.acts.iter().collect();
     roots.sort_by_key(|act| (act.authoritative_position, &act.id));
-    let mut union = BTreeMap::new();
-    let mut closures = Vec::new();
-    for root in roots {
-        let mut members = BTreeMap::new();
-        let mut pending = vec![root];
-        while let Some(act) = pending.pop() {
-            if members.insert(&act.id, act).is_some() {
-                continue;
-            }
-            let dependencies = match &act.projections.dependency {
-                DependencyProjection::FullEmpty => &[][..],
-                DependencyProjection::Full(ids) => ids.as_slice(),
-                DependencyProjection::Tombstoned(_) => return Err(dependency_error(&act.id, None, DependencyCause::Unavailable)),
-            };
-            for dependency in dependencies {
-                let target = history
-                    .get(dependency)
-                    .ok_or_else(|| dependency_error(&act.id, Some(dependency), DependencyCause::Missing))?;
-                pending.push(*target);
+    // Strict parent placement provides a topological order. This shared memo
+    // visits each proposal once; history parents have no memo entry and add nothing.
+    let mut visited: BTreeMap<&ActId, BTreeSet<&ActId>> = BTreeMap::new();
+    let mut work = Some(0_u64);
+    let mut count = || {
+        work = work.and_then(|total| total.checked_add(1));
+        metrics::counter!("records__root__sig__design__records__work_operations").increment(1);
+    };
+    for root in &roots {
+        count();
+        let mut members = BTreeSet::from([&root.id]);
+        for parent in &root.body.asserted_parents {
+            count();
+            if let Some(ancestors) = visited.get(parent) {
+                for ancestor in ancestors {
+                    count();
+                    members.insert(*ancestor);
+                }
             }
         }
-        let mut ordered: Vec<_> = members.values().copied().collect();
-        ordered.sort_by_key(|act| (act.authoritative_position, &act.id));
+        visited.insert(&root.id, members);
+    }
+    let mut closures = Vec::new();
+    let positions: BTreeMap<_, _> = roots.iter().map(|act| (&act.id, act.authoritative_position)).collect();
+    for root in &roots {
+        let members = &visited[&root.id];
+        let mut ordered: Vec<_> = members
+            .iter()
+            .map(|id| {
+                count();
+                (*id).clone()
+            })
+            .collect();
+        ordered.sort_by_key(|id| (positions[id], id.clone()));
         closures.push(PrincipalClosure {
             root: root.id.clone(),
-            members: ordered.iter().map(|act| act.id.clone()).collect(),
+            members: ordered,
         });
-        union.extend(members);
     }
-    let mut acts: Vec<_> = union.into_values().collect();
-    acts.sort_by_key(|act| (act.authoritative_position, &act.id));
     Ok(BoundaryInputs {
         boundary,
-        acts,
+        acts: roots,
         closures,
+        work,
     })
 }
 

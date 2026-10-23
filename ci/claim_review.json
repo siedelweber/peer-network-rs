@@ -1518,16 +1518,16 @@
       "path": "packages/records/tests/integration.rs",
       "claim": "RECORDS::claim:acts:complete-acts-are-counted-once",
       "before": "Claim: In a batch containing one binary and one paired act, validation exposes exactly two complete acts with three owned projections and preserves quantities, units, vintages and host metadata unchanged; this establishes counting only for this structural fixture, not membership closure or ledger accounting.",
-      "after": "Claim: The local whole-act fixtures retain each structural act once with all its legs and unchanged quantities, units, vintages and host metadata, including a paired ancestor shared by overlapping closures; this is structural input accounting, not a partition or ledger verdict.",
-      "review": "The binary/paired fixture compares retained public fields and legs, while the sibling overlap fixture checks the shared ancestor occurs only once in the whole-act union; neither test partitions membership."
+      "after": "Claim: The local whole-act fixtures retain each structural act once with all its legs and unchanged quantities, units, vintages and host metadata, including a paired in-epoch ancestor shared by overlapping closures, while a shared history ancestor joins nothing; this is structural input accounting, not a partition or ledger verdict.",
+      "review": "The first fixture preserves retained body and metadata fields. Its sibling counts a shared paired ancestor once only while it is outside history; moving it into history leaves two singleton root closures. Neither computes partition blocks."
     },
     {
       "operation": "pn-records::public::dependency_placement",
       "path": "packages/records/tests/public.rs",
       "claim": "RECORDS::claim:acts:dependencies-require-earlier-accepted-acts",
       "before": "Claim: Missing dependency acts and dependencies at or after a dependent's position refuse distinct typed causes, while strictly earlier dependencies validate regardless of history input order.",
-      "after": "Claim: Missing dependency acts and dependencies at or after a dependent's position refuse distinct typed causes, while a strictly earlier dependency validates.",
-      "review": "The missing parent, equal position and later parent each produce the declared cause; moving the dependent strictly later admits it. History input-order independence is asserted by the separate overlap fixture."
+      "after": "Claim: Declared dependencies resolve in history or earlier proposals with identical strict placement rules; missing, equal-position and later targets refuse, independently of input order.",
+      "review": "The missing dependency, equal position and later target produce exact causes. A strictly earlier target admits from either history or the same proposed batch, including reversed input order."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_interchange_refusal",
@@ -1536,6 +1536,22 @@
       "before": "Claim: Canonical decode and unheld acceptance refuse unchanged inputs at default and trace; the two decoder boundaries and dispatch/accept each book refusal, no error, with identical complete outcome distributions.",
       "after": "Claim: Canonical value/document decode, content-key and prefix validation, routing and unheld acceptance retain their exact rejection predicates at default and trace, booking fifteen boundary refusals and no errors with identical complete outcome distributions; a truncated prefix still returns its original error.",
       "review": "The executable asserts each decoder, envelope, prefix-routing and acceptance refusal predicate unchanged, including truncation; the two modes require the same fifteen refusing boundary completions with no errors."
+    },
+    {
+      "operation": "pn-records::public::overlapping_closures",
+      "path": "packages/records/tests/public.rs",
+      "claim": "RECORDS::claim:acts:overlapping-closures-retain-complete-inputs",
+      "before": "Claim: Two proposed closures sharing a paired ancestor each retain its transitive complete acts in authoritative order, preserve the overlap and produce one whole-act union independently of candidate and history input order, without computing partition blocks.",
+      "after": "Claim: Principal closures contain precisely each proposal and its causal ancestors outside fixed history; shared in-epoch ancestors overlap, shared history ancestors do not, declared dependencies do not join closures, and their union equals all proposals regardless of input order.",
+      "review": "The five proposals cover a shared in-epoch paired parent, a transitive chain and a history-only parent. Exact closure lists, whole-act union equality and reverse input order distinguish causal closure from placement dependencies."
+    },
+    {
+      "operation": "pn-records::public::boundary_refusals",
+      "path": "packages/records/tests/public.rs",
+      "claim": "RECORDS::claim:acts:incomplete-boundary-inputs-refuse",
+      "before": "Claim: Assembly refuses history on or beyond the fixed cut, proposals before it, and a tombstoned dependency list reached transitively; unavailable content is never guessed empty.",
+      "after": "Claim: Assembly refuses history on or beyond the fixed cut and proposals before it, while a history dependency tombstone neither refuses assembly nor enters a proposal's closure.",
+      "review": "Both invalid cuts have exact BoundaryPlacement causes. Replacing history dependency content with a tombstone still yields the root-only closure."
     }
   ]
 }

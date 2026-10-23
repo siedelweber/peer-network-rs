@@ -171,6 +171,7 @@ class Processes(unittest.TestCase):
             self.assertEqual(instruments[stem+'input_bytes']['count'],3)
             self.assertEqual(instruments[stem+'records_per_boundary']['count'],1)
             self.assertEqual(instruments[stem+'records_per_boundary']['sum'],2)
+            self.assertEqual(instruments[stem+'work_operations']['counter'],15)
             self.assertEqual(summary['lost_updates'],0)
             status=next(row for row in rows if row.get('kind')=='observation_status')
             self.assertEqual(status['delivered_records'],len(rows)-1)

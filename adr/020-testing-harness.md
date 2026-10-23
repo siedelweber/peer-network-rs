@@ -110,7 +110,7 @@
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
 | ci::test_linter_entry | active | integration | ci-python | fast | 16 |
 | pn-records | active | unit | pn-records-rust | fast | 1 |
-| pn-records::public | active | public-surface | pn-records-rust | fast | 13 |
+| pn-records::public | active | public-surface | pn-records-rust | fast | 14 |
 | pn-records::integration | active | integration | pn-records-rust | fast | 2 |
 
 

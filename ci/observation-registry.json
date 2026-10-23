@@ -7889,7 +7889,7 @@
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "Locally validates complete candidates against immutable whole-act history and opaque declarations. Public inputs and typed refusals are captured; counters never influence acceptance."
+      "item_premise": "Locally validates whole candidates, with asserted parents and placement dependencies resolved against fixed history or earlier proposals. Typed refusal and public snapshot content are observed; counters never influence acceptance."
     },
     {
       "operation": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
@@ -7944,7 +7944,7 @@
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "Traverses complete dependency content iteratively against fixed pre-epoch history, refusing missing or tombstoned content. Returns whole-act union and overlapping identity closures without partitioning."
+      "item_premise": "Memoizes causal ancestors over the proposed set in strict placement order, excluding fixed history. Dependency tombstones have no closure role. Work increments are mirrored into records metering; private validation ensures resolved earlier parents. Returns proposals and their overlapping closures without partitioning."
     }
   ],
   "generators": [
@@ -9479,6 +9479,15 @@
       "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
     },
     {
+      "item": "ParentCause",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+    },
+    {
       "item": "ValidationError",
       "kind": "derive",
       "package": "pn-records",
@@ -10669,7 +10678,7 @@
       "item": "StructuralBody",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Structural content retained unchanged by local validation.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StructuralBody { # [doc = \" Required role set; endpoint and family semantics are later contracts.\"] pub layout : Layout , # [doc = \" Named exact quantities; duplicate field names are ambiguous and refused.\"] pub quantities : Vec < (String , Quantity) > , }"
+      "syntax": "# [doc = \" Structural content retained unchanged by local validation.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StructuralBody { # [doc = \" Non-removable asserted parents, sorted by derived `ActId` order.\"] pub asserted_parents : Vec < ActId > , # [doc = \" Required role set; endpoint and family semantics are later contracts.\"] pub layout : Layout , # [doc = \" Named exact quantities; duplicate field names are ambiguous and refused.\"] pub quantities : Vec < (String , Quantity) > , }"
     },
     {
       "item": "CandidateAct",
@@ -10732,10 +10741,16 @@
       "syntax": "# [doc = \" Finite local representation causes, suitable for exhaustive matching.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum InvalidCause { # [doc = \" The identity's author is empty.\"] # [error (\"empty author\")] EmptyAuthor , # [doc = \" The identity's family is empty.\"] # [error (\"empty family\")] EmptyFamily , # [doc = \" Authentication evidence is absent; nonempty evidence is not authenticated here.\"] # [error (\"empty authentication evidence\")] EmptyAuthentication , # [doc = \" A quantity field has no name.\"] # [error (\"empty quantity name\")] EmptyQuantityName , # [doc = \" Two quantity fields claim one name.\"] # [error (\"duplicate quantity name\")] DuplicateQuantityName , # [doc = \" A quantity has no unit.\"] # [error (\"empty quantity unit\")] EmptyUnit , # [doc = \" A leg names another act, including an inconsistent author or family.\"] # [error (\"wrong projection parent\")] ProjectionParent , # [doc = \" A role is outside the structural layout.\"] # [error (\"projection role outside layout\")] ProjectionRole , # [doc = \" A reference contains an empty structural component.\"] # [error (\"empty reference component\")] ReferenceComponent , # [doc = \" An untrusted leg attempts to own a removal fact.\"] # [error (\"removal fact on structural leg\")] CoLegRemoval , # [doc = \" An act's content or dependency tombstone does not follow acceptance.\"] # [error (\"tombstone at or before acceptance\")] TombstonePosition , }"
     },
     {
+      "item": "ParentCause",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Canonical asserted-parent or causal placement refusal.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ParentCause { # [doc = \" The provisional count bound is exceeded.\"] # [error (\"too many asserted parents\")] TooMany , # [doc = \" Parent identifiers are not strictly increasing.\"] # [error (\"asserted parents are not canonical\")] NonCanonical , # [doc = \" An act asserts itself as parent.\"] # [error (\"self asserted parent\")] SelfParent , # [doc = \" The parent is absent from history and proposals.\"] # [error (\"unresolved asserted parent\")] Missing , # [doc = \" The parent is not strictly before the child.\"] # [error (\"asserted parent is not earlier\")] NotEarlier , }"
+    },
+    {
       "item": "ValidationError",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Typed local refusal; exhaustive while this workspace package is unpublished.\"] # [doc = \" Consumers must handle new variants at compile time. No standing verdict is implied.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ValidationError { # [doc = \" Duplicate batch or previously accepted identity, even with different host positions.\"] # [error (\"ambiguous act identity: {0:?}\")] DuplicateAct (ActId) , # [doc = \" Two legs claim the same parent and role.\"] # [error (\"ambiguous edge identity: {0:?}\")] DuplicateEdge (EdgeId) , # [doc = \" A required reference is absent from accepted history and the validated batch.\"] # [error (\"unresolved required reference: {0:?}\")] UnresolvedReference (PublicReference) , # [doc = \" The layout's complete role set is absent.\"] # [error (\"missing {role:?} co-leg of {act:?}\")] MissingCoLeg { act : ActId , role : Role } , # [doc = \" A local structural field is invalid for the named typed reason.\"] # [error (\"invalid local representation of {act:?}: {cause}\")] InvalidRepresentation { act : ActId , cause : InvalidCause } , # [doc = \" Previously accepted history or a query contains an invalid reference.\"] # [error (\"invalid structural reference: {0:?}\")] InvalidReference (PublicReference) , # [doc = \" Declaration identities and boundaries must be locally well formed.\"] # [error (\"invalid declaration {id:?}: {cause}\")] InvalidDeclaration { id : DeclarationId , cause : DeclarationCause } , # [doc = \" A selection key is malformed independently of edition availability.\"] # [error (\"invalid declaration query: {0}\")] InvalidSelectionKey (DeclarationCause) , # [doc = \" A dependency or boundary representation cannot supply a complete closure.\"] # [error (\"invalid dependencies of {act:?}, target {dependency:?}: {cause}\")] Dependency { act : ActId , dependency : Option < ActId > , cause : DependencyCause , } , # [doc = \" Repeated identities cannot silently replace old editions.\"] # [error (\"duplicate declaration identity: {0:?}\")] DuplicateDeclaration (DeclarationId) , # [doc = \" Two editions would take effect at the same boundary for the same key.\"] # [error (\"ambiguous effective declaration: {0:?}\")] AmbiguousDeclaration (DeclarationId) , # [doc = \" No announced and effective edition exists at the requested boundary.\"] # [error (\"no effective declaration for {namespace}/{name} at {boundary}\")] MissingDeclaration { namespace : String , name : String , boundary : u64 } , }"
+      "syntax": "# [doc = \" Typed local refusal; exhaustive while this workspace package is unpublished.\"] # [doc = \" Consumers must handle new variants at compile time. No standing verdict is implied.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ValidationError { # [doc = \" Asserted-parent metadata is noncanonical, unresolved or misplaced.\"] # [error (\"invalid asserted parents of {act:?}, target {parent:?}: {cause}\")] Parent { act : ActId , parent : Option < ActId > , cause : ParentCause , } , # [doc = \" Duplicate batch or previously accepted identity, even with different host positions.\"] # [error (\"ambiguous act identity: {0:?}\")] DuplicateAct (ActId) , # [doc = \" Two legs claim the same parent and role.\"] # [error (\"ambiguous edge identity: {0:?}\")] DuplicateEdge (EdgeId) , # [doc = \" A required reference is absent from accepted history and the validated batch.\"] # [error (\"unresolved required reference: {0:?}\")] UnresolvedReference (PublicReference) , # [doc = \" The layout's complete role set is absent.\"] # [error (\"missing {role:?} co-leg of {act:?}\")] MissingCoLeg { act : ActId , role : Role } , # [doc = \" A local structural field is invalid for the named typed reason.\"] # [error (\"invalid local representation of {act:?}: {cause}\")] InvalidRepresentation { act : ActId , cause : InvalidCause } , # [doc = \" Previously accepted history or a query contains an invalid reference.\"] # [error (\"invalid structural reference: {0:?}\")] InvalidReference (PublicReference) , # [doc = \" Declaration identities and boundaries must be locally well formed.\"] # [error (\"invalid declaration {id:?}: {cause}\")] InvalidDeclaration { id : DeclarationId , cause : DeclarationCause } , # [doc = \" A selection key is malformed independently of edition availability.\"] # [error (\"invalid declaration query: {0}\")] InvalidSelectionKey (DeclarationCause) , # [doc = \" A dependency or boundary representation cannot supply a complete closure.\"] # [error (\"invalid dependencies of {act:?}, target {dependency:?}: {cause}\")] Dependency { act : ActId , dependency : Option < ActId > , cause : DependencyCause , } , # [doc = \" Repeated identities cannot silently replace old editions.\"] # [error (\"duplicate declaration identity: {0:?}\")] DuplicateDeclaration (DeclarationId) , # [doc = \" Two editions would take effect at the same boundary for the same key.\"] # [error (\"ambiguous effective declaration: {0:?}\")] AmbiguousDeclaration (DeclarationId) , # [doc = \" No announced and effective edition exists at the requested boundary.\"] # [error (\"no effective declaration for {namespace}/{name} at {boundary}\")] MissingDeclaration { namespace : String , name : String , boundary : u64 } , }"
     },
     {
       "item": "DeclarationId",
@@ -10771,7 +10786,7 @@
       "item": "BoundaryInputs",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] pub boundary : u64 , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] pub acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] pub closures : Vec < PrincipalClosure > , }"
+      "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Node visits, parent inspections, inherited-member insert attempts and emitted members.\"] # [doc = \" None means counter overflow, never a work-limit refusal.\"] pub work : Option < u64 > , # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] pub boundary : u64 , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] pub acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] pub closures : Vec < PrincipalClosure > , }"
     }
   ],
   "class_decisions": [

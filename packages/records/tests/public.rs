@@ -341,7 +341,7 @@ fn dependency_content() {
     );
 }
 
-/// Claim: Missing dependency acts and dependencies at or after a dependent's position refuse distinct typed causes, while a strictly earlier dependency validates.
+/// Claim: Declared dependencies resolve in history or earlier proposals with identical strict placement rules; missing, equal-position and later targets refuse, independently of input order.
 /// ´claim:acts:dependencies-require-earlier-accepted-acts´
 /// ´test:integration:dependency-placement´
 #[test]
@@ -370,7 +370,10 @@ fn dependency_placement() {
         );
     }
     root.authoritative_position = 9;
-    assert!(validate_record(&[root], &history, &[]).is_ok());
+    assert!(validate_record(std::slice::from_ref(&root), &history, &[]).is_ok());
+    for proposed in [[root.clone(), parent.clone()], [parent.clone(), root.clone()]] {
+        assert!(validate_record(&proposed, &resolved(), &[]).is_ok());
+    }
 }
 
 /// Claim: Whole validated history derives an act and both co-leg identities together, refuses edge-only history input and reintroduced identities through the validated snapshot.
@@ -411,57 +414,60 @@ fn whole_history() {
     );
 }
 
-/// Claim: Two proposed closures sharing a paired ancestor each retain its transitive complete acts in authoritative order, preserve the overlap and produce one whole-act union independently of candidate and history input order, without computing partition blocks.
+/// Claim: Principal closures contain precisely each proposal and its causal ancestors outside fixed history; shared in-epoch ancestors overlap, shared history ancestors do not, declared dependencies do not join closures, and their union equals all proposals regardless of input order.
 /// ´claim:acts:overlapping-closures-retain-complete-inputs´
 /// ´test:integration:overlapping-closures´
 #[test]
 fn overlapping_closures() {
-    let mut first = act(1, Layout::Binary);
-    first.authoritative_position = 1;
+    use std::collections::BTreeSet;
+    let mut history_parent = act(1, Layout::Paired);
+    history_parent.authoritative_position = 1;
+    history_parent.projections.dependency = DependencyProjection::Tombstoned(2);
+    let history = validate_history(std::slice::from_ref(&history_parent), &[named("left"), named("right")]).unwrap();
     let mut shared = act(2, Layout::Paired);
-    shared.authoritative_position = 2;
-    shared.projections.dependency = DependencyProjection::Full(vec![first.id.clone()]);
+    shared.authoritative_position = 10;
+    shared.body.asserted_parents = vec![history_parent.id.clone()];
     let mut left = act(3, Layout::Paired);
-    left.authoritative_position = 10;
-    left.projections.dependency = DependencyProjection::Full(vec![shared.id.clone()]);
+    left.authoritative_position = 11;
+    left.body.asserted_parents = vec![shared.id.clone()];
     let mut right = act(4, Layout::Binary);
-    right.authoritative_position = 11;
-    right.projections.dependency = DependencyProjection::Full(vec![first.id.clone(), shared.id.clone()]);
+    right.authoritative_position = 12;
+    right.body.asserted_parents = vec![shared.id.clone()];
+    let mut chain = act(5, Layout::Binary);
+    chain.authoritative_position = 13;
+    chain.body.asserted_parents = vec![left.id.clone()];
+    let mut separate = act(6, Layout::Binary);
+    separate.authoritative_position = 14;
+    separate.body.asserted_parents = vec![history_parent.id.clone()];
+    separate.projections.dependency = DependencyProjection::Full(vec![left.id.clone()]);
     for reversed in [false, true] {
-        let history_acts = if reversed {
-            vec![shared.clone(), first.clone()]
-        } else {
-            vec![first.clone(), shared.clone()]
-        };
-        let proposals = if reversed {
-            vec![right.clone(), left.clone()]
-        } else {
-            vec![left.clone(), right.clone()]
-        };
-        let history = validate_history(&history_acts, &[named("left"), named("right")]).unwrap();
+        let mut proposals = vec![shared.clone(), left.clone(), right.clone(), chain.clone(), separate.clone()];
+        if reversed {
+            proposals.reverse();
+        }
         let view = validate_record(&proposals, &history, &[]).unwrap();
         let inputs = assemble_boundary_inputs(&view, 10).unwrap();
         assert_eq!(inputs.boundary, 10);
-        assert_eq!(
-            inputs.acts.iter().map(|a| &a.id).collect::<Vec<_>>(),
-            vec![&first.id, &shared.id, &left.id, &right.id]
+        let expected = [vec![2], vec![2, 3], vec![2, 4], vec![2, 3, 5], vec![6]];
+        for (closure, ids) in inputs.closures.iter().zip(expected) {
+            assert_eq!(closure.members.iter().map(|id| id.sequence).collect::<Vec<_>>(), ids);
+        }
+        let union: BTreeSet<_> = inputs.closures.iter().flat_map(|closure| closure.members.iter()).collect();
+        assert_eq!(union, proposals.iter().map(|act| &act.id).collect());
+        assert_eq!(inputs.acts.iter().map(|act| &act.id).collect::<BTreeSet<_>>(), union);
+        assert!(
+            inputs
+                .closures
+                .iter()
+                .all(|closure| !closure.members.contains(&history_parent.id))
         );
-        assert_eq!(inputs.closures[0].root, left.id);
-        assert_eq!(
-            inputs.closures[0].members,
-            vec![first.id.clone(), shared.id.clone(), left.id.clone()]
-        );
-        assert_eq!(inputs.closures[1].root, right.id);
-        assert_eq!(
-            inputs.closures[1].members,
-            vec![first.id.clone(), shared.id.clone(), right.id.clone()]
-        );
+        assert_eq!(inputs.acts[0].legs.len(), 2);
         assert_eq!(inputs.acts[1].legs.len(), 2);
-        assert_eq!(inputs.acts[2].legs.len(), 2);
+        assert_eq!(inputs.work, Some(23));
     }
 }
 
-/// Claim: Assembly refuses history on or beyond the fixed cut, proposals before it, and a tombstoned dependency list reached transitively; unavailable content is never guessed empty.
+/// Claim: Assembly refuses history on or beyond the fixed cut and proposals before it, while a history dependency tombstone neither refuses assembly nor enters a proposal's closure.
 /// ´claim:acts:incomplete-boundary-inputs-refuse´
 /// ´test:integration:boundary-refusals´
 #[test]
@@ -470,6 +476,7 @@ fn boundary_refusals() {
     parent.authoritative_position = 1;
     let mut root = act(2, Layout::Paired);
     root.authoritative_position = 10;
+    root.body.asserted_parents = vec![parent.id.clone()];
     root.projections.dependency = DependencyProjection::Full(vec![parent.id.clone()]);
     let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
     let view = validate_record(std::slice::from_ref(&root), &history, &[]).unwrap();
@@ -479,19 +486,59 @@ fn boundary_refusals() {
             ValidationError::Dependency {
                 act: id,
                 dependency: None,
-                cause: DependencyCause::BoundaryPlacement
+                cause: DependencyCause::BoundaryPlacement,
             }
         );
     }
     parent.projections.dependency = DependencyProjection::Tombstoned(2);
     let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
-    let view = validate_record(&[root], &history, &[]).unwrap();
-    assert_eq!(
-        assemble_boundary_inputs(&view, 10).unwrap_err(),
-        ValidationError::Dependency {
-            act: parent.id,
-            dependency: None,
-            cause: DependencyCause::Unavailable
-        }
-    );
+    let view = validate_record(std::slice::from_ref(&root), &history, &[]).unwrap();
+    let inputs = assemble_boundary_inputs(&view, 10).unwrap();
+    assert_eq!(inputs.acts.len(), 1);
+    assert_eq!(inputs.closures[0].members, vec![root.id]);
+}
+
+/// Claim: Asserted parents are canonical structural identifiers independent of removable dependency content; missing, self, duplicate, unsorted, excessive and non-earlier parents refuse their typed cause, while an earlier in-epoch parent is accepted.
+/// ´claim:acts:asserted-parents-are-canonical-and-earlier´
+/// ´test:integration:asserted-parents´
+#[test]
+fn asserted_parents() {
+    use pn_records::{MAX_ASSERTED_PARENTS, ParentCause};
+    let mut parent = act(1, Layout::Binary);
+    parent.authoritative_position = 10;
+    let mut root = act(2, Layout::Paired);
+    root.authoritative_position = 11;
+    let other = act(3, Layout::Binary);
+    let cases = [
+        (vec![other.id.clone()], Some(other.id.clone()), ParentCause::Missing),
+        (vec![root.id.clone()], Some(root.id.clone()), ParentCause::SelfParent),
+        (vec![parent.id.clone(), parent.id.clone()], None, ParentCause::NonCanonical),
+        (vec![other.id.clone(), parent.id.clone()], None, ParentCause::NonCanonical),
+        (vec![parent.id.clone(); MAX_ASSERTED_PARENTS + 1], None, ParentCause::TooMany),
+    ];
+    for (parents, target, cause) in cases {
+        root.body.asserted_parents = parents;
+        assert_eq!(
+            validate_record(&[root.clone(), parent.clone()], &resolved(), &[]).unwrap_err(),
+            ValidationError::Parent {
+                act: root.id.clone(),
+                parent: target,
+                cause
+            }
+        );
+    }
+    root.body.asserted_parents = vec![parent.id.clone()];
+    for position in [11, 12] {
+        parent.authoritative_position = position;
+        assert_eq!(
+            validate_record(&[root.clone(), parent.clone()], &resolved(), &[]).unwrap_err(),
+            ValidationError::Parent {
+                act: root.id.clone(),
+                parent: Some(parent.id.clone()),
+                cause: ParentCause::NotEarlier
+            }
+        );
+    }
+    parent.authoritative_position = 10;
+    assert!(validate_record(&[root, parent], &resolved(), &[]).is_ok());
 }
