@@ -1477,42 +1477,46 @@ mod tests {
         accept(&nested);
     }
 
-    /// Each nested map, array, and inline group is a group entry, and a group
-    /// entry's leading `type1` is parsed exactly once. A parser that parsed it
-    /// twice — once to look for a `=>` and again as the value — would cost a
-    /// depth-`d` entry 2^d work, and forty levels of any of these shapes would
-    /// not finish. Test-only counters check that resuming these single-choice
-    /// members enters no new type1 production, so load cannot affect the oracle.
+    /// Member resumption must reuse its parsed leading type. The separate
+    /// member-to-inline-group fallback may re-descend quadratically; doubling
+    /// nesting must therefore cost at most four times the type1 visits plus
+    /// eight fixed visits. Both counters are test-only and per parser.
     ///
-    /// Claim: A member's parsed leading type is reused on these nested single-choice inputs, preventing a duplicate descent.
-    /// ´claim:parse:a-group-entry-is-parsed-once´
+    /// Claim: Resumption reuses its leading type and doubling these nested inputs has at most quadratic visit growth, guarding against exponential re-descent.
+    /// ´claim:parse:nested-entry-visits-have-bounded-growth´
     /// ´test:unit:a-deeply-nested-group-entry-parses-without-reparsing´
     #[test]
     fn a_deeply_nested_group_entry_parses_without_reparsing() {
-        let depth = 40;
-        let arrays = format!("a = {{{}uint{}}}", "[".repeat(depth), "]".repeat(depth));
-        let maps = format!("a = {}uint{}", "{".repeat(depth), "}".repeat(depth));
-        let content_key = format!("a = {{{}uint{} => 0}}", "[".repeat(depth), "]".repeat(depth));
-        let mut inline = String::from("0, 0");
-        for _ in 0..depth {
-            inline = format!("({inline}), 0");
-        }
-        let inline_groups = format!("a = [{inline}]");
+        let visits = |depth| {
+            let arrays = format!("a = {{{}uint{}}}", "[".repeat(depth), "]".repeat(depth));
+            let maps = format!("a = {}uint{}", "{".repeat(depth), "}".repeat(depth));
+            let content_key = format!("a = {{{}uint{} => 0}}", "[".repeat(depth), "]".repeat(depth));
+            let mut inline = String::from("0, 0");
+            for _ in 0..depth {
+                inline = format!("({inline}), 0");
+            }
+            let inline_groups = format!("a = [{inline}]");
 
-        for source in [&arrays, &maps, &content_key, &inline_groups] {
-            let tokens = tokenize(source).expect("valid nested source");
-            let mut parser = Parser {
-                tokens,
-                pos: 0,
-                depth: 0,
-                type1_visits: 0,
-                resumed_type1_visits: 0,
-            };
-            assert!(parser.cddl().is_ok());
-            assert_eq!(
-                parser.resumed_type1_visits, 0,
-                "resuming a member must reuse its leading type"
-            );
+            [arrays, maps, content_key, inline_groups].map(|source| {
+                let tokens = tokenize(&source).expect("valid nested source");
+                let mut parser = Parser {
+                    tokens,
+                    pos: 0,
+                    depth: 0,
+                    type1_visits: 0,
+                    resumed_type1_visits: 0,
+                };
+                assert!(parser.cddl().is_ok());
+                assert_eq!(
+                    parser.resumed_type1_visits, 0,
+                    "resuming a member must reuse its leading type"
+                );
+                assert!(parser.type1_visits > 0);
+                parser.type1_visits
+            })
+        };
+        for (shallow, deep) in visits(20).into_iter().zip(visits(40)) {
+            assert!(deep <= 4 * shallow + 8, "doubling depth grew visits from {shallow} to {deep}");
         }
     }
 

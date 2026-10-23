@@ -32,6 +32,24 @@ def result(registry):
 
 
 class Harness(unittest.TestCase):
+    def test_nextest_suite_span(self):
+        """Interleaved suite arrivals retain their own envelope, never summed case work.
+        ´claim:harness:nextest-suite-arrival-envelope´
+        ´test:harness:test-nextest-suite-span´
+        """
+        from run_tests import suite_events
+        registry = fixture()
+        inventory = {'rust-suites': {'example': {'package-name': 'example',
+                     'binary-name': 'example', 'kind': 'lib'}}}
+        meta = dict(crate='example', test_binary='example', kind='lib')
+        for outcome in ['ok', 'failed']:
+            observations = [dict(offset_ms=10, item=dict(type='suite', event='started', nextest=meta)),
+                            dict(offset_ms=20, item=dict(type='test', event='ok', name='other', exec_time=9)),
+                            dict(offset_ms=30, item=dict(type='suite', event=outcome, exec_time=15, nextest=meta))]
+            record, = suite_events(observations, inventory, registry, 'current', 'nextest')
+            self.assertEqual(record['duration_ms'], 20)
+            self.assertEqual(record['outcome'], 'passed' if outcome == 'ok' else 'failed')
+
     def test_missing_level(self):
         """A missing level is structural, preventing an undeclared scope from borrowing evidence.
         ´claim:harness:missing-level-refused´
@@ -121,13 +139,42 @@ class Harness(unittest.TestCase):
         ´test:harness:test-doctest-inventory´
         """
         from run_tests import doctest_events
-        registry = fixture('doctest', 'doctest::fixture', 'doctest')
-        for text in ['', '{"type":"test","event":"started","name":"fixture"}']:
+        registry = fixture('doctest', 'doctest::src/lib.rs - fixture [example 1]', 'doctest')
+        for text in ['', '{"type":"test","event":"started","name":"src/lib.rs - fixture (line 1)"}']:
             records = doctest_events(text, 'current', CONFIGURATION, registry)
             self.assertEqual(records[0]['outcome'], 'incomplete')
             self.assertIsNone(records[0]['duration_ms'])
             with self.assertRaisesRegex(StructuralError, 'incomplete'):
                 registry.matrix(records, 'current')
+
+    def test_doctest_identity(self):
+        """Unrelated line shifts preserve item/example identity; ambiguous source positions refuse.
+        ´claim:harness:doctest-identity-survives-line-shifts´
+        ´test:harness:test-doctest-identity´
+        """
+        from doctest_identity import identities
+        from run_tests import doctest_events
+        import json
+        names = ['src/../README.md - (line 10)', 'src/../README.md - (line 20)',
+                 'src/lib.rs - item (line 30)']
+        shifted = [n.replace('10', '110').replace('20', '120').replace('30', '130') for n in names]
+        expected = ['doctest::README.md - <module> [example 1]',
+                    'doctest::README.md - <module> [example 2]',
+                    'doctest::src/lib.rs - item [example 1]']
+        self.assertEqual(list(identities(names).values()), expected)
+        self.assertEqual(identities(reversed(shifted)), identities(shifted))
+        declared = rows('doctest', expected[0], 'doctest')
+        declared[-1]['cases'] = expected
+        registry = Registry(declared, declarations())
+        for raw in [names, shifted]:
+            stream = '\n'.join(json.dumps(dict(type='test', event=event, name=name, exec_time=0.01))
+                               for event in ['started', 'ok'] for name in reversed(raw))
+            records = doctest_events(stream, 'current', CONFIGURATION, registry)
+            self.assertEqual({r['operation'] for r in records}, set(expected))
+            self.assertTrue(all(r['outcome'] == 'passed' for r in records))
+        for bad in [[names[0], names[0]], [names[0], 'README.md - (line 10)'], ['no location']]:
+            with self.assertRaises(StructuralError):
+                identities(bad)
 
 
 if __name__ == '__main__':

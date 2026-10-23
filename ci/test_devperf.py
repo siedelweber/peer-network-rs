@@ -37,7 +37,7 @@ def inventory_fixture(kind='lib', location='src/lib.rs'):
 
 class Performance(unittest.TestCase):
     def test_noisy_clock(self):
-        """Noisy timing remains inconclusive without changing a completed predicate or hiding an excess.
+        """The reporter contract keeps injected noisy evidence inconclusive without changing a predicate or hiding an excess.
         ´claim:devperf:noisy-clock-is-nonverdict´
         ´test:devperf:test-noisy-clock´
         """
@@ -55,7 +55,7 @@ class Performance(unittest.TestCase):
             self.assertEqual(record, original)
 
     def test_cold_cache(self):
-        """A cold run cannot replace warm baseline evidence, while its excess remains visible.
+        """The reporter contract keeps injected cold/warm comparisons inconclusive while their excess remains visible.
         ´claim:devperf:cold-cache-is-nonverdict´
         ´test:devperf:test-cold-cache´
         """
@@ -95,13 +95,16 @@ class Performance(unittest.TestCase):
         self.assertEqual(assess(execution(150), declarations(), [admission])[0]['budget_ms'], 100)
 
     def test_budget_category(self):
-        """Classification follows declared categories, so renamed build budgets remain configuration findings.
+        """Declared categories keep build/aggregate configuration findings distinct from case/suite performance findings.
         ´claim:devperf:category-controls-classification´
         ´test:devperf:test-budget-category´
         """
         for category in ['build', 'aggregate']:
             finding, = assess(execution(101), {'unit': {'budget_ms': 100, 'category': category}})
             self.assertEqual(finding['classification'], 'build-or-aggregate-misconfiguration')
+        for category in ['case', 'suite']:
+            finding, = assess(execution(101), {'unit': {'budget_ms': 100, 'category': category}})
+            self.assertEqual(finding['classification'], 'performance')
 
     def test_version_mismatch(self):
         """An unreviewed stream version is refused before tests, preventing silent schema drift.

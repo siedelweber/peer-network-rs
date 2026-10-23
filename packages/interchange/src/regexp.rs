@@ -449,7 +449,7 @@ mod tests {
     /// A refusal must never be disguised as "no match", since callers need
     /// to distinguish an exhausted search from a completed predicate.
     ///
-    /// Claim: A pattern with no linear-time bound finishes inside the budget, answering or refusing but never running on.
+    /// Claim: Exponential subjects refuse at the fixed production and intermediate operation limits, while a benign match completes at the intermediate limit.
     /// ´claim:regexp:the-budget-bounds-every-walk´
     /// ´test:unit:pathological-patterns´
     #[test]
@@ -464,15 +464,34 @@ mod tests {
             ("([a-z]+)+$", "a".repeat(40)),
         ];
 
+        assert_eq!(OPS_BUDGET, 100_000, "the production operation limit is part of this guard");
+        let intermediate_limit = 1_000;
+        assert_eq!(
+            compile("a+b").regex.is_full_match_bounded("aaaab", intermediate_limit),
+            Ok(true)
+        );
+        let mut refusals = Vec::new();
         for (pattern, subject) in cases {
             let compiled = compile(pattern);
-            let outcome = compiled.is_match(subject);
             assert!(compiled.regex.is_full_match_bounded(subject, 1).is_err());
-            assert!(
-                matches!(outcome, Ok(false) | Err(RegexpError::BudgetExhausted { .. })),
-                "{pattern:?} answered {outcome:?}; these subjects never match"
-            );
+            let intermediate = compiled.regex.is_full_match_bounded(subject, intermediate_limit);
+            let production = compiled.is_match(subject);
+            assert!(matches!(intermediate, Ok(false) | Err(regexml::Error::BudgetExceeded)));
+            assert!(matches!(production, Ok(false) | Err(RegexpError::BudgetExhausted { .. })));
+            refusals.push((intermediate.is_err(), production.is_err()));
         }
+        assert_eq!(
+            refusals,
+            vec![
+                (true, true),
+                (false, false),
+                (false, false),
+                (true, true),
+                (true, true),
+                (false, false),
+                (true, true)
+            ]
+        );
     }
 
     /// Nested quantifiers must compile without losing the required suffix,

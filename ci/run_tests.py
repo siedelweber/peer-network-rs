@@ -17,6 +17,7 @@ import uuid
 from devperf import StructuralError, inclusive_ms, number
 from harness import CONFIGURATION, load as load_registry
 from properties import environment as property_environment, evidence as property_evidence
+from doctest_identity import identities as doctest_identities
 
 
 def instant():
@@ -96,13 +97,12 @@ def doctest_events(text, source, configuration, registry=None):
     records = []
     started = set()
     finished = set()
-    for line in text.splitlines():
-        if not line.startswith('{'):
-            continue
-        item = json.loads(line)
+    items = [json.loads(line) for line in text.splitlines() if line.startswith('{')]
+    names = doctest_identities({item['name'] for item in items if item.get('type') == 'test'})
+    for item in items:
         if item.get('type') != 'test':
             continue
-        name = 'doctest::' + item['name']
+        name = names[item['name']]
         if name not in expected:
             raise StructuralError(f'unregistered doctest: {name}')
         if item['event'] == 'started':
@@ -157,13 +157,14 @@ def suite_events(observations, inventory, registry, source, runner):
     outcomes = {}
     doc_start = None
     doc_names = set()
+    doc_ids = doctest_identities({o['item']['name'] for o in observations if o['item'].get('type') == 'test'}) if runner == 'doctest' else {}
     for observation in observations:
         item, offset = observation['item'], observation['offset_ms']
         if runner == 'doctest':
             if item.get('type') == 'suite' and item.get('event') == 'started':
                 doc_start, doc_names = offset, set()
             if item.get('type') == 'test':
-                case = registry.cases.get('doctest::'+item['name'])
+                case = registry.cases.get(doc_ids[item['name']])
                 if case:
                     doc_names.add(case['name'])
             if item.get('type') == 'suite' and item.get('event') in {'ok', 'failed'} and doc_start is not None:
