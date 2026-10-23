@@ -1,6 +1,7 @@
 """Negative admission fixtures for syntax coverage and semantic review bindings."""
 import copy
 import io
+import json
 import unittest
 
 from devperf import StructuralError
@@ -36,6 +37,12 @@ class Admission(unittest.TestCase):
         self.assertEqual(separate(io.BytesIO(observation + diagnostic + malformed), artifact, output), 1)
         self.assertEqual(artifact.getvalue(), observation)
         self.assertEqual(output.getvalue(), diagnostic + malformed)
+        for kind in ('span_envelope','metering','metric_summary','export_summary','observation_artifact','observation_status'):
+            record=json.dumps({'kind':kind,'public':'complete'}).encode()+b'\n'
+            output,artifact=io.BytesIO(),io.BytesIO()
+            self.assertEqual(separate(io.BytesIO(record),artifact,output),1)
+            self.assertEqual(artifact.getvalue(),record)
+            self.assertEqual(output.getvalue(),b'')
 
     def test_omitted_instrumentation(self):
         """Claim: A registered public function whose parsed body has no reviewed boundary refuses, even when its declaration and semantic review remain present.

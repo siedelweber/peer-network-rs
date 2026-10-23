@@ -269,6 +269,12 @@ impl Observation {
                     }
                 }
                 for done in flush_receiver.try_iter().take(1) {
+                    for diagnostic in diagnostic_receiver.try_iter().take(8) {
+                        deliver(&diagnostic);
+                    }
+                    for summary in summary_receiver.try_iter().take(2) {
+                        deliver(&summary);
+                    }
                     let _ignored = done.try_send(());
                 }
             }

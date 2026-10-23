@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import sys
 
-KINDS = {'trace', 'span_envelope', 'metering', 'metric_summary', 'observation_artifact', 'observation_status'}
+KINDS = {'trace', 'span_envelope', 'metering', 'metric_summary', 'export_summary', 'observation_artifact', 'observation_status'}
 
 
 def separate(source, observations, diagnostics):
