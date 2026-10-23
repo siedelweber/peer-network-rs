@@ -72,3 +72,25 @@ pub fn validate(root: &Path, templates: &[Rendering], datasets: &BTreeMap<String
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::record;
+
+    /// Claim: Only a three-digit ADR filename with the Markdown extension enters the record index.
+    /// ´claim:render:record-name-boundary´
+    /// ´test:unit:record-name-boundary´
+    #[test]
+    fn record_name_boundary() {
+        assert!(record("adr/020-testing-harness.md"));
+        for path in [
+            "adr/20-short.md",
+            "adr/0200-long.md",
+            "adr/020-title.txt",
+            "docs/020-title.md",
+            "adr/abc-title.md",
+        ] {
+            assert!(!record(path), "unexpected record: {path}");
+        }
+    }
+}

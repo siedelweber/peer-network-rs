@@ -1,0 +1,29 @@
+# Development support · `guide:testkit:support`
+
+**Section (testkit)** · `sec:testkit:area-testkit` If support loses cases, implementation identities or replay inputs, passing tests can conceal a contract failure. This unpublished, dependency-free package is used only through development dependencies under (`[ROOT-proposal:harness:packages]`).
+
+**Definition (Runner)** · `def:testkit:runner-interface` `run` validates a suite edition, unique case identifiers and unique implementation names before executing their complete Cartesian product. An adapter receives each unchanged input and returns its predicate; every returned result retains the identity and elapsed `Duration`. The caller owns persistence and joins these results with source and configuration. Adapter panics remain test failures; they are never converted into passing cases. No retry, timeout, filtering, printing or global subscriber is installed.
+
+**Definition (Replay and faults)** · `def:testkit:controls` `Seeded` implements the fixed `SplitMix64` edition-one stream from a recorded unsigned seed. `FaultPlan` selects exact logical steps, without sleeping or consulting a wall clock. These controls support tests only and supply neither cryptographic randomness nor service conformance. Unit, external public and integration tests cover independent properties. There are no optional features; the gate compiles the no-default-features configuration.
+
+**Implementation remark (support)** · `impl:testkit:support` Development support performs no production binding computation and imports no production domain crate.
+
+**Definition (case)** · `def:testkit:case` Case pairs a stable case identifier with the unchanged input supplied to each implementation.
+
+**Definition (result)** · `def:testkit:result` `CaseResult` retains suite, edition, case, implementation, original outcome and observed elapsed duration.
+
+**Definition (declaration error)** · `def:testkit:declaration-error` `DeclarationError` refuses empty or duplicate identities before adapters execute.
+
+**Definition (run)** · `def:testkit:run` run executes each declared case once per named implementation and keeps errors as results, without timing control.
+
+**Definition (seeded)** · `def:testkit:seeded` `Seeded` is the `SplitMix64` edition-one generator, for reproducible test inputs only.
+
+**Definition (seeded new)** · `def:testkit:seeded-new` `Seeded::new` initializes the exact unsigned seed recorded by its caller.
+
+**Definition (seeded next)** · `def:testkit:seeded-next` `Seeded::next_u64` advances one step using wrapping arithmetic and returns the mixed word.
+
+**Definition (fault plan)** · `def:testkit:fault-plan` `FaultPlan` is a set of logical failure steps owned by the caller.
+
+**Definition (fault plan new)** · `def:testkit:fault-plan-new` `FaultPlan::new` canonicalizes a supplied sequence of failure steps into a set.
+
+**Definition (fault at)** · `def:testkit:fault-at` `FaultPlan::fails_at` queries set membership without consuming state or reading a clock.

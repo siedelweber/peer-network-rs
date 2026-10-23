@@ -1,0 +1,11 @@
+[package]
+name = "pn-testkit"
+description = "Development-only contract runners, seeded inputs and fault control"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+version.workspace = true
+
+[lints]
+workspace = true

@@ -52,6 +52,14 @@
         {
           "owner": "ROOT",
           "target": "EXECWRAP"
+        },
+        {
+          "owner": "TESTKIT",
+          "target": "ROOT"
+        },
+        {
+          "owner": "INTERCHANGE",
+          "target": "TESTKIT"
         }
       ],
       "name": "declaration",
@@ -61,6 +69,7 @@
         "INTERCHANGE",
         "CLICOMMON",
         "EXECWRAP",
+        "TESTKIT",
         "VENDOR"
       ],
       "partitions": [
@@ -113,6 +122,11 @@
           "name": "execwrap",
           "owner": "EXECWRAP",
           "pattern": "%s\"packages/execwrap/\" *VCHAR"
+        },
+        {
+          "name": "testkit",
+          "owner": "TESTKIT",
+          "pattern": "%s\"packages/testkit/\" *VCHAR"
         }
       ]
     }

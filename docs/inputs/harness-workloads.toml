@@ -1,0 +1,32 @@
+namespace = "org.peer-network.harness.workloads"
+version = [1, 0, 0]
+
+[[rows]]
+name = "canonical-encode"
+implementation = "pn-interchange-rust"
+input = "typed array [unsigned 0, unsigned 24, true, null]; six canonical bytes"
+correctness_case = "pn-interchange::benchmark_correctness::encode_workload"
+claim = "claim:vectors:benchmark-encode-oracle"
+work_unit = "one six-byte canonical encoding"
+warmup_ms = 10
+measurement_ms = 30
+samples = 10
+baseline_status = "held"
+baseline_reason = "No reviewed compatible five-run machine campaign; fast smoke establishes execution only."
+statistical_threshold = "Criterion confidence 95 percent and significance 0.05; comparison also requires five comparable runs."
+practical_threshold = "more than 20 percent and more than 100 ms absolute; no timing threshold changes correctness"
+
+[[rows]]
+name = "canonical-decode"
+implementation = "pn-interchange-rust"
+input = "canonical bytes [132, 0, 24, 24, 245, 246]"
+correctness_case = "pn-interchange::benchmark_correctness::decode_workload"
+claim = "claim:vectors:benchmark-decode-oracle"
+work_unit = "one six-byte canonical decoding"
+warmup_ms = 10
+measurement_ms = 30
+samples = 10
+baseline_status = "held"
+baseline_reason = "No reviewed compatible five-run machine campaign; fast smoke establishes execution only."
+statistical_threshold = "Criterion confidence 95 percent and significance 0.05; comparison also requires five comparable runs."
+practical_threshold = "more than 20 percent and more than 100 ms absolute; no timing threshold changes correctness"

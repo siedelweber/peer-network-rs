@@ -1,7 +1,7 @@
 [workspace]
 resolver = "3"
 exclude = ["packages/interchange/fuzz"]
-members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap"]
+members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap", "packages/testkit"]
 
 [workspace.package]
 authors = ["Peer Network contributors"]
@@ -17,6 +17,9 @@ license = "AGPL-3.0-only"
 regexml = { path = "vendor/regexml" }
 # Property obligations require shrinking and prop_recursive over the recursive Value model.
 proptest = "1"
+pn-testkit = { path = "packages/testkit" }
+# Measurement only; plotting and parallel analysis are unnecessary for owned smoke runs.
+criterion = { version = "0.7", default-features = false }
 cli-common = { path = "packages/cli-common" }
 clap = { version = "4", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }

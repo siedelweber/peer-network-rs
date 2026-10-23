@@ -13,6 +13,8 @@ regexml.workspace = true
 thiserror = { workspace = true }
 
 [dev-dependencies]
+pn-testkit.workspace = true
+criterion.workspace = true
 # Property obligations of the design's metatheorem table: shrinking and
 # prop_recursive over the recursive Value model (adr/010-interchange-design.md, dependency
 # justifications).
@@ -21,3 +23,7 @@ proptest.workspace = true
 # (adr/010-interchange-design.md, refused dependencies) is about its own data model, which no
 # test fixture reaches.
 serde_json = { workspace = true }
+
+[[bench]]
+name = "foundation"
+harness = false

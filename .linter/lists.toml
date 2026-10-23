@@ -189,3 +189,39 @@ allowances = []
 
 [EXECWRAP."profile.claims-conform"]
 allowances = []
+
+[TESTKIT."labels.citations-import-form"]
+allowances = []
+
+[TESTKIT."labels.citations-imported-resolve"]
+allowances = []
+
+[TESTKIT."labels.citations-layer-conform"]
+allowances = []
+
+[TESTKIT."labels.citations-local-resolve"]
+allowances = []
+
+[TESTKIT."labels.generated-regions-conform"]
+allowances = []
+
+[TESTKIT."labels.heads-conform"]
+allowances = []
+
+[TESTKIT."labels.mints-kind-conform"]
+allowances = []
+
+[TESTKIT."labels.mints-unique"]
+allowances = []
+
+[TESTKIT."labels.mints-well-formed"]
+allowances = []
+
+[TESTKIT."labels.outlines-conform"]
+allowances = []
+
+[TESTKIT."profile.tests-conform"]
+allowances = []
+
+[TESTKIT."profile.claims-conform"]
+allowances = []

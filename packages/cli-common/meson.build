@@ -2,7 +2,7 @@ pkg_cli_common_rust = files(
   'src/lib.rs',
   'src/publication.rs',
   'src/tests/mod.rs',
-  'tests/public_api.rs',
+  'tests/integration.rs',
 )
 
 pkg_cli_common_prose = files(

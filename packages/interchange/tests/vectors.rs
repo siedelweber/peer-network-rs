@@ -67,9 +67,7 @@ fn corpus_has_the_seeded_shape() {
 /// ´test:integration:canonical-rows-decode-reencode-identically-and-roundtrip´
 #[test]
 fn canonical_rows_decode_reencode_identically_and_roundtrip() {
-    let rows = corpus();
-    let mut driven = 0;
-    for row in rows.iter().filter(|row| row.valid_canonical) {
+    drive("canonical", true, CANONICAL_ROWS, |row| {
         let bytes = hex_to_bytes(&row.hex);
         let context = &row.diagnostic;
 
@@ -85,10 +83,7 @@ fn canonical_rows_decode_reencode_identically_and_roundtrip() {
         let (prefix_value, consumed) =
             Value::from_canonical_prefix(&bytes).unwrap_or_else(|e| panic!("{context} was refused as a prefix: {e}"));
         assert_eq!((prefix_value, consumed), (value, bytes.len()));
-
-        driven += 1;
-    }
-    assert_eq!(driven, CANONICAL_ROWS);
+    });
 }
 
 /// Claim: Every refusal vector is refused inside its own bytes and as the variant its reason names.
@@ -96,9 +91,7 @@ fn canonical_rows_decode_reencode_identically_and_roundtrip() {
 /// ´test:integration:refusal-rows-are-refused-with-a-located-error´
 #[test]
 fn refusal_rows_are_refused_with_a_located_error() {
-    let rows = corpus();
-    let mut driven = 0;
-    for row in rows.iter().filter(|row| !row.valid_canonical) {
+    drive("refusal", false, REFUSAL_ROWS, |row| {
         let bytes = hex_to_bytes(&row.hex);
         let context = &row.diagnostic;
 
@@ -123,10 +116,7 @@ fn refusal_rows_are_refused_with_a_located_error() {
                 "{context} claims to be ill-formed but was refused as {error}"
             ),
         }
-
-        driven += 1;
-    }
-    assert_eq!(driven, REFUSAL_ROWS);
+    });
 }
 
 enum Expected {
@@ -168,4 +158,47 @@ fn expected_refusal(bytes: &[u8], reason: &str) -> Expected {
         "a refusal reason naming no property this test knows: {reason}"
     );
     Expected::WellFormedness
+}
+
+fn drive(suite: &str, valid: bool, expected: usize, predicate: impl Fn(&Row) + std::panic::RefUnwindSafe) {
+    let rows = corpus();
+    let cases: Vec<_> = rows
+        .iter()
+        .enumerate()
+        .filter(|(_, row)| row.valid_canonical == valid)
+        .map(|(index, row)| pn_testkit::Case {
+            id: format!("row-{index}"),
+            input: row,
+        })
+        .collect();
+    assert_eq!(cases.len(), expected);
+    let results = pn_testkit::run(suite, "rfc8949", &cases, &["pn-interchange-rust"], |_, row| {
+        std::panic::catch_unwind(|| predicate(row)).map_err(|_| "vector predicate failed")
+    })
+    .expect("the committed corpus has distinct row identifiers");
+    if let Ok(directory) = std::env::var("PN_CONTRACT_RESULTS") {
+        let source = std::env::var("PN_HARNESS_SOURCE").expect("runner source");
+        let configuration = std::env::var("PN_HARNESS_CONFIGURATION").expect("runner configuration");
+        let utc = std::env::var("PN_HARNESS_UTC").expect("runner UTC instant");
+        let records: Vec<_> = results
+            .iter()
+            .map(|result| {
+                serde_json::json!({
+                    "operation": format!("contract::rfc8949::{suite}::{}", result.case),
+                    "implementation": result.implementation, "contract_edition": result.edition,
+                    "outcome": if result.outcome.is_ok() { "passed" } else { "failed" },
+                    "duration_ms": result.elapsed.as_secs_f64() * 1000.0,
+                    "source": source, "configuration": configuration, "utc": utc,
+                    "owner": "interchange conformance implementer"
+                })
+            })
+            .collect();
+        let path = std::path::Path::new(&directory).join(format!("rfc8949-{suite}.json"));
+        std::fs::write(path, serde_json::to_vec(&records).expect("result records serialize")).expect("case results persist");
+    }
+    assert_eq!(results.len(), expected);
+    assert!(
+        results.iter().all(|result| result.outcome.is_ok()),
+        "a corpus predicate failed"
+    );
 }

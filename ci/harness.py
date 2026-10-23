@@ -23,7 +23,8 @@ def source_id():
 
 
 class Registry:
-    def __init__(self, rows, declared):
+    def __init__(self, rows, declared, properties=None):
+        self.properties = properties or {}
         self.levels = {}
         self.implementations = {}
         self.tiers = {}
@@ -69,12 +70,17 @@ class Registry:
                 raise StructuralError('real implementation requires service tier')
             if evidence == 'mock' and suite['budget'] != 'mock-suite':
                 raise StructuralError('mock implementation requires mock-suite budget')
-            if suite.get('runner') not in {'nextest', 'doctest', 'ci'}:
+            if suite.get('runner') not in {'nextest', 'doctest', 'ci', 'contract', 'benchmark'}:
                 raise StructuralError('unknown suite runner')
             for case in suite['cases']:
                 if not isinstance(case, str) or not case or case in self.cases:
                     raise StructuralError('duplicate or malformed registered case')
                 self.cases[case] = suite
+        if not set(self.properties).issubset(self.cases):
+            raise StructuralError('unregistered property case')
+        for suite in self.suites.values():
+            if suite.get('runner') == 'contract' and (suite.get('parent_case') not in self.cases or not suite.get('contract_edition') or not suite.get('claim')):
+                raise StructuralError('contract case mapping lacks parent, edition or establishing claim')
 
     def expected(self, runner):
         return {name for name, suite in self.cases.items() if suite['runner'] == runner}
@@ -86,6 +92,8 @@ class Registry:
             raise StructuralError(f'{runner}: case inventory differs; missing={sorted(expected-set(actual))} extra={sorted(set(actual)-expected)}')
 
     def join(self, record, source, configuration=CONFIGURATION):
+        from properties import validate
+        validate(record, self.properties)
         name = record.get('operation')
         if name not in self.cases:
             raise StructuralError(f'unregistered case: {name}')
@@ -96,6 +104,7 @@ class Registry:
                       suite=suite['name'], implementation=suite['implementation'], tier=suite['tier'],
                       evidence=implementation['evidence'], budget=level['budget'],
                       applicable_budgets=[level['budget'], suite['budget'], 'test-command', 'gate'])
+        fields.update({key: suite[key] for key in ('contract_edition', 'claim', 'claim_owner', 'parent_case') if key in suite})
         for key, value in fields.items():
             if key in record and record[key] != value:
                 raise StructuralError(f'{name}: stale or misreported {key}')
@@ -147,7 +156,8 @@ class Registry:
 
 
 def load():
-    return Registry(tomllib.loads(REGISTRY.read_text())['rows'], budgets(REGISTRY.with_name('devperf-budgets.toml')))
+    from properties import declarations
+    return Registry(tomllib.loads(REGISTRY.read_text())['rows'], budgets(REGISTRY.with_name('devperf-budgets.toml')), declarations())
 
 
 def main():
@@ -157,7 +167,7 @@ def main():
     try:
         registry = load()
         if args.matrix:
-            paths = [Path('.lane/performance-events.jsonl'), *sorted(Path('.lane').glob('harness-ci-*.jsonl'))]
+            paths = [Path('.lane/performance-events.jsonl'), Path('.lane/harness-benchmarks.jsonl'), *sorted(Path('.lane').glob('harness-ci-*.jsonl'))]
             records = [json.loads(line) for path in paths for line in path.read_text().splitlines()]
             matrix = registry.matrix(records, source_id())
             Path('.lane/harness-matrix.json').write_text(json.dumps({'schema': 1, 'rows': matrix}, indent=2)+'\n')

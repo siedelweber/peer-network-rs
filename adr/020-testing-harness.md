@@ -34,18 +34,18 @@
 
 **Amendment (Foundation registry and join)** · `amend:harness:registry-join` This implements the registry and result-join portion of (`gate:harness:foundation`) and (`gate:design:harness-foundation`), refining (`dec:harness:levels`) and (`rule:harness:tiers`). The committed harness registry declares four levels, each active suite's complete case roster, implementation and evidence class, tier and case/suite budget references. It replaces the interim location rule in (`amend:devperf:foundation-reporting`). Public-surface declarations preserve the existing crate-labelled tests, including those currently located in internal test modules; declaration does not claim their later layout audit complete. Unknown cases, missing declarations, unregistered implementations, ignored or incomplete required cases, dropped cases, changed source/configuration and mock evidence labelled as real are structural errors. The nextest inventory must equal the declared roster before results join. Doctests join against their committed prior inventory, including cases that never start; CI unittest discovery and results use the same accounting. Every joined case retains its source, configuration, level, suite, implementation, evidence class, tier, applicable budgets, raw outcome and duration in milliseconds. A suite name is not an authored claim; the claim-site audit and obligation join remain under (`gate:testing:foundation`).
 
-**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 53 suites and 6 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
+**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 66 suites and 7 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
-| cli-common | active | public-surface | cli-common-rust | fast | 73 |
-| cli-common::public_api | active | integration | cli-common-rust | fast | 5 |
-| documents::behaviour | active | integration | documents-rust | fast | 28 |
+| cli-common | active | unit | cli-common-rust | fast | 73 |
+| cli-common::integration | active | integration | cli-common-rust | fast | 5 |
+| documents::integration | active | integration | documents-rust | fast | 28 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
-| execwrap | active | public-surface | execwrap-rust | fast | 25 |
-| execwrap::subprocess_contract | active | integration | execwrap-rust | fast | 18 |
+| execwrap | active | unit | execwrap-rust | fast | 25 |
+| execwrap::integration | active | integration | execwrap-rust | fast | 18 |
 | pn-interchange | active | unit | pn-interchange-rust | fast | 223 |
-| pn-interchange::acceptance | active | integration | pn-interchange-rust | fast | 14 |
+| pn-interchange::integration | active | integration | pn-interchange-rust | fast | 14 |
 | pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |
 | pn-interchange::deterministic_encoding | active | integration | pn-interchange-rust | fast | 13 |
 | pn-interchange::documents | active | integration | pn-interchange-rust | fast | 11 |
@@ -91,6 +91,19 @@
 | planned-api | held | held | none | service | 0 |
 | planned-devnet | held | held | none | service | 0 |
 | planned-client | held | held | none | service | 0 |
+| pn-testkit | active | unit | pn-testkit-rust | fast | 2 |
+| pn-testkit::public | active | public-surface | pn-testkit-rust | fast | 1 |
+| pn-testkit::integration | active | integration | pn-testkit-rust | fast | 1 |
+| documents | active | unit | documents-rust | fast | 1 |
+| documents::public | active | public-surface | documents-rust | fast | 1 |
+| cli-common::public | active | public-surface | cli-common-rust | fast | 1 |
+| execwrap::public | active | public-surface | execwrap-rust | fast | 1 |
+| pn-interchange::public | active | public-surface | pn-interchange-rust | fast | 1 |
+| pn-interchange::benchmark_correctness | active | integration | pn-interchange-rust | fast | 2 |
+| ci::test_testkit | active | unit | ci-python | fast | 6 |
+| rfc8949-canonical | active | integration | pn-interchange-rust | fast | 67 |
+| rfc8949-refusal | active | integration | pn-interchange-rust | fast | 26 |
+| foundation-benchmarks | active | integration | pn-interchange-rust | fast | 2 |
 
 
 **Amendment (Matrix and remaining support)** · `amend:harness:matrix-evidence` The untracked .lane/harness-matrix.json artifact and HARNESS-MATRIX gate summary publish source/configuration/implementation/tier results and explicit holds under (`rule:harness:tiers`). The service tier has no provisioned worker and remains held, never passed by fast evidence. Planned storage, burn and API suites remain held with no implementation, as do the other unimplemented domain contracts in (`model:design:harness-suites`). The measured performance tier remains held for benchmark workloads and reviewed baselines. The support package, accepted dependency conditions, property seed/replay conventions, benchmark conventions and correctness probes, and completion of each package's required test-level coverage/layout remain for the support step; (`gate:harness:foundation`) and (`gate:design:harness-foundation`) remain open. Registry declaration and successful rendering do not create service conformance or executed claims.
@@ -102,3 +115,45 @@
 **Rule (Wallet request recovery)** · `rule:harness:wallet-recovery` Bind an opaque request identifier within one declared run and selected wallet to the complete immutable typed intent: operation, asset, amount, permanent target, authenticated binding and allowed fee policy. The identifier is an operational retry key, not structural act identity or the JSON-RPC correlation id. Serialize conflicting uses across all writers of that wallet; the same identifier with different intent is refused. Before a spend can escape through broadcast, the admitted wallet integration must durably associate that request and intent with the chosen inputs and exact signed transaction, and make creation and association recoverable across restart without an unrecorded broadcast gap. Include the run/request identifier with the permanent target in the signed burn commitment, and cross-check decoded outputs, amounts and inputs against the intent; wallet metadata alone is a lookup aid, not burn provenance. On a lost reply, inspect the selected wallet's complete relevant history, including pending, conflicted and abandoned transactions, and recover that association before acting. A uniquely matched transaction may be queried or rebroadcast unchanged; never replace it with fresh inputs to repair uncertainty. An empty page, missing mempool entry, lagging wallet, rescan, inaccessible wallet or lost association is not proof that no spend occurred. Report unavailable or incomplete with unknown effect and retain the same request identifier; require reconciliation before further spending. Only an authoritative no-creation result under the serialized wallet contract permits first creation for that intent. Prove the required durable association and complete lookup on the admitted Elements RPC integration; ordinary comments and RPC ids do not establish idempotence. If it cannot supply that contract, the spending workflow is unsupported before effects, or incomplete after possible effects, never backed by a second client store. Faucet funding separately recovers the node's grant status for the same run/request and checks the receiving wallet; it does not replace that request after a lost reply.
 
 **Amendment (Wallet and GraphQL clients)** · `amend:harness:client-packages` The client contracts now follow (`dec:harness:client-packages`), (`dec:harness:client-schema`) and (`rule:harness:wallet-recovery`). This amends (`sig:harness:clients`), (`rule:harness:burn-targets`), (`rule:harness:client-output`) and the client portion of (`proposal:harness:packages`), withdrawing the independent client recovery journal and direct command-side storage/RPC adapters. The wallet is already the authority for its spending, while a shared GraphQL language preserves node types, outcomes and exact binding bytes through the client and command. The node's durable grant quotas and domain history remain PostgreSQL responsibilities; they are not the withdrawn client journal. Implementation evidence remains held under (`open:design:harness-evidence`).
+
+
+**Amendment (Development support)** · `amend:harness:support-package` The foundation now implements the unpublished, dependency-free pn-testkit under (`proposal:harness:packages`). Its generic runner validates identities before effects and returns each case's original predicate and named implementation to the caller-owned collector; elapsed duration cannot select, retry or terminate a case. The interchange RFC 8949 corpus uses that runner for all 67 canonical and 26 refusal rows, preserving every original predicate and joining each row under the unchanged establishing claims. The generator is a fixed seeded stream, and fault control uses caller-declared logical steps. The Cargo metadata guard refuses every normal or build edge to pn-testkit, including renamed edges, while permitting development edges. Unit, external public-surface and integration evidence exists for the support package and each of the four existing packages; existing internal cli-common and execwrap suites are now declared unit, with new external tests/public.rs witnesses. One existing integration entry point in each package moves to tests/integration.rs without changing its predicates; other focused integration suites remain. The deployed linter derives integration test labels for every tests/ carrier, while the registry independently declares public-surface scope for tests/public.rs; this does not change the label calculus or its profiles.
+
+**Amendment (Reviewed dependencies)** · `amend:harness:dependency-review` The following fetched package manifests and Cargo resolved-feature metadata discharge the applicable version, licence and feature conditions of (`proposal:harness:dependencies`). Proptest remains at its existing locked version and default features, with synchronous execution, timeout zero and no timed shrinking limit. Criterion is a development dependency with all optional features disabled; its child process is reachable through the owned runner described below, and no measurement library enters a production dependency graph. Dual-licensed packages are accepted under their MIT option, and Apache-2.0-only measurement dependencies remain development-only. The guard checks this reviewed metadata against the resolved graph. Tokio is not adopted: no current test needs an async runtime, so its condition is held until the first async test reviews and demonstrates runtime control. No secret-bearing workload is admitted by these public fixed-input samples.
+
+**Table (Dependency versions and features)** · `tab:harness:dependency-review` Versions and features are read from the fetched registry manifests and resolved graph, not inferred from version requirements.
+
+| Package | Version | Licence | Enabled features | Role |
+|---|---|---|---|---|
+| anes | 0.1.6 | MIT OR Apache-2.0 | default | Criterion transitive development dependency |
+| cast | 0.3.0 | MIT OR Apache-2.0 | none | Criterion transitive development dependency |
+| ciborium | 0.2.2 | Apache-2.0 | default, std | Criterion transitive development dependency |
+| ciborium-io | 0.2.2 | Apache-2.0 | alloc, std | Criterion transitive development dependency |
+| ciborium-ll | 0.2.2 | Apache-2.0 | none | Criterion transitive development dependency |
+| criterion | 0.7.0 | Apache-2.0 OR MIT | none | owned benchmark measurement |
+| criterion-plot | 0.6.0 | MIT OR Apache-2.0 | none | Criterion transitive development dependency |
+| crunchy | 0.2.4 | MIT | default, limit_128 | Criterion transitive development dependency |
+| either | 1.19.0 | MIT OR Apache-2.0 | std, use_std | Criterion transitive development dependency |
+| half | 2.7.1 | MIT OR Apache-2.0 | none | Criterion transitive development dependency |
+| itertools | 0.13.0 | MIT OR Apache-2.0 | default, use_alloc, use_std | Criterion transitive development dependency |
+| oorandom | 11.1.5 | MIT | none | Criterion transitive development dependency |
+| pn-testkit | 0.1.0 | AGPL-3.0-only | none | development-only support |
+| proptest | 1.12.0 | MIT OR Apache-2.0 | bit-set, default, fork, regex-syntax, rusty-fork, std, tempfile, timeout | existing bounded property generation and shrinking |
+| regex | 1.13.1 | MIT OR Apache-2.0 | std | Criterion transitive development dependency |
+| tinytemplate | 1.2.1 | Apache-2.0 OR MIT | none | Criterion transitive development dependency |
+
+
+**Amendment (Property replay evidence)** · `amend:harness:property-replay` The 23 existing properties retain their generators, shrinkers, predicates and 256-case default strength under (`conv:xchg:metatheorems-as-tests`). The fast seed set is the single recorded unsigned seed 20261023 with the cc algorithm; each joined result carries seed, configured successful-case count, generator and shrinker editions, scheduling/fault choices and the committed regression corpus path. Passing results account for the configured generated cases; persisted regression cases run additionally. Failed searches retain their failure and report the completed generated count as unknown rather than inventing it. All inherited PROPTEST variables are removed before the declared configuration is applied, and failure persistence remains enabled. The committed proptest-regressions files are replay inputs; newly minimized failures require review before entering that corpus. A missing seed is structural. No additional property was added to documents or cli-common merely to duplicate existing predicates.
+
+**Definition (Replay invocation)** · `def:harness:property-replay-command` For example, replay the named property with `env PROPTEST_RNG_SEED=20261023 PROPTEST_RNG_ALGORITHM=cc PROPTEST_CASES=256 PROPTEST_FORK=false PROPTEST_TIMEOUT=0 PROPTEST_MAX_SHRINK_TIME=0 PROPTEST_MAX_SHRINK_ITERS=4294967295 cargo test -p pn-interchange --locked --offline --profile gate --test properties unique_names_decoding_inverts_encoding -- --exact --nocapture`, with other PROPTEST variables unset. The two in-crate properties use `--lib` and their full cddl::tests function names instead of `--test properties`. Keep the same source, lockfile and committed regression corpus: a seed across changed generators or dependencies is not the same replay. The property result declares a configured case count, not an invented count of attempts, rejected inputs, shrink steps or persisted witnesses.
+
+**Amendment (Owned benchmark command)** · `amend:harness:owned-benchmarks` The command `python3 -B ci/benchmarks.py` refuses terminal stdout before effects and emits one JSON result on completion; structural diagnostics are JSON on stderr. It captures both Cargo and Criterion streams into a fresh untracked .lane/benchmarks run directory, along with source/configuration, toolchain, dependency versions, CPU/affinity/load, features, input and sampling declarations, raw Criterion samples and estimates, summaries, findings and inconclusive assessments. Criterion's previous-run output stays within that fresh artifact directory and never replaces reviewed baseline data. Independent correctness cases run in the ordinary test roster, and each benchmark executable checks its fixed oracle before measuring. A correctness failure fails the command and matrix; timing comparisons do not. Memory, CPU-time and allocation instrumentation are explicitly unavailable, not zero. Fast smoke is noisy evidence without a reviewed comparable five-run baseline, so its comparison is inconclusive even when its functional execution passes. Controlled probes establish failing correctness, regression warnings without failure, and ownership of both child streams.
+
+**Table (Foundation benchmark workloads)** · `tab:harness:foundation-workloads` Setup constructs the fixed value before sampling; Criterion warmup and steady-work samples are separate, and decoding/encoding allocation and teardown remain within each measured iteration. Work units and sample declarations are committed inputs, not measured feasibility claims.
+
+| Workload | Input and work unit | Warmup (ms) | Measurement target (ms) | Samples | Baseline |
+|---|---|---|---|---|---|
+| canonical-encode | typed array [unsigned 0, unsigned 24, true, null]; six canonical bytes; one six-byte canonical encoding | 10 | 30 | 10 | held: No reviewed compatible five-run machine campaign; fast smoke establishes execution only. |
+| canonical-decode | canonical bytes [132, 0, 24, 24, 245, 246]; one six-byte canonical decoding | 10 | 30 | 10 | held: No reviewed compatible five-run machine campaign; fast smoke establishes execution only. |
+
+

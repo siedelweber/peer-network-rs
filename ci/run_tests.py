@@ -16,6 +16,7 @@ import uuid
 
 from devperf import StructuralError, inclusive_ms, number
 from harness import CONFIGURATION, load as load_registry
+from properties import environment as property_environment, evidence as property_evidence
 
 
 def instant():
@@ -77,6 +78,9 @@ def nextest_events(text, inventory, metadata, source, configuration, registry=No
     for key, (operation, level, ignored) in expected.items():
         if key not in seen:
             records.append(event(operation, level, None, 'ignored' if ignored else 'incomplete', source, configuration))
+    for record in records:
+        if record['operation'] in registry.properties:
+            record.update(property_evidence(registry.properties[record['operation']], record['outcome']))
     return [join_case(registry, r, source, configuration) for r in records]
 
 
@@ -135,6 +139,18 @@ def invoke(argv, stdout, stderr, env=None):
     return result
 
 
+def contract_events(directory, registry, source, parents):
+    records = [row for path in sorted(directory.glob('*.json')) for row in json.loads(path.read_text())]
+    registry.roster('contract', [row['operation'] for row in records])
+    joined = [registry.join(row, source) for row in records]
+    parent_results = {row['operation']: row for row in parents}
+    for name, suite in registry.suites.items():
+        if suite.get('runner') == 'contract':
+            parent = parent_results[suite['parent_case']]
+            joined.append(registry.suite_event(name, parent['duration_ms'], parent['outcome'], source))
+    return joined
+
+
 def suite_events(observations, inventory, registry, source, runner):
     starts = {}
     spans = {}
@@ -183,6 +199,8 @@ def main():
     policy_path = Path(__file__).with_name('nextest.toml')
     run = Path('.lane/performance') / uuid.uuid4().hex
     run.mkdir(parents=True)
+    contracts = run.resolve() / 'contracts'
+    contracts.mkdir()
     records = []
     git_started = time.monotonic()
     source = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
@@ -229,12 +247,16 @@ def main():
                                    '--no-fail-fast', '--ignore-default-filter', '--run-ignored', 'default',
                                    '--message-format', 'libtest-json-plus', '--message-format-version', '0.1',
                                    '--binaries-metadata', str(run / 'build.stdout')], 'test-command',
-                         {**os.environ, 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON': '1'})
+                         {**{key: value for key, value in os.environ.items() if not key.startswith('PROPTEST_')},
+                          **property_environment(registry.properties), 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON': '1',
+                          'PN_CONTRACT_RESULTS': str(contracts), 'PN_HARNESS_SOURCE': source,
+                          'PN_HARNESS_CONFIGURATION': configuration, 'PN_HARNESS_UTC': instant()})
         try:
             inventory = json.loads((run / 'inventory.stdout').read_text())
             metadata = json.loads((run / 'metadata.stdout').read_text())
             results = nextest_events((run / 'nextest.stdout').read_text(), inventory, metadata, source, configuration, registry)
             records.extend(results)
+            records.extend(contract_events(contracts, registry, source, results))
             records.extend(suite_events(json.loads((run / 'nextest.observations.json').read_text()), inventory, registry, source, 'nextest'))
             if any(row['outcome'] in {'incomplete', 'ignored'} for row in results):
                 raise StructuralError('runner omitted or ignored required executions')

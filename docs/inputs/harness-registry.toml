@@ -79,14 +79,14 @@ reason = "no provisioned service worker or admitted service implementation"
 kind = "tier"
 name = "performance"
 status = "held"
-reason = "benchmark workloads and baseline declarations await the support step"
+reason = "fast smoke is implemented; comparable machine campaigns and reviewed baselines are unavailable"
 
 [[rows]]
 kind = "suite"
 name = "cli-common"
 status = "active"
 runner = "nextest"
-level = "public-surface"
+level = "unit"
 implementation = "cli-common-rust"
 tier = "fast"
 budget = "pure-suite"
@@ -94,25 +94,25 @@ cases = ["cli-common::tests::a_failed_report_write_leaves_the_stamp_untouched", 
 
 [[rows]]
 kind = "suite"
-name = "cli-common::public_api"
+name = "cli-common::integration"
 status = "active"
 runner = "nextest"
 level = "integration"
 implementation = "cli-common-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["cli-common::public_api::base_args_flattens_into_clap_parser", "cli-common::public_api::base_args_long_flag_toggles_debug", "cli-common::public_api::base_args_rejects_unknown_short_flag", "cli-common::public_api::emit_real_stdout_through_public_api", "cli-common::public_api::parse_args_from_wraps_help_as_json_control_record"]
+cases = ["cli-common::integration::base_args_flattens_into_clap_parser", "cli-common::integration::base_args_long_flag_toggles_debug", "cli-common::integration::base_args_rejects_unknown_short_flag", "cli-common::integration::emit_real_stdout_through_public_api", "cli-common::integration::parse_args_from_wraps_help_as_json_control_record"]
 
 [[rows]]
 kind = "suite"
-name = "documents::behaviour"
+name = "documents::integration"
 status = "active"
 runner = "nextest"
 level = "integration"
 implementation = "documents-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["documents::behaviour::atomic_refresh", "documents::behaviour::clean_result", "documents::behaviour::control_records", "documents::behaviour::dataset_mutation", "documents::behaviour::declaration_authority", "documents::behaviour::empty_root", "documents::behaviour::exhibited_labels", "documents::behaviour::finding_status", "documents::behaviour::git_required", "documents::behaviour::io_paths", "documents::behaviour::json_model", "documents::behaviour::named_refusals", "documents::behaviour::paired_census", "documents::behaviour::premise_refusals", "documents::behaviour::protected_outputs", "documents::behaviour::record_authority", "documents::behaviour::record_observed_row", "documents::behaviour::record_row_key", "documents::behaviour::registry_relation", "documents::behaviour::release_premises", "documents::behaviour::repository_fixed_point", "documents::behaviour::runtime_error", "documents::behaviour::stale_rendering", "documents::behaviour::template_fragments", "documents::behaviour::terminal_refusal", "documents::behaviour::text_output", "documents::behaviour::tracked_census", "documents::behaviour::vendor_census"]
+cases = ["documents::integration::atomic_refresh", "documents::integration::clean_result", "documents::integration::control_records", "documents::integration::dataset_mutation", "documents::integration::declaration_authority", "documents::integration::empty_root", "documents::integration::exhibited_labels", "documents::integration::finding_status", "documents::integration::git_required", "documents::integration::io_paths", "documents::integration::json_model", "documents::integration::named_refusals", "documents::integration::paired_census", "documents::integration::premise_refusals", "documents::integration::protected_outputs", "documents::integration::record_authority", "documents::integration::record_observed_row", "documents::integration::record_row_key", "documents::integration::registry_relation", "documents::integration::release_premises", "documents::integration::repository_fixed_point", "documents::integration::runtime_error", "documents::integration::stale_rendering", "documents::integration::template_fragments", "documents::integration::terminal_refusal", "documents::integration::text_output", "documents::integration::tracked_census", "documents::integration::vendor_census"]
 
 [[rows]]
 kind = "suite"
@@ -130,7 +130,7 @@ kind = "suite"
 name = "execwrap"
 status = "active"
 runner = "nextest"
-level = "public-surface"
+level = "unit"
 implementation = "execwrap-rust"
 tier = "fast"
 budget = "pure-suite"
@@ -138,14 +138,14 @@ cases = ["execwrap::tests::aliased_redirection_paths_are_rejected", "execwrap::t
 
 [[rows]]
 kind = "suite"
-name = "execwrap::subprocess_contract"
+name = "execwrap::integration"
 status = "active"
 runner = "nextest"
 level = "integration"
 implementation = "execwrap-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["execwrap::subprocess_contract::ambiguous_same_path_routing_is_a_usage_failure", "execwrap::subprocess_contract::bare_separator_invocation_succeeds", "execwrap::subprocess_contract::child_argv_secrets_never_appear_in_diagnostics", "execwrap::subprocess_contract::child_exit_code_is_propagated", "execwrap::subprocess_contract::credential_bearing_url_never_appears_in_diagnostics", "execwrap::subprocess_contract::data_loss_fails_a_successful_child", "execwrap::subprocess_contract::help_version_and_usage_follow_the_output_contract", "execwrap::subprocess_contract::prefixed_redirect_tags_streams", "execwrap::subprocess_contract::raw_redirect_is_byte_exact", "execwrap::subprocess_contract::redirect_error_only_still_forwards_stdout", "execwrap::subprocess_contract::reserved_wrapper_exit_classes_are_preserved", "execwrap::subprocess_contract::signal_termination_maps_to_128_plus_signal", "execwrap::subprocess_contract::spawn_failure_does_not_echo_child_program_text", "execwrap::subprocess_contract::spawn_failure_does_not_echo_credential_bearing_program_url", "execwrap::subprocess_contract::spawn_failure_emits_json_diagnostics", "execwrap::subprocess_contract::split_streams_route_to_their_own_files", "execwrap::subprocess_contract::unredirected_streams_pass_through_pipes", "execwrap::subprocess_contract::unspawnable_child_is_wrapper_failure"]
+cases = ["execwrap::integration::ambiguous_same_path_routing_is_a_usage_failure", "execwrap::integration::bare_separator_invocation_succeeds", "execwrap::integration::child_argv_secrets_never_appear_in_diagnostics", "execwrap::integration::child_exit_code_is_propagated", "execwrap::integration::credential_bearing_url_never_appears_in_diagnostics", "execwrap::integration::data_loss_fails_a_successful_child", "execwrap::integration::help_version_and_usage_follow_the_output_contract", "execwrap::integration::prefixed_redirect_tags_streams", "execwrap::integration::raw_redirect_is_byte_exact", "execwrap::integration::redirect_error_only_still_forwards_stdout", "execwrap::integration::reserved_wrapper_exit_classes_are_preserved", "execwrap::integration::signal_termination_maps_to_128_plus_signal", "execwrap::integration::spawn_failure_does_not_echo_child_program_text", "execwrap::integration::spawn_failure_does_not_echo_credential_bearing_program_url", "execwrap::integration::spawn_failure_emits_json_diagnostics", "execwrap::integration::split_streams_route_to_their_own_files", "execwrap::integration::unredirected_streams_pass_through_pipes", "execwrap::integration::unspawnable_child_is_wrapper_failure"]
 
 [[rows]]
 kind = "suite"
@@ -160,14 +160,14 @@ cases = ["pn-interchange::cddl::ast::tests::a_broken_unicode_escape_is_refused",
 
 [[rows]]
 kind = "suite"
-name = "pn-interchange::acceptance"
+name = "pn-interchange::integration"
 status = "active"
 runner = "nextest"
 level = "integration"
 implementation = "pn-interchange-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-interchange::acceptance::a_held_stamp_is_judged_strictly", "pn-interchange::acceptance::a_held_stamp_the_document_fails_is_rejected_under_that_theory", "pn-interchange::acceptance::a_major_nothing_is_held_of_is_rejected_whole", "pn-interchange::acceptance::a_prefix_too_short_to_carry_an_envelope_asks_for_more_bytes", "pn-interchange::acceptance::a_stamp_above_the_ceiling_is_judged_tolerantly", "pn-interchange::acceptance::a_stamp_above_the_ceiling_still_answers_to_the_floor", "pn-interchange::acceptance::a_stamp_below_the_ceiling_that_was_never_assigned_is_rejected_whole", "pn-interchange::acceptance::an_empty_registry_rejects_everything_whole", "pn-interchange::acceptance::dispatch_names_the_instrument_for_each_disposition", "pn-interchange::acceptance::refusal_turns_a_strict_verdict_tolerant_and_then_unheld", "pn-interchange::acceptance::the_companion_follows_the_ceiling_up_and_down", "pn-interchange::acceptance::the_patch_position_does_not_occur_in_the_condition", "pn-interchange::acceptance::the_prefix_path_agrees_with_the_full_envelope", "pn-interchange::acceptance::the_prefix_path_certifies_no_membership"]
+cases = ["pn-interchange::integration::a_held_stamp_is_judged_strictly", "pn-interchange::integration::a_held_stamp_the_document_fails_is_rejected_under_that_theory", "pn-interchange::integration::a_major_nothing_is_held_of_is_rejected_whole", "pn-interchange::integration::a_prefix_too_short_to_carry_an_envelope_asks_for_more_bytes", "pn-interchange::integration::a_stamp_above_the_ceiling_is_judged_tolerantly", "pn-interchange::integration::a_stamp_above_the_ceiling_still_answers_to_the_floor", "pn-interchange::integration::a_stamp_below_the_ceiling_that_was_never_assigned_is_rejected_whole", "pn-interchange::integration::an_empty_registry_rejects_everything_whole", "pn-interchange::integration::dispatch_names_the_instrument_for_each_disposition", "pn-interchange::integration::refusal_turns_a_strict_verdict_tolerant_and_then_unheld", "pn-interchange::integration::the_companion_follows_the_ceiling_up_and_down", "pn-interchange::integration::the_patch_position_does_not_occur_in_the_condition", "pn-interchange::integration::the_prefix_path_agrees_with_the_full_envelope", "pn-interchange::integration::the_prefix_path_certifies_no_membership"]
 
 [[rows]]
 kind = "suite"
@@ -649,3 +649,161 @@ implementation = ""
 cases = []
 reason = "contract not implemented; first contributing domain bite 8"
 contract = "GraphQL node relays and client workflows, wallet request recovery and both command surfaces"
+
+[[rows]]
+kind = "implementation"
+name = "pn-testkit-rust"
+evidence = "pure"
+contract = "development support"
+edition = "0.1"
+
+[[rows]]
+kind = "suite"
+name = "pn-testkit"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-testkit-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-testkit::tests::duplicate_roster", "pn-testkit::tests::generator_vector"]
+
+[[rows]]
+kind = "suite"
+name = "pn-testkit::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-testkit-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-testkit::public::runner_results"]
+
+[[rows]]
+kind = "suite"
+name = "pn-testkit::integration"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-testkit-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-testkit::integration::controlled_replay"]
+
+[[rows]]
+kind = "suite"
+name = "documents"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "documents-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["documents::census::tests::record_name_boundary"]
+
+[[rows]]
+kind = "suite"
+name = "documents::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "documents-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["documents::public::report_carrier"]
+
+[[rows]]
+kind = "suite"
+name = "cli-common::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "cli-common-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["cli-common::public::control_record_roundtrip"]
+
+[[rows]]
+kind = "suite"
+name = "execwrap::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "execwrap-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["execwrap::public::empty_command_preflight"]
+
+[[rows]]
+kind = "suite"
+name = "pn-interchange::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::public::prefix_extent"]
+
+[[rows]]
+kind = "suite"
+name = "pn-interchange::benchmark_correctness"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-interchange::benchmark_correctness::encode_workload", "pn-interchange::benchmark_correctness::decode_workload"]
+
+[[rows]]
+kind = "suite"
+name = "ci::test_testkit"
+status = "active"
+runner = "ci"
+level = "unit"
+implementation = "ci-python"
+tier = "fast"
+budget = "pure-suite"
+cases = ["ci::test_testkit.SupportGuard.test_benchmark_correctness", "ci::test_testkit.SupportGuard.test_benchmark_regression", "ci::test_testkit.SupportGuard.test_benchmark_streams", "ci::test_testkit.SupportGuard.test_benchmark_terminal", "ci::test_testkit.SupportGuard.test_property_seed", "ci::test_testkit.SupportGuard.test_support_edges"]
+
+[[rows]]
+kind = "suite"
+name = "rfc8949-canonical"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::rfc8949::canonical::row-0", "contract::rfc8949::canonical::row-1", "contract::rfc8949::canonical::row-2", "contract::rfc8949::canonical::row-3", "contract::rfc8949::canonical::row-4", "contract::rfc8949::canonical::row-5", "contract::rfc8949::canonical::row-6", "contract::rfc8949::canonical::row-7", "contract::rfc8949::canonical::row-8", "contract::rfc8949::canonical::row-9", "contract::rfc8949::canonical::row-10", "contract::rfc8949::canonical::row-11", "contract::rfc8949::canonical::row-12", "contract::rfc8949::canonical::row-13", "contract::rfc8949::canonical::row-14", "contract::rfc8949::canonical::row-15", "contract::rfc8949::canonical::row-16", "contract::rfc8949::canonical::row-17", "contract::rfc8949::canonical::row-18", "contract::rfc8949::canonical::row-19", "contract::rfc8949::canonical::row-20", "contract::rfc8949::canonical::row-21", "contract::rfc8949::canonical::row-22", "contract::rfc8949::canonical::row-23", "contract::rfc8949::canonical::row-24", "contract::rfc8949::canonical::row-25", "contract::rfc8949::canonical::row-26", "contract::rfc8949::canonical::row-27", "contract::rfc8949::canonical::row-28", "contract::rfc8949::canonical::row-29", "contract::rfc8949::canonical::row-30", "contract::rfc8949::canonical::row-31", "contract::rfc8949::canonical::row-32", "contract::rfc8949::canonical::row-33", "contract::rfc8949::canonical::row-34", "contract::rfc8949::canonical::row-35", "contract::rfc8949::canonical::row-36", "contract::rfc8949::canonical::row-37", "contract::rfc8949::canonical::row-38", "contract::rfc8949::canonical::row-39", "contract::rfc8949::canonical::row-40", "contract::rfc8949::canonical::row-41", "contract::rfc8949::canonical::row-42", "contract::rfc8949::canonical::row-43", "contract::rfc8949::canonical::row-44", "contract::rfc8949::canonical::row-47", "contract::rfc8949::canonical::row-48", "contract::rfc8949::canonical::row-49", "contract::rfc8949::canonical::row-50", "contract::rfc8949::canonical::row-51", "contract::rfc8949::canonical::row-52", "contract::rfc8949::canonical::row-53", "contract::rfc8949::canonical::row-54", "contract::rfc8949::canonical::row-55", "contract::rfc8949::canonical::row-56", "contract::rfc8949::canonical::row-57", "contract::rfc8949::canonical::row-58", "contract::rfc8949::canonical::row-59", "contract::rfc8949::canonical::row-60", "contract::rfc8949::canonical::row-61", "contract::rfc8949::canonical::row-62", "contract::rfc8949::canonical::row-70", "contract::rfc8949::canonical::row-71", "contract::rfc8949::canonical::row-72", "contract::rfc8949::canonical::row-73", "contract::rfc8949::canonical::row-74", "contract::rfc8949::canonical::row-75"]
+parent_case = "pn-interchange::vectors::canonical_rows_decode_reencode_identically_and_roundtrip"
+contract_edition = "rfc8949"
+claim_owner = "INTERCHANGE"
+claim = "claim:vectors:a-canonical-vector-re-encodes-to-its-own-bytes"
+
+[[rows]]
+kind = "suite"
+name = "rfc8949-refusal"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::rfc8949::refusal::row-45", "contract::rfc8949::refusal::row-46", "contract::rfc8949::refusal::row-63", "contract::rfc8949::refusal::row-64", "contract::rfc8949::refusal::row-65", "contract::rfc8949::refusal::row-66", "contract::rfc8949::refusal::row-67", "contract::rfc8949::refusal::row-68", "contract::rfc8949::refusal::row-69", "contract::rfc8949::refusal::row-76", "contract::rfc8949::refusal::row-77", "contract::rfc8949::refusal::row-78", "contract::rfc8949::refusal::row-79", "contract::rfc8949::refusal::row-80", "contract::rfc8949::refusal::row-81", "contract::rfc8949::refusal::row-82", "contract::rfc8949::refusal::row-83", "contract::rfc8949::refusal::row-84", "contract::rfc8949::refusal::row-85", "contract::rfc8949::refusal::row-86", "contract::rfc8949::refusal::row-87", "contract::rfc8949::refusal::row-88", "contract::rfc8949::refusal::row-89", "contract::rfc8949::refusal::row-90", "contract::rfc8949::refusal::row-91", "contract::rfc8949::refusal::row-92"]
+parent_case = "pn-interchange::vectors::refusal_rows_are_refused_with_a_located_error"
+contract_edition = "rfc8949"
+claim_owner = "INTERCHANGE"
+claim = "claim:vectors:a-refusal-vector-is-refused-where-it-stands"
+
+[[rows]]
+kind = "suite"
+name = "foundation-benchmarks"
+status = "active"
+runner = "benchmark"
+level = "integration"
+implementation = "pn-interchange-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["benchmark::canonical-encode", "benchmark::canonical-decode"]

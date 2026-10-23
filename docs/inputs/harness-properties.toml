@@ -1,0 +1,255 @@
+namespace = "org.peer-network.harness.properties"
+version = [1, 0, 0]
+
+[[rows]]
+name = "pn-interchange::properties::unique_names_decoding_inverts_encoding"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::unique_names_encoding_is_stable_through_decoding"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::unique_names_byte_equality_decides_structure_equality"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::canonical_order_agrees_with_the_order_of_names"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::map_entries_stand_in_ascending_key_order"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::canonical_len_agrees_with_the_name"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::float_reduction_is_minimal"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::arbitrary_bytes_are_answered_rather_than_survived"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::one_spelling_parsing_and_printing_are_inverse"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::one_spelling_string_equality_is_byte_equality"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::one_spelling_every_label_is_ascii"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::one_spelling_mutations_leave_the_language"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::bounded_determination_peek_agrees_within_the_bound"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::inclusion_composes_along_a_chain"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::every_document_satisfies_the_base_theory"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::forward_compatibility_a_conforming_document_meets_every_earlier_companion"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::conservativity_a_key_absent_earlier_is_optional_later"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::acceptance_monotonicity_a_verdict_moves_only_toward_the_stamp"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::acceptance_monotonicity_a_stamp_never_assigned_turns_to_rejection"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::bounded_determination_the_prefix_routes_as_the_envelope_does"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::properties::stamping_the_binary_search_agrees_with_a_linear_scan"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/tests/properties.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::cddl::tests::the_two_label_recognizers_agree"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/src/cddl/mod.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-interchange::cddl::tests::the_pattern_matches_every_label_the_scanner_accepts"
+seed = "20261023"
+cases = 256
+algorithm = "cc"
+generator = "packages/interchange/src/cddl/mod.rs"
+edition = "existing-generator-and-shrinker-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/interchange/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"

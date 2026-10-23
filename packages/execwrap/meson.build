@@ -3,7 +3,7 @@ pkg_execwrap_rust = files(
   'src/lib.rs',
   'src/tests/mod.rs',
   'src/writer.rs',
-  'tests/subprocess_contract.rs',
+  'tests/integration.rs',
 )
 
 pkg_execwrap_prose = files(

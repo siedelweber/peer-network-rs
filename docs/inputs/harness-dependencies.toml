@@ -1,0 +1,130 @@
+namespace = "org.peer-network.harness.dependencies"
+version = [1, 0, 0]
+
+[[rows]]
+name = "anes"
+version = "0.1.6"
+license = "MIT OR Apache-2.0"
+features = ["default"]
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "cast"
+version = "0.3.0"
+license = "MIT OR Apache-2.0"
+features = []
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "ciborium"
+version = "0.2.2"
+license = "Apache-2.0"
+features = ["default", "std"]
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "ciborium-io"
+version = "0.2.2"
+license = "Apache-2.0"
+features = ["alloc", "std"]
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "ciborium-ll"
+version = "0.2.2"
+license = "Apache-2.0"
+features = []
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "criterion"
+version = "0.7.0"
+license = "Apache-2.0 OR MIT"
+features = []
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "owned benchmark measurement"
+
+[[rows]]
+name = "criterion-plot"
+version = "0.6.0"
+license = "MIT OR Apache-2.0"
+features = []
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "crunchy"
+version = "0.2.4"
+license = "MIT"
+features = ["default", "limit_128"]
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "either"
+version = "1.19.0"
+license = "MIT OR Apache-2.0"
+features = ["std", "use_std"]
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "half"
+version = "2.7.1"
+license = "MIT OR Apache-2.0"
+features = []
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "itertools"
+version = "0.13.0"
+license = "MIT OR Apache-2.0"
+features = ["default", "use_alloc", "use_std"]
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "oorandom"
+version = "11.1.5"
+license = "MIT"
+features = []
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "pn-testkit"
+version = "0.1.0"
+license = "AGPL-3.0-only"
+features = []
+source = "workspace package manifest; unpublished"
+role = "development-only support"
+
+[[rows]]
+name = "proptest"
+version = "1.12.0"
+license = "MIT OR Apache-2.0"
+features = ["bit-set", "default", "fork", "regex-syntax", "rusty-fork", "std", "tempfile", "timeout"]
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "existing bounded property generation and shrinking"
+
+[[rows]]
+name = "regex"
+version = "1.13.1"
+license = "MIT OR Apache-2.0"
+features = ["std"]
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
+
+[[rows]]
+name = "tinytemplate"
+version = "1.2.1"
+license = "Apache-2.0 OR MIT"
+features = []
+source = "fetched Cargo registry package manifest and resolved feature metadata"
+role = "Criterion transitive development dependency"
