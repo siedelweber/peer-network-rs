@@ -803,6 +803,8 @@
     "ci::test_claims.Evidence.test_executed_admission": "Claim: An executed-basis entry clears only with its owner's admitted, resolving amendment, and current scoped execution support; absent admission or an unrelated evidence label refuses entry.",
     "ci::test_linter_entry.Conformance.test_unregistered_prefix": "Claim: An import naming an undeclared owner fails with unregistered_prefix, so a missing owner cannot be mistaken for a local resolution or ignored text.",
     "ci::test_linter_entry.Conformance.test_non_parenthesized_import": "Claim: A bracketed import without citation parentheses fails with non_parenthesized_import even when its target exists, preserving the distinction between a citation and a bare imported form.",
-    "ci::test_linter_entry.Conformance.test_no_form_span": "Claim: A parenthesized prefix-label pair without import brackets contributes no occurrence and never fails resolution; only a near-miss warning may accompany this ordinary text."
+    "ci::test_linter_entry.Conformance.test_no_form_span": "Claim: A parenthesized prefix-label pair without import brackets contributes no occurrence and never fails resolution; only a near-miss warning may accompany this ordinary text.",
+    "cli-common::observation::tests::status_after_stalled_delivery": "Claim: With more than one delivery batch pending behind a stalled writer at guard drop, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.",
+    "cli-common::observation::tests::drain_timeout_preserves_loss": "Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait."
   }
 }

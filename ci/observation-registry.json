@@ -6680,9 +6680,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<BootstrapGuard as Drop>::drop",
-      "body": "{ if let Some (observation) = & self . 0 { observation . summarize () ; observation . flush () ; observation . emit (json ! ({ \"kind\" : \"observation_status\" , \"availability\" : \"enabled\" , \"level\" : if observation . full_trace { \"trace\" } else { \"default\" } , \"delivered_records\" : observation . delivered . load (Ordering :: Relaxed) , \"count_scope\" : \"records preceding this status; status excluded\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"dec:observe:sinks\" , \"execution_owner\" : \"CLICOMMON\" })) ; observation . flush () ; } }",
+      "body": "{ if let Some (observation) = & self . 0 { observation . summarize () ; observation . flush () ; observation . emit (json ! ({ \"kind\" : \"observation_status\" , \"availability\" : \"enabled\" , \"level\" : if observation . full_trace { \"trace\" } else { \"default\" } , \"count_scope\" : \"records preceding this status; status excluded\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"dec:observe:sinks\" , \"execution_owner\" : \"CLICOMMON\" })) ; observation . flush () ; } }",
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<BootstrapGuard as Drop>::drop. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+      "item_premise": "This body inherits the delivery decision for observation::<BootstrapGuard as Drop>::drop. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation. Final status counts are assigned by the delivery worker after preceding records; drain timeout and unavailability are separate from record loss.",
       "assessments": {
         "full_recording": "review-208",
         "secret_flow": "review-002",
@@ -9710,7 +9710,7 @@
       "item": "observation::Observation",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "# [doc = \" Cloneable operation context; no initialization occurs in library operations.\"] # [derive (Clone)] pub struct Observation { sender : SyncSender < Message > , summary_sender : SyncSender < Vec < u8 > > , flush_sender : SyncSender < SyncSender < () > > , diagnostic_sender : SyncSender < Vec < u8 > > , queued_bytes : Arc < AtomicU64 > , lost : Arc < AtomicU64 > , delivered : Arc < AtomicU64 > , full_trace : bool , clock : Arc < dyn Clock > , recorder : JsonRecorder , next_id : Arc < AtomicU64 > , bridge : Option < Arc < crate :: observation_export :: Bridge > > , }"
+      "syntax": "# [doc = \" Cloneable operation context; no initialization occurs in library operations.\"] # [derive (Clone)] pub struct Observation { sender : SyncSender < Message > , summary_sender : SyncSender < Vec < u8 > > , flush_sender : SyncSender < SyncSender < () > > , diagnostic_sender : SyncSender < Vec < u8 > > , queued_bytes : Arc < AtomicU64 > , lost : Arc < AtomicU64 > , drain_timeouts : Arc < AtomicU64 > , drain_unavailable : Arc < AtomicU64 > , # [cfg (test)] refuse_drain_wait : bool , full_trace : bool , clock : Arc < dyn Clock > , recorder : JsonRecorder , next_id : Arc < AtomicU64 > , bridge : Option < Arc < crate :: observation_export :: Bridge > > , }"
     },
     {
       "item": "observation::OperationKind",

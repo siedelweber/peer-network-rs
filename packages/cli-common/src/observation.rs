@@ -224,7 +224,10 @@ pub struct Observation {
     diagnostic_sender: SyncSender<Vec<u8>>,
     queued_bytes: Arc<AtomicU64>,
     lost: Arc<AtomicU64>,
-    delivered: Arc<AtomicU64>,
+    drain_timeouts: Arc<AtomicU64>,
+    drain_unavailable: Arc<AtomicU64>,
+    #[cfg(test)]
+    refuse_drain_wait: bool,
     full_trace: bool,
     clock: Arc<dyn Clock>,
     recorder: JsonRecorder,
@@ -248,8 +251,11 @@ impl Observation {
         let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Vec<u8>>(8);
         let lost = Arc::new(AtomicU64::new(0));
         let worker_lost = lost.clone();
-        let delivered = Arc::new(AtomicU64::new(0));
-        let worker_delivered = delivered.clone();
+        let worker_delivered = AtomicU64::new(0);
+        let drain_timeouts = Arc::new(AtomicU64::new(0));
+        let worker_timeouts = drain_timeouts.clone();
+        let drain_unavailable = Arc::new(AtomicU64::new(0));
+        let worker_unavailable = drain_unavailable.clone();
         let queued_bytes = Arc::new(AtomicU64::new(0));
         let worker_queued = queued_bytes.clone();
         let artifact_root = content::root()?;
@@ -259,6 +265,12 @@ impl Observation {
             let mut deliver = |bytes: &[u8]| {
                 let result = (|| -> io::Result<()> {
                     let mut record: Value = serde_json::from_slice(bytes)?;
+                    if record["kind"] == "observation_status" {
+                        record["delivered_records"] = json!(worker_delivered.load(Ordering::Relaxed));
+                        record["lost_records"] = json!(worker_lost.load(Ordering::Relaxed));
+                        record["drain_timeouts"] = json!(worker_timeouts.load(Ordering::Relaxed));
+                        record["drain_unavailable"] = json!(worker_unavailable.load(Ordering::Relaxed));
+                    }
                     content::compact(&mut record, &artifact_root)?;
                     let mut compact = serde_json::to_vec(&record)?;
                     compact.push(b'\n');
@@ -312,7 +324,10 @@ impl Observation {
             diagnostic_sender,
             queued_bytes,
             lost,
-            delivered,
+            drain_timeouts,
+            drain_unavailable,
+            #[cfg(test)]
+            refuse_drain_wait: false,
             full_trace: false,
             clock,
             recorder: bridge
@@ -380,12 +395,21 @@ impl Observation {
     fn flush(&self) {
         let (done, wait) = mpsc::sync_channel(1);
         if self.flush_sender.try_send(done).is_err() {
-            self.lost.fetch_add(1, Ordering::Relaxed);
+            self.drain_unavailable.fetch_add(1, Ordering::Relaxed);
             return;
         }
         let _wake = self.sender.try_send(Message::Wake);
-        if wait.recv_timeout(Duration::from_millis(100)).is_err() {
-            self.lost.fetch_add(1, Ordering::Relaxed);
+        let duration = Duration::from_millis(100);
+        #[cfg(test)]
+        let duration = if self.refuse_drain_wait { Duration::ZERO } else { duration };
+        match wait.recv_timeout(duration) {
+            Ok(()) => {}
+            Err(mpsc::RecvTimeoutError::Timeout) => {
+                self.drain_timeouts.fetch_add(1, Ordering::Relaxed);
+            }
+            Err(mpsc::RecvTimeoutError::Disconnected) => {
+                self.drain_unavailable.fetch_add(1, Ordering::Relaxed);
+            }
         }
     }
 
@@ -1003,7 +1027,6 @@ impl Drop for BootstrapGuard {
             observation.flush();
             observation.emit(json!({"kind":"observation_status","availability":"enabled",
                 "level":if observation.full_trace {"trace"} else {"default"},
-                "delivered_records":observation.delivered.load(Ordering::Relaxed),
                 "count_scope":"records preceding this status; status excluded",
                 "claim_owner":"ROOT","claim_label":"dec:observe:sinks","execution_owner":"CLICOMMON"}));
             observation.flush();

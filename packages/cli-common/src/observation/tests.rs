@@ -411,6 +411,112 @@ fn summary_capacity() {
     assert!(export.load(Ordering::Relaxed));
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
 }
+
+/// Claim: With more than one delivery batch pending behind a stalled writer at guard drop, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.
+/// ´claim:cli:status-counts-are-stamped-after-preceding-delivery´
+/// ´test:unit:status-after-stalled-delivery´
+#[test]
+fn status_after_stalled_delivery() {
+    struct Stalled {
+        capture: Capture,
+        entered: mpsc::SyncSender<()>,
+        release: mpsc::Receiver<()>,
+        status: mpsc::SyncSender<()>,
+        first: bool,
+    }
+    impl Write for Stalled {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            if self.first {
+                self.first = false;
+                self.entered.send(()).unwrap();
+                self.release.recv().unwrap();
+            }
+            let result = self.capture.write(bytes)?;
+            let row: Value = serde_json::from_slice(bytes).unwrap();
+            if row["kind"] == "observation_status" {
+                self.status.send(()).unwrap();
+            }
+            Ok(result)
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+    let capture = Capture::default();
+    let (entered, entry) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
+    let (status, seen) = mpsc::sync_channel(1);
+    let mut observation = Observation::with_writer(
+        Stalled {
+            capture: capture.clone(),
+            entered,
+            release: released,
+            status,
+            first: true,
+        },
+        Arc::new(ManualClock(AtomicU64::new(0))),
+    )
+    .unwrap();
+    observation.full_trace = true;
+    observation.refuse_drain_wait = true;
+    observation.emit(json!({"public":"first"}));
+    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    for index in 0..QUEUE_RECORDS - 5 {
+        observation.emit(json!({"public":index}));
+    }
+    // Seed the reserved queues without redundant wakes: the ordinary queue
+    // already guarantees that the worker will visit them after release.
+    for index in 0..8 {
+        observation
+            .diagnostic_sender
+            .try_send(serde_json::to_vec(&json!({"level":"WARN","public":index})).unwrap())
+            .unwrap();
+    }
+    observation.emit(json!({"level":"WARN","public":"dropped"}));
+    observation
+        .summary_sender
+        .try_send(serde_json::to_vec(&json!({"kind":"export_summary"})).unwrap())
+        .unwrap();
+    // 60 ordinary records, nine diagnostics (one dropped), export and metrics:
+    // 71 attempts, with 69 records still queued behind the in-flight writer.
+    drop(BootstrapGuard(Some(observation.clone())));
+    release.send(()).unwrap();
+    seen.recv_timeout(Duration::from_secs(30)).unwrap();
+    let bytes = capture.0.lock().unwrap();
+    let rows: Vec<Value> = bytes
+        .split(|b| *b == b'\n')
+        .filter(|line| !line.is_empty())
+        .map(|line| serde_json::from_slice(line).unwrap())
+        .collect();
+    let status = rows.last().unwrap();
+    assert_eq!(status["kind"], "observation_status");
+    assert_eq!(status["delivered_records"], rows.len() - 1);
+    assert_eq!(status["delivered_records"], 70);
+    assert_eq!(status["lost_records"], 1);
+    assert_eq!(
+        status["delivered_records"].as_u64().unwrap() + status["lost_records"].as_u64().unwrap(),
+        71
+    );
+    assert_eq!(status["drain_timeouts"], 1);
+    assert_eq!(status["drain_unavailable"], 1);
+}
+
+/// Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait.
+/// ´claim:cli:drain-timeouts-are-not-record-loss´
+/// ´test:unit:drain-timeout-preserves-loss´
+#[test]
+fn drain_timeout_preserves_loss() {
+    let (mut observation, _, _) = fixture();
+    let (sender, _receiver) = mpsc::sync_channel(1);
+    observation.flush_sender = sender;
+    observation.refuse_drain_wait = true;
+    observation.flush();
+    assert_eq!(observation.drain_timeouts.load(Ordering::Relaxed), 1);
+    assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
+    observation.flush();
+    assert_eq!(observation.drain_unavailable.load(Ordering::Relaxed), 1);
+    assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
+}
 use crate::secrets::{PrivateBytes, PrivateString, SecretBox, SecretRole, SecretString};
 use std::sync::Mutex;
 

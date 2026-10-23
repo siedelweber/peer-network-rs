@@ -107,6 +107,8 @@
         "cli-common::observation::tests::custom_debug_error_outcome",
         "cli-common::observation::tests::unavailable_observation",
         "cli-common::observation::tests::summary_capacity",
+        "cli-common::observation::tests::drain_timeout_preserves_loss",
+        "cli-common::observation::tests::status_after_stalled_delivery",
         "cli-common::observation::tests::content_artifact_publication",
         "cli-common::observation::tests::artifact_root_survives_directory_change",
         "cli-common::observation::tests::public_content_encoding",
