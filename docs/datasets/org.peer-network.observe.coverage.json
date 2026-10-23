@@ -8,7 +8,7 @@
   "rows": [
     {
       "exceptions": 76,
-      "generators": 37,
+      "generators": 40,
       "helpers": 3,
       "instrumented": 30,
       "name": "cli-common",

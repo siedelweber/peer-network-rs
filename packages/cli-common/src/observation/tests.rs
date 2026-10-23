@@ -41,7 +41,7 @@ fn default_emission() {
     assert_eq!(emission_level(Some("trace")), Ok(true));
     assert_eq!(
         emission_level(Some("unknown")),
-        Err("PN_OBSERVE_LEVEL must be default or trace")
+        Err(BootstrapError::Configuration(EmissionConfigurationError::UnknownLevel))
     );
     let (mut observation, clock, capture) = fixture();
     observation.full_trace = false;

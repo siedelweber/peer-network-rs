@@ -90,8 +90,20 @@ fn main() -> ExitCode {
         }
     };
 
-    let _observation_guard =
-        cli_common::observation::bootstrap(args.observation == ObservationMode::Enabled, args.debug, default_level(&args)).ok();
+    let _observation_guard = match cli_common::observation::bootstrap(
+        args.observation == ObservationMode::Enabled,
+        args.debug,
+        default_level(&args),
+    ) {
+        Ok(guard) => Some(guard),
+        Err(error @ cli_common::observation::BootstrapError::Configuration(_)) => {
+            let mut record = cli_common::ControlPlaneRecord::usage_error(COMMAND_NAME, "observation_configuration");
+            record.message = error.to_string();
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
+        Err(cli_common::observation::BootstrapError::Unavailable(_)) => None,
+    };
 
     execute(args)
 }

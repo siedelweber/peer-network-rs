@@ -7,7 +7,7 @@ operations = 109
 instrumented = 30
 exceptions = 76
 helpers = 3
-generators = 37
+generators = 40
 
 [[rows]]
 name = "documents"

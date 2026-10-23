@@ -304,6 +304,7 @@
         "execwrap::integration::public_child_arguments_are_observed",
         "execwrap::integration::public_child_urls_are_observed",
         "execwrap::integration::raw_redirect_is_byte_exact",
+        "execwrap::integration::invalid_observation_level_starts_no_child",
         "execwrap::integration::redirect_error_only_still_forwards_stdout",
         "execwrap::integration::reserved_wrapper_exit_classes_are_preserved",
         "execwrap::integration::signal_termination_maps_to_128_plus_signal",

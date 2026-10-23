@@ -776,6 +776,7 @@
     "cli-common::observation::tests::default_emission": "Claim: Default emission never formats operation payloads, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.",
     "ci::test_observe.Admission.test_resource_samples": "Claim: Cgroup counters, PSI percentages and memory readings retain their units and start/end deltas, while an absent file or migrated cgroup makes its delta unavailable rather than zero.",
     "ci::test_observe.Admission.test_process_delivery_counts": "Claim: Inline warning and error counts remain distinct from verdicts, and each process retains its delivered and lost counts without treating missing delivery evidence as a measured zero.",
-    "cli-common::observation::tests::unavailable_observation": "Claim: When another subscriber already owns a fresh process, unavailable observation does not stop a successful command callback or change its exit; only invalid level configuration is a structural refusal."
+    "cli-common::observation::tests::unavailable_observation": "Claim: When another subscriber already owns a fresh process, unavailable observation does not stop a successful command callback or change its exit; only invalid level configuration is a structural refusal.",
+    "execwrap::integration::invalid_observation_level_starts_no_child": "Claim: Unknown and non-UTF-8 observation levels refuse with one usage diagnostic and exit 2 before a child can create its marker, even when observation is disabled; a valid-level control proves the child would create it."
   }
 }

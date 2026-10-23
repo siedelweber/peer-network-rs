@@ -932,6 +932,48 @@ impl Drop for BootstrapGuard {
     }
 }
 
+/// Executable startup distinguishes invalid configuration from nonbinding observer availability.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+pub enum BootstrapError {
+    /// The command must refuse invalid observation configuration before executing work.
+    #[error(transparent)]
+    Configuration(#[from] EmissionConfigurationError),
+    /// Observation cannot be installed; command computation may continue unchanged.
+    #[error(transparent)]
+    Unavailable(#[from] ObserverUnavailable),
+}
+
+/// Refused values of the executable-owned emission setting.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+pub enum EmissionConfigurationError {
+    /// Only the two declared emission modes are accepted.
+    #[error("PN_OBSERVE_LEVEL must be default or trace")]
+    UnknownLevel,
+    /// Configuration is text and must not be decoded lossily.
+    #[error("PN_OBSERVE_LEVEL must be UTF-8: default or trace")]
+    NonUtf8Level,
+}
+
+/// Nonbinding failures of the observer's process-global installation or delivery worker.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+pub enum ObserverUnavailable {
+    /// The disabled-status writer could not start.
+    #[error("observation status writer unavailable")]
+    StatusWriter,
+    /// The observation writer could not start.
+    #[error("observation writer unavailable")]
+    Writer,
+    /// The process already owns an observation installation.
+    #[error("observation already initialized")]
+    ObservationAlreadyInitialized,
+    /// A subscriber already owns the process.
+    #[error("subscriber already initialized")]
+    SubscriberAlreadyInitialized,
+    /// A recorder already owns the process.
+    #[error("metrics recorder already initialized")]
+    MetricsAlreadyInitialized,
+}
+
 /// Compose one subscriber/accounting layer and one metrics recorder at executable startup.
 /// Disabled observation installs nothing. Library operations never call this function.
 ///
@@ -939,7 +981,7 @@ impl Drop for BootstrapGuard {
 /// Refuses an unknown or non-UTF-8 `PN_OBSERVE_LEVEL`, an existing global installation or an unavailable writer thread by name.
 /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
 /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
-pub fn bootstrap(enabled: bool, debug: bool, default_level: tracing::Level) -> Result<BootstrapGuard, &'static str> {
+pub fn bootstrap(enabled: bool, debug: bool, default_level: tracing::Level) -> Result<BootstrapGuard, BootstrapError> {
     bootstrap_inner(enabled, debug, default_level, None, Instant::now())
 }
 
@@ -967,11 +1009,11 @@ pub fn bootstrap_with_export(
     bootstrap_inner(enabled, debug, default_level, bridge, started).map_err(Into::into)
 }
 
-fn emission_level(value: Option<&str>) -> Result<bool, &'static str> {
+fn emission_level(value: Option<&str>) -> Result<bool, BootstrapError> {
     match value {
         None | Some("default") => Ok(false),
         Some("trace") => Ok(true),
-        Some(_) => Err("PN_OBSERVE_LEVEL must be default or trace"),
+        Some(_) => Err(EmissionConfigurationError::UnknownLevel.into()),
     }
 }
 
@@ -981,35 +1023,35 @@ fn bootstrap_inner(
     _default_level: tracing::Level,
     bridge: Option<Arc<crate::observation_export::Bridge>>,
     started: Instant,
-) -> Result<BootstrapGuard, &'static str> {
+) -> Result<BootstrapGuard, BootstrapError> {
     let level = match std::env::var("PN_OBSERVE_LEVEL") {
         Ok(value) => emission_level(Some(&value))?,
         Err(std::env::VarError::NotPresent) => emission_level(None)?,
-        Err(std::env::VarError::NotUnicode(_)) => return Err("PN_OBSERVE_LEVEL must be UTF-8: default or trace"),
+        Err(std::env::VarError::NotUnicode(_)) => return Err(EmissionConfigurationError::NonUtf8Level.into()),
     };
     if !enabled {
         let status = Observation::with_writer(StderrSink, Arc::new(SystemClock(Instant::now())))
-            .map_err(|_| "observation status writer unavailable")?;
+            .map_err(|_| ObserverUnavailable::StatusWriter)?;
         status.emit(json!({"kind":"observation_status","name":"dec:observe:sinks","claim_owner":"ROOT",
             "claim_label":"dec:observe:sinks","execution_owner":"CLICOMMON","availability":"disabled","measurements":"unavailable"}));
         status.flush();
         return Ok(BootstrapGuard(None));
     }
     if GLOBAL.get().is_some() {
-        return Err("observation already initialized");
+        return Err(ObserverUnavailable::ObservationAlreadyInitialized.into());
     }
     let mut observation = Observation::with_writer_bridge(StderrSink, Arc::new(SystemClock(started)), bridge)
-        .map_err(|_| "observation writer unavailable")?;
+        .map_err(|_| ObserverUnavailable::Writer)?;
     observation.full_trace = level;
     // Legacy verbosity arguments do not silently enable payload persistence.
     tracing_subscriber::registry()
         .with(AccountingLayer(observation.clone(), None))
         .try_init()
-        .map_err(|_| "subscriber already initialized")?;
-    metrics::set_global_recorder(observation.recorder.clone()).map_err(|_| "metrics recorder already initialized")?;
+        .map_err(|_| ObserverUnavailable::SubscriberAlreadyInitialized)?;
+    metrics::set_global_recorder(observation.recorder.clone()).map_err(|_| ObserverUnavailable::MetricsAlreadyInitialized)?;
     GLOBAL
         .set(observation.clone())
-        .map_err(|_| "observation already initialized")?;
+        .map_err(|_| ObserverUnavailable::ObservationAlreadyInitialized)?;
     let mut operation=observation.operation(OperationKind::Bootstrap,json!({"level":if observation.full_trace {"trace"} else {"default"},"queue_records":QUEUE_RECORDS,"record_capacity_bytes":RECORD_LIMIT}));
     operation.started = Duration::ZERO;
     operation.finish(

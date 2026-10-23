@@ -21,6 +21,45 @@ fn read(path: &Path) -> Vec<u8> {
     std::fs::read(path).expect("log file readable")
 }
 
+/// Claim: Unknown and non-UTF-8 observation levels refuse with one usage diagnostic and exit 2 before a child can create its marker, even when observation is disabled; a valid-level control proves the child would create it.
+/// ´claim:cli:invalid-observation-level-refuses-before-child-start´
+/// ´test:integration:invalid-observation-level-starts-no-child´
+#[test]
+fn invalid_observation_level_starts_no_child() {
+    use std::os::unix::ffi::OsStringExt;
+    let dir = tempfile::tempdir().expect("tempdir");
+    let marker = dir.path().join("child-started");
+    let child = ["--", "sh", "-c", "printf started > \"$1\"", "fixture"];
+    let control = execwrap()
+        .env("PN_OBSERVE_LEVEL", "default")
+        .args(child)
+        .arg(&marker)
+        .output()
+        .expect("control runs");
+    assert!(control.status.success());
+    assert_eq!(read(&marker), b"started");
+    std::fs::remove_file(&marker).expect("remove control marker");
+    for level in [std::ffi::OsString::from("unknown"), std::ffi::OsString::from_vec(vec![255])] {
+        for mode in ["enabled", "disabled"] {
+            let output = execwrap()
+                .env("PN_OBSERVE_LEVEL", &level)
+                .args(["--observation", mode])
+                .args(child)
+                .arg(&marker)
+                .output()
+                .expect("wrapper runs");
+            assert_eq!(output.status.code(), Some(2));
+            assert_eq!(output.stdout, [] as [u8; 0]);
+            let record: serde_json::Value = serde_json::from_slice(&output.stderr).expect("exactly one JSON diagnostic");
+            assert_eq!(record["kind"], "usage_error");
+            assert_eq!(record["fields"]["exit_code"], 2);
+            assert_eq!(record["fields"]["clap_error_kind"], "observation_configuration");
+            assert!(record["message"].as_str().expect("message").contains("PN_OBSERVE_LEVEL"));
+            assert!(!marker.exists(), "refused configuration must not start the child");
+        }
+    }
+}
+
 /// `--redirect` (raw, merged) preserves arbitrary bytes: invalid
 /// UTF-8, NUL, ANSI escapes, and a large binary chunk.
 ///

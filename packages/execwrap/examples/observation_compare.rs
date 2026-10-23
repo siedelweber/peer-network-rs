@@ -77,7 +77,7 @@ fn main() -> ExitCode {
                 tracing::Level::INFO
             },
         )
-        .map_err(str::to_owned)
+        .map_err(|error| error.to_string())
     };
     match guard {
         // This executable already owns bootstrap. The convenience command runner

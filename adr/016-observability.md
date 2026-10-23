@@ -73,7 +73,7 @@
 
 | Package | Operations | Instrumented | Local exceptions | Reviewed helpers | Generators |
 |---|---:|---:|---:|---:|---:|
-| cli-common | 109 | 30 | 76 | 3 | 37 |
+| cli-common | 109 | 30 | 76 | 3 | 40 |
 | documents | 18 | 12 | 6 | 0 | 10 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
 | pn-interchange | 153 | 118 | 34 | 1 | 89 |

@@ -43,7 +43,7 @@
 | documents::integration | active | integration | documents-rust | fast | 28 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
 | execwrap | active | unit | execwrap-rust | fast | 25 |
-| execwrap::integration | active | integration | execwrap-rust | fast | 19 |
+| execwrap::integration | active | integration | execwrap-rust | fast | 20 |
 | pn-interchange | active | unit | pn-interchange-rust | fast | 233 |
 | pn-interchange::integration | active | integration | pn-interchange-rust | fast | 14 |
 | pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |

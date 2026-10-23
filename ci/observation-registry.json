@@ -6581,7 +6581,7 @@
       "path": "packages/cli-common/src/observation.rs",
       "item": "observation::bootstrap",
       "owner": "CLICOMMON",
-      "signature": "fn bootstrap (enabled : bool , debug : bool , default_level : tracing :: Level) -> Result < BootstrapGuard , & 'static str >",
+      "signature": "fn bootstrap (enabled : bool , debug : bool , default_level : tracing :: Level) -> Result < BootstrapGuard , BootstrapError >",
       "claim": "ROOT::rule:observe:spans",
       "fields": [
         "complete available argument representation",
@@ -9041,7 +9041,7 @@
         "clicommon__root__rule__observe__spans__workload_operations"
       ],
       "mode": "reviewed-helper",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error) if error . starts_with (\"PN_OBSERVE_LEVEL\") => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (_) => None , } ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }"
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }"
     },
     {
       "package": "cli-common",
@@ -15778,7 +15778,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/lib.rs::run_stdout_json_command",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error) if error . starts_with (\"PN_OBSERVE_LEVEL\") => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (_) => None , } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_stdout_json_command\" , & (command_name , debug , default_level , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } match run () { Ok (output) => match emit (& output) { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to write JSON to stdout\") ; CommandExit :: Failure . exit_code () } } , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_stdout_json_command\" , & (command_name , debug , default_level , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } match run () { Ok (output) => match emit (& output) { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to write JSON to stdout\") ; CommandExit :: Failure . exit_code () } } , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
       "full_recording": {
         "status": "reviewer-confirmed",
         "premises": "Control records, argv, public errors and serialized output are recorded at command boundaries. Parser and callback capabilities are described without an extra invocation. Non-string panic payloads have no introspection contract and are explicitly unavailable. This body inherits the public-cli decision for run_stdout_json_command.",
@@ -15799,7 +15799,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error) if error . starts_with (\"PN_OBSERVE_LEVEL\") => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (_) => None , } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_no_stdout_command\" , & (command_name , debug , default_level , std :: any :: type_name :: < Run > ()) ,) ; let result = match run () { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_no_stdout_command\" , & (command_name , debug , default_level , std :: any :: type_name :: < Run > ()) ,) ; let result = match run () { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
       "full_recording": {
         "status": "reviewer-confirmed",
         "premises": "Control records, argv, public errors and serialized output are recorded at command boundaries. Parser and callback capabilities are described without an extra invocation. Non-string panic payloads have no introspection contract and are explicitly unavailable. This body inherits the public-cli decision for run_no_stdout_command.",
@@ -15820,7 +15820,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error) if error . starts_with (\"PN_OBSERVE_LEVEL\") => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (_) => None , } ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }",
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }",
       "full_recording": {
         "status": "reviewer-confirmed",
         "premises": "Control records, argv, public errors and serialized output are recorded at command boundaries. Parser and callback capabilities are described without an extra invocation. Non-string panic payloads have no introspection contract and are explicitly unavailable. This body inherits the public-cli decision for run_no_stdout_command_async.",
@@ -15841,7 +15841,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/lib.rs::run_check_command",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error) if error . starts_with (\"PN_OBSERVE_LEVEL\") => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (_) => None , } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_check_command\" , & (command_name , debug , default_level , output , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if output . report . is_none () && output . stamp . is_none () && let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } let outcome = match run () { Ok (outcome) => outcome , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; return CommandExit :: Failure . exit_code () ; } } ; let published = if outcome . clean { finish_check_command (command_name , output , & outcome . report) } else { match (& output . report , & output . stamp) { (None , None) => finish_check_command (command_name , output , & outcome . report) , (Some (report_path) , Some (stamp_path)) => { ensure_distinct_outputs (& [(\"report\" , report_path) , (\"stamp\" , stamp_path)]) . map_err (CheckResultError :: from) . and_then (| () | { write_json_report_if_changed (report_path , & outcome . report) . map (| _change | ()) . map_err (CheckResultError :: from) }) } _ => Err (CheckResultError :: InvalidMode) , } } ; match published { Ok (()) if outcome . clean => CommandExit :: Success . exit_code () , Ok (()) => ExitCode :: from (3) , Err (CheckResultError :: TtyRefusal) => CommandExit :: Usage . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to publish the check result\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => Some (guard) , Err (error @ observation :: BootstrapError :: Configuration (_)) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (observation :: BootstrapError :: Unavailable (_)) => None , } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_check_command\" , & (command_name , debug , default_level , output , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if output . report . is_none () && output . stamp . is_none () && let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } let outcome = match run () { Ok (outcome) => outcome , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; return CommandExit :: Failure . exit_code () ; } } ; let published = if outcome . clean { finish_check_command (command_name , output , & outcome . report) } else { match (& output . report , & output . stamp) { (None , None) => finish_check_command (command_name , output , & outcome . report) , (Some (report_path) , Some (stamp_path)) => { ensure_distinct_outputs (& [(\"report\" , report_path) , (\"stamp\" , stamp_path)]) . map_err (CheckResultError :: from) . and_then (| () | { write_json_report_if_changed (report_path , & outcome . report) . map (| _change | ()) . map_err (CheckResultError :: from) }) } _ => Err (CheckResultError :: InvalidMode) , } } ; match published { Ok (()) if outcome . clean => CommandExit :: Success . exit_code () , Ok (()) => ExitCode :: from (3) , Err (CheckResultError :: TtyRefusal) => CommandExit :: Usage . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to publish the check result\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
       "full_recording": {
         "status": "reviewer-confirmed",
         "premises": "Control records, argv, public errors and serialized output are recorded at command boundaries. Parser and callback capabilities are described without an extra invocation. Non-string panic payloads have no introspection contract and are explicitly unavailable. This body inherits the public-cli decision for run_check_command.",
@@ -16198,7 +16198,7 @@
     },
     {
       "operation": "execwrap::packages/execwrap/src/bin/execwrap.rs::main",
-      "body": "{ install_json_panic_hook (COMMAND_NAME) ; let args : Args = match parse_args_from :: < Args , _ , _ > (env :: args_os ()) { Ok (parsed) => parsed , Err (exit) => { let _ignored = emit_control_plane_record (& exit . record) ; return exit . exit_code () ; } } ; let _observation_guard = cli_common :: observation :: bootstrap (args . observation == ObservationMode :: Enabled , args . debug , default_level (& args)) . ok () ; execute (args) }",
+      "body": "{ install_json_panic_hook (COMMAND_NAME) ; let args : Args = match parse_args_from :: < Args , _ , _ > (env :: args_os ()) { Ok (parsed) => parsed , Err (exit) => { let _ignored = emit_control_plane_record (& exit . record) ; return exit . exit_code () ; } } ; let _observation_guard = match cli_common :: observation :: bootstrap (args . observation == ObservationMode :: Enabled , args . debug , default_level (& args) ,) { Ok (guard) => Some (guard) , Err (error @ cli_common :: observation :: BootstrapError :: Configuration (_)) => { let mut record = cli_common :: ControlPlaneRecord :: usage_error (COMMAND_NAME , \"observation_configuration\") ; record . message = error . to_string () ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } Err (cli_common :: observation :: BootstrapError :: Unavailable (_)) => None , } ; execute (args) }",
       "full_recording": {
         "status": "reviewer-confirmed",
         "premises": "Child arguments, configuration, outcomes and I/O are public. Tagged UTF-8/base64 preserves original bytes; relays write their original buffers. Read, Write and notification capabilities are not invoked for observation. This body inherits the public-execwrap decision for main.",
@@ -17747,6 +17747,48 @@
       ]
     },
     {
+      "item": "observation::BootstrapError",
+      "kind": "derive",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [derive (Debug , Clone , Copy , PartialEq , Eq , thiserror :: Error)]",
+      "expansion_review": "The declaration supplies only source-visible state and derives; adapters inherit their consuming labelled operation without extra execution.",
+      "boundaries": [
+        "cli-common::packages/cli-common/src/lib.rs::run_stdout_json_command",
+        "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command",
+        "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
+        "cli-common::packages/cli-common/src/lib.rs::run_check_command"
+      ]
+    },
+    {
+      "item": "observation::EmissionConfigurationError",
+      "kind": "derive",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [derive (Debug , Clone , Copy , PartialEq , Eq , thiserror :: Error)]",
+      "expansion_review": "The declaration supplies only source-visible state and derives; adapters inherit their consuming labelled operation without extra execution.",
+      "boundaries": [
+        "cli-common::packages/cli-common/src/lib.rs::run_stdout_json_command",
+        "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command",
+        "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
+        "cli-common::packages/cli-common/src/lib.rs::run_check_command"
+      ]
+    },
+    {
+      "item": "observation::ObserverUnavailable",
+      "kind": "derive",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [derive (Debug , Clone , Copy , PartialEq , Eq , thiserror :: Error)]",
+      "expansion_review": "The declaration supplies only source-visible state and derives; adapters inherit their consuming labelled operation without extra execution.",
+      "boundaries": [
+        "cli-common::packages/cli-common/src/lib.rs::run_stdout_json_command",
+        "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command",
+        "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
+        "cli-common::packages/cli-common/src/lib.rs::run_check_command"
+      ]
+    },
+    {
       "item": "observation_export::ExportFailure",
       "kind": "derive",
       "package": "cli-common",
@@ -18996,6 +19038,24 @@
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
       "syntax": "# [doc = \" Executable-owned lifetime for a bounded final metric snapshot and drain.\"] pub struct BootstrapGuard (Option < Observation >) ;"
+    },
+    {
+      "item": "observation::BootstrapError",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [doc = \" Executable startup distinguishes invalid configuration from nonbinding observer availability.\"] # [derive (Debug , Clone , Copy , PartialEq , Eq , thiserror :: Error)] pub enum BootstrapError { # [doc = \" The command must refuse invalid observation configuration before executing work.\"] # [error (transparent)] Configuration (# [from] EmissionConfigurationError) , # [doc = \" Observation cannot be installed; command computation may continue unchanged.\"] # [error (transparent)] Unavailable (# [from] ObserverUnavailable) , }"
+    },
+    {
+      "item": "observation::EmissionConfigurationError",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [doc = \" Refused values of the executable-owned emission setting.\"] # [derive (Debug , Clone , Copy , PartialEq , Eq , thiserror :: Error)] pub enum EmissionConfigurationError { # [doc = \" Only the two declared emission modes are accepted.\"] # [error (\"PN_OBSERVE_LEVEL must be default or trace\")] UnknownLevel , # [doc = \" Configuration is text and must not be decoded lossily.\"] # [error (\"PN_OBSERVE_LEVEL must be UTF-8: default or trace\")] NonUtf8Level , }"
+    },
+    {
+      "item": "observation::ObserverUnavailable",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [doc = \" Nonbinding failures of the observer's process-global installation or delivery worker.\"] # [derive (Debug , Clone , Copy , PartialEq , Eq , thiserror :: Error)] pub enum ObserverUnavailable { # [doc = \" The disabled-status writer could not start.\"] # [error (\"observation status writer unavailable\")] StatusWriter , # [doc = \" The observation writer could not start.\"] # [error (\"observation writer unavailable\")] Writer , # [doc = \" The process already owns an observation installation.\"] # [error (\"observation already initialized\")] ObservationAlreadyInitialized , # [doc = \" A subscriber already owns the process.\"] # [error (\"subscriber already initialized\")] SubscriberAlreadyInitialized , # [doc = \" A recorder already owns the process.\"] # [error (\"metrics recorder already initialized\")] MetricsAlreadyInitialized , }"
     },
     {
       "item": "observation::StderrSink",

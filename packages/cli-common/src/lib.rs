@@ -827,13 +827,13 @@ where
     install_json_panic_hook(command_name);
     let _observation_guard = match observation::bootstrap(true, debug, default_level) {
         Ok(guard) => Some(guard),
-        Err(error) if error.starts_with("PN_OBSERVE_LEVEL") => {
+        Err(error @ observation::BootstrapError::Configuration(_)) => {
             let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
-            error.clone_into(&mut record.message);
+            record.message = error.to_string();
             let _ignored = emit_control_plane_record(&record);
             return CommandExit::Usage.exit_code();
         }
-        Err(_) => None,
+        Err(observation::BootstrapError::Unavailable(_)) => None,
     };
     let scope = crate::observation::scope(
         "CLICOMMON",
@@ -893,13 +893,13 @@ where
     install_json_panic_hook(command_name);
     let _observation_guard = match observation::bootstrap(true, debug, default_level) {
         Ok(guard) => Some(guard),
-        Err(error) if error.starts_with("PN_OBSERVE_LEVEL") => {
+        Err(error @ observation::BootstrapError::Configuration(_)) => {
             let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
-            error.clone_into(&mut record.message);
+            record.message = error.to_string();
             let _ignored = emit_control_plane_record(&record);
             return CommandExit::Usage.exit_code();
         }
-        Err(_) => None,
+        Err(observation::BootstrapError::Unavailable(_)) => None,
     };
     let scope = crate::observation::scope(
         "CLICOMMON",
@@ -947,13 +947,13 @@ where
     install_json_panic_hook(command_name);
     let _observation_guard = match observation::bootstrap(true, debug, default_level) {
         Ok(guard) => Some(guard),
-        Err(error) if error.starts_with("PN_OBSERVE_LEVEL") => {
+        Err(error @ observation::BootstrapError::Configuration(_)) => {
             let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
-            error.clone_into(&mut record.message);
+            record.message = error.to_string();
             let _ignored = emit_control_plane_record(&record);
             return CommandExit::Usage.exit_code();
         }
-        Err(_) => None,
+        Err(observation::BootstrapError::Unavailable(_)) => None,
     };
     let debug_requested = debug;
     let span = tracing::info_span!("rule:observe:spans", execution_owner="CLICOMMON", claim_owner="ROOT", claim_label="rule:observe:spans", source_item="run_no_stdout_command_async", asynchronous=true, command_name, debug_requested, default_level=?default_level, callback=std::any::type_name::<Run>());
@@ -1006,13 +1006,13 @@ where
     install_json_panic_hook(command_name);
     let _observation_guard = match observation::bootstrap(true, debug, default_level) {
         Ok(guard) => Some(guard),
-        Err(error) if error.starts_with("PN_OBSERVE_LEVEL") => {
+        Err(error @ observation::BootstrapError::Configuration(_)) => {
             let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
-            error.clone_into(&mut record.message);
+            record.message = error.to_string();
             let _ignored = emit_control_plane_record(&record);
             return CommandExit::Usage.exit_code();
         }
-        Err(_) => None,
+        Err(observation::BootstrapError::Unavailable(_)) => None,
     };
     let scope = crate::observation::scope(
         "CLICOMMON",
