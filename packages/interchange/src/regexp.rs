@@ -559,27 +559,7 @@ mod tests {
         }
     }
 
-    /// Claim: Nullable counted repetitions agree with an independent automaton for bounded exhaustive subjects, including mandatory empty iterations, nested groups and range bounds.
-    /// ´claim:regexp:nullable-counts-preserve-membership´
-    /// ´test:unit:nullable-counted-membership´
-    #[test]
-    fn nullable_counted_membership() {
-        let mut patterns = Vec::new();
-        for n in [0, 1, 2, 3, 5, 8, 20] {
-            patterns.extend([
-                format!("(a?){{{n}}}a{{{n}}}"),
-                format!("(a*){{{n}}}"),
-                format!("(|a){{{n}}}"),
-                format!("((a?){{2}}){{{n}}}"),
-                format!("(a?){{{n},}}"),
-            ]);
-        }
-        for min in 0..=4 {
-            for max in min..=6 {
-                patterns.push(format!("(a?){{{min},{max}}}"));
-            }
-        }
-        patterns.extend(["((|a)b?){2,3}".into(), "((a|b)?){3}".into()]);
+    fn compare_nullable_patterns(patterns: Vec<String>) {
         let mut subjects = Vec::new();
         for length in 0..=5 {
             for bits in 0..(1 << length) {
@@ -600,6 +580,146 @@ mod tests {
                     "{pattern} / {subject:?}"
                 );
             }
+        }
+    }
+
+    /// Claim: At repetition count 0, five nullable shapes agree with the independent automaton over all binary subjects through length five and unary subjects through length 42, preserving empty-iteration and bound semantics.
+    /// ´claim:regexp:nullable-counts-preserve-membership´
+    /// ´test:unit:nullable-counted-membership-0´
+    #[test]
+    fn nullable_counted_membership_0() {
+        let n = 0;
+        compare_nullable_patterns(vec![
+            format!("(a?){{{n}}}a{{{n}}}"),
+            format!("(a*){{{n}}}"),
+            format!("(|a){{{n}}}"),
+            format!("((a?){{2}}){{{n}}}"),
+            format!("(a?){{{n},}}"),
+        ]);
+    }
+
+    /// Claim: At repetition count 1, five nullable shapes agree with the independent automaton over all binary subjects through length five and unary subjects through length 42, preserving empty-iteration and bound semantics.
+    /// (´claim:regexp:nullable-counts-preserve-membership´)
+    /// ´test:unit:nullable-counted-membership-1´
+    #[test]
+    fn nullable_counted_membership_1() {
+        let n = 1;
+        compare_nullable_patterns(vec![
+            format!("(a?){{{n}}}a{{{n}}}"),
+            format!("(a*){{{n}}}"),
+            format!("(|a){{{n}}}"),
+            format!("((a?){{2}}){{{n}}}"),
+            format!("(a?){{{n},}}"),
+        ]);
+    }
+
+    /// Claim: At repetition count 2, five nullable shapes agree with the independent automaton over all binary subjects through length five and unary subjects through length 42, preserving empty-iteration and bound semantics.
+    /// (´claim:regexp:nullable-counts-preserve-membership´)
+    /// ´test:unit:nullable-counted-membership-2´
+    #[test]
+    fn nullable_counted_membership_2() {
+        let n = 2;
+        compare_nullable_patterns(vec![
+            format!("(a?){{{n}}}a{{{n}}}"),
+            format!("(a*){{{n}}}"),
+            format!("(|a){{{n}}}"),
+            format!("((a?){{2}}){{{n}}}"),
+            format!("(a?){{{n},}}"),
+        ]);
+    }
+
+    /// Claim: At repetition count 3, five nullable shapes agree with the independent automaton over all binary subjects through length five and unary subjects through length 42, preserving empty-iteration and bound semantics.
+    /// (´claim:regexp:nullable-counts-preserve-membership´)
+    /// ´test:unit:nullable-counted-membership-3´
+    #[test]
+    fn nullable_counted_membership_3() {
+        let n = 3;
+        compare_nullable_patterns(vec![
+            format!("(a?){{{n}}}a{{{n}}}"),
+            format!("(a*){{{n}}}"),
+            format!("(|a){{{n}}}"),
+            format!("((a?){{2}}){{{n}}}"),
+            format!("(a?){{{n},}}"),
+        ]);
+    }
+
+    /// Claim: At repetition count 5, five nullable shapes agree with the independent automaton over all binary subjects through length five and unary subjects through length 42, preserving empty-iteration and bound semantics.
+    /// (´claim:regexp:nullable-counts-preserve-membership´)
+    /// ´test:unit:nullable-counted-membership-5´
+    #[test]
+    fn nullable_counted_membership_5() {
+        let n = 5;
+        compare_nullable_patterns(vec![
+            format!("(a?){{{n}}}a{{{n}}}"),
+            format!("(a*){{{n}}}"),
+            format!("(|a){{{n}}}"),
+            format!("((a?){{2}}){{{n}}}"),
+            format!("(a?){{{n},}}"),
+        ]);
+    }
+
+    /// Claim: At repetition count 8, five nullable shapes agree with the independent automaton over all binary subjects through length five and unary subjects through length 42, preserving empty-iteration and bound semantics.
+    /// (´claim:regexp:nullable-counts-preserve-membership´)
+    /// ´test:unit:nullable-counted-membership-8´
+    #[test]
+    fn nullable_counted_membership_8() {
+        let n = 8;
+        compare_nullable_patterns(vec![
+            format!("(a?){{{n}}}a{{{n}}}"),
+            format!("(a*){{{n}}}"),
+            format!("(|a){{{n}}}"),
+            format!("((a?){{2}}){{{n}}}"),
+            format!("(a?){{{n},}}"),
+        ]);
+    }
+
+    /// Claim: At repetition count 20, five nullable shapes agree with the independent automaton over all binary subjects through length five and unary subjects through length 42, preserving empty-iteration and bound semantics.
+    /// (´claim:regexp:nullable-counts-preserve-membership´)
+    /// ´test:unit:nullable-counted-membership-20´
+    #[test]
+    fn nullable_counted_membership_20() {
+        let n = 20;
+        compare_nullable_patterns(vec![
+            format!("(a?){{{n}}}a{{{n}}}"),
+            format!("(a*){{{n}}}"),
+            format!("(|a){{{n}}}"),
+            format!("((a?){{2}}){{{n}}}"),
+            format!("(a?){{{n},}}"),
+        ]);
+    }
+
+    /// Claim: All 25 nullable count ranges and two nested alternatives agree with the automaton on the same 100 subjects, preserving ranged and nested membership.
+    /// (´claim:regexp:nullable-counts-preserve-membership´)
+    /// ´test:unit:nullable-counted-membership-ranges´
+    #[test]
+    fn nullable_counted_membership_ranges() {
+        let mut patterns = Vec::new();
+        for min in 0..=4 {
+            for max in min..=6 {
+                patterns.push(format!("(a?){{{min},{max}}}"));
+            }
+        }
+        patterns.extend(["((|a)b?){2,3}".into(), "((a|b)?){3}".into()]);
+        compare_nullable_patterns(patterns);
+    }
+
+    /// Claim: Unsupported escapes, negated classes and nested or escaped class syntax refuse before they can supply a false reference answer; supported metacharacter escapes retain literal membership.
+    /// ´claim:regexp:oracle-refuses-unsupported-syntax´
+    /// ´test:unit:oracle-refuses-unsupported-syntax´
+    #[test]
+    fn oracle_refuses_unsupported_syntax() {
+        for pattern in [
+            r"\d", r"\D", r"\s", r"\S", r"\w", r"\W", r"\i", r"\I", r"\c", r"\C", r"\n", r"\r", r"\t", r"\p", r"\P", r"\a",
+            "[^a]", r"[\a]", "[[a]", r"[a-\]", "[a-[]",
+        ] {
+            assert!(
+                std::panic::catch_unwind(|| super::oracle::accepts(pattern, "")).is_err(),
+                "{pattern}"
+            );
+        }
+        for byte in b"\\|.-?*+{}()[]^" {
+            let literal = char::from(*byte);
+            assert!(super::oracle::accepts(&format!("\\{literal}"), &literal.to_string()));
         }
     }
 

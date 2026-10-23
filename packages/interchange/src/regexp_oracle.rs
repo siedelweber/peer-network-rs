@@ -3,6 +3,8 @@
 //! Test-only Thompson automaton for ASCII literals, classes, concatenation,
 //! alternation and repetition. It shares neither parsing nor execution code
 //! with the production matcher. Unsupported syntax is a test fixture error.
+//! Every parenthesized operand is a choice with fresh branch states; the
+//! unbounded-repeat back edge relies on this isolation from sibling exits.
 
 use std::collections::BTreeSet;
 
@@ -60,11 +62,14 @@ impl Parser<'_> {
                 }
                 b'[' => {
                     let mut bytes = Vec::new();
+                    assert_ne!(self.peek(), Some(b'^'), "unsupported negated fixture class");
                     while self.peek() != Some(b']') {
                         let first = self.take();
+                        assert!(!b"\\[".contains(&first), "unsupported fixture class syntax");
                         if self.peek() == Some(b'-') {
                             self.take();
                             let last = self.take();
+                            assert!(!b"\\[".contains(&last), "unsupported fixture class syntax");
                             assert!(first <= last);
                             bytes.extend(first..=last);
                         } else {
@@ -74,7 +79,11 @@ impl Parser<'_> {
                     self.take();
                     Expression::Bytes(bytes)
                 }
-                b'\\' => Expression::Bytes(vec![self.take()]),
+                b'\\' => {
+                    let escaped = self.take();
+                    assert!(b"\\|.-?*+{}()[]^".contains(&escaped), "unsupported fixture escape");
+                    Expression::Bytes(vec![escaped])
+                }
                 byte => {
                     assert!(!b".*+?{}]".contains(&byte), "unsupported fixture syntax");
                     Expression::Bytes(vec![byte])
