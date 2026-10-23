@@ -1,4 +1,4 @@
-"""Separate complete observation records from the gate's diagnostic log."""
+"""Optional splitter for explicit traced runs; the default gate keeps records inline."""
 import json
 from pathlib import Path
 import sys

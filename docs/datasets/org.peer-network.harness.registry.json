@@ -102,6 +102,7 @@
         "cli-common::observation::tests::inclusive_metering",
         "cli-common::observation::tests::metric_registry",
         "cli-common::observation::tests::default_emission",
+        "cli-common::observation::tests::unavailable_observation",
         "cli-common::observation::tests::summary_capacity",
         "cli-common::observation::tests::content_artifact_publication",
         "cli-common::observation::tests::public_content_encoding",

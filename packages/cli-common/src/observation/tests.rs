@@ -1,5 +1,30 @@
 use super::*;
 
+/// Claim: When another subscriber already owns a fresh process, unavailable observation does not stop a successful command callback or change its exit; only invalid level configuration is a structural refusal.
+/// ´claim:cli:unavailable-observation-preserves-command-execution´
+/// ´test:unit:unavailable-observation´
+#[test]
+fn unavailable_observation() {
+    if std::env::var_os("PN_TEST_EXISTING_SUBSCRIBER").is_some() {
+        tracing::subscriber::set_global_default(tracing_subscriber::registry()).unwrap();
+        let mut ran = false;
+        let result = crate::run_no_stdout_command("fixture", false, tracing::Level::INFO, || {
+            ran = true;
+            Ok::<(), &str>(())
+        });
+        assert!(ran);
+        assert_eq!(result, std::process::ExitCode::SUCCESS);
+    } else {
+        let result = std::process::Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "observation::tests::unavailable_observation"])
+            .env("PN_TEST_EXISTING_SUBSCRIBER", "1")
+            .env("PN_OBSERVE_LEVEL", "default")
+            .output()
+            .unwrap();
+        assert!(result.status.success(), "{}", String::from_utf8_lossy(&result.stdout));
+    }
+}
+
 /// Claim: Default emission never formats operation payloads, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.
 /// ´claim:cli:default-emission-retains-problems-and-cost´
 /// ´test:unit:default-emission´
