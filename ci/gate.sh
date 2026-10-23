@@ -57,6 +57,7 @@ run_step harness-tests python3 -B ci/run_ci.py test_harness
 run_step testkit-guard python3 -B ci/testkit_guard.py
 run_step testkit-tests python3 -B ci/run_ci.py test_testkit
 run_step claim-tests python3 -B ci/run_ci.py test_claims
+run_step linter-entry-tests python3 -B ci/run_ci.py test_linter_entry
 run_step observation-tests python3 -B ci/run_ci.py test_observe
 run_step devperf-tests python3 -B ci/run_ci.py test_devperf
 run_step build-policy python3 ci/discipline.py build-policy

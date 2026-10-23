@@ -48,6 +48,11 @@ class Evidence(unittest.TestCase):
             enforce_entry([row],True)
         row['status']='scoped-passed'
         with self.assertRaises(StructuralError):enforce_entry([row],True)
+        row['admission'].update(status='submitted',evidence='prepared review package')
+        enforce_entry([row],False)
+        with self.assertRaises(StructuralError):enforce_entry([row],True)
+        invalid=copy.deepcopy(row);invalid['admission'].pop('evidence')
+        with self.assertRaises(StructuralError):enforce_entry([invalid],False)
         row['admission'].update(status='admitted',evidence='recorded contract admission')
         enforce_entry([row],True)
         invalid=copy.deepcopy(row); invalid['admission'].pop('evidence')

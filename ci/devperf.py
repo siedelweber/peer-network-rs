@@ -137,6 +137,20 @@ def report(records, declared, output, warnings=sys.stderr, registry=()):
     return 0
 
 
+def report_loss(record, output, warnings=sys.stderr):
+    """Persist trace incompleteness beside timing findings without changing outcomes."""
+    for key in ('source','configuration','operation','outcome'):
+        if not isinstance(record.get(key),str) or not record[key]:raise StructuralError('missing loss '+key)
+    for key in ('delivered_records','lost_records'):
+        if type(record.get(key)) is not int or record[key]<0:raise StructuralError('malformed '+key)
+    utc(record['utc'])
+    if record['level']!='trace' or record['lost_records']==0:return 0
+    finding={**record,'kind':'observation-loss','classification':'observation-completeness','verdict_effect':'none'}
+    with Path(output).open('a') as stream:stream.write(json.dumps(finding,sort_keys=True)+'\n')
+    print('PERFORMANCE-WARNING '+json.dumps(finding,sort_keys=True),file=warnings)
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--budgets', default='docs/inputs/devperf-budgets.toml')

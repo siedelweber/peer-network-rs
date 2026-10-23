@@ -34,7 +34,20 @@ static GLOBAL: OnceLock<Observation> = OnceLock::new();
 /// Justified: Representation runs inside the labelled observation delivery operation and must not recursively observe itself.
 #[must_use]
 pub fn public_bytes(value: &[u8]) -> Value {
+    #[cfg(any(test, feature = "observation-test-hook"))]
+    PAYLOAD_BUILDS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     content::bytes(value)
+}
+
+#[cfg(any(test, feature = "observation-test-hook"))]
+static PAYLOAD_BUILDS: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+
+/// Read the process-wide byte-representation count in development test builds.
+/// Justified: This test-only counter must not recursively observe the observation boundary.
+#[cfg(any(test, feature = "observation-test-hook"))]
+#[must_use]
+pub fn payload_builds_for_test() -> usize {
+    PAYLOAD_BUILDS.load(std::sync::atomic::Ordering::Relaxed)
 }
 
 /// Whether the executable has selected full payload capture.

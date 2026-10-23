@@ -8,6 +8,10 @@ def counts(lines):
     warn = error = 0
     processes = []
     for line in lines:
+        if isinstance(line, bytes):line=line.decode('utf-8',errors='replace')
+        if line.startswith('OBSERVATION-WITNESS '):
+            if ' injected=true ' in line:continue
+            line=line.partition(' observation_status=')[2]
         try:
             row = json.loads(line)
         except (ValueError, UnicodeDecodeError):

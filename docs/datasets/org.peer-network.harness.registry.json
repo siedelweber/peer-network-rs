@@ -3026,6 +3026,31 @@
       "runner": "ci",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "ci::test_linter_entry.Conformance.test_asset_inventory",
+        "ci::test_linter_entry.Conformance.test_duplicate_locations",
+        "ci::test_linter_entry.Conformance.test_generated_citations",
+        "ci::test_linter_entry.Conformance.test_import_forms",
+        "ci::test_linter_entry.Conformance.test_missing_tracked_source",
+        "ci::test_linter_entry.Conformance.test_near_misses",
+        "ci::test_linter_entry.Conformance.test_occurrence_forms",
+        "ci::test_linter_entry.Conformance.test_projection_fixed_point",
+        "ci::test_linter_entry.Conformance.test_reserved_warrant",
+        "ci::test_linter_entry.Conformance.test_resolution",
+        "ci::test_linter_entry.Conformance.test_scoped_projection",
+        "ci::test_linter_entry.Conformance.test_traversal_order",
+        "ci::test_linter_entry.Conformance.test_warrant_species"
+      ],
+      "implementation": "ci-python",
+      "kind": "suite",
+      "level": "integration",
+      "name": "ci::test_linter_entry",
+      "runner": "ci",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

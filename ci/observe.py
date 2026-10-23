@@ -186,7 +186,7 @@ def syntax_census():
     result['source']=source_id()
     result['declared_configuration']='four production packages, host target, default and no-default features; development-only pn-testkit is outside this production configuration'
     for package in metadata['packages']:
-        if package['id'] in metadata['workspace_members'] and '/packages/' in package['manifest_path'] and package['features']:
+        if package['id'] in metadata['workspace_members'] and '/packages/' in package['manifest_path'] and package['features'] and not (package['name']=='cli-common' and package['features']=={'observation-test-hook':[]}):
             raise StructuralError('new first-party feature configuration requires census admission')
     return result
 

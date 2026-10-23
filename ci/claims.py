@@ -200,10 +200,10 @@ def enforce_entry(obligations, started, required=None):
     for row in entries:
         admission=row.get('admission',{})
         if (not row.get('owner') or admission.get('owner')!=row['owner'] or not isinstance(admission.get('evidence_kind'),str) or not admission['evidence_kind'].strip()
-                or admission.get('status') not in ('held','admitted')):
+                or admission.get('status') not in ('held','submitted','admitted')):
             raise StructuralError('bite-1 entry admission requires owner and evidence kind')
         admitted=admission['status']=='admitted'
-        if admitted and (not isinstance(admission.get('evidence'),str) or not admission['evidence'].strip()):
+        if admission['status'] in ('submitted','admitted') and (not isinstance(admission.get('evidence'),str) or not admission['evidence'].strip()):
             raise StructuralError('bite-1 entry admission requires evidence')
         if row['status']!='scoped-passed' or not admitted: pending.append(row['name'])
     if started and pending:

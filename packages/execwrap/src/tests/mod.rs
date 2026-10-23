@@ -670,9 +670,11 @@ fn default_payload_sites() {
         assert_eq!(result.exit_code, 7);
         assert_eq!(std::fs::read(output).unwrap(), b"public");
         assert_eq!(std::fs::read(error).unwrap(), b"diagnostic");
-        let builds = super::PAYLOAD_BUILDS.load(std::sync::atomic::Ordering::Relaxed);
+        let builds = cli_common::observation::payload_builds_for_test();
         if mode == "default" {
             assert_eq!(builds, 0);
+            let _direct = cli_common::observation::public_bytes(b"direct call");
+            assert_eq!(cli_common::observation::payload_builds_for_test(), 1);
         } else {
             assert!(builds >= 7);
         }

@@ -783,12 +783,12 @@ claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Interchange contract reviewer"
-missing = "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition."
-closing_condition = "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition."
+missing = "Independent review must judge the explicit replacement of unavailable historical ordering evidence by current artifact evidence."
+closing_condition = "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation."
 closing_step = "Entry condition of gate:design:bite-1"
 entry_gate = "ROOT::gate:design:bite-1"
 
-admission = { owner = "Interchange contract reviewer", evidence_kind = "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition.", status = "held", evidence = "" }
+admission = { owner = "Interchange contract reviewer", evidence_kind = "The historical-order amendment and itemized present evidence in amend:xchg:adopted-artifact-entry and tab:xchg:adopted-artifact-evidence.", status = "submitted", evidence = "ROOT::amend:xchg:adopted-artifact-entry; ROOT::tab:xchg:adopted-artifact-evidence; four responsibilities retained without an unprovable authoring-order claim" }
 [[rows]]
 name = "ROOT::dec:xchg:theory-sharing"
 path = "adr/010-interchange-design.md"
@@ -1237,16 +1237,18 @@ evidence_paragraph = "EXECWRAP::amend:foundation:evidence-gate-kinds-adoption"
 name = "ROOT::gate:labels:implementation"
 path = "adr/001-label-calculus.md"
 status = "held"
-claims = []
+claims = ["ROOT::claim:discipline:duplicate-fixtures-name-both-sites", "ROOT::claim:discipline:fixture-carriers-separate-text-from-evidence", "ROOT::claim:discipline:fixture-imports-preserve-owner-boundaries", "ROOT::claim:discipline:fixture-index-cannot-supply-its-target", "ROOT::claim:discipline:fixture-inventory-follows-the-asset", "ROOT::claim:discipline:fixture-kind-warrants-cannot-overlap", "ROOT::claim:discipline:fixture-near-misses-are-not-occurrences", "ROOT::claim:discipline:fixture-projection-is-scoped-to-its-inputs", "ROOT::claim:discipline:fixture-projection-reaches-a-fixed-point", "ROOT::claim:discipline:fixture-reserved-kinds-require-a-profile", "ROOT::claim:discipline:fixture-resolution-requires-a-mint", "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic", "ROOT::claim:discipline:fixture-traversal-order-does-not-select-meaning"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Linter integration reviewer"
-missing = "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them."
-closing_condition = "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them."
+missing = "Independent review must establish the submitted conformance clauses, including an available synthetic-citation and anchor-harvest fixture interface and the currently unmet bracket-free-token refusal."
+closing_condition = "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation."
 closing_step = "Entry condition of gate:design:bite-1"
 entry_gate = "ROOT::gate:design:bite-1"
 
-admission = { owner = "Linter integration reviewer", evidence_kind = "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them.", status = "held", evidence = "" }
+admission = { owner = "Linter integration reviewer", evidence_kind = "Itemized deployed-linter conformance evidence for every implementation-gate clause, with fixture results and explicit unresolved capability limits.", status = "submitted", evidence = "ROOT::amend:labels:entry-conformance-submission; ci/test_linter_entry.py; deployed fixture outcomes and named unproven clauses" }
+premises = "Finite isolated deployed-checker fixtures establish only the clauses and limits itemized in amend:labels:entry-conformance-submission. Synthetic citation and anchor programs and bracket-free refusal remain unproved; independent admission is still required."
+evidence_paragraph = "ROOT::amend:labels:entry-executed-evidence"
 [[rows]]
 name = "ROOT::gate:labels:verification"
 path = "adr/001-label-calculus.md"
@@ -1401,12 +1403,12 @@ claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Interchange contract reviewer"
-missing = "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review."
-closing_condition = "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review."
+missing = "Independent review must confirm or correct the submitted purpose, consumers, completeness, scope and verification-frame judgments."
+closing_condition = "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation."
 closing_step = "Entry condition of gate:design:bite-1"
 entry_gate = "ROOT::gate:design:bite-1"
 
-admission = { owner = "Interchange contract reviewer", evidence_kind = "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review.", status = "held", evidence = "" }
+admission = { owner = "Interchange contract reviewer", evidence_kind = "Itemized independent concept review against accepted conventions; draft in amend:xchg:concept-review-submission.", status = "submitted", evidence = "ROOT::amend:xchg:concept-review-submission; itemized purpose, consumers, completeness, discipline, scope and verification review" }
 [[rows]]
 name = "ROOT::gate:xchg:implementation"
 path = "adr/010-interchange-design.md"
@@ -1415,12 +1417,12 @@ claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Interchange implementer and contract reviewer"
-missing = "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order."
-closing_condition = "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order."
+missing = "Independent review must judge the amended present-artifact evidence; original authoring order and start-time provenance are unavailable and are not asserted."
+closing_condition = "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation."
 closing_step = "Entry condition of gate:design:bite-1"
 entry_gate = "ROOT::gate:design:bite-1"
 
-admission = { owner = "Interchange implementer and contract reviewer", evidence_kind = "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order.", status = "held", evidence = "" }
+admission = { owner = "Interchange implementer and contract reviewer", evidence_kind = "Present corpus transcription sources, locked dependency review, adoption audit and commissioning evidence, and current witnesses under amend:xchg:adopted-artifact-entry.", status = "submitted", evidence = "ROOT::amend:xchg:adopted-artifact-entry; ROOT::tab:xchg:adopted-artifact-evidence; present artifact evidence replaces unavailable authoring history" }
 [[rows]]
 name = "ROOT::req:design:limits"
 path = "docs/design/implementation.md"
@@ -1465,12 +1467,12 @@ claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Bite 1 implementer and interchange contract reviewer"
-missing = "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer."
-closing_condition = "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer."
+missing = "Independent review must admit the design-level producer/reader map and its rejected local alternatives before domain implementation begins."
+closing_condition = "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation."
 closing_step = "Entry condition of gate:design:bite-1"
 entry_gate = "ROOT::gate:design:bite-1"
 
-admission = { owner = "Bite 1 implementer and interchange contract reviewer", evidence_kind = "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer.", status = "held", evidence = "" }
+admission = { owner = "Bite 1 implementer and interchange contract reviewer", evidence_kind = "The complete bite-1 producer/reader map to the one canonical contract and its admission limits in amend:interchange:bite-one-contract-map and amend:interchange:bite-one-map-limit.", status = "submitted", evidence = "ROOT::amend:interchange:bite-one-contract-map; ROOT::amend:interchange:bite-one-map-limit; all bite-1 producer and reader roles mapped before implementation" }
 [[rows]]
 name = "ROOT::req:kinds:attestation-register"
 path = "adr/002-environment-kinds.md"

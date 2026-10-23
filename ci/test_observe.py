@@ -58,6 +58,7 @@ class Admission(unittest.TestCase):
             self.assertEqual(start['values']['cpu.pressure.some.avg10'],1.0)
             self.assertNotIn('cpu.pressure.some.avg10',delta)
             self.assertEqual(result['node_pressure_fraction']['cpu.some'],0.1)
+            self.assertIs(type(start['values']['cpu.pressure.some.total']),int)
             self.assertEqual(context(result),(str(root),'shared'))
             self.assertEqual(context(result,str(root)),(str(root),'gate'))
             line=compact(result)
@@ -65,6 +66,10 @@ class Admission(unittest.TestCase):
             self.assertIn('[50,40,-10]',line)
             self.assertIn('[null,null,null]',line)
             self.assertIn('[1.0,3.0]',line)
+            self.assertIn('node_cores=0.000',line)
+            busy=copy.deepcopy(result)
+            busy['node_load_deltas']['cpu.stat.usage_usec']=6000000
+            self.assertIn('node_cores=3.000',compact(busy))
             self.assertEqual(seconds(69.42599999999999),'69.426')
             self.assertEqual(cpu_from_log(['OWN-TIME user=1.2 sys=0.3']),(1.2,0.3))
             self.assertEqual(cpu_from_log([]),(None,None))
@@ -76,6 +81,7 @@ class Admission(unittest.TestCase):
             missing=joined(raw_sample(root/'missing'),raw_sample(root/'bad'),1)
             self.assertEqual(context(missing),(None,'unavailable'))
             self.assertTrue(compact(missing).startswith('scope=unavailable'))
+            self.assertIn('node_cores=unavailable',compact(missing))
 
     def test_process_delivery_counts(self):
         """Claim: Inline warning and error counts remain distinct from verdicts, and each process retains its delivered and lost counts without treating missing delivery evidence as a measured zero.
@@ -87,6 +93,29 @@ class Admission(unittest.TestCase):
         self.assertEqual((result['warn'],result['error'],result['loss']),(1,1,2))
         self.assertEqual(result['processes'][0]['delivered'],5)
         self.assertEqual(counts([b'{"kind":"observation_status"}'])['processes'][0]['delivered'],None)
+        status={'kind':'observation_status','process_id':8,'delivered_records':4,'lost_records':3,'level':'trace'}
+        line='OBSERVATION-WITNESS command=child status=0 injected=false delivered=4 lost=3 observation_status='+json.dumps(status)
+        self.assertEqual(counts([line])['loss'],3)
+        self.assertEqual(counts([line.replace('injected=false','injected=true')])['loss'],0)
+        from devperf import report_loss
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as directory:
+            output=Path(directory)/'findings.jsonl';warnings=io.StringIO()
+            record=dict(source='fixture',configuration='trace',operation='child',outcome='exit:7',level='trace',
+                        delivered_records=4,lost_records=3,utc='2000-01-01T00:00:00Z')
+            self.assertEqual(report_loss(record,output,warnings),0)
+            finding=json.loads(output.read_text())
+            self.assertEqual((finding['kind'],finding['outcome'],finding['verdict_effect']),('observation-loss','exit:7','none'))
+            self.assertIn('PERFORMANCE-WARNING',warnings.getvalue())
+        from test_observe_runtime import witness
+        from contextlib import redirect_stdout
+        status={'kind':'observation_status','process_id':8,'delivered_records':1,'lost_records':0,'level':'trace'}
+        captured=io.StringIO()
+        with redirect_stdout(captured):witness(['fixture'],7,0,b'{"process_id":8,"kind":"trace"}\n'+json.dumps(status).encode())
+        self.assertEqual(counts(captured.getvalue().splitlines())['processes'][0]['delivered'],2)
+        with redirect_stdout(io.StringIO()),self.assertRaisesRegex(AssertionError,'captured records'):
+            witness(['fixture'],7,0,json.dumps(status).encode())
 
     def test_observation_streams(self):
         """Claim: Gate routing preserves complete observation bytes in the artifact and leaves diagnostics and malformed lines byte-identical in the main log, without treating an observation level as a verdict.

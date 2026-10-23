@@ -9,14 +9,37 @@ import threading
 import unittest
 
 
+def witness(argv, status, wall, stderr, injected=False):
+    rows=[];records=[]
+    for line in stderr.splitlines():
+        try:row=json.loads(line)
+        except (ValueError,UnicodeError):continue
+        if isinstance(row,dict):
+            records.append(row)
+            if row.get('kind')=='observation_status':rows.append(row)
+    prefix=f'OBSERVATION-WITNESS command={argv[0]} status={status} wall_seconds={wall:.6f} injected={str(injected).lower()}'
+    if not rows:print(prefix+' delivered=unavailable lost=unavailable');return
+    for row in rows:
+        print(prefix+f" delivered={row.get('delivered_records','unavailable')} lost={row.get('lost_records','unavailable')} observation_status="+json.dumps(row,sort_keys=True))
+        if not injected and row.get('level')=='trace':
+            delivered=sum(item.get('process_id')==row['process_id'] for item in records)-1
+            if row['delivered_records']!=delivered:raise AssertionError('trace delivered count differs from captured records')
+        if not injected and row.get('level')=='trace' and row.get('lost_records',0)>0:
+            from devperf import report_loss
+            from harness import source_id
+            report_loss(dict(source=source_id(),configuration='foundation trace witness',operation=argv[0],outcome=f'exit:{status}',
+                             level='trace',process_id=row['process_id'],utc=row['timestamp'],delivered_records=row['delivered_records'],lost_records=row['lost_records']),
+                        '.lane/performance-findings.jsonl')
+
+
 def run(argv, **kwargs):
     started=time.monotonic()
     result=subprocess.run(argv,capture_output=True,**kwargs)
-    print(f'OBSERVATION-WITNESS command={argv[0]} status={result.returncode} wall_seconds={time.monotonic()-started:.6f}')
+    witness(argv,result.returncode,time.monotonic()-started,result.stderr)
     return result
 
 
-def compare(argv, mode, env, deadline=60):
+def compare(argv, mode, env, deadline=60, injected=False):
     """Bound the fixture lifetime; release on final status or reader termination."""
     started=time.monotonic()
     process=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
@@ -51,7 +74,7 @@ def compare(argv, mode, env, deadline=60):
         if not output.is_alive(): process.stdout.close()
         try: process.stdin.close()
         except (OSError,ValueError): pass
-    print(f'OBSERVATION-WITNESS command={argv[0]} status={status} wall_seconds={time.monotonic()-started:.6f}')
+    witness(argv,status,time.monotonic()-started,b''.join(stderr),injected)
     if timed_out or reader.is_alive() or output.is_alive(): raise AssertionError('observation fixture deadline exceeded')
     if reader_errors: raise AssertionError('observation reader failed: '+str(reader_errors))
     return subprocess.CompletedProcess(argv,status,b''.join(stdout),b''.join(stderr))
@@ -84,11 +107,11 @@ class Processes(unittest.TestCase):
             class Input(io.BytesIO):
                 def close(self):self.released=self.getvalue()
             process.stdin=Input()
-            with patch('subprocess.Popen',return_value=process):result=compare(['fixture'],'trace',{})
+            with patch('subprocess.Popen',return_value=process):result=compare(['fixture'],'trace',{},injected=True)
             self.assertEqual(result.stdout,b'result'); self.assertIn(b'\n',process.stdin.released)
             process=Process(evidence,True)
             with patch('subprocess.Popen',return_value=process):
-                with self.assertRaisesRegex(AssertionError,'deadline exceeded'):compare(['fixture'],'trace',{})
+                with self.assertRaisesRegex(AssertionError,'deadline exceeded'):compare(['fixture'],'trace',{},injected=True)
             self.assertTrue(process.killed)
 
     def test_four_mode_results(self):
@@ -139,7 +162,10 @@ class Processes(unittest.TestCase):
                     self.assertEqual(status['lost_records'],0)
                     self.assertEqual(status['delivered_records'],len(rows)-1)
                     self.assertFalse(objects.exists())
-                else:self.assertTrue(any(row.get('kind')=='span_envelope' for row in rows))
+                else:
+                    self.assertTrue(any(row.get('kind')=='span_envelope' for row in rows))
+                    status=next(row for row in rows if row.get('kind')=='observation_status')
+                    self.assertEqual(status['delivered_records'],len(rows)-1)
                 if mode=='failing-export':self.assertTrue(any(row.get('kind')=='export_summary' and row['lost_exports']>0 for row in rows))
             self.assertTrue(all(sample==samples['disabled'] for sample in samples.values()))
             self.assertTrue(all(sample==accounting['default'] for sample in accounting.values()))

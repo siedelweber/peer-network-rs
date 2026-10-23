@@ -21,7 +21,10 @@ def compact(resource, owned=None):
     start,end=resource['start']['values'],resource['end']['values']
     samples=[[start.get(k),end.get(k),resource['node_load_deltas'].get(k)] for k in COUNTERS]
     averages=[[start.get(k),end.get(k)] for k in AVERAGES]
-    return 'scope='+scope+' samples='+json.dumps(samples,separators=(',',':'))+' psi_avg='+json.dumps(averages,separators=(',',':'))+' psi='+json.dumps({k:round(v,6) if v is not None else None for k,v in resource['node_pressure_fraction'].items()},separators=(',',':'))
+    usage=resource['node_load_deltas'].get('cpu.stat.usage_usec')
+    wall=resource.get('wall_seconds')
+    cores='unavailable' if usage is None or wall is None or wall<=0 else f'{usage/1e6/wall:.3f}'
+    return 'scope='+scope+' node_cores='+cores+' samples='+json.dumps(samples,separators=(',',':'))+' psi_avg='+json.dumps(averages,separators=(',',':'))+' psi='+json.dumps({k:round(v,6) if v is not None else None for k,v in resource['node_pressure_fraction'].items()},separators=(',',':'))
 
 
 def seconds(value):
@@ -47,7 +50,7 @@ def raw_sample(path):
                 if parts and parts[0] in ('some','full'):
                     for pair in parts[1:]:
                         field,value=pair.split('=')
-                        values[f'{resource}.pressure.{parts[0]}.{field}']=float(value)
+                        values[f'{resource}.pressure.{parts[0]}.{field}']=int(value) if field=='total' else float(value)
         for name in ('memory.current','memory.peak'):
             value=''.join(files.get(name,[]))
             values[name]=int(value) if value.isdigit() else None
@@ -59,7 +62,7 @@ def joined(start,end,wall):
     keys=set(start['values'])|set(end['values'])
     delta={k:(end['values'].get(k)-start['values'][k] if start['cgroup'] and start['cgroup']==end['cgroup'] and start['values'].get(k) is not None and end['values'].get(k) is not None else None) for k in keys if '.avg' not in k}
     pressure={f'{r}.{kind}': (delta.get(f'{r}.pressure.{kind}.total')/1e6/wall if delta.get(f'{r}.pressure.{kind}.total') is not None and wall>0 else None) for r in ('cpu','memory','io') for kind in ('some','full')}
-    return dict(start=start,end=end,node_load_deltas=delta,node_pressure_fraction=pressure)
+    return dict(start=start,end=end,node_load_deltas=delta,node_pressure_fraction=pressure,wall_seconds=wall)
 
 
 def cpu_from_log(lines):
@@ -85,19 +88,19 @@ def main():
     whole=joined(raw_sample(root/'gate-resource-start.raw'),raw_sample(root/'gate-resource-end.raw'),wall)
     owned=os.environ.get('GATE_OWN_CGROUP')
     cgroup,scope=context(whole,owned)
-    print('RESOURCE-LEGEND cgroup='+str(cgroup or 'unavailable')+' scope='+scope+' shared=node-load-not-gate-CPU; gate=launcher-declared-GATE_OWN_CGROUP; own_user_s/own_sys_s=process-and-child CPU seconds; samples=[start,end,delta] ordered='+json.dumps(COUNTERS,separators=(',',':'))+'; psi_avg=[start,end] percent ordered='+json.dumps(AVERAGES,separators=(',',':'))+'; psi=delta-stall-microseconds/1000000/wall-seconds; cpu.stat=microseconds/counts; memory=bytes; unavailable=null')
+    print('RESOURCE-LEGEND cgroup='+str(cgroup or 'unavailable')+' scope='+scope+' shared=node-load-not-gate-CPU; gate=launcher-declared-GATE_OWN_CGROUP; own_user_s/own_sys_s=process-and-child CPU seconds; samples=[start,end,delta] ordered='+json.dumps(COUNTERS,separators=(',',':'))+'; psi_avg=[start,end] percent ordered='+json.dumps(AVERAGES,separators=(',',':'))+'; node_cores=delta-usage-microseconds/1000000/wall-seconds; psi=delta-stall-microseconds/1000000/wall-seconds; cpu.stat=microseconds/counts; memory=bytes; unavailable=null')
     reports=[]
     for line in (root/'gate-steps.tsv').read_text().splitlines():
         name,status,started,ended=line.split('\t'); wall=float(ended)-float(started)
         lines=(root/f'gate-{name}.log').read_text(errors='replace').splitlines()
         own=cpu_from_log(lines); counted=counts(lines)
         resource=joined(raw_sample(root/f'gate-{name}-resource-start.raw'),raw_sample(root/f'gate-{name}-resource-end.raw'),wall)
-        reports.append(dict(step=name,wall_seconds=wall,own_user_s=own[0],own_sys_s=own[1],**resource))
+        reports.append(dict(step=name,own_user_s=own[0],own_sys_s=own[1],**resource))
         print(f'STEP={name} STATUS={status} WALL={wall:.6f}s own_user_s={seconds(own[0])} own_sys_s={seconds(own[1])} '+compact(resource,owned)+' warn={warn} error={error} loss={loss} processes='.format(**counted)+json.dumps(counted['processes'],separators=(',',':')))
     wall=float(sys.argv[2]); begin=process_cpu(root/'gate-cpu-start.raw'); end=process_cpu(root/'gate-cpu-end.raw')
     own=[b-a if a is not None and b is not None else None for a,b in zip(begin,end)]
     resource=joined(raw_sample(root/'gate-resource-start.raw'),raw_sample(root/'gate-resource-end.raw'),wall)
-    reports.append(dict(step='gate',wall_seconds=wall,own_user_s=own[0],own_sys_s=own[1],**resource))
+    reports.append(dict(step='gate',own_user_s=own[0],own_sys_s=own[1],**resource))
     (root/'gate-resources.json').write_text(json.dumps(reports,indent=2)+'\n')
     print(f'GATE-RESOURCES WALL={wall:.6f}s own_user_s={seconds(own[0])} own_sys_s={seconds(own[1])} '+compact(resource,owned)+' artifact=.lane/gate-resources.json')
 
