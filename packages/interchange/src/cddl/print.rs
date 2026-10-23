@@ -404,6 +404,7 @@ mod tests {
         }
     }
 
+    /// Claim: Each production-tour fixture reaches the printer's fixed point, protecting normalized identities across the exercised grammar forms.
     /// (´claim:print:the-printed-form-is-a-fixed-point´)
     /// ´test:unit:every-production-reaches-a-fixed-point´
     #[test]

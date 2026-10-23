@@ -54,6 +54,7 @@ fn adding_an_optional_key_is_additive() {
     );
 }
 
+/// Claim: Adding four optional keys of different shapes at a later minor preserves inclusion, protecting additive evolution across multiple new members.
 /// (´claim:inclusion:adding-an-optional-key-is-additive´)
 /// ´test:integration:adding-several-optional-keys-at-once-is-additive´
 #[test]
@@ -112,6 +113,7 @@ fn a_respelled_type_is_the_same_type() {
 /// The rules a type reaches are compared by their printed definitions, so a
 /// chain that is written differently and means the same is the same.
 ///
+/// Claim: Whitespace-only changes along a reached rule chain preserve inclusion, preventing source formatting from changing normalized type identity.
 /// (´claim:inclusion:identity-of-type-is-the-printers-question´)
 /// ´test:integration:a-reached-rule-chain-respelled-is-the-same-type´
 #[test]
@@ -320,6 +322,7 @@ fn a_pure_rule_rename_is_a_breach() {
 /// The rename is a breach one level down too: the key's own expression is
 /// identical and the rule *it* reaches was renamed.
 ///
+/// Claim: Renaming a rule one level below an unchanged key yields exactly `TypeChanged` for key 2, preserving literal identity through references.
 /// (´claim:inclusion:a-pure-rule-rename-is-a-breach´)
 /// ´test:integration:a-rename-below-the-key-is-a-breach´
 #[test]
@@ -466,6 +469,7 @@ fn two_labels_are_not_comparable() {
     incomparable(BASE, r#"e = {0 => "com.other", 1 => [1, 1, uint], 2 => tstr, ? 7 => bstr}"#);
 }
 
+/// Claim: The fixture theories on different major lines are incomparable, preventing a minor-inclusion verdict across a major boundary.
 /// (´claim:inclusion:theories-of-different-lines-are-incomparable´)
 /// ´test:integration:two-majors-are-not-comparable´
 #[test]
@@ -473,6 +477,7 @@ fn two_majors_are_not_comparable() {
     incomparable(BASE, r#"e = {0 => "com.example", 1 => [2, 1, uint], 2 => tstr, ? 7 => bstr}"#);
 }
 
+/// Claim: Comparing the base theory with itself is incomparable, enforcing the strictly increasing minor premise.
 /// (´claim:inclusion:the-earlier-minor-must-be-the-lesser´)
 /// ´test:integration:one-minor-is-not-comparable-with-itself´
 #[test]

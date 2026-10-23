@@ -964,14 +964,16 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:design:claim-foundation"
 path = "docs/design/implementation.md"
-status = "held"
-claims = []
+status = "supported"
+claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:python-exhibits-resolve-to-source", "ROOT::claim:testing:python-edges-require-known-claims"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:design:claim-foundation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b and observation step 4"
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
+closing_step = "Observation step 4 and service provisioning"
+premises = "Current Rust and Python source carriers, the declared gate configuration and controlled graph fixtures; the reviewed glosses and area stakes are item-specific review evidence, not semantic facts proved by the graph evaluator."
+evidence_paragraph = "ROOT::amend:testing:claims-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:design:dependency-readiness"
@@ -1036,14 +1038,16 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:design:harness-foundation"
 path = "docs/design/implementation.md"
-status = "held"
-claims = []
+status = "supported"
+claims = ["TESTKIT::claim:testkit:duplicate-roster-prevents-effects", "TESTKIT::claim:testkit:generator-edition-vector", "TESTKIT::claim:testkit:seed-and-fault-replay", "TESTKIT::claim:testkit:all-predicates-retain-identity", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:missing-level-refused", "ROOT::claim:harness:unregistered-implementation-refused", "ROOT::claim:harness:dropped-case-refused", "ROOT::claim:harness:ignored-case-refused", "ROOT::claim:harness:mock-is-not-real", "ROOT::claim:harness:stale-source-refused", "ROOT::claim:harness:service-hold-visible", "ROOT::claim:harness:doctest-inventory-complete", "ROOT::claim:harness:doctest-identity-survives-line-shifts", "ROOT::claim:harness:benchmark-terminal-preflight", "ROOT::claim:harness:benchmark-correctness-fails", "ROOT::claim:harness:benchmark-regression-is-nonverdict", "ROOT::claim:harness:benchmark-stream-ownership", "ROOT::claim:harness:property-seed-required", "ROOT::claim:harness:development-only-support", "ROOT::claim:harness:undeclared-property-refused", "ROOT::claim:harness:source-seed-exploration", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:external-test-modules-keep-lints", "ROOT::claim:discipline:test-implementations-keep-lints"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:design:harness-foundation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b and observation step 4; service provisioning for the service tier"
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
+closing_step = "Observation step 4 and service provisioning"
+premises = "The declared fast-tier suites and implementations, fixture registry refusals, recorded property seeds, benchmark correctness and controlled timing comparisons, development-only dependency guard and testkit fixtures; no real service, domain or client implementation is inferred."
+evidence_paragraph = "TESTKIT::amend:testkit:harness-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:design:implementation-evidence"
@@ -1072,14 +1076,16 @@ closing_step = "Observation step 4 and claims audit step 3b"
 [[rows]]
 name = "ROOT::gate:design:performance-foundation"
 path = "docs/design/implementation.md"
-status = "held"
-claims = []
+status = "supported"
+claims = ["ROOT::claim:devperf:correspondence-predicate-preserved", "ROOT::claim:devperf:noisy-clock-is-nonverdict", "ROOT::claim:devperf:cold-cache-is-nonverdict", "ROOT::claim:devperf:overlap-is-not-summed", "ROOT::claim:devperf:admission-is-nonverdict", "ROOT::claim:devperf:category-controls-classification", "ROOT::claim:devperf:exact-runner-version", "ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:findings-preserve-outcome-order", "ROOT::claim:devperf:missing-measurement-is-explicit", "ROOT::claim:devperf:structural-errors-distinct", "ROOT::claim:devperf:utc-is-explicit", "ROOT::claim:devperf:runner-policy-is-nonverdict", "ROOT::claim:devperf:result-accounting-is-explicit", "ROOT::claim:devperf:raw-duration-validation", "ROOT::claim:devperf:gate-profile-guards", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:benchmark-regression-is-nonverdict"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:design:performance-foundation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b and observation step 4; service provisioning for the service tier"
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
+closing_step = "Observation step 4 and service provisioning"
+premises = "The current gate profile and reviewed runner, structured current-source results and injected clock, cache, span, admission and duration fixtures; these establish reporter contracts and nonverdict behavior, not a performance baseline or controlled worker execution order."
+evidence_paragraph = "ROOT::amend:testing:performance-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:devnet:implementation"
@@ -1096,14 +1102,16 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:devperf:foundation"
 path = "adr/021-development-performance.md"
-status = "held"
-claims = []
+status = "supported"
+claims = ["ROOT::claim:devperf:correspondence-predicate-preserved", "ROOT::claim:devperf:noisy-clock-is-nonverdict", "ROOT::claim:devperf:cold-cache-is-nonverdict", "ROOT::claim:devperf:overlap-is-not-summed", "ROOT::claim:devperf:admission-is-nonverdict", "ROOT::claim:devperf:category-controls-classification", "ROOT::claim:devperf:exact-runner-version", "ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:findings-preserve-outcome-order", "ROOT::claim:devperf:missing-measurement-is-explicit", "ROOT::claim:devperf:structural-errors-distinct", "ROOT::claim:devperf:utc-is-explicit", "ROOT::claim:devperf:runner-policy-is-nonverdict", "ROOT::claim:devperf:result-accounting-is-explicit", "ROOT::claim:devperf:raw-duration-validation", "ROOT::claim:devperf:gate-profile-guards", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:benchmark-regression-is-nonverdict"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:devperf:foundation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b and observation step 4; service provisioning for the service tier"
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
+closing_step = "Observation step 4 and service provisioning"
+premises = "The current gate profile and reviewed runner, structured current-source results and injected clock, cache, span, admission and duration fixtures; these establish reporter contracts and nonverdict behavior, not a performance baseline or controlled worker execution order."
+evidence_paragraph = "ROOT::amend:testing:performance-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:foundation:verification"
@@ -1120,14 +1128,16 @@ closing_step = "Claims audit step 3b"
 [[rows]]
 name = "ROOT::gate:harness:foundation"
 path = "adr/020-testing-harness.md"
-status = "held"
-claims = []
+status = "supported"
+claims = ["TESTKIT::claim:testkit:duplicate-roster-prevents-effects", "TESTKIT::claim:testkit:generator-edition-vector", "TESTKIT::claim:testkit:seed-and-fault-replay", "TESTKIT::claim:testkit:all-predicates-retain-identity", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:missing-level-refused", "ROOT::claim:harness:unregistered-implementation-refused", "ROOT::claim:harness:dropped-case-refused", "ROOT::claim:harness:ignored-case-refused", "ROOT::claim:harness:mock-is-not-real", "ROOT::claim:harness:stale-source-refused", "ROOT::claim:harness:service-hold-visible", "ROOT::claim:harness:doctest-inventory-complete", "ROOT::claim:harness:doctest-identity-survives-line-shifts", "ROOT::claim:harness:benchmark-terminal-preflight", "ROOT::claim:harness:benchmark-correctness-fails", "ROOT::claim:harness:benchmark-regression-is-nonverdict", "ROOT::claim:harness:benchmark-stream-ownership", "ROOT::claim:harness:property-seed-required", "ROOT::claim:harness:development-only-support", "ROOT::claim:harness:undeclared-property-refused", "ROOT::claim:harness:source-seed-exploration", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:external-test-modules-keep-lints", "ROOT::claim:discipline:test-implementations-keep-lints"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:harness:foundation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b and observation step 4; service provisioning for the service tier"
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
+closing_step = "Observation step 4 and service provisioning"
+premises = "The declared fast-tier suites and implementations, fixture registry refusals, recorded property seeds, benchmark correctness and controlled timing comparisons, development-only dependency guard and testkit fixtures; no real service, domain or client implementation is inferred."
+evidence_paragraph = "TESTKIT::amend:testkit:harness-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:identity:implementation"
@@ -1240,14 +1250,16 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:testing:foundation"
 path = "adr/017-claim-based-testing.md"
-status = "held"
-claims = []
+status = "supported"
+claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:python-exhibits-resolve-to-source", "ROOT::claim:testing:python-edges-require-known-claims"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:testing:foundation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b and observation step 4"
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
+closing_step = "Observation step 4 and service provisioning"
+premises = "Current Rust and Python source carriers, the declared gate configuration and controlled graph fixtures; the reviewed glosses and area stakes are item-specific review evidence, not semantic facts proved by the graph evaluator."
+evidence_paragraph = "ROOT::amend:testing:claims-foundation-evidence"
 
 [[rows]]
 name = "ROOT::gate:toolchain:verification"

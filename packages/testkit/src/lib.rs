@@ -132,7 +132,7 @@ impl FaultPlan {
 mod tests {
     use super::*;
 
-    /// Claim: Duplicate case identities refuse before an adapter can have effects.
+    /// Claim: Two cases sharing one identifier return `InvalidRoster` without invoking the adapter, preventing ambiguous result identities and preflight side effects.
     /// ´claim:testkit:duplicate-roster-prevents-effects´
     /// ´test:unit:duplicate-roster´
     #[test]
@@ -156,7 +156,7 @@ mod tests {
         assert!(!called);
     }
 
-    /// Claim: The seed-zero first word fixes the generator edition, preventing silent replay drift.
+    /// Claim: Seed zero produces the pinned first `SplitMix64` word, detecting a change to that generator-edition vector used for replay.
     /// ´claim:testkit:generator-edition-vector´
     /// ´test:unit:generator-vector´
     #[test]

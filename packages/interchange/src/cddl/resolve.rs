@@ -572,6 +572,7 @@ mod tests {
         ));
     }
 
+    /// Claim: An unresolved name in the second rule reports that name and line 2, preserving useful resolution diagnostics beyond the first line.
     /// (´claim:resolve:an-undefined-name-is-located´)
     /// ´test:unit:an-undefined-name-on-a-later-line-carries-that-line´
     #[test]
@@ -591,6 +592,7 @@ mod tests {
         assert!(matches!(refuse("a = [~missing]"), TheoryError::UnresolvedRule { .. }));
     }
 
+    /// Claim: An undefined name inside a generic argument returns `UnresolvedRule`, preventing application arguments from escaping resolution.
     /// (´claim:resolve:every-place-a-name-may-stand-is-resolved´)
     /// ´test:unit:an-undefined-name-inside-a-generic-argument-is-refused´
     #[test]
@@ -601,6 +603,7 @@ mod tests {
         ));
     }
 
+    /// Claim: An undefined member-key name returns `UnresolvedRule`, preventing key expressions from escaping resolution.
     /// (´claim:resolve:every-place-a-name-may-stand-is-resolved´)
     /// ´test:unit:an-undefined-name-in-a-member-key-is-refused´
     #[test]
@@ -635,6 +638,7 @@ mod tests {
         assert!(table.get("t").is_none());
     }
 
+    /// Claim: Using another rule's parameter returns `UnresolvedRule` naming that parameter, preserving rule-local generic scope.
     /// (´claim:resolve:a-generic-parameter-is-local-to-its-rule´)
     /// ´test:unit:a-generic-parameter-does-not-escape-its-rule´
     #[test]
@@ -665,6 +669,7 @@ mod tests {
         ));
     }
 
+    /// Claim: Calling a parameterized rule without arguments returns a syntax refusal, preserving its declared arity.
     /// (´claim:resolve:a-generic-must-be-cited-at-its-arity´)
     /// ´test:unit:a-generic-cited-without-arguments-is-refused´
     #[test]
@@ -681,6 +686,7 @@ mod tests {
         assert!(table.get("$extension").is_none());
     }
 
+    /// Claim: An unplugged group socket leaves no table entry and resolution succeeds, preserving optional extension points.
     /// (´claim:resolve:an-unplugged-socket-resolves-to-nothing´)
     /// ´test:unit:an-undefined-group-socket-resolves-to-nothing´
     #[test]
@@ -698,6 +704,7 @@ mod tests {
         assert_eq!(printed(&table, "$message"), "[1, tstr] / [2, uint]");
     }
 
+    /// Claim: Two group-socket plugs print as one choice in source order, preserving deterministic extension composition.
     /// (´claim:resolve:a-socket-collects-its-plugs-in-order´)
     /// ´test:unit:a-plugged-group-socket-collects-its-plugs-in-order´
     #[test]
@@ -715,6 +722,7 @@ mod tests {
         assert_eq!(printed(&table, "a"), "1 / 2 / 3");
     }
 
+    /// Claim: Extending uint with tstr prints the original #0 followed by tstr, preserving the prelude base during augmentation.
     /// (´claim:resolve:an-augmenting-assignment-extends-its-base´)
     /// ´test:unit:a-type-choice-augments-a-prelude-rule´
     #[test]
@@ -732,6 +740,7 @@ mod tests {
         assert_eq!(printed(&table, "b"), "1");
     }
 
+    /// Claim: Conflicting definitions of one name return a syntax error at the second definition's line, preventing ambiguous resolution.
     /// (´claim:resolve:a-name-defined-twice-must-agree´)
     /// ´test:unit:a-name-defined-twice-differently-is-refused´
     #[test]

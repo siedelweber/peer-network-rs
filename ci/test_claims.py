@@ -1,12 +1,19 @@
 """Controlled evidence graphs exercise structural and predicate failures."""
 
 from copy import deepcopy
+from contextlib import ExitStack, redirect_stdout
+import io
+import json
+import os
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
-from claims import evaluate, prose, respells, reconcile_mints, site_claim
+from claims import evaluate, main, prose, respells, reconcile_mints, reviewed_sites, site_claim
 from devperf import StructuralError
+from harness import CONFIGURATION
 
 
 def fixture():
@@ -14,7 +21,7 @@ def fixture():
     obligation = 'ROOT::gate:testing:fixture'
     area = 'ROOT::sec:testing:fixture-area'
     evidence = 'ROOT::amend:testing:fixture-evidence'
-    sites = [dict(operation=n, owner='ROOT', area='testing', claim=claim, mint=i==0)
+    sites = [dict(operation=n, owner='ROOT', area='testing', claim=claim, mint=i==0, language='rust')
              for i,n in enumerate(('first', 'sibling'))]
     paragraphs = {area: dict(text='Losing cases hides failures.', citations=set()),
                   evidence: dict(text='', citations={claim,obligation})}
@@ -138,6 +145,99 @@ class Evidence(unittest.TestCase):
         mints['ROOT::claim:testing:orphan']=1
         with self.assertRaisesRegex(StructuralError,'orphan'): reconcile_mints(data['sites'],mints)
 
+    def test_enforcement_switch(self):
+        """An otherwise passing fixture exits zero in reporting mode and one with --fail-respellings while retaining its offender artifact.
+        ´claim:testing:respelling-switch-controls-exit´
+        ´test:testing:test-enforcement-switch´
+        """
+        data=fixture()
+        evidence=data['paragraphs']['ROOT::amend:testing:fixture-evidence']
+        evidence['citations'].remove('ROOT::claim:testing:fixture')
+        evidence['exhibits']={'ROOT::claim:testing:fixture'}
+        sites=[]
+        for i,name in enumerate(('first','sibling')):
+            carrier='´claim:testing:fixture´' if i==0 else '(´claim:testing:fixture´)'
+            gloss='Claim: First.' if i==0 else 'Claim: The second execution checks the same fixture predicate.'
+            sites.append(dict(operation=name,owner='ROOT',function=name,path='ci/test_claims.py',
+                              line=i+1,language='python',property=False,
+                              doc=gloss+'\n'+carrier+'\n´test:testing:'+name+'´'))
+        records=[dict(r,scope='case',configuration=CONFIGURATION) for r in data['results']]
+        registry=SimpleNamespace(cases={n:dict(runner='ci') for n in ('first','sibling')},matrix=lambda *_:None)
+        with tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
+            previous=Path.cwd()
+            stack.callback(os.chdir,previous)
+            os.chdir(directory)
+            for name in ('.lane','ci','docs/inputs'): Path(name).mkdir(parents=True,exist_ok=True)
+            for name,rows in (('claim-areas',data['areas']),('claim-obligations',data['declared'])):
+                Path('docs/inputs/'+name+'.toml').write_text('\n'.join(
+                    '[[rows]]\n'+'\n'.join(key+' = '+json.dumps(value) for key,value in row.items()) for row in rows))
+            Path('.lane/performance-events.jsonl').write_text('\n'.join(json.dumps(r) for r in records)+'\n')
+            Path('.lane/harness-benchmarks.jsonl').write_text('')
+            Path('ci/claim_review.json').write_text('{"schema":1,"sites":[]}')
+            for name,value in (('load_registry',registry),('census',sites),
+                               ('claim_mints',{'ROOT::claim:testing:fixture':1}),('checked_linter',None),
+                               ('prose',(data['paragraphs'],data['obligations'])),('source_id','current')):
+                stack.enter_context(patch('claims.'+name,return_value=value))
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(main([]),0)
+                self.assertEqual(main(['--fail-respellings']),1)
+            self.assertEqual(len(json.loads(Path('.lane/claim-respellings.json').read_text())['offenders']),1)
+
+    def test_review_binding(self):
+        """A review must identify an existing unique site and its current claim and gloss, preventing stale audit entries from being counted.
+        ´claim:testing:review-is-bound-to-current-site´
+        ´test:testing:test-review-binding´
+        """
+        site=dict(operation='first',path='fixture.rs',claim='ROOT::claim:testing:fixture',gloss='The asserted fixture consequence.')
+        row=dict(operation='first',path=site['path'],claim=site['claim'],before='First.',after=site['gloss'],review='Compared the fixture assertion and premise.')
+        self.assertEqual(reviewed_sites([site],dict(schema=1,sites=[row])),[row])
+        for key,value in (('operation','missing'),('path','other.rs'),('claim','ROOT::claim:testing:other'),('after','Old wording.')):
+            with self.assertRaises(StructuralError): reviewed_sites([site],dict(schema=1,sites=[dict(row,**{key:value})]))
+        with self.assertRaises(StructuralError): reviewed_sites([site],dict(schema=1,sites=[row,row]))
+
+    def test_python_exhibits(self):
+        """Designated evidence exhibits resolve only to Python-minted claims; unknown or Rust names refuse while unrelated planned names remain outside support.
+        ´claim:testing:python-exhibits-resolve-to-source´
+        ´test:testing:test-python-exhibits´
+        """
+        data=fixture()
+        claim='ROOT::claim:testing:fixture'
+        for site in data['sites']: site['language']='python'
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            (root/'README.md').write_text(
+                '**Amendment (Evidence)** · `amend:testing:fixture-evidence` '
+                '(`gate:testing:fixture`) uses ``claim:testing:fixture``.\n\n'
+                '**Model (Plan)** · `model:testing:future` Planned ``claim:testing:future``.\n')
+            paragraphs,_=prose(root)
+        data['paragraphs'].update(paragraphs)
+        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'passed')
+        evidence=data['paragraphs']['ROOT::amend:testing:fixture-evidence']
+        evidence['exhibits'].add('ROOT::claim:testing:unknown')
+        with self.assertRaisesRegex(StructuralError,'exhibit does not resolve'): evaluate(**data)
+        evidence['exhibits']={claim}
+        for site in data['sites']: site['language']='rust'
+        with self.assertRaisesRegex(StructuralError,'exhibit does not resolve'): evaluate(**data)
+        evidence['exhibits']=set(); evidence['citations'].add(claim)
+        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'passed')
+        for site in data['sites']: site['language']='python'
+        with self.assertRaisesRegex(StructuralError,'Python claim requires exhibition'): evaluate(**data)
+
+    def test_unknown_evidence_edge(self):
+        """An unknown data edge refuses even beside valid Python evidence, and removing the matching exhibit cannot leave a supported row.
+        ´claim:testing:python-edges-require-known-claims´
+        ´test:testing:test-unknown-evidence-edge´
+        """
+        data=fixture(); claim='ROOT::claim:testing:fixture'
+        for site in data['sites']: site['language']='python'
+        evidence=data['paragraphs']['ROOT::amend:testing:fixture-evidence']
+        evidence['citations'].remove(claim); evidence['exhibits']={claim}
+        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'passed')
+        data['declared'][0]['claims'].append('ROOT::claim:testing:unknown')
+        with self.assertRaisesRegex(StructuralError,'unresolved claim presented as evidence'): evaluate(**data)
+        data['declared'][0]['claims']=[claim]; evidence['exhibits']=set()
+        with self.assertRaisesRegex(StructuralError,'uncited evidence'): evaluate(**data)
+
     def test_source_carriers(self):
         """Strings cannot invent Rust tests, and unattached Python docstrings remain visible to mint reconciliation.
         ´claim:testing:source-carriers-are-lexically-checked´
@@ -151,6 +251,9 @@ class Evidence(unittest.TestCase):
         sites=rust_sites('packages/example/tests/property.rs',generated,'example','ROOT')
         self.assertEqual(site_claim(sites[0])['claim'],'ROOT::claim:testing:generated-bound')
         self.assertTrue(sites[0]['property'])
+        narrated=dict(sites[0],doc='Narrative with extra words.\nClaim: Bounded.\n´claim:testing:generated-bound´\n´test:integration:bounded´')
+        self.assertEqual(site_claim(narrated)['gloss'],'Claim: Bounded.')
+        self.assertTrue(respells(site_claim(narrated)))
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory); (root/'ci').mkdir()
             (root/'ci/orphan.py').write_text('"""Detached.\n´claim:testing:detached´\n"""\n')

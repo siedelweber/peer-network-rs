@@ -1275,6 +1275,7 @@ mod tests {
         assert!(error.detail.contains("unterminated text"));
     }
 
+    /// Claim: An unterminated hexadecimal byte string reports line 1, column 6 and its literal kind, locating the opening quote for repair.
     /// (´claim:lex:an-unterminated-literal-is-located-at-its-quote´)
     /// ´test:unit:refuses-an-unterminated-byte-string-at-its-opening-quote´
     #[test]
@@ -1323,6 +1324,7 @@ mod tests {
         assert!(error.detail.contains("horizontal tab"));
     }
 
+    /// Claim: A tab inside a comment is refused with a comment diagnostic, preserving the grammar's character restriction inside trivia.
     /// (´claim:lex:a-tab-is-not-whitespace´)
     /// ´test:unit:refuses-a-tab-in-a-comment-because-pchar-excludes-it´
     #[test]

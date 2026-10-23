@@ -35,7 +35,7 @@ fn fixture() -> Result<tempfile::TempDir> {
     Ok(directory)
 }
 
-/// Claim: the committed datasets and documents are current in consecutive read-only checks.
+/// Claim: Two consecutive generate-check and document-check passes report no findings on the repository, checking that committed inputs and outputs form a fixed point.
 /// ´claim:render:repository-fixed-point´
 /// ´test:integration:repository-fixed-point´
 #[test]
@@ -51,7 +51,7 @@ fn repository_fixed_point() -> Result<()> {
     Ok(())
 }
 
-/// Claim: changing a dataset byte is detected without repairing it.
+/// Claim: Changing the fixture dataset count produces exactly stale-dataset and stale-document findings without repairing the changed bytes, preserving read-only diagnosis.
 /// ´claim:render:dataset-mutation´
 /// ´test:integration:dataset-mutation´
 #[test]
@@ -78,7 +78,7 @@ fn dataset_mutation() -> Result<()> {
     Ok(())
 }
 
-/// Claim: stale documents fail checking and writing repairs them while reporting a finding.
+/// Claim: A stale fixture document remains untouched by checking, is repaired to the exact rendered bytes by writing with a finding, and then checks clean.
 /// ´claim:render:stale-rendering´
 /// ´test:integration:stale-rendering´
 #[test]

@@ -35,7 +35,7 @@ use std::sync::{Arc, Mutex};
 use super::writer::{StreamProps, Writer};
 use super::{ExecError, RoutingConfig, Stream, collect_file_specs, file_identity};
 
-/// Claim: routing config detects combined redirects.
+/// Claim: A combined redirect marks both stdout and stderr redirected, ensuring both child streams participate in routing.
 /// ´claim:cli:routing-config-detects-combined-redirects´
 /// ´test:crate:routing-config-detects-combined-redirects´
 #[test]
@@ -48,7 +48,7 @@ fn routing_config_detects_combined_redirects() {
     assert!(cfg.is_stream_redirected(Stream::Stderr));
 }
 
-/// Claim: routing config detects single stream redirects.
+/// Claim: A stdout-only redirect marks stdout redirected and stderr unredirected, preserving independent stream routing.
 /// ´claim:cli:routing-config-detects-single-stream-redirects´
 /// ´test:crate:routing-config-detects-single-stream-redirects´
 #[test]
@@ -61,7 +61,7 @@ fn routing_config_detects_single_stream_redirects() {
     assert!(!cfg.is_stream_redirected(Stream::Stderr));
 }
 
-/// Claim: collect file specs rejects ambiguous routing.
+/// Claim: Combined and stdout routes to the same path return `AmbiguousRedirection`, preventing competing writers to one destination.
 /// ´claim:cli:collect-file-specs-rejects-ambiguous-routing´
 /// ´test:crate:collect-file-specs-rejects-ambiguous-routing´
 #[test]
@@ -75,7 +75,7 @@ fn collect_file_specs_rejects_ambiguous_routing() {
     assert!(matches!(error, ExecError::AmbiguousRedirection { .. }));
 }
 
-/// Claim: aliased redirection paths are rejected.
+/// Claim: A path and its dotted spelling are refused as ambiguous before routing, preventing lexical aliases from opening one log twice.
 /// ´claim:cli:aliased-redirection-paths-are-rejected´
 /// ´test:crate:aliased-redirection-paths-are-rejected´
 #[test]
@@ -94,7 +94,7 @@ fn aliased_redirection_paths_are_rejected() {
     ));
 }
 
-/// Claim: symlink and hardlink aliases are rejected.
+/// Claim: Routes to symlinked or hard-linked names of an existing log are refused and its bytes survive, protecting the prior log from truncation.
 /// ´claim:cli:symlink-and-hardlink-aliases-are-rejected´
 /// ´test:crate:symlink-and-hardlink-aliases-are-rejected´
 #[test]
@@ -136,7 +136,7 @@ fn symlink_and_hardlink_aliases_are_rejected() {
     assert_eq!(std::fs::read(&target).expect("read target"), b"keep");
 }
 
-/// Claim: two routes to one log are refused because they would interleave.
+/// Claim: Separately configured stdout and stderr paths sharing an inode are refused before truncation, preserving previous log bytes without claiming to close host races.
 /// ´claim:cli:two-routes-to-one-log-are-refused-because-they-would-interleave´
 /// ´test:crate:two-routes-to-one-log-are-refused-because-they-would-interleave´
 #[test]
@@ -173,7 +173,7 @@ fn two_routes_to_one_log_are_refused_because_they_would_interleave() {
     assert_eq!(std::fs::read(&stdout_log).expect("read log"), b"previous run");
 }
 
-/// Claim: parent symlink alias is rejected.
+/// Claim: Two missing log paths under aliased existing parents are refused, preventing an absent final component from hiding destination identity.
 /// ´claim:cli:parent-symlink-alias-is-rejected´
 /// ´test:crate:parent-symlink-alias-is-rejected´
 #[test]
@@ -199,7 +199,7 @@ fn parent_symlink_alias_is_rejected() {
     ));
 }
 
-/// Claim: symlinked ancestor with missing directories is rejected.
+/// Claim: Aliased ancestors with two missing suffix directories still cause refusal before creating them, preventing lexical fallback from duplicating a log.
 /// ´claim:cli:symlinked-ancestor-with-missing-directories-is-rejected´
 /// ´test:crate:symlinked-ancestor-with-missing-directories-is-rejected´
 #[test]
@@ -231,7 +231,7 @@ fn symlinked_ancestor_with_missing_directories_is_rejected() {
     assert!(!real.join("new").exists());
 }
 
-/// Claim: parent dir through missing component still resolves symlinks.
+/// Claim: After a missing component and parent traversal, a symlinked component still resolves to the competing log and causes ambiguity refusal.
 /// ´claim:cli:parent-dir-through-missing-component-still-resolves-symlinks´
 /// ´test:crate:parent-dir-through-missing-component-still-resolves-symlinks´
 #[test]
@@ -259,7 +259,7 @@ fn parent_dir_through_missing_component_still_resolves_symlinks() {
     ));
 }
 
-/// Claim: missing directories under distinct ancestors validate.
+/// Claim: Two missing log suffixes under distinct existing ancestors produce two file specifications, allowing genuinely separate future destinations.
 /// ´claim:cli:missing-directories-under-distinct-ancestors-validate´
 /// ´test:crate:missing-directories-under-distinct-ancestors-validate´
 #[test]
@@ -281,7 +281,7 @@ fn missing_directories_under_distinct_ancestors_validate() {
     assert_eq!(specs.len(), 2);
 }
 
-/// Claim: dangling symlink alias is rejected.
+/// Claim: A dangling link and its target conflict when routed together, while the link alone yields one valid specification, preserving single-target routing.
 /// ´claim:cli:dangling-symlink-alias-is-rejected´
 /// ´test:crate:dangling-symlink-alias-is-rejected´
 #[test]
@@ -315,7 +315,7 @@ fn dangling_symlink_alias_is_rejected() {
     assert_eq!(specs.len(), 1);
 }
 
-/// Claim: dangling symlink chain resolves to final target.
+/// Claim: A two-link dangling chain has the same identity as its missing final target, preventing chained aliases from evading route comparison.
 /// ´claim:cli:dangling-symlink-chain-resolves-to-final-target´
 /// ´test:crate:dangling-symlink-chain-resolves-to-final-target´
 #[test]
@@ -335,7 +335,7 @@ fn dangling_symlink_chain_resolves_to_final_target() {
     );
 }
 
-/// Claim: symlink loop is an error.
+/// Claim: A two-link cycle yields an identity error and an I/O preflight refusal, preventing unresolved cyclic paths from becoming log destinations.
 /// ´claim:cli:symlink-loop-is-an-error´
 /// ´test:crate:symlink-loop-is-an-error´
 #[test]
@@ -356,7 +356,7 @@ fn symlink_loop_is_an_error() {
     assert!(matches!(super::preflight_routing(&cfg), Err(ExecError::Io(_)),));
 }
 
-/// Claim: distinct redirection targets validate.
+/// Claim: Separate stdout and stderr filenames pass preflight, preserving valid independent stream destinations.
 /// ´claim:cli:distinct-redirection-targets-validate´
 /// ´test:crate:distinct-redirection-targets-validate´
 #[test]
@@ -372,7 +372,7 @@ fn distinct_redirection_targets_validate() {
     super::preflight_routing(&cfg).expect("distinct targets are valid");
 }
 
-/// Claim: ambiguous alias does not truncate existing output.
+/// Claim: A full run with aliased combined/stdout destinations returns `AmbiguousRedirection` and preserves the existing log, proving refusal precedes truncation.
 /// ´claim:cli:ambiguous-alias-does-not-truncate-existing-output´
 /// ´test:crate:ambiguous-alias-does-not-truncate-existing-output´
 #[test]
@@ -405,7 +405,7 @@ fn ambiguous_alias_does_not_truncate_existing_output() {
     );
 }
 
-/// Claim: dangling alias failure leaves target intact.
+/// Claim: A dangling route pair is refused without creating its target and remains refused after creation, preserving existing bytes through preflight and run.
 /// ´claim:cli:dangling-alias-failure-leaves-target-intact´
 /// ´test:crate:dangling-alias-failure-leaves-target-intact´
 #[test]
@@ -475,7 +475,7 @@ fn make_writer(add_prefix: bool, props: StreamProps, wrap_length: usize) -> (Wri
     (writer, buffer)
 }
 
-/// Claim: typesetter passes data through.
+/// Claim: Raw output writes the two-line fixture unchanged through finalization, preserving byte content on the simple forwarding path.
 /// ´claim:cli:typesetter-passes-data-through´
 /// ´test:crate:typesetter-passes-data-through´
 #[test]
@@ -487,7 +487,7 @@ fn typesetter_passes_data_through() {
     assert_eq!(&*written, b"hello\nworld\n");
 }
 
-/// Claim: typesetter preserves arbitrary bytes.
+/// Claim: Raw stdout and stderr preserve invalid UTF-8, NUL, control bytes and a 64 `KiB` payload exactly, protecting binary child output.
 /// ´claim:cli:typesetter-preserves-arbitrary-bytes´
 /// ´test:crate:typesetter-preserves-arbitrary-bytes´
 #[test]
@@ -510,7 +510,7 @@ fn typesetter_preserves_arbitrary_bytes() {
     assert_eq!(written, expected);
 }
 
-/// Claim: calligraphic sanitizes control bytes.
+/// Claim: Text presentation replaces NUL and invalid UTF-8 with the pinned printable forms and prefixes the line, preventing unsafe bytes from reaching that presentation.
 /// ´claim:cli:calligraphic-sanitizes-control-bytes´
 /// ´test:crate:calligraphic-sanitizes-control-bytes´
 #[test]
@@ -526,7 +526,7 @@ fn calligraphic_sanitizes_control_bytes() {
     assert_eq!(written, ">>> a?b\u{fffd}c\n");
 }
 
-/// Claim: calligraphic adds prefix per line.
+/// Claim: Two complete stdout lines each receive the configured prefix and retain their newline, preserving stream identification per line.
 /// ´claim:cli:calligraphic-adds-prefix-per-line´
 /// ´test:crate:calligraphic-adds-prefix-per-line´
 #[test]
@@ -543,7 +543,7 @@ fn calligraphic_adds_prefix_per_line() {
     assert_eq!(written, ">>> line one\n>>> line two\n");
 }
 
-/// Claim: calligraphic buffers partial lines until finalize.
+/// Claim: An incomplete line produces no immediate bytes and finalization emits its prefix and newline, preserving complete-line presentation.
 /// ´claim:cli:calligraphic-buffers-partial-lines-until-finalize´
 /// ´test:crate:calligraphic-buffers-partial-lines-until-finalize´
 #[test]
@@ -567,7 +567,7 @@ fn prefix_props() -> StreamProps {
     }
 }
 
-/// Claim: calligraphic preserves code point split across two writes.
+/// Claim: A euro sign split after its first UTF-8 byte renders intact after the second write, preventing pipe chunk boundaries from corrupting text.
 /// ´claim:cli:calligraphic-preserves-code-point-split-across-two-writes´
 /// ´test:crate:calligraphic-preserves-code-point-split-across-two-writes´
 #[test]
@@ -581,7 +581,7 @@ fn calligraphic_preserves_code_point_split_across_two_writes() {
     assert_eq!(written, ">>> \u{20ac}\n");
 }
 
-/// Claim: calligraphic preserves code point split across three writes.
+/// Claim: Delivering each euro-sign byte separately still renders the exact prefixed character, protecting multibyte text under minimal reads.
 /// ´claim:cli:calligraphic-preserves-code-point-split-across-three-writes´
 /// ´test:crate:calligraphic-preserves-code-point-split-across-three-writes´
 #[test]
@@ -595,7 +595,7 @@ fn calligraphic_preserves_code_point_split_across_three_writes() {
     assert_eq!(written, ">>> \u{20ac}\n");
 }
 
-/// Claim: calligraphic replaces invalid utf8 after buffering.
+/// Claim: A lone continuation byte and a final truncated sequence render replacement characters at the pinned positions, distinguishing invalid input from merely split UTF-8.
 /// ´claim:cli:calligraphic-replaces-invalid-utf8-after-buffering´
 /// ´test:crate:calligraphic-replaces-invalid-utf8-after-buffering´
 #[test]
@@ -611,7 +611,7 @@ fn calligraphic_replaces_invalid_utf8_after_buffering() {
     assert_eq!(written, ">>> a\u{fffd}b\n>>> \u{fffd}\n");
 }
 
-/// Claim: calligraphic output is chunking invariant.
+/// Claim: The multilingual fixture renders identically for six chunk sizes, retaining the euro sign without replacement characters, protecting presentation from read boundaries.
 /// ´claim:cli:calligraphic-output-is-chunking-invariant´
 /// ´test:crate:calligraphic-output-is-chunking-invariant´
 #[test]

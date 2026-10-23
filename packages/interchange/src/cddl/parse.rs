@@ -1139,6 +1139,7 @@ mod tests {
         assert!(error.detail.contains("at least one rule"));
     }
 
+    /// Claim: A comment-only document is refused for lacking a rule, preventing trivia from becoming a valid empty theory.
     /// (´claim:parse:a-document-needs-a-rule´)
     /// ´test:unit:refuses-a-document-of-only-trivia´
     #[test]
@@ -1157,6 +1158,7 @@ mod tests {
         assert!(error.detail.contains("`=`"));
     }
 
+    /// Claim: An assignment ending after its equals sign is refused at column 4, locating the missing body.
     /// (´claim:parse:a-rule-needs-a-name-an-assignment-and-a-body´)
     /// ´test:unit:refuses-an-assignment-with-no-body´
     #[test]
@@ -1165,6 +1167,7 @@ mod tests {
         assert_eq!((error.line, error.column), (1, 4));
     }
 
+    /// Claim: An assignment beginning with equals is refused at column 1, locating the missing rule name.
     /// (´claim:parse:a-rule-needs-a-name-an-assignment-and-a-body´)
     /// ´test:unit:refuses-a-rule-that-does-not-start-with-a-name´
     #[test]
@@ -1183,6 +1186,7 @@ mod tests {
         assert!(error.detail.contains("`]`"));
     }
 
+    /// Claim: An unterminated map diagnostic names the closing brace, making the missing delimiter actionable.
     /// (´claim:parse:an-unclosed-bracket-names-the-closer-it-wanted´)
     /// ´test:unit:refuses-an-unclosed-map´
     #[test]
@@ -1191,6 +1195,7 @@ mod tests {
         assert!(error.detail.contains("`}`"));
     }
 
+    /// Claim: An unterminated parenthesized type diagnostic names the closing parenthesis, making the missing delimiter actionable.
     /// (´claim:parse:an-unclosed-bracket-names-the-closer-it-wanted´)
     /// ´test:unit:refuses-an-unclosed-parenthesis´
     #[test]
@@ -1208,6 +1213,7 @@ mod tests {
         assert_eq!((error.line, error.column), (1, 7));
     }
 
+    /// Claim: An unterminated generic parameter list diagnostic names the closing angle bracket, preserving delimiter-specific repair guidance.
     /// (´claim:parse:an-unclosed-bracket-names-the-closer-it-wanted´)
     /// ´test:unit:refuses-an-unclosed-generic-parameter-list´
     #[test]
@@ -1216,6 +1222,7 @@ mod tests {
         assert!(error.detail.contains("`>`"));
     }
 
+    /// Claim: An unterminated generic argument list diagnostic names the closing angle bracket, preserving delimiter-specific repair guidance.
     /// (´claim:parse:an-unclosed-bracket-names-the-closer-it-wanted´)
     /// ´test:unit:refuses-an-unclosed-generic-argument-list´
     #[test]
@@ -1235,6 +1242,7 @@ mod tests {
         assert_eq!((error.line, error.column), (1, 3));
     }
 
+    /// Claim: An empty generic application is refused at column 7, preventing a zero-entry argument list from being accepted.
     /// (´claim:parse:a-generic-list-may-not-be-empty´)
     /// ´test:unit:refuses-empty-generic-arguments´
     #[test]
@@ -1283,6 +1291,7 @@ mod tests {
         assert!(error.detail.contains("expected a type"));
     }
 
+    /// Claim: A bare control dot reports column 10 and a control-operator diagnostic, locating the absent operator name.
     /// (´claim:parse:a-control-operator-needs-a-name-and-an-operand´)
     /// ´test:unit:refuses-a-control-operator-with-no-name´
     #[test]
@@ -1310,6 +1319,7 @@ mod tests {
         assert_eq!((error.line, error.column), (1, 6));
     }
 
+    /// Claim: A colon-style entry with no value is refused at column 8, protecting the key/value entry structure.
     /// (´claim:parse:an-entry-needs-both-sides-of-its-arrow´)
     /// ´test:unit:refuses-a-member-key-with-no-value´
     #[test]
@@ -1318,6 +1328,7 @@ mod tests {
         assert_eq!((error.line, error.column), (1, 8));
     }
 
+    /// Claim: An arrow-style entry with no value is refused at column 10, protecting the key/value entry structure.
     /// (´claim:parse:an-entry-needs-both-sides-of-its-arrow´)
     /// ´test:unit:refuses-an-arrow-with-no-value´
     #[test]
@@ -1358,6 +1369,7 @@ mod tests {
     /// `occur = [uint] "*" [uint]` admits no space, so the `2` here is an
     /// entry of its own and `*3` is left wanting one.
     ///
+    /// Claim: Spacing between 2 and *3 leaves an entryless occurrence that is refused at column 10, preserving the grammar's adjacency requirement.
     /// (´claim:parse:an-occurrence-indicator-needs-its-entry´)
     /// ´test:unit:refuses-an-occurrence-indicator-held-off-from-its-bound´
     #[test]
@@ -1376,6 +1388,7 @@ mod tests {
         assert!(error.detail.contains("expected a type"));
     }
 
+    /// Claim: An unterminated tag diagnostic names the closing parenthesis, preserving explicit closure of its enclosed type.
     /// (´claim:parse:a-tag-needs-a-type-and-its-closing-parenthesis´)
     /// ´test:unit:refuses-a-tag-with-no-closing-parenthesis´
     #[test]
@@ -1393,6 +1406,7 @@ mod tests {
         assert_eq!((error.line, error.column), (1, 6));
     }
 
+    /// Claim: An enumeration followed by a number is refused at column 6, requiring the named group reference.
     /// (´claim:parse:an-unwrap-and-an-enumeration-need-a-name´)
     /// ´test:unit:refuses-an-enumeration-with-no-name´
     #[test]
@@ -1412,6 +1426,7 @@ mod tests {
 
     /// A group entry may sit beside another; a rule body may not.
     ///
+    /// Claim: A second top-level literal after a complete rule is refused at column 7, preventing trailing input from being ignored.
     /// (´claim:parse:nothing-may-follow-a-complete-rule´)
     /// ´test:unit:refuses-two-types-juxtaposed-at-the-top-level´
     #[test]
@@ -1484,9 +1499,9 @@ mod tests {
     ///
     /// Claim: Resumption reuses its leading type and doubling these nested inputs has at most quadratic visit growth, guarding against exponential re-descent.
     /// ´claim:parse:nested-entry-visits-have-bounded-growth´
-    /// ´test:unit:a-deeply-nested-group-entry-parses-without-reparsing´
+    /// ´test:unit:nested-entry-visits-have-bounded-growth´
     #[test]
-    fn a_deeply_nested_group_entry_parses_without_reparsing() {
+    fn nested_entry_visits_have_bounded_growth() {
         let visits = |depth| {
             let arrays = format!("a = {{{}uint{}}}", "[".repeat(depth), "]".repeat(depth));
             let maps = format!("a = {}uint{}", "{".repeat(depth), "}".repeat(depth));
@@ -1555,6 +1570,7 @@ mod tests {
         assert!(matches!(cddl.rules[0].body, RuleBody::Type(_)));
     }
 
+    /// Claim: A comma-separated pair under plain assignment is parsed as a group, preserving the fallback when a type reading cannot consume it.
     /// (´claim:parse:a-plain-rule-prefers-the-type-reading´)
     /// ´test:unit:an-equals-rule-falls-back-to-the-group-reading´
     #[test]
@@ -1563,6 +1579,7 @@ mod tests {
         assert!(matches!(cddl.rules[0].body, RuleBody::Group(_)));
     }
 
+    /// Claim: A named member under plain assignment is parsed as a group, preserving member-key syntax through the type/group ambiguity.
     /// (´claim:parse:a-plain-rule-prefers-the-type-reading´)
     /// ´test:unit:an-equals-rule-reads-a-member-key-as-a-group´
     #[test]
@@ -1589,6 +1606,7 @@ mod tests {
         assert!(matches!(cddl.rules[0].body, RuleBody::Group(_)));
     }
 
+    /// Claim: A /= assignment produces a type body, preserving the disambiguating meaning of the augmentation operator.
     /// (´claim:parse:an-augmenting-assignment-settles-the-reading´)
     /// ´test:unit:a-type-choice-assignment-is-always-a-type´
     #[test]

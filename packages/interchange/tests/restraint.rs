@@ -78,7 +78,8 @@ fn the_unwidened_float_names_are_provisions_that_fix_nothing() {
 /// The same distinction written inline: `#7.25` is the width the prelude
 /// calls `float16`.
 ///
-/// (´claim:restraint:a-named-width-fixes-the-form´)
+/// Claim: Explicit #7.25, #7.26 and #7.27 forms each report a fixed float provision, preserving width declarations without prelude names.
+/// ´claim:restraint:explicit-width-forms-are-provisions´
 /// ´test:integration:a-major-type-seven-form-that-pins-its-information-is-a-provision´
 #[test]
 fn a_major_type_seven_form_that_pins_its_information_is_a_provision() {
@@ -191,6 +192,7 @@ fn any_reaches_all_three_kinds_without_naming_one() {
 /// `#` is `any` written out: the prelude's own definition, and it reaches
 /// the same way.
 ///
+/// Claim: The unrestricted # form reports implicit float, tag and simple reaches with their source spelling, preserving restraint analysis of the bare data-item form.
 /// (´claim:restraint:any-reaches-all-three-kinds´)
 /// ´test:integration:the-bare-data-item-form-reaches-all-three-kinds´
 #[test]
@@ -255,6 +257,7 @@ fn a_prelude_alias_that_reaches_a_float_is_an_implicit_reach() {
     assert_eq!(reaches(&report), [(Restrained::Float, vec!["number"])]);
 }
 
+/// Claim: The integer and unsigned prelude aliases each report an implicit tag reach, preventing aliases from concealing restrained representations.
 /// (´claim:restraint:a-prelude-alias-reaches-what-it-does-not-name´)
 /// ´test:integration:a-prelude-alias-that-reaches-a-tag-is-an-implicit-reach´
 #[test]

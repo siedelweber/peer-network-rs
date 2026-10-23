@@ -173,6 +173,7 @@ fn a_major_nothing_is_held_of_is_rejected_whole() {
     );
 }
 
+/// Claim: With an empty registry, the fixture document returns `UnheldMajor` 1 and is not accepted, preserving whole-document refusal without held theory evidence.
 /// (´claim:acceptance:an-unheld-major-rejects-whole´)
 /// ´test:integration:an-empty-registry-rejects-everything-whole´
 #[test]
@@ -301,6 +302,7 @@ fn the_prefix_path_agrees_with_the_full_envelope() {
 /// A well-formed envelope with a tail outside the data language: the routing
 /// answers, and the bytes are still no document at all.
 ///
+/// Claim: A valid envelope followed by a trailing byte routes strictly but fails canonical document decoding, preventing prefix routing from certifying membership.
 /// (´claim:prefix:a-peek-certifies-no-membership´)
 /// ´test:integration:the-prefix-path-certifies-no-membership´
 #[test]
@@ -319,6 +321,7 @@ fn the_prefix_path_certifies_no_membership() {
     ));
 }
 
+/// Claim: Three bytes of the fixture envelope return `Truncated` with given 3, preserving the request-for-more path during dispatch.
 /// (´claim:prefix:a-short-prefix-asks-for-more´)
 /// ´test:integration:a-prefix-too-short-to-carry-an-envelope-asks-for-more-bytes´
 #[test]

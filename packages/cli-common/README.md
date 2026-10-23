@@ -208,4 +208,4 @@ The documents command and execwrap use this package for the command-line output 
 
 ## Claim areas · `sec:clicommon:areas`
 
-**Section (cli)** · `sec:clicommon:area-cli` If command-line claims fail, callers can lose result bytes, receive malformed diagnostics, or mistake failure for success.
+**Section (cli)** · `sec:clicommon:area-cli` If shared CLI claims fail, callers can misclassify exits, expose secrets in control records, or publish incorrect report bytes, permissions and success stamps.

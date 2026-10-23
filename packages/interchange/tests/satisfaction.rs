@@ -86,6 +86,7 @@ fn the_base_theory_admits_a_document_with_no_content() {
     assert!(satisfies_global(&document).holds());
 }
 
+/// Claim: The base admits the fixture's text, nested null/float and tagged value including the maximum content key, witnessing unrestricted content acceptance.
 /// (´claim:satisfaction:the-base-theory-admits-any-document´)
 /// ´test:integration:the-base-theory-admits-every-content-key-and-every-value´
 #[test]
@@ -729,7 +730,8 @@ fn size_on_a_text_string_counts_bytes() {
     assert!(!admits("tstr .size 2", text("a€")));
 }
 
-/// (´claim:satisfaction:size-counts-bytes´)
+/// Claim: A bstr size-four constraint admits four bytes and refuses three, preserving exact byte-string length checking.
+/// ´claim:satisfaction:byte-string-size-is-exact´
 /// ´test:integration:size-on-a-byte-string-counts-bytes´
 #[test]
 fn size_on_a_byte_string_counts_bytes() {
@@ -771,6 +773,7 @@ fn size_on_an_unsigned_integer_is_a_range() {
 /// widths is satisfied the same way, and eight is unchanged: the widths at or
 /// below it still bound the value.
 ///
+/// Claim: Widths above eight admit the tested small and maximum uint values while width one refuses 256 and width eight admits the maximum, preserving value-range semantics.
 /// (´claim:satisfaction:size-on-an-integer-is-a-range´)
 /// ´test:integration:size-on-an-unsigned-integer-admits-every-uint-past-eight-bytes´
 #[test]
@@ -862,7 +865,8 @@ fn an_exhausted_regexp_budget_is_a_located_mismatch() {
 /// ordinary answer, which is what says the refusal above is about the
 /// budget and not about the pattern.
 ///
-/// (´claim:satisfaction:an-exhausted-pattern-budget-is-a-mismatch´)
+/// Claim: Within its operation budget, the nested-repeat pattern admits aaab and refuses aaa, distinguishing ordinary membership answers from budget refusal.
+/// ´claim:satisfaction:bounded-patterns-return-membership´
 /// ´test:integration:the-same-pattern-answers-a-short-subject´
 #[test]
 fn the_same_pattern_answers_a_short_subject() {
@@ -1005,6 +1009,7 @@ fn default_is_the_ne_it_implies() {
 /// Nothing puts a 7 at key 2: the document is unchanged by the judgment, and a
 /// 7 arriving on the wire is refused.
 ///
+/// Claim: An absent optional defaulted member is admitted while explicitly sending its default value is refused, preserving default as a constraint rather than synthesis.
 /// (´claim:satisfaction:default-is-the-inequality-it-implies´)
 /// ´test:integration:an-absent-optional-member-stays-absent-under-a-default´
 #[test]

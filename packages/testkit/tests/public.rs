@@ -1,6 +1,6 @@
 use pn_testkit::{Case, run};
 
-/// Claim: A failed adapter result neither hides later cases nor loses implementation identity.
+/// Claim: Across two named implementations, a rejected case precedes a passing case in each result sequence and all retain suite and edition, preventing failure from hiding later cases.
 /// ´claim:testkit:all-predicates-retain-identity´
 /// ´test:integration:runner-results´
 #[test]

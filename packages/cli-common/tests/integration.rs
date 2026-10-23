@@ -36,7 +36,7 @@ struct FixtureHelpCli {
     base: BaseArgs,
 }
 
-/// Claim: emit real stdout through public api.
+/// Claim: With harness-captured stdout, an external caller can emit the fixture payload successfully, checking public sink access without asserting captured byte contents.
 /// ´claim:cli:emit-real-stdout-through-public-api´
 /// ´test:integration:emit-real-stdout-through-public-api´
 #[test]
@@ -53,7 +53,7 @@ fn emit_real_stdout_through_public_api() {
     emit(&Payload { schema: 1, name: "ok" }).expect("emit must succeed under captured stdout");
 }
 
-/// Claim: base args flattens into clap parser.
+/// Claim: An external fixture parser can flatten `BaseArgs` and parse no options with debug false, checking the shared default through the public API.
 /// ´claim:cli:base-args-flattens-into-clap-parser´
 /// ´test:integration:base-args-flattens-into-clap-parser´
 #[test]
@@ -62,7 +62,7 @@ fn base_args_flattens_into_clap_parser() {
     assert!(!cli.base.debug, "default must be debug=false");
 }
 
-/// Claim: base args long flag toggles debug.
+/// Claim: An external fixture parser accepts --debug and exposes debug true, checking the public shared-argument opt-in.
 /// ´claim:cli:base-args-long-flag-toggles-debug´
 /// ´test:integration:base-args-long-flag-toggles-debug´
 #[test]
@@ -71,7 +71,7 @@ fn base_args_long_flag_toggles_debug() {
     assert!(cli.base.debug);
 }
 
-/// Claim: base args rejects unknown short flag.
+/// Claim: An unknown long flag in the external fixture parser yields exit code 2, preventing unrecognized options from silently succeeding.
 /// ´claim:cli:base-args-rejects-unknown-short-flag´
 /// ´test:integration:base-args-rejects-unknown-short-flag´
 #[test]
@@ -86,7 +86,7 @@ fn base_args_rejects_unknown_short_flag() {
     assert_eq!(err.exit_code(), 2, "clap argv-parse failure exit code is 2");
 }
 
-/// Claim: parse args from wraps help as json control record.
+/// Claim: The external fixture accepts debug and returns a successful `Help` record containing its description for --help, preserving public control-plane help access.
 /// ´claim:cli:parse-args-from-wraps-help-as-json-control-record´
 /// ´test:integration:parse-args-from-wraps-help-as-json-control-record´
 #[test]

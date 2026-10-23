@@ -1,0 +1,1541 @@
+{
+  "schema": 1,
+  "sites": [
+    {
+      "operation": "pn-interchange::cddl::fragment::tests::an_unevaluable_operator_at_a_content_key_is_in_the_fragment",
+      "path": "packages/interchange/src/cddl/fragment.rs",
+      "claim": "INTERCHANGE::claim:fragment:membership-restricts-no-vocabulary",
+      "before": "Clause 6 again, on the operator vocabulary: `.cbor` is outside the\nevaluable subset, and that is a different verdict at a different\nplace — membership does not look.",
+      "after": "Claim: A content-key .cbor expression remains in the assignable fragment, keeping syntactic membership independent of operator evaluability.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::fragment::tests::a_root_group_choice_is_refused",
+      "path": "packages/interchange/src/cddl/fragment.rs",
+      "claim": "INTERCHANGE::claim:fragment:a-root-choice-is-refused",
+      "before": "",
+      "after": "Claim: A root group choice is refused as not closed, preserving the single closed-map requirement.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::fragment::tests::a_repeated_entry_is_refused",
+      "path": "packages/interchange/src/cddl/fragment.rs",
+      "claim": "INTERCHANGE::claim:fragment:an-occurrence-indicator-in-the-root-is-refused",
+      "before": "",
+      "after": "Claim: A repeated root entry is refused with an occurrence-indicator diagnostic, preventing an open cardinality from entering the closed envelope.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::fragment::tests::a_bare_group_reference_is_refused",
+      "path": "packages/interchange/src/cddl/fragment.rs",
+      "claim": "INTERCHANGE::claim:fragment:an-entry-that-extends-the-map-is-refused",
+      "before": "",
+      "after": "Claim: A root group reference is refused for lacking a member key, preventing another group from extending the envelope implicitly.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::fragment::tests::a_typed_key_is_refused",
+      "path": "packages/interchange/src/cddl/fragment.rs",
+      "claim": "INTERCHANGE::claim:fragment:a-content-key-must-be-an-integer-literal",
+      "before": "",
+      "after": "Claim: A tstr key is refused as not closed, preserving integer-literal content-key enumeration.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::fragment::tests::an_absent_key_1_is_refused",
+      "path": "packages/interchange/src/cddl/fragment.rs",
+      "claim": "INTERCHANGE::claim:fragment:both-envelope-keys-must-be-present",
+      "before": "",
+      "after": "Claim: A root containing key 0 alone is refused with key 1 named as absent, preserving the version envelope requirement.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::fragment::tests::a_key_1_that_is_not_an_array_is_refused",
+      "path": "packages/interchange/src/cddl/fragment.rs",
+      "claim": "INTERCHANGE::claim:fragment:key-1-must-be-a-three-element-array",
+      "before": "",
+      "after": "Claim: A uint at key 1 is refused as not pinned to an array, protecting the version tuple shape.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::lex::tests::refuses_an_unterminated_byte_string_at_its_opening_quote",
+      "path": "packages/interchange/src/cddl/lex.rs",
+      "claim": "INTERCHANGE::claim:lex:an-unterminated-literal-is-located-at-its-quote",
+      "before": "",
+      "after": "Claim: An unterminated hexadecimal byte string reports line 1, column 6 and its literal kind, locating the opening quote for repair.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::lex::tests::refuses_a_tab_in_a_comment_because_pchar_excludes_it",
+      "path": "packages/interchange/src/cddl/lex.rs",
+      "claim": "INTERCHANGE::claim:lex:a-tab-is-not-whitespace",
+      "before": "",
+      "after": "Claim: A tab inside a comment is refused with a comment diagnostic, preserving the grammar's character restriction inside trivia.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::tests::the_base_theory_is_not_in_the_assignable_fragment",
+      "path": "packages/interchange/src/cddl/mod.rs",
+      "claim": "INTERCHANGE::claim:theories:the-base-theory-is-not-assignable",
+      "before": "",
+      "after": "Claim: Reading the unpinned global source as an assigned theory fails, preserving the distinction between the base and assignable theories.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::tests::a_malformed_pattern_is_refused_at_parse",
+      "path": "packages/interchange/src/cddl/mod.rs",
+      "claim": "INTERCHANGE::claim:theories:a-pattern-is-compiled-at-parse",
+      "before": "",
+      "after": "Claim: An unclosed character class in a theory returns a `Regexp` error during parsing, preventing malformed patterns from reaching document evaluation.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::tests::the_operators_outside_the_subset_are_refused",
+      "path": "packages/interchange/src/cddl/mod.rs",
+      "claim": "INTERCHANGE::claim:theories:an-operator-outside-the-subset-is-unevaluable",
+      "before": "",
+      "after": "Claim: The cbor, cborseq, within and and fixtures return `Unevaluable` naming their operator, preserving explicit refusal outside the evaluable subset.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_a_document_of_only_trivia",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:a-document-needs-a-rule",
+      "before": "",
+      "after": "Claim: A comment-only document is refused for lacking a rule, preventing trivia from becoming a valid empty theory.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_an_assignment_with_no_body",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:a-rule-needs-a-name-an-assignment-and-a-body",
+      "before": "",
+      "after": "Claim: An assignment ending after its equals sign is refused at column 4, locating the missing body.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_a_rule_that_does_not_start_with_a_name",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:a-rule-needs-a-name-an-assignment-and-a-body",
+      "before": "",
+      "after": "Claim: An assignment beginning with equals is refused at column 1, locating the missing rule name.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_an_unclosed_map",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:an-unclosed-bracket-names-the-closer-it-wanted",
+      "before": "",
+      "after": "Claim: An unterminated map diagnostic names the closing brace, making the missing delimiter actionable.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_an_unclosed_parenthesis",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:an-unclosed-bracket-names-the-closer-it-wanted",
+      "before": "",
+      "after": "Claim: An unterminated parenthesized type diagnostic names the closing parenthesis, making the missing delimiter actionable.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_an_unclosed_generic_parameter_list",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:an-unclosed-bracket-names-the-closer-it-wanted",
+      "before": "",
+      "after": "Claim: An unterminated generic parameter list diagnostic names the closing angle bracket, preserving delimiter-specific repair guidance.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_an_unclosed_generic_argument_list",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:an-unclosed-bracket-names-the-closer-it-wanted",
+      "before": "",
+      "after": "Claim: An unterminated generic argument list diagnostic names the closing angle bracket, preserving delimiter-specific repair guidance.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_empty_generic_arguments",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:a-generic-list-may-not-be-empty",
+      "before": "",
+      "after": "Claim: An empty generic application is refused at column 7, preventing a zero-entry argument list from being accepted.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_a_control_operator_with_no_name",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:a-control-operator-needs-a-name-and-an-operand",
+      "before": "",
+      "after": "Claim: A bare control dot reports column 10 and a control-operator diagnostic, locating the absent operator name.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_a_member_key_with_no_value",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:an-entry-needs-both-sides-of-its-arrow",
+      "before": "",
+      "after": "Claim: A colon-style entry with no value is refused at column 8, protecting the key/value entry structure.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_an_arrow_with_no_value",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:an-entry-needs-both-sides-of-its-arrow",
+      "before": "",
+      "after": "Claim: An arrow-style entry with no value is refused at column 10, protecting the key/value entry structure.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_an_occurrence_indicator_held_off_from_its_bound",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:an-occurrence-indicator-needs-its-entry",
+      "before": "`occur = [uint] \"*\" [uint]` admits no space, so the `2` here is an\nentry of its own and `*3` is left wanting one.",
+      "after": "Claim: Spacing between 2 and *3 leaves an entryless occurrence that is refused at column 10, preserving the grammar's adjacency requirement.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_a_tag_with_no_closing_parenthesis",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:a-tag-needs-a-type-and-its-closing-parenthesis",
+      "before": "",
+      "after": "Claim: An unterminated tag diagnostic names the closing parenthesis, preserving explicit closure of its enclosed type.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_an_enumeration_with_no_name",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:an-unwrap-and-an-enumeration-need-a-name",
+      "before": "",
+      "after": "Claim: An enumeration followed by a number is refused at column 6, requiring the named group reference.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_two_types_juxtaposed_at_the_top_level",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:nothing-may-follow-a-complete-rule",
+      "before": "A group entry may sit beside another; a rule body may not.",
+      "after": "Claim: A second top-level literal after a complete rule is refused at column 7, preventing trailing input from being ignored.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::an_equals_rule_falls_back_to_the_group_reading",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:a-plain-rule-prefers-the-type-reading",
+      "before": "",
+      "after": "Claim: A comma-separated pair under plain assignment is parsed as a group, preserving the fallback when a type reading cannot consume it.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::an_equals_rule_reads_a_member_key_as_a_group",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:a-plain-rule-prefers-the-type-reading",
+      "before": "",
+      "after": "Claim: A named member under plain assignment is parsed as a group, preserving member-key syntax through the type/group ambiguity.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::a_type_choice_assignment_is_always_a_type",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:an-augmenting-assignment-settles-the-reading",
+      "before": "",
+      "after": "Claim: A /= assignment produces a type body, preserving the disambiguating meaning of the augmentation operator.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::printer::tests::every_production_reaches_a_fixed_point",
+      "path": "packages/interchange/src/cddl/print.rs",
+      "claim": "INTERCHANGE::claim:print:the-printed-form-is-a-fixed-point",
+      "before": "",
+      "after": "Claim: Each production-tour fixture reaches the printer's fixed point, protecting normalized identities across the exercised grammar forms.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::resolve::tests::an_undefined_name_on_a_later_line_carries_that_line",
+      "path": "packages/interchange/src/cddl/resolve.rs",
+      "claim": "INTERCHANGE::claim:resolve:an-undefined-name-is-located",
+      "before": "",
+      "after": "Claim: An unresolved name in the second rule reports that name and line 2, preserving useful resolution diagnostics beyond the first line.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::resolve::tests::an_undefined_name_inside_a_generic_argument_is_refused",
+      "path": "packages/interchange/src/cddl/resolve.rs",
+      "claim": "INTERCHANGE::claim:resolve:every-place-a-name-may-stand-is-resolved",
+      "before": "",
+      "after": "Claim: An undefined name inside a generic argument returns `UnresolvedRule`, preventing application arguments from escaping resolution.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::resolve::tests::an_undefined_name_in_a_member_key_is_refused",
+      "path": "packages/interchange/src/cddl/resolve.rs",
+      "claim": "INTERCHANGE::claim:resolve:every-place-a-name-may-stand-is-resolved",
+      "before": "",
+      "after": "Claim: An undefined member-key name returns `UnresolvedRule`, preventing key expressions from escaping resolution.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::resolve::tests::a_generic_parameter_does_not_escape_its_rule",
+      "path": "packages/interchange/src/cddl/resolve.rs",
+      "claim": "INTERCHANGE::claim:resolve:a-generic-parameter-is-local-to-its-rule",
+      "before": "",
+      "after": "Claim: Using another rule's parameter returns `UnresolvedRule` naming that parameter, preserving rule-local generic scope.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::resolve::tests::a_generic_cited_without_arguments_is_refused",
+      "path": "packages/interchange/src/cddl/resolve.rs",
+      "claim": "INTERCHANGE::claim:resolve:a-generic-must-be-cited-at-its-arity",
+      "before": "",
+      "after": "Claim: Calling a parameterized rule without arguments returns a syntax refusal, preserving its declared arity.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::resolve::tests::an_undefined_group_socket_resolves_to_nothing",
+      "path": "packages/interchange/src/cddl/resolve.rs",
+      "claim": "INTERCHANGE::claim:resolve:an-unplugged-socket-resolves-to-nothing",
+      "before": "",
+      "after": "Claim: An unplugged group socket leaves no table entry and resolution succeeds, preserving optional extension points.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::resolve::tests::a_plugged_group_socket_collects_its_plugs_in_order",
+      "path": "packages/interchange/src/cddl/resolve.rs",
+      "claim": "INTERCHANGE::claim:resolve:a-socket-collects-its-plugs-in-order",
+      "before": "",
+      "after": "Claim: Two group-socket plugs print as one choice in source order, preserving deterministic extension composition.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::resolve::tests::a_type_choice_augments_a_prelude_rule",
+      "path": "packages/interchange/src/cddl/resolve.rs",
+      "claim": "INTERCHANGE::claim:resolve:an-augmenting-assignment-extends-its-base",
+      "before": "",
+      "after": "Claim: Extending uint with tstr prints the original #0 followed by tstr, preserving the prelude base during augmentation.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::cddl::resolve::tests::a_name_defined_twice_differently_is_refused",
+      "path": "packages/interchange/src/cddl/resolve.rs",
+      "claim": "INTERCHANGE::claim:resolve:a-name-defined-twice-must-agree",
+      "before": "",
+      "after": "Claim: Conflicting definitions of one name return a syntax error at the second definition's line, preventing ambiguous resolution.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::regexp::tests::dollar_is_an_ordinary_character",
+      "path": "packages/interchange/src/regexp.rs",
+      "claim": "INTERCHANGE::claim:regexp:the-anchor-characters-are-ordinary",
+      "before": "",
+      "after": "Claim: The pattern a$ matches the literal dollar-bearing subject and refuses bare a, preserving this dialect's non-anchor semantics.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::regexp::tests::the_xml_name_escape_is_understood",
+      "path": "packages/interchange/src/regexp.rs",
+      "claim": "INTERCHANGE::claim:regexp:the-xml-name-escapes-are-understood",
+      "before": "",
+      "after": "Claim: The XML name escape admits the tested letter, dash, dot and digit but refuses space, preserving its character-class boundary.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::companion::the_edits_are_the_only_ones_whatever_the_theory_enumerates",
+      "path": "packages/interchange/tests/companion.rs",
+      "claim": "INTERCHANGE::claim:companion:the-companion-makes-exactly-the-allowed-edits",
+      "before": "",
+      "after": "Claim: The companion helper checks exactly the allowed edits across empty, optional and nested content fixtures, protecting unrelated theory structure.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::inclusion::adding_several_optional_keys_at_once_is_additive",
+      "path": "packages/interchange/tests/inclusion.rs",
+      "claim": "INTERCHANGE::claim:inclusion:adding-an-optional-key-is-additive",
+      "before": "",
+      "after": "Claim: Adding four optional keys of different shapes at a later minor preserves inclusion, protecting additive evolution across multiple new members.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::inclusion::a_reached_rule_chain_respelled_is_the_same_type",
+      "path": "packages/interchange/tests/inclusion.rs",
+      "claim": "INTERCHANGE::claim:inclusion:identity-of-type-is-the-printers-question",
+      "before": "The rules a type reaches are compared by their printed definitions, so a\nchain that is written differently and means the same is the same.",
+      "after": "Claim: Whitespace-only changes along a reached rule chain preserve inclusion, preventing source formatting from changing normalized type identity.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::inclusion::a_rename_below_the_key_is_a_breach",
+      "path": "packages/interchange/tests/inclusion.rs",
+      "claim": "INTERCHANGE::claim:inclusion:a-pure-rule-rename-is-a-breach",
+      "before": "The rename is a breach one level down too: the key's own expression is\nidentical and the rule *it* reaches was renamed.",
+      "after": "Claim: Renaming a rule one level below an unchanged key yields exactly `TypeChanged` for key 2, preserving literal identity through references.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::inclusion::two_majors_are_not_comparable",
+      "path": "packages/interchange/tests/inclusion.rs",
+      "claim": "INTERCHANGE::claim:inclusion:theories-of-different-lines-are-incomparable",
+      "before": "",
+      "after": "Claim: The fixture theories on different major lines are incomparable, preventing a minor-inclusion verdict across a major boundary.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::inclusion::one_minor_is_not_comparable_with_itself",
+      "path": "packages/interchange/tests/inclusion.rs",
+      "claim": "INTERCHANGE::claim:inclusion:the-earlier-minor-must-be-the-lesser",
+      "before": "",
+      "after": "Claim: Comparing the base theory with itself is incomparable, enforcing the strictly increasing minor premise.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::integration::an_empty_registry_rejects_everything_whole",
+      "path": "packages/interchange/tests/integration.rs",
+      "claim": "INTERCHANGE::claim:acceptance:an-unheld-major-rejects-whole",
+      "before": "",
+      "after": "Claim: With an empty registry, the fixture document returns `UnheldMajor` 1 and is not accepted, preserving whole-document refusal without held theory evidence.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::integration::the_prefix_path_certifies_no_membership",
+      "path": "packages/interchange/tests/integration.rs",
+      "claim": "INTERCHANGE::claim:prefix:a-peek-certifies-no-membership",
+      "before": "A well-formed envelope with a tail outside the data language: the routing\nanswers, and the bytes are still no document at all.",
+      "after": "Claim: A valid envelope followed by a trailing byte routes strictly but fails canonical document decoding, preventing prefix routing from certifying membership.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::integration::a_prefix_too_short_to_carry_an_envelope_asks_for_more_bytes",
+      "path": "packages/interchange/tests/integration.rs",
+      "claim": "INTERCHANGE::claim:prefix:a-short-prefix-asks-for-more",
+      "before": "",
+      "after": "Claim: Three bytes of the fixture envelope return `Truncated` with given 3, preserving the request-for-more path during dispatch.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::prefix::an_empty_prefix_needs_one_byte",
+      "path": "packages/interchange/tests/prefix.rs",
+      "claim": "INTERCHANGE::claim:prefix:a-short-prefix-asks-for-more",
+      "before": "",
+      "after": "Claim: Peeking an empty slice returns `Truncated` with zero given and at least one needed, preserving the minimal prefix demand.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::properties::unique_names_encoding_is_stable_through_decoding",
+      "path": "packages/interchange/tests/properties.rs",
+      "claim": "INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names",
+      "before": "",
+      "after": "Claim: For generated values, decoding and re-encoding their canonical bytes preserves those bytes, checking canonical-name stability on the bounded sample.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::properties::unique_names_byte_equality_decides_structure_equality",
+      "path": "packages/interchange/tests/properties.rs",
+      "claim": "INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names",
+      "before": "",
+      "after": "Claim: For generated value pairs, structural equality equals canonical-byte equality, checking name injectivity on the bounded sample.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::properties::one_spelling_string_equality_is_byte_equality",
+      "path": "packages/interchange/tests/properties.rs",
+      "claim": "INTERCHANGE::claim:properties:generated-labels-have-one-byte-spelling",
+      "before": "",
+      "after": "Claim: For generated label pairs, string equality equals encoded text-item equality, checking that label names have one canonical spelling.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::properties::a_deep_chain_of_arrays_maps_and_tags_drops",
+      "path": "packages/interchange/tests/properties.rs",
+      "claim": "INTERCHANGE::claim:properties:mixed-constructor-depth-is-traversable",
+      "before": "The same depth reached through all three recursive constructors, so\nthat no teardown path is left to the compiler's glue.",
+      "after": "Claim: A chain of 200000 array/map/tag units decodes, re-encodes identically and drops successfully, protecting mixed-constructor traversal at the declared depth.",
+      "review": "Separate proposition: assigned its own mint after comparison with the shared claim."
+    },
+    {
+      "operation": "pn-interchange::properties::a_deep_chain_of_tags_alone_drops",
+      "path": "packages/interchange/tests/properties.rs",
+      "claim": "INTERCHANGE::claim:properties:tag-only-depth-is-traversable",
+      "before": "A chain of tags alone: the recursion the value model carries without\nan array or a map anywhere to intercept it.",
+      "after": "Claim: A chain of 500000 tags decodes, reports the exact encoded length and drops successfully, protecting the tag-only deep traversal path.",
+      "review": "Separate proposition: assigned its own mint after comparison with the shared claim."
+    },
+    {
+      "operation": "pn-interchange::restraint::a_major_type_seven_form_that_pins_its_information_is_a_provision",
+      "path": "packages/interchange/tests/restraint.rs",
+      "claim": "INTERCHANGE::claim:restraint:explicit-width-forms-are-provisions",
+      "before": "The same distinction written inline: `#7.25` is the width the prelude\ncalls `float16`.",
+      "after": "Claim: Explicit #7.25, #7.26 and #7.27 forms each report a fixed float provision, preserving width declarations without prelude names.",
+      "review": "Separate proposition: assigned its own mint after comparison with the shared claim."
+    },
+    {
+      "operation": "pn-interchange::restraint::the_bare_data_item_form_reaches_all_three_kinds",
+      "path": "packages/interchange/tests/restraint.rs",
+      "claim": "INTERCHANGE::claim:restraint:any-reaches-all-three-kinds",
+      "before": "`#` is `any` written out: the prelude's own definition, and it reaches\nthe same way.",
+      "after": "Claim: The unrestricted # form reports implicit float, tag and simple reaches with their source spelling, preserving restraint analysis of the bare data-item form.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::restraint::a_prelude_alias_that_reaches_a_tag_is_an_implicit_reach",
+      "path": "packages/interchange/tests/restraint.rs",
+      "claim": "INTERCHANGE::claim:restraint:a-prelude-alias-reaches-what-it-does-not-name",
+      "before": "",
+      "after": "Claim: The integer and unsigned prelude aliases each report an implicit tag reach, preventing aliases from concealing restrained representations.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::satisfaction::the_base_theory_admits_every_content_key_and_every_value",
+      "path": "packages/interchange/tests/satisfaction.rs",
+      "claim": "INTERCHANGE::claim:satisfaction:the-base-theory-admits-any-document",
+      "before": "",
+      "after": "Claim: The base admits the fixture's text, nested null/float and tagged value including the maximum content key, witnessing unrestricted content acceptance.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::satisfaction::size_on_a_byte_string_counts_bytes",
+      "path": "packages/interchange/tests/satisfaction.rs",
+      "claim": "INTERCHANGE::claim:satisfaction:byte-string-size-is-exact",
+      "before": "",
+      "after": "Claim: A bstr size-four constraint admits four bytes and refuses three, preserving exact byte-string length checking.",
+      "review": "Separate proposition: assigned its own mint after comparison with the shared claim."
+    },
+    {
+      "operation": "pn-interchange::satisfaction::size_on_an_unsigned_integer_admits_every_uint_past_eight_bytes",
+      "path": "packages/interchange/tests/satisfaction.rs",
+      "claim": "INTERCHANGE::claim:satisfaction:size-on-an-integer-is-a-range",
+      "before": "`uint .size N` ≡ `0…256**N`, and `256**9 > 2**64`, so a width of nine\nbytes or more admits every unsigned integer — where the byte count a\nvalue happens to need would say nothing of the kind. A range of oversized\nwidths is satisfied the same way, and eight is unchanged: the widths at or\nbelow it still bound the value.",
+      "after": "Claim: Widths above eight admit the tested small and maximum uint values while width one refuses 256 and width eight admits the maximum, preserving value-range semantics.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "pn-interchange::satisfaction::the_same_pattern_answers_a_short_subject",
+      "path": "packages/interchange/tests/satisfaction.rs",
+      "claim": "INTERCHANGE::claim:satisfaction:bounded-patterns-return-membership",
+      "before": "A subject the same pattern answers about within the budget gets an\nordinary answer, which is what says the refusal above is about the\nbudget and not about the pattern.",
+      "after": "Claim: Within its operation budget, the nested-repeat pattern admits aaab and refuses aaa, distinguishing ordinary membership answers from budget refusal.",
+      "review": "Separate proposition: assigned its own mint after comparison with the shared claim."
+    },
+    {
+      "operation": "pn-interchange::satisfaction::an_absent_optional_member_stays_absent_under_a_default",
+      "path": "packages/interchange/tests/satisfaction.rs",
+      "claim": "INTERCHANGE::claim:satisfaction:default-is-the-inequality-it-implies",
+      "before": "Nothing puts a 7 at key 2: the document is unchanged by the judgment, and a\n7 arriving on the wire is refused.",
+      "after": "Claim: An absent optional defaulted member is admitted while explicitly sending its default value is refused, preserving default as a constraint rather than synthesis.",
+      "review": "Reviewed the executable assertions and premises; retained the shared proposition with this local witness."
+    },
+    {
+      "operation": "cli-common::tests::emit_writes_one_json_line",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:emit-writes-one-json-line",
+      "before": "emit writes one json line.",
+      "after": "Claim: Given an ordered two-field payload, emission writes exactly one JSON object and a trailing newline, preserving record framing for consumers.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::emit_propagates_writer_error",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:emit-propagates-writer-error",
+      "before": "emit propagates writer error.",
+      "after": "Claim: A writer refusing all bytes returns `BrokenPipe` to the caller, so failed delivery cannot be reported as successful emission.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::partial_stdout_write_during_emit_is_not_reverted",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:partial-stdout-write-during-emit-is-not-reverted",
+      "before": "partial stdout write during emit is not reverted.",
+      "after": "Claim: When the sink fails after eight bytes, emission returns `BrokenPipe` and leaves that prefix visible, exposing the limit of stream rollback.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::emit_propagates_serialisation_error",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:emit-propagates-serialisation-error",
+      "before": "emit propagates serialisation error.",
+      "after": "Claim: A payload whose serializer refuses returns an error before writing any bytes, preventing a partial record from serialization failure.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::emit_to_real_stdout_succeeds",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:emit-to-real-stdout-succeeds",
+      "before": "emit to real stdout succeeds.",
+      "after": "Claim: With stdout captured by the test harness, the public emitter accepts the fixture payload without an error, checking the live sink path.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::base_args_parses_default",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:base-args-parses-default",
+      "before": "base args parses default.",
+      "after": "Claim: Flattening the shared arguments into the fixture parser leaves debug disabled when no flags are supplied, preserving the quiet default.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::base_args_parses_long_flag",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:base-args-parses-long-flag",
+      "before": "base args parses long flag.",
+      "after": "Claim: The fixture parser accepts --debug and sets the shared debug field, making the documented opt-in available to callers.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::command_exit_codes_match_contract",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:command-exit-codes-match-contract",
+      "before": "command exit codes match contract.",
+      "after": "Claim: Success, failure and usage map bidirectionally to 0, 1 and 2 while 3 has no wrapper class, preserving exit classification.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::control_record_serialises_shape",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:control-record-serialises-shape",
+      "before": "control record serialises shape.",
+      "after": "Claim: A status record carries the declared schema, command and status kind and omits absent fields, preserving the control-record envelope.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::json_line_writer_appends_newline",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:json-line-writer-appends-newline",
+      "before": "json line writer appends newline.",
+      "after": "Claim: Writing a status record produces newline-terminated parseable JSON with the declared schema and status kind, preserving machine-readable framing.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::usage_error_record_carries_fields",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:usage-error-record-carries-fields",
+      "before": "usage error record carries fields.",
+      "after": "Claim: A usage record serializes its `usage_error` discriminator and exit code 2, allowing consumers to distinguish argument failures.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::tty_refusal_record_carries_fields",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:tty-refusal-record-carries-fields",
+      "before": "tty refusal record carries fields.",
+      "after": "Claim: A stdout TTY refusal retains its refusal kind, usage exit and stream identity, allowing callers to diagnose the blocked destination.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::panic_record_omits_payload_without_debug",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:panic-record-omits-payload-without-debug",
+      "before": "panic record omits payload without debug.",
+      "after": "Claim: Constructing a panic record without a payload omits that field while retaining exit 1 and thread identity, preventing absent details from becoming data.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::panic_record_carries_debug_payload",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:panic-record-carries-debug-payload",
+      "before": "panic record carries debug payload.",
+      "after": "Claim: An explicitly supplied panic payload round-trips through JSON with quotes escaped, preserving diagnostic content without breaking framing.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::panic_payload_reporting_fails_closed_then_follows_debug_flag",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:panic-payload-reporting-fails-closed-then-follows-debug-flag",
+      "before": "panic payload reporting fails closed then follows debug flag.",
+      "after": "Claim: Panic payload reporting starts disabled and follows explicit enable and disable operations, keeping disclosure opt-in and reversible.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::panic_payload_message_extracts_string_payloads",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:panic-payload-message-extracts-string-payloads",
+      "before": "panic payload message extracts string payloads.",
+      "after": "Claim: Borrowed and owned string panic payloads yield their text while a numeric payload yields none, bounding the supported diagnostic conversion.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::parse_args_from_returns_help_record",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:parse-args-from-returns-help-record",
+      "before": "parse args from returns help record.",
+      "after": "Claim: The help flag stops parsing with success and a help record naming the command and its debug option, preserving control-plane help delivery.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::sole_version_carries_caller_metadata",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:sole-version-carries-caller-metadata",
+      "before": "sole version carries caller metadata.",
+      "after": "Claim: A sole --version argument produces the exact success record with caller command, package and version, preserving executable identity in metadata.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::sole_version_carries_compiled_commit",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:sole-version-carries-compiled-commit",
+      "before": "sole version carries compiled commit.",
+      "after": "Claim: When build identity is supplied, the sole-version record includes it in the package version text, preserving the caller's compiled provenance.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::sole_version_leaves_other_arguments_alone",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:sole-version-leaves-other-arguments-alone",
+      "before": "sole version leaves other arguments alone.",
+      "after": "Claim: Only the sole long version flag takes the early exit; abbreviations, separators, extra arguments and repeats remain for normal parsing.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::sole_version_handles_non_utf8_arguments",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:sole-version-handles-non-utf8-arguments",
+      "before": "sole version handles non utf8 arguments.",
+      "after": "Claim: Invalid UTF-8 arguments alone or beside --version do not trigger the early version exit, preserving the original argument-validation path.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::parse_args_from_returns_version_record",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:parse-args-from-returns-version-record",
+      "before": "parse args from returns version record.",
+      "after": "Claim: The parser's version request returns success and the fixture command's exact version text, keeping metadata on the control-plane path.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::parse_args_from_returns_usage_record",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:parse-args-from-returns-usage-record",
+      "before": "parse args from returns usage record.",
+      "after": "Claim: An unknown flag returns usage exit 2 and the `unknown_argument` field with the command identity, making parse failure classifiable.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::tracing_filter_prefers_rust_log",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:tracing-filter-prefers-rust-log",
+      "before": "tracing filter prefers rust log.",
+      "after": "Claim: A nonempty environment filter wins over the debug flag and retains its provenance, preserving explicit operator filter selection.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::tracing_filter_uses_debug_flag",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:tracing-filter-uses-debug-flag",
+      "before": "tracing filter uses debug flag.",
+      "after": "Claim: With only whitespace in the environment filter, debug selects the debug directive and `DebugFlag` source, preserving the fallback order.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::tracing_filter_uses_default_level",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:tracing-filter-uses-default-level",
+      "before": "tracing filter uses default level.",
+      "after": "Claim: Without an environment filter or debug flag, the supplied WARN default becomes the warn directive and `DefaultLevel` source.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::redacts_sensitive_field_values",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:redacts-sensitive-field-values",
+      "before": "redacts sensitive field values.",
+      "after": "Claim: Token, password and private-key field names replace their values with the redaction marker, preventing these named secrets from entering diagnostics.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::redacts_database_url_secrets",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:redacts-database-url-secrets",
+      "before": "redacts database url secrets.",
+      "after": "Claim: The database URL loses user information and token/password query pairs while retaining host, path and ssl-mode, preserving useful safe context.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::keeps_public_key_fields_visible",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:keeps-public-key-fields-visible",
+      "before": "keeps public key fields visible.",
+      "after": "Claim: A public-key path field remains unchanged, keeping nonsecret configuration available for diagnosis.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::redacts_credentials_in_any_url_scheme",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:redacts-credentials-in-any-url-scheme",
+      "before": "redacts credentials in any url scheme.",
+      "after": "Claim: The HTTPS and RPC fixtures lose credentials, safe URLs and non-URLs survive, and the generic field path also scrubs credential URLs.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::redacts_secrets_in_free_form_text",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:redacts-secrets-in-free-form-text",
+      "before": "redacts secrets in free form text.",
+      "after": "Claim: The mixed error fixture loses its token and URL credentials while retaining explanatory text and a newline, preserving safe diagnostic context.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::redacts_key_equals_credential_url_token",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:redacts-key-equals-credential-url-token",
+      "before": "redacts key equals credential url token.",
+      "after": "Claim: A URL following --endpoint= loses user information and its secret query value, closing the prefixed-token redaction path.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::redacts_credential_url_in_error_chain_text",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:redacts-credential-url-in-error-chain-text",
+      "before": "redacts credential url in error chain text.",
+      "after": "Claim: Embedded endpoint credentials disappear while the request-failure and attempt context remain, keeping chained error text useful without the secret.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::redacts_sensitive_url_fragments",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:redacts-sensitive-url-fragments",
+      "before": "redacts sensitive url fragments.",
+      "after": "Claim: Sensitive fragment pairs are removed, safe state survives, and a wholly secret fragment is cleared on URL and free-text paths.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::unparseable_url_ish_token_fails_closed",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:unparseable-url-ish-token-fails-closed",
+      "before": "unparseable url ish token fails closed.",
+      "after": "Claim: Malformed credential-like and empty-host URL tokens become the redaction marker, preventing parse failure from exposing their original bytes.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::keeps_non_sensitive_key_value_tokens",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:keeps-non-sensitive-key-value-tokens",
+      "before": "keeps non sensitive key value tokens.",
+      "after": "Claim: The retries and mode fixture passes through unchanged, preventing secret filtering from erasing ordinary diagnostic parameters.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::redacts_runner_style_error_display",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:redacts-runner-style-error-display",
+      "before": "redacts runner style error display.",
+      "after": "Claim: The runner-shaped error loses URL credentials but retains endpoint, failure context and timeout text, preserving safe failure diagnosis.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::usage_error_text_never_reproduces_secrets",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:usage-error-text-never-reproduces-secrets",
+      "before": "usage error text never reproduces secrets.",
+      "after": "Claim: An unknown secret-bearing flag returns usage failure and its serialized control record excludes the supplied secret, protecting parser diagnostics.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::touch_stamp_creates_empty_and_redates_an_empty_stamp",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:touch-stamp-creates-empty-and-redates-an-empty-stamp",
+      "before": "touch stamp creates empty and redates an empty stamp.",
+      "after": "Claim: Creating and then touching an empty success stamp preserves zero length and advances its modification time, making renewed success observable.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::touch_stamp_refuses_a_nonempty_stamp_without_destroying_it",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:touch-stamp-refuses-a-nonempty-stamp-without-destroying-it",
+      "before": "touch stamp refuses a nonempty stamp without destroying it.",
+      "after": "Claim: A nonempty stamp returns `InvalidData` with the empty-stamp contract and retains its bytes and modification time, preserving foreign evidence.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::build_mode_writes_report_then_touches_stamp",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:build-mode-writes-report-then-touches-stamp",
+      "before": "build mode writes report then touches stamp.",
+      "after": "Claim: Successful build-mode completion leaves the exact JSON report and a success stamp, exposing both publication outputs to the build caller.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::build_mode_leaves_an_unchanged_report_untouched_on_rerun",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:build-mode-leaves-an-unchanged-report-untouched-on-rerun",
+      "before": "build mode leaves an unchanged report untouched on rerun.",
+      "after": "Claim: Repeating an identical report preserves its pinned modification time, avoiding spurious downstream rebuilds.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::build_mode_publishes_a_publicly_readable_report",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:build-mode-publishes-a-publicly-readable-report",
+      "before": "build mode publishes a publicly readable report.",
+      "after": "Claim: New, changed and unchanged build reports all have mode 0644, preserving their readability across publication states.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::a_half_specified_output_mode_is_invalid",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:a-half-specified-output-mode-is-invalid",
+      "before": "a half specified output mode is invalid.",
+      "after": "Claim: Supplying a report without a stamp returns `InvalidMode`, refusing an incomplete build-output contract.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::a_failed_report_write_leaves_the_stamp_untouched",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:a-failed-report-write-leaves-the-stamp-untouched",
+      "before": "a failed report write leaves the stamp untouched.",
+      "after": "Claim: A regular file blocking the report parent causes an I/O error and no success stamp, preventing failed publication from certifying success.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::identical_output_paths_are_aliased",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:identical-output-paths-are-aliased",
+      "before": "identical output paths are aliased.",
+      "after": "Claim: Two roles naming the same destination are rejected with both role names, preventing conflicting output ownership.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::lexical_alias_spellings_are_aliased",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:lexical-alias-spellings-are-aliased",
+      "before": "lexical alias spellings are aliased.",
+      "after": "Claim: A destination and its sub/../ spelling are rejected as the same two roles, preventing lexical aliases from bypassing output separation.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::relative_and_absolute_spellings_of_one_destination_are_aliased",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:relative-and-absolute-spellings-of-one-destination-are-aliased",
+      "before": "relative and absolute spellings of one destination are aliased.",
+      "after": "Claim: A relative destination and its working-directory absolute spelling collide, preserving output separation across path forms.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::hard_linked_destinations_are_not_treated_as_one_role",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:hard-linked-destinations-are-not-treated-as-one-role",
+      "before": "hard linked destinations are not treated as one role.",
+      "after": "Claim: Distinct lexical destinations pass even when hard-linked, pinning that output-role validation leaves filesystem alias responsibility to its caller.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::symlinked_parent_directories_are_not_resolved",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:symlinked-parent-directories-are-not-resolved",
+      "before": "symlinked parent directories are not resolved.",
+      "after": "Claim: Paths through real and symlinked parents pass lexical role validation, pinning its boundary without claiming filesystem identity checks.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::distinct_destinations_validate",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:distinct-destinations-validate",
+      "before": "distinct destinations validate.",
+      "after": "Claim: Two different destination names under one temporary root pass role validation, allowing independent outputs to be published.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::build_mode_rejects_aliased_report_and_stamp",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:build-mode-rejects-aliased-report-and-stamp",
+      "before": "build mode rejects aliased report and stamp.",
+      "after": "Claim: Report and stamp paths that normalize to one destination return `AliasedOutputs` before creating it, protecting the success fact from report bytes.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::aliased_outputs_fail_before_any_write",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:aliased-outputs-fail-before-any-write",
+      "before": "aliased outputs fail before any write.",
+      "after": "Claim: A batch assigning two roles to one path fails with `AliasedOutputs` and leaves neither destination nor staging files, preventing partial publication.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::unchanged_destinations_keep_bytes_and_mtimes",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:unchanged-destinations-keep-bytes-and-mtimes",
+      "before": "unchanged destinations keep bytes and mtimes.",
+      "after": "Claim: A batch matching both existing public files reports every member unchanged and preserves their modification times, avoiding unnecessary rebuilds.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::only_the_changed_member_is_rewritten",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:only-the-changed-member-is-rewritten",
+      "before": "only the changed member is rewritten.",
+      "after": "Claim: In a mixed current/stale batch, only the stale member reports changed bytes and receives new content while the current member retains its timestamp.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::a_staging_failure_changes_no_final_destination",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:a-staging-failure-changes-no-final-destination",
+      "before": "a staging failure changes no final destination.",
+      "after": "Claim: When a later member cannot be staged below a regular file, the error names that role, earlier bytes survive and staging files are removed.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::a_late_publish_failure_is_reported_and_repairable",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:a-late-publish-failure-is-reported-and-repairable",
+      "before": "a late publish failure is reported and repairable.",
+      "after": "Claim: A directory blocking the second rename exposes the first publication and names the failed role; removing it lets a rerun repair the remainder without staging leftovers.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::a_prior_mixed_generation_is_repaired",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:a-prior-mixed-generation-is-repaired",
+      "before": "a prior mixed generation is repaired.",
+      "after": "Claim: Given one current and one old generation, publication marks only the old member changed and brings its bytes to the requested generation.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::publication_modes_name_their_octal_contract",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:publication-modes-name-their-octal-contract",
+      "before": "publication modes name their octal contract.",
+      "after": "Claim: Public and executable publication modes map to 0644 and 0755, pinning the permission contract used by publication callers.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::an_absent_destination_is_published_publicly_readable",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:an-absent-destination-is-published-publicly-readable",
+      "before": "an absent destination is published publicly readable.",
+      "after": "Claim: Publishing a missing destination reports changed bytes and sets mode 0644, making the new output publicly readable.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::a_changed_public_destination_stays_publicly_readable",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:a-changed-public-destination-stays-publicly-readable",
+      "before": "a changed public destination stays publicly readable.",
+      "after": "Claim: Replacing an existing 0644 file changes its bytes to the requested content and retains 0644, preserving readability on update.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::an_unchanged_public_destination_keeps_its_mode",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:an-unchanged-public-destination-keeps-its-mode",
+      "before": "an unchanged public destination keeps its mode.",
+      "after": "Claim: Publishing identical bytes to a 0644 destination reports no change and retains its mode, preserving an already current output.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::an_executable_publication_mode_is_applied_to_a_staged_file",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:an-executable-publication-mode-is-applied-to-a-staged-file",
+      "before": "an executable publication mode is applied to a staged file.",
+      "after": "Claim: Applying executable mode to an open staged file yields 0755, ensuring the staged artifact can carry executable permissions.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::missing_destinations_and_parents_are_created",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:missing-destinations-and-parents-are-created",
+      "before": "missing destinations and parents are created.",
+      "after": "Claim: Publishing below a missing parent creates the path and requested bytes and reports a byte change, supporting first-run output creation.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::an_owner_only_destination_with_current_bytes_is_mode_repaired",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:an-owner-only-destination-with-current-bytes-is-mode-repaired",
+      "before": "an owner only destination with current bytes is mode repaired.",
+      "after": "Claim: `Current` bytes at mode 0600 are repaired to 0644 with only `mode_changed` set and their bytes and timestamp preserved, exposing permission-only repair accurately.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::a_run_after_a_mode_repair_is_a_no_op",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:a-run-after-a-mode-repair-is-a-no-op",
+      "before": "a run after a mode repair is a no op.",
+      "after": "Claim: After repairing a 0600 destination, an identical rerun reports unchanged at 0644 and leaves no staging files, establishing repair idempotence.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::stale_bytes_are_republished_rather_than_mode_repaired",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:stale-bytes-are-republished-rather-than-mode-repaired",
+      "before": "stale bytes are republished rather than mode repaired.",
+      "after": "Claim: A stale public destination reports `bytes_changed` without `mode_changed` and ends at 0644, distinguishing replacement from permission-only repair.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::an_executable_destination_missing_its_x_bit_is_not_current",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:an-executable-destination-missing-its-x-bit-is-not-current",
+      "before": "an executable destination missing its x bit is not current.",
+      "after": "Claim: Matching executable bytes at 0644 classify as `ModeOnly`; repair preserves bytes, sets 0755 and makes the destination `Current`.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::an_absent_destination_is_stale_in_every_publication_class",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:an-absent-destination-is-stale-in-every-publication-class",
+      "before": "an absent destination is stale in every publication class.",
+      "after": "Claim: A missing path classifies as `StaleBytes` for both public and executable modes, preventing absent outputs from being treated as current.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::report::an_absent_report_is_published_publicly_readable",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:an-absent-report-is-published-publicly-readable",
+      "before": "an absent report is published publicly readable.",
+      "after": "Claim: Creating a JSON report reports `bytes_changed` without `mode_changed` and sets 0644, preserving the report publication classification.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::report::a_current_report_with_a_correct_mode_is_untouched",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:a-current-report-with-a-correct-mode-is-untouched",
+      "before": "a current report with a correct mode is untouched.",
+      "after": "Claim: An identical JSON report rerun reports unchanged and retains its modification time, avoiding publication churn.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::report::a_stale_report_is_rewritten",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:a-stale-report-is-rewritten",
+      "before": "a stale report is rewritten.",
+      "after": "Claim: A false-valued report is replaced by the exact true-valued JSON line, with `bytes_changed` alone set, exposing stale-content repair.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::tests::publication::report::an_owner_only_current_report_is_mode_repaired_without_rewriting",
+      "path": "packages/cli-common/src/tests/mod.rs",
+      "claim": "CLICOMMON::claim:cli:an-owner-only-current-report-is-mode-repaired-without-rewriting",
+      "before": "an owner only current report is mode repaired without rewriting.",
+      "after": "Claim: A current 0600 report becomes 0644 without changing bytes or timestamp, reports only `mode_changed`, and is unchanged on the next run.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::integration::emit_real_stdout_through_public_api",
+      "path": "packages/cli-common/tests/integration.rs",
+      "claim": "CLICOMMON::claim:cli:emit-real-stdout-through-public-api",
+      "before": "emit real stdout through public api.",
+      "after": "Claim: With harness-captured stdout, an external caller can emit the fixture payload successfully, checking public sink access without asserting captured byte contents.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::integration::base_args_flattens_into_clap_parser",
+      "path": "packages/cli-common/tests/integration.rs",
+      "claim": "CLICOMMON::claim:cli:base-args-flattens-into-clap-parser",
+      "before": "base args flattens into clap parser.",
+      "after": "Claim: An external fixture parser can flatten `BaseArgs` and parse no options with debug false, checking the shared default through the public API.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::integration::base_args_long_flag_toggles_debug",
+      "path": "packages/cli-common/tests/integration.rs",
+      "claim": "CLICOMMON::claim:cli:base-args-long-flag-toggles-debug",
+      "before": "base args long flag toggles debug.",
+      "after": "Claim: An external fixture parser accepts --debug and exposes debug true, checking the public shared-argument opt-in.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::integration::base_args_rejects_unknown_short_flag",
+      "path": "packages/cli-common/tests/integration.rs",
+      "claim": "CLICOMMON::claim:cli:base-args-rejects-unknown-short-flag",
+      "before": "base args rejects unknown short flag.",
+      "after": "Claim: An unknown long flag in the external fixture parser yields exit code 2, preventing unrecognized options from silently succeeding.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "cli-common::integration::parse_args_from_wraps_help_as_json_control_record",
+      "path": "packages/cli-common/tests/integration.rs",
+      "claim": "CLICOMMON::claim:cli:parse-args-from-wraps-help-as-json-control-record",
+      "before": "parse args from wraps help as json control record.",
+      "after": "Claim: The external fixture accepts debug and returns a successful `Help` record containing its description for --help, preserving public control-plane help access.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::routing_config_detects_combined_redirects",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:routing-config-detects-combined-redirects",
+      "before": "routing config detects combined redirects.",
+      "after": "Claim: A combined redirect marks both stdout and stderr redirected, ensuring both child streams participate in routing.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::routing_config_detects_single_stream_redirects",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:routing-config-detects-single-stream-redirects",
+      "before": "routing config detects single stream redirects.",
+      "after": "Claim: A stdout-only redirect marks stdout redirected and stderr unredirected, preserving independent stream routing.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::collect_file_specs_rejects_ambiguous_routing",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:collect-file-specs-rejects-ambiguous-routing",
+      "before": "collect file specs rejects ambiguous routing.",
+      "after": "Claim: Combined and stdout routes to the same path return `AmbiguousRedirection`, preventing competing writers to one destination.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::aliased_redirection_paths_are_rejected",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:aliased-redirection-paths-are-rejected",
+      "before": "aliased redirection paths are rejected.",
+      "after": "Claim: A path and its dotted spelling are refused as ambiguous before routing, preventing lexical aliases from opening one log twice.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::symlink_and_hardlink_aliases_are_rejected",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:symlink-and-hardlink-aliases-are-rejected",
+      "before": "symlink and hardlink aliases are rejected.",
+      "after": "Claim: Routes to symlinked or hard-linked names of an existing log are refused and its bytes survive, protecting the prior log from truncation.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::two_routes_to_one_log_are_refused_because_they_would_interleave",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:two-routes-to-one-log-are-refused-because-they-would-interleave",
+      "before": "two routes to one log are refused because they would interleave.",
+      "after": "Claim: Separately configured stdout and stderr paths sharing an inode are refused before truncation, preserving previous log bytes without claiming to close host races.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::parent_symlink_alias_is_rejected",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:parent-symlink-alias-is-rejected",
+      "before": "parent symlink alias is rejected.",
+      "after": "Claim: Two missing log paths under aliased existing parents are refused, preventing an absent final component from hiding destination identity.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::symlinked_ancestor_with_missing_directories_is_rejected",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:symlinked-ancestor-with-missing-directories-is-rejected",
+      "before": "symlinked ancestor with missing directories is rejected.",
+      "after": "Claim: Aliased ancestors with two missing suffix directories still cause refusal before creating them, preventing lexical fallback from duplicating a log.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::parent_dir_through_missing_component_still_resolves_symlinks",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:parent-dir-through-missing-component-still-resolves-symlinks",
+      "before": "parent dir through missing component still resolves symlinks.",
+      "after": "Claim: After a missing component and parent traversal, a symlinked component still resolves to the competing log and causes ambiguity refusal.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::missing_directories_under_distinct_ancestors_validate",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:missing-directories-under-distinct-ancestors-validate",
+      "before": "missing directories under distinct ancestors validate.",
+      "after": "Claim: Two missing log suffixes under distinct existing ancestors produce two file specifications, allowing genuinely separate future destinations.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::dangling_symlink_alias_is_rejected",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:dangling-symlink-alias-is-rejected",
+      "before": "dangling symlink alias is rejected.",
+      "after": "Claim: A dangling link and its target conflict when routed together, while the link alone yields one valid specification, preserving single-target routing.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::dangling_symlink_chain_resolves_to_final_target",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:dangling-symlink-chain-resolves-to-final-target",
+      "before": "dangling symlink chain resolves to final target.",
+      "after": "Claim: A two-link dangling chain has the same identity as its missing final target, preventing chained aliases from evading route comparison.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::symlink_loop_is_an_error",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:symlink-loop-is-an-error",
+      "before": "symlink loop is an error.",
+      "after": "Claim: A two-link cycle yields an identity error and an I/O preflight refusal, preventing unresolved cyclic paths from becoming log destinations.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::distinct_redirection_targets_validate",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:distinct-redirection-targets-validate",
+      "before": "distinct redirection targets validate.",
+      "after": "Claim: Separate stdout and stderr filenames pass preflight, preserving valid independent stream destinations.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::ambiguous_alias_does_not_truncate_existing_output",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:ambiguous-alias-does-not-truncate-existing-output",
+      "before": "ambiguous alias does not truncate existing output.",
+      "after": "Claim: A full run with aliased combined/stdout destinations returns `AmbiguousRedirection` and preserves the existing log, proving refusal precedes truncation.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::dangling_alias_failure_leaves_target_intact",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:dangling-alias-failure-leaves-target-intact",
+      "before": "dangling alias failure leaves target intact.",
+      "after": "Claim: A dangling route pair is refused without creating its target and remains refused after creation, preserving existing bytes through preflight and run.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::typesetter_passes_data_through",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:typesetter-passes-data-through",
+      "before": "typesetter passes data through.",
+      "after": "Claim: Raw output writes the two-line fixture unchanged through finalization, preserving byte content on the simple forwarding path.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::typesetter_preserves_arbitrary_bytes",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:typesetter-preserves-arbitrary-bytes",
+      "before": "typesetter preserves arbitrary bytes.",
+      "after": "Claim: Raw stdout and stderr preserve invalid UTF-8, NUL, control bytes and a 64 `KiB` payload exactly, protecting binary child output.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::calligraphic_sanitizes_control_bytes",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:calligraphic-sanitizes-control-bytes",
+      "before": "calligraphic sanitizes control bytes.",
+      "after": "Claim: Text presentation replaces NUL and invalid UTF-8 with the pinned printable forms and prefixes the line, preventing unsafe bytes from reaching that presentation.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::calligraphic_adds_prefix_per_line",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:calligraphic-adds-prefix-per-line",
+      "before": "calligraphic adds prefix per line.",
+      "after": "Claim: Two complete stdout lines each receive the configured prefix and retain their newline, preserving stream identification per line.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::calligraphic_buffers_partial_lines_until_finalize",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:calligraphic-buffers-partial-lines-until-finalize",
+      "before": "calligraphic buffers partial lines until finalize.",
+      "after": "Claim: An incomplete line produces no immediate bytes and finalization emits its prefix and newline, preserving complete-line presentation.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::calligraphic_preserves_code_point_split_across_two_writes",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:calligraphic-preserves-code-point-split-across-two-writes",
+      "before": "calligraphic preserves code point split across two writes.",
+      "after": "Claim: A euro sign split after its first UTF-8 byte renders intact after the second write, preventing pipe chunk boundaries from corrupting text.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::calligraphic_preserves_code_point_split_across_three_writes",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:calligraphic-preserves-code-point-split-across-three-writes",
+      "before": "calligraphic preserves code point split across three writes.",
+      "after": "Claim: Delivering each euro-sign byte separately still renders the exact prefixed character, protecting multibyte text under minimal reads.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::calligraphic_replaces_invalid_utf8_after_buffering",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:calligraphic-replaces-invalid-utf8-after-buffering",
+      "before": "calligraphic replaces invalid utf8 after buffering.",
+      "after": "Claim: A lone continuation byte and a final truncated sequence render replacement characters at the pinned positions, distinguishing invalid input from merely split UTF-8.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::tests::calligraphic_output_is_chunking_invariant",
+      "path": "packages/execwrap/src/tests/mod.rs",
+      "claim": "EXECWRAP::claim:cli:calligraphic-output-is-chunking-invariant",
+      "before": "calligraphic output is chunking invariant.",
+      "after": "Claim: The multilingual fixture renders identically for six chunk sizes, retaining the euro sign without replacement characters, protecting presentation from read boundaries.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::raw_redirect_is_byte_exact",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:raw-redirect-is-byte-exact",
+      "before": "raw redirect is byte exact.",
+      "after": "Claim: A merged raw redirect preserves the fixture's invalid UTF-8, NUL, escape bytes and 64 `KiB` binary chunk exactly after a successful child run.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::split_streams_route_to_their_own_files",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:split-streams-route-to-their-own-files",
+      "before": "split streams route to their own files.",
+      "after": "Claim: A child writing both streams leaves the exact distinct stdout and stderr lines in their respective files, preventing cross-stream mixing.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::child_exit_code_is_propagated",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:child-exit-code-is-propagated",
+      "before": "child exit code is propagated.",
+      "after": "Claim: A spawned child exiting 7 makes the wrapper exit 7, checking a concrete member of the relay range.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::reserved_wrapper_exit_classes_are_preserved",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:reserved-wrapper-exit-classes-are-preserved",
+      "before": "reserved wrapper exit classes are preserved.",
+      "after": "Claim: Child statuses 0, 1, 2, 3 and 42 map to 0, 1, 1, 3 and 42, keeping usage code 2 reserved for wrapper argument failures.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::unspawnable_child_is_wrapper_failure",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:unspawnable-child-is-wrapper-failure",
+      "before": "unspawnable child is wrapper failure.",
+      "after": "Claim: A nonexistent executable makes the wrapper exit 1, distinguishing failure to spawn from a relayed child status.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::spawn_failure_does_not_echo_child_program_text",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:spawn-failure-does-not-echo-child-program-text",
+      "before": "spawn failure does not echo child program text.",
+      "after": "Claim: A nonexistent secret-bearing path yields exit 1, empty stdout and object-shaped JSON stderr lines without the secret, protecting caller-controlled argv.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::spawn_failure_does_not_echo_credential_bearing_program_url",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:spawn-failure-does-not-echo-credential-bearing-program-url",
+      "before": "spawn failure does not echo credential bearing program url.",
+      "after": "Claim: A credential URL used as an executable yields exit 1 and empty stdout while neither credential marker reaches stderr, protecting spawn diagnostics.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::signal_termination_maps_to_128_plus_signal",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:signal-termination-maps-to-128-plus-signal",
+      "before": "signal termination maps to 128 plus signal.",
+      "after": "Claim: A child terminating itself with SIGTERM makes the wrapper exit 143, preserving the declared signal-status encoding for that signal.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::ambiguous_same_path_routing_is_a_usage_failure",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:ambiguous-same-path-routing-is-a-usage-failure",
+      "before": "ambiguous same path routing is a usage failure.",
+      "after": "Claim: Two route kinds naming one absent file yield exit 2, empty stdout and no log file, preventing usage failure from creating outputs.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::child_argv_secrets_never_appear_in_diagnostics",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:child-argv-secrets-never-appear-in-diagnostics",
+      "before": "child argv secrets never appear in diagnostics.",
+      "after": "Claim: With debug enabled, a successful child carrying a secret argument exposes it on neither wrapper stream, protecting raw child argv from diagnostics.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::credential_bearing_url_never_appears_in_diagnostics",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:credential-bearing-url-never-appears-in-diagnostics",
+      "before": "credential bearing url never appears in diagnostics.",
+      "after": "Claim: With debug enabled, a successful child carrying a credential URL exposes neither secret marker on wrapper stdout or stderr, protecting URL-bearing argv.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::redirect_error_only_still_forwards_stdout",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:redirect-error-only-still-forwards-stdout",
+      "before": "redirect error only still forwards stdout.",
+      "after": "Claim: With only stderr redirected, quiet mode forwards exact stdout bytes and writes exact stderr bytes to its file, preserving the unsubscribed stream.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::bare_separator_invocation_succeeds",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:bare-separator-invocation-succeeds",
+      "before": "bare separator invocation succeeds.",
+      "after": "Claim: A separator followed by true and no options exits 0 with empty stdout, checking the minimal valid command boundary.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::unredirected_streams_pass_through_pipes",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:unredirected-streams-pass-through-pipes",
+      "before": "unredirected streams pass through pipes.",
+      "after": "Claim: Quiet mode relays both unredirected streams; redirecting only stdout empties wrapper stdout while stderr remains visible, preventing silent pipe-output loss.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::help_version_and_usage_follow_the_output_contract",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:help-version-and-usage-follow-the-output-contract",
+      "before": "help version and usage follow the output contract.",
+      "after": "Claim: `Help` and version exit 0 with empty stdout and a first JSON record naming execwrap; unknown flags, missing separator and missing command exit 2.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::prefixed_redirect_tags_streams",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:prefixed-redirect-tags-streams",
+      "before": "prefixed redirect tags streams.",
+      "after": "Claim: A successful two-stream child leaves stdout and stderr lines with their distinct configured tags, preserving their identities in the merged text log.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::data_loss_fails_a_successful_child",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:data-loss-fails-a-successful-child",
+      "before": "data loss fails a successful child.",
+      "after": "Claim: When /dev/full is available, losing redirected bytes makes the wrapper exit 1 despite child exit 0, preventing data loss from being reported as success.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "execwrap::integration::spawn_failure_emits_json_diagnostics",
+      "path": "packages/execwrap/tests/integration.rs",
+      "claim": "EXECWRAP::claim:cli:spawn-failure-emits-json-diagnostics",
+      "before": "spawn failure emits json diagnostics.",
+      "after": "Claim: A nonexistent executable yields exit 1, empty stdout and at least one stderr JSON object with every nonempty line parseable, preserving diagnostic framing on failure.",
+      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "documents::integration::repository_fixed_point",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:render:repository-fixed-point",
+      "before": "Claim: the committed datasets and documents are current in consecutive read-only checks.",
+      "after": "Claim: Two consecutive generate-check and document-check passes report no findings on the repository, checking that committed inputs and outputs form a fixed point.",
+      "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "documents::integration::dataset_mutation",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:render:dataset-mutation",
+      "before": "Claim: changing a dataset byte is detected without repairing it.",
+      "after": "Claim: Changing the fixture dataset count produces exactly stale-dataset and stale-document findings without repairing the changed bytes, preserving read-only diagnosis.",
+      "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "documents::integration::stale_rendering",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:render:stale-rendering",
+      "before": "Claim: stale documents fail checking and writing repairs them while reporting a finding.",
+      "after": "Claim: A stale fixture document remains untouched by checking, is repaired to the exact rendered bytes by writing with a finding, and then checks clean.",
+      "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "pn-testkit::tests::duplicate_roster",
+      "path": "packages/testkit/src/lib.rs",
+      "claim": "TESTKIT::claim:testkit:duplicate-roster-prevents-effects",
+      "before": "Claim: Duplicate case identities refuse before an adapter can have effects.",
+      "after": "Claim: Two cases sharing one identifier return `InvalidRoster` without invoking the adapter, preventing ambiguous result identities and preflight side effects.",
+      "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "pn-testkit::tests::generator_vector",
+      "path": "packages/testkit/src/lib.rs",
+      "claim": "TESTKIT::claim:testkit:generator-edition-vector",
+      "before": "Claim: The seed-zero first word fixes the generator edition, preventing silent replay drift.",
+      "after": "Claim: Seed zero produces the pinned first `SplitMix64` word, detecting a change to that generator-edition vector used for replay.",
+      "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "pn-testkit::public::runner_results",
+      "path": "packages/testkit/tests/public.rs",
+      "claim": "TESTKIT::claim:testkit:all-predicates-retain-identity",
+      "before": "Claim: A failed adapter result neither hides later cases nor loses implementation identity.",
+      "after": "Claim: Across two named implementations, a rejected case precedes a passing case in each result sequence and all retain suite and edition, preventing failure from hiding later cases.",
+      "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    }
+  ]
+}

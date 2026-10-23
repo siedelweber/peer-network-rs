@@ -122,7 +122,7 @@ fn emit_to<W: Write, T: Serialize>(mut w: W, value: &T) -> io::Result<()> {
     w.flush()
 }
 
-/// Claim: emit writes one json line.
+/// Claim: Given an ordered two-field payload, emission writes exactly one JSON object and a trailing newline, preserving record framing for consumers.
 /// ´claim:cli:emit-writes-one-json-line´
 /// ´test:crate:emit-writes-one-json-line´
 #[test]
@@ -138,7 +138,7 @@ fn emit_writes_one_json_line() {
     assert_eq!(buf, b"{\"a\":1,\"b\":2}\n");
 }
 
-/// Claim: emit propagates writer error.
+/// Claim: A writer refusing all bytes returns `BrokenPipe` to the caller, so failed delivery cannot be reported as successful emission.
 /// ´claim:cli:emit-propagates-writer-error´
 /// ´test:crate:emit-propagates-writer-error´
 #[test]
@@ -148,7 +148,7 @@ fn emit_propagates_writer_error() {
     assert_eq!(err.kind(), io::ErrorKind::BrokenPipe);
 }
 
-/// Claim: partial stdout write during emit is not reverted.
+/// Claim: When the sink fails after eight bytes, emission returns `BrokenPipe` and leaves that prefix visible, exposing the limit of stream rollback.
 /// ´claim:cli:partial-stdout-write-during-emit-is-not-reverted´
 /// ´test:crate:partial-stdout-write-during-emit-is-not-reverted´
 #[test]
@@ -175,7 +175,7 @@ fn partial_stdout_write_during_emit_is_not_reverted() {
     );
 }
 
-/// Claim: emit propagates serialisation error.
+/// Claim: A payload whose serializer refuses returns an error before writing any bytes, preventing a partial record from serialization failure.
 /// ´claim:cli:emit-propagates-serialisation-error´
 /// ´test:crate:emit-propagates-serialisation-error´
 #[test]
@@ -206,7 +206,7 @@ fn emit_propagates_serialisation_error() {
     drop(err); // kind not asserted, see comment above.
 }
 
-/// Claim: emit to real stdout succeeds.
+/// Claim: With stdout captured by the test harness, the public emitter accepts the fixture payload without an error, checking the live sink path.
 /// ´claim:cli:emit-to-real-stdout-succeeds´
 /// ´test:crate:emit-to-real-stdout-succeeds´
 #[test]
@@ -217,7 +217,7 @@ fn emit_to_real_stdout_succeeds() {
     crate::emit(&serde_json::json!({"k": "v"})).expect("emit must succeed under captured stdout");
 }
 
-/// Claim: base args parses default.
+/// Claim: Flattening the shared arguments into the fixture parser leaves debug disabled when no flags are supplied, preserving the quiet default.
 /// ´claim:cli:base-args-parses-default´
 /// ´test:crate:base-args-parses-default´
 #[test]
@@ -232,7 +232,7 @@ fn base_args_parses_default() {
     assert!(!parsed.base.debug);
 }
 
-/// Claim: base args parses long flag.
+/// Claim: The fixture parser accepts --debug and sets the shared debug field, making the documented opt-in available to callers.
 /// ´claim:cli:base-args-parses-long-flag´
 /// ´test:crate:base-args-parses-long-flag´
 #[test]
@@ -247,7 +247,7 @@ fn base_args_parses_long_flag() {
     assert!(parsed.base.debug);
 }
 
-/// Claim: command exit codes match contract.
+/// Claim: Success, failure and usage map bidirectionally to 0, 1 and 2 while 3 has no wrapper class, preserving exit classification.
 /// ´claim:cli:command-exit-codes-match-contract´
 /// ´test:crate:command-exit-codes-match-contract´
 #[test]
@@ -262,7 +262,7 @@ fn command_exit_codes_match_contract() {
     assert_eq!(CommandExit::from_code(3), None);
 }
 
-/// Claim: control record serialises shape.
+/// Claim: A status record carries the declared schema, command and status kind and omits absent fields, preserving the control-record envelope.
 /// ´claim:cli:control-record-serialises-shape´
 /// ´test:crate:control-record-serialises-shape´
 #[test]
@@ -277,7 +277,7 @@ fn control_record_serialises_shape() {
     assert!(value.get("fields").is_none());
 }
 
-/// Claim: json line writer appends newline.
+/// Claim: Writing a status record produces newline-terminated parseable JSON with the declared schema and status kind, preserving machine-readable framing.
 /// ´claim:cli:json-line-writer-appends-newline´
 /// ´test:crate:json-line-writer-appends-newline´
 #[test]
@@ -294,7 +294,7 @@ fn json_line_writer_appends_newline() {
     assert_eq!(value["kind"], json!("status"));
 }
 
-/// Claim: usage error record carries fields.
+/// Claim: A usage record serializes its `usage_error` discriminator and exit code 2, allowing consumers to distinguish argument failures.
 /// ´claim:cli:usage-error-record-carries-fields´
 /// ´test:crate:usage-error-record-carries-fields´
 #[test]
@@ -315,7 +315,7 @@ fn usage_error_record_carries_fields() {
     assert_eq!(value["fields"]["exit_code"], json!(2));
 }
 
-/// Claim: tty refusal record carries fields.
+/// Claim: A stdout TTY refusal retains its refusal kind, usage exit and stream identity, allowing callers to diagnose the blocked destination.
 /// ´claim:cli:tty-refusal-record-carries-fields´
 /// ´test:crate:tty-refusal-record-carries-fields´
 #[test]
@@ -332,7 +332,7 @@ fn tty_refusal_record_carries_fields() {
     );
 }
 
-/// Claim: panic record omits payload without debug.
+/// Claim: Constructing a panic record without a payload omits that field while retaining exit 1 and thread identity, preventing absent details from becoming data.
 /// ´claim:cli:panic-record-omits-payload-without-debug´
 /// ´test:crate:panic-record-omits-payload-without-debug´
 #[test]
@@ -347,7 +347,7 @@ fn panic_record_omits_payload_without_debug() {
     assert!(value["fields"].get("payload").is_none());
 }
 
-/// Claim: panic record carries debug payload.
+/// Claim: An explicitly supplied panic payload round-trips through JSON with quotes escaped, preserving diagnostic content without breaking framing.
 /// ´claim:cli:panic-record-carries-debug-payload´
 /// ´test:crate:panic-record-carries-debug-payload´
 #[test]
@@ -366,7 +366,7 @@ fn panic_record_carries_debug_payload() {
     assert_eq!(value["fields"]["payload"], json!("panic with \"quoted\" detail"));
 }
 
-/// Claim: panic payload reporting fails closed then follows debug flag.
+/// Claim: Panic payload reporting starts disabled and follows explicit enable and disable operations, keeping disclosure opt-in and reversible.
 /// ´claim:cli:panic-payload-reporting-fails-closed-then-follows-debug-flag´
 /// ´test:crate:panic-payload-reporting-fails-closed-then-follows-debug-flag´
 #[test]
@@ -382,7 +382,7 @@ fn panic_payload_reporting_fails_closed_then_follows_debug_flag() {
     assert!(!panic_payload_reporting_enabled());
 }
 
-/// Claim: panic payload message extracts string payloads.
+/// Claim: Borrowed and owned string panic payloads yield their text while a numeric payload yields none, bounding the supported diagnostic conversion.
 /// ´claim:cli:panic-payload-message-extracts-string-payloads´
 /// ´test:crate:panic-payload-message-extracts-string-payloads´
 #[test]
@@ -396,7 +396,7 @@ fn panic_payload_message_extracts_string_payloads() {
     assert_eq!(panic_payload_message_from_payload(numeric_payload), None);
 }
 
-/// Claim: parse args from returns help record.
+/// Claim: The help flag stops parsing with success and a help record naming the command and its debug option, preserving control-plane help delivery.
 /// ´claim:cli:parse-args-from-returns-help-record´
 /// ´test:crate:parse-args-from-returns-help-record´
 #[test]
@@ -419,7 +419,7 @@ fn parse_args_from_returns_help_record() {
     assert!(text.contains("--debug"));
 }
 
-/// Claim: sole version carries caller metadata.
+/// Claim: A sole --version argument produces the exact success record with caller command, package and version, preserving executable identity in metadata.
 /// ´claim:cli:sole-version-carries-caller-metadata´
 /// ´test:crate:sole-version-carries-caller-metadata´
 #[test]
@@ -438,7 +438,7 @@ fn sole_version_carries_caller_metadata() {
     );
 }
 
-/// Claim: sole version carries compiled commit.
+/// Claim: When build identity is supplied, the sole-version record includes it in the package version text, preserving the caller's compiled provenance.
 /// ´claim:cli:sole-version-carries-compiled-commit´
 /// ´test:crate:sole-version-carries-compiled-commit´
 #[test]
@@ -451,7 +451,7 @@ fn sole_version_carries_compiled_commit() {
     );
 }
 
-/// Claim: sole version leaves other arguments alone.
+/// Claim: Only the sole long version flag takes the early exit; abbreviations, separators, extra arguments and repeats remain for normal parsing.
 /// ´claim:cli:sole-version-leaves-other-arguments-alone´
 /// ´test:crate:sole-version-leaves-other-arguments-alone´
 #[test]
@@ -473,7 +473,7 @@ fn sole_version_leaves_other_arguments_alone() {
     }
 }
 
-/// Claim: sole version handles non utf8 arguments.
+/// Claim: Invalid UTF-8 arguments alone or beside --version do not trigger the early version exit, preserving the original argument-validation path.
 /// ´claim:cli:sole-version-handles-non-utf8-arguments´
 /// ´test:crate:sole-version-handles-non-utf8-arguments´
 #[cfg(unix)]
@@ -488,7 +488,7 @@ fn sole_version_handles_non_utf8_arguments() {
     }
 }
 
-/// Claim: parse args from returns version record.
+/// Claim: The parser's version request returns success and the fixture command's exact version text, keeping metadata on the control-plane path.
 /// ´claim:cli:parse-args-from-returns-version-record´
 /// ´test:crate:parse-args-from-returns-version-record´
 #[test]
@@ -507,7 +507,7 @@ fn parse_args_from_returns_version_record() {
     assert_eq!(version, "fixture-helper 1.2.3");
 }
 
-/// Claim: parse args from returns usage record.
+/// Claim: An unknown flag returns usage exit 2 and the `unknown_argument` field with the command identity, making parse failure classifiable.
 /// ´claim:cli:parse-args-from-returns-usage-record´
 /// ´test:crate:parse-args-from-returns-usage-record´
 #[test]
@@ -532,7 +532,7 @@ fn parse_args_from_returns_usage_record() {
     assert_eq!(clap_error_kind, "unknown_argument");
 }
 
-/// Claim: tracing filter prefers rust log.
+/// Claim: A nonempty environment filter wins over the debug flag and retains its provenance, preserving explicit operator filter selection.
 /// ´claim:cli:tracing-filter-prefers-rust-log´
 /// ´test:crate:tracing-filter-prefers-rust-log´
 #[test]
@@ -543,7 +543,7 @@ fn tracing_filter_prefers_rust_log() {
     assert_eq!(filter.source, TracingFilterSource::RustLog);
 }
 
-/// Claim: tracing filter uses debug flag.
+/// Claim: With only whitespace in the environment filter, debug selects the debug directive and `DebugFlag` source, preserving the fallback order.
 /// ´claim:cli:tracing-filter-uses-debug-flag´
 /// ´test:crate:tracing-filter-uses-debug-flag´
 #[test]
@@ -554,7 +554,7 @@ fn tracing_filter_uses_debug_flag() {
     assert_eq!(filter.source, TracingFilterSource::DebugFlag);
 }
 
-/// Claim: tracing filter uses default level.
+/// Claim: Without an environment filter or debug flag, the supplied WARN default becomes the warn directive and `DefaultLevel` source.
 /// ´claim:cli:tracing-filter-uses-default-level´
 /// ´test:crate:tracing-filter-uses-default-level´
 #[test]
@@ -565,7 +565,7 @@ fn tracing_filter_uses_default_level() {
     assert_eq!(filter.source, TracingFilterSource::DefaultLevel);
 }
 
-/// Claim: redacts sensitive field values.
+/// Claim: Token, password and private-key field names replace their values with the redaction marker, preventing these named secrets from entering diagnostics.
 /// ´claim:cli:redacts-sensitive-field-values´
 /// ´test:crate:redacts-sensitive-field-values´
 #[test]
@@ -575,7 +575,7 @@ fn redacts_sensitive_field_values() {
     assert_eq!(redact_field_value("auth.private_key_pem", "PEM"), REDACTED);
 }
 
-/// Claim: redacts database url secrets.
+/// Claim: The database URL loses user information and token/password query pairs while retaining host, path and ssl-mode, preserving useful safe context.
 /// ´claim:cli:redacts-database-url-secrets´
 /// ´test:crate:redacts-database-url-secrets´
 #[test]
@@ -585,7 +585,7 @@ fn redacts_database_url_secrets() {
     assert_eq!(redacted, "mysql://example.test/db?ssl-mode=required");
 }
 
-/// Claim: keeps public key fields visible.
+/// Claim: A public-key path field remains unchanged, keeping nonsecret configuration available for diagnosis.
 /// ´claim:cli:keeps-public-key-fields-visible´
 /// ´test:crate:keeps-public-key-fields-visible´
 #[test]
@@ -596,7 +596,7 @@ fn keeps_public_key_fields_visible() {
     );
 }
 
-/// Claim: redacts credentials in any url scheme.
+/// Claim: The HTTPS and RPC fixtures lose credentials, safe URLs and non-URLs survive, and the generic field path also scrubs credential URLs.
 /// ´claim:cli:redacts-credentials-in-any-url-scheme´
 /// ´test:crate:redacts-credentials-in-any-url-scheme´
 #[test]
@@ -628,7 +628,7 @@ fn redacts_credentials_in_any_url_scheme() {
     );
 }
 
-/// Claim: redacts secrets in free form text.
+/// Claim: The mixed error fixture loses its token and URL credentials while retaining explanatory text and a newline, preserving safe diagnostic context.
 /// ´claim:cli:redacts-secrets-in-free-form-text´
 /// ´test:crate:redacts-secrets-in-free-form-text´
 #[test]
@@ -647,7 +647,7 @@ fn redacts_secrets_in_free_form_text() {
     assert!(redacted.contains('\n'));
 }
 
-/// Claim: redacts key equals credential url token.
+/// Claim: A URL following --endpoint= loses user information and its secret query value, closing the prefixed-token redaction path.
 /// ´claim:cli:redacts-key-equals-credential-url-token´
 /// ´test:crate:redacts-key-equals-credential-url-token´
 #[test]
@@ -661,7 +661,7 @@ fn redacts_key_equals_credential_url_token() {
     assert!(!redacted.contains("secret"));
 }
 
-/// Claim: redacts credential url in error chain text.
+/// Claim: Embedded endpoint credentials disappear while the request-failure and attempt context remain, keeping chained error text useful without the secret.
 /// ´claim:cli:redacts-credential-url-in-error-chain-text´
 /// ´test:crate:redacts-credential-url-in-error-chain-text´
 #[test]
@@ -676,7 +676,7 @@ fn redacts_credential_url_in_error_chain_text() {
     assert!(redacted.contains("(attempt 2 of 3)"));
 }
 
-/// Claim: redacts sensitive url fragments.
+/// Claim: Sensitive fragment pairs are removed, safe state survives, and a wholly secret fragment is cleared on URL and free-text paths.
 /// ´claim:cli:redacts-sensitive-url-fragments´
 /// ´test:crate:redacts-sensitive-url-fragments´
 #[test]
@@ -699,7 +699,7 @@ fn redacts_sensitive_url_fragments() {
     assert!(!redacted.contains("SECRET"));
 }
 
-/// Claim: unparseable url ish token fails closed.
+/// Claim: Malformed credential-like and empty-host URL tokens become the redaction marker, preventing parse failure from exposing their original bytes.
 /// ´claim:cli:unparseable-url-ish-token-fails-closed´
 /// ´test:crate:unparseable-url-ish-token-fails-closed´
 #[test]
@@ -715,7 +715,7 @@ fn unparseable_url_ish_token_fails_closed() {
     assert_eq!(crate::redact_text("https://"), REDACTED);
 }
 
-/// Claim: keeps non sensitive key value tokens.
+/// Claim: The retries and mode fixture passes through unchanged, preventing secret filtering from erasing ordinary diagnostic parameters.
 /// ´claim:cli:keeps-non-sensitive-key-value-tokens´
 /// ´test:crate:keeps-non-sensitive-key-value-tokens´
 #[test]
@@ -725,7 +725,7 @@ fn keeps_non_sensitive_key_value_tokens() {
     assert_eq!(crate::redact_text(text), text);
 }
 
-/// Claim: redacts runner style error display.
+/// Claim: The runner-shaped error loses URL credentials but retains endpoint, failure context and timeout text, preserving safe failure diagnosis.
 /// ´claim:cli:redacts-runner-style-error-display´
 /// ´test:crate:redacts-runner-style-error-display´
 #[test]
@@ -742,7 +742,7 @@ fn redacts_runner_style_error_display() {
     assert!(redacted.contains("timeout"));
 }
 
-/// Claim: usage error text never reproduces secrets.
+/// Claim: An unknown secret-bearing flag returns usage failure and its serialized control record excludes the supplied secret, protecting parser diagnostics.
 /// ´claim:cli:usage-error-text-never-reproduces-secrets´
 /// ´test:crate:usage-error-text-never-reproduces-secrets´
 #[test]
@@ -761,7 +761,7 @@ fn usage_error_text_never_reproduces_secrets() {
     );
 }
 
-/// Claim: touch stamp creates empty and redates an empty stamp.
+/// Claim: Creating and then touching an empty success stamp preserves zero length and advances its modification time, making renewed success observable.
 /// ´claim:cli:touch-stamp-creates-empty-and-redates-an-empty-stamp´
 /// ´test:crate:touch-stamp-creates-empty-and-redates-an-empty-stamp´
 #[test]
@@ -782,7 +782,7 @@ fn touch_stamp_creates_empty_and_redates_an_empty_stamp() {
     assert!(metadata.modified().expect("mtime") > before);
 }
 
-/// Claim: touch stamp refuses a nonempty stamp without destroying it.
+/// Claim: A nonempty stamp returns `InvalidData` with the empty-stamp contract and retains its bytes and modification time, preserving foreign evidence.
 /// ´claim:cli:touch-stamp-refuses-a-nonempty-stamp-without-destroying-it´
 /// ´test:crate:touch-stamp-refuses-a-nonempty-stamp-without-destroying-it´
 #[test]
@@ -806,7 +806,7 @@ fn touch_stamp_refuses_a_nonempty_stamp_without_destroying_it() {
     );
 }
 
-/// Claim: build mode writes report then touches stamp.
+/// Claim: Successful build-mode completion leaves the exact JSON report and a success stamp, exposing both publication outputs to the build caller.
 /// ´claim:cli:build-mode-writes-report-then-touches-stamp´
 /// ´test:crate:build-mode-writes-report-then-touches-stamp´
 #[test]
@@ -825,7 +825,7 @@ fn build_mode_writes_report_then_touches_stamp() {
     assert!(stamp.exists(), "the success stamp is touched");
 }
 
-/// Claim: build mode leaves an unchanged report untouched on rerun.
+/// Claim: Repeating an identical report preserves its pinned modification time, avoiding spurious downstream rebuilds.
 /// ´claim:cli:build-mode-leaves-an-unchanged-report-untouched-on-rerun´
 /// ´test:crate:build-mode-leaves-an-unchanged-report-untouched-on-rerun´
 #[test]
@@ -857,7 +857,7 @@ fn build_mode_leaves_an_unchanged_report_untouched_on_rerun() {
 // The staged report is owner-only until publication sets the
 // intended mode, so a check report must arrive publicly readable and
 // stay that way across an unchanged rerun.
-/// Claim: build mode publishes a publicly readable report.
+/// Claim: New, changed and unchanged build reports all have mode 0644, preserving their readability across publication states.
 /// ´claim:cli:build-mode-publishes-a-publicly-readable-report´
 /// ´test:crate:build-mode-publishes-a-publicly-readable-report´
 #[cfg(unix)]
@@ -883,7 +883,7 @@ fn build_mode_publishes_a_publicly_readable_report() {
     assert_eq!(mode(&report), 0o644, "an unchanged report stays public");
 }
 
-/// Claim: a half specified output mode is invalid.
+/// Claim: Supplying a report without a stamp returns `InvalidMode`, refusing an incomplete build-output contract.
 /// ´claim:cli:a-half-specified-output-mode-is-invalid´
 /// ´test:crate:a-half-specified-output-mode-is-invalid´
 #[test]
@@ -899,7 +899,7 @@ fn a_half_specified_output_mode_is_invalid() {
     ));
 }
 
-/// Claim: a failed report write leaves the stamp untouched.
+/// Claim: A regular file blocking the report parent causes an I/O error and no success stamp, preventing failed publication from certifying success.
 /// ´claim:cli:a-failed-report-write-leaves-the-stamp-untouched´
 /// ´test:crate:a-failed-report-write-leaves-the-stamp-untouched´
 #[test]
@@ -928,7 +928,7 @@ fn a_failed_report_write_leaves_the_stamp_untouched() {
 // success with one role's bytes overwriting another's, however the two
 // destinations are spelled.
 
-/// Claim: identical output paths are aliased.
+/// Claim: Two roles naming the same destination are rejected with both role names, preventing conflicting output ownership.
 /// ´claim:cli:identical-output-paths-are-aliased´
 /// ´test:crate:identical-output-paths-are-aliased´
 #[test]
@@ -941,7 +941,7 @@ fn identical_output_paths_are_aliased() {
     assert_eq!(error.second, "second");
 }
 
-/// Claim: lexical alias spellings are aliased.
+/// Claim: A destination and its sub/../ spelling are rejected as the same two roles, preventing lexical aliases from bypassing output separation.
 /// ´claim:cli:lexical-alias-spellings-are-aliased´
 /// ´test:crate:lexical-alias-spellings-are-aliased´
 #[test]
@@ -955,7 +955,7 @@ fn lexical_alias_spellings_are_aliased() {
     assert_eq!((error.first.as_str(), error.second.as_str()), ("first", "second"));
 }
 
-/// Claim: relative and absolute spellings of one destination are aliased.
+/// Claim: A relative destination and its working-directory absolute spelling collide, preserving output separation across path forms.
 /// ´claim:cli:relative-and-absolute-spellings-of-one-destination-are-aliased´
 /// ´test:crate:relative-and-absolute-spellings-of-one-destination-are-aliased´
 #[test]
@@ -974,7 +974,7 @@ fn relative_and_absolute_spellings_of_one_destination_are_aliased() {
 // remount a path at any moment establishes no boundary. These two
 // cases record that as the decided behaviour rather than an oversight.
 
-/// Claim: hard linked destinations are not treated as one role.
+/// Claim: Distinct lexical destinations pass even when hard-linked, pinning that output-role validation leaves filesystem alias responsibility to its caller.
 /// ´claim:cli:hard-linked-destinations-are-not-treated-as-one-role´
 /// ´test:crate:hard-linked-destinations-are-not-treated-as-one-role´
 #[cfg(unix)]
@@ -993,7 +993,7 @@ fn hard_linked_destinations_are_not_treated_as_one_role() {
         .expect("lexically distinct paths pass; the caller owns hard-link aliasing");
 }
 
-/// Claim: symlinked parent directories are not resolved.
+/// Claim: Paths through real and symlinked parents pass lexical role validation, pinning its boundary without claiming filesystem identity checks.
 /// ´claim:cli:symlinked-parent-directories-are-not-resolved´
 /// ´test:crate:symlinked-parent-directories-are-not-resolved´
 #[cfg(unix)]
@@ -1009,7 +1009,7 @@ fn symlinked_parent_directories_are_not_resolved() {
         .expect("no symlink resolution; the host owns what these paths resolve to");
 }
 
-/// Claim: distinct destinations validate.
+/// Claim: Two different destination names under one temporary root pass role validation, allowing independent outputs to be published.
 /// ´claim:cli:distinct-destinations-validate´
 /// ´test:crate:distinct-destinations-validate´
 #[test]
@@ -1020,7 +1020,7 @@ fn distinct_destinations_validate() {
         .expect("distinct destinations are valid");
 }
 
-/// Claim: build mode rejects aliased report and stamp.
+/// Claim: Report and stamp paths that normalize to one destination return `AliasedOutputs` before creating it, protecting the success fact from report bytes.
 /// ´claim:cli:build-mode-rejects-aliased-report-and-stamp´
 /// ´test:crate:build-mode-rejects-aliased-report-and-stamp´
 #[test]
@@ -1072,7 +1072,7 @@ mod publication {
             .collect()
     }
 
-    /// Claim: aliased outputs fail before any write.
+    /// Claim: A batch assigning two roles to one path fails with `AliasedOutputs` and leaves neither destination nor staging files, preventing partial publication.
     /// ´claim:cli:aliased-outputs-fail-before-any-write´
     /// ´test:crate:aliased-outputs-fail-before-any-write´
     #[test]
@@ -1087,7 +1087,7 @@ mod publication {
         assert_eq!(staged_leftovers(dir.path()), [] as [std::string::String; 0]);
     }
 
-    /// Claim: unchanged destinations keep bytes and mtimes.
+    /// Claim: A batch matching both existing public files reports every member unchanged and preserves their modification times, avoiding unnecessary rebuilds.
     /// ´claim:cli:unchanged-destinations-keep-bytes-and-mtimes´
     /// ´test:crate:unchanged-destinations-keep-bytes-and-mtimes´
     #[test]
@@ -1107,7 +1107,7 @@ mod publication {
         assert_eq!(std::fs::metadata(&second).unwrap().modified().unwrap(), second_mtime);
     }
 
-    /// Claim: only the changed member is rewritten.
+    /// Claim: In a mixed current/stale batch, only the stale member reports changed bytes and receives new content while the current member retains its timestamp.
     /// ´claim:cli:only-the-changed-member-is-rewritten´
     /// ´test:crate:only-the-changed-member-is-rewritten´
     #[test]
@@ -1129,7 +1129,7 @@ mod publication {
         assert_eq!(std::fs::metadata(&current).unwrap().modified().unwrap(), kept_mtime);
     }
 
-    /// Claim: a staging failure changes no final destination.
+    /// Claim: When a later member cannot be staged below a regular file, the error names that role, earlier bytes survive and staging files are removed.
     /// ´claim:cli:a-staging-failure-changes-no-final-destination´
     /// ´test:crate:a-staging-failure-changes-no-final-destination´
     #[test]
@@ -1153,7 +1153,7 @@ mod publication {
         assert_eq!(staged_leftovers(dir.path()), [] as [std::string::String; 0]);
     }
 
-    /// Claim: a late publish failure is reported and repairable.
+    /// Claim: A directory blocking the second rename exposes the first publication and names the failed role; removing it lets a rerun repair the remainder without staging leftovers.
     /// ´claim:cli:a-late-publish-failure-is-reported-and-repairable´
     /// ´test:crate:a-late-publish-failure-is-reported-and-repairable´
     #[test]
@@ -1186,7 +1186,7 @@ mod publication {
         assert_eq!(staged_leftovers(dir.path()), [] as [std::string::String; 0]);
     }
 
-    /// Claim: a prior mixed generation is repaired.
+    /// Claim: Given one current and one old generation, publication marks only the old member changed and brings its bytes to the requested generation.
     /// ´claim:cli:a-prior-mixed-generation-is-repaired´
     /// ´test:crate:a-prior-mixed-generation-is-repaired´
     #[test]
@@ -1222,7 +1222,7 @@ mod publication {
         std::fs::metadata(path).unwrap().permissions().mode() & 0o777
     }
 
-    /// Claim: publication modes name their octal contract.
+    /// Claim: Public and executable publication modes map to 0644 and 0755, pinning the permission contract used by publication callers.
     /// ´claim:cli:publication-modes-name-their-octal-contract´
     /// ´test:crate:publication-modes-name-their-octal-contract´
     #[cfg(unix)]
@@ -1234,7 +1234,7 @@ mod publication {
         assert_eq!(PublicationMode::Executable.octal(), 0o755);
     }
 
-    /// Claim: an absent destination is published publicly readable.
+    /// Claim: Publishing a missing destination reports changed bytes and sets mode 0644, making the new output publicly readable.
     /// ´claim:cli:an-absent-destination-is-published-publicly-readable´
     /// ´test:crate:an-absent-destination-is-published-publicly-readable´
     #[cfg(unix)]
@@ -1249,7 +1249,7 @@ mod publication {
         assert_eq!(mode_of(&out), 0o644, "a new publication must be public");
     }
 
-    /// Claim: a changed public destination stays publicly readable.
+    /// Claim: Replacing an existing 0644 file changes its bytes to the requested content and retains 0644, preserving readability on update.
     /// ´claim:cli:a-changed-public-destination-stays-publicly-readable´
     /// ´test:crate:a-changed-public-destination-stays-publicly-readable´
     #[cfg(unix)]
@@ -1273,7 +1273,7 @@ mod publication {
         );
     }
 
-    /// Claim: an unchanged public destination keeps its mode.
+    /// Claim: Publishing identical bytes to a 0644 destination reports no change and retains its mode, preserving an already current output.
     /// ´claim:cli:an-unchanged-public-destination-keeps-its-mode´
     /// ´test:crate:an-unchanged-public-destination-keeps-its-mode´
     #[cfg(unix)]
@@ -1292,7 +1292,7 @@ mod publication {
         assert_eq!(mode_of(&out), 0o644);
     }
 
-    /// Claim: an executable publication mode is applied to a staged file.
+    /// Claim: Applying executable mode to an open staged file yields 0755, ensuring the staged artifact can carry executable permissions.
     /// ´claim:cli:an-executable-publication-mode-is-applied-to-a-staged-file´
     /// ´test:crate:an-executable-publication-mode-is-applied-to-a-staged-file´
     #[cfg(unix)]
@@ -1310,7 +1310,7 @@ mod publication {
         assert_eq!(mode_of(&staged), 0o755);
     }
 
-    /// Claim: missing destinations and parents are created.
+    /// Claim: Publishing below a missing parent creates the path and requested bytes and reports a byte change, supporting first-run output creation.
     /// ´claim:cli:missing-destinations-and-parents-are-created´
     /// ´test:crate:missing-destinations-and-parents-are-created´
     #[test]
@@ -1331,7 +1331,7 @@ mod publication {
     // forever: every run saw equal bytes and skipped the repair. The
     // rows below are the review's freshness matrix.
 
-    /// Claim: an owner only destination with current bytes is mode repaired.
+    /// Claim: `Current` bytes at mode 0600 are repaired to 0644 with only `mode_changed` set and their bytes and timestamp preserved, exposing permission-only repair accurately.
     /// ´claim:cli:an-owner-only-destination-with-current-bytes-is-mode-repaired´
     /// ´test:crate:an-owner-only-destination-with-current-bytes-is-mode-repaired´
     #[cfg(unix)]
@@ -1358,7 +1358,7 @@ mod publication {
         );
     }
 
-    /// Claim: a run after a mode repair is a no op.
+    /// Claim: After repairing a 0600 destination, an identical rerun reports unchanged at 0644 and leaves no staging files, establishing repair idempotence.
     /// ´claim:cli:a-run-after-a-mode-repair-is-a-no-op´
     /// ´test:crate:a-run-after-a-mode-repair-is-a-no-op´
     #[cfg(unix)]
@@ -1384,7 +1384,7 @@ mod publication {
         assert_eq!(staged_leftovers(dir.path()), [] as [std::string::String; 0]);
     }
 
-    /// Claim: stale bytes are republished rather than mode repaired.
+    /// Claim: A stale public destination reports `bytes_changed` without `mode_changed` and ends at 0644, distinguishing replacement from permission-only repair.
     /// ´claim:cli:stale-bytes-are-republished-rather-than-mode-repaired´
     /// ´test:crate:stale-bytes-are-republished-rather-than-mode-repaired´
     #[cfg(unix)]
@@ -1404,7 +1404,7 @@ mod publication {
         assert_eq!(mode_of(&out), 0o644);
     }
 
-    /// Claim: an executable destination missing its x bit is not current.
+    /// Claim: Matching executable bytes at 0644 classify as `ModeOnly`; repair preserves bytes, sets 0755 and makes the destination `Current`.
     /// ´claim:cli:an-executable-destination-missing-its-x-bit-is-not-current´
     /// ´test:crate:an-executable-destination-missing-its-x-bit-is-not-current´
     #[cfg(unix)]
@@ -1436,7 +1436,7 @@ mod publication {
         );
     }
 
-    /// Claim: an absent destination is stale in every publication class.
+    /// Claim: A missing path classifies as `StaleBytes` for both public and executable modes, preventing absent outputs from being treated as current.
     /// ´claim:cli:an-absent-destination-is-stale-in-every-publication-class´
     /// ´test:crate:an-absent-destination-is-stale-in-every-publication-class´
     #[cfg(unix)]
@@ -1466,7 +1466,7 @@ mod publication {
             serde_json::json!({"ok": true})
         }
 
-        /// Claim: an absent report is published publicly readable.
+        /// Claim: Creating a JSON report reports `bytes_changed` without `mode_changed` and sets 0644, preserving the report publication classification.
         /// ´claim:cli:an-absent-report-is-published-publicly-readable´
         /// ´test:crate:an-absent-report-is-published-publicly-readable´
         #[test]
@@ -1481,7 +1481,7 @@ mod publication {
             assert_eq!(mode_of(&path), 0o644);
         }
 
-        /// Claim: a current report with a correct mode is untouched.
+        /// Claim: An identical JSON report rerun reports unchanged and retains its modification time, avoiding publication churn.
         /// ´claim:cli:a-current-report-with-a-correct-mode-is-untouched´
         /// ´test:crate:a-current-report-with-a-correct-mode-is-untouched´
         #[test]
@@ -1497,7 +1497,7 @@ mod publication {
             assert_eq!(std::fs::metadata(&path).unwrap().modified().unwrap(), mtime);
         }
 
-        /// Claim: a stale report is rewritten.
+        /// Claim: A false-valued report is replaced by the exact true-valued JSON line, with `bytes_changed` alone set, exposing stale-content repair.
         /// ´claim:cli:a-stale-report-is-rewritten´
         /// ´test:crate:a-stale-report-is-rewritten´
         #[test]
@@ -1514,7 +1514,7 @@ mod publication {
             assert_eq!(std::fs::read(&path).unwrap(), b"{\"ok\":true}\n");
         }
 
-        /// Claim: an owner only current report is mode repaired without rewriting.
+        /// Claim: A current 0600 report becomes 0644 without changing bytes or timestamp, reports only `mode_changed`, and is unchanged on the next run.
         /// ´claim:cli:an-owner-only-current-report-is-mode-repaired-without-rewriting´
         /// ´test:crate:an-owner-only-current-report-is-mode-repaired-without-rewriting´
         #[test]

@@ -739,6 +739,7 @@ mod tests {
         );
     }
 
+    /// Claim: Reading the unpinned global source as an assigned theory fails, preserving the distinction between the base and assignable theories.
     /// (´claim:theories:the-base-theory-is-not-assignable´)
     /// ´test:unit:the-base-theory-is-not-in-the-assignable-fragment´
     #[test]
@@ -759,6 +760,7 @@ mod tests {
         assert_eq!(theory.patterns.len(), 1);
     }
 
+    /// Claim: An unclosed character class in a theory returns a `Regexp` error during parsing, preventing malformed patterns from reaching document evaluation.
     /// (´claim:theories:a-pattern-is-compiled-at-parse´)
     /// ´test:unit:a-malformed-pattern-is-refused-at-parse´
     #[test]
@@ -779,6 +781,7 @@ mod tests {
         }
     }
 
+    /// Claim: The cbor, cborseq, within and and fixtures return `Unevaluable` naming their operator, preserving explicit refusal outside the evaluable subset.
     /// (´claim:theories:an-operator-outside-the-subset-is-unevaluable´)
     /// ´test:unit:the-operators-outside-the-subset-are-refused´
     #[test]

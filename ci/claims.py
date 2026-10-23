@@ -47,7 +47,9 @@ def prose(root):
             name = qualify(head[1], owner)
             if name in paragraphs: raise StructuralError('duplicate prose mint: '+name)
             citations = {qualify(m[1], owner) for m in re.finditer(r'\(`(\[[A-Z]+-'+LABEL+r'\]|'+LABEL+r')`\)', paragraph)}
-            row = dict(name=name, path=str(path.relative_to(root)), text=paragraph, citations=citations)
+            exhibits = {qualify(m[1], owner) for m in re.finditer(r'(?<!`)``(\[[A-Z]+-'+LABEL+r'\]|'+LABEL+r')``(?!`)', paragraph)
+                        if 'claim:' in m[1]}
+            row = dict(name=name, path=str(path.relative_to(root)), text=paragraph, citations=citations, exhibits=exhibits)
             paragraphs[name] = row
             if head[1].split(':')[0] in OBLIGATION_KINDS: obligations[name] = row
     return paragraphs, obligations
@@ -63,6 +65,9 @@ def site_claim(site):
     if (i == 0 and not match[1]) or i != len(lines)-2 or not re.fullmatch(r'´test:[a-z0-9-]+:[a-z0-9.-]+´', lines[-1].strip()):
         raise StructuralError('claim/test carrier order: '+site['operation'])
     gloss = '\n'.join(lines[:i]).strip()
+    explicit = [line.strip() for line in lines[:i] if line.strip().startswith('Claim:')]
+    if len(explicit) > 1: raise StructuralError('multiple explicit claim glosses: '+site['operation'])
+    if explicit: gloss = explicit[0]
     test_label = lines[-1].strip(' ´')
     if test_label.split(':',2)[2] != site['function'].replace('_','-'):
         raise StructuralError('test label differs from function identity: '+site['operation'])
@@ -100,10 +105,19 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     mints = Counter(s['claim'] for s in sites if s['mint'])
     for site in sites: claims[site['claim']].append(site)
     if set(mints) != set(claims) or any(v != 1 for v in mints.values()): raise StructuralError('unresolved or duplicate claim mint')
+    python_claims = {s['claim'] for s in sites if s['mint'] and s['language']=='python'}
     if any('::claim:' in name for name in paragraphs): raise StructuralError('orphan prose claim mint outside a test site')
     for paragraph in paragraphs.values():
         if any('::claim:' in name and name not in claims for name in paragraph['citations']):
             raise StructuralError('unresolved prose claim citation')
+        if paragraph['citations'] & python_claims:
+            raise StructuralError('Python claim requires exhibition, not a linter citation')
+    # Only designated evidence paragraphs assert support. Planned design names
+    # remain exhibits, never mints or evidence merely because they are displayed.
+    for name in {r.get('evidence_paragraph') for r in declared if r.get('evidence_paragraph')}:
+        exhibits = paragraphs.get(name, {}).get('exhibits', set())
+        if exhibits - python_claims:
+            raise StructuralError('evidence exhibit does not resolve to a Python claim: '+str(sorted(exhibits-python_claims)))
     if len({r['operation'] for r in results}) != len(results): raise StructuralError('duplicate result')
     actual = {r['operation']:r for r in results}
     missing = set(expected_sites)-set(actual)
@@ -130,8 +144,10 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
             raise StructuralError('evidence edge lacks scoped premises')
         for claim in row['claims']:
             if claim not in claims: raise StructuralError('planned name or unresolved claim presented as evidence')
-            citations = paragraphs.get(row.get('evidence_paragraph'), {}).get('citations', set())
-            if claim not in citations or name not in citations: raise StructuralError('uncited evidence presented as coverage')
+            paragraph = paragraphs.get(row.get('evidence_paragraph'), {})
+            citations = paragraph.get('citations', set())
+            evidence = paragraph.get('exhibits', set()) if claim in python_claims else citations
+            if claim not in evidence or name not in citations: raise StructuralError('uncited evidence presented as coverage')
         if row['status']=='supported' and not row['claims']: raise StructuralError('supported obligation lacks claims')
         if name.split('::',1)[1].startswith('req:'):
             edges = {key for key,value in obligations.items() if key != name and name in value['citations']}
@@ -165,10 +181,27 @@ def checked_linter(path,sites):
         raise StructuralError('independent source census differs from checked Rust profile')
 
 
-def main():
+def reviewed_sites(sites, manifest):
+    """Check review identities against source; semantic review remains item-specific."""
+    if manifest.get('schema') != 1: raise StructuralError('claim review schema differs')
+    actual = {s['operation']:s for s in sites}
+    seen = set()
+    for row in manifest['sites']:
+        name = row['operation']
+        if name in seen or name not in actual: raise StructuralError('duplicate or missing reviewed site')
+        seen.add(name)
+        site = actual[name]
+        if any(row[k] != site[k] for k in ('path','claim')) or row['after'] != site['gloss']:
+            raise StructuralError('stale claim gloss review: '+name)
+        if not isinstance(row['before'],str) or not isinstance(row['review'],str) or not row['review'].strip():
+            raise StructuralError('claim review lacks before gloss or assessment')
+    return manifest['sites']
+
+
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--fail-respellings', action='store_true')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     try:
         root = Path('.')
         registry = load_registry()
@@ -189,6 +222,8 @@ def main():
                 raise StructuralError('public carrier mapping differs')
         result = evaluate(sites, expected, areas, obligations, declared, paragraphs,
                           [r for r in records if r.get('scope')=='case'], source)
+        reviews = reviewed_sites(sites, json.loads(Path('ci/claim_review.json').read_text()))
+        Path('.lane/claim-gloss-review.json').write_text(json.dumps({'schema':1,'source':source,'sites':reviews},indent=2)+'\n')
         offenders = [{k:s[k] for k in ('owner','path','line','function','operation','claim','gloss')} for s in sites if respells(s)]
         Path('.lane/claim-respellings.json').write_text(json.dumps({'schema':1,'source':source,'offenders':offenders},indent=2)+'\n')
         local_contracts={(a['owner'],a['area']):a['contract'] for a in areas}
@@ -198,6 +233,7 @@ def main():
         missing_glosses=[s['operation'] for s in sites if not s['gloss']]
         Path('.lane/claim-evidence.json').write_text(json.dumps({'schema':1,'source':source,'configuration':CONFIGURATION,'sites':sites,'sibling_gloss_review':missing_glosses,**result},indent=2)+'\n')
         counts = Counter(r['status'] for r in result['obligations'])
+        print(f'CLAIM-REVIEW sites={len(reviews)} artifact=.lane/claim-gloss-review.json')
         print(f'CLAIM-RESPELLINGS count={len(offenders)} artifact=.lane/claim-respellings.json enforcement={args.fail_respellings}')
         print(f'CLAIM-EVIDENCE sites={len(sites)} claims={len(result["claims"])} obligations={len(obligations)} passed={counts["passed"]} failed={counts["failed"]} held={counts["held"]} artifact=.lane/claim-evidence.json')
         return int(any(r['status']=='failed' for r in result['claims']) or counts['failed']>0 or (args.fail_respellings and bool(offenders)))

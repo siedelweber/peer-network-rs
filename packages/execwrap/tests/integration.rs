@@ -22,7 +22,7 @@ fn read(path: &Path) -> Vec<u8> {
 /// `--redirect` (raw, merged) preserves arbitrary bytes: invalid
 /// UTF-8, NUL, ANSI escapes, and a large binary chunk.
 ///
-/// Claim: raw redirect is byte exact.
+/// Claim: A merged raw redirect preserves the fixture's invalid UTF-8, NUL, escape bytes and 64 `KiB` binary chunk exactly after a successful child run.
 /// ´claim:cli:raw-redirect-is-byte-exact´
 /// ´test:integration:raw-redirect-is-byte-exact´
 #[test]
@@ -50,7 +50,7 @@ fn raw_redirect_is_byte_exact() {
 /// Simultaneous stdout/stderr routing to separate files keeps each
 /// stream's bytes exact and unmixed.
 ///
-/// Claim: split streams route to their own files.
+/// Claim: A child writing both streams leaves the exact distinct stdout and stderr lines in their respective files, preventing cross-stream mixing.
 /// ´claim:cli:split-streams-route-to-their-own-files´
 /// ´test:integration:split-streams-route-to-their-own-files´
 #[test]
@@ -77,7 +77,7 @@ fn split_streams_route_to_their_own_files() {
 
 /// A child status in the relay range (3..=255) is propagated unchanged.
 ///
-/// Claim: child exit code is propagated.
+/// Claim: A spawned child exiting 7 makes the wrapper exit 7, checking a concrete member of the relay range.
 /// ´claim:cli:child-exit-code-is-propagated´
 /// ´test:integration:child-exit-code-is-propagated´
 #[test]
@@ -93,7 +93,7 @@ fn child_exit_code_is_propagated() {
 /// success, a child 1 or 2 becomes wrapper runtime failure 1 (so code 2 stays
 /// reserved for wrapper usage), and 3..=255 relay unchanged.
 ///
-/// Claim: reserved wrapper exit classes are preserved.
+/// Claim: Child statuses 0, 1, 2, 3 and 42 map to 0, 1, 1, 3 and 42, keeping usage code 2 reserved for wrapper argument failures.
 /// ´claim:cli:reserved-wrapper-exit-classes-are-preserved´
 /// ´test:integration:reserved-wrapper-exit-classes-are-preserved´
 #[test]
@@ -122,7 +122,7 @@ fn reserved_wrapper_exit_classes_are_preserved() {
 /// A child that cannot be spawned is a wrapper runtime failure (1), not a
 /// relayed child status.
 ///
-/// Claim: unspawnable child is wrapper failure.
+/// Claim: A nonexistent executable makes the wrapper exit 1, distinguishing failure to spawn from a relayed child status.
 /// ´claim:cli:unspawnable-child-is-wrapper-failure´
 /// ´test:integration:unspawnable-child-is-wrapper-failure´
 #[test]
@@ -143,7 +143,7 @@ fn unspawnable_child_is_wrapper_failure() {
 /// `argv[0]` is raw child argv under the command-line output contract (´[ROOT-rec:output:decision]´), so a secret embedded in
 /// the executable path must stay out of the JSON diagnostics.
 ///
-/// Claim: spawn failure does not echo child program text.
+/// Claim: A nonexistent secret-bearing path yields exit 1, empty stdout and object-shaped JSON stderr lines without the secret, protecting caller-controlled argv.
 /// ´claim:cli:spawn-failure-does-not-echo-child-program-text´
 /// ´test:integration:spawn-failure-does-not-echo-child-program-text´
 #[test]
@@ -168,7 +168,7 @@ fn spawn_failure_does_not_echo_child_program_text() {
 /// A credential-bearing URL supplied as the program path must not appear
 /// in diagnostics on spawn failure either.
 ///
-/// Claim: spawn failure does not echo credential bearing program url.
+/// Claim: A credential URL used as an executable yields exit 1 and empty stdout while neither credential marker reaches stderr, protecting spawn diagnostics.
 /// ´claim:cli:spawn-failure-does-not-echo-credential-bearing-program-url´
 /// ´test:integration:spawn-failure-does-not-echo-credential-bearing-program-url´
 #[test]
@@ -189,7 +189,7 @@ fn spawn_failure_does_not_echo_credential_bearing_program_url() {
 
 /// Signal termination is reported as 128 + signal.
 ///
-/// Claim: signal termination maps to 128 plus signal.
+/// Claim: A child terminating itself with SIGTERM makes the wrapper exit 143, preserving the declared signal-status encoding for that signal.
 /// ´claim:cli:signal-termination-maps-to-128-plus-signal´
 /// ´test:integration:signal-termination-maps-to-128-plus-signal´
 #[test]
@@ -212,7 +212,7 @@ fn signal_termination_maps_to_128_plus_signal() {
 /// The same path configured for two different routing kinds is an
 /// invalid argument combination: usage class 2, no side effects.
 ///
-/// Claim: ambiguous same path routing is a usage failure.
+/// Claim: Two route kinds naming one absent file yield exit 2, empty stdout and no log file, preventing usage failure from creating outputs.
 /// ´claim:cli:ambiguous-same-path-routing-is-a-usage-failure´
 /// ´test:integration:ambiguous-same-path-routing-is-a-usage-failure´
 #[test]
@@ -230,7 +230,7 @@ fn ambiguous_same_path_routing_is_a_usage_failure() {
 /// Child argv is never logged: secrets on the command line must not
 /// appear on either wrapper stream (the command-line output contract (´[ROOT-rec:output:decision]´) redaction).
 ///
-/// Claim: child argv secrets never appear in diagnostics.
+/// Claim: With debug enabled, a successful child carrying a secret argument exposes it on neither wrapper stream, protecting raw child argv from diagnostics.
 /// ´claim:cli:child-argv-secrets-never-appear-in-diagnostics´
 /// ´test:integration:child-argv-secrets-never-appear-in-diagnostics´
 #[test]
@@ -265,7 +265,7 @@ fn child_argv_secrets_never_appear_in_diagnostics() {
 /// A credential-bearing URL in child argv must not appear on either
 /// wrapper stream (B0-001: URLs with userinfo are secrets too).
 ///
-/// Claim: credential bearing url never appears in diagnostics.
+/// Claim: With debug enabled, a successful child carrying a credential URL exposes neither secret marker on wrapper stdout or stderr, protecting URL-bearing argv.
 /// ´claim:cli:credential-bearing-url-never-appears-in-diagnostics´
 /// ´test:integration:credential-bearing-url-never-appears-in-diagnostics´
 #[test]
@@ -302,7 +302,7 @@ fn credential_bearing_url_never_appears_in_diagnostics() {
 
 /// Redirecting only stderr must still relay stdout to the parent.
 ///
-/// Claim: redirect error only still forwards stdout.
+/// Claim: With only stderr redirected, quiet mode forwards exact stdout bytes and writes exact stderr bytes to its file, preserving the unsubscribed stream.
 /// ´claim:cli:redirect-error-only-still-forwards-stdout´
 /// ´test:integration:redirect-error-only-still-forwards-stdout´
 #[test]
@@ -326,7 +326,7 @@ fn redirect_error_only_still_forwards_stdout() {
 
 /// The minimal valid invocation: a separator and a child, no options.
 ///
-/// Claim: bare separator invocation succeeds.
+/// Claim: A separator followed by true and no options exits 0 with empty stdout, checking the minimal valid command boundary.
 /// ´claim:cli:bare-separator-invocation-succeeds´
 /// ´test:integration:bare-separator-invocation-succeeds´
 #[test]
@@ -339,7 +339,7 @@ fn bare_separator_invocation_succeeds() {
 /// An unsubscribed child stream is relayed to the parent's stream even
 /// when the parent stream is a pipe, never silently discarded.
 ///
-/// Claim: unredirected streams pass through pipes.
+/// Claim: Quiet mode relays both unredirected streams; redirecting only stdout empties wrapper stdout while stderr remains visible, preventing silent pipe-output loss.
 /// ´claim:cli:unredirected-streams-pass-through-pipes´
 /// ´test:integration:unredirected-streams-pass-through-pipes´
 #[test]
@@ -373,7 +373,7 @@ fn unredirected_streams_pass_through_pipes() {
 /// Help and version are control-plane paths: JSON on stderr, empty
 /// stdout, exit 0. Usage failures exit 2 (´[ROOT-rec:output:decision]´).
 ///
-/// Claim: help version and usage follow the output contract.
+/// Claim: `Help` and version exit 0 with empty stdout and a first JSON record naming execwrap; unknown flags, missing separator and missing command exit 2.
 /// ´claim:cli:help-version-and-usage-follow-the-output-contract´
 /// ´test:integration:help-version-and-usage-follow-the-output-contract´
 #[test]
@@ -405,7 +405,7 @@ fn help_version_and_usage_follow_the_output_contract() {
 /// Prefixed mode is a text presentation: streams are tagged and
 /// control bytes are sanitized.
 ///
-/// Claim: prefixed redirect tags streams.
+/// Claim: A successful two-stream child leaves stdout and stderr lines with their distinct configured tags, preserving their identities in the merged text log.
 /// ´claim:cli:prefixed-redirect-tags-streams´
 /// ´test:integration:prefixed-redirect-tags-streams´
 #[test]
@@ -432,7 +432,7 @@ fn prefixed_redirect_tags_streams() {
 /// writes to /dev/full fail with ENOSPC, so the wrapper must not
 /// report success.
 ///
-/// Claim: data loss fails a successful child.
+/// Claim: When /dev/full is available, losing redirected bytes makes the wrapper exit 1 despite child exit 0, preventing data loss from being reported as success.
 /// ´claim:cli:data-loss-fails-a-successful-child´
 /// ´test:integration:data-loss-fails-a-successful-child´
 #[test]
@@ -456,7 +456,7 @@ fn data_loss_fails_a_successful_child() {
 /// Diagnostics are JSON on stderr (´[ROOT-rec:output:decision]´): a spawn failure produces
 /// parseable JSON records and no stdout.
 ///
-/// Claim: spawn failure emits json diagnostics.
+/// Claim: A nonexistent executable yields exit 1, empty stdout and at least one stderr JSON object with every nonempty line parseable, preserving diagnostic framing on failure.
 /// ´claim:cli:spawn-failure-emits-json-diagnostics´
 /// ´test:integration:spawn-failure-emits-json-diagnostics´
 #[test]

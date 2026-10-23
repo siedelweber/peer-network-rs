@@ -153,4 +153,4 @@ The wrapper is available to callers that explicitly select a child command; it u
 
 ## Claim areas · `sec:execwrap:areas`
 
-**Section (cli)** · `sec:execwrap:area-cli` If command-line claims fail, callers can lose result bytes, receive malformed diagnostics, or mistake failure for success.
+**Section (cli)** · `sec:execwrap:area-cli` If process-wrapper claims fail, child output can be lost or mixed, routing can truncate prior logs, raw arguments can leak, and wrapper statuses can conceal child or delivery failure.

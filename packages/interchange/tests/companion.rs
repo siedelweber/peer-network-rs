@@ -194,6 +194,7 @@ fn the_companion_frees_the_minor_cuts_each_key_and_adds_the_wildcard() {
     assert_the_expected_edits(ASSIGNED, "2", 2);
 }
 
+/// Claim: The companion helper checks exactly the allowed edits across empty, optional and nested content fixtures, protecting unrelated theory structure.
 /// (´claim:companion:the-companion-makes-exactly-the-allowed-edits´)
 /// ´test:integration:the-edits-are-the-only-ones-whatever-the-theory-enumerates´
 #[test]

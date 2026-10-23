@@ -11,7 +11,7 @@
       "contract": "CLICOMMON::sec:clicommon:area-cli",
       "owner": "CLICOMMON",
       "register": "CLICOMMON::sec:clicommon:area-cli",
-      "stake": "If command-line claims fail, callers can lose result bytes, receive malformed diagnostics, or mistake failure for success."
+      "stake": "If shared CLI claims fail, callers can misclassify exits, expose secrets in control records, or publish incorrect report bytes, permissions and success stamps."
     },
     {
       "area": "cli",
@@ -39,7 +39,7 @@
       "contract": "EXECWRAP::sec:execwrap:area-cli",
       "owner": "EXECWRAP",
       "register": "EXECWRAP::sec:execwrap:area-cli",
-      "stake": "If command-line claims fail, callers can lose result bytes, receive malformed diagnostics, or mistake failure for success."
+      "stake": "If process-wrapper claims fail, child output can be lost or mixed, routing can truncate prior logs, raw arguments can leak, and wrapper statuses can conceal child or delivery failure."
     },
     {
       "area": "acceptance",

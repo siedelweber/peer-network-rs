@@ -601,6 +601,7 @@ mod tests {
     /// evaluable subset, and that is a different verdict at a different
     /// place — membership does not look.
     ///
+    /// Claim: A content-key .cbor expression remains in the assignable fragment, keeping syntactic membership independent of operator evaluability.
     /// (´claim:fragment:membership-restricts-no-vocabulary´)
     /// ´test:unit:an-unevaluable-operator-at-a-content-key-is-in-the-fragment´
     #[test]
@@ -698,6 +699,7 @@ uint = 5"#,
         assert!(reject(r#"e = {0 => "com.example"} / {1 => uint}"#).contains("choice"));
     }
 
+    /// Claim: A root group choice is refused as not closed, preserving the single closed-map requirement.
     /// (´claim:fragment:a-root-choice-is-refused´)
     /// ´test:unit:a-root-group-choice-is-refused´
     #[test]
@@ -713,6 +715,7 @@ uint = 5"#,
         assert!(reject(r#"e = {0 => "com.example", 1 => [0, 0, uint], * (uint .gt 1) => any}"#).contains("occurrence indicator"));
     }
 
+    /// Claim: A repeated root entry is refused with an occurrence-indicator diagnostic, preventing an open cardinality from entering the closed envelope.
     /// (´claim:fragment:an-occurrence-indicator-in-the-root-is-refused´)
     /// ´test:unit:a-repeated-entry-is-refused´
     #[test]
@@ -728,6 +731,7 @@ uint = 5"#,
         assert!(reject(r#"e = {0 => "com.example", 1 => [0, 0, uint], (2 => uint, 3 => uint)}"#).contains("extends the map"));
     }
 
+    /// Claim: A root group reference is refused for lacking a member key, preventing another group from extending the envelope implicitly.
     /// (´claim:fragment:an-entry-that-extends-the-map-is-refused´)
     /// ´test:unit:a-bare-group-reference-is-refused´
     #[test]
@@ -749,6 +753,7 @@ more = (2 => uint)"#
         assert!(reject(r#"e = {0 => "com.example", 1 => [0, 0, uint], name: tstr}"#).contains("text string"));
     }
 
+    /// Claim: A tstr key is refused as not closed, preserving integer-literal content-key enumeration.
     /// (´claim:fragment:a-content-key-must-be-an-integer-literal´)
     /// ´test:unit:a-typed-key-is-refused´
     #[test]
@@ -772,6 +777,7 @@ more = (2 => uint)"#
         assert!(reject("e = {1 => [0, 0, uint]}").contains("key 0 is absent"));
     }
 
+    /// Claim: A root containing key 0 alone is refused with key 1 named as absent, preserving the version envelope requirement.
     /// (´claim:fragment:both-envelope-keys-must-be-present´)
     /// ´test:unit:an-absent-key-1-is-refused´
     #[test]
@@ -814,6 +820,7 @@ more = (2 => uint)"#
         assert!(reject(r#"e = {0 => "com.example", 1 => [0, 0, uint, 0]}"#).contains("not three"));
     }
 
+    /// Claim: A uint at key 1 is refused as not pinned to an array, protecting the version tuple shape.
     /// (´claim:fragment:key-1-must-be-a-three-element-array´)
     /// ´test:unit:a-key-1-that-is-not-an-array-is-refused´
     #[test]

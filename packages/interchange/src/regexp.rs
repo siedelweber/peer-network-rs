@@ -245,6 +245,7 @@ mod tests {
         assert!(!p.is_match("a").expect("within budget"));
     }
 
+    /// Claim: The pattern a$ matches the literal dollar-bearing subject and refuses bare a, preserving this dialect's non-anchor semantics.
     /// (´claim:regexp:the-anchor-characters-are-ordinary´)
     /// ´test:unit:dollar-is-an-ordinary-character´
     #[test]
@@ -291,6 +292,7 @@ mod tests {
         assert!(!p.is_match("-").expect("within budget"));
     }
 
+    /// Claim: The XML name escape admits the tested letter, dash, dot and digit but refuses space, preserving its character-class boundary.
     /// (´claim:regexp:the-xml-name-escapes-are-understood´)
     /// ´test:unit:the-xml-name-escape-is-understood´
     #[test]

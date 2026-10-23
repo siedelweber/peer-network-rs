@@ -149,6 +149,7 @@ fn a_short_prefix_asks_for_more_bytes() {
     assert!(Envelope::peek(&bytes[..consumed]).is_ok());
 }
 
+/// Claim: Peeking an empty slice returns `Truncated` with zero given and at least one needed, preserving the minimal prefix demand.
 /// (´claim:prefix:a-short-prefix-asks-for-more´)
 /// ´test:integration:an-empty-prefix-needs-one-byte´
 #[test]

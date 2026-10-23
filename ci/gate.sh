@@ -75,7 +75,7 @@ run_step design-tests python3 -B ci/run_ci.py test_design
 run_step benchmarks python3 -B ci/benchmarks.py
 run_step harness-matrix python3 -B ci/harness.py --matrix
 run_step linter "$LINTER_BIN" check --root .
-run_step claim-evidence python3 -B ci/claims.py
+run_step claim-evidence python3 -B ci/claims.py --fail-respellings
 run_step token python3 ci/discipline.py token
 run_step hash-citations python3 -B ci/discipline.py hash-citations
 run_step suppressions python3 ci/discipline.py suppressions
