@@ -917,7 +917,7 @@
       "kind": "function",
       "label": "eq:comparator:residual-balance",
       "label_source": "explicit",
-      "statement": "Calculate residual burn as imported value less the debit schedule."
+      "statement": "Calculate residual burn as imported burn amount less the debit schedule."
     },
     {
       "added_at": "network-v0.27.0",
@@ -7374,7 +7374,7 @@
       "kind": "policy",
       "label": "post:epoch:final-edge-set",
       "label_source": "explicit",
-      "statement": "Bind the common recognized final marker, fixed policy identity and edition, lineage, interpretation, complete accepted sets and evidence to the accepted acts, prior state and writing-epoch debit vintage."
+      "statement": "Publish the monotone epoch edge set, causally closed under the dependent-set closure. Bind the common recognized final marker, fixed policy identity and edition, lineage, interpretation, complete accepted sets and evidence to the accepted acts, prior state and writing-epoch debit vintage."
     },
     {
       "added_at": "network-v0.27.0",

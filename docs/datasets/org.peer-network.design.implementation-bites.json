@@ -30,10 +30,9 @@
         "sig:design:storage",
         "verif:design:storage-history",
         "model:design:wall-floor",
-        "rule:design:marker-recognition",
-        "alg:design:burn-snapshot"
+        "rule:design:marker-recognition"
       ],
-      "evidence": "Introduce nrz-scalar, nrz-accuracy and nrz-cas as git dependencies from the public Naturrhythmuszentrum repository on branch main; review the lockfile resolution and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases. Under the accepted infrastructure amendment, introduce the host storage slice with real PostgreSQL beta history tests from its first implementation; first pass whole-configuration secret typing through PostgreSQL driver state and errors. Introduce the sole Elements RPC integration in pn-wallet and the optional development-network host edge with its runtime guard; real-service and mock suites begin here. No pre-1.0 migration support is promised. Retain the exact declared floor, controller edition and source constant definitions; distinguish them from evaluated values and rounded displays. Define burn amounts and dimensioned positive unit costs without a universal lower bound; retain separate event costs, bootstrap-empty and operator-absence evidence. Introduce marker-policy and evidence carriers, recognize markers under the declared policy, and mint the burn disclosure and recognition claims before any sample is supported.",
+      "evidence": "Introduce nrz-scalar, nrz-accuracy and nrz-cas as git dependencies from the public Naturrhythmuszentrum repository on branch main; review the lockfile resolution and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases. Under the accepted infrastructure amendment, introduce the host storage slice with real PostgreSQL beta history tests from its first implementation; first pass whole-configuration secret typing through PostgreSQL driver state and errors. Introduce the sole Elements RPC integration in pn-wallet and the optional development-network host edge with its runtime guard; real-service and mock suites begin here. No pre-1.0 migration support is promised. Retain the exact declared floor, controller edition and source constant definitions; distinguish them from evaluated values and rounded displays. Define burn amounts and dimensioned positive unit costs without a universal lower bound; retain separate event costs, bootstrap-empty and operator-absence evidence. In pn-records, introduce and validate the burn-data, marker-policy, lineage and accepted-set carriers and their evidence. Exercise host recognition under the declared policy and mint the scoped burn disclosure and recognition claims; snapshot and first-accepted increment derivation belong to bite 5.",
       "ordinal": 2,
       "requirements": [
         "burn-boundary",
@@ -70,12 +69,13 @@
     },
     {
       "contracts": [
+        "alg:design:burn-snapshot",
         "alg:design:ledger",
         "alg:design:cells",
         "alg:design:recipients",
         "alg:design:base"
       ],
-      "evidence": "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, revocation ties and dependency-permutation invariance. Extend real PostgreSQL tests to immutable debit vintages, atomic result references and earlier verdicts unaffected by later-effective rules. Derive gross increments from newly accepted destruction identities at the common marker, including delayed acceptance and empty act epochs; reject policy/history mixing and double counting before applying the writing-epoch debit.",
+      "evidence": "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, revocation ties and dependency-permutation invariance. Extend real PostgreSQL tests to immutable debit vintages, atomic result references and earlier verdicts unaffected by later-effective rules. In pn-epoch, derive the gross snapshot and first-accepted increments from newly accepted destruction identities at the common marker, including delayed acceptance and empty act epochs; reject policy/history mixing and double counting before applying the writing-epoch debit.",
       "ordinal": 5,
       "requirements": [
         "final-state",

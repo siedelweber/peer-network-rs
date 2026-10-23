@@ -229,7 +229,7 @@
       "cases": "Both chartered floors, exact ridge comparison, zero width, empty live domain, deadband equality, capped upward/downward steps, recoinage, fixed-ledger numeraire change and a next epoch wider than its predecessor.",
       "decision": "dec:design:policy-schedules",
       "fixture": "wall-controller-cases",
-      "hold": "Deployment declarations and verified marker evidence remain required; economics and controller performance remain open, while recognition proves accepted-snapshot consistency without compulsory or timed acceptance.",
+      "hold": "Deployment declarations and verified marker evidence remain required; economics and controller performance remain open, while the marker-bound settlement postulate establishes accepted-snapshot consistency for readers of the same recognized marker, without compulsory or timed acceptance.",
       "labels": [
         "def:epoch:safety-threshold",
         "def:epoch:policy-floor",
