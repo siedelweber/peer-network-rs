@@ -196,6 +196,42 @@ allowances = []
 [EXECWRAP."profile.claims-conform"]
 allowances = []
 
+[RECORDS."labels.citations-import-form"]
+allowances = []
+
+[RECORDS."labels.citations-imported-resolve"]
+allowances = []
+
+[RECORDS."labels.citations-layer-conform"]
+allowances = []
+
+[RECORDS."labels.citations-local-resolve"]
+allowances = []
+
+[RECORDS."labels.generated-regions-conform"]
+allowances = []
+
+[RECORDS."labels.heads-conform"]
+allowances = []
+
+[RECORDS."labels.mints-kind-conform"]
+allowances = []
+
+[RECORDS."labels.mints-unique"]
+allowances = []
+
+[RECORDS."labels.mints-well-formed"]
+allowances = []
+
+[RECORDS."labels.outlines-conform"]
+allowances = []
+
+[RECORDS."profile.tests-conform"]
+allowances = []
+
+[RECORDS."profile.claims-conform"]
+allowances = []
+
 [TESTKIT."labels.citations-import-form"]
 allowances = []
 

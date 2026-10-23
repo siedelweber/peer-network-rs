@@ -485,6 +485,8 @@ pub enum OperationKind {
     PublicCli,
     /// Execution wrapper public operation.
     PublicExec,
+    /// Internal records validation and complete-act access.
+    Records,
 }
 impl OperationKind {
     const fn stem(self) -> &'static str {
@@ -496,6 +498,7 @@ impl OperationKind {
             Self::Interchange => STEMS[4],
             Self::PublicCli => STEMS[5],
             Self::PublicExec => STEMS[6],
+            Self::Records => STEMS[7],
         }
     }
     const fn label(self) -> &'static str {
@@ -503,7 +506,7 @@ impl OperationKind {
             Self::Command => "rule:observe:metering",
             Self::Child => "rule:observe:privacy",
             Self::Bootstrap => "dec:observe:sinks",
-            Self::Document | Self::Interchange | Self::PublicCli | Self::PublicExec => "rule:observe:spans",
+            Self::Document | Self::Interchange | Self::PublicCli | Self::PublicExec | Self::Records => "rule:observe:spans",
         }
     }
     const fn owner(self) -> &'static str {
@@ -511,6 +514,7 @@ impl OperationKind {
             Self::Child | Self::PublicExec => "EXECWRAP",
             Self::Document => "DOCUMENTS",
             Self::Interchange => "INTERCHANGE",
+            Self::Records => "RECORDS",
             _ => "CLICOMMON",
         }
     }
@@ -882,6 +886,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                 match fields.0.get("execution_owner").and_then(Value::as_str) {
                     Some("DOCUMENTS") => Some(OperationKind::Document),
                     Some("INTERCHANGE") => Some(OperationKind::Interchange),
+                    Some("RECORDS") => Some(OperationKind::Records),
                     Some("CLICOMMON") => Some(OperationKind::PublicCli),
                     Some("EXECWRAP") => Some(OperationKind::PublicExec),
                     _ => None,

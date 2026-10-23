@@ -1035,7 +1035,7 @@ fn metric_registry() {
     });
     let snapshot = recorder.snapshot(true);
     let rows = snapshot["instruments"].as_array().unwrap();
-    assert_eq!(rows.len(), 98);
+    assert_eq!(rows.len(), 112);
     assert_eq!(snapshot["lost_updates"], 3);
     assert_eq!(
         rows.iter()

@@ -86,6 +86,41 @@ def distribution(summary):
 
 
 class Processes(unittest.TestCase):
+    def test_records_entry(self):
+        """Claim: The first domain entry counts and times successful validation, complete-act access and a missing-co-leg refusal at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.
+        ´claim:discipline:records-entry-is-observed-without-changing-results´
+        ´test:integration:test-records-entry´
+        """
+        target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'
+        build=run(['cargo','build','--offline','--locked','--profile','gate','-p','pn-records','--example','records_observation'])
+        self.assertEqual(build.returncode,0,build.stderr.decode())
+        artifact=Path('.lane/records-observation');artifact.mkdir(exist_ok=True)
+        samples={};accounting={}
+        for mode in ('disabled','default','trace'):
+            env=os.environ | {'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default',
+                              'PN_OBSERVE_ARTIFACT_DIR':str((artifact/(mode+'-objects')).resolve())}
+            result=compare([str(target/'examples/records_observation'),mode],mode,env)
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+            samples[mode]=(result.returncode,result.stdout)
+            (artifact/(mode+'.jsonl')).write_bytes(result.stderr)
+            (artifact/(mode+'.stdout')).write_bytes(result.stdout)
+            rows=[json.loads(line) for line in result.stderr.splitlines()]
+            if mode=='disabled':continue
+            summary=next(row['metrics'] for row in rows if row.get('kind')=='metric_summary')
+            accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith('records__')}
+            stem='records__root__rule__observe__spans__'
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):3,(stem+'completed_operations','success'):2,(stem+'completed_operations','error'):1})
+            elapsed=next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')
+            self.assertEqual(elapsed['count'],3)
+            status=next(row for row in rows if row.get('kind')=='observation_status')
+            self.assertEqual(status['delivered_records'],len(rows)-1)
+            self.assertEqual(status['lost_records'],0)
+            if mode=='default':self.assertFalse(any(row.get('kind')=='span_envelope' for row in rows))
+            else:self.assertIn(b'authentication_evidence',result.stderr)
+            print('RECORDS-OBSERVATION level='+mode+' started=3 success=2 error=1 timed=3')
+        self.assertTrue(all(value==samples['disabled'] for value in samples.values()))
+        self.assertEqual(accounting['default'],accounting['trace'])
+
     def test_rendezvous_failures(self):
         """Claim: Non-JSON diagnostics and a final status without a summary release the fixture, reader EOF also releases it, and an injected deadline kills a wedged fixture and fails explicitly instead of hanging verification.
         ´claim:discipline:observation-rendezvous-fails-within-its-deadline´

@@ -37,6 +37,14 @@
       "instrumented": 118,
       "name": "pn-interchange",
       "operations": 153
+    },
+    {
+      "exceptions": 0,
+      "generators": 12,
+      "helpers": 0,
+      "instrumented": 2,
+      "name": "pn-records",
+      "operations": 2
     }
   ]
 }

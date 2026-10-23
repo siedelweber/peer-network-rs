@@ -243,6 +243,13 @@
       "owner": "TESTKIT",
       "register": "TESTKIT::sec:testkit:area-testkit",
       "stake": "If support loses cases, implementation identities or replay inputs, passing tests can conceal a contract failure."
+    },
+    {
+      "area": "acts",
+      "contract": "RECORDS::sec:acts:area-acts",
+      "owner": "RECORDS",
+      "register": "RECORDS::sec:acts:area-acts",
+      "stake": "Collapsing parallel identities, admitting partial co-legs or erasing required protocol references changes the complete act set before any domain accounting."
     }
   ]
 }

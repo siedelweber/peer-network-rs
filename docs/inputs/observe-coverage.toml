@@ -32,3 +32,11 @@ instrumented = 118
 exceptions = 34
 helpers = 1
 generators = 89
+
+[[rows]]
+name = "pn-records"
+operations = 2
+instrumented = 2
+exceptions = 0
+helpers = 0
+generators = 12

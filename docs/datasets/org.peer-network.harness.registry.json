@@ -3009,6 +3009,7 @@
       "budget": "pure-suite",
       "cases": [
         "ci::test_observe_runtime.Processes.test_four_mode_results",
+        "ci::test_observe_runtime.Processes.test_records_entry",
         "ci::test_observe_runtime.Processes.test_rendezvous_failures"
       ],
       "implementation": "ci-python",
@@ -3057,6 +3058,55 @@
       "level": "integration",
       "name": "ci::test_linter_entry",
       "runner": "ci",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "contract": "internal structural records slice",
+      "edition": "0.1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-records-rust"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-records::tests::identity_components"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-records",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-records::public::structural_duplicates",
+        "pn-records::public::missing_co_legs",
+        "pn-records::public::required_references",
+        "pn-records::public::invalid_local_fields"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-records::public",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-records::integration::complete_acts_count_once"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-records::integration",
+      "runner": "nextest",
       "status": "active",
       "tier": "fast"
     }

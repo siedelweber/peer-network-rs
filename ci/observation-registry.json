@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "configuration": "four production packages, host target, default and no-default features; development-only pn-testkit is outside this production configuration",
+  "configuration": "five production packages, host target, default and no-default features; development-only pn-testkit is outside this production configuration",
   "named_operations": [
     "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
     "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
@@ -3966,6 +3966,26 @@
       "claim": "ROOT::rule:observe:spans",
       "mode": "instrumented",
       "shape": "shape-004"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedRecords < '_ >::acts",
+      "owner": "RECORDS",
+      "signature": "fn acts (& self) -> & [AcceptedAct]",
+      "claim": "ROOT::rule:observe:spans",
+      "mode": "instrumented",
+      "shape": "shape-records"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "validate_record",
+      "owner": "RECORDS",
+      "signature": "fn validate_record < 'a > (acts : & 'a [AcceptedAct] , resolved : & BTreeSet < PublicReference > ,) -> Result < ValidatedRecords < 'a > , ValidationError >",
+      "claim": "ROOT::rule:observe:spans",
+      "mode": "instrumented",
+      "shape": "shape-records"
     }
   ],
   "metrics": [
@@ -4406,6 +4426,69 @@
     },
     {
       "name": "execwrap__root__rule__observe__spans__workload_operations",
+      "kind": "histogram",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__rule__observe__spans__started_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__rule__observe__spans__completed_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {
+        "outcome": [
+          "success",
+          "refusal",
+          "error",
+          "cancelled",
+          "unwinding",
+          "incomplete"
+        ]
+      }
+    },
+    {
+      "name": "records__root__rule__observe__spans__work_bytes",
+      "kind": "counter",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__rule__observe__spans__work_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__rule__observe__spans__active_operations",
+      "kind": "gauge",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__rule__observe__spans__resource_current_bytes",
+      "kind": "gauge",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__rule__observe__spans__elapsed_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__rule__observe__spans__workload_bytes",
+      "kind": "histogram",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__rule__observe__spans__workload_operations",
       "kind": "histogram",
       "unit": "operations",
       "attributes": {}
@@ -6636,9 +6719,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_new_span",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , }) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , }) ; } }",
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_new_span. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_new_span. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation. The RECORDS owner selects its own declared operation metric stem; payload gating and terminal classification are unchanged.",
       "assessments": {
         "full_recording": "review-204",
         "secret_flow": "review-002",
@@ -7666,6 +7749,28 @@
         "full_recording": "review-297",
         "secret_flow": "review-002",
         "exposure_consumers": "review-003"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedRecords < '_ >::acts",
+      "body": "{ self . acts }",
+      "class_decision": "public-records",
+      "item_premise": "The ValidatedRecords < '_ >::acts body retains complete act ownership and reports its original typed result; public authentication bytes are evidence, not credentials.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::validate_record",
+      "body": "{ let mut identities = BTreeSet :: new () ; let mut references = resolved . clone () ; for act in acts { if ! identities . insert (& act . id) { return Err (ValidationError :: DuplicateAct (act . id . clone ())) ; } references . insert (PublicReference :: Act (act . id . clone ())) ; for projection in act . mandatory . iter () . chain (& act . removable) { references . insert (PublicReference :: Edge (projection . id . clone ())) ; } } for act in acts { let invalid = | field | ValidationError :: InvalidRepresentation { act : act . id . clone () , field , } ; if ! valid_id (& act . id) || act . author != act . id . author || act . family != act . id . family { return Err (invalid (\"identity\")) ; } if act . authentication_evidence . is_empty () { return Err (invalid (\"authentication_evidence\")) ; } let mut fields = BTreeSet :: new () ; for (name , quantity) in & act . body . quantities { if name . is_empty () || quantity . unit . is_empty () || ! fields . insert (name) { return Err (invalid (\"quantities\")) ; } } let required : & [Role] = match act . body . layout { Layout :: Binary => & [Role :: Binary] , Layout :: Paired => & [Role :: A , Role :: T] , } ; let mut roles = BTreeSet :: new () ; for projection in act . mandatory . iter () . chain (& act . removable) { if projection . id . act != act . id || ! required . contains (& projection . id . role) { return Err (invalid (\"projection_identity\")) ; } if ! roles . insert (projection . id . role) { return Err (ValidationError :: DuplicateEdge (projection . id . clone ())) ; } for reference in [& projection . source , & projection . target] { if ! valid_reference (reference) { return Err (invalid (\"projection_reference\")) ; } if ! references . contains (reference) { return Err (ValidationError :: UnresolvedReference (reference . clone ())) ; } } } if act . mandatory . iter () . any (| p | p . removal != Removal :: Live) { return Err (invalid (\"mandatory_removal\")) ; } for role in required { if ! roles . contains (role) { return Err (ValidationError :: MissingCoLeg { act : act . id . clone () , role : * role , }) ; } } for reference in & act . protocol_references { if ! valid_reference (reference) { return Err (invalid (\"protocol_reference\")) ; } if ! references . contains (reference) { return Err (ValidationError :: UnresolvedReference (reference . clone ())) ; } } } Ok (ValidatedRecords { acts }) }",
+      "class_decision": "public-records",
+      "item_premise": "The validate_record body retains complete act ownership and reports its original typed result; public authentication bytes are evidence, not credentials.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
       }
     }
   ],
@@ -9019,6 +9124,114 @@
       "syntax": "# [derive (Debug , Parser)]",
       "expansion_review": "The explicit generator syntax and complete containing type declaration are bound to this admission. Standard derives supply structural value or formatting traits; serde and clap derives supply adapters under their caller boundaries. The private thread-local declaration is nonrecursive recorder state. Unknown or changed generator syntax requires renewed admission.",
       "class_decision": "public-execwrap"
+    },
+    {
+      "item": "ActId",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "Role",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "EdgeId",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "PublicReference",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "Layout",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "Removal",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "Projection",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "Quantity",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "StructuralBody",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "AcceptedAct",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "ValidationError",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+    },
+    {
+      "item": "ValidatedRecords",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "public-records",
+      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
     }
   ],
   "reviewed_types": [
@@ -9716,7 +9929,7 @@
       "item": "observation::OperationKind",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , }"
+      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , }"
     },
     {
       "item": "observation::Outcome",
@@ -10095,6 +10308,78 @@
       "package": "execwrap",
       "path": "packages/execwrap/src/bin/execwrap.rs",
       "syntax": "# [derive (Debug , Parser)] # [command (name = \"execwrap\" , version , about = \"Spawn a command and route its stdout/stderr to log files\" , trailing_var_arg = false)] struct Args { # [doc = \" Redirect both STDOUT and STDERR to this file (raw, merged).\"] # [arg (long = \"redirect\" , value_name = \"FILE\")] redirect : Option < PathBuf > , # [doc = \" Redirect STDOUT to this file.\"] # [arg (long = \"redirect-output\" , value_name = \"FILE\")] redirect_output : Option < PathBuf > , # [doc = \" Redirect STDERR to this file.\"] # [arg (long = \"redirect-error\" , value_name = \"FILE\")] redirect_error : Option < PathBuf > , # [doc = \" Redirect both streams to this file with per-stream prefixes.\"] # [arg (long = \"redirect-prefixed\" , value_name = \"FILE\")] redirect_prefixed : Option < PathBuf > , # [doc = \" Emit notifications when log files are written.\"] # [arg (long = \"notify-on-write\")] notify_on_write : bool , # [doc = \" Change to this directory before executing the command.\"] # [arg (long = \"change-directory\" , short = 'C' , value_name = \"DIR\")] change_directory : Option < PathBuf > , # [doc = \" Add Writer write/line events at trace; does not select observation level. Use `PN_OBSERVE_LEVEL`.\"] # [arg (long , short = 'd')] debug : bool , # [doc = \" Observation delivery mode, independent of command results.\"] # [arg (long , value_enum , default_value_t = ObservationMode :: Enabled)] observation : ObservationMode , # [doc = \" Command and its arguments (after `--`).\"] # [arg (last = true , required = true , num_args = 1 .., value_name = \"COMMAND\")] command : Vec < OsString > , }"
+    },
+    {
+      "item": "ActId",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Authored identity before finalization or host ordering.\"] # [doc = \" (´def:acts:identity´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct ActId { # [doc = \" Exact public author identifier, nonempty.\"] pub author : String , # [doc = \" Author-local sequence, not a host position.\"] pub sequence : u64 , # [doc = \" Exact family name, nonempty; family semantics belong to the graph bite.\"] pub family : String , }"
+    },
+    {
+      "item": "Role",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" The declared role in one complete act projection.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum Role { # [doc = \" The sole projection of a binary act.\"] Binary , # [doc = \" First co-leg of a paired act.\"] A , # [doc = \" Second co-leg of a paired act.\"] T , }"
+    },
+    {
+      "item": "EdgeId",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Edge identity is exactly its parent act and declared role.\"] # [doc = \" (´def:acts:identity´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct EdgeId { # [doc = \" Parent structural identity.\"] pub act : ActId , # [doc = \" Declared projection role.\"] pub role : Role , }"
+    },
+    {
+      "item": "PublicReference",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Immutable protocol target; no removal or storage-position field exists here.\"] # [doc = \" (´def:acts:references´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum PublicReference { # [doc = \" An act's structural identity.\"] Act (ActId) , # [doc = \" An edge's structural identity.\"] Edge (EdgeId) , # [doc = \" An exact external structural name; resolution is supplied by the caller.\"] Named { # [doc = \" Exact namespace, nonempty.\"] namespace : String , # [doc = \" Exact name, nonempty.\"] name : String , } , }"
+    },
+    {
+      "item": "Layout",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Projection completeness declared by the structural body.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Layout { # [doc = \" Exactly the Binary role.\"] Binary , # [doc = \" Exactly both A and T roles, owned by one act.\"] Paired , }"
+    },
+    {
+      "item": "Removal",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" A dependency projection's versioned removal fact, distinct from identity.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Removal { # [doc = \" Present in this accepted snapshot.\"] Live , # [doc = \" Removed at the given authoritative position; the identity remains.\"] Tombstoned (u64) , }"
+    },
+    {
+      "item": "Projection",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" One owned edge projection; never an independent accounting record.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Projection { # [doc = \" Structural identity, checked against the owning act and layout.\"] pub id : EdgeId , # [doc = \" Exact source reference.\"] pub source : PublicReference , # [doc = \" Exact target reference.\"] pub target : PublicReference , # [doc = \" Removal state; mandatory projections must remain live.\"] pub removal : Removal , }"
+    },
+    {
+      "item": "Quantity",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" An exact integer with its declared unit and consummated vintage.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Quantity { # [doc = \" Exact integer; no floating conversion or valuation occurs here.\"] pub value : i64 , # [doc = \" Nonempty unit name, retained without conversion.\"] pub unit : String , # [doc = \" Declared epoch, never replaced with finalization time.\"] pub vintage : u64 , }"
+    },
+    {
+      "item": "StructuralBody",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Structural content retained unchanged by local validation.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StructuralBody { # [doc = \" Required role set; endpoint and family semantics are later contracts.\"] pub layout : Layout , # [doc = \" Named exact quantities; duplicate field names are ambiguous and refused.\"] pub quantities : Vec < (String , Quantity) > , }"
+    },
+    {
+      "item": "AcceptedAct",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" An accepted-act candidate whose local representation must be validated.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AcceptedAct { # [doc = \" Authored structural identity.\"] pub id : ActId , # [doc = \" Public author; must equal the identity's author.\"] pub author : String , # [doc = \" Declared family; must equal the identity's family.\"] pub family : String , # [doc = \" Unchanged structural body with units and vintages.\"] pub body : StructuralBody , # [doc = \" Non-removable complete-act projections.\"] pub mandatory : Vec < Projection > , # [doc = \" Tombstonable dependency projections, still owned by this act.\"] pub removable : Vec < Projection > , # [doc = \" Immutable protocol references, independently required even after removal.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public authentication evidence; retained, not cryptographically certified.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Accepted finalization epoch, not identity or a quantity's vintage.\"] pub finalization_epoch : u64 , # [doc = \" Host-authoritative order; never used for identity equality.\"] pub authoritative_position : u64 , }"
+    },
+    {
+      "item": "ValidationError",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Typed local refusal; no refusal asserts a standing or formation verdict.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum ValidationError { # [doc = \" Even identical duplicate rows are ambiguous input, not silently deduplicated.\"] DuplicateAct (ActId) , # [doc = \" Two projections claim the same parent/role identity.\"] DuplicateEdge (EdgeId) , # [doc = \" A required reference is absent from the supplied resolution set and batch.\"] UnresolvedReference (PublicReference) , # [doc = \" The layout's complete role set is absent.\"] MissingCoLeg { act : ActId , role : Role } , # [doc = \" A local field, parent, role, removal or unit declaration is inconsistent.\"] InvalidRepresentation { act : ActId , field : & 'static str } , }"
+    },
+    {
+      "item": "ValidatedRecords",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Read-only complete acts; borrowing prevents mutation after validation.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Debug)] pub struct ValidatedRecords < 'a > { acts : & 'a [AcceptedAct] , }"
     }
   ],
   "class_decisions": [
@@ -10156,6 +10441,14 @@
         "explicit": [
           "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation"
         ]
+      }
+    },
+    {
+      "name": "public-records",
+      "status": "reviewer-confirmed",
+      "premises": "Internal records are public structural carriers. Validation records complete candidate acts and the caller-supplied resolution set, then its typed result; borrowed access records the unchanged complete acts. No codec, subscriber installation, secret acquisition or ExposeSecret consumer occurs. Structural Clone, Debug, Eq and Ord implementations inherit both labelled boundaries, with no duplicate trace on trait plumbing. External callers owe their own labelled boundary.",
+      "membership": {
+        "labelled_package": "pn-records"
       }
     }
   ],
@@ -10242,6 +10535,27 @@
         "execwrap__root__rule__observe__spans__elapsed_seconds",
         "execwrap__root__rule__observe__spans__workload_bytes",
         "execwrap__root__rule__observe__spans__workload_operations"
+      ]
+    },
+    "shape-records": {
+      "fields": [
+        "complete available argument representation",
+        "result or explicit unavailable capability representation",
+        "terminal outcome",
+        "inclusive duration_seconds",
+        "declared own work",
+        "qualified resource totals"
+      ],
+      "metrics": [
+        "records__root__rule__observe__spans__started_operations",
+        "records__root__rule__observe__spans__completed_operations",
+        "records__root__rule__observe__spans__work_bytes",
+        "records__root__rule__observe__spans__work_operations",
+        "records__root__rule__observe__spans__active_operations",
+        "records__root__rule__observe__spans__resource_current_bytes",
+        "records__root__rule__observe__spans__elapsed_seconds",
+        "records__root__rule__observe__spans__workload_bytes",
+        "records__root__rule__observe__spans__workload_operations"
       ]
     }
   },
@@ -11730,6 +12044,21 @@
       "status": "reviewer-confirmed",
       "premises": "Child arguments, configuration, outcomes and I/O are public. Tagged UTF-8/base64 preserves original bytes; relays write their original buffers. Read, Write and notification capabilities are not invoked for observation. This body inherits the public-execwrap decision for execute.",
       "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+    },
+    "records-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Internal records are public structural carriers. Validation records complete candidate acts and the caller-supplied resolution set, then its typed result; borrowed access records the unchanged complete acts. No codec, subscriber installation, secret acquisition or ExposeSecret consumer occurs. Structural Clone, Debug, Eq and Ord implementations inherit both labelled boundaries, with no duplicate trace on trait plumbing. External callers owe their own labelled boundary.",
+      "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+    },
+    "records-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Internal records are public structural carriers. Validation records complete candidate acts and the caller-supplied resolution set, then its typed result; borrowed access records the unchanged complete acts. No codec, subscriber installation, secret acquisition or ExposeSecret consumer occurs. Structural Clone, Debug, Eq and Ord implementations inherit both labelled boundaries, with no duplicate trace on trait plumbing. External callers owe their own labelled boundary.",
+      "negative_probe": "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop"
+    },
+    "records-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Internal records are public structural carriers. Validation records complete candidate acts and the caller-supplied resolution set, then its typed result; borrowed access records the unchanged complete acts. No codec, subscriber installation, secret acquisition or ExposeSecret consumer occurs. Structural Clone, Debug, Eq and Ord implementations inherit both labelled boundaries, with no duplicate trace on trait plumbing. External callers owe their own labelled boundary.",
+      "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
     }
   }
 }

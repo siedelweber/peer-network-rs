@@ -10,6 +10,14 @@
       "imports": [],
       "may_cite": [
         {
+          "owner": "RECORDS",
+          "target": "ROOT"
+        },
+        {
+          "owner": "RECORDS",
+          "target": "CLICOMMON"
+        },
+        {
           "owner": "INTERCHANGE",
           "target": "VENDOR"
         },
@@ -78,9 +86,15 @@
         "CLICOMMON",
         "EXECWRAP",
         "TESTKIT",
+        "RECORDS",
         "VENDOR"
       ],
       "partitions": [
+        {
+          "name": "records-package",
+          "owner": "RECORDS",
+          "pattern": "%s\"packages/records/\" *VCHAR"
+        },
         {
           "name": "vendor",
           "owner": "VENDOR",

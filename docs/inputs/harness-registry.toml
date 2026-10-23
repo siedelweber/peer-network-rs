@@ -843,7 +843,7 @@ level = "integration"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
+cases = ["ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
 
 [[rows]]
 kind = "suite"
@@ -866,3 +866,43 @@ implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
 cases = ["ci::test_linter_entry.Conformance.test_asset_inventory", "ci::test_linter_entry.Conformance.test_duplicate_locations", "ci::test_linter_entry.Conformance.test_generated_citations", "ci::test_linter_entry.Conformance.test_import_forms", "ci::test_linter_entry.Conformance.test_missing_tracked_source", "ci::test_linter_entry.Conformance.test_near_misses", "ci::test_linter_entry.Conformance.test_no_form_span", "ci::test_linter_entry.Conformance.test_non_parenthesized_import", "ci::test_linter_entry.Conformance.test_occurrence_forms", "ci::test_linter_entry.Conformance.test_projection_fixed_point", "ci::test_linter_entry.Conformance.test_reserved_warrant", "ci::test_linter_entry.Conformance.test_resolution", "ci::test_linter_entry.Conformance.test_scoped_projection", "ci::test_linter_entry.Conformance.test_traversal_order", "ci::test_linter_entry.Conformance.test_unregistered_prefix", "ci::test_linter_entry.Conformance.test_warrant_species"]
+
+[[rows]]
+kind = "implementation"
+name = "pn-records-rust"
+evidence = "pure"
+contract = "internal structural records slice"
+edition = "0.1"
+
+[[rows]]
+kind = "suite"
+name = "pn-records"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-records::tests::identity_components"]
+
+[[rows]]
+kind = "suite"
+name = "pn-records::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-records::public::structural_duplicates", "pn-records::public::missing_co_legs", "pn-records::public::required_references", "pn-records::public::invalid_local_fields"]
+
+[[rows]]
+kind = "suite"
+name = "pn-records::integration"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-records-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-records::integration::complete_acts_count_once"]

@@ -1006,14 +1006,24 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "RECORDS::claim:acts:identity-is-structural",
+        "RECORDS::claim:acts:complete-acts-are-counted-once",
+        "RECORDS::claim:acts:duplicates-refuse-and-parallel-identities-survive",
+        "RECORDS::claim:acts:both-co-legs-are-required",
+        "RECORDS::claim:acts:protocol-references-outlive-dependency-removal",
+        "RECORDS::claim:acts:invalid-local-fields-refuse",
+        "ROOT::claim:discipline:records-entry-is-observed-without-changing-results"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "evidence_paragraph": "RECORDS::amend:acts:first-slice-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:design:bite-1",
+      "missing": "Remaining records operations, overlapping closure inputs, shared conformance suite and recorded properties with their required tiers.",
       "name": "ROOT::gate:design:bite-1",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "The finite first-slice structural fixtures and the records entry runtime comparison; no closure partition, effective declaration, public-reference resolver, boundary assembler, shared suite or property tier is claimed.",
       "realizers": [],
       "status": "held"
     },

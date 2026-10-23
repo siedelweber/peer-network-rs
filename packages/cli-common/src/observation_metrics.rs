@@ -8,7 +8,7 @@ use std::sync::{Arc, Mutex};
 use metrics::{Counter, CounterFn, Gauge, GaugeFn, Histogram, HistogramFn, Key, KeyName, Metadata, Recorder, SharedString, Unit};
 use serde_json::{Value, json};
 
-pub(super) const STEMS: [&str; 7] = [
+pub(super) const STEMS: [&str; 8] = [
     "clicommon__root__rule__observe__metering",
     "execwrap__root__rule__observe__privacy",
     "clicommon__root__dec__observe__sinks",
@@ -16,6 +16,7 @@ pub(super) const STEMS: [&str; 7] = [
     "interchange__root__rule__observe__spans",
     "clicommon__root__rule__observe__spans",
     "execwrap__root__rule__observe__spans",
+    "records__root__rule__observe__spans",
 ];
 pub(super) const OUTCOMES: [&str; 6] = ["success", "refusal", "error", "cancelled", "unwinding", "incomplete"];
 

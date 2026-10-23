@@ -1,7 +1,7 @@
 [workspace]
 resolver = "3"
 exclude = ["packages/interchange/fuzz"]
-members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap", "packages/testkit"]
+members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap", "packages/testkit", "packages/records"]
 
 [workspace.package]
 authors = ["Peer Network contributors"]

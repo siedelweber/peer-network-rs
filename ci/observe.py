@@ -12,7 +12,7 @@ from collections import Counter
 from devperf import StructuralError
 from harness import source_id
 
-OWNERS={'cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT'}
+OWNERS={'cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','records':'RECORDS'}
 HELPERS={
     'cli-common::packages/cli-common/src/observation.rs::observation::scope',
     'cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation',
@@ -184,7 +184,7 @@ def syntax_census():
     output=command(['cargo','run','--offline','--locked','--profile','gate','-q','-p','cli-common','--example','observe_census'],input=json.dumps(request))
     result=json.loads(output)
     result['source']=source_id()
-    result['declared_configuration']='four production packages, host target, default and no-default features; development-only pn-testkit is outside this production configuration'
+    result['declared_configuration']='five production packages, host target, default and no-default features; development-only pn-testkit is outside this production configuration'
     for package in metadata['packages']:
         if package['id'] in metadata['workspace_members'] and '/packages/' in package['manifest_path'] and package['features'] and not (package['name']=='cli-common' and package['features']=={'observation-test-hook':[]}):
             raise StructuralError('new first-party feature configuration requires census admission')

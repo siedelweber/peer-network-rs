@@ -1107,6 +1107,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "pn-records"
+version = "0.1.0"
+dependencies = [
+ "cli-common",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
 name = "pn-testkit"
 version = "0.1.0"
 
