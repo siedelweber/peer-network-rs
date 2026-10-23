@@ -45,7 +45,11 @@ class Processes(unittest.TestCase):
                 (artifact/(mode+'.jsonl')).write_bytes(result.stderr)
                 rows=[json.loads(line) for line in result.stderr.splitlines()]
                 self.assertNotIn(b'fixture-private-token',result.stdout+result.stderr)
-                if mode=='disabled':self.assertTrue(any(row.get('availability')=='disabled' for row in rows))
+                if mode=='disabled':
+                    self.assertEqual(len(rows),1)
+                    self.assertEqual(rows[0].get('availability'),'disabled')
+                    self.assertEqual(rows[0].get('kind'),'observation_status')
+                else:self.assertTrue(any(row.get('kind')=='span_envelope' for row in rows))
                 if mode=='failing-export':self.assertTrue(any(row.get('kind')=='export_summary' and row['lost_exports']>0 for row in rows))
             self.assertTrue(all(sample==samples['disabled'] for sample in samples.values()))
             report=json.loads(samples['disabled'][1])

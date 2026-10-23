@@ -80,7 +80,15 @@ fn main() -> ExitCode {
         .map_err(str::to_owned)
     };
     match guard {
-        Ok(_guard) => cli_common::run_stdout_json_command("observation-compare", false, tracing::Level::INFO, workload),
+        // This executable already owns bootstrap. The convenience command runner
+        // would bootstrap again and turn the disabled comparison back on.
+        Ok(_guard) => match workload() {
+            Ok(output) => match cli_common::emit(&output) {
+                Ok(()) => ExitCode::SUCCESS,
+                Err(_) => ExitCode::FAILURE,
+            },
+            Err(_) => ExitCode::FAILURE,
+        },
         Err(error) => cli_common::run_stdout_json_command("observation-compare", false, tracing::Level::INFO, || {
             Err::<serde_json::Value, _>(error)
         }),
