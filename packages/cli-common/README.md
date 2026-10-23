@@ -2,7 +2,7 @@
 
 `cli-common` is the shared scaffolding every command-line tool in this workspace is built on. It implements the command-line output contract (`[ROOT-rec:output:decision]`): what may appear on stdout, what must appear on stderr, which exit classes exist, and what must never be printed at all.
 
-It is infrastructure, not policy about any particular subject. It contains no repository knowledge: a helper binary receives its subjects as explicit arguments and uses this crate only to parse argv, emit machine-readable records, publish outputs, and exit correctly.
+It is infrastructure, not policy about any particular subject. A helper binary receives its subjects as explicit arguments; shared scaffolding parses argv, emits machine-readable records, publishes outputs and records the declared observation labels.
 
 ## The output contract · `sec:clicommon:the-output-contract`
 
@@ -32,7 +32,7 @@ $ head -c 60 help.json
 {"schema":1,"command":"my-tool","kind":"help","message":"h
 ```
 
-A usage error reports the clap error *class* and never the offending argument text, which may embed an inline secret:
+A usage-error constructor reports the clap error class. Parser-produced errors additionally retain the full public clap diagnostic as their message and original argv bytes in their arguments field:
 
 ```text
 {"schema":1,"command":"my-tool","kind":"usage_error","message":"invalid command-line arguments","fields":{"type":"usage_error","exit_code":2,"clap_error_kind":"missing_required_argument"}}
@@ -40,7 +40,7 @@ A usage error reports the clap error *class* and never the offending argument te
 
 ## Quickstart · `sec:clicommon:quickstart`
 
-A complete helper binary. `BaseArgs` contributes the shared `--debug` flag; `run_stdout_json_command` installs the JSON panic hook, initialises JSON stderr tracing with `RUST_LOG` / `--debug` precedence, refuses terminal stdout, writes the returned value as the single JSON result object, and maps a returned error onto exit class 1 after passing its display text through redaction.
+A complete helper binary. `BaseArgs` contributes the shared `--debug` flag; `run_stdout_json_command` installs the JSON panic hook, initialises JSON stderr tracing with `RUST_LOG` / `--debug` precedence, refuses terminal stdout, writes the returned value as the single JSON result object, and maps a returned error onto exit class 1 with its full public display text.
 
 ```rust,no_run
 // Compiled but not executed: `main` parses process argv and installs a
@@ -128,19 +128,15 @@ The crate is a single flat module; `publication` is private and its published it
 - `struct BaseArgs { pub debug: bool }` — flatten into a binary's `Args` with `#[command(flatten)]` to gain `--debug`.
 - `struct CheckOutputArgs { pub report: Option<PathBuf>, pub stamp: Option<PathBuf> }` — the reciprocal `--report` / `--stamp` pair for checker binaries.
 
-### Redaction · `sec:clicommon:redaction`
+### Full content and secret carriers · `sec:clicommon:redaction`
 
-- `is_sensitive_field_name(&str) -> bool` — name matches a secret marker (token, password, api key, credential, private key, and similar).
-- `redact_field_value(field_name, value) -> Cow<str>` — replaces the value of a sensitive field, otherwise redacts URL credentials.
-- `redact_url(&str) -> Cow<str>` — strips userinfo credentials, secret query parameters, and OAuth-style fragment pieces from a URL of any scheme; a non-URL is returned unchanged.
-- `redact_database_url(&str) -> Cow<str>` — retained name, delegates to `redact_url`.
-- `redact_text(&str) -> String` — conservative sanitisation of free-form diagnostic text: `key=value` tokens with sensitive keys, and URL-shaped tokens, are scrubbed with whitespace preserved. A URL-shaped token that fails to parse fails closed to `REDACTED`.
-- `const REDACTED: &str` — the placeholder these paths substitute.
+Public values, including URL-shaped text, are recorded in full under (`[ROOT-rule:observe:privacy]`); the former name- and text-based redaction functions are removed. `secrets::PrivateString` and `secrets::PrivateBytes` adopt already secret-owned storage with a finite `SecretRole`, exposing only role and marker through Debug and providing neither Display nor serialization. Their `secret()` methods return the protected carrier, not a public value; each explicit exposure consumer still requires admission under (`[ROOT-inv:observe:secret-boundary]`).
+
+`observation::bootstrap(enabled, debug, default_level)` belongs to the executable and returns a guard for a bounded final snapshot/drain. `Observation::current()` retrieves its optional context without initializing anything. `Observation::operation` starts a declared context; `work_bytes`, `resources`, `progress` and `finish` account public work and terminal outcomes independently of trace filtering. Resources retain exact, estimated or unavailable accuracy, and duration is inclusive monotonic seconds. The local recorder admits finite metric names and outcomes; queue and sink loss never becomes a command failure. Complete package instrumentation and export remain step 4b work.
 
 ### Process scaffolding · `sec:clicommon:process-scaffolding`
 
 - `install_json_panic_hook(command_name: &str)` — replaces Rust's text panic hook with one best-effort JSON record, then exits class 1.
-- `set_panic_payload_reporting_enabled(bool)` — payload reporting starts **disabled**; call with the parsed `--debug` value once argv is known.
 - `tracing_filter(debug: bool, default_level: tracing::Level) -> TracingFilter` — resolves the directive with `RUST_LOG` first, then `--debug`, then the supplied default; the chosen `TracingFilterSource` is reported.
 - `init_json_tracing`, `try_init_json_tracing`, `init_json_tracing_with_debug`, `try_init_json_tracing_with_debug` — JSON subscriber on stderr. The `try_` forms return `false` when a subscriber is already installed.
 - `stdout_tty_refusal_record(&str) -> Option<ControlPlaneRecord>` and `refuse_if_stdout_is_tty(&str)` — the terminal check as a value, and as an emit-and-exit.
@@ -148,7 +144,7 @@ The crate is a single flat module; `publication` is private and its published it
 
 ### Runners · `sec:clicommon:runners`
 
-Each installs the panic hook, sets payload reporting from `debug`, and initialises JSON tracing before running the closure.
+Each installs the panic hook and the shared observation bootstrap before running the closure; debug affects trace delivery, never public payload inclusion.
 
 - `run_stdout_json_command(name, debug, default_level, run) -> ExitCode` — refuses terminal stdout, then emits the closure's `Ok` value.
 - `run_no_stdout_command(name, debug, default_level, run) -> ExitCode` — side-effect command; deliberately performs **no** TTY refusal because it produces no stdout result data.
@@ -188,16 +184,15 @@ Publication freshness has two components: bytes **and** mode. A destination whos
 
 Fallible entry points return `io::Result` (`emit`, `emit_control_plane_record`, `touch_stamp`, `set_publication_mode`) or a typed error: `CliExit` for parse control flow, `AliasedOutputs` for role collisions, `CheckResultError` for check publication, and `BatchPublicationError` for batch publication. The batch variants say how far the operation got: `AliasedOutputs` before any filesystem effect, `Stage` with every final destination untouched, and `Publish` after staging succeeded, where earlier members of the batch may already carry new bytes.
 
-The runners are the boundary where an arbitrary error becomes an exit code. They log the error's display text through `redact_text` centrally, so an individual command does not have to remember that its own error type might embed a credential URL.
+The runners are the boundary where an arbitrary error becomes an exit code. They record the full public error display text. Private fields must already have secret-owned representations; no output scrubber repairs an unprotected private value.
 
 Atomicity limits are stated, not implied. `publish_batch` performs all staging before the first rename, but multiple renames are not one filesystem transaction: a failure partway leaves a partial publication, the command fails, and the next successful run repairs the set.
 
 ## What this crate deliberately does not do · `sec:clicommon:what-this-crate-deliberately-does-not-do`
 
 - **No human-readable output mode.** There is no `--format=text`, no pretty printer, and no partially structured mode. Prose on stdout would break the contract even for a successful run.
-- **No echoing of argv.** Usage-error records carry the clap error class and nothing else. The rendered clap message reproduces the offending argument, which may embed an inline secret, so it is dropped wholesale rather than heuristically filtered. Help and version text is generated from the static command definition and is therefore kept verbatim.
-- **No panic payloads by default.** Payload reporting is off until a parsed `--debug` enables it, so a panic before argument parsing reports thread and location only.
-- **No credential-bearing text.** Redaction is applied by the crate's own paths; it is a safety net for untrusted echo text, not a licence to pass arbitrary strings through. Structured records should prefer known-safe fields to free text.
+- **Full public argv diagnostics.** Usage errors retain the rendered clap message, its class and the original argv bytes, including values clap abbreviates. Private inputs require typed acquisition boundaries; command-line strings are public inputs, not secret carriers.
+- **Public panic payloads.** String payloads are included even before argument parsing. Rust does not provide Debug access to an arbitrary non-string panic payload; unsupported payload types remain explicitly unavailable.
 - **No filesystem identity claims.** `destination_identity` is lexical. It catches two roles spelled differently for one destination; it makes no claim about symlinks, hard links, mounts, or a host replacing a path between the check and the write.
 - **No path discovery.** Nothing here resolves a repository path from a compiled location; subjects arrive as arguments.
 - **No transactional multi-file publication.** See the atomicity limit above.

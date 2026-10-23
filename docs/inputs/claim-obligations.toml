@@ -1068,10 +1068,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:design:observability-foundation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Observation step 4 and claims audit step 3b"
+owner = "Foundation implementer and repository reviewer"
+missing = "Core metering, secret representation and public-content witnesses are implemented; complete package instrumentation, coverage, comparison matrix, secret-consumer admission and export remain."
+closing_condition = "Complete step 4b evidence with matched executions and independent review; real service evidence remains held until provisioned."
+closing_step = "Observation step 4b; service evidence after provisioning"
 
 [[rows]]
 name = "ROOT::gate:design:performance-foundation"
@@ -1207,9 +1207,9 @@ claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:observe:foundation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Observation step 4 and claims audit step 3b"
+missing = "Core metering, secret representation and public-content witnesses are implemented; complete package instrumentation, coverage, comparison matrix, secret-consumer admission and export remain."
+closing_condition = "Complete step 4b evidence with matched executions and independent review; real service evidence remains held until provisioned."
+closing_step = "Observation step 4b; service evidence after provisioning"
 
 [[rows]]
 name = "ROOT::gate:output:verification"

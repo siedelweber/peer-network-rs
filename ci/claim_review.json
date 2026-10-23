@@ -618,30 +618,6 @@
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {
-      "operation": "cli-common::tests::panic_record_omits_payload_without_debug",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:panic-record-omits-payload-without-debug",
-      "before": "panic record omits payload without debug.",
-      "after": "Claim: Constructing a panic record without a payload omits that field while retaining exit 1 and thread identity, preventing absent details from becoming data.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::panic_record_carries_debug_payload",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:panic-record-carries-debug-payload",
-      "before": "panic record carries debug payload.",
-      "after": "Claim: An explicitly supplied panic payload round-trips through JSON with quotes escaped, preserving diagnostic content without breaking framing.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::panic_payload_reporting_fails_closed_then_follows_debug_flag",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:panic-payload-reporting-fails-closed-then-follows-debug-flag",
-      "before": "panic payload reporting fails closed then follows debug flag.",
-      "after": "Claim: Panic payload reporting starts disabled and follows explicit enable and disable operations, keeping disclosure opt-in and reversible.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
       "operation": "cli-common::tests::panic_payload_message_extracts_string_payloads",
       "path": "packages/cli-common/src/tests/mod.rs",
       "claim": "CLICOMMON::claim:cli:panic-payload-message-extracts-string-payloads",
@@ -727,102 +703,6 @@
       "claim": "CLICOMMON::claim:cli:tracing-filter-uses-default-level",
       "before": "tracing filter uses default level.",
       "after": "Claim: Without an environment filter or debug flag, the supplied WARN default becomes the warn directive and `DefaultLevel` source.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::redacts_sensitive_field_values",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:redacts-sensitive-field-values",
-      "before": "redacts sensitive field values.",
-      "after": "Claim: Token, password and private-key field names replace their values with the redaction marker, preventing these named secrets from entering diagnostics.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::redacts_database_url_secrets",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:redacts-database-url-secrets",
-      "before": "redacts database url secrets.",
-      "after": "Claim: The database URL loses user information and token/password query pairs while retaining host, path and ssl-mode, preserving useful safe context.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::keeps_public_key_fields_visible",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:keeps-public-key-fields-visible",
-      "before": "keeps public key fields visible.",
-      "after": "Claim: A public-key path field remains unchanged, keeping nonsecret configuration available for diagnosis.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::redacts_credentials_in_any_url_scheme",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:redacts-credentials-in-any-url-scheme",
-      "before": "redacts credentials in any url scheme.",
-      "after": "Claim: The HTTPS and RPC fixtures lose credentials, safe URLs and non-URLs survive, and the generic field path also scrubs credential URLs.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::redacts_secrets_in_free_form_text",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:redacts-secrets-in-free-form-text",
-      "before": "redacts secrets in free form text.",
-      "after": "Claim: The mixed error fixture loses its token and URL credentials while retaining explanatory text and a newline, preserving safe diagnostic context.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::redacts_key_equals_credential_url_token",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:redacts-key-equals-credential-url-token",
-      "before": "redacts key equals credential url token.",
-      "after": "Claim: A URL following --endpoint= loses user information and its secret query value, closing the prefixed-token redaction path.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::redacts_credential_url_in_error_chain_text",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:redacts-credential-url-in-error-chain-text",
-      "before": "redacts credential url in error chain text.",
-      "after": "Claim: Embedded endpoint credentials disappear while the request-failure and attempt context remain, keeping chained error text useful without the secret.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::redacts_sensitive_url_fragments",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:redacts-sensitive-url-fragments",
-      "before": "redacts sensitive url fragments.",
-      "after": "Claim: Sensitive fragment pairs are removed, safe state survives, and a wholly secret fragment is cleared on URL and free-text paths.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::unparseable_url_ish_token_fails_closed",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:unparseable-url-ish-token-fails-closed",
-      "before": "unparseable url ish token fails closed.",
-      "after": "Claim: Malformed credential-like and empty-host URL tokens become the redaction marker, preventing parse failure from exposing their original bytes.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::keeps_non_sensitive_key_value_tokens",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:keeps-non-sensitive-key-value-tokens",
-      "before": "keeps non sensitive key value tokens.",
-      "after": "Claim: The retries and mode fixture passes through unchanged, preventing secret filtering from erasing ordinary diagnostic parameters.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::redacts_runner_style_error_display",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:redacts-runner-style-error-display",
-      "before": "redacts runner style error display.",
-      "after": "Claim: The runner-shaped error loses URL credentials but retains endpoint, failure context and timeout text, preserving safe failure diagnosis.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "cli-common::tests::usage_error_text_never_reproduces_secrets",
-      "path": "packages/cli-common/src/tests/mod.rs",
-      "claim": "CLICOMMON::claim:cli:usage-error-text-never-reproduces-secrets",
-      "before": "usage error text never reproduces secrets.",
-      "after": "Claim: An unknown secret-bearing flag returns usage failure and its serialized control record excludes the supplied secret, protecting parser diagnostics.",
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {
@@ -1386,22 +1266,6 @@
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {
-      "operation": "execwrap::integration::spawn_failure_does_not_echo_child_program_text",
-      "path": "packages/execwrap/tests/integration.rs",
-      "claim": "EXECWRAP::claim:cli:spawn-failure-does-not-echo-child-program-text",
-      "before": "spawn failure does not echo child program text.",
-      "after": "Claim: A nonexistent secret-bearing path yields exit 1, empty stdout and object-shaped JSON stderr lines without the secret, protecting caller-controlled argv.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "execwrap::integration::spawn_failure_does_not_echo_credential_bearing_program_url",
-      "path": "packages/execwrap/tests/integration.rs",
-      "claim": "EXECWRAP::claim:cli:spawn-failure-does-not-echo-credential-bearing-program-url",
-      "before": "spawn failure does not echo credential bearing program url.",
-      "after": "Claim: A credential URL used as an executable yields exit 1 and empty stdout while neither credential marker reaches stderr, protecting spawn diagnostics.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
       "operation": "execwrap::integration::signal_termination_maps_to_128_plus_signal",
       "path": "packages/execwrap/tests/integration.rs",
       "claim": "EXECWRAP::claim:cli:signal-termination-maps-to-128-plus-signal",
@@ -1415,22 +1279,6 @@
       "claim": "EXECWRAP::claim:cli:ambiguous-same-path-routing-is-a-usage-failure",
       "before": "ambiguous same path routing is a usage failure.",
       "after": "Claim: Two route kinds naming one absent file yield exit 2, empty stdout and no log file, preventing usage failure from creating outputs.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "execwrap::integration::child_argv_secrets_never_appear_in_diagnostics",
-      "path": "packages/execwrap/tests/integration.rs",
-      "claim": "EXECWRAP::claim:cli:child-argv-secrets-never-appear-in-diagnostics",
-      "before": "child argv secrets never appear in diagnostics.",
-      "after": "Claim: With debug enabled, a successful child carrying a secret argument exposes it on neither wrapper stream, protecting raw child argv from diagnostics.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
-    },
-    {
-      "operation": "execwrap::integration::credential_bearing_url_never_appears_in_diagnostics",
-      "path": "packages/execwrap/tests/integration.rs",
-      "claim": "EXECWRAP::claim:cli:credential-bearing-url-never-appears-in-diagnostics",
-      "before": "credential bearing url never appears in diagnostics.",
-      "after": "Claim: With debug enabled, a successful child carrying a credential URL exposes neither secret marker on wrapper stdout or stderr, protecting URL-bearing argv.",
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {

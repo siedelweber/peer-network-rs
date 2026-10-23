@@ -1,6 +1,5 @@
 #![doc = include_str!("../README.md")]
 
-use std::borrow::Cow;
 use std::ffi::{OsStr, OsString};
 use std::future::Future;
 use std::io::{self, IsTerminal, Write};
@@ -10,9 +9,11 @@ use std::sync::{Mutex, MutexGuard, TryLockError};
 
 use clap::{CommandFactory, Parser};
 use serde::{Deserialize, Serialize};
-use tracing_subscriber::fmt::MakeWriter;
 
+pub mod observation;
+mod observation_metrics;
 mod publication;
+pub mod secrets;
 
 pub use publication::{
     BatchPublicationError, PublicationAsset, PublicationChange, PublicationMode, PublicationResult, publish_batch,
@@ -25,15 +26,7 @@ mod tests;
 /// Schema version for shared JSON control-plane records.
 pub const CONTROL_PLANE_SCHEMA: u32 = 1;
 
-/// Placeholder used when a diagnostic value is intentionally hidden.
-pub const REDACTED: &str = "[redacted]";
-
 static PANIC_REPORTED: AtomicBool = AtomicBool::new(false);
-// Fail closed: panic payloads may contain secrets, so they are omitted
-// until a parsed `--debug` flag explicitly enables them (´[ROOT-rec:output:decision]´). A
-// panic before debug status is known therefore reports thread and
-// location but no payload.
-static PANIC_PAYLOAD_REPORTING_ENABLED: AtomicBool = AtomicBool::new(false);
 static STDERR_WRITE_LOCK: Mutex<()> = Mutex::new(());
 
 /// Baseline exit-code classes for command-line tools.
@@ -118,7 +111,7 @@ pub enum ControlPlaneFields {
     UsageError { exit_code: u8, clap_error_kind: String },
     /// Details for stdout TTY refusal.
     TtyRefusal { exit_code: u8, stream: StandardStream },
-    /// Details for a panic diagnostic. The panic payload is only exposed when debug diagnostics are enabled.
+    /// Details for a panic diagnostic, including every available public string payload.
     Panic {
         exit_code: u8,
         thread: Option<String>,
@@ -139,6 +132,9 @@ pub struct ControlPlaneRecord {
     pub kind: ControlPlaneRecordKind,
     /// Short human-readable message, still carried inside JSON.
     pub message: String,
+    /// Complete public argv bytes on usage failure, including values clap may abbreviate.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub arguments: Option<Vec<Vec<u8>>>,
     /// Kind-specific structured fields.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub fields: Option<ControlPlaneFields>,
@@ -153,6 +149,7 @@ impl ControlPlaneRecord {
             command: command.to_string(),
             kind,
             message: message.to_string(),
+            arguments: None,
             fields,
         }
     }
@@ -183,10 +180,8 @@ impl ControlPlaneRecord {
 
     /// Build an argv usage-error record.
     ///
-    /// The message is fixed here, not caller-supplied: a usage record
-    /// carries no argument values (´[ROOT-rec:output:decision]´), and argument text may
-    /// embed inline secrets. The machine-readable detail is the error
-    /// class alone.
+    /// The constructor supplies a generic message; parser callers replace it
+    /// with the complete public diagnostic under (´[ROOT-rule:observe:privacy]´).
     #[must_use]
     pub fn usage_error(command: &str, clap_error_kind: &str) -> Self {
         Self::new(
@@ -297,258 +292,6 @@ impl TracingFilter {
     }
 }
 
-/// Return true when a diagnostic field name is likely to contain a secret.
-#[must_use]
-pub fn is_sensitive_field_name(field_name: &str) -> bool {
-    const SENSITIVE_MARKERS: &[&str] = &[
-        "admin_token",
-        "api_key",
-        "apikey",
-        "credential",
-        "credentials",
-        "jwt_secret",
-        "mailer_password",
-        "passwd",
-        "password",
-        "private_key",
-        "pwd",
-        "secret",
-        "session_secret",
-        "smtp_password",
-        "token",
-    ];
-
-    let normalized = normalize_name(field_name);
-    SENSITIVE_MARKERS.iter().any(|marker| normalized.contains(marker))
-}
-
-/// Redact a diagnostic field value according to the command-line output contract (´[ROOT-rec:output:decision]´).
-#[must_use]
-pub fn redact_field_value<'a>(field_name: &str, value: &'a str) -> Cow<'a, str> {
-    if is_sensitive_field_name(field_name) {
-        Cow::Borrowed(REDACTED)
-    } else {
-        redact_url(value)
-    }
-}
-
-/// Redact credentials and secret query parameters from a database URL.
-///
-/// Retained name; delegates to the scheme-agnostic [`redact_url`].
-#[must_use]
-pub fn redact_database_url(value: &str) -> Cow<'_, str> {
-    redact_url(value)
-}
-
-/// Redact userinfo credentials and secret query parameters from a URL
-/// of any scheme. Non-URL values are returned unchanged; safe host,
-/// path, and query data are preserved.
-///
-/// The command-line output contract (´[ROOT-rec:output:decision]´) forbids credential-bearing URLs on JSON stderr regardless
-/// of scheme: an HTTPS endpoint or custom RPC URL can carry secrets
-/// exactly like a database URL.
-///
-/// Fragments are treated like query strings: OAuth-style fragments
-/// (`#access_token=...&state=...`) are split on `&` and any piece
-/// whose key is sensitive is dropped, keeping the safe pieces.
-#[must_use]
-pub fn redact_url(value: &str) -> Cow<'_, str> {
-    let Ok(mut url) = url::Url::parse(value) else {
-        return Cow::Borrowed(value);
-    };
-
-    let username_changed = !url.username().is_empty() && url.set_username("").is_ok();
-    let password_changed = url.password().is_some() && url.set_password(None).is_ok();
-
-    let mut safe_query_pairs = Vec::new();
-    let mut removed_query_pair = false;
-    for (key, query_value) in url.query_pairs() {
-        if is_sensitive_query_key(&key) {
-            removed_query_pair = true;
-        } else {
-            safe_query_pairs.push((key.into_owned(), query_value.into_owned()));
-        }
-    }
-
-    if removed_query_pair {
-        url.set_query(None);
-        if !safe_query_pairs.is_empty() {
-            let mut query_pairs = url.query_pairs_mut();
-            for (key, query_value) in safe_query_pairs {
-                query_pairs.append_pair(&key, &query_value);
-            }
-        }
-    }
-
-    // OAuth-style implicit-grant responses put credentials in the
-    // fragment (`#access_token=...`), which `query_pairs` never sees.
-    let mut removed_fragment_piece = false;
-    if let Some(fragment) = url.fragment().map(str::to_owned)
-        && !fragment.is_empty()
-    {
-        let mut pieces: Vec<&str> = fragment.split('&').collect();
-        let original_piece_count = pieces.len();
-        pieces.retain(|piece| {
-            let key = piece.split_once('=').map_or(*piece, |(key, _value)| key);
-            !is_sensitive_query_key(key)
-        });
-        if pieces.len() < original_piece_count {
-            removed_fragment_piece = true;
-            if pieces.is_empty() {
-                url.set_fragment(None);
-            } else {
-                url.set_fragment(Some(&pieces.join("&")));
-            }
-        }
-    }
-
-    let changed = username_changed || password_changed || removed_query_pair || removed_fragment_piece;
-
-    if changed {
-        Cow::Owned(url.to_string())
-    } else {
-        Cow::Borrowed(value)
-    }
-}
-
-/// Redact secrets from free-form diagnostic text (for example a clap
-/// error message that reproduces the offending argument).
-///
-/// Two token shapes are scrubbed, whitespace preserved:
-///
-/// - `key=value` tokens (including `--key=value`) whose key is
-///   sensitive per [`is_sensitive_field_name`] have the value
-///   replaced; non-sensitive keys with URL-shaped values (such as
-///   `--endpoint=https://user:pw@host/`) have the value redacted;
-/// - URL-shaped tokens (containing `://`) have their URL substring
-///   passed through [`redact_url`], failing closed to `[redacted]`
-///   when the substring does not parse as a URL.
-///
-/// This is conservative sanitization of untrusted echo text, not an
-/// escape hatch: structured records should still prefer known-safe
-/// fields over free text.
-#[must_use]
-pub fn redact_text(text: &str) -> String {
-    let mut out = String::with_capacity(text.len());
-    let mut token = String::new();
-
-    for character in text.chars() {
-        if character.is_whitespace() {
-            if !token.is_empty() {
-                out.push_str(&redact_text_token(&token));
-                token.clear();
-            }
-            out.push(character);
-        } else {
-            token.push(character);
-        }
-    }
-
-    if !token.is_empty() {
-        out.push_str(&redact_text_token(&token));
-    }
-
-    out
-}
-
-fn redact_text_token(token: &str) -> Cow<'_, str> {
-    // Peel surrounding quotes/brackets that clap and error chains wrap
-    // around echoed values, so the inner value is still recognized.
-    const WRAPPERS: &[char] = &['\'', '"', '`', '(', ')', '<', '>', '[', ']', ',', ';'];
-
-    let trimmed = token.trim_matches(WRAPPERS);
-    if trimmed.is_empty() {
-        return Cow::Borrowed(token);
-    }
-
-    let prefix_len = token.find(trimmed).unwrap_or(0);
-    let prefix = &token[..prefix_len];
-    let suffix = &token[prefix_len + trimmed.len()..];
-
-    let scheme_separator = trimmed.find("://");
-
-    // `key=value` tokens are recognised only when the '=' sits left of
-    // any "://", so a URL query string (`?a=b`) is not mistaken for a
-    // key=value token, while `--endpoint=https://user:pw@host/` is.
-    if let Some((key, value)) = trimmed.split_once('=')
-        && scheme_separator.is_none_or(|separator| key.len() < separator)
-    {
-        let name = key.trim_start_matches('-');
-        if !value.is_empty() && is_sensitive_field_name(name) {
-            return Cow::Owned(format!("{prefix}{key}={REDACTED}{suffix}"));
-        }
-        if let Cow::Owned(redacted) = redact_url_occurrence(value) {
-            return Cow::Owned(format!("{prefix}{key}={redacted}{suffix}"));
-        }
-        return Cow::Borrowed(token);
-    }
-
-    if scheme_separator.is_some()
-        && let Cow::Owned(redacted) = redact_url_occurrence(trimmed)
-    {
-        return Cow::Owned(format!("{prefix}{redacted}{suffix}"));
-    }
-
-    Cow::Borrowed(token)
-}
-
-/// Redact a URL embedded at any position inside `text`.
-///
-/// Locates the first `://`, scans backward over scheme characters to
-/// the scheme start, and applies [`redact_url`] to the substring from
-/// there to the end of `text`, splicing any prefix back on. If the
-/// substring does not parse as a URL this fails closed (´[ROOT-rec:output:decision]´) and
-/// replaces it with [`REDACTED`]: an unparseable URL-shaped value may
-/// still embed credentials verbatim.
-fn redact_url_occurrence(text: &str) -> Cow<'_, str> {
-    let Some(separator) = text.find("://") else {
-        return Cow::Borrowed(text);
-    };
-
-    // Scheme characters are ASCII (RFC 3986: ALPHA / DIGIT / "+" /
-    // "-" / "."), so a byte-wise backward scan stays on UTF-8
-    // boundaries.
-    let bytes = text.as_bytes();
-    let mut scheme_start = separator;
-    while scheme_start > 0 {
-        let byte = bytes[scheme_start - 1];
-        if byte.is_ascii_alphanumeric() || matches!(byte, b'+' | b'-' | b'.') {
-            scheme_start -= 1;
-        } else {
-            break;
-        }
-    }
-
-    let prefix = &text[..scheme_start];
-    let candidate = &text[scheme_start..];
-
-    if url::Url::parse(candidate).is_err() {
-        return Cow::Owned(format!("{prefix}{REDACTED}"));
-    }
-
-    match redact_url(candidate) {
-        Cow::Owned(redacted) => Cow::Owned(format!("{prefix}{redacted}")),
-        Cow::Borrowed(_) => Cow::Borrowed(text),
-    }
-}
-
-fn normalize_name(name: &str) -> String {
-    let mut normalized = String::with_capacity(name.len());
-    for ch in name.chars() {
-        if ch.is_ascii_alphanumeric() {
-            normalized.push(ch.to_ascii_lowercase());
-        } else {
-            normalized.push('_');
-        }
-    }
-    normalized
-}
-
-fn is_sensitive_query_key(key: &str) -> bool {
-    let normalized = normalize_name(key);
-    normalized == "key" || normalized.ends_with("_key") || is_sensitive_field_name(key)
-}
-
 /// Resolve the JSON tracing filter using the precedence in (´[ROOT-rec:output:decision]´).
 ///
 /// `RUST_LOG` wins when set and non-empty. Otherwise `--debug` selects `debug`,
@@ -636,7 +379,19 @@ where
     I: IntoIterator<Item = A>,
     A: Into<OsString> + Clone,
 {
-    T::try_parse_from(args).map_err(|clap_error| cli_exit_from_clap_error::<T>(&clap_error))
+    let arguments: Vec<OsString> = args.into_iter().map(Into::into).collect();
+    T::try_parse_from(&arguments).map_err(|clap_error| {
+        let mut exit = cli_exit_from_clap_error::<T>(&clap_error);
+        if exit.exit == CommandExit::Usage {
+            exit.record.arguments = Some(
+                arguments
+                    .iter()
+                    .map(|argument| argument.as_encoded_bytes().to_vec())
+                    .collect(),
+            );
+        }
+        exit
+    })
 }
 
 /// Parse process argv with `clap`, emitting JSON control-plane records and
@@ -667,16 +422,11 @@ where
         clap::error::ErrorKind::DisplayVersion => {
             CliExit::new(ControlPlaneRecord::version(&command_name, &text), CommandExit::Success)
         }
-        // Usage errors happen before the early-startup boundary, so the
-        // record omits argument values wholesale instead of relying on
-        // heuristic redaction: clap's rendered text reproduces the
-        // offending argument, which may embed an inline secret
-        // (`--api-token=...`, a credential URL). Help/version text is
-        // generated from the static command definition and stays verbatim.
-        _ => CliExit::new(
-            ControlPlaneRecord::usage_error(&command_name, &clap_error_kind_name(clap_error.kind())),
-            CommandExit::Usage,
-        ),
+        _ => {
+            let mut record = ControlPlaneRecord::usage_error(&command_name, &clap_error_kind_name(clap_error.kind()));
+            record.message = text;
+            CliExit::new(record, CommandExit::Usage)
+        }
     }
 }
 
@@ -746,29 +496,13 @@ pub fn install_json_panic_hook(command_name: &str) {
             let location = panic_info
                 .location()
                 .map(|location| format!("{}:{}:{}", location.file(), location.line(), location.column()));
-            let payload = panic_payload_reporting_enabled()
-                .then(|| panic_payload_message(panic_info))
-                .flatten();
+            let payload = panic_payload_message(panic_info);
             let record = ControlPlaneRecord::panic(&command_name, thread_name, location.as_deref(), payload);
             let _ignored = try_emit_control_plane_record(&record);
         }
 
         exit_with(CommandExit::Failure);
     }));
-}
-
-/// Enable or disable string panic payloads in JSON panic diagnostics.
-///
-/// Payload reporting starts **disabled** (fail closed: payloads may
-/// contain secrets), so a panic before argument parsing omits its
-/// payload. Call this with the parsed `--debug` value once arguments
-/// are available.
-pub fn set_panic_payload_reporting_enabled(enabled: bool) {
-    PANIC_PAYLOAD_REPORTING_ENABLED.store(enabled, Ordering::SeqCst);
-}
-
-fn panic_payload_reporting_enabled() -> bool {
-    PANIC_PAYLOAD_REPORTING_ENABLED.load(Ordering::SeqCst)
 }
 
 fn panic_payload_message<'a>(info: &'a std::panic::PanicHookInfo<'_>) -> Option<&'a str> {
@@ -819,8 +553,7 @@ pub fn init_json_tracing(level: tracing::Level) {
 /// Returns `false` if another subscriber is already installed.
 #[must_use]
 pub fn try_init_json_tracing(level: tracing::Level) -> bool {
-    let filter = tracing_filter(false, level);
-    try_init_json_tracing_with_directive(&filter.directive)
+    observation::bootstrap(true, false, level).is_ok()
 }
 
 /// Initialise JSON stderr tracing with `RUST_LOG` / `--debug` precedence.
@@ -833,21 +566,7 @@ pub fn init_json_tracing_with_debug(debug: bool, default_level: tracing::Level) 
 /// Returns `false` if another subscriber is already installed.
 #[must_use]
 pub fn try_init_json_tracing_with_debug(debug: bool, default_level: tracing::Level) -> bool {
-    let filter = tracing_filter(debug, default_level);
-    try_init_json_tracing_with_directive(&filter.directive)
-}
-
-fn try_init_json_tracing_with_directive(filter_directive: &str) -> bool {
-    let fallback_directive = level_directive(tracing::Level::INFO);
-    let filter = tracing_subscriber::EnvFilter::try_new(filter_directive)
-        .unwrap_or_else(|_error| tracing_subscriber::EnvFilter::new(fallback_directive));
-
-    tracing_subscriber::fmt()
-        .json()
-        .with_env_filter(filter)
-        .with_writer(LockedStderr)
-        .try_init()
-        .is_ok()
+    observation::bootstrap(true, debug, default_level).is_ok()
 }
 
 /// Serialise `value` as one JSON object + trailing newline to stdout.
@@ -877,9 +596,8 @@ where
     CommandError: std::fmt::Display,
     Run: FnOnce() -> Result<Output, CommandError>,
 {
-    set_panic_payload_reporting_enabled(debug);
     install_json_panic_hook(command_name);
-    init_json_tracing_with_debug(debug, default_level);
+    let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
 
     if let Some(record) = stdout_tty_refusal_record(command_name) {
         let _ignored = emit_control_plane_record(&record);
@@ -890,16 +608,13 @@ where
         Ok(output) => match emit(&output) {
             Ok(()) => CommandExit::Success.exit_code(),
             Err(error) => {
-                tracing::error!(error = %redact_text(&error.to_string()), "failed to write JSON to stdout");
+                tracing::error!(error = %error, "failed to write JSON to stdout");
                 CommandExit::Failure.exit_code()
             }
         },
         Err(error) => {
-            // The command-line output contract (´[ROOT-rec:output:decision]´): arbitrary `Display` errors may embed credential
-            // URLs (connection strings, HTTP endpoints), so the display
-            // text passes through `redact_text` centrally here instead
-            // of trusting each command to sanitise its own errors.
-            tracing::error!(error = %redact_text(&error.to_string()), "command failed");
+            // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
+            tracing::error!(error = %error, "command failed");
             CommandExit::Failure.exit_code()
         }
     }
@@ -920,16 +635,14 @@ where
     CommandError: std::fmt::Display,
     Run: FnOnce() -> Result<(), CommandError>,
 {
-    set_panic_payload_reporting_enabled(debug);
     install_json_panic_hook(command_name);
-    init_json_tracing_with_debug(debug, default_level);
+    let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
 
     match run() {
         Ok(()) => CommandExit::Success.exit_code(),
         Err(error) => {
-            // The command-line output contract (´[ROOT-rec:output:decision]´): the display text passes through `redact_text`
-            // because arbitrary errors may embed credential URLs.
-            tracing::error!(error = %redact_text(&error.to_string()), "command failed");
+            // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
+            tracing::error!(error = %error, "command failed");
             CommandExit::Failure.exit_code()
         }
     }
@@ -951,16 +664,14 @@ where
     Run: FnOnce() -> RunFuture,
     RunFuture: Future<Output = Result<(), CommandError>>,
 {
-    set_panic_payload_reporting_enabled(debug);
     install_json_panic_hook(command_name);
-    init_json_tracing_with_debug(debug, default_level);
+    let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
 
     match run().await {
         Ok(()) => CommandExit::Success.exit_code(),
         Err(error) => {
-            // The command-line output contract (´[ROOT-rec:output:decision]´): the display text passes through `redact_text`
-            // because arbitrary errors may embed credential URLs.
-            tracing::error!(error = %redact_text(&error.to_string()), "command failed");
+            // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
+            tracing::error!(error = %error, "command failed");
             CommandExit::Failure.exit_code()
         }
     }
@@ -994,9 +705,8 @@ where
     CommandError: std::fmt::Display,
     Run: FnOnce() -> Result<CheckOutcome<Report>, CommandError>,
 {
-    set_panic_payload_reporting_enabled(debug);
     install_json_panic_hook(command_name);
-    init_json_tracing_with_debug(debug, default_level);
+    let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
 
     // Direct mode (no --report/--stamp) refuses terminal stdout *before*
     // any semantic work: the JSON result would have nowhere safe to go,
@@ -1015,8 +725,8 @@ where
     let outcome = match run() {
         Ok(outcome) => outcome,
         Err(error) => {
-            // The command-line output contract (´[ROOT-rec:output:decision]´): arbitrary errors may embed credential URLs.
-            tracing::error!(error = %redact_text(&error.to_string()), "command failed");
+            // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
+            tracing::error!(error = %error, "command failed");
             return CommandExit::Failure.exit_code();
         }
     };
@@ -1045,16 +755,6 @@ where
             tracing::error!(error = %error, "failed to publish the check result");
             CommandExit::Failure.exit_code()
         }
-    }
-}
-
-struct LockedStderr;
-
-impl<'writer> MakeWriter<'writer> for LockedStderr {
-    type Writer = LockedStderrWriter;
-
-    fn make_writer(&'writer self) -> Self::Writer {
-        LockedStderrWriter::locked_stderr()
     }
 }
 

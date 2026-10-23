@@ -174,6 +174,7 @@ class Evidence(unittest.TestCase):
             Path('.lane/performance-events.jsonl').write_text('\n'.join(json.dumps(r) for r in records)+'\n')
             Path('.lane/harness-benchmarks.jsonl').write_text('')
             Path('ci/claim_review.json').write_text('{"schema":1,"sites":[]}')
+            Path('ci/observe-core.json').write_text('{"schema":1,"operations":[]}')
             for name,value in (('load_registry',registry),('census',sites),
                                ('claim_mints',{'ROOT::claim:testing:fixture':1}),('checked_linter',None),
                                ('prose',(data['paragraphs'],data['obligations'])),('source_id','current')):

@@ -9,9 +9,11 @@ The package is both a library and the `execwrap` binary. The binary implements t
 `execwrap` is **not a sandbox**. Read this before using it on anything you do not already trust:
 
 - The caller authorizes the selected child executable to run with the operating-system authority of this process. Nothing is dropped, filtered, or confined.
-- Child argv is omitted from wrapper diagnostics, but it is still present in process memory and visible through ordinary operating-system interfaces. Omission from logs is not secrecy.
-- Relayed and captured child output is **unsanitized child result data** (the child-byte relay exception in (`[ROOT-rec:output:decision]`)). The wrapper does not inspect it, redact it, or vouch for it. In raw routing it is written byte-for-byte.
-- The wrapper's own diagnostics never carry argv or the program path, even under `--debug`: command lines routinely carry tokens, passwords, and credential URLs, so only the argument *count* and the child pid are recorded.
+- Child arguments are public inputs and are observed in full, including their byte representation. Passing instance-private material through this untyped process interface is not an admitted secret integration; explicit exposure consumers remain held under (`[ROOT-inv:observe:secret-boundary]`).
+- Relayed and captured child output is **unsanitized child result data** (the child-byte relay exception in (`[ROOT-rec:output:decision]`)). Observation records the full byte payload without rewriting it. In raw routing the result is written byte-for-byte.
+- Wrapper observations include the public program path, full arguments, child pid, results and byte payloads; the observation queue reports loss without changing child results.
+
+`--observation enabled|disabled` selects collection, with enabled as the default. Disabled collection emits one unavailable-status record; neither setting changes child stdout bytes or exit status.
 
 ## Routing model · `sec:execwrap:routing-model`
 
@@ -96,7 +98,7 @@ preflight_routing(&config).expect("a single target is unambiguous");
 - `run(command: &[OsString], cfg: &RoutingConfig, notify: impl FnMut(&Notification)) -> Result<ExecOutcome, ExecError>` — spawn, capture both pipes on reader threads, fan the bytes out to every subscribed writer, relay unsubscribed streams to the parent, and wait. `notify` is called only when `notify_on_write` is set.
 - `struct ExecOutcome { exit_code: i32, data_loss: bool }` — a signal termination is reported as `128 + signal`. `data_loss` is true when a log write, a child-stream read, a reader thread, a parent flush, or a writer finalization failed.
 - `enum Notification { WritingToLog { path, stream }, WroteToLog { path } }` — the immediate and deferred forms of the write notice.
-- `enum ExecError { Io, Spawn { source }, EmptyCommand, AmbiguousRedirection { path } }` — `Spawn` deliberately omits the failing program path, which is caller-controlled argv.
+- `enum ExecError { Io, Spawn { source }, EmptyCommand, AmbiguousRedirection { path } }` — The observation context retains the full public command before spawn, including failed attempts.
 - `safe_open(path: &Path) -> io::Result<File>` — open for writing, creating parent directories as needed.
 
 ### `writer` module · `sec:execwrap:writer-module`
@@ -142,7 +144,7 @@ Per-stream failures during the run do not abort it. A failed log write, read err
 - **It does not confine the child.** No sandbox, no privilege drop, no environment scrubbing, no argument filtering. Choosing the executable is authorizing it.
 - **It does not sanitise child output.** In raw routing the bytes are written exactly as produced. The lossy conversion in prefixed mode is a presentation choice for a human-readable log, not a safety measure.
 - **It does not discard a stream.** A stream with no file subscriber is always relayed to the parent.
-- **It does not log argv or the program path**, at any verbosity.
+- **It does not infer secrets from text.** Child arguments and I/O are public content; secret integrations require their own typed acquisition and reviewed exposure boundaries.
 - **It does not merge streams except where asked.** Only `redirect` and `redirect_prefixed` combine them.
 - **It does not claim atomic or race-free logging.** The identity preflight catches configuration aliases; it does not survive a host replacing a path between the check and the open.
 - **It does not decide freshness or emit build metadata.** It is a process wrapper, not a build step.

@@ -231,7 +231,7 @@ def main(argv=None):
             site['local_contract']=local_contracts[site['owner'],site['area']]
             site['execution']=next(r for r in records if r.get('scope')=='case' and r['operation']==site['operation'])
         missing_glosses=[s['operation'] for s in sites if not s['gloss']]
-        Path('.lane/claim-evidence.json').write_text(json.dumps({'schema':1,'source':source,'configuration':CONFIGURATION,'sites':sites,'sibling_gloss_review':missing_glosses,**result},indent=2)+'\n')
+        Path('.lane/claim-evidence.json').write_text(json.dumps({'schema':1,'source':source,'configuration':CONFIGURATION,'sites':sites,'sibling_gloss_review':missing_glosses,'observation_declarations':{'coverage_status':'held for step 4b','data':json.loads(Path('ci/observe-core.json').read_text())},**result},indent=2)+'\n')
         counts = Counter(r['status'] for r in result['obligations'])
         print(f'CLAIM-REVIEW sites={len(reviews)} artifact=.lane/claim-gloss-review.json')
         print(f'CLAIM-RESPELLINGS count={len(offenders)} artifact=.lane/claim-respellings.json enforcement={args.fail_respellings}')

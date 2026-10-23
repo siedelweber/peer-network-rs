@@ -27,6 +27,33 @@ from hash_citations import audit, establish, occurrences
 
 
 class WorkspaceChecks(unittest.TestCase):
+    def test_secret_carrier_traits(self):
+        """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles, preventing accidental output opt-in.
+        ´claim:discipline:secret-carriers-reject-printable-traits´
+        ´test:discipline:test-secret-carrier-traits´
+        """
+        if os.environ.get('FOUNDATION_COMPUTE_TESTS') != '1':
+            self.skipTest('requires the provisioned compute toolchain')
+        root = Path.cwd()
+        with tempfile.TemporaryDirectory(prefix='secret-traits-', dir=os.environ['TMPDIR']) as directory:
+            fixture = Path(directory)
+            (fixture/'src').mkdir()
+            (fixture/'Cargo.toml').write_text('[package]\nname="secret-trait-probe"\nversion="0.0.0"\nedition="2024"\n[workspace]\n[dependencies]\ncli-common={path='+json.dumps(str(root/'packages/cli-common'))+'}\nserde_json="1"\n[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\n')
+            constructors = [
+                'SecretString::from("private-sentinel")',
+                'SecretBox::<[u8]>::new(vec![1,2,3].into_boxed_slice())',
+                'PrivateString::new(SecretRole::Authentication,SecretString::from("private-sentinel"))',
+                'PrivateBytes::new(SecretRole::Connection,SecretBox::new(vec![1,2,3].into_boxed_slice()))',
+            ]
+            for constructor in constructors:
+                for expression, expected in [('format!("{:?}", value)',None),('format!("{}", value)','Display'),('serde_json::to_string(&value)','Serialize')]:
+                    (fixture/'src/main.rs').write_text('use cli_common::secrets::*; fn main(){let value='+constructor+'; let _result='+expression+';}')
+                    result=subprocess.run(['cargo','check','--offline','--profile','gate','--manifest-path',str(fixture/'Cargo.toml')],capture_output=True,text=True)
+                    if expected is None: self.assertEqual(result.returncode,0,result.stderr)
+                    else:
+                        self.assertNotEqual(result.returncode,0)
+                        self.assertIn(expected,result.stderr)
+
     def test_discovered_members(self):
         """feature-minimal and documentation checks include a new binary-only member, exclude the engine and ignore nonmembers.
         ´claim:discipline:new-members-receive-feature-checks´

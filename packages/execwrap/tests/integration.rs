@@ -139,15 +139,11 @@ fn unspawnable_child_is_wrapper_failure() {
     assert_eq!(output.status.code(), Some(1));
 }
 
-/// A spawn failure must not echo the caller-controlled program path:
-/// `argv[0]` is raw child argv under the command-line output contract (´[ROOT-rec:output:decision]´), so a secret embedded in
-/// the executable path must stay out of the JSON diagnostics.
-///
-/// Claim: A nonexistent secret-bearing path yields exit 1, empty stdout and object-shaped JSON stderr lines without the secret, protecting caller-controlled argv.
-/// ´claim:cli:spawn-failure-does-not-echo-child-program-text´
-/// ´test:integration:spawn-failure-does-not-echo-child-program-text´
+/// Claim: A nonexistent public program yields exit 1 and empty stdout while its complete name survives in JSON stderr, preserving failed-attempt context.
+/// ´claim:cli:spawn-failure-records-public-program´
+/// ´test:integration:spawn-failure-records-public-program´
 #[test]
-fn spawn_failure_does_not_echo_child_program_text() {
+fn spawn_failure_records_public_program() {
     let secret = "SHOULD_NOT_APPEAR_spawn-program-secret";
     let program = format!("/nonexistent/{secret}");
 
@@ -157,7 +153,7 @@ fn spawn_failure_does_not_echo_child_program_text() {
     assert_eq!(output.stdout, [] as [u8; 0]);
 
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(!stderr.contains(secret), "child program text leaked to diagnostics: {stderr}");
+    assert!(stderr.contains(secret), "public program missing from diagnostics: {stderr}");
 
     for line in stderr.lines().filter(|line| !line.trim().is_empty()) {
         let value: serde_json::Value = serde_json::from_str(line).expect("diagnostic is JSON");
@@ -165,14 +161,11 @@ fn spawn_failure_does_not_echo_child_program_text() {
     }
 }
 
-/// A credential-bearing URL supplied as the program path must not appear
-/// in diagnostics on spawn failure either.
-///
-/// Claim: A credential URL used as an executable yields exit 1 and empty stdout while neither credential marker reaches stderr, protecting spawn diagnostics.
-/// ´claim:cli:spawn-failure-does-not-echo-credential-bearing-program-url´
-/// ´test:integration:spawn-failure-does-not-echo-credential-bearing-program-url´
+/// Claim: A public URL-shaped program yields exit 1 and empty stdout with the entire URL retained in stderr, preventing heuristic content deletion.
+/// ´claim:cli:spawn-failure-records-public-url´
+/// ´test:integration:spawn-failure-records-public-url´
 #[test]
-fn spawn_failure_does_not_echo_credential_bearing_program_url() {
+fn spawn_failure_records_public_url() {
     let program = "https://user:hunter2-secret@example.invalid/SHOULD_NOT_APPEAR";
 
     let output = run(&["--", program]);
@@ -182,8 +175,8 @@ fn spawn_failure_does_not_echo_credential_bearing_program_url() {
 
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
-        !stderr.contains("hunter2-secret") && !stderr.contains("SHOULD_NOT_APPEAR"),
-        "credential program URL leaked to diagnostics: {stderr}",
+        stderr.contains(program),
+        "public program URL missing from diagnostics: {stderr}",
     );
 }
 
@@ -227,14 +220,11 @@ fn ambiguous_same_path_routing_is_a_usage_failure() {
     assert!(!log.exists(), "usage failure must not open log files");
 }
 
-/// Child argv is never logged: secrets on the command line must not
-/// appear on either wrapper stream (the command-line output contract (´[ROOT-rec:output:decision]´) redaction).
-///
-/// Claim: With debug enabled, a successful child carrying a secret argument exposes it on neither wrapper stream, protecting raw child argv from diagnostics.
-/// ´claim:cli:child-argv-secrets-never-appear-in-diagnostics´
-/// ´test:integration:child-argv-secrets-never-appear-in-diagnostics´
+/// Claim: A successful child with a credential-named public argument leaves stdout empty and records the argument in stderr, distinguishing public input from secret-typed material.
+/// ´claim:cli:public-child-arguments-are-observed´
+/// ´test:integration:public-child-arguments-are-observed´
 #[test]
-fn child_argv_secrets_never_appear_in_diagnostics() {
+fn public_child_arguments_are_observed() {
     let secret = "SHOULD_NOT_APPEAR_hunter2";
     let dir = tempfile::tempdir().expect("tempdir");
     let log = dir.path().join("raw.log");
@@ -259,17 +249,14 @@ fn child_argv_secrets_never_appear_in_diagnostics() {
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(!stdout.contains(secret), "secret leaked to stdout");
-    assert!(!stderr.contains(secret), "secret leaked to stderr diagnostics");
+    assert!(stderr.contains(secret), "public argument missing from diagnostics");
 }
 
-/// A credential-bearing URL in child argv must not appear on either
-/// wrapper stream (B0-001: URLs with userinfo are secrets too).
-///
-/// Claim: With debug enabled, a successful child carrying a credential URL exposes neither secret marker on wrapper stdout or stderr, protecting URL-bearing argv.
-/// ´claim:cli:credential-bearing-url-never-appears-in-diagnostics´
-/// ´test:integration:credential-bearing-url-never-appears-in-diagnostics´
+/// Claim: A successful child with a public URL argument records every URL component on stderr without changing empty result stdout.
+/// ´claim:cli:public-child-urls-are-observed´
+/// ´test:integration:public-child-urls-are-observed´
 #[test]
-fn credential_bearing_url_never_appears_in_diagnostics() {
+fn public_child_urls_are_observed() {
     let url = "https://user:hunter2-secret@example.invalid/private?api_key=SHOULD_NOT_APPEAR";
     let dir = tempfile::tempdir().expect("tempdir");
     let log = dir.path().join("raw.log");
@@ -291,13 +278,8 @@ fn credential_bearing_url_never_appears_in_diagnostics() {
         .expect("execwrap runs");
     assert!(output.status.success());
 
-    for (name, bytes) in [("stdout", &output.stdout), ("stderr", &output.stderr)] {
-        let text = String::from_utf8_lossy(bytes);
-        assert!(
-            !text.contains("hunter2-secret") && !text.contains("SHOULD_NOT_APPEAR"),
-            "credential URL leaked to {name}",
-        );
-    }
+    assert_eq!(output.stdout, [] as [u8; 0]);
+    assert!(String::from_utf8_lossy(&output.stderr).contains(url));
 }
 
 /// Redirecting only stderr must still relay stdout to the parent.
@@ -476,4 +458,39 @@ fn spawn_failure_emits_json_diagnostics() {
         assert!(value.is_object());
     }
     assert!(saw_json, "expected at least one JSON diagnostic");
+}
+
+/// Claim: The same binary child result, including NUL and invalid UTF-8, has identical stdout and exit with observation enabled and disabled; enabled metering retains those bytes and the returned status.
+/// ´claim:cli:observation-preserves-child-results´
+/// ´test:integration:observation-preserves-child-results´
+#[test]
+fn observation_preserves_child_results() {
+    let script = r"printf '\377\000public'; exit 7";
+    let enabled = run(&["--", "sh", "-c", script]);
+    let disabled = run(&["--observation", "disabled", "--", "sh", "-c", script]);
+    assert_eq!(enabled.stdout, disabled.stdout);
+    assert_eq!(enabled.status.code(), disabled.status.code());
+    assert_eq!(enabled.status.code(), Some(7));
+    assert_eq!(enabled.stdout, b"\xff\0public");
+    let unavailable: serde_json::Value = serde_json::from_slice(&disabled.stderr).unwrap();
+    assert_eq!(unavailable["availability"], "disabled");
+    assert_eq!(unavailable["measurements"], "unavailable");
+    let records: Vec<serde_json::Value> = String::from_utf8(enabled.stderr)
+        .unwrap()
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    let bytes: Vec<u8> = records
+        .iter()
+        .filter(|r| r["event_kind"] == "progress")
+        .flat_map(|r| r["detail"]["bytes"].as_array().unwrap())
+        .map(|b| u8::try_from(b.as_u64().unwrap()).unwrap())
+        .collect();
+    assert_eq!(bytes, enabled.stdout);
+    assert!(
+        records
+            .iter()
+            .any(|r| r["event_kind"] == "completion" && r["detail"]["result"]["exit_code"] == 7)
+    );
+    assert!(records.iter().any(|r| r["kind"] == "metric_summary"));
 }

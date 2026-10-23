@@ -10,13 +10,16 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use clap::Parser;
-use cli_common::{
-    CommandExit, emit_control_plane_record, init_json_tracing_with_debug, install_json_panic_hook, parse_args_from,
-    set_panic_payload_reporting_enabled,
-};
+use cli_common::{CommandExit, emit_control_plane_record, install_json_panic_hook, parse_args_from};
 use execwrap::{ExecError, Notification, RoutingConfig, preflight_routing, run};
 
 const COMMAND_NAME: &str = "execwrap";
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, clap::ValueEnum)]
+enum ObservationMode {
+    Enabled,
+    Disabled,
+}
 
 #[derive(Debug, Parser)]
 #[command(
@@ -58,6 +61,10 @@ struct Args {
     #[arg(long, short = 'q')]
     quiet: bool,
 
+    /// Observation delivery mode, independent of command results.
+    #[arg(long, value_enum, default_value_t = ObservationMode::Enabled)]
+    observation: ObservationMode,
+
     /// Command and its arguments (after `--`).
     #[arg(last = true, required = true, num_args = 1.., value_name = "COMMAND")]
     command: Vec<OsString>,
@@ -81,8 +88,8 @@ fn main() -> ExitCode {
         }
     };
 
-    set_panic_payload_reporting_enabled(args.debug);
-    init_json_tracing_with_debug(args.debug, default_level(&args));
+    let _observation_guard =
+        cli_common::observation::bootstrap(args.observation == ObservationMode::Enabled, args.debug, default_level(&args)).ok();
 
     let cfg = RoutingConfig {
         redirect: args.redirect,
@@ -96,10 +103,10 @@ fn main() -> ExitCode {
 
     // Conflicting routing for one path is an invalid argument
     // combination: usage class 2, before any side effect. The
-    // conflicting path is an argument value and stays out of the
-    // record; the fixed usage message comes from the constructor.
-    if let Err(ExecError::AmbiguousRedirection { .. }) = preflight_routing(&cfg) {
-        let record = cli_common::ControlPlaneRecord::usage_error(COMMAND_NAME, "ambiguous_redirection");
+    // full public error text is retained in the usage diagnostic.
+    if let Err(error @ ExecError::AmbiguousRedirection { .. }) = preflight_routing(&cfg) {
+        let mut record = cli_common::ControlPlaneRecord::usage_error(COMMAND_NAME, "ambiguous_redirection");
+        record.message = error.to_string();
         let _ignored = emit_control_plane_record(&record);
         return CommandExit::Usage.exit_code();
     }
@@ -118,8 +125,7 @@ fn main() -> ExitCode {
     let outcome = match run(&args.command, &cfg, emit_notification) {
         Ok(outcome) => outcome,
         Err(ExecError::Spawn { source }) => {
-            // The program path is caller-controlled argv[0]; only the
-            // spawn error itself is safe to report (´[ROOT-rec:output:decision]´).
+            // The operation start already recorded the full public command.
             tracing::error!(error = %source, "failed to spawn child process");
             return CommandExit::Failure.exit_code();
         }

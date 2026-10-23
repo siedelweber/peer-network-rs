@@ -1,0 +1,210 @@
+{
+  "schema": 1,
+  "scope": "Core declarations only; full syntactic coverage and integration admission are held for step 4b.",
+  "operations": [
+    {
+      "name": "Command",
+      "owner": "CLICOMMON",
+      "source": "packages/cli-common/src/observation.rs::Observation::operation",
+      "claim_owner": "ROOT",
+      "label": "rule:observe:metering",
+      "boundary": "explicit Operation lifetime",
+      "metric_stem": "clicommon__root__rule__observe__metering"
+    },
+    {
+      "name": "Child",
+      "owner": "EXECWRAP",
+      "source": "packages/execwrap/src/lib.rs::run",
+      "claim_owner": "ROOT",
+      "label": "rule:observe:privacy",
+      "boundary": "explicit Operation lifetime around public process execution",
+      "metric_stem": "execwrap__root__rule__observe__privacy"
+    },
+    {
+      "name": "Bootstrap",
+      "owner": "CLICOMMON",
+      "source": "packages/cli-common/src/observation.rs::bootstrap",
+      "claim_owner": "ROOT",
+      "label": "dec:observe:sinks",
+      "boundary": "entry transferred to installed operation context",
+      "metric_stem": "clicommon__root__dec__observe__sinks"
+    }
+  ],
+  "metrics": [
+    {
+      "suffix": "started_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "aggregation": "sum starts",
+      "attributes": {}
+    },
+    {
+      "suffix": "completed_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "aggregation": "sum terminal records",
+      "attributes": {
+        "outcome": [
+          "success",
+          "refusal",
+          "error",
+          "cancelled",
+          "unwinding",
+          "incomplete"
+        ]
+      }
+    },
+    {
+      "suffix": "work_bytes",
+      "kind": "counter",
+      "unit": "bytes",
+      "aggregation": "sum own increments; no child roll-up",
+      "attributes": {}
+    },
+    {
+      "suffix": "active_operations",
+      "kind": "gauge",
+      "unit": "operations",
+      "aggregation": "starts minus orderly terminal records",
+      "attributes": {}
+    },
+    {
+      "suffix": "resource_current_bytes",
+      "kind": "gauge",
+      "unit": "bytes",
+      "aggregation": "sum operation-owned reported live bytes; unavailable contexts excluded, null before any report",
+      "attributes": {}
+    },
+    {
+      "suffix": "elapsed_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "aggregation": "inclusive observations; not disjoint parent/child totals",
+      "boundaries": [
+        0.001,
+        0.01,
+        0.1,
+        1.0
+      ],
+      "attributes": {}
+    },
+    {
+      "suffix": "workload_bytes",
+      "kind": "histogram",
+      "unit": "bytes",
+      "aggregation": "one floating-point workload sample per terminal record; exact integer totals remain in metering",
+      "boundaries": [
+        1,
+        1024,
+        65536,
+        1048576
+      ],
+      "attributes": {}
+    }
+  ],
+  "fields": {
+    "timestamp": "calendar-valid explicit UTC Z instant or null with unavailable accuracy",
+    "duration_seconds": "monotonic inclusive seconds or null",
+    "work": "integer bytes owned by this operation",
+    "resources": "current, high_water and cumulative bytes, each exact, estimated or unavailable; CPU and allocation unavailable",
+    "result": "full public JSON content; secret carriers cannot serialize"
+  },
+  "obligations": [
+    {
+      "label": "gate:observe:foundation",
+      "status": "held",
+      "owner": "foundation implementer and reviewer",
+      "closing_step": "4b",
+      "closing_condition": "Complete instrumentation, coverage, noninterference and export admission; services remain separately held"
+    },
+    {
+      "label": "gate:design:observability-foundation",
+      "status": "held",
+      "owner": "foundation implementer and reviewer",
+      "closing_step": "4b",
+      "closing_condition": "Complete instrumentation, coverage, noninterference and export admission; services remain separately held"
+    },
+    {
+      "label": "inv:observe:secret-boundary",
+      "status": "held",
+      "owner": "consumer implementer and reviewer",
+      "closing_step": "4b and each exposed integration",
+      "closing_condition": "Review acquisition, whole configuration, explicit exposures, retained state, errors and zeroization witnesses"
+    }
+  ],
+  "exposures": [],
+  "bootstrap_exceptions": [
+    {
+      "source": "packages/cli-common/src/observation.rs::bootstrap",
+      "rule": "operation entry precedes installed subscriber",
+      "justification": "The bootstrap transfers its entry clock into the first explicit completion after installation."
+    },
+    {
+      "source": "packages/cli-common/src/observation.rs::Observation::emit",
+      "rule": "recursive instrumentation",
+      "justification": "The recorder and delivery path use a nonrecursive loss counter so observing an observation cannot recurse."
+    }
+  ],
+  "inherited_context": [
+    {
+      "source": "packages/cli-common/src/observation.rs::UtcInstant::parse",
+      "boundary": "caller operation; observation machinery must not recursively instrument itself",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/observation.rs::Observation::current",
+      "boundary": "caller operation; observation machinery must not recursively instrument itself",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/observation.rs::Observation::summarize",
+      "boundary": "caller operation; observation machinery must not recursively instrument itself",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/observation.rs::Operation::child",
+      "boundary": "caller operation; observation machinery must not recursively instrument itself",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/observation.rs::Operation::work_bytes",
+      "boundary": "caller operation; observation machinery must not recursively instrument itself",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/observation.rs::Operation::resources",
+      "boundary": "caller operation; observation machinery must not recursively instrument itself",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/observation.rs::Operation::progress",
+      "boundary": "caller operation; observation machinery must not recursively instrument itself",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/observation.rs::Operation::finish",
+      "boundary": "caller operation; observation machinery must not recursively instrument itself",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/secrets.rs::PrivateString::new",
+      "boundary": "caller acquisition or consumer operation; no contents are observed",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/secrets.rs::PrivateString::secret",
+      "boundary": "caller acquisition or consumer operation; no contents are observed",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/secrets.rs::PrivateBytes::new",
+      "boundary": "caller acquisition or consumer operation; no contents are observed",
+      "status": "coverage validation held for 4b"
+    },
+    {
+      "source": "packages/cli-common/src/secrets.rs::PrivateBytes::secret",
+      "boundary": "caller acquisition or consumer operation; no contents are observed",
+      "status": "coverage validation held for 4b"
+    }
+  ]
+}

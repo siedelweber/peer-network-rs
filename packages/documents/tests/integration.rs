@@ -499,7 +499,7 @@ fn control_records() -> Result<()> {
 fn terminal_refusal() -> Result<()> {
     let directory = fixture()?;
     fs::write(directory.path().join("docs/result.md"), "stale")?;
-    let script = "import os,pty,subprocess,sys,json\nm,s=pty.openpty()\np=subprocess.run([sys.argv[1],'--root',sys.argv[2],'write'],stdout=s,stderr=subprocess.PIPE)\nos.close(s)\nassert p.returncode==2\nassert json.loads(p.stderr)['kind']=='tty_refusal'\ntry:\n data=os.read(m,4096)\nexcept OSError:\n data=b''\nassert data==b''\nos.close(m)\n";
+    let script = "import os,pty,subprocess,sys,json\nm,s=pty.openpty()\np=subprocess.run([sys.argv[1],'--root',sys.argv[2],'write'],stdout=s,stderr=subprocess.PIPE)\nos.close(s)\nassert p.returncode==2\nrecords=[json.loads(line) for line in p.stderr.splitlines()]\nassert sum(r.get('kind')=='tty_refusal' for r in records)==1\ntry:\n data=os.read(m,4096)\nexcept OSError:\n data=b''\nassert data==b''\nos.close(m)\n";
     assert!(
         Command::new("python3")
             .args(["-c", script, env!("CARGO_BIN_EXE_documents")])
@@ -531,7 +531,11 @@ fn clean_result() -> Result<()> {
     let report: serde_json::Value = serde_json::from_slice(&output.stdout)?;
     assert!(report.is_object());
     assert_eq!(report["findings"], serde_json::json!([]));
-    assert_eq!(output.stderr, b"");
+    let records: Vec<serde_json::Value> = std::str::from_utf8(&output.stderr)?
+        .lines()
+        .map(serde_json::from_str)
+        .collect::<std::result::Result<_, _>>()?;
+    assert!(records.iter().any(|record| record["kind"] == "metric_summary"));
     Ok(())
 }
 
@@ -569,9 +573,13 @@ fn runtime_error() -> Result<()> {
     let output = invoke(directory.path(), "check")?;
     assert_eq!(output.status.code(), Some(1));
     assert_eq!(output.stdout, b"");
-    let record: serde_json::Value = serde_json::from_slice(&output.stderr)?;
-    assert_eq!(record["level"], "ERROR");
-    assert!(record.to_string().contains("docs/inputs/items.toml"));
+    let records: Vec<serde_json::Value> = std::str::from_utf8(&output.stderr)?
+        .lines()
+        .map(serde_json::from_str)
+        .collect::<std::result::Result<_, _>>()?;
+    let errors: Vec<_> = records.iter().filter(|record| record["level"] == "ERROR").collect();
+    assert_eq!(errors.len(), 1);
+    assert!(errors[0].to_string().contains("docs/inputs/items.toml"));
     Ok(())
 }
 

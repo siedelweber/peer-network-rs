@@ -38,12 +38,12 @@
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
-| cli-common | active | unit | cli-common-rust | fast | 73 |
+| cli-common | active | unit | cli-common-rust | fast | 70 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
 | documents::integration | active | integration | documents-rust | fast | 28 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
 | execwrap | active | unit | execwrap-rust | fast | 25 |
-| execwrap::integration | active | integration | execwrap-rust | fast | 18 |
+| execwrap::integration | active | integration | execwrap-rust | fast | 19 |
 | pn-interchange | active | unit | pn-interchange-rust | fast | 233 |
 | pn-interchange::integration | active | integration | pn-interchange-rust | fast | 14 |
 | pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |
@@ -75,7 +75,7 @@
 | regexml-doctests | active | doctest | regexml-rust | fast | 1 |
 | ci::test_design | active | integration | ci-python | fast | 6 |
 | ci::test_devperf | active | unit | ci-python | fast | 14 |
-| ci::test_discipline | active | integration | ci-python | fast | 25 |
+| ci::test_discipline | active | integration | ci-python | fast | 26 |
 | ci::test_harness | active | unit | ci-python | fast | 10 |
 | planned-records | held | held | none | fast | 0 |
 | planned-burn | held | held | none | service | 0 |

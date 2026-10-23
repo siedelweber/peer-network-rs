@@ -146,7 +146,7 @@ def source_findings(path, source, mode, forced_test=False):
                 "locked_stderr": r"io\s*::\s*stderr",
                 "try_locked_stderr": r"io\s*::\s*stderr",
             },
-            "packages/execwrap/src/lib.rs": {"run": r"(?:io\s*::\s*(?:stdout|stderr)|(?<=\.)(?:stdout|stderr))"},
+            "packages/execwrap/src/lib.rs": {"run_observed": r"(?:io\s*::\s*(?:stdout|stderr)|(?<=\.)(?:stdout|stderr))"},
         }
         for match in reversed(list(re.finditer(r"\bfn\s+(\w+)\b", code))):
             allowed = boundaries.get(path.as_posix(), {}).get(match.group(1))

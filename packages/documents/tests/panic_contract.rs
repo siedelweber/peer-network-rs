@@ -1,6 +1,6 @@
 use std::process::Command;
 
-/// Claim: the probe using shared production startup emits one payload-free JSON panic record, no stdout and status one.
+/// Claim: The shared production startup preserves the public panic payload in one JSON diagnostic, with empty stdout and status one.
 /// ´claim:cli:panic-proxy´
 /// ´test:integration:panic-proxy´
 #[test]
@@ -11,6 +11,6 @@ fn panic_proxy() -> documents::Result<()> {
     let record: serde_json::Value = serde_json::from_slice(&output.stderr)?;
     assert_eq!(record["kind"], "panic");
     assert_eq!(record["command"], "documents");
-    assert!(record["fields"].get("payload").is_none());
+    assert_eq!(record["fields"]["payload"], "contract probe");
     Ok(())
 }

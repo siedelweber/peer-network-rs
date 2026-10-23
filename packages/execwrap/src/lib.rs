@@ -374,9 +374,35 @@ pub struct ExecOutcome {
 ///
 /// Panics if the child's stdout/stderr pipes cannot be taken after being
 /// configured as piped, which should never happen.
-// Justified: One routing item keeps setup, relay and finalisation in order; explicit if-let branches show exit-status precedence: normal code, then Unix signal, then fallback.
-#[allow(clippy::cognitive_complexity, clippy::too_many_lines, clippy::option_if_let_else)]
 pub fn run(command: &[OsString], cfg: &RoutingConfig, mut notify: impl FnMut(&Notification)) -> Result<ExecOutcome, ExecError> {
+    let observation = cli_common::observation::Observation::current();
+    let mut operation = observation.as_ref().map(|o| o.operation(cli_common::observation::OperationKind::Child, serde_json::json!({
+        "command": command.iter().map(|arg| arg.as_encoded_bytes()).collect::<Vec<_>>(), "command_debug": format!("{command:?}"), "configuration": format!("{cfg:?}")
+    })));
+    let result = run_observed(command, cfg, &mut notify, &mut operation);
+    if let Some(operation) = operation {
+        match &result {
+            Ok(outcome) => operation.finish(
+                cli_common::observation::Outcome::Success,
+                serde_json::json!({"exit_code":outcome.exit_code,"data_loss":outcome.data_loss}),
+            ),
+            Err(error) => operation.finish(
+                cli_common::observation::Outcome::Error,
+                serde_json::json!({"error":error.to_string(),"error_debug":format!("{error:?}")}),
+            ),
+        }
+    }
+    result
+}
+
+// Justified: The child-byte relay preserves setup, stream routing and finalisation as one operation with explicit status precedence.
+#[allow(clippy::cognitive_complexity, clippy::too_many_lines, clippy::option_if_let_else)]
+fn run_observed(
+    command: &[OsString],
+    cfg: &RoutingConfig,
+    notify: &mut impl FnMut(&Notification),
+    operation: &mut Option<cli_common::observation::Operation>,
+) -> Result<ExecOutcome, ExecError> {
     let program = command.first().ok_or(ExecError::EmptyCommand)?;
     let args = &command[1..];
 
@@ -442,13 +468,7 @@ pub fn run(command: &[OsString], cfg: &RoutingConfig, mut notify: impl FnMut(&No
         .spawn()
         .map_err(|source| ExecError::Spawn { source })?;
 
-    // Redaction under (´[ROOT-rec:output:decision]´): neither argv nor the program path is logged,
-    // even under --debug. Command lines routinely carry tokens,
-    // passwords, and credential URLs, and the program is itself
-    // caller-controlled argv[0]; no field-aware sanitizer guards this
-    // call site, so only known-safe metadata (argument count and pid)
-    // is recorded.
-    tracing::info!(argument_count = args.len(), pid = child.id(), "executing child process",);
+    tracing::info!(command = ?command, configuration = ?cfg, pid = child.id(), "executing child process");
 
     let stdout = child.stdout.take().expect("stdout pipe configured above");
     let stderr = child.stderr.take().expect("stderr pipe configured above");
@@ -468,6 +488,10 @@ pub fn run(command: &[OsString], cfg: &RoutingConfig, mut notify: impl FnMut(&No
     for message in rx {
         match message {
             ChannelMessage::Data { stream, data } => {
+                if let Some(operation) = operation {
+                    operation.work_bytes(u64::try_from(data.len()).unwrap_or(u64::MAX));
+                    operation.progress(serde_json::json!({"stream":stream.label(),"bytes":data}));
+                }
                 let subscribers = match stream {
                     Stream::Stdout => &stdout_subscribers,
                     Stream::Stderr => &stderr_subscribers,

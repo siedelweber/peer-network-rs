@@ -14,9 +14,8 @@
 //! | `json_line_writer_appends_newline`      | JSON record helper writes one complete line.     |
 //! | `usage_error_record_carries_fields`    | Usage records include exit code and clap kind.   |
 //! | `tty_refusal_record_carries_fields`    | TTY refusal records identify stdout and code 2.  |
-//! | `panic_record_omits_payload_without_debug` | Panic records hide payloads without debug.    |
-//! | `panic_record_carries_debug_payload`    | Panic records can expose string payloads.        |
-//! | `panic_payload_reporting_fails_closed_then_follows_debug_flag` | Startup payload gate fails closed. |
+//! | `panic_record_omits_unavailable_payload` | Panic records hide payloads without debug.    |
+//! | `panic_record_carries_public_payload`    | Panic records can expose string payloads.        |
 //! | `panic_payload_message_extracts_string_payloads` | String panic payloads are downcast.     |
 //! | `parse_args_from_returns_help_record`  | Clap help becomes JSON stderr control data.      |
 //! | `parse_args_from_returns_version_record` | Clap version becomes JSON stderr control data. |
@@ -28,18 +27,6 @@
 //! | `tracing_filter_prefers_rust_log`      | `RUST_LOG` wins over `--debug`.                  |
 //! | `tracing_filter_uses_debug_flag`       | `--debug` selects debug without `RUST_LOG`.      |
 //! | `tracing_filter_uses_default_level`    | Default level is used last.                      |
-//! | `redacts_sensitive_field_values`       | Secret-like field names are hidden.              |
-//! | `redacts_database_url_secrets`         | DB credentials and query secrets are removed.    |
-//! | `redacts_credentials_in_any_url_scheme` | HTTPS and custom-scheme credentials are removed. |
-//! | `redacts_secrets_in_free_form_text`    | key=value and URL secrets scrubbed from text.    |
-//! | `redacts_key_equals_credential_url_token` | `--key=credential-url` tokens are scrubbed.   |
-//! | `redacts_credential_url_in_error_chain_text` | key=URL inside a longer sentence is scrubbed. |
-//! | `redacts_sensitive_url_fragments`      | OAuth-style fragment secrets are dropped.        |
-//! | `unparseable_url_ish_token_fails_closed` | Unparseable `://` tokens become `[redacted]`.  |
-//! | `keeps_non_sensitive_key_value_tokens` | Safe key=value tokens survive untouched.         |
-//! | `redacts_runner_style_error_display`   | Runner-shaped error text loses credential URLs.  |
-//! | `usage_error_text_never_reproduces_secrets` | Usage records omit argument values.         |
-//! | `keeps_public_key_fields_visible`      | Public key metadata is not treated as secret.    |
 //!
 //! `refuse_if_stdout_is_tty` and `init_json_tracing` mutate
 //! global process state (the `process::exit` path and the
@@ -58,9 +45,8 @@ use serde::Serialize;
 use serde_json::json;
 
 use crate::{
-    BaseArgs, CONTROL_PLANE_SCHEMA, CommandExit, ControlPlaneFields, ControlPlaneRecord, ControlPlaneRecordKind, REDACTED,
-    StandardStream, TracingFilterSource, panic_payload_message_from_payload, panic_payload_reporting_enabled, parse_args_from,
-    redact_database_url, redact_field_value, set_panic_payload_reporting_enabled, tracing_filter_from_rust_log, write_json_line,
+    BaseArgs, CONTROL_PLANE_SCHEMA, CommandExit, ControlPlaneFields, ControlPlaneRecord, ControlPlaneRecordKind, StandardStream,
+    TracingFilterSource, panic_payload_message_from_payload, parse_args_from, tracing_filter_from_rust_log, write_json_line,
 };
 
 /// A `Write` that fails every call with `BrokenPipe`.
@@ -333,10 +319,10 @@ fn tty_refusal_record_carries_fields() {
 }
 
 /// Claim: Constructing a panic record without a payload omits that field while retaining exit 1 and thread identity, preventing absent details from becoming data.
-/// ´claim:cli:panic-record-omits-payload-without-debug´
-/// ´test:crate:panic-record-omits-payload-without-debug´
+/// ´claim:cli:panic-record-omits-unavailable-payload´
+/// ´test:crate:panic-record-omits-unavailable-payload´
 #[test]
-fn panic_record_omits_payload_without_debug() {
+fn panic_record_omits_unavailable_payload() {
     let record = ControlPlaneRecord::panic("fixture", Some("main"), Some("src/main.rs:12:34"), None);
     let value = serde_json::to_value(record).unwrap();
 
@@ -348,10 +334,10 @@ fn panic_record_omits_payload_without_debug() {
 }
 
 /// Claim: An explicitly supplied panic payload round-trips through JSON with quotes escaped, preserving diagnostic content without breaking framing.
-/// ´claim:cli:panic-record-carries-debug-payload´
-/// ´test:crate:panic-record-carries-debug-payload´
+/// ´claim:cli:panic-record-carries-public-payload´
+/// ´test:crate:panic-record-carries-public-payload´
 #[test]
-fn panic_record_carries_debug_payload() {
+fn panic_record_carries_public_payload() {
     let record = ControlPlaneRecord::panic(
         "fixture",
         Some("main"),
@@ -364,22 +350,6 @@ fn panic_record_carries_debug_payload() {
 
     let value: serde_json::Value = serde_json::from_str(&line).unwrap();
     assert_eq!(value["fields"]["payload"], json!("panic with \"quoted\" detail"));
-}
-
-/// Claim: Panic payload reporting starts disabled and follows explicit enable and disable operations, keeping disclosure opt-in and reversible.
-/// ´claim:cli:panic-payload-reporting-fails-closed-then-follows-debug-flag´
-/// ´test:crate:panic-payload-reporting-fails-closed-then-follows-debug-flag´
-#[test]
-fn panic_payload_reporting_fails_closed_then_follows_debug_flag() {
-    // Fail closed (´[ROOT-rec:output:decision]´): payloads may contain secrets, so the gate
-    // starts disabled and opens only via the parsed --debug value.
-    assert!(!panic_payload_reporting_enabled());
-
-    set_panic_payload_reporting_enabled(true);
-    assert!(panic_payload_reporting_enabled());
-
-    set_panic_payload_reporting_enabled(false);
-    assert!(!panic_payload_reporting_enabled());
 }
 
 /// Claim: Borrowed and owned string panic payloads yield their text while a numeric payload yields none, bounding the supported diagnostic conversion.
@@ -519,7 +489,7 @@ fn parse_args_from_returns_usage_record() {
     assert_eq!(exit.exit, CommandExit::Usage);
     assert_eq!(exit.record.command, "fixture-helper");
     assert_eq!(exit.record.kind, ControlPlaneRecordKind::UsageError);
-    assert_eq!(exit.record.message, "invalid command-line arguments");
+    assert!(exit.record.message.contains("--no-such-flag"));
 
     let Some(ControlPlaneFields::UsageError {
         exit_code,
@@ -565,200 +535,40 @@ fn tracing_filter_uses_default_level() {
     assert_eq!(filter.source, TracingFilterSource::DefaultLevel);
 }
 
-/// Claim: Token, password and private-key field names replace their values with the redaction marker, preventing these named secrets from entering diagnostics.
-/// ´claim:cli:redacts-sensitive-field-values´
-/// ´test:crate:redacts-sensitive-field-values´
+/// Claim: URL-shaped, credential-named and malformed public error text survives the JSON diagnostic round trip byte for byte, so content is not selected by a heuristic filter.
+/// ´claim:cli:public-error-content-is-complete´
+/// ´test:crate:public-error-content-is-complete´
 #[test]
-fn redacts_sensitive_field_values() {
-    assert_eq!(redact_field_value("tracker.token", "MyAccessToken"), REDACTED);
-    assert_eq!(redact_field_value("smtp_password", "secret"), REDACTED);
-    assert_eq!(redact_field_value("auth.private_key_pem", "PEM"), REDACTED);
+fn public_error_content_is_complete() {
+    for text in [
+        "tracker.token=public-value smtp_password=public-fixture",
+        "mysql://user:pass@example.test/db?token=abc&password=def",
+        "https://user:password@example.test/path?api_key=fixture&page=2",
+        "rpc://alice:fixture@node.test:7041/",
+        "error: --api-token=PUBLIC endpoint https://user:pw@example.test/ retried",
+        "request failed: endpoint=https://user:pw@example.test/ (attempt 2 of 3)",
+        "https://example.test/cb#access_token=abc&state=xyz",
+        "connect to ://user:pw@ failed",
+        "https://",
+        "--retries=5 mode=fast",
+        "command failed: error connecting to https://svc:fixture@api.example.test/v1: timeout",
+    ] {
+        let value = serde_json::to_value(ControlPlaneRecord::diagnostic("fixture", text)).unwrap();
+        assert_eq!(value["message"], text);
+    }
 }
 
-/// Claim: The database URL loses user information and token/password query pairs while retaining host, path and ssl-mode, preserving useful safe context.
-/// ´claim:cli:redacts-database-url-secrets´
-/// ´test:crate:redacts-database-url-secrets´
+/// Claim: An unknown public flag returns usage failure with the complete clap diagnostic and argument value, preserving the reason for refusal without changing its exit class.
+/// ´claim:cli:usage-errors-retain-public-arguments´
+/// ´test:crate:usage-errors-retain-public-arguments´
 #[test]
-fn redacts_database_url_secrets() {
-    let redacted = redact_database_url("mysql://user:pass@example.test/db?ssl-mode=required&token=abc&password=def");
-
-    assert_eq!(redacted, "mysql://example.test/db?ssl-mode=required");
-}
-
-/// Claim: A public-key path field remains unchanged, keeping nonsecret configuration available for diagnosis.
-/// ´claim:cli:keeps-public-key-fields-visible´
-/// ´test:crate:keeps-public-key-fields-visible´
-#[test]
-fn keeps_public_key_fields_visible() {
-    assert_eq!(
-        redact_field_value("auth.public_key_path", "/etc/app/public.pem"),
-        "/etc/app/public.pem"
-    );
-}
-
-/// Claim: The HTTPS and RPC fixtures lose credentials, safe URLs and non-URLs survive, and the generic field path also scrubs credential URLs.
-/// ´claim:cli:redacts-credentials-in-any-url-scheme´
-/// ´test:crate:redacts-credentials-in-any-url-scheme´
-#[test]
-fn redacts_credentials_in_any_url_scheme() {
-    assert_eq!(
-        crate::redact_url("https://user:password@example.test/path?api_key=secret&page=2"),
-        "https://example.test/path?page=2"
-    );
-
-    assert_eq!(
-        crate::redact_url("rpc://alice:hunter2@node.test:7041/"),
-        "rpc://node.test:7041/"
-    );
-
-    // A safe public URL is returned unchanged (borrowed).
-    assert_eq!(
-        crate::redact_url("https://example.test/docs?page=2"),
-        "https://example.test/docs?page=2"
-    );
-
-    // A non-URL value is untouched.
-    assert_eq!(crate::redact_url("not a url"), "not a url");
-
-    // A non-database field value carrying a credential URL is
-    // scrubbed on the generic field path too.
-    assert_eq!(
-        redact_field_value("endpoint", "https://user:password@example.test/?api_key=x"),
-        "https://example.test/"
-    );
-}
-
-/// Claim: The mixed error fixture loses its token and URL credentials while retaining explanatory text and a newline, preserving safe diagnostic context.
-/// ´claim:cli:redacts-secrets-in-free-form-text´
-/// ´test:crate:redacts-secrets-in-free-form-text´
-#[test]
-fn redacts_secrets_in_free_form_text() {
-    let text = "error: unexpected argument '--api-token=SHOULD_NOT_APPEAR' found\n\
-                endpoint https://user:pw@example.test/ retried";
-
-    let redacted = crate::redact_text(text);
-
-    assert!(!redacted.contains("SHOULD_NOT_APPEAR"));
-    assert!(!redacted.contains("user:pw"));
-    assert!(redacted.contains(&format!("--api-token={REDACTED}")));
-    assert!(redacted.contains("https://example.test/"));
-    assert!(redacted.contains("error: unexpected argument"));
-    // Whitespace and safe text survive untouched.
-    assert!(redacted.contains('\n'));
-}
-
-/// Claim: A URL following --endpoint= loses user information and its secret query value, closing the prefixed-token redaction path.
-/// ´claim:cli:redacts-key-equals-credential-url-token´
-/// ´test:crate:redacts-key-equals-credential-url-token´
-#[test]
-fn redacts_key_equals_credential_url_token() {
-    // The whole token fails `Url::parse` (the `--endpoint=` prefix is
-    // not a scheme), so the value side must be redacted on its own.
-    let redacted = crate::redact_text("--endpoint=https://user:password@example.test/path?api_key=secret");
-
-    assert_eq!(redacted, "--endpoint=https://example.test/path");
-    assert!(!redacted.contains("password"));
-    assert!(!redacted.contains("secret"));
-}
-
-/// Claim: Embedded endpoint credentials disappear while the request-failure and attempt context remain, keeping chained error text useful without the secret.
-/// ´claim:cli:redacts-credential-url-in-error-chain-text´
-/// ´test:crate:redacts-credential-url-in-error-chain-text´
-#[test]
-fn redacts_credential_url_in_error_chain_text() {
-    let text = "request failed: endpoint=https://user:pw@example.test/ (attempt 2 of 3)";
-
-    let redacted = crate::redact_text(text);
-
-    assert!(!redacted.contains("user:pw"));
-    assert!(redacted.contains("endpoint=https://example.test/"));
-    assert!(redacted.contains("request failed:"));
-    assert!(redacted.contains("(attempt 2 of 3)"));
-}
-
-/// Claim: Sensitive fragment pairs are removed, safe state survives, and a wholly secret fragment is cleared on URL and free-text paths.
-/// ´claim:cli:redacts-sensitive-url-fragments´
-/// ´test:crate:redacts-sensitive-url-fragments´
-#[test]
-fn redacts_sensitive_url_fragments() {
-    // OAuth implicit-grant style: the secret rides in the fragment,
-    // which query-pair scrubbing never sees. Safe pieces survive.
-    assert_eq!(
-        crate::redact_url("https://example.test/cb#access_token=abc&state=xyz"),
-        "https://example.test/cb#state=xyz"
-    );
-
-    // A fully sensitive fragment is cleared outright.
-    assert_eq!(
-        crate::redact_url("https://example.test/cb#access_token=abc"),
-        "https://example.test/cb"
-    );
-
-    // Fragment secrets are also caught on the free-text path.
-    let redacted = crate::redact_text("redirected to https://example.test/cb#id_token=SECRET");
-    assert!(!redacted.contains("SECRET"));
-}
-
-/// Claim: Malformed credential-like and empty-host URL tokens become the redaction marker, preventing parse failure from exposing their original bytes.
-/// ´claim:cli:unparseable-url-ish-token-fails-closed´
-/// ´test:crate:unparseable-url-ish-token-fails-closed´
-#[test]
-fn unparseable_url_ish_token_fails_closed() {
-    // "://user:pw@" has no scheme, so `Url::parse` fails even after
-    // substring extraction; the token must not be echoed verbatim.
-    assert_eq!(
-        crate::redact_text("connect to ://user:pw@ failed"),
-        format!("connect to {REDACTED} failed")
-    );
-
-    // "https://" alone fails parsing too (empty host).
-    assert_eq!(crate::redact_text("https://"), REDACTED);
-}
-
-/// Claim: The retries and mode fixture passes through unchanged, preventing secret filtering from erasing ordinary diagnostic parameters.
-/// ´claim:cli:keeps-non-sensitive-key-value-tokens´
-/// ´test:crate:keeps-non-sensitive-key-value-tokens´
-#[test]
-fn keeps_non_sensitive_key_value_tokens() {
-    let text = "--retries=5 mode=fast";
-
-    assert_eq!(crate::redact_text(text), text);
-}
-
-/// Claim: The runner-shaped error loses URL credentials but retains endpoint, failure context and timeout text, preserving safe failure diagnosis.
-/// ´claim:cli:redacts-runner-style-error-display´
-/// ´test:crate:redacts-runner-style-error-display´
-#[test]
-fn redacts_runner_style_error_display() {
-    // The generic runners pass arbitrary `Display` error text through
-    // `redact_text` before logging; this covers that text shape.
-    let error_display = "command failed: error connecting to https://svc:token123@api.example.test/v1: timeout";
-
-    let redacted = crate::redact_text(error_display);
-
-    assert!(!redacted.contains("token123"));
-    assert!(redacted.contains("https://api.example.test/v1"));
-    assert!(redacted.contains("command failed:"));
-    assert!(redacted.contains("timeout"));
-}
-
-/// Claim: An unknown secret-bearing flag returns usage failure and its serialized control record excludes the supplied secret, protecting parser diagnostics.
-/// ´claim:cli:usage-error-text-never-reproduces-secrets´
-/// ´test:crate:usage-error-text-never-reproduces-secrets´
-#[test]
-fn usage_error_text_never_reproduces_secrets() {
-    let Err(exit) = parse_args_from::<FixtureCli, _, _>(["fixture-helper", "--api-token=SHOULD_NOT_APPEAR"]) else {
-        panic!("unknown secret-bearing argument must fail parsing");
+fn usage_errors_retain_public_arguments() {
+    let Err(exit) = parse_args_from::<FixtureCli, _, _>(["fixture-helper", "--public-value=OBSERVED"]) else {
+        panic!("unknown argument must fail parsing");
     };
-
     assert_eq!(exit.exit, CommandExit::Usage);
-
-    let rendered = serde_json::to_string(&exit.record).unwrap();
-
-    assert!(
-        !rendered.contains("SHOULD_NOT_APPEAR"),
-        "usage record leaked the secret: {rendered}"
-    );
+    assert!(exit.record.message.contains("--public-value"));
+    assert_eq!(exit.record.arguments.unwrap()[1], b"--public-value=OBSERVED");
 }
 
 /// Claim: Creating and then touching an empty success stamp preserves zero length and advances its modification time, making renewed success observable.

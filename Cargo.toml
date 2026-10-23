@@ -30,8 +30,9 @@ thiserror = "2"
 # Pre-1.0 minor lines preserve the API used by the public pack.
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+secrecy = { version = "0.10", default-features = false }
+metrics = { version = "0.24", default-features = false }
 textwrap = "0.16"
-url = "2"
 # Keep the renderer on its reviewed major line with default features and dataset serialization.
 minijinja = { version = "3", features = ["serde"] }
 # TOML is pre-1.0; its 0.9 minor line preserves this input parser's API.
