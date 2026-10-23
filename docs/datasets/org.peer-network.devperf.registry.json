@@ -26,14 +26,14 @@
       "label": "expt:devperf:nullable-count-twenty",
       "label_name": "nullable-count-twenty",
       "measured_ms": 157.7,
-      "measurement": "Paired initial 34.04 to 70.95 ms and warmed 33.34 to 70.67 ms; recorded gate 157.7 ms.",
+      "measurement": "Paired initial 34.04 to 70.95 ms and warmed 33.34 to 70.67 ms; recorded gate 157.7 ms",
       "name": "pn-interchange::regexp::tests::nullable_counted_membership_20",
       "operation": "nullable counted repetition oracle and corrected matcher at count twenty",
       "ordinary_budget": "unit",
       "owner": "interchange implementer and contract reviewer",
       "placement": "required fast-tier unit case",
       "reason": "The approximately 2.1-fold increase is the accepted cost of counted-search correctness: exact membership takes priority over oracle speed. The 200 ms warning budget rounds the recorded gate cost upward; it changes no predicate, retry or timeout.",
-      "settlement": "Accepted correctness cost; revisit on matcher or fixture changes without weakening membership evidence.",
+      "settlement": "Accepted correctness cost; revisit on matcher or fixture changes without weakening membership evidence",
       "status": "admitted"
     }
   ]

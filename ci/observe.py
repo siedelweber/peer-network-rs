@@ -6,6 +6,7 @@ import subprocess
 import sys
 import time
 import tomllib
+import copy
 from collections import Counter
 
 from devperf import StructuralError
@@ -22,6 +23,42 @@ HELPERS={
 
 def identity(row):
     return row['package']+'::'+row['path']+'::'+row['item']
+
+
+def class_operations(decision, census):
+    membership=decision.get('membership',{})
+    if set(membership)=={'labelled_package'}:
+        package=membership['labelled_package']
+        return sorted(identity(row) for row in census['functions'] if row['package']==package and (row['boundary'] is not None or identity(row) in HELPERS))
+    if set(membership)=={'explicit'} and len(membership['explicit'])==len(set(membership['explicit'])):
+        return sorted(membership['explicit'])
+    raise StructuralError('invalid semantic class membership rule')
+
+
+def expand_registry(decisions, census):
+    """Expand reviewed shapes and membership rules, preserving item-specific evidence."""
+    if decisions.get('schema')!=2:raise StructuralError('compact observation input schema differs')
+    result=copy.deepcopy(decisions)
+    shapes=result.pop('shapes');assessments=result.pop('assessments')
+    classes={row['name']:row for row in result['class_decisions']}
+    if len(classes)!=len(result['class_decisions']):raise StructuralError('duplicate semantic class decision')
+    for decision in classes.values():
+        if 'operations' in decision:raise StructuralError('expanded class operations must be derived')
+        decision['operations']=class_operations(decision,census)
+    for row in result['operations']:
+        if 'fields' in row or 'metrics' in row:raise StructuralError('expanded operation shape must be derived')
+        row.update(copy.deepcopy(shapes[row.pop('shape')]))
+        if row['mode']=='exception':
+            exception=row['exception']
+            if 'enclosing_operations' in exception:raise StructuralError('expanded exception list must be derived')
+            exception['enclosing_operations']=classes[exception['class_decision']]['operations'].copy()
+    for row in result['generators']:
+        if 'boundaries' in row:raise StructuralError('expanded generator list must be derived')
+        row['boundaries']=classes[row['class_decision']]['operations'].copy()
+    for row in result['reviews']:
+        for field,name in row.pop('assessments').items():row[field]=copy.deepcopy(assessments[name])
+    result['schema']=1
+    return result
 
 
 def validate(census, registry, labels, claims):
@@ -56,6 +93,8 @@ def validate(census, registry, labels, claims):
     classes={row['name']:row for row in registry.get('class_decisions',[])}
     if len(classes)!=len(registry.get('class_decisions',[])):raise StructuralError('duplicate semantic class decision')
     for decision in classes.values():
+        if decision.get('operations')!=class_operations(decision,census):
+            raise StructuralError('semantic class does not contain its complete operation set')
         if decision.get('status')!='reviewer-confirmed' or not decision.get('premises') or not decision.get('operations') or not set(decision['operations'])<=set(rows):
             raise StructuralError('invalid semantic class decision')
     for name,row in rows.items():
@@ -85,7 +124,7 @@ def validate(census, registry, labels, claims):
                 raise StructuralError('exception lacks enclosing boundary witness')
             decision=classes.get(exception.get('class_decision'),{})
             inherited=exception.get('enclosing_operations',[])
-            if not inherited or not set(inherited)<=set(decision.get('operations',[])) or exception['boundary'] not in inherited:
+            if not inherited or inherited!=decision.get('operations',[]) or exception['boundary'] not in inherited:
                 raise StructuralError('exception lacks enclosing class operations')
             seen={name}
             target=exception['boundary']
@@ -114,6 +153,8 @@ def validate(census, registry, labels, claims):
     for generator in registry['generators']:
         if not generator.get('expansion_review') or not generator.get('boundaries') or not set(generator['boundaries'])<=set(rows):
             raise StructuralError('uninspected generated entry points')
+        if generator.get('boundaries')!=classes.get(generator.get('class_decision'),{}).get('operations'):
+            raise StructuralError('generator does not inherit its complete class operation set')
     return {'operations':len(rows),'by_package':dict(Counter(row['package'] for row in rows.values())),
             'instrumented':sum(row['mode']=='instrumented' for row in rows.values()),
             'exceptions':sum(row['mode']=='exception' for row in rows.values()),'generators':sum(generators.values()),
@@ -162,8 +203,9 @@ def main():
             from source_sites import census as sites
             labels,_=prose('.')
             claims={site_claim(site)['claim'] for site in sites(Path('.'))}
-            registry=json.loads(Path('ci/observation-registry.json').read_text())
+            registry=expand_registry(json.loads(Path('ci/observation-registry.json').read_text()),data)
             result=validate(data,registry,set(labels)|claims,claims)
+            Path('.lane/observation-registry-expanded.json').write_text(json.dumps(registry,indent=2,ensure_ascii=False)+'\n')
             summary=[]
             for package in sorted(result['by_package']):
                 modes=Counter(row['mode'] for row in registry['operations'] if row['package']==package)

@@ -641,3 +641,57 @@ fn calligraphic_output_is_chunking_invariant() {
     assert!(text.contains('\u{20ac}'));
     assert!(!text.contains('\u{fffd}'));
 }
+
+/// Claim: Running a real child through argument capture, progress and pipe relay builds no byte payload at default; the same sites build payloads at trace while preserving the child's exact output and exit.
+/// ´claim:cli:default-execwrap-sites-do-not-build-payloads´
+/// ´test:crate:default-payload-sites´
+#[test]
+fn default_payload_sites() {
+    if let Ok(mode) = std::env::var("PN_TEST_PAYLOAD_SITES") {
+        let _guard = cli_common::observation::bootstrap(true, false, tracing::Level::INFO).unwrap();
+        let root = tempfile::tempdir().unwrap();
+        let output = root.path().join("output");
+        let error = root.path().join("error");
+        let config = RoutingConfig {
+            redirect_output: Some(output.clone()),
+            redirect_error: Some(error.clone()),
+            ..Default::default()
+        };
+        let result = super::run(
+            &[
+                "sh".into(),
+                "-c".into(),
+                "printf public; printf diagnostic >&2; exit 7".into(),
+            ],
+            &config,
+            |_| {},
+        )
+        .unwrap();
+        assert_eq!(result.exit_code, 7);
+        assert_eq!(std::fs::read(output).unwrap(), b"public");
+        assert_eq!(std::fs::read(error).unwrap(), b"diagnostic");
+        let builds = super::PAYLOAD_BUILDS.load(std::sync::atomic::Ordering::Relaxed);
+        if mode == "default" {
+            assert_eq!(builds, 0);
+        } else {
+            assert!(builds >= 7);
+        }
+    } else {
+        for mode in ["default", "trace"] {
+            let root = tempfile::tempdir().unwrap();
+            let result = std::process::Command::new(std::env::current_exe().unwrap())
+                .args(["--exact", "tests::default_payload_sites"])
+                .env("PN_TEST_PAYLOAD_SITES", mode)
+                .env("PN_OBSERVE_LEVEL", mode)
+                .env("PN_OBSERVE_ARTIFACT_DIR", root.path())
+                .output()
+                .unwrap();
+            assert!(
+                result.status.success(),
+                "{} {}",
+                String::from_utf8_lossy(&result.stdout),
+                String::from_utf8_lossy(&result.stderr)
+            );
+        }
+    }
+}

@@ -69,7 +69,7 @@ fn main() -> ExitCode {
     } else {
         cli_common::observation::bootstrap(mode != "disabled", false, tracing::Level::INFO)
     };
-    let _guard = match guard {
+    let observation_guard = match guard {
         Ok(guard) => Some(guard),
         Err(cli_common::observation::BootstrapError::Unavailable(_)) => None,
         Err(error @ cli_common::observation::BootstrapError::Configuration(_)) => {
@@ -89,10 +89,8 @@ fn main() -> ExitCode {
         Err(_) => ExitCode::FAILURE,
     };
     if std::env::var_os("PN_TEST_OBSERVATION_RENDEZVOUS").is_some() {
-        if let Some(observation) = cli_common::observation::Observation::current() {
-            observation.summarize();
-        }
-        // The process fixture releases this read after receiving its summary.
+        drop(observation_guard);
+        // The process fixture releases this read after receiving its final status.
         // This is test ordering, not a longer production drain deadline.
         let mut released = [0];
         let _ignored = std::io::Read::read_exact(&mut std::io::stdin(), &mut released);

@@ -146,6 +146,66 @@ fn default_emission() {
     assert!(series.len() < usize::try_from(metrics["declared_series"].as_u64().unwrap()).unwrap());
 }
 
+/// Claim: At default, nested instrumented returns and scoped finishes each classify Ok as success and Err as error without formatting either payload, so returned work cannot be reported as incomplete merely because trace capture is disabled.
+/// ´claim:cli:default-returns-retain-outcomes-without-payloads´
+/// ´test:unit:default-return-outcomes´
+#[test]
+fn default_return_outcomes() {
+    struct Payload;
+    impl fmt::Debug for Payload {
+        fn fmt(&self, _: &mut fmt::Formatter<'_>) -> fmt::Result {
+            panic!("payload formatted");
+        }
+    }
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        skip_all,
+        ret,
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "returned"
+        )
+    )]
+    fn returned(error: bool) -> Result<Payload, Payload> {
+        if error { Err(Payload) } else { Ok(Payload) }
+    }
+    let (mut observation, _, capture) = fixture();
+    observation.full_trace = false;
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+    tracing::subscriber::with_default(subscriber, || {
+        let parent = scope("CLICOMMON", "rule:observe:spans", "run_stdout_json_command", &());
+        for error in [false, true] {
+            assert_eq!(returned(error).is_err(), error);
+            let nested = scope("CLICOMMON", "rule:observe:spans", "finished", &());
+            let result: Result<Payload, Payload> = if error { Err(Payload) } else { Ok(Payload) };
+            nested.finish(&result);
+        }
+        parent.finish_with(Outcome::Success, &());
+    });
+    observation.summarize();
+    let (done, drained) = mpsc::sync_channel(1);
+    observation.flush_sender.send(done).unwrap();
+    observation.sender.send(Message::Wake).unwrap();
+    drained.recv().unwrap();
+    let rows = records(&observation, &capture);
+    let summary = rows.iter().find(|row| row["kind"] == "metric_summary").unwrap();
+    let series = summary["metrics"]["instruments"].as_array().unwrap();
+    for outcome in ["success", "error"] {
+        let completed = series
+            .iter()
+            .find(|row| row["name"] == "clicommon__root__rule__observe__spans__completed_operations" && row["outcome"] == outcome)
+            .unwrap();
+        assert_eq!(completed["counter"], 2);
+    }
+    assert!(
+        !series
+            .iter()
+            .any(|row| row["outcome"] == "incomplete" && row["counter"].as_u64().is_some_and(|count| count > 0))
+    );
+}
+
 /// Claim: Public byte representations preserve UTF-8, NUL and invalid UTF-8 exactly, and structural values retain constructors, field keys and escaped string contents rather than nesting Debug text.
 /// ´claim:cli:public-content-encoding-is-lossless´
 /// ´test:unit:public-content-encoding´

@@ -1438,8 +1438,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:four-observation-modes-preserve-command-results",
       "before": "Claim: Disabled, enabled, selected-out and locally failing-export executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes.",
-      "after": "Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit; all enabled modes count the same labelled operations, default omits only unobserved series, and an unknown level refuses document execution before work.",
-      "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+      "after": "Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit; all enabled modes count the same labelled operations and terminal outcome distributions, default omits only unobserved series, and an unknown level refuses document execution before work.",
+      "review": "Read the fixture and assertions: the comparison now checks completed outcome distributions as well as starts, with identical workload bytes and exit. This is a semantic assertion independent of recorded duration."
     },
     {
       "operation": "cli-common::observation::tests::default_emission",

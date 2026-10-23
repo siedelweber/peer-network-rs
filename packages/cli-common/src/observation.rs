@@ -699,6 +699,9 @@ impl Visit for Fields {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn record_debug(&mut self, field: &Field, value: &dyn fmt::Debug) {
+        if field.name() == "return" {
+            self.3 = Some(return_outcome(value));
+        }
         let mut text = Limited(Vec::new());
         if fmt::write(&mut text, format_args!("{value:?}")).is_err() {
             self.2 = true;
@@ -706,9 +709,6 @@ impl Visit for Fields {
         }
         let length = text.0.len();
         if let Ok(text) = String::from_utf8(text.0) {
-            if field.name() == "return" {
-                self.3 = Some(if text.starts_with("Err(") { "error" } else { "success" });
-            }
             self.insert(field, content::structured(&text), length);
         } else {
             self.2 = true;
@@ -739,12 +739,49 @@ impl Visit for Fields {
         self.insert(field, json!(value), 5);
     }
 }
-// Identity and outcome only: default emission never formats public payloads.
+// Stop at the first mismatch or at Err(: no result payload is retained.
+fn return_outcome(value: &dyn fmt::Debug) -> &'static str {
+    struct Prefix {
+        matched: usize,
+        stopped: bool,
+    }
+    impl fmt::Write for Prefix {
+        fn write_str(&mut self, text: &str) -> fmt::Result {
+            if self.stopped {
+                return Err(fmt::Error);
+            }
+            for byte in text.bytes() {
+                if byte != b"Err("[self.matched] {
+                    self.stopped = true;
+                    return Err(fmt::Error);
+                }
+                self.matched += 1;
+                if self.matched == 4 {
+                    self.stopped = true;
+                    return Err(fmt::Error);
+                }
+            }
+            Ok(())
+        }
+    }
+    let mut prefix = Prefix {
+        matched: 0,
+        stopped: false,
+    };
+    let _bounded = fmt::write(&mut prefix, format_args!("{value:?}"));
+    if prefix.matched == 4 { "error" } else { "success" }
+}
+
+// Identity and bounded outcome classification, without public payload capture.
 #[derive(Default)]
 struct SummaryFields(Fields);
 impl Visit for SummaryFields {
     /// Justified: The delivery visitor selects accounting identity without recursively observing itself.
-    fn record_debug(&mut self, _field: &Field, _value: &dyn fmt::Debug) {}
+    fn record_debug(&mut self, field: &Field, value: &dyn fmt::Debug) {
+        if field.name() == "return" && !self.0.0.contains_key("outcome") {
+            self.0.3 = Some(return_outcome(value));
+        }
+    }
     /// Justified: Accounting accepts declared work without capturing public payloads.
     fn record_u64(&mut self, field: &Field, value: u64) {
         if field.name() == "work_bytes" {

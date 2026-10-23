@@ -18,7 +18,7 @@ def fixture():
     assessment=dict(status='reviewer-confirmed',premises='The fixture has no credential field and returns unit.',negative_probe='ROOT::claim:discipline:semantic-review-is-bound-to-source')
     review=dict(operation=name,body=function['body'],full_recording=assessment,secret_flow=assessment,exposure_consumers=assessment,class_decision='fixture',item_premise='The body returns unit with no credential or public payload.')
     data=dict(schema=1,functions=[function],generators=[])
-    register=dict(schema=1,named_operations=[],operations=[operation],generators=[],reviews=[review],class_decisions=[dict(name='fixture',status='reviewer-confirmed',premises='Public unit operation.',operations=[name])],
+    register=dict(schema=1,named_operations=[],operations=[operation],generators=[],reviews=[review],class_decisions=[dict(name='fixture',status='reviewer-confirmed',premises='Public unit operation.',membership={'explicit':[name]},operations=[name])],
                   metrics=[dict(name='fixture__elapsed_seconds',unit='seconds',kind='histogram',attributes={})])
     return data,register,{'ROOT::rule:observe:spans'},{assessment['negative_probe']}
 
@@ -31,7 +31,7 @@ class Admission(unittest.TestCase):
         """
         import tempfile
         from pathlib import Path
-        from gate_resources import raw_sample, joined, cpu_from_log
+        from gate_resources import raw_sample, joined, cpu_from_log, compact, context, seconds
         import subprocess
         script=Path(__file__).resolve().with_name('gate_resources.sh')
         with tempfile.TemporaryDirectory() as directory:
@@ -58,6 +58,14 @@ class Admission(unittest.TestCase):
             self.assertEqual(start['values']['cpu.pressure.some.avg10'],1.0)
             self.assertNotIn('cpu.pressure.some.avg10',delta)
             self.assertEqual(result['node_pressure_fraction']['cpu.some'],0.1)
+            self.assertEqual(context(result),(str(root),'shared'))
+            self.assertEqual(context(result,str(root)),(str(root),'gate'))
+            line=compact(result)
+            self.assertIn('[10,30,20]',line)
+            self.assertIn('[50,40,-10]',line)
+            self.assertIn('[null,null,null]',line)
+            self.assertIn('[1.0,3.0]',line)
+            self.assertEqual(seconds(69.42599999999999),'69.426')
             self.assertEqual(cpu_from_log(['OWN-TIME user=1.2 sys=0.3']),(1.2,0.3))
             self.assertEqual(cpu_from_log([]),(None,None))
             end['cgroup']='another'
@@ -65,6 +73,9 @@ class Admission(unittest.TestCase):
             self.assertTrue(all(v is None for v in joined(raw_sample(root/'missing'),end,2)['node_load_deltas'].values()))
             (root/'bad').write_text('corrupt')
             self.assertIsNone(raw_sample(root/'bad')['cgroup'])
+            missing=joined(raw_sample(root/'missing'),raw_sample(root/'bad'),1)
+            self.assertEqual(context(missing),(None,'unavailable'))
+            self.assertTrue(compact(missing).startswith('scope=unavailable'))
 
     def test_process_delivery_counts(self):
         """Claim: Inline warning and error counts remain distinct from verdicts, and each process retains its delivered and lost counts without treating missing delivery evidence as a measured zero.
@@ -161,7 +172,8 @@ class Admission(unittest.TestCase):
         anchor_row=copy.deepcopy(row);anchor_row['item']='outer';base[1]['operations'].append(anchor_row)
         anchor_review=copy.deepcopy(base[1]['reviews'][0]);anchor_review['operation']=identity(anchor);base[1]['reviews'].append(anchor_review)
         function['attributes']=[reason];function['boundary']=None;row['mode']='exception'
-        base[1]['class_decisions'][0]['operations'].append(identity(anchor))
+        base[1]['class_decisions'][0]['operations']=[identity(anchor)]
+        base[1]['class_decisions'][0]['membership']={'explicit':[identity(anchor)]}
         row['exception']=dict(rule='ROOT::rule:observe:spans',kind='inherited',justification=reason,witness=next(iter(base[3])),boundary=identity(anchor),class_decision='fixture',enclosing_operations=[identity(anchor)])
         self.assertEqual(validate(*base)['exceptions'],1)
         for mutation in ('rule','local','witness','const','cycle','enclosing'):
@@ -201,6 +213,30 @@ class Admission(unittest.TestCase):
         with self.assertRaisesRegex(StructuralError,'generator mapping'):validate(*args)
         args[1]['generators']=[copy.deepcopy(generator)]
         with self.assertRaisesRegex(StructuralError,'uninspected generated'):validate(*args)
+
+    def test_derived_class_completeness(self):
+        """Claim: Compact class membership derives every labelled operation from the parsed package census; removing one from the expansion or supplying a hand-maintained class list refuses rather than silently weakening inherited coverage.
+        ´claim:discipline:derived-classes-cover-every-labelled-boundary´
+        ´test:integration:test-derived-class-completeness´
+        """
+        from observe import expand_registry
+        data,registry,labels,claims=fixture()
+        compact=copy.deepcopy(registry);compact['schema']=2
+        decision=compact['class_decisions'][0]
+        decision.pop('operations');decision['membership']={'labelled_package':'fixture'}
+        operation=compact['operations'][0]
+        compact['shapes']={'public':{field:operation.pop(field) for field in ('fields','metrics')}}
+        operation['shape']='public'
+        review=compact['reviews'][0]
+        compact['assessments']={field:review.pop(field) for field in ('full_recording','secret_flow','exposure_consumers')}
+        review['assessments']={field:field for field in compact['assessments']}
+        expanded=expand_registry(compact,data)
+        self.assertEqual(expanded['class_decisions'][0]['operations'],[identity(data['functions'][0])])
+        self.assertEqual(validate(data,expanded,labels,claims)['operations'],1)
+        expanded['class_decisions'][0]['operations']=[]
+        with self.assertRaisesRegex(StructuralError,'complete operation set'):validate(data,expanded,labels,claims)
+        compact['class_decisions'][0]['operations']=[]
+        with self.assertRaisesRegex(StructuralError,'must be derived'):expand_registry(compact,data)
 
 
 if __name__=='__main__':unittest.main()

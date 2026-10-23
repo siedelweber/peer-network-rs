@@ -53,7 +53,7 @@ struct Args {
     #[arg(long = "change-directory", short = 'C', value_name = "DIR")]
     change_directory: Option<PathBuf>,
 
-    /// Retained output-contract flag; does not select observation level. Use `PN_OBSERVE_LEVEL`.
+    /// Add Writer write/line events at trace; does not select observation level. Use `PN_OBSERVE_LEVEL`.
     #[arg(long, short = 'd')]
     debug: bool,
 

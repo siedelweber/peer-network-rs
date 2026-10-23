@@ -116,9 +116,9 @@ reason = "An ordinary implementation-file edit should preserve a short feedback 
 [[rows]]
 name = "gate"
 category = "aggregate"
-budget_ms = 90000
-scope = "warm per-change repository gate"
-reason = "Complete default-level accounting measured 59.889 s and 52.189 s on the pinned worker, with own user/system CPU of 84.745/48.895 s and 63.712/34.957 s. Ninety seconds gives about fifty percent margin over the larger low-pressure sample; heavily contended runs remain warnings, not the feedback target."
+budget_ms = 120000
+scope = "gate of record on the imported tree in a fresh checkout, with its own retained node target"
+reason = "Pinned-node gates of record took 81.2 s and 85.5 s; the latter used about 233 own CPU seconds at about two percent shared CPU pressure. A 120 s warning allowance gives about forty percent margin above the larger observed wall for post-import build work. Warm lane repeats are diagnostics, not the calibration workload."
 
 [[rows]]
 name = "service-gate"

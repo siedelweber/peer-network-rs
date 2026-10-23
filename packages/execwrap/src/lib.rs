@@ -404,14 +404,16 @@ pub fn run(command: &[OsString], cfg: &RoutingConfig, mut notify: impl FnMut(&No
         &(command, cfg, "notification callback: opaque capability"),
     );
     let observation = cli_common::observation::Observation::current();
-    let mut operation = observation.as_ref().map(|o| o.operation(cli_common::observation::OperationKind::Child, o.capture(|| serde_json::json!({
-        "command": command.iter().map(|arg| cli_common::observation::public_bytes(arg.as_encoded_bytes())).collect::<Vec<_>>(),
-        "configuration": {"redirect":cfg.redirect.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
-            "redirect_output":cfg.redirect_output.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
-            "redirect_error":cfg.redirect_error.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
-            "redirect_prefixed":cfg.redirect_prefixed.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
+    let mut operation = observation.as_ref().map(|o| {
+        o.operation(cli_common::observation::OperationKind::Child, o.capture(|| serde_json::json!({
+        "command": command.iter().map(|arg| observed_bytes(arg.as_encoded_bytes())).collect::<Vec<_>>(),
+        "configuration": {"redirect":cfg.redirect.as_ref().map(|p|observed_bytes(p.as_os_str().as_encoded_bytes())),
+            "redirect_output":cfg.redirect_output.as_ref().map(|p|observed_bytes(p.as_os_str().as_encoded_bytes())),
+            "redirect_error":cfg.redirect_error.as_ref().map(|p|observed_bytes(p.as_os_str().as_encoded_bytes())),
+            "redirect_prefixed":cfg.redirect_prefixed.as_ref().map(|p|observed_bytes(p.as_os_str().as_encoded_bytes())),
             "notify_on_write":cfg.notify_on_write,"debug":cfg.debug}
-    }))));
+    })))
+    });
     let result = run_observed(command, cfg, &mut notify, &mut operation);
     if let Some(operation) = operation {
         let content = observation.as_ref().map_or(serde_json::Value::Null, |o| {
@@ -528,9 +530,7 @@ fn run_observed(
             ChannelMessage::Data { stream, data } => {
                 if let Some(operation) = operation {
                     operation.work_bytes(u64::try_from(data.len()).unwrap_or(u64::MAX));
-                    operation.progress(
-                        || serde_json::json!({"stream":stream.label(),"bytes":cli_common::observation::public_bytes(&data)}),
-                    );
+                    operation.progress(|| serde_json::json!({"stream":stream.label(),"bytes":observed_bytes(&data)}));
                 }
                 let subscribers = match stream {
                     Stream::Stdout => &stdout_subscribers,
@@ -677,7 +677,7 @@ fn read_stream<R: Read>(stream: Stream, mut source: R, tx: &Sender<ChannelMessag
             }
             Ok(read) => {
                 if cli_common::observation::trace_enabled() {
-                    tracing::info!(public_child_bytes=?cli_common::observation::public_bytes(&buffer[..read]), work_bytes=read as u64);
+                    tracing::info!(public_child_bytes=?observed_bytes(&buffer[..read]), work_bytes=read as u64);
                 } else {
                     tracing::info!(work_bytes = read as u64);
                 }
@@ -697,4 +697,14 @@ fn read_stream<R: Read>(stream: Stream, mut source: R, tx: &Sender<ChannelMessag
         }
     }
     scope.finish_with(outcome, &());
+}
+
+// Keep the test counter at the representation boundary, inside all three callers' guards.
+#[cfg(test)]
+static PAYLOAD_BUILDS: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+
+fn observed_bytes(bytes: &[u8]) -> serde_json::Value {
+    #[cfg(test)]
+    PAYLOAD_BUILDS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    cli_common::observation::public_bytes(bytes)
 }

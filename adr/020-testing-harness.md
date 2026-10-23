@@ -38,11 +38,11 @@
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
-| cli-common | active | unit | cli-common-rust | fast | 83 |
+| cli-common | active | unit | cli-common-rust | fast | 84 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
 | documents::integration | active | integration | documents-rust | fast | 28 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
-| execwrap | active | unit | execwrap-rust | fast | 25 |
+| execwrap | active | unit | execwrap-rust | fast | 26 |
 | execwrap::integration | active | integration | execwrap-rust | fast | 20 |
 | pn-interchange | active | unit | pn-interchange-rust | fast | 233 |
 | pn-interchange::integration | active | integration | pn-interchange-rust | fast | 14 |
@@ -105,8 +105,8 @@
 | rfc8949-refusal | active | integration | pn-interchange-rust | fast | 26 |
 | foundation-benchmarks | active | integration | pn-interchange-rust | fast | 2 |
 | ci::test_claims | active | unit | ci-python | fast | 20 |
-| ci::test_observe | active | unit | ci-python | fast | 11 |
-| ci::test_observe_runtime | active | integration | ci-python | fast | 1 |
+| ci::test_observe | active | unit | ci-python | fast | 12 |
+| ci::test_observe_runtime | active | integration | ci-python | fast | 2 |
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
 
 
@@ -166,3 +166,5 @@
 **Amendment (Observation co-closure)** · `amend:harness:observation-co-closure` The current registry, support package, replay configuration and benchmark smoke combine with the completed claims audit and (`amend:observe:foundation-evidence`) to support the implemented portions of (`gate:harness:foundation`) and (`gate:design:harness-foundation`). The asynchronous witnesses use controlled futures directly and require no tokio runtime. Exercised shrinking, independent models and comparable benchmark baselines remain future evidence, not facts inferred from passing smoke. The register reports scoped support rather than unrestricted closed gates. Real PostgreSQL and Elements service evidence: service implementer, provisioning slice; domain suites: assigned domain implementer, corresponding domain bite; client harnesses and actual exporter transport admission: client implementer, client slice. Decision-level evidence is not implicitly closed by these scoped gate rows.
 
 **Amendment (Case scope within a binary)** · `amend:harness:case-level-scope` Refines (`dec:harness:levels`): a binary suite may declare a case-specific level with its premise, without changing source identity, implementation, tier or binary-envelope accounting. The registry refuses an unknown case, missing level or missing premise. The provider-bridge witness is integration evidence because it composes the recorder, SDK, OTLP encoders and controlled transport workers; its private bridge assertions require in-crate placement. It retains the profile-derived unit-area carrier, which identifies that physical site, while the harness join declares integration and applies the ordinary two-second integration warning budget. This is a named placement exception, not a new timing verdict or a blanket relaxation of unit budgets.
+
+**Amendment (Payload-site witness placement)** · `amend:harness:payload-site-placement` Under (`amend:harness:case-level-scope`), execwrap's default_payload_sites case is integration evidence: it composes a real child process, pipe readers, relay workers and executable-owned observation. Its in-crate placement provides the test-only construction counter at the production argument, progress and relay sites; the profile-derived crate-area carrier identifies that placement, while the registry assigns the integration level and its ordinary two-second warning budget. The test-site witness proves that default execution avoids byte-payload construction and that trace visits those sites without changing child output or exit.

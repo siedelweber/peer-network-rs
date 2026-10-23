@@ -2,6 +2,30 @@
 import json
 from pathlib import Path
 import sys
+import os
+
+COUNTERS=[f'cpu.stat.{k}' for k in ('usage_usec','user_usec','system_usec','nr_periods','nr_throttled','throttled_usec')]+[f'{r}.pressure.{k}.total' for r in ('cpu','memory','io') for k in ('some','full')]+['memory.current','memory.peak']
+AVERAGES=[f'{r}.pressure.{k}.{a}' for r in ('cpu','memory','io') for k in ('some','full') for a in ('avg10','avg60','avg300')]
+
+
+def context(resource, owned=None):
+    start,end=resource['start'],resource['end']
+    root=start.get('cgroup')
+    if not root or root!=end.get('cgroup') or not any(v is not None for v in start['values'].values()) or not any(v is not None for v in end['values'].values()):
+        return None,'unavailable'
+    return root,'gate' if owned==root else 'shared'
+
+
+def compact(resource, owned=None):
+    _,scope=context(resource,owned)
+    start,end=resource['start']['values'],resource['end']['values']
+    samples=[[start.get(k),end.get(k),resource['node_load_deltas'].get(k)] for k in COUNTERS]
+    averages=[[start.get(k),end.get(k)] for k in AVERAGES]
+    return 'scope='+scope+' samples='+json.dumps(samples,separators=(',',':'))+' psi_avg='+json.dumps(averages,separators=(',',':'))+' psi='+json.dumps({k:round(v,6) if v is not None else None for k,v in resource['node_pressure_fraction'].items()},separators=(',',':'))
+
+
+def seconds(value):
+    return 'unavailable' if value is None else f'{value:.3f}'
 
 
 def raw_sample(path):
@@ -57,7 +81,11 @@ def process_cpu(path):
 def main():
     from gate_observation_counts import counts
     root=Path(sys.argv[1])
-    print('RESOURCE-LEGEND own_user_s/own_sys_s=process-and-child CPU seconds; node_load=shared cgroup, not gate CPU; node_psi=delta stall microseconds/1000000/wall seconds (some/full, upper bounds on gate stall); raw PSI averages=percent, no average deltas; cpu.stat=kernel microseconds/counts; memory=bytes; epoch_seconds=Unix UTC seconds; unavailable=null')
+    wall=float(sys.argv[2])
+    whole=joined(raw_sample(root/'gate-resource-start.raw'),raw_sample(root/'gate-resource-end.raw'),wall)
+    owned=os.environ.get('GATE_OWN_CGROUP')
+    cgroup,scope=context(whole,owned)
+    print('RESOURCE-LEGEND cgroup='+str(cgroup or 'unavailable')+' scope='+scope+' shared=node-load-not-gate-CPU; gate=launcher-declared-GATE_OWN_CGROUP; own_user_s/own_sys_s=process-and-child CPU seconds; samples=[start,end,delta] ordered='+json.dumps(COUNTERS,separators=(',',':'))+'; psi_avg=[start,end] percent ordered='+json.dumps(AVERAGES,separators=(',',':'))+'; psi=delta-stall-microseconds/1000000/wall-seconds; cpu.stat=microseconds/counts; memory=bytes; unavailable=null')
     reports=[]
     for line in (root/'gate-steps.tsv').read_text().splitlines():
         name,status,started,ended=line.split('\t'); wall=float(ended)-float(started)
@@ -65,13 +93,13 @@ def main():
         own=cpu_from_log(lines); counted=counts(lines)
         resource=joined(raw_sample(root/f'gate-{name}-resource-start.raw'),raw_sample(root/f'gate-{name}-resource-end.raw'),wall)
         reports.append(dict(step=name,wall_seconds=wall,own_user_s=own[0],own_sys_s=own[1],**resource))
-        print(f'STEP={name} STATUS={status} WALL={wall:.6f}s own_user_s={own[0]} own_sys_s={own[1]} node_load=true node_psi='+json.dumps(resource['node_pressure_fraction'],separators=(',',':'))+' warn={warn} error={error} loss={loss} processes='.format(**counted)+json.dumps(counted['processes'],separators=(',',':')))
+        print(f'STEP={name} STATUS={status} WALL={wall:.6f}s own_user_s={seconds(own[0])} own_sys_s={seconds(own[1])} '+compact(resource,owned)+' warn={warn} error={error} loss={loss} processes='.format(**counted)+json.dumps(counted['processes'],separators=(',',':')))
     wall=float(sys.argv[2]); begin=process_cpu(root/'gate-cpu-start.raw'); end=process_cpu(root/'gate-cpu-end.raw')
     own=[b-a if a is not None and b is not None else None for a,b in zip(begin,end)]
     resource=joined(raw_sample(root/'gate-resource-start.raw'),raw_sample(root/'gate-resource-end.raw'),wall)
     reports.append(dict(step='gate',wall_seconds=wall,own_user_s=own[0],own_sys_s=own[1],**resource))
     (root/'gate-resources.json').write_text(json.dumps(reports,indent=2)+'\n')
-    print(f'GATE-RESOURCES WALL={wall:.6f}s own_user_s={own[0]} own_sys_s={own[1]} node_load=true node_psi='+json.dumps(resource['node_pressure_fraction'],separators=(',',':'))+' artifact=.lane/gate-resources.json')
+    print(f'GATE-RESOURCES WALL={wall:.6f}s own_user_s={seconds(own[0])} own_sys_s={seconds(own[1])} '+compact(resource,owned)+' artifact=.lane/gate-resources.json')
 
 
 if __name__ == '__main__':

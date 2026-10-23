@@ -16,37 +16,83 @@ def run(argv, **kwargs):
     return result
 
 
-def compare(argv, mode, env):
-    """Release the fixture only after its reserved summary has been delivered."""
+def compare(argv, mode, env, deadline=60):
+    """Bound the fixture lifetime; release on final status or reader termination."""
     started=time.monotonic()
     process=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
                              env=env | {'PN_TEST_OBSERVATION_RENDEZVOUS':'1'})
-    stderr=[]
+    stderr=[]; stdout=[]; reader_errors=[]
+    released=False
+    def release():
+        nonlocal released
+        if released:return
+        released=True
+        try: process.stdin.write(b'\n'); process.stdin.flush()
+        except (OSError,ValueError): pass
     def receive():
-        summary=export=released=False
-        if mode=='disabled':
-            process.stdin.write(b'\n'); process.stdin.flush(); released=True
-        for line in process.stderr:
-            stderr.append(line)
-            row=json.loads(line)
-            summary |= row.get('kind')=='metric_summary'
-            export |= row.get('kind')=='export_summary'
-            unavailable=row.get('kind')=='observation_status' and row.get('availability')=='unavailable'
-            if not released and (unavailable or (summary and (mode!='failing-export' or export))):
-                process.stdin.write(b'\n'); process.stdin.flush(); released=True
-    reader=threading.Thread(target=receive)
-    reader.start()
-    stdout=process.stdout.read()
-    status=process.wait()
-    reader.join()
-    process.stdin.close();process.stdout.close();process.stderr.close()
+        try:
+            for line in process.stderr:
+                stderr.append(line)
+                try: row=json.loads(line)
+                except (ValueError,UnicodeError): continue
+                if isinstance(row,dict) and row.get('kind')=='observation_status': release()
+        except (OSError,ValueError) as error: reader_errors.append(str(error))
+        finally: release()
+    reader=threading.Thread(target=receive,daemon=True)
+    output=threading.Thread(target=lambda: stdout.append(process.stdout.read()),daemon=True)
+    reader.start(); output.start()
+    timed_out=False
+    try: status=process.wait(timeout=deadline)
+    except subprocess.TimeoutExpired:
+        timed_out=True; process.kill(); status=process.wait(timeout=5)
+    finally:
+        reader.join(timeout=5); output.join(timeout=5)
+        if not reader.is_alive(): process.stderr.close()
+        if not output.is_alive(): process.stdout.close()
+        try: process.stdin.close()
+        except (OSError,ValueError): pass
     print(f'OBSERVATION-WITNESS command={argv[0]} status={status} wall_seconds={time.monotonic()-started:.6f}')
-    return subprocess.CompletedProcess(argv,status,stdout,b''.join(stderr))
+    if timed_out or reader.is_alive() or output.is_alive(): raise AssertionError('observation fixture deadline exceeded')
+    if reader_errors: raise AssertionError('observation reader failed: '+str(reader_errors))
+    return subprocess.CompletedProcess(argv,status,b''.join(stdout),b''.join(stderr))
+
+
+def distribution(summary):
+    return {(row['name'],row.get('outcome','')):row['counter'] for row in summary['instruments']
+            if row['name'].endswith(('started_operations','completed_operations')) and row['counter']>0}
 
 
 class Processes(unittest.TestCase):
+    def test_rendezvous_failures(self):
+        """Claim: Non-JSON diagnostics and a final status without a summary release the fixture, reader EOF also releases it, and an injected deadline kills a wedged fixture and fails explicitly instead of hanging verification.
+        ´claim:discipline:observation-rendezvous-fails-within-its-deadline´
+        ´test:integration:test-rendezvous-failures´
+        """
+        import io
+        from unittest.mock import patch
+        class Process:
+            def __init__(self, evidence, timeout=False):
+                self.stdin=io.BytesIO();self.stdout=io.BytesIO(b'result');self.stderr=io.BytesIO(evidence)
+                self.timeout=timeout;self.killed=False
+            def wait(self, timeout):
+                if self.timeout and not self.killed:raise subprocess.TimeoutExpired('fixture',timeout)
+                return -9 if self.killed else 0
+            def kill(self):self.killed=True
+        for evidence in (b'not JSON\n{"kind":"observation_status"}\n',b'not JSON\n'):
+            process=Process(evidence)
+            # Retain writes after close for the release assertion.
+            class Input(io.BytesIO):
+                def close(self):self.released=self.getvalue()
+            process.stdin=Input()
+            with patch('subprocess.Popen',return_value=process):result=compare(['fixture'],'trace',{})
+            self.assertEqual(result.stdout,b'result'); self.assertIn(b'\n',process.stdin.released)
+            process=Process(evidence,True)
+            with patch('subprocess.Popen',return_value=process):
+                with self.assertRaisesRegex(AssertionError,'deadline exceeded'):compare(['fixture'],'trace',{})
+            self.assertTrue(process.killed)
+
     def test_four_mode_results(self):
-        """Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit; all enabled modes count the same labelled operations, default omits only unobserved series, and an unknown level refuses document execution before work.
+        """Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit; all enabled modes count the same labelled operations and terminal outcome distributions, default omits only unobserved series, and an unknown level refuses document execution before work.
         ´claim:discipline:four-observation-modes-preserve-command-results´
         ´test:integration:test-four-mode-results´
         """
@@ -78,9 +124,9 @@ class Processes(unittest.TestCase):
                 rows=[json.loads(line) for line in result.stderr.splitlines()]
                 if mode!='disabled':
                     summary=next(row['metrics'] for row in rows if row.get('kind')=='metric_summary')
-                    accounting[mode]={row['name']:row['counter'] for row in summary['instruments'] if row['name'].endswith('started_operations') and row['counter']>0}
+                    accounting[mode]=distribution(summary)
                     for owner in ('documents','interchange','execwrap','clicommon'):
-                        self.assertTrue(any(name.startswith(owner+'__') and count>0 for name,count in accounting[mode].items()))
+                        self.assertTrue(any(name[0].startswith(owner+'__') and count>0 for name,count in accounting[mode].items()))
                     self.assertEqual(len(summary['instruments'])+(summary['declared_but_unobserved'] if mode=='default' else 0),summary['declared_series'])
                 self.assertNotIn(b'fixture-private-token',result.stdout+result.stderr)
                 if mode=='disabled':
@@ -97,6 +143,18 @@ class Processes(unittest.TestCase):
                 if mode=='failing-export':self.assertTrue(any(row.get('kind')=='export_summary' and row['lost_exports']>0 for row in rows))
             self.assertTrue(all(sample==samples['disabled'] for sample in samples.values()))
             self.assertTrue(all(sample==accounting['default'] for sample in accounting.values()))
+            document_runs={}
+            document_outcomes={}
+            for level in ("default","trace"):
+                result=run([str(target/"documents"),"check"],cwd=root,env=env | {"PN_OBSERVE_LEVEL":level})
+                self.assertEqual(result.returncode,0,result.stderr.decode())
+                document_runs[level]=(result.returncode,result.stdout)
+                (artifact/("documents-"+level+".jsonl")).write_bytes(result.stderr)
+                rows=[json.loads(line) for line in result.stderr.splitlines()]
+                summary=next(row["metrics"] for row in rows if row.get("kind")=="metric_summary")
+                document_outcomes[level]=distribution(summary)
+            self.assertEqual(document_runs["default"],document_runs["trace"])
+            self.assertEqual(document_outcomes["default"],document_outcomes["trace"])
             report=json.loads(samples['disabled'][1])
             self.assertEqual(report['canonical'],[130,24,42,97,120])
             self.assertEqual(report['verdict'],'AcceptedStrictly { minor: 0 }')

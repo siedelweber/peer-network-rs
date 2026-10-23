@@ -102,6 +102,7 @@
         "cli-common::observation::tests::inclusive_metering",
         "cli-common::observation::tests::metric_registry",
         "cli-common::observation::tests::default_emission",
+        "cli-common::observation::tests::default_return_outcomes",
         "cli-common::observation::tests::typed_export_bootstrap",
         "cli-common::observation::tests::custom_debug_error_outcome",
         "cli-common::observation::tests::unavailable_observation",
@@ -259,7 +260,14 @@
     },
     {
       "budget": "pure-suite",
+      "case_level_reasons": {
+        "execwrap::tests::default_payload_sites": "Composes a real child, pipe readers, relay workers and the observer; in-crate placement permits a test-only representation counter at all three production call sites."
+      },
+      "case_levels": {
+        "execwrap::tests::default_payload_sites": "integration"
+      },
       "cases": [
+        "execwrap::tests::default_payload_sites",
         "execwrap::tests::aliased_redirection_paths_are_rejected",
         "execwrap::tests::ambiguous_alias_does_not_truncate_existing_output",
         "execwrap::tests::calligraphic_adds_prefix_per_line",
@@ -2973,6 +2981,7 @@
       "cases": [
         "ci::test_observe.Admission.test_duplicate_metric",
         "ci::test_observe.Admission.test_generated_mapping",
+        "ci::test_observe.Admission.test_derived_class_completeness",
         "ci::test_observe.Admission.test_invalid_exception",
         "ci::test_observe.Admission.test_observation_streams",
         "ci::test_observe.Admission.test_omitted_instrumentation",
@@ -2994,7 +3003,8 @@
     {
       "budget": "pure-suite",
       "cases": [
-        "ci::test_observe_runtime.Processes.test_four_mode_results"
+        "ci::test_observe_runtime.Processes.test_four_mode_results",
+        "ci::test_observe_runtime.Processes.test_rendezvous_failures"
       ],
       "implementation": "ci-python",
       "kind": "suite",
