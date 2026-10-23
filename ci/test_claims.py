@@ -35,6 +35,23 @@ def fixture():
 
 
 class Evidence(unittest.TestCase):
+    def test_bite_one_entry(self):
+        """Claim: An owned bite-1 entry hold blocks a records implementation even when other scoped evidence passes; only admitted source-matched support clears that prerequisite.
+        ´claim:testing:bite-one-entry-holds-block-implementation´
+        ´test:integration:test-bite-one-entry´
+        """
+        from claims import enforce_entry
+        row=dict(name='ROOT::req:testing:fixture',entry_gate='ROOT::gate:design:bite-1',status='held')
+        enforce_entry([row],False)
+        with self.assertRaisesRegex(StructuralError,'bite-1 entry evidence remains held'):
+            enforce_entry([row],True)
+        row['status']='scoped-passed'
+        enforce_entry([row],True)
+        row['status']='failed'
+        with self.assertRaises(StructuralError):enforce_entry([row],True)
+        with self.assertRaisesRegex(StructuralError,'entry register differs'):
+            enforce_entry([],False,{row['name']})
+
     def test_shared_failure(self):
         """A failing sibling defeats the shared claim and its obligation despite another passing execution.
         ´claim:testing:sibling-failure-dominates´
@@ -163,6 +180,7 @@ class Evidence(unittest.TestCase):
                               doc=gloss+'\n'+carrier+'\n´test:integration:'+name+'´'))
         records=[dict(r,scope='case',configuration=CONFIGURATION) for r in data['results']]
         registry=SimpleNamespace(cases={n:dict(runner='ci') for n in ('first','sibling')},matrix=lambda *_:None)
+        data['paragraphs']['ROOT::amend:decomposition:bite-one-entry-evidence']={'citations':set()}
         with tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
             previous=Path.cwd()
             stack.callback(os.chdir,previous)

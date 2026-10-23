@@ -84,6 +84,8 @@ reason = "fast smoke is implemented; comparable machine campaigns and reviewed b
 [[rows]]
 kind = "suite"
 name = "cli-common"
+case_levels = { "cli-common::observation::tests::provider_bridge" = "integration" }
+case_level_reasons = { "cli-common::observation::tests::provider_bridge" = "Composes the JSON recorder, OpenTelemetry SDK providers, real OTLP encoders and controlled transport workers; in-crate placement is required for private bridge assertions, not evidence of a local-unit scope." }
 status = "active"
 runner = "nextest"
 level = "unit"
@@ -508,7 +510,7 @@ level = "unit"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_harness.Harness.test_doctest_identity", "ci::test_harness.Harness.test_doctest_inventory", "ci::test_harness.Harness.test_dropped_case", "ci::test_harness.Harness.test_ignored_case", "ci::test_harness.Harness.test_missing_level", "ci::test_harness.Harness.test_mock_as_real", "ci::test_harness.Harness.test_nextest_suite_span", "ci::test_harness.Harness.test_service_hold", "ci::test_harness.Harness.test_stale_source", "ci::test_harness.Harness.test_unregistered_implementation"]
+cases = ["ci::test_harness.Harness.test_case_level_declaration", "ci::test_harness.Harness.test_doctest_identity", "ci::test_harness.Harness.test_doctest_inventory", "ci::test_harness.Harness.test_dropped_case", "ci::test_harness.Harness.test_ignored_case", "ci::test_harness.Harness.test_interchange_manifest", "ci::test_harness.Harness.test_missing_level", "ci::test_harness.Harness.test_mock_as_real", "ci::test_harness.Harness.test_nextest_suite_span", "ci::test_harness.Harness.test_service_hold", "ci::test_harness.Harness.test_stale_source", "ci::test_harness.Harness.test_unregistered_implementation"]
 
 [[rows]]
 kind = "suite"
@@ -817,7 +819,7 @@ level = "unit"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_claims.Evidence.test_enforcement_switch", "ci::test_claims.Evidence.test_missing_area", "ci::test_claims.Evidence.test_missing_results_and_mints", "ci::test_claims.Evidence.test_orphan_mint", "ci::test_claims.Evidence.test_planned_census", "ci::test_claims.Evidence.test_planned_name", "ci::test_claims.Evidence.test_python_exhibits", "ci::test_claims.Evidence.test_removed_obligation", "ci::test_claims.Evidence.test_required_gloss_reviews", "ci::test_claims.Evidence.test_requirement_edges", "ci::test_claims.Evidence.test_respellings", "ci::test_claims.Evidence.test_reverse_evidence_edges", "ci::test_claims.Evidence.test_review_binding", "ci::test_claims.Evidence.test_shared_failure", "ci::test_claims.Evidence.test_source_carriers", "ci::test_claims.Evidence.test_stale_result", "ci::test_claims.Evidence.test_uncited_evidence_and_holds", "ci::test_claims.Evidence.test_undeclared_site", "ci::test_claims.Evidence.test_unknown_evidence_edge"]
+cases = ["ci::test_claims.Evidence.test_bite_one_entry", "ci::test_claims.Evidence.test_enforcement_switch", "ci::test_claims.Evidence.test_missing_area", "ci::test_claims.Evidence.test_missing_results_and_mints", "ci::test_claims.Evidence.test_orphan_mint", "ci::test_claims.Evidence.test_planned_census", "ci::test_claims.Evidence.test_planned_name", "ci::test_claims.Evidence.test_python_exhibits", "ci::test_claims.Evidence.test_removed_obligation", "ci::test_claims.Evidence.test_required_gloss_reviews", "ci::test_claims.Evidence.test_requirement_edges", "ci::test_claims.Evidence.test_respellings", "ci::test_claims.Evidence.test_reverse_evidence_edges", "ci::test_claims.Evidence.test_review_binding", "ci::test_claims.Evidence.test_shared_failure", "ci::test_claims.Evidence.test_source_carriers", "ci::test_claims.Evidence.test_stale_result", "ci::test_claims.Evidence.test_uncited_evidence_and_holds", "ci::test_claims.Evidence.test_undeclared_site", "ci::test_claims.Evidence.test_unknown_evidence_edge"]
 
 [[rows]]
 kind = "suite"

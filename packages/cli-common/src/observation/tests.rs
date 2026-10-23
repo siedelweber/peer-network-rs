@@ -61,6 +61,13 @@ fn content_artifact_publication() {
     content::compact(&mut second, directory.path()).unwrap();
     assert_eq!(first, second);
     assert_eq!(std::fs::read_dir(path.parent().unwrap()).unwrap().count(), 1);
+    let mut wrapped = json!({"detail":{"duration_seconds":1,"result":original["payload"]}});
+    content::compact(&mut wrapped, directory.path()).unwrap();
+    assert_eq!(wrapped["detail"]["result"], first["payload"]);
+    let mut another = json!({"detail":{"duration_seconds":2,"result":original["payload"]}});
+    content::compact(&mut another, directory.path()).unwrap();
+    assert_eq!(another["detail"]["result"], first["payload"]);
+    assert_eq!(std::fs::read_dir(path.parent().unwrap()).unwrap().count(), 1);
     std::fs::write(path, b"wrong").unwrap();
     assert!(content::compact(&mut original.clone(), directory.path()).is_err());
     let mut small = json!({"payload":"small"});
@@ -68,7 +75,7 @@ fn content_artifact_publication() {
     assert_eq!(small, json!({"payload":"small"}));
 }
 
-/// Claim: A saturated ordinary queue cannot consume the reserved metric-summary slot; rendezvous-controlled delivery observes the summary before draining the queued ordinary records, without extending a timeout.
+/// Claim: A saturated ordinary queue cannot consume diagnostic, metric-summary, export-summary or drain-request capacity; rendezvous-controlled delivery observes these records and acknowledges the drain without extending a timeout.
 /// ´claim:cli:summary-capacity-survives-ordinary-saturation´
 /// ´test:unit:summary-capacity´
 #[test]
@@ -78,6 +85,7 @@ fn summary_capacity() {
         release: mpsc::Receiver<()>,
         summary: mpsc::SyncSender<()>,
         diagnostic: Arc<std::sync::atomic::AtomicBool>,
+        export: Arc<std::sync::atomic::AtomicBool>,
         first: bool,
     }
     impl Write for Blocked {
@@ -95,6 +103,9 @@ fn summary_capacity() {
             if row["kind"] == "metric_summary" {
                 self.summary.send(()).unwrap();
             }
+            if row["kind"] == "export_summary" {
+                self.export.store(true, Ordering::Relaxed);
+            }
             Ok(bytes.len())
         }
         fn flush(&mut self) -> io::Result<()> {
@@ -106,12 +117,14 @@ fn summary_capacity() {
     let (summary, seen) = mpsc::sync_channel(1);
     let clock = Arc::new(ManualClock(AtomicU64::new(0)));
     let diagnostic = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let export = Arc::new(std::sync::atomic::AtomicBool::new(false));
     let observation = Observation::with_writer(
         Blocked {
             entered,
             release: released,
             summary,
             diagnostic: diagnostic.clone(),
+            export: export.clone(),
             first: true,
         },
         clock,
@@ -123,10 +136,15 @@ fn summary_capacity() {
         observation.emit(json!({"public":i}));
     }
     observation.emit(json!({"level":"ERROR","message":"complete public diagnostic"}));
+    observation.emit(json!({"kind":"export_summary","lost_exports":1}));
     observation.summarize();
+    let (done, drained) = mpsc::sync_channel(1);
+    observation.flush_sender.try_send(done).unwrap();
     release.send(()).unwrap();
     seen.recv().unwrap();
+    drained.recv().unwrap();
     assert!(diagnostic.load(Ordering::Relaxed));
+    assert!(export.load(Ordering::Relaxed));
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
 }
 use crate::secrets::{PrivateBytes, PrivateString, SecretBox, SecretRole, SecretString};

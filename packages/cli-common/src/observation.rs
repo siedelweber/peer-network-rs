@@ -167,7 +167,6 @@ impl Clock for SystemClock {
 
 enum Message {
     Record(Vec<u8>),
-    Flush(SyncSender<()>),
     Wake,
 }
 
@@ -201,6 +200,7 @@ impl Write for Limited {
 pub struct Observation {
     sender: SyncSender<Message>,
     summary_sender: SyncSender<Vec<u8>>,
+    flush_sender: SyncSender<SyncSender<()>>,
     diagnostic_sender: SyncSender<Vec<u8>>,
     queued_bytes: Arc<AtomicU64>,
     lost: Arc<AtomicU64>,
@@ -221,7 +221,8 @@ impl Observation {
         bridge: Option<Arc<crate::observation_export::Bridge>>,
     ) -> io::Result<Self> {
         let (sender, receiver) = mpsc::sync_channel(QUEUE_RECORDS);
-        let (summary_sender, summary_receiver) = mpsc::sync_channel::<Vec<u8>>(1);
+        let (summary_sender, summary_receiver) = mpsc::sync_channel::<Vec<u8>>(2);
+        let (flush_sender, flush_receiver) = mpsc::sync_channel::<SyncSender<()>>(1);
         let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Vec<u8>>(8);
         let lost = Arc::new(AtomicU64::new(0));
         let worker_lost = lost.clone();
@@ -250,29 +251,32 @@ impl Observation {
                     worker_lost.fetch_add(1, Ordering::Relaxed);
                 }
             };
-            while let Ok(message) = receiver.recv() {
-                for diagnostic in diagnostic_receiver.try_iter().take(8) {
-                    deliver(&diagnostic);
-                }
-                if let Ok(summary) = summary_receiver.try_recv() {
-                    deliver(&summary);
-                }
-                match message {
-                    Message::Record(bytes) => {
-                        let charged = bytes.len() as u64;
-                        deliver(&bytes);
-                        worker_queued.fetch_sub(charged, Ordering::Relaxed);
+            while let Ok(first) = receiver.recv() {
+                for message in std::iter::once(first).chain(receiver.try_iter().take(QUEUE_RECORDS)) {
+                    for diagnostic in diagnostic_receiver.try_iter().take(8) {
+                        deliver(&diagnostic);
                     }
-                    Message::Flush(done) => {
-                        let _ignored = done.try_send(());
+                    for summary in summary_receiver.try_iter().take(2) {
+                        deliver(&summary);
                     }
-                    Message::Wake => {}
+                    match message {
+                        Message::Record(bytes) => {
+                            let charged = bytes.len() as u64;
+                            deliver(&bytes);
+                            worker_queued.fetch_sub(charged, Ordering::Relaxed);
+                        }
+                        Message::Wake => {}
+                    }
+                }
+                for done in flush_receiver.try_iter().take(1) {
+                    let _ignored = done.try_send(());
                 }
             }
         })?;
         Ok(Self {
             sender,
             summary_sender,
+            flush_sender,
             diagnostic_sender,
             queued_bytes,
             lost,
@@ -306,7 +310,7 @@ impl Observation {
             self.lost.fetch_add(1, Ordering::Relaxed);
             return;
         }
-        let reserved = if record["kind"] == "metric_summary" {
+        let reserved = if record["kind"] == "metric_summary" || record["kind"] == "export_summary" {
             Some(&self.summary_sender)
         } else if record["level"] == "ERROR" || record["level"] == "WARN" {
             Some(&self.diagnostic_sender)
@@ -340,7 +344,12 @@ impl Observation {
 
     fn flush(&self) {
         let (done, wait) = mpsc::sync_channel(1);
-        if self.sender.try_send(Message::Flush(done)).is_err() || wait.recv_timeout(Duration::from_millis(100)).is_err() {
+        if self.flush_sender.try_send(done).is_err() {
+            self.lost.fetch_add(1, Ordering::Relaxed);
+            return;
+        }
+        let _wake = self.sender.try_send(Message::Wake);
+        if wait.recv_timeout(Duration::from_millis(100)).is_err() {
             self.lost.fetch_add(1, Ordering::Relaxed);
         }
     }

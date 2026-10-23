@@ -88,6 +88,12 @@
     },
     {
       "budget": "pure-suite",
+      "case_level_reasons": {
+        "cli-common::observation::tests::provider_bridge": "Composes the JSON recorder, OpenTelemetry SDK providers, real OTLP encoders and controlled transport workers; in-crate placement is required for private bridge assertions, not evidence of a local-unit scope."
+      },
+      "case_levels": {
+        "cli-common::observation::tests::provider_bridge": "integration"
+      },
       "cases": [
         "cli-common::observation::tests::backward_clock",
         "cli-common::observation::tests::bounded_loss",
@@ -2476,10 +2482,12 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_harness.Harness.test_case_level_declaration",
         "ci::test_harness.Harness.test_doctest_identity",
         "ci::test_harness.Harness.test_doctest_inventory",
         "ci::test_harness.Harness.test_dropped_case",
         "ci::test_harness.Harness.test_ignored_case",
+        "ci::test_harness.Harness.test_interchange_manifest",
         "ci::test_harness.Harness.test_missing_level",
         "ci::test_harness.Harness.test_mock_as_real",
         "ci::test_harness.Harness.test_nextest_suite_span",
@@ -2924,6 +2932,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_claims.Evidence.test_bite_one_entry",
         "ci::test_claims.Evidence.test_enforcement_switch",
         "ci::test_claims.Evidence.test_missing_area",
         "ci::test_claims.Evidence.test_missing_results_and_mints",

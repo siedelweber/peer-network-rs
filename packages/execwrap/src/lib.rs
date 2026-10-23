@@ -49,9 +49,9 @@ pub enum ExecError {
 
     /// The child process could not be spawned.
     ///
-    /// The failing program path is caller-controlled `argv[0]` — raw
-    /// child argv under the command-line output contract (´[ROOT-rec:output:decision]´) — so it is deliberately not carried on
-    /// this variant, keeping it out of every `Display` and diagnostic.
+    /// The failing program path remains in the enclosing operation's full public
+    /// arguments under (´[ROOT-rec:output:decision]´); this variant carries the
+    /// underlying error, without duplicating those arguments.
     #[error("failed to spawn child process: {source}")]
     Spawn {
         /// Underlying I/O error.
@@ -423,7 +423,7 @@ pub fn run(command: &[OsString], cfg: &RoutingConfig, mut notify: impl FnMut(&No
             ),
             Err(error) => operation.finish(
                 cli_common::observation::Outcome::Error,
-                serde_json::json!({"error":error.to_string(),"error_debug":format!("{error:?}")}),
+                serde_json::json!({"error":error.to_string(),"structured_result":"enclosing run span return"}),
             ),
         }
     }

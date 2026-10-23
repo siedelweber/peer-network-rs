@@ -242,19 +242,40 @@ fn base64(value: &[u8]) -> String {
 /// Store large values on the delivery worker, replacing only their representation.
 /// Justified: Artifact publication is part of the labelled observation delivery operation and must not recursively observe itself.
 pub(super) fn compact(record: &mut Value, root: &Path) -> io::Result<()> {
-    // Externalize complete top-level values, so nesting cannot multiply references
-    // or discard an element. Small records keep their ordinary JSON schema.
+    // Address the payload before its envelope, so different timestamps and
+    // operation totals cannot cause another copy of identical public content.
     if let Value::Object(fields) = record {
         for value in fields.values_mut() {
-            let encoded = serde_json::to_vec(value)?;
-            if encoded.len() > INLINE_BYTES {
-                *value = artifact(&encoded, root)?;
-            }
+            compact_value(value, root)?;
         }
     }
     let encoded = serde_json::to_vec(record)?;
     if encoded.len() >= super::RECORD_LIMIT {
         *record = json!({"kind":"observation_artifact","payload":artifact(&encoded, root)?});
+    }
+    Ok(())
+}
+
+fn compact_value(value: &mut Value, root: &Path) -> io::Result<()> {
+    if serde_json::to_vec(value)?.len() <= INLINE_BYTES {
+        return Ok(());
+    }
+    match value {
+        Value::Object(fields) => {
+            for child in fields.values_mut() {
+                compact_value(child, root)?;
+            }
+        }
+        Value::Array(values) => {
+            for child in values {
+                compact_value(child, root)?;
+            }
+        }
+        _ => {}
+    }
+    let encoded = serde_json::to_vec(value)?;
+    if encoded.len() > INLINE_BYTES {
+        *value = artifact(&encoded, root)?;
     }
     Ok(())
 }

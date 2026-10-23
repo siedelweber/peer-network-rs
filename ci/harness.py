@@ -72,10 +72,16 @@ class Registry:
                 raise StructuralError('mock implementation requires mock-suite budget')
             if suite.get('runner') not in {'nextest', 'doctest', 'ci', 'contract', 'benchmark'}:
                 raise StructuralError('unknown suite runner')
+            overrides=suite.get('case_levels',{})
+            reasons=suite.get('case_level_reasons',{})
+            if not isinstance(overrides,dict) or not isinstance(reasons,dict) or set(overrides)!=set(reasons) or not set(overrides)<=set(suite['cases']):
+                raise StructuralError('case level override lacks a declared case and premise')
+            if any(level not in self.levels or not isinstance(reasons[name],str) or not reasons[name].strip() for name,level in overrides.items()):
+                raise StructuralError('missing case level or premise')
             for case in suite['cases']:
                 if not isinstance(case, str) or not case or case in self.cases:
                     raise StructuralError('duplicate or malformed registered case')
-                self.cases[case] = suite
+                self.cases[case] = dict(suite,level=overrides.get(case,suite['level']))
         if not set(self.properties).issubset(self.cases):
             raise StructuralError('unregistered property case')
         for suite in self.suites.values():

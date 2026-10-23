@@ -76,7 +76,7 @@
 | ci::test_design | active | integration | ci-python | fast | 6 |
 | ci::test_devperf | active | unit | ci-python | fast | 14 |
 | ci::test_discipline | active | integration | ci-python | fast | 26 |
-| ci::test_harness | active | unit | ci-python | fast | 10 |
+| ci::test_harness | active | unit | ci-python | fast | 12 |
 | planned-records | held | held | none | fast | 0 |
 | planned-burn | held | held | none | service | 0 |
 | planned-graph | held | held | none | fast | 0 |
@@ -104,7 +104,7 @@
 | rfc8949-canonical | active | integration | pn-interchange-rust | fast | 67 |
 | rfc8949-refusal | active | integration | pn-interchange-rust | fast | 26 |
 | foundation-benchmarks | active | integration | pn-interchange-rust | fast | 2 |
-| ci::test_claims | active | unit | ci-python | fast | 19 |
+| ci::test_claims | active | unit | ci-python | fast | 20 |
 | ci::test_observe | active | unit | ci-python | fast | 9 |
 | ci::test_observe_runtime | active | integration | ci-python | fast | 1 |
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
@@ -164,3 +164,5 @@
 **Amendment (Foundation support evidence)** · `amend:harness:foundation-closure` The green foundation gate establishes the support portion of (`gate:harness:foundation`) and (`gate:design:harness-foundation`): registry and result join, the unpublished support package and dependency-direction guard, reviewed applicable dependencies, unit/public-surface/integration levels in all four packages, real vector-runner use, bounded seeded properties and recorded replay configuration, owned benchmark correctness and smoke, missing-seed and correctness-failure probes, and nonverdict regression evidence. This narrows the registry and result-join probes and recorded property replay configuration of (`open:design:harness-evidence`) without closing either harness gate. An exercised replay and shrink witness, comparable baselines, independent models, and domain and client evidence remain held; shared-suite vector evidence currently covers one implementation only. The remaining foundation obligations are the complete test-site claim and obligation audit under (`gate:testing:foundation`) and tracing/observation under (`gate:observe:foundation`); performance foundation likewise awaits claims, tracing and their combined evidence. The real service tier, domain conformance suites and client harnesses remain implementation holds. No PostgreSQL or Elements service is provisioned and none is marked passed. The tokio condition awaits an actual async test; comparable benchmark campaigns remain inconclusive until reviewed baselines exist.
 
 **Amendment (Observation co-closure)** · `amend:harness:observation-co-closure` The current registry, support package, replay configuration and benchmark smoke combine with the completed claims audit and (`amend:observe:foundation-evidence`) to support the implemented portions of (`gate:harness:foundation`) and (`gate:design:harness-foundation`). The asynchronous witnesses use controlled futures directly and require no tokio runtime. Exercised shrinking, independent models and comparable benchmark baselines remain future evidence, not facts inferred from passing smoke. The register reports scoped support rather than unrestricted closed gates. Real PostgreSQL and Elements service evidence: service implementer, provisioning slice; domain suites: assigned domain implementer, corresponding domain bite; client harnesses and actual exporter transport admission: client implementer, client slice. Decision-level evidence is not implicitly closed by these scoped gate rows.
+
+**Amendment (Case scope within a binary)** · `amend:harness:case-level-scope` Refines (`dec:harness:levels`): a binary suite may declare a case-specific level with its premise, without changing source identity, implementation, tier or binary-envelope accounting. The registry refuses an unknown case, missing level or missing premise. The provider-bridge witness is integration evidence because it composes the recorder, SDK, OTLP encoders and controlled transport workers; its private bridge assertions require in-crate placement. It retains the profile-derived unit-area carrier, which identifies that physical site, while the harness join declares integration and applies the ordinary two-second integration warning budget. This is a named placement exception, not a new timing verdict or a blanket relaxation of unit budgets.

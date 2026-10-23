@@ -769,6 +769,9 @@
     "cli-common::observation::tests::public_content_encoding": "Claim: Public byte representations preserve UTF-8, NUL and invalid UTF-8 exactly, and structural values retain constructors, field keys and escaped string contents rather than nesting Debug text.",
     "cli-common::observation::tests::content_artifact_publication": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt existing content is refused rather than trusted.",
     "ci::test_observe.Admission.test_observation_streams": "Claim: Gate routing preserves complete observation bytes in the artifact and leaves diagnostics and malformed lines byte-identical in the main log, without treating an observation level as a verdict.",
-    "cli-common::observation::tests::summary_capacity": "Claim: A saturated ordinary queue cannot consume the reserved metric-summary slot; rendezvous-controlled delivery observes the summary before draining the queued ordinary records, without extending a timeout."
+    "cli-common::observation::tests::summary_capacity": "Claim: A saturated ordinary queue cannot consume the reserved metric-summary slot; rendezvous-controlled delivery observes the summary before draining the queued ordinary records, without extending a timeout.",
+    "ci::test_claims.Evidence.test_bite_one_entry": "Claim: An owned bite-1 entry hold blocks a records implementation even when other scoped evidence passes; only admitted source-matched support clears that prerequisite.",
+    "ci::test_harness.Harness.test_interchange_manifest": "Claim: The current shared interchange library has no feature or binary branch and no unreviewed production dependency; its source-bound Value enum remains exhaustive, keeping one declared public configuration.",
+    "ci::test_harness.Harness.test_case_level_declaration": "Claim: An explicit integration case retains its binary suite and implementation while receiving the integration budget; undeclared case identities, absent levels and missing premises cannot create overrides."
   }
 }

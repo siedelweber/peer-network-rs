@@ -177,6 +177,16 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     return dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]]) for n,s in sorted(states.items())], obligations=obligation_results)
 
 
+def enforce_entry(obligations, started, required=None):
+    """A named entry hold remains a prerequisite, not a future-work caption."""
+    entries=[row for row in obligations if row.get('entry_gate')=='ROOT::gate:design:bite-1']
+    if required is not None and {row['name'] for row in entries}!=required:
+        raise StructuralError('bite-1 entry register differs from the source amendment')
+    pending=[row['name'] for row in entries if row['status']!='scoped-passed']
+    if started and pending:
+        raise StructuralError('bite-1 entry evidence remains held: '+str(sorted(pending)))
+
+
 def checked_linter(path,sites):
     summaries=[]
     for line in Path(path).read_text().splitlines():
@@ -238,6 +248,8 @@ def main(argv=None):
                 raise StructuralError('public carrier mapping differs')
         result = evaluate(sites, expected, areas, obligations, declared, paragraphs,
                           [r for r in records if r.get('scope')=='case'], source)
+        entry = paragraphs['ROOT::amend:decomposition:bite-one-entry-evidence']['citations'] & set(obligations)
+        enforce_entry(result['obligations'], (root/'packages/records').exists(), entry-{'ROOT::gate:design:bite-1'})
         reviews = reviewed_sites(sites, json.loads(Path('ci/claim_review.json').read_text()), json.loads(Path('ci/claim_gloss_baseline.json').read_text()))
         Path('.lane/claim-gloss-review.json').write_text(json.dumps({'schema':1,'source':source,'sites':reviews},indent=2)+'\n')
         offenders = [{k:s[k] for k in ('owner','path','line','function','operation','claim','gloss')} for s in sites if respells(s)]

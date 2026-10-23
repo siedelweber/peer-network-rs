@@ -32,6 +32,48 @@ def result(registry):
 
 
 class Harness(unittest.TestCase):
+    def test_case_level_declaration(self):
+        """Claim: An explicit integration case retains its binary suite and implementation while receiving the integration budget; undeclared case identities, absent levels and missing premises cannot create overrides.
+        ´claim:harness:case-levels-are-explicit-within-binaries´
+        ´test:integration:test-case-level-declaration´
+        """
+        data=rows()
+        data[-1]['case_levels']={'example::case':'integration'}
+        data[-1]['case_level_reasons']={'example::case':'The fixture composes local components.'}
+        registry=Registry(data,declarations())
+        joined=registry.join(dict(operation='example::case',outcome='passed',duration_ms=1),'current')
+        self.assertEqual((joined['suite'],joined['implementation'],joined['level'],joined['budget']),('example','example','integration','integration'))
+        for mutation in ('identity','level','premise'):
+            invalid=copy.deepcopy(data)
+            if mutation=='identity':invalid[-1]['case_levels']['unknown']='unit'
+            elif mutation=='level':invalid[-1]['case_levels']['example::case']='absent'
+            else:invalid[-1]['case_level_reasons']={}
+            with self.assertRaises(StructuralError):Registry(invalid,declarations())
+
+    def test_interchange_manifest(self):
+        """Claim: The current shared interchange library has no feature or binary branch and no unreviewed production dependency; its source-bound Value enum remains exhaustive, keeping one declared public configuration.
+        ´claim:harness:interchange-structure-is-declared´
+        ´test:integration:test-interchange-manifest´
+        """
+        import json
+        import tomllib
+        from pathlib import Path
+        root=Path(__file__).resolve().parents[1]
+        manifest=tomllib.loads((root/'packages/interchange/Cargo.toml').read_text())
+        self.assertEqual(manifest['package']['name'],'pn-interchange')
+        self.assertFalse(manifest.get('features'))
+        self.assertFalse(manifest.get('bin'))
+        self.assertTrue((root/'packages/interchange/src/lib.rs').is_file())
+        self.assertFalse((root/'packages/interchange/src/main.rs').exists())
+        self.assertEqual(set(manifest['dependencies']),{'regexml','thiserror','tracing'})
+        self.assertTrue(manifest['lints']['workspace'])
+        self.assertNotIn('rust-version',manifest['package'])
+        register=json.loads((root/'ci/observation-registry.json').read_text())
+        declaration,=[row for row in register['reviewed_types'] if row['package']=='pn-interchange' and row['item']=='value::Value']
+        self.assertIn('pub enum Value',declaration['syntax'])
+        self.assertNotIn('non_exhaustive',declaration['syntax'])
+        # The observation gate separately refuses a stale type declaration.
+
     def test_nextest_suite_span(self):
         """Interleaved suite arrivals retain their own envelope, never summed case work.
         ´claim:harness:nextest-suite-arrival-envelope´

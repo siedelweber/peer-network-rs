@@ -367,28 +367,37 @@
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:devperf:feedback",
+      "claims": [
+        "ROOT::claim:devperf:timing-preserves-predicates",
+        "ROOT::claim:devperf:category-controls-classification"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-devperf-feedback",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:devperf:feedback",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/021-development-performance.md",
+      "premises": "Controlled passing and failing executions retain their outcomes under excess durations; budget categories distinguish performance evidence from structural configuration. This supports the current reporter, not a latency promise.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:devperf:profiles",
+      "claims": [
+        "ROOT::claim:devperf:gate-profile-guards"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-devperf-profiles",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:devperf:profiles",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/021-development-performance.md",
+      "premises": "The current workspace profile retains assertions and overflow checks and the guard refuses drift. The accepted cold/warm comparison samples and profile decision remain recorded in records 013 and 021; this witness checks continued configuration, not a new measurement campaign.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -415,100 +424,150 @@
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:harness:levels",
+      "claims": [
+        "ROOT::claim:harness:missing-level-refused",
+        "ROOT::claim:harness:dropped-case-refused"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-harness-levels",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:harness:levels",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/020-testing-harness.md",
+      "premises": "The complete current roster declares every case and level; controlled omissions refuse structurally. The public-surface layout amendment bounds the present package witnesses; future packages require their own levels.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:labels:policy",
+      "claims": [
+        "DOCUMENTS::claim:render:paired-census",
+        "DOCUMENTS::claim:render:declaration-authority"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-labels-policy",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:labels:policy",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/001-label-calculus.md",
+      "premises": "The current adoption inputs and rendered owner declarations are one checked fixed point, and the deployed linter checks the actual current corpus without warnings. This is adoption and corpus resolution evidence, not a proof of all linter algorithms.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:lint:policy",
+      "claims": [
+        "ROOT::claim:discipline:members-inherit-workspace-lints",
+        "ROOT::claim:discipline:test-lints-cannot-be-suppressed",
+        "ROOT::claim:discipline:configuration-cannot-relax-lints"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-lint-policy",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:lint:policy",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/005-lint-discipline.md",
+      "premises": "Manifest inheritance, forbidden configuration relaxation and test-tree suppressions have negative fixtures; the current gate supplies formatting, required Clippy and the separate advisory pass. Vendor policy remains the documented exception.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:observe:foundation",
+      "claims": [
+        "ROOT::claim:discipline:public-bodies-require-parsed-boundaries",
+        "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-observe-foundation",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:observe:foundation",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/016-observability.md",
+      "premises": "The source-bound production operation census and negative fixtures establish mechanical admission; body-bound class decisions remain semantic reviews. Current local execution and export witnesses do not admit a network service.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:observe:secrets",
+      "claims": [
+        "ROOT::claim:discipline:secret-carriers-reject-printable-traits"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-observe-secrets",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:observe:secrets",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/016-observability.md",
+      "premises": "Compile-fail probes reject Display and accidental serde serialization for the current protected carriers. Acquisition and future explicit exposure consumers remain governed by their separate admission boundary.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:observe:sinks",
+      "claims": [
+        "CLICOMMON::claim:cli:observation-loss-is-nonbinding",
+        "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+        "CLICOMMON::claim:cli:summary-capacity-survives-ordinary-saturation"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-observe-sinks",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:observe:sinks",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/016-observability.md",
+      "premises": "Current executable-owned JSON delivery, queue saturation and recursive-entry fixtures preserve binding results and reserve summary capacity. Real service export and service configuration are outside this scope.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:output:policy",
+      "claims": [
+        "DOCUMENTS::claim:cli:control-records",
+        "DOCUMENTS::claim:cli:terminal-refusal",
+        "DOCUMENTS::claim:cli:clean-result",
+        "DOCUMENTS::claim:cli:finding-status",
+        "DOCUMENTS::claim:cli:runtime-error",
+        "DOCUMENTS::claim:cli:panic-proxy"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-output-policy",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:output:policy",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/004-command-line-output-contract.md",
+      "premises": "Subprocess witnesses cover help, version, usage, terminal refusal, clean output, findings, runtime errors and public panic diagnostics. Observation adds JSON stderr records while preserving stdout and exit; clean results forbid WARN and ERROR records.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:render:policy",
+      "claims": [
+        "DOCUMENTS::claim:render:repository-fixed-point",
+        "DOCUMENTS::claim:render:dataset-mutation",
+        "DOCUMENTS::claim:render:stale-rendering",
+        "DOCUMENTS::claim:render:protected-outputs",
+        "DOCUMENTS::claim:envelope:json-model",
+        "DOCUMENTS::claim:render:tracked-census",
+        "DOCUMENTS::claim:render:git-required"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-render-policy",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:render:policy",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/003-templated-documentation.md",
+      "premises": "The actual repository and controlled fixtures establish deterministic projections, rendering, protected outputs, JSON envelopes and tracked-path census. The engine-generated bytes are checked as a clean fixed point.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -523,268 +582,372 @@
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:testing:evidence",
+      "claims": [
+        "ROOT::claim:testing:sibling-failure-dominates",
+        "ROOT::claim:testing:python-edges-require-known-claims"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-testing-evidence",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:testing:evidence",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/017-claim-based-testing.md",
+      "premises": "The current checked carriers and source-matched runner results support scoped obligations only through resolving evidence edges; a failed sibling dominates. Meaning is the reviewed gloss premise, not a passing count.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:toolchain:compiler",
+      "claims": [
+        "ROOT::claim:discipline:toolchain-family-is-consistent",
+        "ROOT::claim:devperf:gate-profile-guards"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-toolchain-compiler",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:toolchain:compiler",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/013-toolchain-and-build-profile.md",
+      "premises": "The gate logs the answering compiler and tools, checks undated nightly and forbids unsupported minimum versions; required release settings and the separately measured gate profile are checked. This supports the current declared toolchain, not compiler-version reproducibility.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:toolchain:minimum",
+      "claims": [
+        "ROOT::claim:discipline:toolchain-family-is-consistent",
+        "ROOT::claim:devperf:gate-profile-guards"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-toolchain-minimum",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:toolchain:minimum",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/013-toolchain-and-build-profile.md",
+      "premises": "The gate logs the answering compiler and tools, checks undated nightly and forbids unsupported minimum versions; required release settings and the separately measured gate profile are checked. This supports the current declared toolchain, not compiler-version reproducibility.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:toolchain:release",
+      "claims": [
+        "ROOT::claim:discipline:toolchain-family-is-consistent",
+        "ROOT::claim:devperf:gate-profile-guards"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-toolchain-release",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:toolchain:release",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/013-toolchain-and-build-profile.md",
+      "premises": "The gate logs the answering compiler and tools, checks undated nightly and forbids unsupported minimum versions; required release settings and the separately measured gate profile are checked. This supports the current declared toolchain, not compiler-version reproducibility.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:cddl-coverage",
+      "claims": [
+        "INTERCHANGE::claim:parse:the-standards-corpus-parses",
+        "INTERCHANGE::claim:cddl:every-operator-of-the-subset-is-admitted",
+        "INTERCHANGE::claim:cddl:an-unevaluable-operator-is-refused-wherever-it-stands"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-cddl-coverage",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:cddl-coverage",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The committed grammar corpus and operator fixtures cover parsing and the documented evaluation subset. This is the current corpus witness, not a proof over every grammar derivation.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:crate-layout",
+      "claims": [
+        "ROOT::claim:harness:interchange-structure-is-declared"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-crate-layout",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:crate-layout",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The checked current manifest declares the std-only library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:evaluable-subset",
+      "claims": [
+        "INTERCHANGE::claim:cddl:every-operator-of-the-subset-is-admitted",
+        "INTERCHANGE::claim:cddl:an-unevaluable-operator-is-refused-wherever-it-stands"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-evaluable-subset",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:evaluable-subset",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "Each supported operator is admitted and the unsupported operators are refused at their actual sites; no unsupported operator is approximated.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:float-bits",
+      "claims": [
+        "INTERCHANGE::claim:encoding:a-float-stands-in-its-shortest-form",
+        "INTERCHANGE::claim:properties:sampled-floats-use-the-independent-minimal-width"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-float-bits",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:float-bits",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "Canonical float fixtures pin accepted widths and NaN refusals; sampled bit patterns are compared to the independent width oracle. The bounded corpus and recorded property cases support the present implementation.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:nan-policy",
+      "claims": [
+        "INTERCHANGE::claim:encoding:a-float-stands-in-its-shortest-form",
+        "INTERCHANGE::claim:properties:sampled-floats-use-the-independent-minimal-width"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-nan-policy",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:nan-policy",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "Canonical float fixtures pin accepted widths and NaN refusals; sampled bit patterns are compared to the independent width oracle. The bounded corpus and recorded property cases support the present implementation.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:nesting-policy",
+      "claims": [
+        "INTERCHANGE::claim:properties:the-deep-paths-are-iterative",
+        "INTERCHANGE::claim:properties:the-derived-walks-are-iterative-too"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-nesting-policy",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:nesting-policy",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "Deep canonical decode/encode and derived value walks, including teardown, execute with explicit work stacks. These concrete depth witnesses do not claim an unbounded machine resource supply.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:prefix-public",
+      "claims": [
+        "INTERCHANGE::claim:vectors:public-prefix-extent",
+        "INTERCHANGE::claim:properties:generated-prefix-dispatch-preserves-envelope-routing"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-prefix-public",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:prefix-public",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "An external public consumer distinguishes consumed prefix extent from strict whole-input decoding; generated envelopes preserve routing within the declared prefix bound.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:public-printer",
+      "claims": [
+        "INTERCHANGE::claim:inclusion:identity-of-type-is-the-printers-question"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-public-printer",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:public-printer",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The externally exercised printer normalizes layout while the type-identity witness distinguishes spelling from structural identity; the current public surface remains callable by consumers.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:refused-dependencies",
+      "claims": [
+        "ROOT::claim:harness:interchange-structure-is-declared"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-refused-dependencies",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:refused-dependencies",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The checked current manifest declares the std-only library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:regexp-engine",
+      "claims": [
+        "INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject",
+        "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk",
+        "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-regexp-engine",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:regexp-engine",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The seam uses whole-subject XSD matching and a deterministic operations budget; an independent automaton checks declared subset membership, including nullable repetition. Current fork corrections and the pathological split are recorded in the regexp provenance and interchange documentation; no linear-time claim is made.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:regexp-seam",
+      "claims": [
+        "INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject",
+        "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk",
+        "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-regexp-seam",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:regexp-seam",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The seam uses whole-subject XSD matching and a deterministic operations budget; an independent automaton checks declared subset membership, including nullable repetition. Current fork corrections and the pathological split are recorded in the regexp provenance and interchange documentation; no linear-time claim is made.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:registry-loading",
+      "claims": [
+        "INTERCHANGE::claim:registry:acquire-all-stops-at-the-first-refusal",
+        "INTERCHANGE::claim:registry:acquire-all-takes-a-whole-ascending-chain"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-registry-loading",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:registry-loading",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The public sequence acquisition witnesses retain an ascending chain and stop at the first named refusal, without inventing a different loading service.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:restraint-enforcement",
+      "claims": [
+        "INTERCHANGE::claim:registry:an-implicit-reach-is-refused",
+        "INTERCHANGE::claim:registry:leniency-relaxes-the-reach-alone"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-restraint-enforcement",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:restraint-enforcement",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "Acquisition refuses undeclared restrained reaches; the explicit lenient option changes that check alone in the fixture.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
+      "closing_condition": "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition.",
+      "closing_step": "Entry condition of gate:design:bite-1",
+      "entry_gate": "ROOT::gate:design:bite-1",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:slice-sequencing",
+      "missing": "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition.",
       "name": "ROOT::dec:xchg:slice-sequencing",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Interchange contract reviewer",
       "path": "adr/010-interchange-design.md",
       "realizers": [],
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:theory-sharing",
+      "claims": [
+        "INTERCHANGE::claim:registry:a-held-theory-is-immutable",
+        "INTERCHANGE::claim:registry:re-acquiring-the-held-theory-changes-nothing"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-theory-sharing",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:theory-sharing",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "Registry reacquisition preserves the held theory and refuses a changed same identity. This witnesses immutable sharing at the current public registry boundary.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:type-identity",
+      "claims": [
+        "INTERCHANGE::claim:inclusion:identity-of-type-is-the-printers-question",
+        "INTERCHANGE::claim:inclusion:an-identity-is-the-expression-and-the-rules-it-reaches"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-type-identity",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:type-identity",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "Expression printing and reached rule identities determine the checked type identity; equivalent layout alone cannot alter it.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:utf8-policy",
+      "claims": [
+        "INTERCHANGE::claim:encoding:a-text-string-must-be-valid-utf8"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-utf8-policy",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:utf8-policy",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The canonical decoder refuses invalid UTF-8 at the named byte while valid text remains in the single string representation.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:xchg:value-exhaustive",
+      "claims": [
+        "ROOT::claim:harness:interchange-structure-is-declared"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-dec-xchg-value-exhaustive",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::dec:xchg:value-exhaustive",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The checked current manifest declares the std-only library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -1235,16 +1398,22 @@
       "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:foundation:verification",
+      "claims": [
+        "ROOT::claim:discipline:members-inherit-workspace-lints",
+        "ROOT::claim:testing:sibling-failure-dominates",
+        "ROOT::claim:discipline:public-bodies-require-parsed-boundaries"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-gate-foundation-verification",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::gate:foundation:verification",
       "owner": "Foundation implementer and repository reviewer",
       "path": "README.md",
+      "premises": "The current source commit must finish every gate step with status zero; structural policy, evidence and observation checks are independently exercised. Duration warnings remain nonverdict outputs. Services and later domain evidence are not inferred.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [
@@ -1299,52 +1468,70 @@
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:kinds:adoption",
+      "claims": [
+        "DOCUMENTS::claim:render:registry-relation",
+        "DOCUMENTS::claim:render:paired-census",
+        "DOCUMENTS::claim:render:repository-fixed-point"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-gate-kinds-adoption",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::gate:kinds:adoption",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/002-environment-kinds.md",
+      "premises": "The accepted adoption data, relation/status fixtures and actual rendered register establish the current ordered register and its derived counts and homonyms. Evidence/status judgments are accepted input facts; the renderer does not invent them.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
+      "closing_condition": "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them.",
+      "closing_step": "Entry condition of gate:design:bite-1",
+      "entry_gate": "ROOT::gate:design:bite-1",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:labels:implementation",
+      "missing": "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them.",
       "name": "ROOT::gate:labels:implementation",
-      "owner": "Foundation implementer and repository reviewer",
+      "owner": "Linter integration reviewer",
       "path": "adr/001-label-calculus.md",
       "realizers": [],
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:labels:verification",
+      "claims": [
+        "DOCUMENTS::claim:render:paired-census",
+        "DOCUMENTS::claim:render:declaration-authority"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-gate-labels-verification",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::gate:labels:verification",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/001-label-calculus.md",
+      "premises": "The current adoption inputs and rendered owner declarations are one checked fixed point, and the deployed linter checks the actual current corpus without warnings. This is adoption and corpus resolution evidence, not a proof of all linter algorithms.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:lint:verification",
+      "claims": [
+        "ROOT::claim:discipline:members-inherit-workspace-lints",
+        "ROOT::claim:discipline:test-lints-cannot-be-suppressed",
+        "ROOT::claim:discipline:configuration-cannot-relax-lints"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-gate-lint-verification",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::gate:lint:verification",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/005-lint-discipline.md",
+      "premises": "Manifest inheritance, forbidden configuration relaxation and test-tree suppressions have negative fixtures; the current gate supplies formatting, required Clippy and the separate advisory pass. Vendor policy remains the documented exception.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [
@@ -1391,28 +1578,47 @@
       "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:output:verification",
+      "claims": [
+        "DOCUMENTS::claim:cli:control-records",
+        "DOCUMENTS::claim:cli:terminal-refusal",
+        "DOCUMENTS::claim:cli:clean-result",
+        "DOCUMENTS::claim:cli:finding-status",
+        "DOCUMENTS::claim:cli:runtime-error",
+        "DOCUMENTS::claim:cli:panic-proxy"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-gate-output-verification",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::gate:output:verification",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/004-command-line-output-contract.md",
+      "premises": "Subprocess witnesses cover help, version, usage, terminal refusal, clean output, findings, runtime errors and public panic diagnostics. Observation adds JSON stderr records while preserving stdout and exit; clean results forbid WARN and ERROR records.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:render:verification",
+      "claims": [
+        "DOCUMENTS::claim:render:repository-fixed-point",
+        "DOCUMENTS::claim:render:dataset-mutation",
+        "DOCUMENTS::claim:render:stale-rendering",
+        "DOCUMENTS::claim:render:protected-outputs",
+        "DOCUMENTS::claim:envelope:json-model",
+        "DOCUMENTS::claim:render:tracked-census",
+        "DOCUMENTS::claim:render:git-required"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-gate-render-verification",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::gate:render:verification",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/003-templated-documentation.md",
+      "premises": "The actual repository and controlled fixtures establish deterministic projections, rendering, protected outputs, JSON envelopes and tracked-path census. The engine-generated bytes are checked as a clean fixed point.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -1461,16 +1667,21 @@
       "status": "scoped-supported"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:toolchain:verification",
+      "claims": [
+        "ROOT::claim:discipline:toolchain-family-is-consistent",
+        "ROOT::claim:devperf:gate-profile-guards"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-gate-toolchain-verification",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::gate:toolchain:verification",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/013-toolchain-and-build-profile.md",
+      "premises": "The gate logs the answering compiler and tools, checks undated nightly and forbids unsupported minimum versions; required release settings and the separately measured gate profile are checked. This supports the current declared toolchain, not compiler-version reproducibility.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -1510,22 +1721,24 @@
     },
     {
       "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
+      "closing_condition": "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review.",
+      "closing_step": "Entry condition of gate:design:bite-1",
+      "entry_gate": "ROOT::gate:design:bite-1",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:xchg:concept-review",
+      "missing": "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review.",
       "name": "ROOT::gate:xchg:concept-review",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Interchange contract reviewer",
       "path": "adr/009-interchange-concept.md",
       "realizers": [],
       "status": "held"
     },
     {
       "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
+      "closing_condition": "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order.",
+      "closing_step": "Entry condition of gate:design:bite-1",
+      "entry_gate": "ROOT::gate:design:bite-1",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:xchg:implementation",
+      "missing": "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order.",
       "name": "ROOT::gate:xchg:implementation",
       "owner": "Interchange implementer and contract reviewer",
       "path": "adr/010-interchange-design.md",
@@ -1570,27 +1783,36 @@
     },
     {
       "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
+      "closing_condition": "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer.",
+      "closing_step": "Entry condition of gate:design:bite-1",
+      "entry_gate": "ROOT::gate:design:bite-1",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:interchange:fixed-once",
+      "missing": "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer.",
       "name": "ROOT::req:interchange:fixed-once",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Bite 1 implementer and interchange contract reviewer",
       "path": "adr/008-interchange-conventions.md",
       "realizers": [],
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach contract-specific policy witnesses with reviewed premises and source-matched results before the first domain consumer; observation coverage alone does not establish this obligation.",
-      "closing_step": "Repository policy evidence admission before the first domain crate",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:kinds:attestation-register",
+      "claims": [
+        "DOCUMENTS::claim:render:registry-relation",
+        "DOCUMENTS::claim:render:paired-census",
+        "DOCUMENTS::claim:render:repository-fixed-point"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-req-kinds-attestation-register",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::req:kinds:attestation-register",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/002-environment-kinds.md",
-      "realizers": [],
-      "status": "held"
+      "premises": "The accepted adoption data, relation/status fixtures and actual rendered register establish the current ordered register and its derived counts and homonyms. Evidence/status judgments are accepted input facts; the renderer does not invent them.",
+      "realizers": [
+        "ROOT::verif:testing:foundation-admissions"
+      ],
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -1873,66 +2095,100 @@
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:xchg:determinism",
-      "name": "ROOT::req:xchg:determinism",
-      "owner": "Interchange implementer and contract reviewer",
-      "path": "adr/009-interchange-concept.md",
-      "realizers": [],
-      "status": "held"
-    },
-    {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:xchg:regexp-guard",
-      "name": "ROOT::req:xchg:regexp-guard",
-      "owner": "Interchange implementer and contract reviewer",
-      "path": "adr/010-interchange-design.md",
-      "realizers": [],
-      "status": "held"
-    },
-    {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:xchg:std-only",
-      "name": "ROOT::req:xchg:std-only",
-      "owner": "Interchange implementer and contract reviewer",
-      "path": "adr/009-interchange-concept.md",
-      "realizers": [
-        "ROOT::dec:xchg:crate-layout"
+      "claims": [
+        "INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names",
+        "INTERCHANGE::claim:properties:sampled-bytes-are-refused-or-preserved"
       ],
-      "status": "held"
-    },
-    {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:xchg:timing",
-      "name": "ROOT::req:xchg:timing",
-      "owner": "Interchange implementer and contract reviewer",
-      "path": "adr/010-interchange-design.md",
-      "realizers": [],
-      "status": "held"
-    },
-    {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for req:xchg:workspace-discipline",
-      "name": "ROOT::req:xchg:workspace-discipline",
-      "owner": "Interchange implementer and contract reviewer",
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-req-xchg-determinism",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
+      "name": "ROOT::req:xchg:determinism",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/009-interchange-concept.md",
-      "realizers": [],
-      "status": "held"
+      "premises": "Bounded generated values round-trip uniquely and sampled byte strings are refused or retained byte for byte; the independent canonical vector corpus supplements those recorded property cases.",
+      "realizers": [
+        "ROOT::verif:testing:foundation-admissions"
+      ],
+      "status": "scoped-supported"
+    },
+    {
+      "claims": [
+        "INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject",
+        "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk",
+        "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-req-xchg-regexp-guard",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
+      "name": "ROOT::req:xchg:regexp-guard",
+      "owner": "Foundation implementer and repository reviewer",
+      "path": "adr/010-interchange-design.md",
+      "premises": "The seam uses whole-subject XSD matching and a deterministic operations budget; an independent automaton checks declared subset membership, including nullable repetition. Current fork corrections and the pathological split are recorded in the regexp provenance and interchange documentation; no linear-time claim is made.",
+      "realizers": [
+        "ROOT::verif:testing:foundation-admissions"
+      ],
+      "status": "scoped-supported"
+    },
+    {
+      "claims": [
+        "ROOT::claim:harness:interchange-structure-is-declared"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-req-xchg-std-only",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
+      "name": "ROOT::req:xchg:std-only",
+      "owner": "Foundation implementer and repository reviewer",
+      "path": "adr/009-interchange-concept.md",
+      "premises": "The checked current manifest declares the std-only library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
+      "realizers": [
+        "ROOT::dec:xchg:crate-layout",
+        "ROOT::verif:testing:foundation-admissions"
+      ],
+      "status": "scoped-supported"
+    },
+    {
+      "claims": [
+        "ROOT::claim:devperf:timing-preserves-predicates",
+        "ROOT::claim:devperf:result-accounting-is-explicit"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-req-xchg-timing",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
+      "name": "ROOT::req:xchg:timing",
+      "owner": "Foundation implementer and repository reviewer",
+      "path": "adr/010-interchange-design.md",
+      "premises": "The joined result stream retains every current case duration, suite and implementation, separating property and vector suites and reporting excesses without changing predicates.",
+      "realizers": [
+        "ROOT::verif:testing:foundation-admissions"
+      ],
+      "status": "scoped-supported"
+    },
+    {
+      "claims": [
+        "ROOT::claim:discipline:members-inherit-workspace-lints",
+        "ROOT::claim:harness:interchange-structure-is-declared"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-req-xchg-workspace-discipline",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
+      "name": "ROOT::req:xchg:workspace-discipline",
+      "owner": "Foundation implementer and repository reviewer",
+      "path": "adr/009-interchange-concept.md",
+      "premises": "Current manifest inheritance, selected production dependencies and the complete gate establish repository discipline for the shared library; no alternate domain codec is admitted here.",
+      "realizers": [
+        "ROOT::verif:testing:foundation-admissions"
+      ],
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -2199,16 +2455,47 @@
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law.",
-      "closing_step": "Interchange contract evidence review before the first domain consumer",
-      "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for verif:xchg:label-pattern-crosscheck",
+      "claims": [
+        "INTERCHANGE::claim:regexp:the-namespace-pattern-recognizes-labels"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded premises; renew on a contract or configuration change.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:evidence-verif-xchg-label-pattern-crosscheck",
+      "hold": "",
+      "missing": "Outside scope: future consumers, services and changes to the reviewed premises.",
       "name": "ROOT::verif:xchg:label-pattern-crosscheck",
-      "owner": "Interchange implementer and contract reviewer",
+      "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The declared namespace pattern is compared with the hand-written label recognizer over the committed near-miss and generated subject corpus; the premise is the current declared pattern set.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
+    },
+    {
+      "claims": [
+        "DOCUMENTS::claim:render:paired-census",
+        "DOCUMENTS::claim:render:registry-relation",
+        "DOCUMENTS::claim:render:repository-fixed-point",
+        "INTERCHANGE::claim:properties:generated-values-have-unique-canonical-names",
+        "INTERCHANGE::claim:properties:sampled-bytes-are-refused-or-preserved",
+        "INTERCHANGE::claim:regexp:a-pattern-matches-the-whole-subject",
+        "INTERCHANGE::claim:regexp:the-budget-bounds-every-walk",
+        "INTERCHANGE::claim:regexp:the-oracle-agrees-with-language-facts",
+        "ROOT::claim:devperf:result-accounting-is-explicit",
+        "ROOT::claim:devperf:timing-preserves-predicates",
+        "ROOT::claim:discipline:members-inherit-workspace-lints",
+        "ROOT::claim:harness:interchange-structure-is-declared"
+      ],
+      "closing_condition": "Passing current-source requirement witnesses.",
+      "closing_step": "Foundation close, current declared configuration",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:requirement-admissions",
+      "hold": "",
+      "missing": "Outside scope: new consumers and changed premises.",
+      "name": "ROOT::verif:testing:foundation-admissions",
+      "owner": "Foundation implementer and repository reviewer",
+      "path": "adr/017-claim-based-testing.md",
+      "premises": "The current adopted register and shared interchange implementation, under each requirement row's narrower recorded premises.",
+      "realizers": [],
+      "status": "scoped-supported"
     }
   ]
 }

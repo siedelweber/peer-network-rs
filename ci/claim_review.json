@@ -1424,6 +1424,14 @@
       "claim": "CLICOMMON::claim:cli:observation-loss-is-nonbinding",
       "after": "Claim: Exhausted byte capacity, full queues and disconnected sinks increment loss while terminal metrics still account success and zero active work; injected capacity proves refusal without large allocations or waits.",
       "review": "Read the capacity fixture: inject exhausted byte accounting instead of allocating an oversized value, then exercise full and disconnected channels and assert unchanged terminal metrics. No elapsed-time oracle is introduced."
+    },
+    {
+      "operation": "cli-common::observation::tests::summary_capacity",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "before": "Claim: A saturated ordinary queue cannot consume the reserved metric-summary slot; rendezvous-controlled delivery observes the summary before draining the queued ordinary records, without extending a timeout.",
+      "claim": "CLICOMMON::claim:cli:summary-capacity-survives-ordinary-saturation",
+      "after": "Claim: A saturated ordinary queue cannot consume diagnostic, metric-summary, export-summary or drain-request capacity; rendezvous-controlled delivery observes these records and acknowledges the drain without extending a timeout.",
+      "review": "Read the blocked-writer rendezvous: fill the ordinary queue, admit a diagnostic, both terminal summaries and an independent drain request, release the writer and wait on explicit acknowledgments. The test asserts delivery and zero loss without a wall-clock oracle."
     }
   ]
 }
