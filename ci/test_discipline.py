@@ -137,8 +137,8 @@ class HashCitations(unittest.TestCase):
         ´claim:hash-citations:context-respects-word-and-line-boundaries´
         ´test:discipline:test-hex-context-word-and-line-boundaries´
         """
-        for text in ["The hash map stores the cafe menu.", "The rev counter sits beside a bead.",
-                     "The revision describes a cafe.", "A tree shades the cafe.", "The object is a bead."]:
+        for text in ["The hash map stores the facade.", "The rev counter sits beside an effaced facade.",
+                     "The revision describes a decade.", "A tree shades the facade.", "The object is effaced."]:
             with self.subTest(text=text):
                 self.assertEqual(occurrences(text), [])
                 self.assertEqual(occurrences(text + "\nAn effaced facade stands nearby."), [])

@@ -137,11 +137,13 @@ def main():
         # Own any incidental Python output as well as both child streams.
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
             summary, status = run()
-        print(json.dumps(summary, allow_nan=False))
+        print(json.dumps(summary, allow_nan=False), file=sys.stderr if status else sys.stdout)
         return status
-    except (ValueError, KeyError, TypeError, OSError) as error:
-        print(json.dumps({'error': str(error), 'classification': 'structural'}), file=sys.stderr)
-        return 2
+    except BaseException as error:
+        structural = isinstance(error, (ValueError, KeyError, TypeError))
+        print(json.dumps({'error': str(error), 'exception': type(error).__name__,
+                          'classification': 'structural' if structural else 'runtime'}), file=sys.stderr)
+        return 2 if structural else 1
 
 
 if __name__ == '__main__':

@@ -173,7 +173,13 @@ fn drive(suite: &str, valid: bool, expected: usize, predicate: impl Fn(&Row) + s
         .collect();
     assert_eq!(cases.len(), expected);
     let results = pn_testkit::run(suite, "rfc8949", &cases, &["pn-interchange-rust"], |_, row| {
-        std::panic::catch_unwind(|| predicate(row)).map_err(|_| "vector predicate failed")
+        std::panic::catch_unwind(|| predicate(row)).map_err(|payload| {
+            payload
+                .downcast_ref::<String>()
+                .cloned()
+                .or_else(|| payload.downcast_ref::<&str>().map(|message| (*message).to_owned()))
+                .unwrap_or_else(|| "non-text panic payload".to_owned())
+        })
     })
     .expect("the committed corpus has distinct row identifiers");
     if let Ok(directory) = std::env::var("PN_CONTRACT_RESULTS") {
@@ -197,8 +203,9 @@ fn drive(suite: &str, valid: bool, expected: usize, predicate: impl Fn(&Row) + s
         std::fs::write(path, serde_json::to_vec(&records).expect("result records serialize")).expect("case results persist");
     }
     assert_eq!(results.len(), expected);
-    assert!(
-        results.iter().all(|result| result.outcome.is_ok()),
-        "a corpus predicate failed"
-    );
+    let failures: Vec<_> = results
+        .iter()
+        .filter_map(|result| result.outcome.as_ref().err().map(|payload| (&result.case, payload)))
+        .collect();
+    assert!(failures.is_empty(), "corpus predicates failed: {failures:?}");
 }

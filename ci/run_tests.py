@@ -81,7 +81,7 @@ def nextest_events(text, inventory, metadata, source, configuration, registry=No
             records.append(event(operation, level, None, 'ignored' if ignored else 'incomplete', source, configuration))
     for record in records:
         if record['operation'] in registry.properties:
-            record.update(property_evidence(registry.properties[record['operation']], record['outcome']))
+            record.update(property_evidence(registry.properties[record['operation']], record['outcome'], source))
     return [join_case(registry, r, source, configuration) for r in records]
 
 
@@ -249,7 +249,7 @@ def main():
                                    '--message-format', 'libtest-json-plus', '--message-format-version', '0.1',
                                    '--binaries-metadata', str(run / 'build.stdout')], 'test-command',
                          {**{key: value for key, value in os.environ.items() if not key.startswith('PROPTEST_')},
-                          **property_environment(registry.properties), 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON': '1',
+                          **property_environment(registry.properties, source), 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON': '1',
                           'PN_CONTRACT_RESULTS': str(contracts), 'PN_HARNESS_SOURCE': source,
                           'PN_HARNESS_CONFIGURATION': configuration, 'PN_HARNESS_UTC': instant()})
         try:

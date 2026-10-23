@@ -2458,13 +2458,13 @@
     {
       "budget": "pure-suite",
       "cases": [
-        "ci::test_harness.Harness.test_doctest_inventory",
         "ci::test_harness.Harness.test_doctest_identity",
-        "ci::test_harness.Harness.test_nextest_suite_span",
+        "ci::test_harness.Harness.test_doctest_inventory",
         "ci::test_harness.Harness.test_dropped_case",
         "ci::test_harness.Harness.test_ignored_case",
         "ci::test_harness.Harness.test_missing_level",
         "ci::test_harness.Harness.test_mock_as_real",
+        "ci::test_harness.Harness.test_nextest_suite_span",
         "ci::test_harness.Harness.test_service_hold",
         "ci::test_harness.Harness.test_stale_source",
         "ci::test_harness.Harness.test_unregistered_implementation"
@@ -2746,6 +2746,8 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_testkit.PropertyDeclarations.test_source_seed",
+        "ci::test_testkit.PropertyDeclarations.test_undeclared_property",
         "ci::test_testkit.SupportGuard.test_benchmark_correctness",
         "ci::test_testkit.SupportGuard.test_benchmark_regression",
         "ci::test_testkit.SupportGuard.test_benchmark_streams",

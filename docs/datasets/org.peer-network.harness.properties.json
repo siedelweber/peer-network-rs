@@ -15,7 +15,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::unique_names_decoding_inverts_encoding",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -26,7 +26,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::unique_names_encoding_is_stable_through_decoding",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -37,7 +37,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::unique_names_byte_equality_decides_structure_equality",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -48,7 +48,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::canonical_order_agrees_with_the_order_of_names",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -59,7 +59,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::map_entries_stand_in_ascending_key_order",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -70,7 +70,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::canonical_len_agrees_with_the_name",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -81,7 +81,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::float_reduction_is_minimal",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -92,7 +92,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::arbitrary_bytes_are_answered_rather_than_survived",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -103,7 +103,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::one_spelling_parsing_and_printing_are_inverse",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -114,7 +114,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::one_spelling_string_equality_is_byte_equality",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -125,7 +125,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::one_spelling_every_label_is_ascii",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -136,7 +136,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::one_spelling_mutations_leave_the_language",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -147,7 +147,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::bounded_determination_peek_agrees_within_the_bound",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -158,7 +158,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::inclusion_composes_along_a_chain",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -169,7 +169,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::every_document_satisfies_the_base_theory",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -180,7 +180,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::forward_compatibility_a_conforming_document_meets_every_earlier_companion",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -191,7 +191,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::conservativity_a_key_absent_earlier_is_optional_later",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -202,7 +202,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::acceptance_monotonicity_a_verdict_moves_only_toward_the_stamp",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -213,7 +213,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::acceptance_monotonicity_a_stamp_never_assigned_turns_to_rejection",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -224,7 +224,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::bounded_determination_the_prefix_routes_as_the_envelope_does",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -235,7 +235,7 @@
       "generator": "packages/interchange/tests/properties.rs",
       "name": "pn-interchange::properties::stamping_the_binary_search_agrees_with_a_linear_scan",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -246,7 +246,7 @@
       "generator": "packages/interchange/src/cddl/mod.rs",
       "name": "pn-interchange::cddl::tests::the_two_label_recognizers_agree",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     },
     {
       "algorithm": "cc",
@@ -257,7 +257,7 @@
       "generator": "packages/interchange/src/cddl/mod.rs",
       "name": "pn-interchange::cddl::tests::the_pattern_matches_every_label_the_scanner_accepts",
       "regressions": "packages/interchange/proptest-regressions",
-      "seed": "20261023"
+      "seed_policy": "source-v1"
     }
   ]
 }

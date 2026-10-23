@@ -17,14 +17,14 @@
       "dispatch": "siedelweber/design-study/2026-10-21-1",
       "name": "inventory",
       "namespace": "org.peer-network.design.inventory",
-      "source": "Released paper declarations, with implementation classifications inherited from the accepted decomposition where still applicable.",
+      "source": "The accepted decomposition study supplied starting implementation classifications. The current release is the authority for all pinned inventory and constants fields, including classifications; the study dispatch records history only.",
       "tag": "network-v0.26.3"
     },
     {
       "dispatch": "siedelweber/design-study/2026-10-21-1",
       "name": "constants",
       "namespace": "org.peer-network.design.constants",
-      "source": "Released paper declarations, with implementation classifications inherited from the accepted decomposition where still applicable.",
+      "source": "The accepted decomposition study supplied starting implementation classifications. The current release is the authority for all pinned inventory and constants fields, including classifications; the study dispatch records history only.",
       "source_schema": "peer-constants-2",
       "tag": "network-v0.26.3"
     },

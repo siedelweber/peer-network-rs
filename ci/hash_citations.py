@@ -21,16 +21,17 @@ HEX = re.compile(
 )
 
 
-IDENTITY_CONTEXT = re.compile(r"\b(?:commit|digest|checksum|hash|rev|revision|tree|object|sha(?:-?(?:1|256|512))?)\b", re.I)
+IDENTITY_CONTEXT = re.compile(r"\b(?:commit|digest|checksum|sha(?:-?(?:1|256|512))?)\b", re.I)
+IDENTITY_FIELD = re.compile(r'''\b(?:hash|rev|revision|tree|object)\b[ \t]*(?:[=:][ \t]*)?["'`]?\Z''', re.I)
 BARE = re.compile(r"[0-9a-f]+", re.I)
 
 
 def occurrences(text):
     """Read values, not short English words that happen to use hex letters.
 
-    An explicit identity field or prose context, including hash, rev, revision,
-    tree and object, is scoped to the candidate's physical line, just as the
-    family readers scope their evidence.
+    Commit, digest, checksum and sha contexts are line-scoped. Hash, rev,
+    revision, tree and object bind only the immediately following value,
+    optionally after a field separator or quote, never another prose word.
     Parenthesized tool-version tuples also carry abbreviated commit identity.
     This changes recognition only; every recognized value still needs a family.
     """
@@ -49,7 +50,7 @@ def occurrences(text):
         decimal_version = (value.isdecimal() and len(value) <= 40
                            and text[max(start, match.start() - 1):match.start()] == "("
                            and text[match.end():match.end() + 1] == " ")
-        if IDENTITY_CONTEXT.search(line) or version or decimal_version:
+        if IDENTITY_CONTEXT.search(line) or IDENTITY_FIELD.search(text[start:match.start()]) or version or decimal_version:
             found.append(match)
     return found
 
