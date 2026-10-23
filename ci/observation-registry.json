@@ -4563,9 +4563,9 @@
   "reviews": [
     {
       "operation": "pn-interchange::packages/interchange/src/accept.rs::accept::dispatch",
-      "body": "{ let version = env . version () ; let (major , minor) = (version . major () , version . minor ()) ; let Some (holding) = reg . holding (env . label () , major) else { return Instrument :: Refused (RejectionCause :: UnheldMajor) ; } ; if let Some (theory) = holding . theory (minor) { return Instrument :: Strict { minor , theory } ; } if minor <= holding . ceiling { return Instrument :: Refused (RejectionCause :: UnassignedStamp { ceiling : holding . ceiling , }) ; } Instrument :: Tolerant { floor : holding . ceiling , companion : holding . companion , } }",
+      "body": "{ let version = env . version () ; let (major , minor) = (version . major () , version . minor ()) ; let Some (holding) = reg . holding (env . label () , major) else { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; return Instrument :: Refused (RejectionCause :: UnheldMajor) ; } ; if let Some (theory) = holding . theory (minor) { return Instrument :: Strict { minor , theory } ; } if minor <= holding . ceiling { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; return Instrument :: Refused (RejectionCause :: UnassignedStamp { ceiling : holding . ceiling , }) ; } Instrument :: Tolerant { floor : holding . ceiling , companion : holding . companion , } }",
       "class_decision": "public-interchange",
-      "item_premise": "This body inherits the public-interchange decision for accept::dispatch.",
+      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for accept::dispatch.",
       "assessments": {
         "full_recording": "review-001",
         "secret_flow": "review-002",
@@ -4574,9 +4574,9 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/accept.rs::accept::dispatch_prefix",
-      "body": "{ let (envelope , _) = Envelope :: peek (prefix) ? ; Ok (dispatch (reg , & envelope)) }",
+      "body": "{ let (envelope , _) = Envelope :: peek (prefix) ? ; let instrument = dispatch (reg , & envelope) ; if matches ! (instrument , Instrument :: Refused (_)) { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } Ok (instrument) }",
       "class_decision": "public-interchange",
-      "item_premise": "This body inherits the public-interchange decision for accept::dispatch_prefix.",
+      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for accept::dispatch_prefix.",
       "assessments": {
         "full_recording": "review-004",
         "secret_flow": "review-002",
@@ -4596,9 +4596,9 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/accept.rs::accept::accept",
-      "body": "{ match dispatch (reg , d . envelope ()) { Instrument :: Strict { minor , theory } => settle (satisfies (d , theory) , Under :: Strict { minor } , | | { Verdict :: AcceptedStrictly { minor } }) , Instrument :: Tolerant { floor , companion } => settle (satisfies_open (d , companion) , Under :: Tolerant { floor } , | | { Verdict :: AcceptedTolerantly { floor } }) , Instrument :: Refused (RejectionCause :: UnheldMajor) => Verdict :: Rejected (Rejection :: UnheldMajor { major : d . envelope () . version () . major () , }) , Instrument :: Refused (RejectionCause :: UnassignedStamp { ceiling }) => Verdict :: Rejected (Rejection :: UnassignedStamp { minor : d . envelope () . version () . minor () , ceiling , }) , } }",
+      "body": "{ let verdict = match dispatch (reg , d . envelope ()) { Instrument :: Strict { minor , theory } => settle (satisfies (d , theory) , Under :: Strict { minor } , | | { Verdict :: AcceptedStrictly { minor } }) , Instrument :: Tolerant { floor , companion } => settle (satisfies_open (d , companion) , Under :: Tolerant { floor } , | | { Verdict :: AcceptedTolerantly { floor } }) , Instrument :: Refused (RejectionCause :: UnheldMajor) => Verdict :: Rejected (Rejection :: UnheldMajor { major : d . envelope () . version () . major () , }) , Instrument :: Refused (RejectionCause :: UnassignedStamp { ceiling }) => Verdict :: Rejected (Rejection :: UnassignedStamp { minor : d . envelope () . version () . minor () , ceiling , }) , } ; if matches ! (verdict , Verdict :: Rejected (_)) { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } verdict }",
       "class_decision": "public-interchange",
-      "item_premise": "This body inherits the public-interchange decision for accept::accept.",
+      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for accept::accept.",
       "assessments": {
         "full_recording": "review-006",
         "secret_flow": "review-002",
@@ -5047,9 +5047,9 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/decode.rs::decode::Value::from_canonical_bytes",
-      "body": "{ let (value , consumed) = Value :: from_canonical_prefix (bytes) ? ; if consumed != bytes . len () { return Err (DecodeError :: TrailingBytes { offset : consumed , count : bytes . len () - consumed , }) ; } Ok (value) }",
+      "body": "{ let (value , consumed) = Value :: from_canonical_prefix (bytes) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) ? ; if consumed != bytes . len () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; return Err (DecodeError :: TrailingBytes { offset : consumed , count : bytes . len () - consumed , }) ; } Ok (value) }",
       "class_decision": "public-interchange",
-      "item_premise": "This body inherits the public-interchange decision for decode::Value::from_canonical_bytes.",
+      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for decode::Value::from_canonical_bytes.",
       "assessments": {
         "full_recording": "review-047",
         "secret_flow": "review-002",
@@ -5058,9 +5058,9 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/decode.rs::decode::Value::from_canonical_prefix",
-      "body": "{ decode_one (bytes) }",
+      "body": "{ decode_one (bytes) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
       "class_decision": "public-interchange",
-      "item_premise": "This body inherits the public-interchange decision for decode::Value::from_canonical_prefix.",
+      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for decode::Value::from_canonical_prefix.",
       "assessments": {
         "full_recording": "review-048",
         "secret_flow": "review-002",
@@ -5256,9 +5256,9 @@
     },
     {
       "operation": "pn-interchange::packages/interchange/src/envelope.rs::envelope::Document::from_canonical_bytes",
-      "body": "{ let value = Value :: from_canonical_bytes (bytes) . map_err (EnvelopeError :: NotCanonical) ? ; Document :: try_from_value (& value) }",
+      "body": "{ let value = Value :: from_canonical_bytes (bytes) . map_err (EnvelopeError :: NotCanonical) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) ? ; Document :: try_from_value (& value) . inspect_err (| _ | { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; }) }",
       "class_decision": "public-interchange",
-      "item_premise": "This body inherits the public-interchange decision for envelope::Document::from_canonical_bytes.",
+      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the public-interchange decision for envelope::Document::from_canonical_bytes.",
       "assessments": {
         "full_recording": "review-066",
         "secret_flow": "review-002",
@@ -6785,9 +6785,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_new_span",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , }) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_new_span. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation. The RECORDS owner selects its own declared operation metric stem; payload gating and terminal classification are unchanged.",
+      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_new_span. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation. The RECORDS owner selects its own declared operation metric stem; payload gating and terminal classification are unchanged.",
       "assessments": {
         "full_recording": "review-204",
         "secret_flow": "review-002",
@@ -6807,9 +6807,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_event",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; let mut fields = Fields :: default () ; let diagnostic = * event . metadata () . level () <= tracing :: Level :: WARN ; if self . 0 . full_trace || diagnostic { event . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; event . record (& mut summary) ; fields = summary . 0 ; } if let Some (span) = context . event_span (event) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () { if let Some (value) = fields . 0 . get (\"return\") { account . result = Some (value . clone ()) ; } account . outcome = fields . 3 . or (account . outcome) ; account . outcome = match fields . 0 . get (\"outcome\") . and_then (Value :: as_str) { Some (\"success\") => Some (\"success\") , Some (\"refusal\") => Some (\"refusal\") , Some (\"error\") => Some (\"error\") , Some (\"cancelled\") => Some (\"cancelled\") , _ => account . outcome , } ; if let Some (bytes) = fields . 0 . get (\"work_bytes\") . and_then (Value :: as_u64) && let Some (operation) = & mut account . operation { operation . work_bytes (bytes) ; } } if ! self . 0 . full_trace && ! diagnostic { return ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } if self . 1 . as_ref () . is_some_and (| filter | { ! < tracing_subscriber :: EnvFilter as Layer < S > > :: enabled (filter , event . metadata () , context . clone ()) }) { return ; } let mut spans = Vec :: new () ; if let Some (scope) = context . event_scope (event) { for span in scope . from_root () { if let Some (account) = span . extensions () . get :: < SpanAccount > () { if account . fields . 2 || spans . len () == 64 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } spans . push (json ! ({ \"name\" : span . name () , \"fields\" : account . fields . 0 })) ; } } } self . 0 . emit (json ! ({ \"kind\" : \"trace\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"origin\" : event . metadata () . target () , \"name\" : \"rule:observe:spans\" , \"origin_name\" : event . metadata () . name () , \"level\" : event . metadata () . level () . as_str () , \"fields\" : fields . 0 , \"spans\" : spans })) ; }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; let mut fields = Fields :: default () ; let diagnostic = * event . metadata () . level () <= tracing :: Level :: WARN ; if self . 0 . full_trace || diagnostic { event . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; event . record (& mut summary) ; fields = summary . 0 ; } if let Some (span) = context . event_span (event) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () { if let Some (value) = fields . 0 . get (\"return\") { account . result = Some (value . clone ()) ; } if ! account . explicit_outcome { account . outcome = fields . 3 . or (account . outcome) ; } let explicit = match fields . 0 . get (\"outcome\") . and_then (Value :: as_str) { Some (\"success\") => Some (\"success\") , Some (\"refusal\") => Some (\"refusal\") , Some (\"error\") => Some (\"error\") , Some (\"cancelled\") => Some (\"cancelled\") , Some (\"unwinding\") => Some (\"unwinding\") , _ => None , } ; if let Some (outcome) = explicit { account . outcome = Some (outcome) ; account . explicit_outcome = true ; } if let Some (bytes) = fields . 0 . get (\"work_bytes\") . and_then (Value :: as_u64) && let Some (operation) = & mut account . operation { operation . work_bytes (bytes) ; } } if ! self . 0 . full_trace && ! diagnostic { return ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } if self . 1 . as_ref () . is_some_and (| filter | { ! < tracing_subscriber :: EnvFilter as Layer < S > > :: enabled (filter , event . metadata () , context . clone ()) }) { return ; } let mut spans = Vec :: new () ; if let Some (scope) = context . event_scope (event) { for span in scope . from_root () { if let Some (account) = span . extensions () . get :: < SpanAccount > () { if account . fields . 2 || spans . len () == 64 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } spans . push (json ! ({ \"name\" : span . name () , \"fields\" : account . fields . 0 })) ; } } } self . 0 . emit (json ! ({ \"kind\" : \"trace\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"origin\" : event . metadata () . target () , \"name\" : \"rule:observe:spans\" , \"origin_name\" : event . metadata () . name () , \"level\" : event . metadata () . level () . as_str () , \"fields\" : fields . 0 , \"spans\" : spans })) ; }",
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_event. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+      "item_premise": "The boundary preserves its input, return and refusal predicates. Explicit bounded contract outcomes precede return inference; capture still follows the configured level. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_event. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
       "assessments": {
         "full_recording": "review-206",
         "secret_flow": "review-002",
@@ -10104,7 +10104,7 @@
       "item": "observation::SpanAccount",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "struct SpanAccount { fields : Fields , started : Duration , operation : Option < Operation > , result : Option < Value > , outcome : Option < & 'static str > , }"
+      "syntax": "struct SpanAccount { fields : Fields , started : Duration , operation : Option < Operation > , result : Option < Value > , outcome : Option < & 'static str > , explicit_outcome : bool , }"
     },
     {
       "item": "observation::AccountingLayer",

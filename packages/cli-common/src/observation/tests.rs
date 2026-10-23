@@ -206,6 +206,51 @@ fn default_return_outcomes() {
     );
 }
 
+/// Claim: At default and trace, an explicit refusal survives a later Err return event, while an unclassified Err remains an error, preserving the distinction between rejected input and a genuine failure.
+/// ´claim:cli:explicit-refusal-precedes-return-inference´
+/// ´test:unit:explicit-refusal-precedence´
+#[test]
+fn explicit_refusal_precedence() {
+    for trace in [false, true] {
+        let (mut observation, _, capture) = fixture();
+        observation.full_trace = trace;
+        let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+        tracing::subscriber::with_default(subscriber, || {
+            for refusal in [false, true] {
+                let span = tracing::info_span!(
+                    "rule:observe:spans",
+                    execution_owner = "CLICOMMON",
+                    source_item = "outcome-fixture"
+                );
+                let _entered = span.enter();
+                if refusal {
+                    tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+                }
+                let failure = serde_json::from_str::<Value>("{").unwrap_err();
+                tracing::event!(tracing::Level::TRACE, r#return = ?Err::<(), _>(failure));
+            }
+        });
+        observation.summarize();
+        let (done, drained) = mpsc::sync_channel(1);
+        observation.flush_sender.send(done).unwrap();
+        observation.sender.send(Message::Wake).unwrap();
+        drained.recv().unwrap();
+        let rows = records(&observation, &capture);
+        let summary = rows.iter().find(|row| row["kind"] == "metric_summary").unwrap();
+        for outcome in ["refusal", "error"] {
+            let row = summary["metrics"]["instruments"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|row| {
+                    row["name"] == "clicommon__root__rule__observe__spans__completed_operations" && row["outcome"] == outcome
+                })
+                .unwrap();
+            assert_eq!(row["counter"], 1);
+        }
+    }
+}
+
 /// Claim: Public byte representations preserve UTF-8, NUL and invalid UTF-8 exactly, and structural values retain constructors, field keys and escaped string contents rather than nesting Debug text.
 /// ´claim:cli:public-content-encoding-is-lossless´
 /// ´test:unit:public-content-encoding´

@@ -86,6 +86,31 @@ def distribution(summary):
 
 
 class Processes(unittest.TestCase):
+    def test_interchange_refusal(self):
+        """Claim: Canonical decode and unheld acceptance refuse unchanged inputs at default and trace; the two decoder boundaries and dispatch/accept each book refusal, no error, with identical complete outcome distributions.
+        ´claim:discipline:interchange-refusals-have-contract-outcomes´
+        ´test:integration:test-interchange-refusal´
+        """
+        root=Path.cwd()
+        with tempfile.TemporaryDirectory(prefix='interchange-outcome-') as temporary:
+            fixture=Path(temporary);(fixture/'src').mkdir()
+            (fixture/'src/main.rs').write_bytes((root/'ci/fixtures/interchange_observation.rs').read_bytes())
+            (fixture/'Cargo.toml').write_text('[package]\nname="interchange-outcome-probe"\nversion="0.0.0"\nedition="2024"\n[workspace]\n[dependencies]\ncli-common={path='+json.dumps(str(root/'packages/cli-common'))+'}\npn-interchange={path='+json.dumps(str(root/'packages/interchange'))+'}\ntracing="0.1"\n[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\n')
+            build=run(['cargo','build','--offline','--profile','gate','--manifest-path',str(fixture/'Cargo.toml')])
+            self.assertEqual(build.returncode,0,build.stderr.decode())
+            distributions={}
+            for mode in ('default','trace'):
+                result=run([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/interchange-outcome-probe')],env=os.environ|{'PN_OBSERVE_LEVEL':mode})
+                self.assertEqual(result.returncode,0,result.stderr.decode())
+                rows=[json.loads(line) for line in result.stderr.splitlines()]
+                summary=next(row['metrics'] for row in rows if row.get('kind')=='metric_summary')
+                stem='interchange__root__rule__observe__spans__'
+                distributions[mode]={k:v for k,v in distribution(summary).items() if k[0].startswith(stem)}
+                self.assertEqual(distributions[mode][stem+'completed_operations','refusal'],4)
+                self.assertNotIn((stem+'completed_operations','error'),distributions[mode])
+                print('INTERCHANGE-OBSERVATION level='+mode+' distribution='+json.dumps({str(k):v for k,v in distributions[mode].items()},sort_keys=True))
+            self.assertEqual(distributions['default'],distributions['trace'])
+
     def test_records_entry(self):
         """Claim: The first domain entry counts and times successful validation, complete-act access, reference resolution and historical edition selection, plus their typed refusals at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.
         ´claim:discipline:records-entry-is-observed-without-changing-results´
@@ -109,7 +134,7 @@ class Processes(unittest.TestCase):
             summary=next(row['metrics'] for row in rows if row.get('kind')=='metric_summary')
             accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith('records__')}
             stem='records__root__sig__design__records__'
-            self.assertEqual(accounting[mode],{(stem+'started_operations',''):7,(stem+'completed_operations','success'):4,(stem+'completed_operations','error'):3})
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):7,(stem+'completed_operations','success'):4,(stem+'completed_operations','refusal'):3})
             elapsed=next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')
             self.assertEqual(elapsed['count'],7)
             instruments={row['name']:row for row in summary['instruments']}
@@ -127,7 +152,7 @@ class Processes(unittest.TestCase):
                 self.assertIn(b'authentication_evidence',result.stderr)
                 for operation in (b'validate-record',b'resolve-public-reference',b'select-effective-declaration'):
                     self.assertIn(operation,result.stderr)
-            print('RECORDS-OBSERVATION level='+mode+' started=7 success=4 error=3 timed=7 validated=2 resolved=1 refusals=3')
+            print('RECORDS-OBSERVATION level='+mode+' started=7 success=4 refusal=3 error=0 timed=7 validated=2 resolved=1 refusals=3')
         self.assertTrue(all(value==samples['disabled'] for value in samples.values()))
         self.assertEqual(accounting['default'],accounting['trace'])
 

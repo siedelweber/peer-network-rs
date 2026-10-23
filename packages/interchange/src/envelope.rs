@@ -609,8 +609,14 @@ impl Document {
         ret
     )]
     pub fn from_canonical_bytes(bytes: &[u8]) -> Result<Document, EnvelopeError> {
-        let value = Value::from_canonical_bytes(bytes).map_err(EnvelopeError::NotCanonical)?;
-        Document::try_from_value(&value)
+        let value = Value::from_canonical_bytes(bytes)
+            .map_err(EnvelopeError::NotCanonical)
+            .inspect_err(|_| {
+                tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+            })?;
+        Document::try_from_value(&value).inspect_err(|_| {
+            tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+        })
     }
 
     /// The document's canonical name.

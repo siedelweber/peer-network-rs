@@ -95,6 +95,7 @@
         "cli-common::observation::tests::provider_bridge": "integration"
       },
       "cases": [
+        "cli-common::observation::tests::explicit_refusal_precedence",
         "cli-common::observation::tests::backward_clock",
         "cli-common::observation::tests::bounded_loss",
         "cli-common::observation::tests::explicit_utc",
@@ -3009,6 +3010,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_observe_runtime.Processes.test_interchange_refusal",
         "ci::test_observe_runtime.Processes.test_four_mode_results",
         "ci::test_observe_runtime.Processes.test_records_entry",
         "ci::test_observe_runtime.Processes.test_rendezvous_failures"

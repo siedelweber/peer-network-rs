@@ -334,6 +334,7 @@ pub fn validate_record<'a>(
 }
 
 fn refused() {
+    tracing::event!(tracing::Level::TRACE, outcome = "refusal");
     metrics::counter!("records__root__sig__design__records__refusals").increment(1);
 }
 

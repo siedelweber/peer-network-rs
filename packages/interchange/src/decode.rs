@@ -78,8 +78,11 @@ impl Value {
         ret
     )]
     pub fn from_canonical_bytes(bytes: &[u8]) -> Result<Value, DecodeError> {
-        let (value, consumed) = Value::from_canonical_prefix(bytes)?;
+        let (value, consumed) = Value::from_canonical_prefix(bytes).inspect_err(|_| {
+            tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+        })?;
         if consumed != bytes.len() {
+            tracing::event!(tracing::Level::TRACE, outcome = "refusal");
             return Err(DecodeError::TrailingBytes {
                 offset: consumed,
                 count: bytes.len() - consumed,
@@ -111,7 +114,9 @@ impl Value {
         ret
     )]
     pub fn from_canonical_prefix(bytes: &[u8]) -> Result<(Value, usize), DecodeError> {
-        decode_one(bytes)
+        decode_one(bytes).inspect_err(|_| {
+            tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+        })
     }
 }
 

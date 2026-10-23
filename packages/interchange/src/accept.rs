@@ -150,12 +150,14 @@ pub fn dispatch<'r>(reg: &'r Registry, env: &Envelope) -> Instrument<'r> {
     let (major, minor) = (version.major(), version.minor());
 
     let Some(holding) = reg.holding(env.label(), major) else {
+        tracing::event!(tracing::Level::TRACE, outcome = "refusal");
         return Instrument::Refused(RejectionCause::UnheldMajor);
     };
     if let Some(theory) = holding.theory(minor) {
         return Instrument::Strict { minor, theory };
     }
     if minor <= holding.ceiling {
+        tracing::event!(tracing::Level::TRACE, outcome = "refusal");
         return Instrument::Refused(RejectionCause::UnassignedStamp {
             ceiling: holding.ceiling,
         });
@@ -223,7 +225,11 @@ pub fn dispatch<'r>(reg: &'r Registry, env: &Envelope) -> Instrument<'r> {
 )]
 pub fn dispatch_prefix<'r>(reg: &'r Registry, prefix: &[u8]) -> Result<Instrument<'r>, EnvelopeError> {
     let (envelope, _) = Envelope::peek(prefix)?;
-    Ok(dispatch(reg, &envelope))
+    let instrument = dispatch(reg, &envelope);
+    if matches!(instrument, Instrument::Refused(_)) {
+        tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+    }
+    Ok(instrument)
 }
 
 /// The disposition of a document at a reader.
@@ -378,7 +384,7 @@ pub enum Under {
     ret
 )]
 pub fn accept(reg: &Registry, d: &Document) -> Verdict {
-    match dispatch(reg, d.envelope()) {
+    let verdict = match dispatch(reg, d.envelope()) {
         Instrument::Strict { minor, theory } => settle(satisfies(d, theory), Under::Strict { minor }, || {
             Verdict::AcceptedStrictly { minor }
         }),
@@ -392,7 +398,11 @@ pub fn accept(reg: &Registry, d: &Document) -> Verdict {
             minor: d.envelope().version().minor(),
             ceiling,
         }),
+    };
+    if matches!(verdict, Verdict::Rejected(_)) {
+        tracing::event!(tracing::Level::TRACE, outcome = "refusal");
     }
+    verdict
 }
 
 /// Turn one judgment into the verdict its instrument gives it.

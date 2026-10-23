@@ -849,6 +849,7 @@ struct SpanAccount {
     operation: Option<Operation>,
     result: Option<Value>,
     outcome: Option<&'static str>,
+    explicit_outcome: bool,
 }
 struct AccountingLayer(Observation, Option<tracing_subscriber::EnvFilter>);
 impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
@@ -906,6 +907,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                 operation,
                 result: None,
                 outcome: None,
+                explicit_outcome: false,
             });
         }
     }
@@ -943,14 +945,21 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
             if let Some(value) = fields.0.get("return") {
                 account.result = Some(value.clone());
             }
-            account.outcome = fields.3.or(account.outcome);
-            account.outcome = match fields.0.get("outcome").and_then(Value::as_str) {
+            if !account.explicit_outcome {
+                account.outcome = fields.3.or(account.outcome);
+            }
+            let explicit = match fields.0.get("outcome").and_then(Value::as_str) {
                 Some("success") => Some("success"),
                 Some("refusal") => Some("refusal"),
                 Some("error") => Some("error"),
                 Some("cancelled") => Some("cancelled"),
-                _ => account.outcome,
+                Some("unwinding") => Some("unwinding"),
+                _ => None,
             };
+            if let Some(outcome) = explicit {
+                account.outcome = Some(outcome);
+                account.explicit_outcome = true;
+            }
             if let Some(bytes) = fields.0.get("work_bytes").and_then(Value::as_u64)
                 && let Some(operation) = &mut account.operation
             {

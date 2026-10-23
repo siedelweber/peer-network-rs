@@ -818,6 +818,8 @@
     "pn-records::public::reference_resolution": "Claim: Accepted history forbids reintroducing an act identity, while a validated batch resolves its own act and leg identities and retained history names; missing and malformed required queries return their distinct typed refusals.",
     "pn-records::public::effective_declarations": "Claim: As-of selection preserves the old opaque edition before a successor takes effect, selects the successor at its boundary independently of input order or edition number, and refuses a key with no effective edition; declaration contents remain outside this fixture.",
     "pn-records::public::invalid_declarations": "Claim: Declaration validation refuses duplicate edition identities, ambiguous simultaneous successors, empty keys and an effective boundary before announcement, so as-of selection cannot silently choose by vector order.",
-    "ci::test_observe.Admission.test_records_operation_field": "Claim: A records boundary must carry the operation declared by its registry row; removing or changing the parsed field refuses coverage even when owner, label and result capture still agree."
+    "ci::test_observe.Admission.test_records_operation_field": "Claim: A records boundary must carry the operation declared by its registry row; removing or changing the parsed field refuses coverage even when owner, label and result capture still agree.",
+    "cli-common::observation::tests::explicit_refusal_precedence": "Claim: At default and trace, an explicit refusal survives a later Err return event, while an unclassified Err remains an error, preserving the distinction between rejected input and a genuine failure.",
+    "ci::test_observe_runtime.Processes.test_interchange_refusal": "Claim: Canonical decode and unheld acceptance refuse unchanged inputs at default and trace; the two decoder boundaries and dispatch/accept each book refusal, no error, with identical complete outcome distributions."
   }
 }
