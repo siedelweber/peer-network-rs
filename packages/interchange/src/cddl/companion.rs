@@ -86,6 +86,16 @@ impl OpenTheory {
     /// assert_eq!(theory.open_companion().floor(), (2, 7));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::companion::OpenTheory::floor"
+        ),
+        ret
+    )]
     pub fn floor(&self) -> (u64, u64) {
         self.floor
     }
@@ -100,6 +110,16 @@ impl OpenTheory {
     /// assert_eq!(theory.open_companion().label().as_str(), "com.example");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::companion::OpenTheory::label"
+        ),
+        ret
+    )]
     pub fn label(&self) -> &NamespaceLabel {
         &self.label
     }
@@ -119,6 +139,16 @@ impl OpenTheory {
     /// );
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::companion::OpenTheory::to_cddl"
+        ),
+        ret
+    )]
     pub fn to_cddl(&self) -> String {
         printer::print(&self.cddl)
     }

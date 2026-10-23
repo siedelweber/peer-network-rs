@@ -44,6 +44,8 @@ impl Version {
     /// assert_eq!((version.major(), version.minor(), version.patch()), (2, 1, 0));
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn new(major: u64, minor: u64, patch: u64) -> Version {
         Version { major, minor, patch }
     }
@@ -56,6 +58,8 @@ impl Version {
     /// assert_eq!(Version::new(2, 1, 0).major(), 2);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn major(self) -> u64 {
         self.major
     }
@@ -69,6 +73,8 @@ impl Version {
     /// assert_eq!(Version::new(2, 1, 0).minor(), 1);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn minor(self) -> u64 {
         self.minor
     }
@@ -81,6 +87,8 @@ impl Version {
     /// assert_eq!(Version::new(2, 1, 7).patch(), 7);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn patch(self) -> u64 {
         self.patch
     }
@@ -94,6 +102,16 @@ impl Version {
     /// assert_eq!(value.to_canonical_bytes(), [0x83, 0x01, 0x02, 0x03]);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "version::Version::to_value"
+        ),
+        ret
+    )]
     pub fn to_value(self) -> Value {
         Value::Array(Array::new([
             Value::Unsigned(self.major),
@@ -117,6 +135,16 @@ impl Version {
     ///
     /// # Errors
     /// Returns an envelope error unless the value is an array of exactly three unsigned integers.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "version::Version::from_value"
+        ),
+        ret
+    )]
     pub fn from_value(v: &Value) -> Result<Version, EnvelopeError> {
         let Value::Array(array) = v else {
             return Err(EnvelopeError::BadVersion);
@@ -160,6 +188,16 @@ impl Coordinate {
     /// assert_eq!(at.label(), &label);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "version::Coordinate::new"
+        ),
+        ret
+    )]
     pub fn new(label: NamespaceLabel, major: u64, minor: u64) -> Coordinate {
         Coordinate { label, major, minor }
     }
@@ -174,6 +212,16 @@ impl Coordinate {
     /// assert_eq!(at.label().as_str(), "com.example");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "version::Coordinate::label"
+        ),
+        ret
+    )]
     pub fn label(&self) -> &NamespaceLabel {
         &self.label
     }
@@ -187,6 +235,8 @@ impl Coordinate {
     /// assert_eq!(Coordinate::new(label, 2, 0).major(), 2);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn major(&self) -> u64 {
         self.major
     }
@@ -200,6 +250,8 @@ impl Coordinate {
     /// assert_eq!(Coordinate::new(label, 2, 5).minor(), 5);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn minor(&self) -> u64 {
         self.minor
     }

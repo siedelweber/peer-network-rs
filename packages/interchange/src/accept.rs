@@ -135,6 +135,16 @@ pub enum RejectionCause {
 /// ));
 /// ```
 #[must_use]
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "INTERCHANGE",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "accept::dispatch"
+    ),
+    ret
+)]
 pub fn dispatch<'r>(reg: &'r Registry, env: &Envelope) -> Instrument<'r> {
     let version = env.version();
     let (major, minor) = (version.major(), version.minor());
@@ -201,6 +211,16 @@ pub fn dispatch<'r>(reg: &'r Registry, env: &Envelope) -> Instrument<'r> {
 ///
 /// # Errors
 /// Returns an envelope error if the bounded prefix cannot supply a canonical, valid envelope.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "INTERCHANGE",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "accept::dispatch_prefix"
+    ),
+    ret
+)]
 pub fn dispatch_prefix<'r>(reg: &'r Registry, prefix: &[u8]) -> Result<Instrument<'r>, EnvelopeError> {
     let (envelope, _) = Envelope::peek(prefix)?;
     Ok(dispatch(reg, &envelope))
@@ -242,6 +262,16 @@ impl Verdict {
     /// assert!(Verdict::AcceptedTolerantly { floor: 0 }.is_accepted());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "accept::Verdict::is_accepted"
+        ),
+        ret
+    )]
     pub fn is_accepted(&self) -> bool {
         matches!(self, Verdict::AcceptedStrictly { .. } | Verdict::AcceptedTolerantly { .. })
     }
@@ -337,6 +367,16 @@ pub enum Under {
 /// assert_eq!(accept(&registry, &document), Verdict::AcceptedStrictly { minor: 0 });
 /// ```
 #[must_use]
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "INTERCHANGE",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "accept::accept"
+    ),
+    ret
+)]
 pub fn accept(reg: &Registry, d: &Document) -> Verdict {
     match dispatch(reg, d.envelope()) {
         Instrument::Strict { minor, theory } => settle(satisfies(d, theory), Under::Strict { minor }, || {

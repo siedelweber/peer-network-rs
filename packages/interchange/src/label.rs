@@ -64,6 +64,16 @@ impl NamespaceLabel {
     ///
     /// # Errors
     /// Returns a label error when the spelling violates the namespace grammar or its byte-length bound.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "label::NamespaceLabel::parse"
+        ),
+        ret
+    )]
     pub fn parse(s: &str) -> Result<NamespaceLabel, LabelError> {
         scan(s)?;
         Ok(NamespaceLabel(Box::from(s)))
@@ -78,6 +88,16 @@ impl NamespaceLabel {
     /// assert_eq!(label.as_str(), "org.pn");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "label::NamespaceLabel::as_str"
+        ),
+        ret
+    )]
     pub fn as_str(&self) -> &str {
         &self.0
     }
@@ -91,6 +111,16 @@ impl NamespaceLabel {
     /// assert_eq!(label.atoms().count(), 3);
     /// assert_eq!(label.atoms().next(), Some("org"));
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "label::NamespaceLabel::atoms"
+        ),
+        ret
+    )]
     pub fn atoms(&self) -> impl Iterator<Item = &str> + '_ {
         self.0.split('.')
     }
@@ -110,6 +140,16 @@ impl NamespaceLabel {
     /// assert_eq!(two.parent(), None);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "label::NamespaceLabel::parent"
+        ),
+        ret
+    )]
     pub fn parent(&self) -> Option<NamespaceLabel> {
         let (head, _) = self.0.rsplit_once('.')?;
         head.contains('.').then(|| NamespaceLabel(Box::from(head)))
@@ -132,9 +172,20 @@ impl NamespaceLabel {
     /// assert!(!neighbour.is_prefix_of(&child));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "label::NamespaceLabel::is_prefix_of"
+        ),
+        ret
+    )]
     pub fn is_prefix_of(&self, other: &NamespaceLabel) -> bool {
         let mut theirs = other.atoms();
-        self.atoms().all(|atom| theirs.next() == Some(atom))
+        let mut ours = self.atoms();
+        ours.all(|atom| theirs.next() == Some(atom))
     }
 }
 
@@ -147,6 +198,16 @@ impl NamespaceLabel {
 impl FromStr for NamespaceLabel {
     type Err = LabelError;
 
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "label::<NamespaceLabel as FromStr>::from_str"
+        ),
+        ret
+    )]
     fn from_str(s: &str) -> Result<NamespaceLabel, LabelError> {
         NamespaceLabel::parse(s)
     }
@@ -159,6 +220,8 @@ impl FromStr for NamespaceLabel {
 /// assert_eq!(label.to_string(), "com.example");
 /// ```
 impl fmt::Display for NamespaceLabel {
+    /// Justified: Formatting supplies the public representation to the enclosing observation boundary and must not recursively create another observation.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(&self.0)
     }
@@ -172,6 +235,16 @@ impl fmt::Display for NamespaceLabel {
 /// assert_eq!(borrowed, "com.example");
 /// ```
 impl AsRef<str> for NamespaceLabel {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "label::<NamespaceLabel as AsRef < str >>::as_ref"
+        ),
+        ret
+    )]
     fn as_ref(&self) -> &str {
         &self.0
     }
@@ -186,6 +259,16 @@ impl AsRef<str> for NamespaceLabel {
 impl TryFrom<&str> for NamespaceLabel {
     type Error = LabelError;
 
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "label::<NamespaceLabel as TryFrom < & str >>::try_from"
+        ),
+        ret
+    )]
     fn try_from(s: &str) -> Result<NamespaceLabel, LabelError> {
         NamespaceLabel::parse(s)
     }

@@ -8,10 +8,14 @@ use std::sync::{Arc, Mutex};
 use metrics::{Counter, CounterFn, Gauge, GaugeFn, Histogram, HistogramFn, Key, KeyName, Metadata, Recorder, SharedString, Unit};
 use serde_json::{Value, json};
 
-pub(super) const STEMS: [&str; 3] = [
+pub(super) const STEMS: [&str; 7] = [
     "clicommon__root__rule__observe__metering",
     "execwrap__root__rule__observe__privacy",
     "clicommon__root__dec__observe__sinks",
+    "documents__root__rule__observe__spans",
+    "interchange__root__rule__observe__spans",
+    "clicommon__root__rule__observe__spans",
+    "execwrap__root__rule__observe__spans",
 ];
 pub(super) const OUTCOMES: [&str; 6] = ["success", "refusal", "error", "cancelled", "unwinding", "incomplete"];
 
@@ -20,14 +24,16 @@ pub(super) const OUTCOMES: [&str; 6] = ["success", "refusal", "error", "cancelle
 pub(super) fn estimate(value: u64) -> f64 {
     value as f64
 }
-const MEASURES: [(&str, &str, &str); 7] = [
+const MEASURES: [(&str, &str, &str); 9] = [
     ("started_operations", "counter", "operations"),
     ("completed_operations", "counter", "operations"),
     ("work_bytes", "counter", "bytes"),
+    ("work_operations", "counter", "operations"),
     ("active_operations", "gauge", "operations"),
     ("resource_current_bytes", "gauge", "bytes"),
     ("elapsed_seconds", "histogram", "seconds"),
     ("workload_bytes", "histogram", "bytes"),
+    ("workload_operations", "histogram", "operations"),
 ];
 
 #[derive(Default)]
@@ -47,6 +53,13 @@ struct Instrument {
     bounds: [f64; 4],
     totals: Mutex<Totals>,
     lost: Arc<AtomicU64>,
+    sdk: Option<SdkInstrument>,
+}
+
+enum SdkInstrument {
+    Counter(opentelemetry::metrics::Counter<u64>),
+    Gauge(opentelemetry::metrics::Gauge<f64>),
+    Histogram(opentelemetry::metrics::Histogram<f64>),
 }
 
 impl Instrument {
@@ -61,35 +74,64 @@ impl Instrument {
 }
 
 impl CounterFn for Instrument {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn increment(&self, value: u64) {
         self.update(|t| {
             if let Some(total) = t.counter.checked_add(value) {
                 t.counter = total;
+                if let Some(SdkInstrument::Counter(counter)) = &self.sdk {
+                    counter.add(value, &[]);
+                }
             } else {
                 t.counter = u64::MAX;
                 self.lost.fetch_add(1, Ordering::Relaxed);
             }
         });
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn absolute(&self, value: u64) {
-        self.update(|t| t.counter = t.counter.max(value));
+        self.update(|t| {
+            let delta = value.saturating_sub(t.counter);
+            t.counter = t.counter.max(value);
+            if let Some(SdkInstrument::Counter(counter)) = &self.sdk {
+                counter.add(delta, &[]);
+            }
+        });
     }
 }
 
 impl GaugeFn for Instrument {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn increment(&self, value: f64) {
         if value.is_finite() {
-            self.update(|t| t.gauge += value);
+            self.update(|t| {
+                t.gauge += value;
+                if let Some(SdkInstrument::Gauge(gauge)) = &self.sdk {
+                    gauge.record(t.gauge, &[]);
+                }
+            });
         } else {
             self.lost.fetch_add(1, Ordering::Relaxed);
         }
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn decrement(&self, value: f64) {
         GaugeFn::increment(self, -value);
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn set(&self, value: f64) {
         if value.is_finite() {
-            self.update(|t| t.gauge = value);
+            self.update(|t| {
+                t.gauge = value;
+                if let Some(SdkInstrument::Gauge(gauge)) = &self.sdk {
+                    gauge.record(t.gauge, &[]);
+                }
+            });
         } else {
             self.lost.fetch_add(1, Ordering::Relaxed);
         }
@@ -97,6 +139,8 @@ impl GaugeFn for Instrument {
 }
 
 impl HistogramFn for Instrument {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn record(&self, value: f64) {
         if !value.is_finite() || value < 0.0 {
             self.lost.fetch_add(1, Ordering::Relaxed);
@@ -107,6 +151,9 @@ impl HistogramFn for Instrument {
             t.sum += value;
             let bucket = self.bounds.iter().position(|b| value <= *b).unwrap_or(4);
             t.buckets[bucket] = t.buckets[bucket].saturating_add(1);
+            if let Some(SdkInstrument::Histogram(histogram)) = &self.sdk {
+                histogram.record(value, &[]);
+            }
         });
     }
 }
@@ -120,24 +167,44 @@ pub(super) struct JsonRecorder {
 
 impl JsonRecorder {
     pub(super) fn new() -> Self {
+        Self::with_meter(None)
+    }
+
+    pub(super) fn with_meter(meter: Option<&opentelemetry::metrics::Meter>) -> Self {
         let lost = Arc::new(AtomicU64::new(0));
         let mut instruments = BTreeMap::new();
         for stem in STEMS {
             for (measure, kind, unit) in MEASURES {
                 let outcomes: &[&str] = if measure == "completed_operations" { &OUTCOMES } else { &[""] };
                 for outcome in outcomes {
+                    // The finite outcome is part of the SDK instrument name; no
+                    // unbounded label can create a provider series.
+                    let sdk_name = format!("{stem}__{measure}{}{}", if outcome.is_empty() { "" } else { "__" }, outcome);
+                    let bounds = if unit == "seconds" {
+                        [0.001, 0.01, 0.1, 1.0]
+                    } else {
+                        [1.0, 1024.0, 65_536.0, 1_048_576.0]
+                    };
+                    let sdk = meter.map(|meter| match kind {
+                        "counter" => SdkInstrument::Counter(meter.u64_counter(sdk_name).with_unit(unit).build()),
+                        "gauge" => SdkInstrument::Gauge(meter.f64_gauge(sdk_name).with_unit(unit).build()),
+                        _ => SdkInstrument::Histogram(
+                            meter
+                                .f64_histogram(sdk_name)
+                                .with_unit(unit)
+                                .with_boundaries(bounds.to_vec())
+                                .build(),
+                        ),
+                    });
                     instruments.insert(
                         (format!("{stem}__{measure}"), (*outcome).into()),
                         Arc::new(Instrument {
                             kind,
                             unit,
-                            bounds: if unit == "seconds" {
-                                [0.001, 0.01, 0.1, 1.0]
-                            } else {
-                                [1.0, 1024.0, 65_536.0, 1_048_576.0]
-                            },
+                            bounds,
                             totals: Mutex::new(Totals::default()),
                             lost: lost.clone(),
+                            sdk,
                         }),
                     );
                 }
@@ -187,7 +254,7 @@ impl JsonRecorder {
             if let Ok(t) = instrument.totals.try_lock() {
                 rows.push(
                     json!({"name":name,"kind":instrument.kind,"unit":instrument.unit,"outcome":outcome,
-                    "counter":t.counter,"gauge":if name.ends_with("resource_current_bytes") && !t.observed {None}else{Some(t.gauge)},"count":t.count,"sum":t.sum,"buckets":t.buckets,
+                    "counter":if name.ends_with("work_bytes") && !t.observed {None}else{Some(t.counter)},"gauge":if name.ends_with("resource_current_bytes") && !t.observed {None}else{Some(t.gauge)},"count":t.count,"sum":t.sum,"buckets":t.buckets,
                     "resource_scope":"reported operation-owned bytes only; unavailable contexts excluded",
                     "boundaries":instrument.bounds,"bucket_aggregation":"disjoint; final bucket is above last boundary"}),
                 );
@@ -200,21 +267,33 @@ impl JsonRecorder {
 }
 
 impl Recorder for JsonRecorder {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn describe_counter(&self, key: KeyName, unit: Option<Unit>, _description: SharedString) {
         self.describe(&key, unit, "counter");
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn describe_gauge(&self, key: KeyName, unit: Option<Unit>, _description: SharedString) {
         self.describe(&key, unit, "gauge");
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn describe_histogram(&self, key: KeyName, unit: Option<Unit>, _description: SharedString) {
         self.describe(&key, unit, "histogram");
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn register_counter(&self, key: &Key, _metadata: &Metadata<'_>) -> Counter {
         self.instrument(key, "counter").map_or_else(Counter::noop, Counter::from_arc)
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn register_gauge(&self, key: &Key, _metadata: &Metadata<'_>) -> Gauge {
         self.instrument(key, "gauge").map_or_else(Gauge::noop, Gauge::from_arc)
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn register_histogram(&self, key: &Key, _metadata: &Metadata<'_>) -> Histogram {
         self.instrument(key, "histogram")
             .map_or_else(Histogram::noop, Histogram::from_arc)

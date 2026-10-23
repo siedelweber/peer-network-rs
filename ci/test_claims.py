@@ -175,7 +175,7 @@ class Evidence(unittest.TestCase):
             Path('.lane/harness-benchmarks.jsonl').write_text('')
             Path('ci/claim_review.json').write_text('{"schema":1,"sites":[]}')
             Path('ci/claim_gloss_baseline.json').write_text(json.dumps({'schema':1,'glosses':{s['operation']:site_claim(s)['gloss'] for s in sites}}))
-            Path('ci/observe-core.json').write_text('{"schema":1,"operations":[]}')
+            Path('.lane/observation-coverage.json').write_text('{"source":"current","mechanical_status":"passed"}')
             for name,value in (('load_registry',registry),('census',sites),
                                ('claim_mints',{'ROOT::claim:testing:fixture':1}),('checked_linter',None),
                                ('prose',(data['paragraphs'],data['obligations'])),('source_id','current')):

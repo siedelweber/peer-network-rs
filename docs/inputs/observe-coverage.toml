@@ -1,0 +1,34 @@
+namespace = "org.peer-network.observe.coverage"
+version = [1, 0, 0]
+
+[[rows]]
+name = "cli-common"
+operations = 106
+instrumented = 30
+exceptions = 73
+helpers = 3
+generators = 36
+
+[[rows]]
+name = "documents"
+operations = 18
+instrumented = 12
+exceptions = 6
+helpers = 0
+generators = 10
+
+[[rows]]
+name = "execwrap"
+operations = 12
+instrumented = 8
+exceptions = 4
+helpers = 0
+generators = 11
+
+[[rows]]
+name = "pn-interchange"
+operations = 153
+instrumented = 134
+exceptions = 18
+helpers = 1
+generators = 89

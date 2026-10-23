@@ -1,0 +1,42 @@
+{
+  "namespace": "org.peer-network.observe.coverage",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "exceptions": 73,
+      "generators": 36,
+      "helpers": 3,
+      "instrumented": 30,
+      "name": "cli-common",
+      "operations": 106
+    },
+    {
+      "exceptions": 6,
+      "generators": 10,
+      "helpers": 0,
+      "instrumented": 12,
+      "name": "documents",
+      "operations": 18
+    },
+    {
+      "exceptions": 4,
+      "generators": 11,
+      "helpers": 0,
+      "instrumented": 8,
+      "name": "execwrap",
+      "operations": 12
+    },
+    {
+      "exceptions": 18,
+      "generators": 89,
+      "helpers": 1,
+      "instrumented": 134,
+      "name": "pn-interchange",
+      "operations": 153
+    }
+  ]
+}

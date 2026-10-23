@@ -27,6 +27,55 @@ const RECORD_LIMIT: usize = 1024 * 1024;
 const QUEUE_RECORDS: usize = 64;
 static GLOBAL: OnceLock<Observation> = OnceLock::new();
 
+thread_local! { static OBSERVING: std::cell::Cell<bool> = const { std::cell::Cell::new(false) }; }
+struct Observing;
+impl Observing {
+    fn enter(lost: &AtomicU64) -> Option<Self> {
+        if OBSERVING.replace(true) {
+            lost.fetch_add(1, Ordering::Relaxed);
+            None
+        } else {
+            Some(Self)
+        }
+    }
+}
+impl Drop for Observing {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
+    fn drop(&mut self) {
+        OBSERVING.set(false);
+    }
+}
+
+/// Checked synchronous boundary for capabilities without a Debug contract.
+/// Public data is supplied in full; opaque capabilities name their unavailable
+/// representation rather than adding a new bound to a binding API.
+#[must_use]
+pub fn scope(owner: &'static str, label: &'static str, item: &'static str, arguments: &dyn fmt::Debug) -> Scope {
+    Scope(tracing::info_span!("rule:observe:spans", execution_owner=owner, claim_owner="ROOT", claim_label=label, source_item=item, arguments=?arguments).entered())
+}
+
+/// Synchronous span lifetime; never retain this guard across suspension.
+#[derive(Debug)]
+pub struct Scope(tracing::span::EnteredSpan);
+impl Scope {
+    /// Record the full public result before the synchronous boundary closes.
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
+    pub fn finish(self, result: &dyn fmt::Debug) {
+        tracing::info!("return"=?result);
+        drop(self.0);
+    }
+
+    /// Record a bounded terminal class with the full available public result.
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
+    pub fn finish_with(self, outcome: Outcome, result: &dyn fmt::Debug) {
+        tracing::info!(outcome=outcome.name(),"return"=?result);
+        drop(self.0);
+    }
+}
+
 /// A validated explicit-UTC instant; no local-zone inference is performed.
 #[derive(Clone, Debug, Serialize)]
 pub struct UtcInstant(String);
@@ -36,6 +85,8 @@ impl UtcInstant {
     ///
     /// # Errors
     /// Names offset, naive or malformed input; never assigns a zone.
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub fn parse(value: &str) -> Result<Self, &'static str> {
         if !value.ends_with('Z') {
             return Err(if value.get(19..).is_some_and(|s| s.contains('+') || s.contains('-')) {
@@ -88,9 +139,13 @@ trait Clock: Send + Sync {
 
 struct SystemClock(Instant);
 impl Clock for SystemClock {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn elapsed(&self) -> Duration {
         self.0.elapsed()
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn utc(&self) -> Option<UtcInstant> {
         let mut text = String::new();
         tracing_subscriber::fmt::time::SystemTime
@@ -107,11 +162,15 @@ enum Message {
 
 struct Limited(Vec<u8>);
 impl fmt::Write for Limited {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn write_str(&mut self, value: &str) -> fmt::Result {
         self.write_all(value.as_bytes()).map_err(|_| fmt::Error)
     }
 }
 impl Write for Limited {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
         if self.0.len().saturating_add(bytes.len()) > RECORD_LIMIT {
             return Err(io::Error::other("observation record capacity"));
@@ -119,6 +178,8 @@ impl Write for Limited {
         self.0.extend_from_slice(bytes);
         Ok(bytes.len())
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn flush(&mut self) -> io::Result<()> {
         Ok(())
     }
@@ -132,10 +193,19 @@ pub struct Observation {
     clock: Arc<dyn Clock>,
     recorder: JsonRecorder,
     next_id: Arc<AtomicU64>,
+    bridge: Option<Arc<crate::observation_export::Bridge>>,
 }
 
 impl Observation {
     fn with_writer(writer: impl Write + Send + 'static, clock: Arc<dyn Clock>) -> io::Result<Self> {
+        Self::with_writer_bridge(writer, clock, None)
+    }
+
+    fn with_writer_bridge(
+        writer: impl Write + Send + 'static,
+        clock: Arc<dyn Clock>,
+        bridge: Option<Arc<crate::observation_export::Bridge>>,
+    ) -> io::Result<Self> {
         let (sender, receiver) = mpsc::sync_channel(QUEUE_RECORDS);
         let lost = Arc::new(AtomicU64::new(0));
         let worker_lost = lost.clone();
@@ -158,13 +228,18 @@ impl Observation {
             sender,
             lost,
             clock,
-            recorder: JsonRecorder::new(),
+            recorder: bridge
+                .as_ref()
+                .map_or_else(JsonRecorder::new, |b| JsonRecorder::with_meter(Some(&b.meter()))),
             next_id: Arc::new(AtomicU64::new(1)),
+            bridge,
         })
     }
 
     /// Borrow the context installed by the executable, if enabled.
     #[must_use]
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub fn current() -> Option<Self> {
         GLOBAL.get().cloned()
     }
@@ -178,10 +253,14 @@ impl Observation {
         });
         record["lost_records"] = json!(self.lost.load(Ordering::Relaxed));
         let mut bytes = Limited(Vec::new());
-        if serde_json::to_writer(&mut bytes, &record).is_err()
-            || bytes.write_all(b"\n").is_err()
-            || self.sender.try_send(Message::Record(bytes.0)).is_err()
-        {
+        if serde_json::to_writer(&mut bytes, &record).is_err() || bytes.write_all(b"\n").is_err() {
+            self.lost.fetch_add(1, Ordering::Relaxed);
+            return;
+        }
+        if let Some(bridge) = &self.bridge {
+            bridge.record(&bytes.0);
+        }
+        if self.sender.try_send(Message::Record(bytes.0)).is_err() {
             self.lost.fetch_add(1, Ordering::Relaxed);
         }
     }
@@ -208,6 +287,7 @@ impl Observation {
             parent,
             started: self.clock.elapsed(),
             work: 0,
+            work_observed: false,
             work_overflow: false,
             current: Resource::unavailable(),
             high_water: Resource::unavailable(),
@@ -216,6 +296,7 @@ impl Observation {
         };
         metrics::with_local_recorder(&self.recorder, || {
             metrics::counter!(format!("{}__started_operations", kind.stem())).increment(1);
+            metrics::counter!(format!("{}__work_operations", kind.stem())).increment(1);
             metrics::gauge!(format!("{}__active_operations", kind.stem())).increment(1.0);
         });
         let mut detail = Map::new();
@@ -225,7 +306,14 @@ impl Observation {
     }
 
     /// Emit a bounded snapshot from the same recorder that owns API instruments.
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub fn summarize(&self) {
+        if let Some(bridge) = &self.bridge {
+            bridge.flush();
+            let failures = bridge.failures.try_lock().ok().map(|values| values.clone());
+            self.emit(json!({"kind":"export_summary","claim_owner":"ROOT","claim_label":"proposal:observe:export","execution_owner":"CLICOMMON","lost_exports":bridge.lost.load(Ordering::Relaxed),"failures":failures}));
+        }
         self.emit(
             json!({"kind":"metric_summary","claim_owner":"ROOT","claim_label":"conv:observe:metrics",
             "execution_owner":"CLICOMMON","metrics":self.recorder.snapshot()}),
@@ -242,6 +330,14 @@ pub enum OperationKind {
     Child,
     /// Executable-owned subscriber/recorder installation.
     Bootstrap,
+    /// Document projection, rendering and checks.
+    Document,
+    /// Interchange coding, theory evaluation and acceptance.
+    Interchange,
+    /// Shared CLI public operation.
+    PublicCli,
+    /// Execution wrapper public operation.
+    PublicExec,
 }
 impl OperationKind {
     const fn stem(self) -> &'static str {
@@ -249,6 +345,10 @@ impl OperationKind {
             Self::Command => STEMS[0],
             Self::Child => STEMS[1],
             Self::Bootstrap => STEMS[2],
+            Self::Document => STEMS[3],
+            Self::Interchange => STEMS[4],
+            Self::PublicCli => STEMS[5],
+            Self::PublicExec => STEMS[6],
         }
     }
     const fn label(self) -> &'static str {
@@ -256,11 +356,14 @@ impl OperationKind {
             Self::Command => "rule:observe:metering",
             Self::Child => "rule:observe:privacy",
             Self::Bootstrap => "dec:observe:sinks",
+            Self::Document | Self::Interchange | Self::PublicCli | Self::PublicExec => "rule:observe:spans",
         }
     }
     const fn owner(self) -> &'static str {
         match self {
-            Self::Child => "EXECWRAP",
+            Self::Child | Self::PublicExec => "EXECWRAP",
+            Self::Document => "DOCUMENTS",
+            Self::Interchange => "INTERCHANGE",
             _ => "CLICOMMON",
         }
     }
@@ -325,6 +428,7 @@ pub struct Operation {
     parent: Option<u64>,
     started: Duration,
     work: u64,
+    work_observed: bool,
     work_overflow: bool,
     current: Resource,
     high_water: Resource,
@@ -341,12 +445,17 @@ impl Operation {
 
     /// Start a child with its own work totals; parent elapsed time remains inclusive.
     #[must_use]
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub fn child(&self, kind: OperationKind, arguments: Value) -> Self {
         self.observation.operation_with_parent(kind, arguments, Some(self.id))
     }
 
     /// Add performed bytes, including retries and refused attempts, exactly once.
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub fn work_bytes(&mut self, bytes: u64) {
+        self.work_observed = true;
         if let Some(total) = self.work.checked_add(bytes) {
             self.work = total;
         } else {
@@ -359,6 +468,8 @@ impl Operation {
     }
 
     /// Record current, high-water and cumulative resource bytes with explicit accuracy.
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub fn resources(&mut self, current: u64, cumulative: u64, accuracy: Accuracy) {
         let previous = self.current.value.unwrap_or(0);
         let measured = if matches!(accuracy, Accuracy::Unavailable) {
@@ -400,11 +511,15 @@ impl Operation {
     }
 
     /// Record full public progress content without affecting the relayed bytes.
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub fn progress(&self, content: Value) {
         self.record("progress", content);
     }
 
     /// Complete once with a bounded outcome and full public result or error.
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub fn finish(mut self, outcome: Outcome, result: Value) {
         self.complete(outcome.name(), result);
     }
@@ -417,7 +532,7 @@ impl Operation {
             .checked_sub(self.started)
             .map(|d| d.as_secs_f64());
         let mut detail = json!({"duration_seconds":elapsed,"duration_accuracy":if elapsed.is_some(){"monotonic"}else{"unavailable"},
-            "outcome":outcome,"work":{"value":if self.work_overflow {None}else{Some(self.work)},"accuracy":if self.work_overflow {"unavailable; counter overflow"}else{"exact"},"unit":"bytes","aggregation":"own increments only"},
+            "outcome":outcome,"work":{"value":if self.work_overflow {None}else{Some(if self.work_observed {self.work}else{1})},"accuracy":if self.work_overflow {"unavailable; counter overflow"}else{"exact"},"unit":if self.work_observed {"bytes"}else{"operations"},"aggregation":if self.work_observed {"own byte increments only"}else{"one invoked operation; child invocations separate"}},
             "resources":{"current":self.current,"high_water":self.high_water,"cumulative":self.cumulative,"cpu_seconds":{"value":null,"accuracy":"unavailable","unit":"seconds"},"allocation_bytes":{"value":null,"accuracy":"unavailable","unit":"bytes"}},
             "duration_aggregation":"inclusive; do not sum parent and child"});
         detail["result"] = result;
@@ -425,13 +540,14 @@ impl Operation {
         metrics::with_local_recorder(&self.observation.recorder, || {
             metrics::counter!(format!("{}__completed_operations",self.kind.stem()),"outcome"=>outcome).increment(1);
             metrics::gauge!(format!("{}__active_operations", self.kind.stem())).decrement(1.0);
+            metrics::histogram!(format!("{}__workload_operations", self.kind.stem())).record(1.0);
             if let Some(current) = self.current.value {
                 metrics::gauge!(format!("{}__resource_current_bytes", self.kind.stem())).decrement(estimate(current));
             }
             if let Some(seconds) = elapsed {
                 metrics::histogram!(format!("{}__elapsed_seconds", self.kind.stem())).record(seconds);
             }
-            if !self.work_overflow {
+            if self.work_observed && !self.work_overflow {
                 metrics::histogram!(format!("{}__workload_bytes", self.kind.stem())).record(estimate(self.work));
             }
         });
@@ -439,6 +555,8 @@ impl Operation {
     }
 }
 impl Drop for Operation {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn drop(&mut self) {
         if !self.finished {
             self.complete(if std::thread::panicking() { "unwinding" } else { "incomplete" }, Value::Null);
@@ -459,6 +577,8 @@ impl Fields {
     }
 }
 impl Visit for Fields {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn record_debug(&mut self, field: &Field, value: &dyn fmt::Debug) {
         let mut text = Limited(Vec::new());
         if fmt::write(&mut text, format_args!("{value:?}")).is_err() {
@@ -472,6 +592,8 @@ impl Visit for Fields {
             self.2 = true;
         }
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn record_str(&mut self, field: &Field, value: &str) {
         if value.len().saturating_add(self.1) > RECORD_LIMIT {
             self.2 = true;
@@ -479,12 +601,18 @@ impl Visit for Fields {
             self.insert(field, json!(value), value.len());
         }
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn record_u64(&mut self, field: &Field, value: u64) {
         self.insert(field, json!(value), 20);
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn record_i64(&mut self, field: &Field, value: i64) {
         self.insert(field, json!(value), 21);
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn record_bool(&mut self, field: &Field, value: bool) {
         self.insert(field, json!(value), 5);
     }
@@ -492,31 +620,94 @@ impl Visit for Fields {
 struct SpanAccount {
     fields: Fields,
     started: Duration,
+    operation: Option<Operation>,
+    result: Option<Value>,
+    outcome: Option<&'static str>,
 }
-struct AccountingLayer(Observation);
+struct AccountingLayer(Observation, Option<tracing_subscriber::EnvFilter>);
 impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn on_new_span(&self, attributes: &Attributes<'_>, id: &Id, context: Context<'_, S>) {
+        let Some(_observing) = Observing::enter(&self.0.lost) else {
+            return;
+        };
         if let Some(span) = context.span(id) {
             let mut fields = Fields::default();
             attributes.record(&mut fields);
+            if fields.2 {
+                self.0.lost.fetch_add(1, Ordering::Relaxed);
+                return;
+            }
+            let kind = match fields.0.get("execution_owner").and_then(Value::as_str) {
+                Some("DOCUMENTS") => Some(OperationKind::Document),
+                Some("INTERCHANGE") => Some(OperationKind::Interchange),
+                Some("CLICOMMON") => Some(OperationKind::PublicCli),
+                Some("EXECWRAP") => Some(OperationKind::PublicExec),
+                _ => None,
+            };
+            let parent = span.parent().and_then(|parent| {
+                parent
+                    .extensions()
+                    .get::<SpanAccount>()
+                    .and_then(|account| account.operation.as_ref().map(|operation| operation.id))
+            });
+            let operation = kind.map(|kind| self.0.operation_with_parent(kind, json!(fields.0), parent));
             span.extensions_mut().insert(SpanAccount {
                 fields,
                 started: self.0.clock.elapsed(),
+                operation,
+                result: None,
+                outcome: None,
             });
         }
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn on_record(&self, id: &Id, values: &Record<'_>, context: Context<'_, S>) {
+        let Some(_observing) = Observing::enter(&self.0.lost) else {
+            return;
+        };
         if let Some(span) = context.span(id)
             && let Some(account) = span.extensions_mut().get_mut::<SpanAccount>()
         {
             values.record(&mut account.fields);
         }
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn on_event(&self, event: &tracing::Event<'_>, context: Context<'_, S>) {
+        let Some(_observing) = Observing::enter(&self.0.lost) else {
+            return;
+        };
         let mut fields = Fields::default();
         event.record(&mut fields);
+        if let Some(span) = context.event_span(event)
+            && let Some(account) = span.extensions_mut().get_mut::<SpanAccount>()
+        {
+            if let Some(value) = fields.0.get("return") {
+                account.result = Some(value.clone());
+            }
+            account.outcome = match fields.0.get("outcome").and_then(Value::as_str) {
+                Some("success") => Some("success"),
+                Some("refusal") => Some("refusal"),
+                Some("error") => Some("error"),
+                Some("cancelled") => Some("cancelled"),
+                _ => account.outcome,
+            };
+            if let Some(bytes) = fields.0.get("work_bytes").and_then(Value::as_u64)
+                && let Some(operation) = &mut account.operation
+            {
+                operation.work_bytes(bytes);
+            }
+        }
         if fields.2 {
             self.0.lost.fetch_add(1, Ordering::Relaxed);
+            return;
+        }
+        if self.1.as_ref().is_some_and(|filter| {
+            !<tracing_subscriber::EnvFilter as Layer<S>>::enabled(filter, event.metadata(), context.clone())
+        }) {
             return;
         }
         let mut spans = Vec::new();
@@ -534,10 +725,36 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
         self.0.emit(json!({"kind":"trace","claim_owner":"ROOT","claim_label":"rule:observe:spans","execution_owner":"CLICOMMON",
             "origin":event.metadata().target(),"name":"rule:observe:spans","origin_name":event.metadata().name(),"level":event.metadata().level().as_str(),"fields":fields.0,"spans":spans}));
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn on_close(&self, id: Id, context: Context<'_, S>) {
+        let Some(_observing) = Observing::enter(&self.0.lost) else {
+            return;
+        };
         if let Some(span) = context.span(&id)
-            && let Some(account) = span.extensions().get::<SpanAccount>()
+            && let Some(account) = span.extensions_mut().remove::<SpanAccount>()
         {
+            if let Some(mut operation) = account.operation {
+                let outcome = if std::thread::panicking() {
+                    "unwinding"
+                } else if let Some(outcome) = account.outcome {
+                    outcome
+                } else if account
+                    .result
+                    .as_ref()
+                    .and_then(Value::as_str)
+                    .is_some_and(|value| value.starts_with("Err("))
+                {
+                    "error"
+                } else if account.result.is_some() {
+                    "success"
+                } else if account.fields.0.get("asynchronous").and_then(Value::as_bool) == Some(true) {
+                    "cancelled"
+                } else {
+                    "incomplete"
+                };
+                operation.complete(outcome, account.result.unwrap_or(Value::Null));
+            }
             if account.fields.2 {
                 self.0.lost.fetch_add(1, Ordering::Relaxed);
                 return;
@@ -551,6 +768,8 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
 /// Executable-owned lifetime for a bounded final metric snapshot and drain.
 pub struct BootstrapGuard(Option<Observation>);
 impl Drop for BootstrapGuard {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn drop(&mut self) {
         if let Some(observation) = &self.0 {
             observation.summarize();
@@ -564,7 +783,43 @@ impl Drop for BootstrapGuard {
 ///
 /// # Errors
 /// Refuses an existing global installation or an unavailable writer thread by name.
+/// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn bootstrap(enabled: bool, debug: bool, default_level: tracing::Level) -> Result<BootstrapGuard, &'static str> {
+    bootstrap_inner(enabled, debug, default_level, None, Instant::now())
+}
+
+/// Compose the same subscriber and recorder with the bounded SDK export bridge.
+/// The executable calls this before spawning threads; environment mutation after
+/// startup is outside the admitted configuration. The transport must have passed
+/// its secret-boundary review; credentials never enter SDK headers or endpoints.
+///
+/// # Errors
+/// Returns full public initialization errors, or names forbidden environment input.
+/// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
+pub fn bootstrap_with_export(
+    enabled: bool,
+    debug: bool,
+    default_level: tracing::Level,
+    config: crate::observation_export::ExportConfig,
+) -> Result<BootstrapGuard, Box<dyn std::error::Error + Send + Sync>> {
+    let started = Instant::now();
+    let bridge = if enabled {
+        Some(Arc::new(crate::observation_export::Bridge::new(config)?))
+    } else {
+        None
+    };
+    bootstrap_inner(enabled, debug, default_level, bridge, started).map_err(Into::into)
+}
+
+fn bootstrap_inner(
+    enabled: bool,
+    debug: bool,
+    default_level: tracing::Level,
+    bridge: Option<Arc<crate::observation_export::Bridge>>,
+    started: Instant,
+) -> Result<BootstrapGuard, &'static str> {
     if !enabled {
         let status = Observation::with_writer(StderrSink, Arc::new(SystemClock(Instant::now())))
             .map_err(|_| "observation status writer unavailable")?;
@@ -576,14 +831,13 @@ pub fn bootstrap(enabled: bool, debug: bool, default_level: tracing::Level) -> R
     if GLOBAL.get().is_some() {
         return Err("observation already initialized");
     }
-    let started = Instant::now();
-    let observation =
-        Observation::with_writer(StderrSink, Arc::new(SystemClock(started))).map_err(|_| "observation writer unavailable")?;
+    let observation = Observation::with_writer_bridge(StderrSink, Arc::new(SystemClock(started)), bridge)
+        .map_err(|_| "observation writer unavailable")?;
     let selection = crate::tracing_filter(debug, default_level);
     let filter = tracing_subscriber::EnvFilter::try_new(&selection.directive)
         .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"));
     tracing_subscriber::registry()
-        .with(AccountingLayer(observation.clone()).with_filter(filter))
+        .with(AccountingLayer(observation.clone(), Some(filter)))
         .try_init()
         .map_err(|_| "subscriber already initialized")?;
     metrics::set_global_recorder(observation.recorder.clone()).map_err(|_| "metrics recorder already initialized")?;
@@ -601,10 +855,14 @@ pub fn bootstrap(enabled: bool, debug: bool, default_level: tracing::Level) -> R
 
 struct StderrSink;
 impl Write for StderrSink {
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
         crate::LockedStderrWriter::locked_stderr().write_all(bytes)?;
         Ok(bytes.len())
     }
+    /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn flush(&mut self) -> io::Result<()> {
         Ok(())
     }

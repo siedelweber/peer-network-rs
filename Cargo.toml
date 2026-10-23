@@ -32,6 +32,18 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 secrecy = { version = "0.10", default-features = false }
 metrics = { version = "0.24", default-features = false }
+# Parser-only development tooling and a compatible local exporter stack.
+syn = { version = "2", features = ["full", "visit"] }
+quote = "1"
+proc-macro2 = { version = "1", features = ["span-locations"] }
+opentelemetry = { version = "0.33.1", default-features = false, features = ["trace", "metrics"] }
+opentelemetry_sdk = { version = "0.33.1", default-features = false, features = ["trace", "metrics", "experimental_metrics_custom_reader"] }
+opentelemetry-otlp = { version = "0.33.1", default-features = false, features = ["http-proto", "trace", "metrics"] }
+tracing-opentelemetry = { version = "0.34", default-features = false }
+opentelemetry-http = { version = "0.33.1", default-features = false }
+http = "1"
+bytes = "1"
+futures-executor = "0.3"
 textwrap = "0.16"
 # Keep the renderer on its reviewed major line with default features and dataset serialization.
 minijinja = { version = "3", features = ["serde"] }

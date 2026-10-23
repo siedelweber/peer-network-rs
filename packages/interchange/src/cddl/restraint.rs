@@ -129,6 +129,16 @@ impl RestraintReport {
     /// assert!(!reaching.restraint().is_restrained());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::RestraintReport::is_restrained"
+        ),
+        ret
+    )]
     pub fn is_restrained(&self) -> bool {
         self.implicit_reaches.is_empty()
     }
@@ -149,6 +159,16 @@ impl RestraintReport {
     ///     .collect();
     /// assert_eq!(keys, [2, 3]);
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::RestraintReport::provisions"
+        ),
+        ret
+    )]
     pub fn provisions(&self) -> impl Iterator<Item = &Provision> + '_ {
         self.provisions.iter()
     }
@@ -165,6 +185,16 @@ impl RestraintReport {
     /// // `number` is `int / float`: the float is reached, and unnamed.
     /// assert_eq!(report.implicit_reaches().count(), 1);
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::RestraintReport::implicit_reaches"
+        ),
+        ret
+    )]
     pub fn implicit_reaches(&self) -> impl Iterator<Item = &ImplicitReach> + '_ {
         self.implicit_reaches.iter()
     }
@@ -204,6 +234,16 @@ impl Provision {
     /// assert_eq!(report.provisions().next().expect("one").key().get(), 5);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::Provision::key"
+        ),
+        ret
+    )]
     pub fn key(&self) -> ContentKey {
         self.key
     }
@@ -219,6 +259,16 @@ impl Provision {
     /// assert_eq!(report.provisions().next().expect("one").kind(), Restrained::Tag);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::Provision::kind"
+        ),
+        ret
+    )]
     pub fn kind(&self) -> Restrained {
         self.kind
     }
@@ -235,6 +285,16 @@ impl Provision {
     /// assert_eq!(report.provisions().next().expect("one").named(), "#7.25");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::Provision::named"
+        ),
+        ret
+    )]
     pub fn named(&self) -> &str {
         &self.named
     }
@@ -268,6 +328,16 @@ impl Provision {
     /// assert_eq!(fixed, [false, true]);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::Provision::fixes_canonical_form"
+        ),
+        ret
+    )]
     pub fn fixes_canonical_form(&self) -> bool {
         self.fixes_canonical_form
     }
@@ -310,6 +380,16 @@ impl ImplicitReach {
     /// assert_eq!(report.implicit_reaches().next().expect("a reach").key().get(), 4);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::ImplicitReach::key"
+        ),
+        ret
+    )]
     pub fn key(&self) -> ContentKey {
         self.key
     }
@@ -326,6 +406,16 @@ impl ImplicitReach {
     /// assert_eq!(reach.kind(), Restrained::Float);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::ImplicitReach::kind"
+        ),
+        ret
+    )]
     pub fn kind(&self) -> Restrained {
         self.kind
     }
@@ -352,6 +442,16 @@ impl ImplicitReach {
     ///     ["outer", "inner", "number"]
     /// );
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::restraint::ImplicitReach::path"
+        ),
+        ret
+    )]
     pub fn path(&self) -> impl Iterator<Item = &str> + '_ {
         self.path.iter().map(String::as_str)
     }

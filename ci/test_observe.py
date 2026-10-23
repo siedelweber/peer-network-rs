@@ -1,0 +1,126 @@
+"""Negative admission fixtures for syntax coverage and semantic review bindings."""
+import copy
+import unittest
+
+from devperf import StructuralError
+from observe import identity, validate
+
+
+def fixture():
+    function=dict(package='fixture',path='packages/fixture/src/lib.rs',item='run',owner='ROOT',
+                  public=True,const=False,signature='fn run ()',body='{ work () ; }',attributes=[],
+                  boundary=dict(helper='tracing::instrument',name='rule:observe:spans',execution_owner='ROOT',claim_owner='ROOT',claim_label='rule:observe:spans',source_item='run',records_result=True))
+    operation={key:function[key] for key in ('package','path','item','owner','signature')}
+    operation.update(claim='ROOT::rule:observe:spans',mode='instrumented',fields=['arguments','result'],metrics=['fixture__elapsed_seconds'])
+    name=identity(function)
+    assessment=dict(status='reviewer-confirmed',premises='The fixture has no credential field and returns unit.',negative_probe='ROOT::claim:discipline:semantic-review-is-bound-to-source')
+    review=dict(operation=name,body=function['body'],full_recording=assessment,secret_flow=assessment,exposure_consumers=assessment)
+    data=dict(schema=1,functions=[function],generators=[])
+    register=dict(schema=1,named_operations=[],operations=[operation],generators=[],reviews=[review],
+                  metrics=[dict(name='fixture__elapsed_seconds',unit='seconds',kind='histogram',attributes={})])
+    return data,register,{'ROOT::rule:observe:spans'},{assessment['negative_probe']}
+
+
+class Admission(unittest.TestCase):
+    def test_omitted_instrumentation(self):
+        """Claim: A registered public function whose parsed body has no reviewed boundary refuses, even when its declaration and semantic review remain present.
+        ´claim:discipline:public-bodies-require-parsed-boundaries´
+        ´test:discipline:test-omitted-instrumentation´
+        """
+        args=fixture()
+        self.assertEqual(validate(*args)['instrumented'],1)
+        args[0]['functions'][0]['boundary']=None
+        with self.assertRaisesRegex(StructuralError,'omitted instrumentation'):validate(*args)
+
+    def test_wrong_identity(self):
+        """Claim: A boundary cannot claim another owner or an unresolved or different label while retaining a valid source item and review.
+        ´claim:discipline:operation-identity-matches-its-source´
+        ´test:discipline:test-wrong-identity´
+        """
+        for field,value in [('owner','FOREIGN'),('claim','ROOT::rule:missing:label')]:
+            args=fixture();args[1]['operations'][0][field]=value
+            with self.assertRaises(StructuralError):validate(*args)
+        args=fixture();args[0]['functions'][0]['boundary']['execution_owner']='FOREIGN'
+        with self.assertRaisesRegex(StructuralError,'wrong instrumentation'):validate(*args)
+        args=fixture();args[0]['functions'][0]['boundary']['name']='rule:wrong:label'
+        with self.assertRaisesRegex(StructuralError,'primary span label'):validate(*args)
+
+    def test_stale_operation(self):
+        """Claim: Deleting a public function or changing its signature leaves a structural stale mapping; duplicating its registry row cannot conceal the mismatch.
+        ´claim:discipline:operation-roster-cannot-retain-stale-items´
+        ´test:discipline:test-stale-operation´
+        """
+        args=fixture();args[0]['functions']=[]
+        with self.assertRaisesRegex(StructuralError,'stale operation'):validate(*args)
+        args=fixture();args[0]['functions'][0]['signature']='fn run (x: u8)'
+        with self.assertRaisesRegex(StructuralError,'stale source'):validate(*args)
+        args=fixture();args[1]['operations'].append(copy.deepcopy(args[1]['operations'][0]))
+        with self.assertRaisesRegex(StructuralError,'duplicate operation'):validate(*args)
+
+    def test_duplicate_metric(self):
+        """Claim: Two declarations of one metric name refuse even when their units agree, preventing ambiguous ownership of a runtime series.
+        ´claim:discipline:metric-names-have-one-declaration´
+        ´test:discipline:test-duplicate-metric´
+        """
+        args=fixture();args[1]['metrics'].append(copy.deepcopy(args[1]['metrics'][0]))
+        with self.assertRaisesRegex(StructuralError,'duplicate metric'):validate(*args)
+
+    def test_undeclared_dimension(self):
+        """Claim: A metric with an undeclared time unit or an unbounded request attribute refuses before it can be represented as a declared bounded series.
+        ´claim:discipline:metric-units-and-attributes-are-declared´
+        ´test:discipline:test-undeclared-dimension´
+        """
+        for field,value in [('unit','ticks'),('attributes',{'request':['arbitrary']})]:
+            args=fixture();args[1]['metrics'][0][field]=value
+            with self.assertRaisesRegex(StructuralError,'undeclared metric'):validate(*args)
+
+    def test_invalid_exception(self):
+        """Claim: An exception cannot waive multiple rules, omit an item-local justification or cite a missing boundary witness; a runtime body cannot claim const evaluation.
+        ´claim:discipline:coverage-exceptions-are-local-and-witnessed´
+        ´test:discipline:test-invalid-exception´
+        """
+        reason='Justified: The fixture is evaluated within its declared caller.'
+        base=fixture();function=base[0]['functions'][0];row=base[1]['operations'][0]
+        anchor=copy.deepcopy(function);anchor['item']='outer';anchor['boundary']['source_item']='outer'
+        base[0]['functions'].append(anchor)
+        anchor_row=copy.deepcopy(row);anchor_row['item']='outer';base[1]['operations'].append(anchor_row)
+        anchor_review=copy.deepcopy(base[1]['reviews'][0]);anchor_review['operation']=identity(anchor);base[1]['reviews'].append(anchor_review)
+        function['attributes']=[reason];function['boundary']=None;row['mode']='exception'
+        row['exception']=dict(rule='ROOT::rule:observe:spans',kind='inherited',justification=reason,witness=next(iter(base[3])),boundary=identity(anchor))
+        self.assertEqual(validate(*base)['exceptions'],1)
+        for mutation in ('rule','local','witness','const','cycle'):
+            args=copy.deepcopy(base);function=args[0]['functions'][0];row=args[1]['operations'][0]
+            if mutation=='rule':row['exception']['rule']='all rules'
+            elif mutation=='local':function['attributes']=[]
+            elif mutation=='witness':row['exception']['witness']='ROOT::claim:missing:witness'
+            elif mutation=='cycle':row['exception']['boundary']=identity(function)
+            else:row['exception']['kind']='const'
+            with self.assertRaises(StructuralError):validate(*args)
+
+    def test_semantic_review(self):
+        """Claim: Full-recording, secret-flow and exposure assessments remain separately reviewer-confirmed and bound to the inspected body; absent negative evidence or a changed body refuses mechanical admission.
+        ´claim:discipline:semantic-review-is-bound-to-source´
+        ´test:discipline:test-semantic-review´
+        """
+        args=fixture();self.assertIn('not mechanical proof',validate(*args)['semantic_status'])
+        for field in ('full_recording','secret_flow','exposure_consumers'):
+            args=fixture();args[1]['reviews'][0][field]={}
+            with self.assertRaisesRegex(StructuralError,'reviewer-confirmed'):validate(*args)
+        args=fixture();args[0]['functions'][0]['body']='{ leak (credential) ; }'
+        with self.assertRaisesRegex(StructuralError,'stale semantic'):validate(*args)
+        args=fixture();args[0]['types']=[{'item':'Connection','syntax':'struct Connection { password: String }'}]
+        with self.assertRaisesRegex(StructuralError,'type declarations changed'):validate(*args)
+
+    def test_generated_mapping(self):
+        """Claim: A newly generated entry point cannot disappear from the census join or be admitted by copying its syntax without an expansion review and enclosing boundaries.
+        ´claim:discipline:generated-entry-points-need-explicit-admission´
+        ´test:discipline:test-generated-mapping´
+        """
+        args=fixture();generator=dict(package='fixture',path='packages/fixture/src/lib.rs',item='State',kind='derive',syntax='#[derive(Debug)]')
+        args[0]['generators']=[generator]
+        with self.assertRaisesRegex(StructuralError,'generator mapping'):validate(*args)
+        args[1]['generators']=[copy.deepcopy(generator)]
+        with self.assertRaisesRegex(StructuralError,'uninspected generated'):validate(*args)
+
+
+if __name__=='__main__':unittest.main()

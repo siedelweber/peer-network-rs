@@ -11,6 +11,7 @@ use clap::{CommandFactory, Parser};
 use serde::{Deserialize, Serialize};
 
 pub mod observation;
+pub mod observation_export;
 mod observation_metrics;
 mod publication;
 pub mod secrets;
@@ -44,6 +45,8 @@ pub enum CommandExit {
 impl CommandExit {
     /// Return the numeric process status for this exit class.
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn code(self) -> u8 {
         match self {
             Self::Success => 0,
@@ -53,12 +56,24 @@ impl CommandExit {
     }
 
     /// Return this class as a standard library [`ExitCode`].
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "CommandExit::exit_code"
+        ),
+        ret
+    )]
     pub fn exit_code(self) -> ExitCode {
         ExitCode::from(self.code())
     }
 
     /// Map a numeric status back to a shared exit class.
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn from_code(code: u8) -> Option<Self> {
         match code {
             0 => Some(Self::Success),
@@ -143,6 +158,16 @@ pub struct ControlPlaneRecord {
 impl ControlPlaneRecord {
     /// Build a generic control-plane record.
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "ControlPlaneRecord::new"
+        ),
+        ret
+    )]
     pub fn new(command: &str, kind: ControlPlaneRecordKind, message: &str, fields: Option<ControlPlaneFields>) -> Self {
         Self {
             schema: CONTROL_PLANE_SCHEMA,
@@ -156,6 +181,16 @@ impl ControlPlaneRecord {
 
     /// Build a help record.
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "ControlPlaneRecord::help"
+        ),
+        ret
+    )]
     pub fn help(command: &str, text: &str) -> Self {
         Self::new(
             command,
@@ -167,6 +202,16 @@ impl ControlPlaneRecord {
 
     /// Build a version record.
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "ControlPlaneRecord::version"
+        ),
+        ret
+    )]
     pub fn version(command: &str, version: &str) -> Self {
         Self::new(
             command,
@@ -183,6 +228,16 @@ impl ControlPlaneRecord {
     /// The constructor supplies a generic message; parser callers replace it
     /// with the complete public diagnostic under (´[ROOT-rule:observe:privacy]´).
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "ControlPlaneRecord::usage_error"
+        ),
+        ret
+    )]
     pub fn usage_error(command: &str, clap_error_kind: &str) -> Self {
         Self::new(
             command,
@@ -197,6 +252,16 @@ impl ControlPlaneRecord {
 
     /// Build a stdout TTY-refusal record.
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "ControlPlaneRecord::tty_refusal"
+        ),
+        ret
+    )]
     pub fn tty_refusal(command: &str) -> Self {
         Self::new(
             command,
@@ -211,6 +276,16 @@ impl ControlPlaneRecord {
 
     /// Build a panic diagnostic record.
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "ControlPlaneRecord::panic"
+        ),
+        ret
+    )]
     pub fn panic(command: &str, thread: Option<&str>, location: Option<&str>, payload: Option<&str>) -> Self {
         Self::new(
             command,
@@ -227,12 +302,32 @@ impl ControlPlaneRecord {
 
     /// Build a non-error status record.
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "ControlPlaneRecord::status"
+        ),
+        ret
+    )]
     pub fn status(command: &str, message: &str) -> Self {
         Self::new(command, ControlPlaneRecordKind::Status, message, None)
     }
 
     /// Build a runtime diagnostic record.
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "ControlPlaneRecord::diagnostic"
+        ),
+        ret
+    )]
     pub fn diagnostic(command: &str, message: &str) -> Self {
         Self::new(command, ControlPlaneRecordKind::Diagnostic, message, None)
     }
@@ -250,11 +345,23 @@ pub struct CliExit {
 impl CliExit {
     /// Build a new parse-control exit value.
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn new(record: ControlPlaneRecord, exit: CommandExit) -> Self {
         Self { record, exit }
     }
 
     /// Return this exit class as a standard library [`ExitCode`].
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "CliExit::exit_code"
+        ),
+        ret
+    )]
     pub fn exit_code(&self) -> ExitCode {
         self.exit.exit_code()
     }
@@ -285,10 +392,20 @@ impl TracingFilter {
     /// Build a resolved tracing filter directive.
     #[must_use]
     pub fn new(directive: impl Into<String>, source: TracingFilterSource) -> Self {
-        Self {
-            directive: directive.into(),
-            source,
-        }
+        let scope = crate::observation::scope(
+            "CLICOMMON",
+            "rule:observe:spans",
+            "TracingFilter::new",
+            &("Into<String> capability", source),
+        );
+        let result = {
+            Self {
+                directive: directive.into(),
+                source,
+            }
+        };
+        scope.finish(&result);
+        result
     }
 }
 
@@ -297,8 +414,18 @@ impl TracingFilter {
 /// `RUST_LOG` wins when set and non-empty. Otherwise `--debug` selects `debug`,
 /// and the caller-supplied default level is used last.
 #[must_use]
-pub fn tracing_filter(debug: bool, default_level: tracing::Level) -> TracingFilter {
-    tracing_filter_from_rust_log(std::env::var_os("RUST_LOG").as_deref(), debug, default_level)
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "tracing_filter"
+    ),
+    ret
+)]
+pub fn tracing_filter(debug_enabled: bool, default_level: tracing::Level) -> TracingFilter {
+    tracing_filter_from_rust_log(std::env::var_os("RUST_LOG").as_deref(), debug_enabled, default_level)
 }
 
 fn tracing_filter_from_rust_log(rust_log: Option<&OsStr>, debug: bool, default_level: tracing::Level) -> TracingFilter {
@@ -332,18 +459,36 @@ where
     I: IntoIterator<Item = A>,
     A: AsRef<OsStr>,
 {
-    let mut args = args.into_iter();
-    if args.next()?.as_ref() != OsStr::new("--version") || args.next().is_some() {
-        return None;
-    }
-    let version = commit.map_or_else(
-        || format!("{package} {version}"),
-        |commit| format!("{package} {version} (commit {commit})"),
+    let scope = crate::observation::scope(
+        "CLICOMMON",
+        "rule:observe:spans",
+        "version_exit_from",
+        &(
+            command,
+            package,
+            version,
+            commit,
+            "lazy argument iterator; only consumed arguments are observed",
+        ),
     );
-    Some(CliExit::new(
-        ControlPlaneRecord::version(command, &version),
-        CommandExit::Success,
-    ))
+    let result = (|| {
+        let mut args = args
+            .into_iter()
+            .inspect(|argument| tracing::info!(argument=?argument.as_ref()));
+        if args.next()?.as_ref() != OsStr::new("--version") || args.next().is_some() {
+            return None;
+        }
+        let version = commit.map_or_else(
+            || format!("{package} {version}"),
+            |commit| format!("{package} {version} (commit {commit})"),
+        );
+        Some(CliExit::new(
+            ControlPlaneRecord::version(command, &version),
+            CommandExit::Success,
+        ))
+    })();
+    scope.finish(&result);
+    result
 }
 
 /// Answer a sole process `--version` argument on stderr and exit successfully.
@@ -351,6 +496,16 @@ where
 /// Call before startup work or other argv reading. Callers with argv0-based
 /// forwarding must classify that mode first and leave forwarded argv alone.
 /// Nonmatching argv returns normally; failure to emit the record exits 1.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "version_or_exit"
+    ),
+    ret
+)]
 pub fn version_or_exit(command: &str, package: &str, version: &str, commit: Option<&str>) {
     if let Some(exit) = version_exit_from(std::env::args_os().skip(1), command, package, version, commit) {
         let status = if emit_control_plane_record(&exit.record).is_ok() {
@@ -379,19 +534,34 @@ where
     I: IntoIterator<Item = A>,
     A: Into<OsString> + Clone,
 {
-    let arguments: Vec<OsString> = args.into_iter().map(Into::into).collect();
-    T::try_parse_from(&arguments).map_err(|clap_error| {
-        let mut exit = cli_exit_from_clap_error::<T>(&clap_error);
-        if exit.exit == CommandExit::Usage {
-            exit.record.arguments = Some(
-                arguments
-                    .iter()
-                    .map(|argument| argument.as_encoded_bytes().to_vec())
-                    .collect(),
-            );
-        }
-        exit
-    })
+    let scope = crate::observation::scope(
+        "CLICOMMON",
+        "rule:observe:spans",
+        "parse_args_from",
+        &("argument iterator", std::any::type_name::<T>()),
+    );
+    let result = {
+        let arguments: Vec<OsString> = args.into_iter().map(Into::into).collect();
+        tracing::info!(arguments=?arguments);
+        T::try_parse_from(&arguments).map_err(|clap_error| {
+            let mut exit = cli_exit_from_clap_error::<T>(&clap_error);
+            if exit.exit == CommandExit::Usage {
+                exit.record.arguments = Some(
+                    arguments
+                        .iter()
+                        .map(|argument| argument.as_encoded_bytes().to_vec())
+                        .collect(),
+                );
+            }
+            exit
+        })
+    };
+    scope.finish(
+        &result
+            .as_ref()
+            .map(|_| "parsed value has a Parser-only representation contract"),
+    );
+    result
 }
 
 /// Parse process argv with `clap`, emitting JSON control-plane records and
@@ -401,13 +571,23 @@ pub fn parse_args_or_exit<T>() -> T
 where
     T: Parser,
 {
-    match parse_args_from::<T, _, _>(std::env::args_os()) {
-        Ok(args) => args,
-        Err(exit) => {
-            let _ignored = emit_control_plane_record(&exit.record);
-            exit_with(exit.exit);
+    let scope = crate::observation::scope(
+        "CLICOMMON",
+        "rule:observe:spans",
+        "parse_args_or_exit",
+        &std::any::type_name::<T>(),
+    );
+    let result = {
+        match parse_args_from::<T, _, _>(std::env::args_os()) {
+            Ok(args) => args,
+            Err(exit) => {
+                let _ignored = emit_control_plane_record(&exit.record);
+                exit_with(exit.exit);
+            }
         }
-    }
+    };
+    scope.finish(&"parsed value has a Parser-only representation contract");
+    result
 }
 
 fn cli_exit_from_clap_error<T>(clap_error: &clap::Error) -> CliExit
@@ -462,6 +642,16 @@ fn debug_name_to_snake_case(name: &str) -> String {
 /// # Errors
 ///
 /// Returns an error if serialisation or writing to stderr fails.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "emit_control_plane_record"
+    ),
+    ret
+)]
 pub fn emit_control_plane_record(record: &ControlPlaneRecord) -> io::Result<()> {
     let mut writer = LockedStderrWriter::locked_stderr();
     write_json_line(&mut writer, record)
@@ -478,6 +668,7 @@ fn try_emit_control_plane_record(record: &ControlPlaneRecord) -> io::Result<bool
 
 fn write_json_line<W: Write, T: serde::Serialize>(writer: &mut W, value: &T) -> io::Result<()> {
     let json = serde_json::to_string(value)?;
+    tracing::info!(public_json = %json);
     writer.write_all(json.as_bytes())?;
     writer.write_all(b"\n")?;
     writer.flush()
@@ -487,6 +678,8 @@ fn write_json_line<W: Write, T: serde::Serialize>(writer: &mut W, value: &T) -> 
 ///
 /// The hook emits one best-effort control-plane record on stderr and terminates
 /// the process with exit code 1 without invoking Rust's default text panic hook.
+/// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn install_json_panic_hook(command_name: &str) {
     let command_name = command_name.to_string();
     std::panic::set_hook(Box::new(move |panic_info| {
@@ -519,12 +712,24 @@ fn panic_payload_message_from_payload(payload: &(dyn std::any::Any + Send)) -> O
 /// Exit the current process with a command-line exit class.
 // Justified: This single termination boundary implements the command-line contract after controlled JSON emission.
 #[allow(clippy::exit)]
+/// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn exit_with(exit: CommandExit) -> ! {
     std::process::exit(i32::from(exit.code()));
 }
 
 /// Return a TTY-refusal record when stdout is attached to a terminal.
 #[must_use]
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "stdout_tty_refusal_record"
+    ),
+    ret
+)]
 pub fn stdout_tty_refusal_record(command_name: &str) -> Option<ControlPlaneRecord> {
     if io::stdout().is_terminal() {
         Some(ControlPlaneRecord::tty_refusal(command_name))
@@ -536,6 +741,16 @@ pub fn stdout_tty_refusal_record(command_name: &str) -> Option<ControlPlaneRecor
 /// Refuse to run if stdout is a terminal (´[ROOT-rec:output:decision]´).
 ///
 /// Emits a JSON control-plane record on stderr and exits with code 2.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "refuse_if_stdout_is_tty"
+    ),
+    ret
+)]
 pub fn refuse_if_stdout_is_tty(binary_name: &str) {
     if let Some(record) = stdout_tty_refusal_record(binary_name) {
         let _ignored = emit_control_plane_record(&record);
@@ -544,6 +759,8 @@ pub fn refuse_if_stdout_is_tty(binary_name: &str) {
 }
 
 /// Initialise `tracing-subscriber` with JSON output on stderr.
+/// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn init_json_tracing(level: tracing::Level) {
     let _installed = try_init_json_tracing(level);
 }
@@ -552,11 +769,15 @@ pub fn init_json_tracing(level: tracing::Level) {
 ///
 /// Returns `false` if another subscriber is already installed.
 #[must_use]
+/// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn try_init_json_tracing(level: tracing::Level) -> bool {
     observation::bootstrap(true, false, level).is_ok()
 }
 
 /// Initialise JSON stderr tracing with `RUST_LOG` / `--debug` precedence.
+/// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn init_json_tracing_with_debug(debug: bool, default_level: tracing::Level) {
     let _installed = try_init_json_tracing_with_debug(debug, default_level);
 }
@@ -565,6 +786,8 @@ pub fn init_json_tracing_with_debug(debug: bool, default_level: tracing::Level) 
 ///
 /// Returns `false` if another subscriber is already installed.
 #[must_use]
+/// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn try_init_json_tracing_with_debug(debug: bool, default_level: tracing::Level) -> bool {
     observation::bootstrap(true, debug, default_level).is_ok()
 }
@@ -575,9 +798,14 @@ pub fn try_init_json_tracing_with_debug(debug: bool, default_level: tracing::Lev
 ///
 /// Returns an error if serialisation or writing to stdout fails.
 pub fn emit<T: serde::Serialize>(value: &T) -> io::Result<()> {
-    let stdout = io::stdout();
-    let mut out = stdout.lock();
-    write_json_line(&mut out, value)
+    let scope = crate::observation::scope("CLICOMMON", "rule:observe:spans", "emit", &std::any::type_name::<T>());
+    let result = {
+        let stdout = io::stdout();
+        let mut out = stdout.lock();
+        write_json_line(&mut out, value)
+    };
+    scope.finish(&result);
+    result
 }
 
 /// Run a stdout-producing single-JSON-object command.
@@ -598,26 +826,44 @@ where
 {
     install_json_panic_hook(command_name);
     let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
+    let scope = crate::observation::scope(
+        "CLICOMMON",
+        "rule:observe:spans",
+        "run_stdout_json_command",
+        &(command_name, debug, default_level, std::any::type_name::<Run>()),
+    );
+    let result = (|| {
+        if let Some(record) = stdout_tty_refusal_record(command_name) {
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
 
-    if let Some(record) = stdout_tty_refusal_record(command_name) {
-        let _ignored = emit_control_plane_record(&record);
-        return CommandExit::Usage.exit_code();
-    }
-
-    match run() {
-        Ok(output) => match emit(&output) {
-            Ok(()) => CommandExit::Success.exit_code(),
+        match run() {
+            Ok(output) => match emit(&output) {
+                Ok(()) => CommandExit::Success.exit_code(),
+                Err(error) => {
+                    tracing::error!(error = %error, "failed to write JSON to stdout");
+                    CommandExit::Failure.exit_code()
+                }
+            },
             Err(error) => {
-                tracing::error!(error = %error, "failed to write JSON to stdout");
+                // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
+                tracing::error!(error = %error, "command failed");
                 CommandExit::Failure.exit_code()
             }
-        },
-        Err(error) => {
-            // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
-            tracing::error!(error = %error, "command failed");
-            CommandExit::Failure.exit_code()
         }
-    }
+    })();
+    scope.finish_with(
+        if result == ExitCode::SUCCESS {
+            observation::Outcome::Success
+        } else if result == ExitCode::from(2) || result == ExitCode::from(3) {
+            observation::Outcome::Refusal
+        } else {
+            observation::Outcome::Error
+        },
+        &result,
+    );
+    result
 }
 
 /// Run a side-effect command that does not emit stdout result data.
@@ -637,15 +883,31 @@ where
 {
     install_json_panic_hook(command_name);
     let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
-
-    match run() {
+    let scope = crate::observation::scope(
+        "CLICOMMON",
+        "rule:observe:spans",
+        "run_no_stdout_command",
+        &(command_name, debug, default_level, std::any::type_name::<Run>()),
+    );
+    let result = match run() {
         Ok(()) => CommandExit::Success.exit_code(),
         Err(error) => {
             // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
             tracing::error!(error = %error, "command failed");
             CommandExit::Failure.exit_code()
         }
-    }
+    };
+    scope.finish_with(
+        if result == ExitCode::SUCCESS {
+            observation::Outcome::Success
+        } else if result == ExitCode::from(2) || result == ExitCode::from(3) {
+            observation::Outcome::Refusal
+        } else {
+            observation::Outcome::Error
+        },
+        &result,
+    );
+    result
 }
 
 /// Run an async side-effect command that does not emit stdout result data.
@@ -666,15 +928,24 @@ where
 {
     install_json_panic_hook(command_name);
     let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
-
-    match run().await {
-        Ok(()) => CommandExit::Success.exit_code(),
-        Err(error) => {
-            // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
-            tracing::error!(error = %error, "command failed");
-            CommandExit::Failure.exit_code()
-        }
-    }
+    let debug_requested = debug;
+    let span = tracing::info_span!("rule:observe:spans", execution_owner="CLICOMMON", claim_owner="ROOT", claim_label="rule:observe:spans", source_item="run_no_stdout_command_async", asynchronous=true, command_name, debug_requested, default_level=?default_level, callback=std::any::type_name::<Run>());
+    tracing::Instrument::instrument(
+        async {
+            let result = match run().await {
+                Ok(()) => CommandExit::Success.exit_code(),
+                Err(error) => {
+                    // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
+                    tracing::error!(error = %error, "command failed");
+                    CommandExit::Failure.exit_code()
+                }
+            };
+            tracing::info!(outcome=if result==ExitCode::SUCCESS {"success"} else {"error"}, "return"=?result);
+            result
+        },
+        span,
+    )
+    .await
 }
 
 /// A completed checker verdict and its report.
@@ -707,55 +978,75 @@ where
 {
     install_json_panic_hook(command_name);
     let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
-
-    // Direct mode (no --report/--stamp) refuses terminal stdout *before*
-    // any semantic work: the JSON result would have nowhere safe to go,
-    // so running the check first would be wasted work and could touch
-    // the filesystem on the way. Build mode has an explicit report/stamp
-    // destination and is exempt. `finish_check_command` still performs
-    // its own refusal for direct callers.
-    if output.report.is_none()
-        && output.stamp.is_none()
-        && let Some(record) = stdout_tty_refusal_record(command_name)
-    {
-        let _ignored = emit_control_plane_record(&record);
-        return CommandExit::Usage.exit_code();
-    }
-
-    let outcome = match run() {
-        Ok(outcome) => outcome,
-        Err(error) => {
-            // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
-            tracing::error!(error = %error, "command failed");
-            return CommandExit::Failure.exit_code();
+    let scope = crate::observation::scope(
+        "CLICOMMON",
+        "rule:observe:spans",
+        "run_check_command",
+        &(command_name, debug, default_level, output, std::any::type_name::<Run>()),
+    );
+    let result = (|| {
+        // Direct mode (no --report/--stamp) refuses terminal stdout *before*
+        // any semantic work: the JSON result would have nowhere safe to go,
+        // so running the check first would be wasted work and could touch
+        // the filesystem on the way. Build mode has an explicit report/stamp
+        // destination and is exempt. `finish_check_command` still performs
+        // its own refusal for direct callers.
+        if output.report.is_none()
+            && output.stamp.is_none()
+            && let Some(record) = stdout_tty_refusal_record(command_name)
+        {
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
         }
-    };
 
-    let published = if outcome.clean {
-        finish_check_command(command_name, output, &outcome.report)
-    } else {
-        match (&output.report, &output.stamp) {
-            (None, None) => finish_check_command(command_name, output, &outcome.report),
-            (Some(report_path), Some(stamp_path)) => ensure_distinct_outputs(&[("report", report_path), ("stamp", stamp_path)])
-                .map_err(CheckResultError::from)
-                .and_then(|()| {
-                    write_json_report_if_changed(report_path, &outcome.report)
-                        .map(|_change| ())
+        let outcome = match run() {
+            Ok(outcome) => outcome,
+            Err(error) => {
+                // Public error text is recorded without rewriting (´[ROOT-rule:observe:privacy]´).
+                tracing::error!(error = %error, "command failed");
+                return CommandExit::Failure.exit_code();
+            }
+        };
+
+        let published = if outcome.clean {
+            finish_check_command(command_name, output, &outcome.report)
+        } else {
+            match (&output.report, &output.stamp) {
+                (None, None) => finish_check_command(command_name, output, &outcome.report),
+                (Some(report_path), Some(stamp_path)) => {
+                    ensure_distinct_outputs(&[("report", report_path), ("stamp", stamp_path)])
                         .map_err(CheckResultError::from)
-                }),
-            _ => Err(CheckResultError::InvalidMode),
-        }
-    };
+                        .and_then(|()| {
+                            write_json_report_if_changed(report_path, &outcome.report)
+                                .map(|_change| ())
+                                .map_err(CheckResultError::from)
+                        })
+                }
+                _ => Err(CheckResultError::InvalidMode),
+            }
+        };
 
-    match published {
-        Ok(()) if outcome.clean => CommandExit::Success.exit_code(),
-        Ok(()) => ExitCode::from(3),
-        Err(CheckResultError::TtyRefusal) => CommandExit::Usage.exit_code(),
-        Err(error) => {
-            tracing::error!(error = %error, "failed to publish the check result");
-            CommandExit::Failure.exit_code()
+        match published {
+            Ok(()) if outcome.clean => CommandExit::Success.exit_code(),
+            Ok(()) => ExitCode::from(3),
+            Err(CheckResultError::TtyRefusal) => CommandExit::Usage.exit_code(),
+            Err(error) => {
+                tracing::error!(error = %error, "failed to publish the check result");
+                CommandExit::Failure.exit_code()
+            }
         }
-    }
+    })();
+    scope.finish_with(
+        if result == ExitCode::SUCCESS {
+            observation::Outcome::Success
+        } else if result == ExitCode::from(2) || result == ExitCode::from(3) {
+            observation::Outcome::Refusal
+        } else {
+            observation::Outcome::Error
+        },
+        &result,
+    );
+    result
 }
 
 struct LockedStderrWriter {
@@ -787,10 +1078,14 @@ impl LockedStderrWriter {
 }
 
 impl Write for LockedStderrWriter {
+    /// Justified: The stderr sink is the observation delivery boundary and must write bytes without recursively observing its own output.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         self.stderr.write(buf)
     }
 
+    /// Justified: The stderr sink is the observation delivery boundary and must write bytes without recursively observing its own output.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn flush(&mut self) -> io::Result<()> {
         self.stderr.flush()
     }
@@ -820,6 +1115,16 @@ pub struct BaseArgs {
 ///
 /// Returns the underlying I/O error, or an `InvalidData` error for an
 /// existing nonempty stamp.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "touch_stamp"
+    ),
+    ret
+)]
 pub fn touch_stamp(path: &std::path::Path) -> io::Result<()> {
     match std::fs::OpenOptions::new().write(true).create_new(true).open(path) {
         Ok(_created) => Ok(()),
@@ -893,6 +1198,16 @@ pub struct DestinationIdentity(std::path::PathBuf);
 /// result is defined for a destination that does not exist yet and is
 /// unaffected by what the host has mounted beneath it.
 #[must_use]
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "destination_identity"
+    ),
+    ret
+)]
 pub fn destination_identity(path: &std::path::Path) -> DestinationIdentity {
     let absolute = if path.is_absolute() {
         path.to_path_buf()
@@ -936,6 +1251,16 @@ pub struct AliasedOutputs {
 /// # Errors
 ///
 /// Returns [`AliasedOutputs`] naming the first offending role pair.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "ensure_distinct_outputs"
+    ),
+    ret
+)]
 pub fn ensure_distinct_outputs(roles: &[(&str, &std::path::Path)]) -> Result<(), AliasedOutputs> {
     let identities = roles.iter().map(|(_, path)| destination_identity(path)).collect::<Vec<_>>();
 
@@ -991,6 +1316,8 @@ pub enum CheckResultError {
 /// Returns [`CheckResultError::TtyRefusal`] in direct mode when stdout is
 /// a terminal, [`CheckResultError::InvalidMode`] if only one build-mode
 /// path is set, or [`CheckResultError::Io`] on a write failure.
+/// Justified: This publication adapter inherits the checker command context and delegates all serialized output and file work to their separately observed boundaries without serializing a report twice.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn finish_check_command<T: serde::Serialize>(
     command_name: &str,
     output: &CheckOutputArgs,

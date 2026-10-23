@@ -69,6 +69,16 @@ impl ContentKey {
     ///
     /// # Errors
     /// Returns an envelope error if the key is zero or one, which belong to the envelope.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::ContentKey::new"
+        ),
+        ret
+    )]
     pub fn new(key: u64) -> Result<ContentKey, EnvelopeError> {
         if key <= 1 {
             return Err(EnvelopeError::ReservedContentKey { key });
@@ -84,6 +94,8 @@ impl ContentKey {
     /// assert_eq!(ContentKey::new(7).expect("a content key").get(), 7);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn get(self) -> u64 {
         self.0
     }
@@ -115,6 +127,16 @@ impl Content {
     /// assert!(Content::new().is_empty());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Content::new"
+        ),
+        ret
+    )]
     pub fn new() -> Content {
         Content(BTreeMap::new())
     }
@@ -129,6 +151,16 @@ impl Content {
     /// assert_eq!(content.insert(key, Value::Unsigned(1)), None);
     /// assert_eq!(content.insert(key, Value::Unsigned(2)), Some(Value::Unsigned(1)));
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Content::insert"
+        ),
+        ret
+    )]
     pub fn insert(&mut self, key: ContentKey, value: Value) -> Option<Value> {
         self.0.insert(key.get(), value)
     }
@@ -143,6 +175,16 @@ impl Content {
     /// assert_eq!(content.get(2), Some(&Value::Null));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Content::get"
+        ),
+        ret
+    )]
     pub fn get(&self, key: u64) -> Option<&Value> {
         self.0.get(&key)
     }
@@ -158,6 +200,16 @@ impl Content {
     /// content.insert(ContentKey::new(2).expect("a content key"), Value::Null);
     /// assert_eq!(content.keys().collect::<Vec<_>>(), [2, 9]);
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Content::keys"
+        ),
+        ret
+    )]
     pub fn keys(&self) -> impl Iterator<Item = u64> + '_ {
         self.0.keys().copied()
     }
@@ -171,6 +223,16 @@ impl Content {
     /// content.insert(ContentKey::new(2).expect("a content key"), Value::Unsigned(1));
     /// assert_eq!(content.iter().next(), Some((2, &Value::Unsigned(1))));
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Content::iter"
+        ),
+        ret
+    )]
     pub fn iter(&self) -> impl Iterator<Item = (u64, &Value)> + '_ {
         self.0.iter().map(|(key, value)| (*key, value))
     }
@@ -185,6 +247,16 @@ impl Content {
     /// assert_eq!(content.len(), 1);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Content::len"
+        ),
+        ret
+    )]
     pub fn len(&self) -> usize {
         self.0.len()
     }
@@ -200,6 +272,16 @@ impl Content {
     /// assert!(!content.is_empty());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Content::is_empty"
+        ),
+        ret
+    )]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
@@ -232,6 +314,16 @@ impl Envelope {
     /// assert_eq!(envelope.version().minor(), 3);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Envelope::new"
+        ),
+        ret
+    )]
     pub fn new(label: NamespaceLabel, version: Version) -> Envelope {
         Envelope { label, version }
     }
@@ -246,6 +338,16 @@ impl Envelope {
     /// assert_eq!(envelope.label().as_str(), "com.example");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Envelope::label"
+        ),
+        ret
+    )]
     pub fn label(&self) -> &NamespaceLabel {
         &self.label
     }
@@ -260,6 +362,8 @@ impl Envelope {
     /// assert_eq!(envelope.version().patch(), 3);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn version(&self) -> Version {
         self.version
     }
@@ -304,6 +408,16 @@ impl Envelope {
     ///
     /// # Errors
     /// Returns an envelope error if the prefix is truncated, noncanonical or has invalid envelope fields.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Envelope::peek"
+        ),
+        ret
+    )]
     pub fn peek(prefix: &[u8]) -> Result<(Envelope, usize), EnvelopeError> {
         let given = prefix.len();
         let window = &prefix[..given.min(MAX_ENVELOPE_PREFIX)];
@@ -443,6 +557,16 @@ impl Document {
     /// assert!(document.content().is_empty());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Document::new"
+        ),
+        ret
+    )]
     pub fn new(envelope: Envelope, content: Content) -> Document {
         Document { envelope, content }
     }
@@ -474,6 +598,16 @@ impl Document {
     ///
     /// # Errors
     /// Returns an envelope error for invalid canonical bytes, envelope fields or content keys.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Document::from_canonical_bytes"
+        ),
+        ret
+    )]
     pub fn from_canonical_bytes(bytes: &[u8]) -> Result<Document, EnvelopeError> {
         let value = Value::from_canonical_bytes(bytes).map_err(EnvelopeError::NotCanonical)?;
         Document::try_from_value(&value)
@@ -492,6 +626,16 @@ impl Document {
     /// );
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Document::to_canonical_bytes"
+        ),
+        ret
+    )]
     pub fn to_canonical_bytes(&self) -> Vec<u8> {
         self.to_value().to_canonical_bytes()
     }
@@ -506,6 +650,16 @@ impl Document {
     /// assert_eq!(document.envelope().label().as_str(), "com.example");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Document::envelope"
+        ),
+        ret
+    )]
     pub fn envelope(&self) -> &Envelope {
         &self.envelope
     }
@@ -522,6 +676,16 @@ impl Document {
     /// assert_eq!(document.content().get(3), Some(&Value::Bool(true)));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Document::content"
+        ),
+        ret
+    )]
     pub fn content(&self) -> &Content {
         &self.content
     }
@@ -542,6 +706,16 @@ impl Document {
     /// assert_eq!(map.len(), 2);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Document::to_value"
+        ),
+        ret
+    )]
     pub fn to_value(&self) -> Value {
         let mut entries = Vec::with_capacity(2 + self.content.len());
         entries.push((
@@ -567,6 +741,16 @@ impl Document {
     ///
     /// # Errors
     /// Returns an envelope error unless the value is a map with valid namespace, version and unsigned content keys.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "envelope::Document::try_from_value"
+        ),
+        ret
+    )]
     pub fn try_from_value(v: &Value) -> Result<Document, EnvelopeError> {
         let Value::Map(map) = v else {
             return Err(EnvelopeError::NotAMap);

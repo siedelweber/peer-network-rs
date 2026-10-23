@@ -47,6 +47,16 @@ fn install_registry(
     });
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "rendering::render"
+    ),
+    ret
+)]
 pub fn render(
     source: &str,
     fragments: &BTreeMap<String, String>,

@@ -8,6 +8,7 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+tracing.workspace = true
 # Public anchored-plus-budget fork (Paligo/regexml#15), scalar aliases and local XSD count-preserving endpoint search; see README.
 # Retire when upstream releases the anchored matcher, budget and count-preserving endpoint search.
 regexml.workspace = true

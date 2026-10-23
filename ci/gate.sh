@@ -15,7 +15,7 @@ mkdir -p .lane
 gate_started=$(date -u +%s.%N)
 source_id=$(time git rev-parse HEAD)
 export CARGO_NET_OFFLINE=true
-rm -f .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl
+rm -f .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json
 run_step() {
     local name=$1
     shift
@@ -33,7 +33,7 @@ run_step() {
     local budget=ordinary-check
     if [ "$name" = tests ]; then budget=test-command; fi
     case "$name" in
-        clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests|benchmarks) budget=incremental-build ;;
+        clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests|benchmarks|observation-syntax|observation-runtime|observation-parser) budget=incremental-build ;;
     esac
     python3 -B ci/devperf.py --operation "$name" --duration-s "$wall" \
         --outcome "exit:$status" --source "$source_id" --budget "$budget" \
@@ -47,6 +47,7 @@ run_step harness-tests python3 -B ci/run_ci.py test_harness
 run_step testkit-guard python3 -B ci/testkit_guard.py
 run_step testkit-tests python3 -B ci/run_ci.py test_testkit
 run_step claim-tests python3 -B ci/run_ci.py test_claims
+run_step observation-tests python3 -B ci/run_ci.py test_observe
 run_step devperf-tests python3 -B ci/run_ci.py test_devperf
 run_step build-policy python3 ci/discipline.py build-policy
 run_step cargo-config python3 ci/discipline.py cargo-config
@@ -73,6 +74,9 @@ run_step determinism-documents cargo run -p documents --locked --profile gate --
 run_step design-correspondence python3 -B ci/design.py
 run_step design-tests python3 -B ci/run_ci.py test_design
 run_step benchmarks python3 -B ci/benchmarks.py
+run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
+run_step observation-parser python3 -B ci/run_ci.py test_observe_syntax
+run_step observation-syntax python3 -B ci/observe.py
 run_step harness-matrix python3 -B ci/harness.py --matrix
 run_step linter "$LINTER_BIN" check --root .
 run_step claim-evidence python3 -B ci/claims.py --fail-respellings

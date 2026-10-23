@@ -30,6 +30,16 @@ fn markdown(root: &Path) -> Result<BTreeSet<String>> {
     Ok(found)
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "census::record"
+    ),
+    ret
+)]
 pub fn record(path: &str) -> bool {
     path.strip_prefix("adr/").is_some_and(|name| {
         name.as_bytes()
@@ -40,6 +50,16 @@ pub fn record(path: &str) -> bool {
     })
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "census::validate"
+    ),
+    ret
+)]
 pub fn validate(root: &Path, templates: &[Rendering], datasets: &BTreeMap<String, Dataset>) -> Result<()> {
     let documents: BTreeSet<_> = templates.iter().map(|item| item.document.clone()).collect();
     let authored = markdown(root)?;

@@ -18,9 +18,20 @@ tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
 secrecy = { workspace = true }
 metrics = { workspace = true }
+opentelemetry.workspace = true
+opentelemetry_sdk.workspace = true
+opentelemetry-otlp.workspace = true
+tracing-opentelemetry.workspace = true
+opentelemetry-http.workspace = true
+http.workspace = true
+bytes.workspace = true
+futures-executor.workspace = true
 
 [dev-dependencies]
 tempfile = { workspace = true }
+syn.workspace = true
+quote.workspace = true
+proc-macro2.workspace = true
 
 [lints]
 workspace = true

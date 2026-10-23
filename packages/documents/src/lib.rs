@@ -13,6 +13,8 @@ mod rendering;
 mod workspace;
 
 /// Install the panic hook shared by the command and its subprocess probe.
+/// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn install_panic_hook() {
     cli_common::install_json_panic_hook("documents");
 }
@@ -73,6 +75,16 @@ fn at<T>(path: &Path, result: std::io::Result<T>) -> Result<T> {
     result.map_err(|error| format!("{}: {error}", path.display()).into())
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "read"
+    ),
+    ret
+)]
 fn read(path: &Path) -> Result<String> {
     at(path, fs::read_to_string(path))
 }
@@ -125,6 +137,16 @@ fn relative(root: &Path, path: &Path) -> Result<String> {
         .replace('\\', "/"))
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "compare"
+    ),
+    ret
+)]
 fn compare(path: &Path, bytes: &[u8], write: bool) -> Result<bool> {
     match fs::read(path) {
         Ok(current) if current == bytes => return Ok(false),
@@ -143,6 +165,16 @@ fn compare(path: &Path, bytes: &[u8], write: bool) -> Result<bool> {
     Ok(true)
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "generate"
+    ),
+    ret
+)]
 fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
     let mut projections = Vec::new();
     let mut namespaces = BTreeSet::new();
@@ -222,6 +254,16 @@ fn validate_templates(root: &Path, template_root: &Path, paths: &[PathBuf]) -> R
 ///
 /// # Errors
 /// Refuses malformed envelopes, invalid payloads, unreadable files, protected output paths and failed template premises.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "run"
+    ),
+    ret
+)]
 pub fn run(root: &Path, operation: Operation) -> Result<Report> {
     let template_root = root.join("docs/templates");
     let template_paths = files(&template_root)?;

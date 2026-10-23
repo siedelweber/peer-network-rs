@@ -1384,6 +1384,14 @@
       "before": "Claim: A failed adapter result neither hides later cases nor loses implementation identity.",
       "after": "Claim: Across two named implementations, a rejected case precedes a passing case in each result sequence and all retain suite and edition, preventing failure from hiding later cases.",
       "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "cli-common::observation::tests::private_configuration",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop",
+      "before": "Claim: A private connection aggregate stays secret-owned during acquisition and a failed parse, including its host and numeric port; diagnostics retain only its marker, and SecretBox zeroizes the entire aggregate before its destructor observes it.",
+      "after": "Claim: A private connection aggregate stays secret-owned during acquisition and a failed parse, including its host and numeric port; diagnostics retain only its marker, and the secret carrier zeroizes the entire aggregate before its destructor observes it.",
+      "review": "Checked direct protected reads, numeric parse refusal, secret-owned error retention and the destructor assertion after whole-aggregate zeroization; the wording avoids a documentation-style violation without changing the proposition."
     }
   ]
 }

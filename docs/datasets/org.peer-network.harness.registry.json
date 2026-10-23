@@ -95,6 +95,11 @@
         "cli-common::observation::tests::filtered_accounting",
         "cli-common::observation::tests::inclusive_metering",
         "cli-common::observation::tests::metric_registry",
+        "cli-common::observation::tests::async_cancellation",
+        "cli-common::observation::tests::private_configuration",
+        "cli-common::observation::tests::recursive_observation",
+        "cli-common::observation::tests::async_context",
+        "cli-common::observation::tests::provider_bridge",
         "cli-common::observation::tests::secret_representations",
         "cli-common::observation::tests::terminal_accounting",
         "cli-common::tests::a_failed_report_write_leaves_the_stamp_untouched",
@@ -2729,7 +2734,8 @@
     {
       "budget": "pure-suite",
       "cases": [
-        "pn-interchange::public::prefix_extent"
+        "pn-interchange::public::prefix_extent",
+        "pn-interchange::public::deep_debug"
       ],
       "implementation": "pn-interchange-rust",
       "kind": "suite",
@@ -2939,6 +2945,52 @@
       "kind": "suite",
       "level": "unit",
       "name": "ci::test_claims",
+      "runner": "ci",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "ci::test_observe.Admission.test_duplicate_metric",
+        "ci::test_observe.Admission.test_generated_mapping",
+        "ci::test_observe.Admission.test_invalid_exception",
+        "ci::test_observe.Admission.test_omitted_instrumentation",
+        "ci::test_observe.Admission.test_semantic_review",
+        "ci::test_observe.Admission.test_stale_operation",
+        "ci::test_observe.Admission.test_undeclared_dimension",
+        "ci::test_observe.Admission.test_wrong_identity"
+      ],
+      "implementation": "ci-python",
+      "kind": "suite",
+      "level": "unit",
+      "name": "ci::test_observe",
+      "runner": "ci",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "ci::test_observe_runtime.Processes.test_four_mode_results"
+      ],
+      "implementation": "ci-python",
+      "kind": "suite",
+      "level": "integration",
+      "name": "ci::test_observe_runtime",
+      "runner": "ci",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "ci::test_observe_syntax.Syntax.test_parsed_boundaries"
+      ],
+      "implementation": "ci-python",
+      "kind": "suite",
+      "level": "integration",
+      "name": "ci::test_observe_syntax",
       "runner": "ci",
       "status": "active",
       "tier": "fast"

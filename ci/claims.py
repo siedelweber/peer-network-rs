@@ -15,7 +15,7 @@ from source_sites import census, claim_mints, OWNERS
 LABEL = r'[a-z][a-z0-9-]*:[a-z0-9-]+:[a-z0-9.-]+'
 OBLIGATION_KINDS = {'req', 'dec', 'verif', 'plan', 'gate'}
 PYTHON_AREAS = {'test_design':'design','test_discipline':'discipline','test_devperf':'devperf',
-                'test_harness':'harness','test_testkit':'harness','test_claims':'testing'}
+                'test_harness':'harness','test_testkit':'harness','test_claims':'testing','test_observe':'discipline','test_observe_runtime':'discipline','test_observe_syntax':'discipline'}
 
 
 def owner_of(path):
@@ -244,7 +244,10 @@ def main(argv=None):
             site['local_contract']=local_contracts[site['owner'],site['area']]
             site['execution']=next(r for r in records if r.get('scope')=='case' and r['operation']==site['operation'])
         missing_glosses=[s['operation'] for s in sites if not s['gloss']]
-        Path('.lane/claim-evidence.json').write_text(json.dumps({'schema':1,'source':source,'configuration':CONFIGURATION,'sites':sites,'sibling_gloss_review':missing_glosses,'observation_declarations':{'coverage_status':'held for step 4b','data':json.loads(Path('ci/observe-core.json').read_text())},**result},indent=2)+'\n')
+        observation=json.loads(Path('.lane/observation-coverage.json').read_text())
+        if observation.get('source')!=source or observation.get('mechanical_status')!='passed':
+            raise StructuralError('observation coverage is missing, stale or failed')
+        Path('.lane/claim-evidence.json').write_text(json.dumps({'schema':1,'source':source,'configuration':CONFIGURATION,'sites':sites,'sibling_gloss_review':missing_glosses,'observation_declarations':observation,**result},indent=2)+'\n')
         counts = Counter(r['status'] for r in result['obligations'])
         print(f'CLAIM-REVIEW sites={len(reviews)} artifact=.lane/claim-gloss-review.json')
         print(f'CLAIM-RESPELLINGS count={len(offenders)} artifact=.lane/claim-respellings.json enforcement={args.fail_respellings}')

@@ -1,6 +1,16 @@
 namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
+[[rows]]
+family = "observation-source-literals"
+group = "Checked Rust syntax mirrored in operation admission"
+measures = "Numeric literals and code-unit witnesses, not source identities"
+producer = "The syntax census and its body/type-bound review register"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "The operation registry mirrors visible Rust bodies and type documentation. Its explicit numeric literals retain their source meaning; the observation gate checks the complete mirrored syntax against source, and this family excludes bare identity-shaped values."
+paths = ["ci/observation-registry.json"]
+
 # Boundary: explicit hexadecimal integers (including Rust suffixes), byte and
 # Unicode escapes and ABNF hexadecimal ranges always participate. Bare runs have
 # at least six characters. Short mixed letter/digit runs participate; letter-only

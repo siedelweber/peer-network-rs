@@ -33,12 +33,30 @@ pub struct StreamProps {
 /// Two-mode buffered writer.
 pub struct Writer {
     file: Box<dyn Write + Send>,
+    file_type: &'static str,
     add_prefix: bool,
     wrap_length: usize,
     props: StreamProps,
     debug: bool,
     stdout_buffer: Vec<u8>,
     stderr_buffer: Vec<u8>,
+}
+
+impl std::fmt::Debug for Writer {
+    /// Justified: Formatting supplies the public representation to the enclosing observation boundary and must not recursively create another observation.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Writer")
+            .field("file_type", &self.file_type)
+            .field("file", &"unavailable: Write has no Debug contract")
+            .field("add_prefix", &self.add_prefix)
+            .field("wrap_length", &self.wrap_length)
+            .field("props", &self.props)
+            .field("debug", &self.debug)
+            .field("stdout_buffer", &self.stdout_buffer)
+            .field("stderr_buffer", &self.stderr_buffer)
+            .finish()
+    }
 }
 
 impl Writer {
@@ -54,15 +72,24 @@ impl Writer {
         props: StreamProps,
         debug: bool,
     ) -> Self {
-        Self {
+        let observation = cli_common::observation::scope(
+            "EXECWRAP",
+            "rule:observe:spans",
+            "writer::Writer::new",
+            &serde_json::json!({"file_type":std::any::type_name::<W>(),"file_state":"unavailable: Write has no Debug contract","add_prefix":add_prefix,"wrap_length":wrap_length,"props":format!("{props:?}"),"debug":debug}),
+        );
+        let result = Self {
             file: Box::new(file),
+            file_type: std::any::type_name::<W>(),
             add_prefix,
             wrap_length,
             props,
             debug,
             stdout_buffer: Vec::new(),
             stderr_buffer: Vec::new(),
-        }
+        };
+        observation.finish(&serde_json::json!(format!("{result:?}")));
+        result
     }
 
     /// Write a chunk of bytes attributed to `stream`.
@@ -73,6 +100,16 @@ impl Writer {
     /// # Errors
     ///
     /// Returns any underlying I/O error from the destination file.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "EXECWRAP",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "writer::Writer::write"
+        ),
+        ret
+    )]
     pub fn write(&mut self, stream: Stream, raw: &[u8]) -> io::Result<()> {
         if self.add_prefix {
             self.write_calligraphic(stream, raw)
@@ -117,6 +154,16 @@ impl Writer {
     /// # Errors
     ///
     /// Returns any underlying I/O error from the destination file.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "EXECWRAP",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "writer::Writer::finalize"
+        ),
+        ret
+    )]
     pub fn finalize(&mut self) -> io::Result<()> {
         if self.add_prefix {
             for stream in [Stream::Stdout, Stream::Stderr] {

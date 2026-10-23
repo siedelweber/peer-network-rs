@@ -119,6 +119,16 @@ impl Theory {
     ///
     /// # Errors
     /// Returns a located syntax error, a fragment refusal, or an unsupported-operator or regular-expression error.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::Theory::parse"
+        ),
+        ret
+    )]
     pub fn parse(source: &str) -> Result<Theory, TheoryError> {
         let cddl = parse::parse(source).map_err(syntax)?;
         let fragment = fragment::check(&cddl)?;
@@ -149,6 +159,16 @@ impl Theory {
     /// assert_eq!(theory.source(), source);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::Theory::source"
+        ),
+        ret
+    )]
     pub fn source(&self) -> &str {
         &self.source
     }
@@ -163,6 +183,16 @@ impl Theory {
     /// assert_eq!(theory.label().as_str(), "com.example");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::Theory::label"
+        ),
+        ret
+    )]
     pub fn label(&self) -> &NamespaceLabel {
         self.fragment.label()
     }
@@ -177,6 +207,16 @@ impl Theory {
     /// assert_eq!(theory.coordinate(), (3, 4));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::Theory::coordinate"
+        ),
+        ret
+    )]
     pub fn coordinate(&self) -> (u64, u64) {
         self.fragment.coordinate()
     }
@@ -193,6 +233,16 @@ impl Theory {
     /// let keys: Vec<u64> = theory.slots().map(|slot| slot.key().get()).collect();
     /// assert_eq!(keys, [2, 7]);
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::Theory::slots"
+        ),
+        ret
+    )]
     pub fn slots(&self) -> impl Iterator<Item = KeySlot<'_>> + '_ {
         self.fragment.slots().iter().map(|slot| KeySlot {
             key: slot.key(),
@@ -212,6 +262,16 @@ impl Theory {
     /// assert!(theory.slot(3).is_none());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::Theory::slot"
+        ),
+        ret
+    )]
     pub fn slot(&self, key: u64) -> Option<KeySlot<'_>> {
         self.slots().find(|slot| slot.key.get() == key)
     }
@@ -232,6 +292,16 @@ impl Theory {
     /// assert_eq!(theory.to_cddl(), "e = {0 => \"com.example\", 1 => [0, 0, uint]}\n");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::Theory::to_cddl"
+        ),
+        ret
+    )]
     pub fn to_cddl(&self) -> String {
         printer::print(&self.cddl)
     }
@@ -253,6 +323,16 @@ impl Theory {
     /// assert!(open.to_cddl().ends_with("* (uint .gt 1) => any}\n"));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::Theory::open_companion"
+        ),
+        ret
+    )]
     pub fn open_companion(&self) -> OpenTheory {
         companion::derive(self)
     }
@@ -276,6 +356,16 @@ impl Theory {
     /// assert_eq!(reaching.restraint().implicit_reaches().count(), 3);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::Theory::restraint"
+        ),
+        ret
+    )]
     pub fn restraint(&self) -> RestraintReport {
         restraint::report(self)
     }
@@ -317,6 +407,16 @@ impl<'a> KeySlot<'a> {
     /// assert_eq!(theory.slot(4).expect("key 4").key().get(), 4);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::KeySlot < 'a >::key"
+        ),
+        ret
+    )]
     pub fn key(&self) -> ContentKey {
         self.key
     }
@@ -335,6 +435,16 @@ impl<'a> KeySlot<'a> {
     /// assert!(!theory.slot(3).expect("key 3").required());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::KeySlot < 'a >::required"
+        ),
+        ret
+    )]
     pub fn required(&self) -> bool {
         self.required
     }
@@ -358,6 +468,16 @@ impl<'a> KeySlot<'a> {
     /// assert_eq!(theory.slot(2).expect("key 2").type_source(), "uint  /  tstr");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::KeySlot < 'a >::type_source"
+        ),
+        ret
+    )]
     pub fn type_source(&self) -> &'a str {
         self.type_source
     }
@@ -371,6 +491,16 @@ impl<'a> KeySlot<'a> {
 ///
 /// assert!(global().source().contains("namespace-form"));
 /// ```
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "INTERCHANGE",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "cddl::global"
+    ),
+    ret
+)]
 pub fn global() -> &'static BaseTheory {
     static GLOBAL: OnceLock<BaseTheory> = OnceLock::new();
     GLOBAL.get_or_init(BaseTheory::build)
@@ -424,6 +554,16 @@ impl BaseTheory {
     /// assert!(global().source().starts_with("global = {"));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::BaseTheory::source"
+        ),
+        ret
+    )]
     pub fn source(&self) -> &'static str {
         GLOBAL_SOURCE
     }
@@ -436,6 +576,16 @@ impl BaseTheory {
     /// assert!(global().to_cddl().starts_with("global = {0 => namespace-label"));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::BaseTheory::to_cddl"
+        ),
+        ret
+    )]
     pub fn to_cddl(&self) -> String {
         match &self.prepared {
             Some(prepared) => printer::print(&prepared.cddl),

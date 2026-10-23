@@ -40,7 +40,7 @@ use crate::error::ValueError;
 /// assert_eq!(v.to_canonical_bytes(), [0x39, 0x01, 0xf3]);
 /// assert_eq!(Value::from_canonical_bytes(&[0x39, 0x01, 0xf3]).expect("canonical"), v);
 /// ```
-#[derive(Debug, Eq)]
+#[derive(Eq)]
 pub enum Value {
     /// Major type 0: an integer in `[0, 2^64)`.
     Unsigned(u64),
@@ -66,6 +66,80 @@ pub enum Value {
     Float(Float),
 }
 
+// Justified: Debug is observation machinery; an explicit worklist prevents recursive formatting from changing acceptance of deeply nested public values.
+impl std::fmt::Debug for Value {
+    /// Justified: Formatting supplies the public representation to the enclosing observation boundary and must not recursively create another observation.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        enum Part<'a> {
+            Value(&'a Value),
+            Text(&'static str),
+            Array(&'a [Value], bool),
+            Map(&'a [(Value, Value)], bool),
+        }
+        let mut work = vec![Part::Value(self)];
+        while let Some(part) = work.pop() {
+            let value = match part {
+                Part::Value(value) => value,
+                Part::Text(text) => {
+                    f.write_str(text)?;
+                    continue;
+                }
+                Part::Array(items, first) => {
+                    if let Some((item, rest)) = items.split_first() {
+                        if !first {
+                            f.write_str(", ")?;
+                        }
+                        work.push(Part::Array(rest, false));
+                        work.push(Part::Value(item));
+                    }
+                    continue;
+                }
+                Part::Map(items, first) => {
+                    if let Some(((key, item), rest)) = items.split_first() {
+                        if !first {
+                            f.write_str(", ")?;
+                        }
+                        f.write_str("(")?;
+                        work.push(Part::Map(rest, false));
+                        work.push(Part::Text(")"));
+                        work.push(Part::Value(item));
+                        work.push(Part::Text(", "));
+                        work.push(Part::Value(key));
+                    }
+                    continue;
+                }
+            };
+            match value {
+                Self::Array(array) => {
+                    f.write_str("Array(Array([")?;
+                    work.push(Part::Text("]))"));
+                    work.push(Part::Array(&array.0, true));
+                }
+                Self::Map(map) => {
+                    f.write_str("Map(Map([")?;
+                    work.push(Part::Text("]))"));
+                    work.push(Part::Map(&map.0, true));
+                }
+                Self::Tag(tag) => {
+                    write!(f, "Tag(Tag {{ number: {}, item: ", tag.number)?;
+                    work.push(Part::Text(" })"));
+                    work.push(Part::Value(&tag.item));
+                }
+                Self::Unsigned(value) => write!(f, "Unsigned({value:?})")?,
+                Self::Negative(value) => write!(f, "Negative({value:?})")?,
+                Self::Bytes(value) => write!(f, "Bytes({value:?})")?,
+                Self::Text(value) => write!(f, "Text({value:?})")?,
+                Self::Bool(value) => write!(f, "Bool({value:?})")?,
+                Self::Null => f.write_str("Null")?,
+                Self::Simple(value) => write!(f, "Simple({value:?})")?,
+                Self::Float(value) => write!(f, "Float({value:?})")?,
+            }
+        }
+        Ok(())
+    }
+}
+
 impl Value {
     /// Build an integer, choosing major type 0 or 1 by sign.
     ///
@@ -79,6 +153,16 @@ impl Value {
     ///
     /// # Errors
     /// Returns a value error if the integer lies outside the CBOR integer range.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Value::integer"
+        ),
+        ret
+    )]
     pub fn integer(v: i128) -> Result<Value, ValueError> {
         if v >= 0 {
             u64::try_from(v)
@@ -139,6 +223,16 @@ impl Ord for Value {
     /// The comparison walks an explicit worklist rather than the call
     /// stack: a value deep enough to overflow a recursive comparator is
     /// exactly the value a hostile input produces.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Value as Ord>::cmp"
+        ),
+        ret
+    )]
     fn cmp(&self, other: &Value) -> Ordering {
         let mut work: Vec<(&Value, &Value)> = vec![(self, other)];
         while let Some((a, b)) = work.pop() {
@@ -173,18 +267,40 @@ impl Ord for Value {
 }
 
 impl PartialOrd for Value {
+    /// Justified: The canonical partial-order delegation inherits the instrumented total-order comparison boundary without changing its required canonical body.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn partial_cmp(&self, other: &Value) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
 impl Clone for Value {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Value as Clone>::clone"
+        ),
+        ret
+    )]
     fn clone(&self) -> Value {
         clone_iter(self)
     }
 }
 
 impl PartialEq for Value {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Value as PartialEq>::eq"
+        ),
+        ret
+    )]
     fn eq(&self, other: &Value) -> bool {
         eq_iter(vec![(self, other)])
     }
@@ -192,7 +308,16 @@ impl PartialEq for Value {
 
 impl Hash for Value {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        hash_iter(vec![self], state);
+        let scope = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "value::<Value as Hash>::hash",
+            &(self, "opaque Hasher capability"),
+        );
+        {
+            hash_iter(vec![self], state);
+        };
+        scope.finish(&());
     }
 }
 
@@ -383,6 +508,8 @@ impl Negative {
     /// assert_eq!(Negative::from_argument(23).get(), -24);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn from_argument(n: u64) -> Negative {
         Negative(n)
     }
@@ -398,6 +525,16 @@ impl Negative {
     ///
     /// # Errors
     /// Returns a value error unless the integer is negative and representable by CBOR major type one.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Negative::from_i128"
+        ),
+        ret
+    )]
     pub fn from_i128(v: i128) -> Result<Negative, ValueError> {
         if v >= 0 {
             return Err(ValueError::IntegerOutOfRange { value: v });
@@ -415,6 +552,8 @@ impl Negative {
     /// assert_eq!(Negative::from_argument(7).argument(), 7);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn argument(self) -> u64 {
         self.0
     }
@@ -427,6 +566,8 @@ impl Negative {
     /// assert_eq!(Negative::from_argument(u64::MAX).get(), -(1i128 << 64));
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn get(self) -> i128 {
         -1 - (self.0 as i128)
     }
@@ -458,6 +599,16 @@ impl Bytes {
     /// assert_eq!(Bytes::default().as_slice(), &[] as &[u8]);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Bytes::as_slice"
+        ),
+        ret
+    )]
     pub fn as_slice(&self) -> &[u8] {
         &self.0
     }
@@ -470,18 +621,48 @@ impl Bytes {
     /// assert_eq!(Bytes::from(vec![0xff]).into_vec(), vec![0xff]);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Bytes::into_vec"
+        ),
+        ret
+    )]
     pub fn into_vec(self) -> Vec<u8> {
         self.0.into_vec()
     }
 }
 
 impl From<Vec<u8>> for Bytes {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Bytes as From < Vec < u8 > >>::from"
+        ),
+        ret
+    )]
     fn from(v: Vec<u8>) -> Bytes {
         Bytes(v.into_boxed_slice())
     }
 }
 
 impl AsRef<[u8]> for Bytes {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Bytes as AsRef < [u8] >>::as_ref"
+        ),
+        ret
+    )]
     fn as_ref(&self) -> &[u8] {
         &self.0
     }
@@ -514,6 +695,16 @@ impl Text {
     /// assert_eq!(Text::from("a".to_owned()).as_str(), "a");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Text::as_str"
+        ),
+        ret
+    )]
     pub fn as_str(&self) -> &str {
         &self.0
     }
@@ -526,12 +717,32 @@ impl Text {
     /// assert_eq!(Text::from("a".to_owned()).into_string(), "a".to_owned());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Text::into_string"
+        ),
+        ret
+    )]
     pub fn into_string(self) -> String {
         self.0.into_string()
     }
 }
 
 impl From<String> for Text {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Text as From < String >>::from"
+        ),
+        ret
+    )]
     fn from(s: String) -> Text {
         Text(s.into_boxed_str())
     }
@@ -540,6 +751,16 @@ impl From<String> for Text {
 impl TryFrom<Vec<u8>> for Text {
     type Error = ValueError;
 
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Text as TryFrom < Vec < u8 > >>::try_from"
+        ),
+        ret
+    )]
     fn try_from(bytes: Vec<u8>) -> Result<Text, ValueError> {
         match String::from_utf8(bytes) {
             Ok(s) => Ok(Text::from(s)),
@@ -570,12 +791,32 @@ impl TryFrom<Vec<u8>> for Text {
 pub struct Array(Vec<Value>);
 
 impl Clone for Array {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Array as Clone>::clone"
+        ),
+        ret
+    )]
     fn clone(&self) -> Array {
         Array(self.0.iter().map(clone_iter).collect())
     }
 }
 
 impl PartialEq for Array {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Array as PartialEq>::eq"
+        ),
+        ret
+    )]
     fn eq(&self, other: &Array) -> bool {
         self.0.len() == other.0.len() && eq_iter(self.0.iter().zip(other.0.iter()).collect())
     }
@@ -583,8 +824,17 @@ impl PartialEq for Array {
 
 impl Hash for Array {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.0.len().hash(state);
-        hash_iter(self.0.iter().collect(), state);
+        let scope = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "value::<Array as Hash>::hash",
+            &(self, "opaque Hasher capability"),
+        );
+        {
+            self.0.len().hash(state);
+            hash_iter(self.0.iter().collect(), state);
+        };
+        scope.finish(&());
     }
 }
 
@@ -598,7 +848,20 @@ impl Array {
     /// assert!(Array::new([]).is_empty());
     /// ```
     pub fn new(items: impl IntoIterator<Item = Value>) -> Array {
-        Array(items.into_iter().collect())
+        let observation = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "value::Array::new",
+            &("lazy input; values recorded as consumed", std::any::type_name_of_val(&items)),
+        );
+        let result = Array(
+            items
+                .into_iter()
+                .inspect(|item| tracing::info!(argument_item=?item))
+                .collect(),
+        );
+        observation.finish(&result);
+        result
     }
 
     /// The elements.
@@ -609,6 +872,16 @@ impl Array {
     /// assert_eq!(Array::new([Value::Null]).as_slice(), [Value::Null]);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Array::as_slice"
+        ),
+        ret
+    )]
     pub fn as_slice(&self) -> &[Value] {
         &self.0
     }
@@ -621,6 +894,16 @@ impl Array {
     /// assert_eq!(Array::new([Value::Null]).into_vec(), vec![Value::Null]);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Array::into_vec"
+        ),
+        ret
+    )]
     pub fn into_vec(mut self) -> Vec<Value> {
         mem::take(&mut self.0)
     }
@@ -633,6 +916,16 @@ impl Array {
     /// assert_eq!(Array::new([Value::Null]).len(), 1);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Array::len"
+        ),
+        ret
+    )]
     pub fn len(&self) -> usize {
         self.0.len()
     }
@@ -645,6 +938,16 @@ impl Array {
     /// assert!(Array::default().is_empty());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Array::is_empty"
+        ),
+        ret
+    )]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
@@ -652,13 +955,25 @@ impl Array {
 
 impl FromIterator<Value> for Array {
     fn from_iter<I: IntoIterator<Item = Value>>(iter: I) -> Array {
-        Array::new(iter)
+        let scope = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "value::<Array as FromIterator < Value >>::from_iter",
+            &"lazy iterator; consumed values recorded by Array::new",
+        );
+        let result = { Array::new(iter) };
+        scope.finish(&result);
+        result
     }
 }
 
 impl Drop for Array {
     fn drop(&mut self) {
-        tear_down(mem::take(&mut self.0));
+        let scope = crate::observe::scope("INTERCHANGE", "rule:observe:spans", "value::<Array as Drop>::drop", &self);
+        {
+            tear_down(mem::take(&mut self.0));
+        };
+        scope.finish(&());
     }
 }
 
@@ -690,6 +1005,16 @@ impl Drop for Array {
 pub struct Map(Vec<(Value, Value)>);
 
 impl Clone for Map {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Map as Clone>::clone"
+        ),
+        ret
+    )]
     fn clone(&self) -> Map {
         Map(self
             .0
@@ -700,6 +1025,16 @@ impl Clone for Map {
 }
 
 impl PartialEq for Map {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Map as PartialEq>::eq"
+        ),
+        ret
+    )]
     fn eq(&self, other: &Map) -> bool {
         if self.0.len() != other.0.len() {
             return false;
@@ -715,13 +1050,22 @@ impl PartialEq for Map {
 
 impl Hash for Map {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.0.len().hash(state);
-        let mut work = Vec::with_capacity(self.0.len() * 2);
-        for (key, value) in &self.0 {
-            work.push(key);
-            work.push(value);
-        }
-        hash_iter(work, state);
+        let scope = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "value::<Map as Hash>::hash",
+            &(self, "opaque Hasher capability"),
+        );
+        {
+            self.0.len().hash(state);
+            let mut work = Vec::with_capacity(self.0.len() * 2);
+            for (key, value) in &self.0 {
+                work.push(key);
+                work.push(value);
+            }
+            hash_iter(work, state);
+        };
+        scope.finish(&());
     }
 }
 
@@ -738,14 +1082,30 @@ impl Map {
     /// # Errors
     /// Returns a value error if two entries have equal canonical keys.
     pub fn new(entries: impl IntoIterator<Item = (Value, Value)>) -> Result<Map, ValueError> {
-        let mut entries: Vec<(Value, Value)> = entries.into_iter().collect();
-        entries.sort_by(|a, b| a.0.cmp(&b.0));
-        for index in 1..entries.len() {
-            if entries[index - 1].0.cmp(&entries[index].0).is_eq() {
-                return Err(ValueError::DuplicateMapKey { index });
+        let observation = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "value::Map::new",
+            &(
+                "lazy input; entries recorded as consumed",
+                std::any::type_name_of_val(&entries),
+            ),
+        );
+        let result = (|| {
+            let mut entries: Vec<(Value, Value)> = entries
+                .into_iter()
+                .inspect(|entry| tracing::info!(argument_entry=?entry))
+                .collect();
+            entries.sort_by(|a, b| a.0.cmp(&b.0));
+            for index in 1..entries.len() {
+                if entries[index - 1].0.cmp(&entries[index].0).is_eq() {
+                    return Err(ValueError::DuplicateMapKey { index });
+                }
             }
-        }
-        Ok(Map(entries))
+            Ok(Map(entries))
+        })();
+        observation.finish(&result);
+        result
     }
 
     /// The entries as a slice, for the walks that need to run backwards.
@@ -775,6 +1135,16 @@ impl Map {
     /// assert_eq!(m.get(&Value::Unsigned(2)), None);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Map::get"
+        ),
+        ret
+    )]
     pub fn get(&self, key: &Value) -> Option<&Value> {
         self.0
             .binary_search_by(|(k, _)| k.cmp(key))
@@ -795,6 +1165,16 @@ impl Map {
     /// let keys: Vec<&Value> = m.iter().map(|(k, _)| k).collect();
     /// assert_eq!(keys, [&Value::Unsigned(1), &Value::Unsigned(2)]);
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Map::iter"
+        ),
+        ret
+    )]
     pub fn iter(&self) -> impl Iterator<Item = (&Value, &Value)> + '_ {
         self.0.iter().map(|(k, v)| (k, v))
     }
@@ -808,6 +1188,16 @@ impl Map {
     /// assert_eq!(m.into_entries(), vec![(Value::Unsigned(1), Value::Null)]);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Map::into_entries"
+        ),
+        ret
+    )]
     pub fn into_entries(mut self) -> Vec<(Value, Value)> {
         mem::take(&mut self.0)
     }
@@ -820,6 +1210,16 @@ impl Map {
     /// assert_eq!(Map::default().len(), 0);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Map::len"
+        ),
+        ret
+    )]
     pub fn len(&self) -> usize {
         self.0.len()
     }
@@ -832,6 +1232,16 @@ impl Map {
     /// assert!(Map::default().is_empty());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Map::is_empty"
+        ),
+        ret
+    )]
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
@@ -839,13 +1249,17 @@ impl Map {
 
 impl Drop for Map {
     fn drop(&mut self) {
-        let entries = mem::take(&mut self.0);
-        let mut work = Vec::with_capacity(entries.len() * 2);
-        for (key, value) in entries {
-            work.push(key);
-            work.push(value);
-        }
-        tear_down(work);
+        let scope = crate::observe::scope("INTERCHANGE", "rule:observe:spans", "value::<Map as Drop>::drop", &self);
+        {
+            let entries = mem::take(&mut self.0);
+            let mut work = Vec::with_capacity(entries.len() * 2);
+            for (key, value) in entries {
+                work.push(key);
+                work.push(value);
+            }
+            tear_down(work);
+        };
+        scope.finish(&());
     }
 }
 
@@ -890,6 +1304,16 @@ pub struct Tag {
 }
 
 impl Clone for Tag {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Tag as Clone>::clone"
+        ),
+        ret
+    )]
     fn clone(&self) -> Tag {
         Tag {
             number: self.number,
@@ -899,6 +1323,16 @@ impl Clone for Tag {
 }
 
 impl PartialEq for Tag {
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::<Tag as PartialEq>::eq"
+        ),
+        ret
+    )]
     fn eq(&self, other: &Tag) -> bool {
         self.number == other.number && eq_iter(vec![(&self.item, &other.item)])
     }
@@ -906,8 +1340,17 @@ impl PartialEq for Tag {
 
 impl Hash for Tag {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.number.hash(state);
-        hash_iter(vec![&self.item], state);
+        let scope = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "value::<Tag as Hash>::hash",
+            &(self, "opaque Hasher capability"),
+        );
+        {
+            self.number.hash(state);
+            hash_iter(vec![&self.item], state);
+        };
+        scope.finish(&());
     }
 }
 
@@ -922,6 +1365,16 @@ impl Tag {
     /// assert_eq!(Tag::new(0, Value::Null).number(), 0);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Tag::new"
+        ),
+        ret
+    )]
     pub fn new(number: u64, item: Value) -> Tag {
         Tag {
             number,
@@ -937,6 +1390,8 @@ impl Tag {
     /// assert_eq!(Tag::new(42, Value::Null).number(), 42);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn number(&self) -> u64 {
         self.number
     }
@@ -949,6 +1404,16 @@ impl Tag {
     /// assert_eq!(Tag::new(42, Value::Null).item(), &Value::Null);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Tag::item"
+        ),
+        ret
+    )]
     pub fn item(&self) -> &Value {
         &self.item
     }
@@ -961,6 +1426,16 @@ impl Tag {
     /// assert_eq!(Tag::new(42, Value::Null).into_item(), Value::Null);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Tag::into_item"
+        ),
+        ret
+    )]
     pub fn into_item(mut self) -> Value {
         self.take_item()
     }
@@ -980,9 +1455,11 @@ impl Tag {
 /// without recursing.
 impl Drop for Tag {
     fn drop(&mut self) {
+        let scope = crate::observe::scope("INTERCHANGE", "rule:observe:spans", "value::<Tag as Drop>::drop", &self);
         if matches!(*self.item, Value::Tag(_)) {
             tear_down(vec![self.take_item()]);
         }
+        scope.finish(&());
     }
 }
 
@@ -1013,6 +1490,16 @@ impl Simple {
     ///
     /// # Errors
     /// Returns a value error for booleans, null or the reserved simple values twenty-four through thirty-one.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Simple::new"
+        ),
+        ret
+    )]
     pub fn new(value: u8) -> Result<Simple, ValueError> {
         match value {
             20..=22 | 24..=31 => Err(ValueError::ReservedSimpleValue { value }),
@@ -1028,6 +1515,8 @@ impl Simple {
     /// assert_eq!(Simple::new(16).expect("in range").get(), 16);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn get(self) -> u8 {
         self.0
     }
@@ -1133,6 +1622,16 @@ impl Float {
     ///
     /// # Errors
     /// Returns a value error for a NaN payload other than the single canonical NaN.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Float::from_f64"
+        ),
+        ret
+    )]
     pub fn from_f64(v: f64) -> Result<Float, ValueError> {
         let bits = v.to_bits();
         if v.is_nan() {
@@ -1170,6 +1669,16 @@ impl Float {
     /// assert_eq!(Float::from_f64(-0.0).expect("canonical").to_f64(), -0.0);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "value::Float::to_f64"
+        ),
+        ret
+    )]
     pub fn to_f64(self) -> f64 {
         bits_to_f64(self.width, self.bits)
     }
@@ -1182,6 +1691,8 @@ impl Float {
     /// assert_eq!(Float::CANONICAL_NAN.width(), FloatWidth::Half);
     /// ```
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn width(self) -> FloatWidth {
         self.width
     }

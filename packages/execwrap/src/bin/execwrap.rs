@@ -70,6 +70,8 @@ struct Args {
     command: Vec<OsString>,
 }
 
+/// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
+/// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 fn main() -> ExitCode {
     // The panic hook precedes argument parsing (´[ROOT-rec:output:decision]´): a panic
     // anywhere in the process emits one JSON diagnostic, never Rust's
@@ -91,58 +93,76 @@ fn main() -> ExitCode {
     let _observation_guard =
         cli_common::observation::bootstrap(args.observation == ObservationMode::Enabled, args.debug, default_level(&args)).ok();
 
-    let cfg = RoutingConfig {
-        redirect: args.redirect,
-        redirect_output: args.redirect_output,
-        redirect_error: args.redirect_error,
-        redirect_prefixed: args.redirect_prefixed,
-        notify_on_write: args.notify_on_write,
-        debug: args.debug,
-        quiet: args.quiet,
-    };
+    execute(args)
+}
 
-    // Conflicting routing for one path is an invalid argument
-    // combination: usage class 2, before any side effect. The
-    // full public error text is retained in the usage diagnostic.
-    if let Err(error @ ExecError::AmbiguousRedirection { .. }) = preflight_routing(&cfg) {
-        let mut record = cli_common::ControlPlaneRecord::usage_error(COMMAND_NAME, "ambiguous_redirection");
-        record.message = error.to_string();
-        let _ignored = emit_control_plane_record(&record);
-        return CommandExit::Usage.exit_code();
-    }
+fn execute(args: Args) -> ExitCode {
+    let scope = cli_common::observation::scope("EXECWRAP", "rule:observe:spans", "execute", &args);
+    let result = (|| {
+        let cfg = RoutingConfig {
+            redirect: args.redirect,
+            redirect_output: args.redirect_output,
+            redirect_error: args.redirect_error,
+            redirect_prefixed: args.redirect_prefixed,
+            notify_on_write: args.notify_on_write,
+            debug: args.debug,
+            quiet: args.quiet,
+        };
 
-    if let Some(directory) = &args.change_directory
-        && let Err(error) = env::set_current_dir(directory)
-    {
-        tracing::error!(
-            error = %error,
-            directory = %directory.display(),
-            "failed to change working directory",
-        );
-        return CommandExit::Failure.exit_code();
-    }
+        // Conflicting routing for one path is an invalid argument
+        // combination: usage class 2, before any side effect. The
+        // full public error text is retained in the usage diagnostic.
+        if let Err(error @ ExecError::AmbiguousRedirection { .. }) = preflight_routing(&cfg) {
+            let mut record = cli_common::ControlPlaneRecord::usage_error(COMMAND_NAME, "ambiguous_redirection");
+            record.message = error.to_string();
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
 
-    let outcome = match run(&args.command, &cfg, emit_notification) {
-        Ok(outcome) => outcome,
-        Err(ExecError::Spawn { source }) => {
-            // The operation start already recorded the full public command.
-            tracing::error!(error = %source, "failed to spawn child process");
+        if let Some(directory) = &args.change_directory
+            && let Err(error) = env::set_current_dir(directory)
+        {
+            tracing::error!(
+                error = %error,
+                directory = %directory.display(),
+                "failed to change working directory",
+            );
             return CommandExit::Failure.exit_code();
         }
-        Err(error) => {
-            tracing::error!(error = %error, "execwrap setup failed");
+
+        let outcome = match run(&args.command, &cfg, emit_notification) {
+            Ok(outcome) => outcome,
+            Err(ExecError::Spawn { source }) => {
+                // The operation start already recorded the full public command.
+                tracing::error!(error = %source, "failed to spawn child process");
+                return CommandExit::Failure.exit_code();
+            }
+            Err(error) => {
+                tracing::error!(error = %error, "execwrap setup failed");
+                return CommandExit::Failure.exit_code();
+            }
+        };
+
+        // Losing captured output is a wrapper failure even when the child
+        // succeeded: a build must not silently continue on truncated logs.
+        if outcome.data_loss && outcome.exit_code == 0 {
+            tracing::error!("captured output may be incomplete; treating the run as failed");
             return CommandExit::Failure.exit_code();
         }
-    };
 
-    // Losing captured output is a wrapper failure even when the child
-    // succeeded: a build must not silently continue on truncated logs.
-    if outcome.data_loss && outcome.exit_code == 0 {
-        tracing::error!("captured output may be incomplete; treating the run as failed");
-        return CommandExit::Failure.exit_code();
-    }
-
-    wrapper_exit_from_child_status(outcome.exit_code)
+        wrapper_exit_from_child_status(outcome.exit_code)
+    })();
+    scope.finish_with(
+        if result == ExitCode::SUCCESS {
+            cli_common::observation::Outcome::Success
+        } else if result == ExitCode::from(2) {
+            cli_common::observation::Outcome::Refusal
+        } else {
+            cli_common::observation::Outcome::Error
+        },
+        &result,
+    );
+    result
 }
 
 /// Map a relayed child status onto the wrapper's exit code, keeping the

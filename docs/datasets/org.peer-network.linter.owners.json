@@ -38,6 +38,14 @@
           "target": "CLICOMMON"
         },
         {
+          "owner": "EXECWRAP",
+          "target": "INTERCHANGE"
+        },
+        {
+          "owner": "EXECWRAP",
+          "target": "DOCUMENTS"
+        },
+        {
           "owner": "CLICOMMON",
           "target": "ROOT"
         },

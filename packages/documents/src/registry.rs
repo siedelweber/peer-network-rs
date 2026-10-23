@@ -10,6 +10,16 @@ fn field<'a>(row: &'a BTreeMap<String, Value>, name: &str) -> crate::Result<&'a 
         .ok_or_else(|| format!("kind registry: expected string field {name}").into())
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "registry::view"
+    ),
+    ret
+)]
 pub fn view(dataset: &Dataset) -> crate::Result<Value> {
     let mut sections: BTreeMap<String, Vec<_>> = BTreeMap::new();
     let mut base = BTreeSet::new();

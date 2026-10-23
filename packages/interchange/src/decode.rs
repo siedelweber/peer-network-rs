@@ -67,6 +67,16 @@ impl Value {
     ///
     /// # Errors
     /// Returns a decode error for malformed, noncanonical, truncated or trailing input.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "decode::Value::from_canonical_bytes"
+        ),
+        ret
+    )]
     pub fn from_canonical_bytes(bytes: &[u8]) -> Result<Value, DecodeError> {
         let (value, consumed) = Value::from_canonical_prefix(bytes)?;
         if consumed != bytes.len() {
@@ -90,6 +100,16 @@ impl Value {
     ///
     /// # Errors
     /// Returns a decode error if the first item is malformed, noncanonical or truncated.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "decode::Value::from_canonical_prefix"
+        ),
+        ret
+    )]
     pub fn from_canonical_prefix(bytes: &[u8]) -> Result<(Value, usize), DecodeError> {
         decode_one(bytes)
     }

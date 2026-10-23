@@ -76,6 +76,16 @@ impl Inclusion {
     /// assert!(!check_inclusion(&earlier, &later).expect("comparable").holds());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::inclusion::Inclusion::holds"
+        ),
+        ret
+    )]
     pub fn holds(&self) -> bool {
         matches!(self, Inclusion::Holds)
     }
@@ -180,6 +190,16 @@ pub enum InclusionBreach {
 ///
 /// # Errors
 /// Returns a theory error if the compared theories cannot supply the resolved types needed for inclusion.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "INTERCHANGE",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "cddl::inclusion::check_inclusion"
+    ),
+    ret
+)]
 pub fn check_inclusion(earlier: &Theory, later: &Theory) -> Result<Inclusion, TheoryError> {
     if earlier.label() != later.label() {
         return Err(TheoryError::Incomparable);

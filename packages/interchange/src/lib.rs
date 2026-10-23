@@ -82,6 +82,7 @@ mod encode;
 mod envelope;
 mod error;
 mod label;
+mod observe;
 mod regexp;
 mod registry;
 mod value;

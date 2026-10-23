@@ -99,6 +99,16 @@ impl Satisfaction {
     /// assert!(!Satisfaction::Fails(Vec::new()).holds());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::eval::Satisfaction::holds"
+        ),
+        ret
+    )]
     pub fn holds(&self) -> bool {
         matches!(self, Satisfaction::Holds)
     }
@@ -178,6 +188,16 @@ impl Mismatch {
     /// assert!(matches!(satisfies_global(&document), Satisfaction::Holds));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::eval::Mismatch::key"
+        ),
+        ret
+    )]
     pub fn key(&self) -> Option<ContentKey> {
         self.key
     }
@@ -198,6 +218,16 @@ impl Mismatch {
     /// assert_eq!(mismatches[0].at(), "key 0");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::eval::Mismatch::at"
+        ),
+        ret
+    )]
     pub fn at(&self) -> &str {
         &self.at
     }
@@ -225,6 +255,16 @@ impl Mismatch {
     /// assert_eq!(mismatches[0].expected(), "uint / tstr");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::eval::Mismatch::expected"
+        ),
+        ret
+    )]
     pub fn expected(&self) -> &str {
         &self.expected
     }
@@ -247,6 +287,16 @@ impl Mismatch {
     /// assert_eq!(mismatches[0].found(), "the unsigned integer 7");
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::eval::Mismatch::found"
+        ),
+        ret
+    )]
     pub fn found(&self) -> &str {
         &self.found
     }
@@ -267,6 +317,16 @@ impl Mismatch {
     /// assert_eq!(mismatches[0].kind(), MismatchKind::Unsatisfied);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cddl::eval::Mismatch::kind"
+        ),
+        ret
+    )]
     pub fn kind(&self) -> MismatchKind {
         self.kind
     }
@@ -322,6 +382,16 @@ impl Mismatch {
 /// assert!(!satisfies(&other, &theory).holds());
 /// ```
 #[must_use]
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "INTERCHANGE",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "cddl::eval::satisfies"
+    ),
+    ret
+)]
 pub fn satisfies(d: &Document, s: &Theory) -> Satisfaction {
     judge(d, &s.cddl, &s.table, &s.patterns)
 }
@@ -356,6 +426,16 @@ pub fn satisfies(d: &Document, s: &Theory) -> Satisfaction {
 /// assert!(satisfies_open(&later, &open).holds());
 /// ```
 #[must_use]
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "INTERCHANGE",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "cddl::eval::satisfies_open"
+    ),
+    ret
+)]
 pub fn satisfies_open(d: &Document, s: &OpenTheory) -> Satisfaction {
     let (cddl, table, patterns) = s.parts();
     judge(d, cddl, table, patterns)
@@ -378,6 +458,16 @@ pub fn satisfies_open(d: &Document, s: &OpenTheory) -> Satisfaction {
 /// assert!(satisfies_global(&document).holds());
 /// ```
 #[must_use]
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "INTERCHANGE",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "cddl::eval::satisfies_global"
+    ),
+    ret
+)]
 pub fn satisfies_global(d: &Document) -> Satisfaction {
     match super::global().prepared.as_ref() {
         Some(prepared) => judge(d, &prepared.cddl, &prepared.table, &prepared.patterns),

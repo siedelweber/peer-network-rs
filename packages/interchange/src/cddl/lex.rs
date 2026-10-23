@@ -137,6 +137,8 @@ impl SyntaxError {
 }
 
 impl fmt::Display for SyntaxError {
+    /// Justified: Formatting supplies the public representation to the enclosing observation boundary and must not recursively create another observation.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "line {}, column {}: {}", self.line, self.column, self.detail)
     }

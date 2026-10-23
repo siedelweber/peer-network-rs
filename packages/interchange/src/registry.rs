@@ -131,6 +131,16 @@ impl Registry {
     /// assert_eq!(registry.ceiling(&label, 1), None);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::new"
+        ),
+        ret
+    )]
     pub fn new() -> Registry {
         Registry::default()
     }
@@ -157,6 +167,16 @@ impl Registry {
     /// assert!(Registry::lenient().acquire(coord, theory).is_ok());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::lenient"
+        ),
+        ret
+    )]
     pub fn lenient() -> Registry {
         Registry {
             lines: BTreeMap::new(),
@@ -214,6 +234,16 @@ impl Registry {
     ///
     /// # Errors
     /// Returns an acquisition error for coordinate mismatch, implicit restraint reach, nonincreasing acquisition, changed theory or invalid minor extension.
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::acquire"
+        ),
+        ret
+    )]
     pub fn acquire(&mut self, coord: Coordinate, theory: Theory) -> Result<(), AcquireError> {
         let (major, minor) = theory.coordinate();
         if theory.label() != coord.label() || major != coord.major() || minor != coord.minor() {
@@ -297,10 +327,24 @@ impl Registry {
     /// # Errors
     /// Returns the first acquisition error; prior successful acquisitions remain in the registry.
     pub fn acquire_all(&mut self, theories: impl IntoIterator<Item = (Coordinate, Theory)>) -> Result<(), AcquireError> {
-        for (coord, theory) in theories {
-            self.acquire(coord, theory)?;
-        }
-        Ok(())
+        let observation = crate::observe::scope(
+            "INTERCHANGE",
+            "rule:observe:spans",
+            "registry::Registry::acquire_all",
+            &(
+                self as &Self,
+                "lazy input; theories recorded as consumed",
+                std::any::type_name_of_val(&theories),
+            ),
+        );
+        let result = (|| {
+            for (coord, theory) in theories.into_iter().inspect(|theory| tracing::info!(argument_theory=?theory)) {
+                self.acquire(coord, theory)?;
+            }
+            Ok(())
+        })();
+        observation.finish(&result);
+        result
     }
 
     /// Decline a major from a minor upward.
@@ -336,6 +380,16 @@ impl Registry {
     /// assert_eq!(registry.ceiling(&label, 1), Some(0));
     /// assert_eq!(registry.minors(&label, 1).collect::<Vec<u64>>(), vec![0]);
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::refuse"
+        ),
+        ret
+    )]
     pub fn refuse(&mut self, label: &NamespaceLabel, major: u64, from_minor: u64) {
         let Some(majors) = self.lines.get_mut(label) else {
             return;
@@ -373,6 +427,16 @@ impl Registry {
     /// assert_eq!(registry.ceiling(&label, 3), None);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::ceiling"
+        ),
+        ret
+    )]
     pub fn ceiling(&self, label: &NamespaceLabel, major: u64) -> Option<u64> {
         self.holding(label, major).map(|holding| holding.ceiling)
     }
@@ -399,6 +463,16 @@ impl Registry {
     /// assert!(!registry.holds(&Coordinate::new(label, 1, 1)));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::holds"
+        ),
+        ret
+    )]
     pub fn holds(&self, coord: &Coordinate) -> bool {
         self.theory(coord).is_some()
     }
@@ -416,6 +490,16 @@ impl Registry {
     /// assert!(!Registry::new().holds_major(&label, 1));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::holds_major"
+        ),
+        ret
+    )]
     pub fn holds_major(&self, label: &NamespaceLabel, major: u64) -> bool {
         self.holding(label, major).is_some()
     }
@@ -440,6 +524,16 @@ impl Registry {
     /// assert_eq!(held.source(), source);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::theory"
+        ),
+        ret
+    )]
     pub fn theory(&self, coord: &Coordinate) -> Option<&Theory> {
         self.holding(coord.label(), coord.major())?.theory(coord.minor())
     }
@@ -456,6 +550,16 @@ impl Registry {
     /// let registry = Registry::new();
     /// assert_eq!(registry.minors(&label, 1).count(), 0);
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::minors"
+        ),
+        ret
+    )]
     pub fn minors(&self, label: &NamespaceLabel, major: u64) -> impl Iterator<Item = u64> + '_ {
         self.lines
             .get(label)
@@ -492,6 +596,16 @@ impl Registry {
     /// assert_eq!(registry.target(&label), Some(Coordinate::new(label, 2, 0)));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::target"
+        ),
+        ret
+    )]
     pub fn target(&self, label: &NamespaceLabel) -> Option<Coordinate> {
         let (major, line) = self.lines.get(label)?.iter().next_back()?;
         let (minor, _) = line.entries.last()?;
@@ -549,6 +663,16 @@ impl Registry {
     /// assert_eq!(registry.stamp(&label, 1, &content), Some(1));
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "registry::Registry::stamp"
+        ),
+        ret
+    )]
     pub fn stamp(&self, label: &NamespaceLabel, major: u64, content: &Content) -> Option<u64> {
         let entries = self.lines.get(label)?.get(&major)?.entries.as_slice();
         let index = entries.partition_point(|(_, theory)| !models(theory, content));

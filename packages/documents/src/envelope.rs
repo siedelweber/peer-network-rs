@@ -60,10 +60,14 @@ struct DatasetVisitor;
 impl<'de> Visitor<'de> for DatasetVisitor {
     type Value = Dataset;
 
+    /// Justified: This private serde adapter inherits the dataset input boundary, which records the complete source and parsed result without adding Debug bounds to the deserializer.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter.write_str("namespace then version then rows")
     }
 
+    /// Justified: This private serde adapter inherits the dataset input boundary, which records the complete source and parsed result without adding Debug bounds to the deserializer.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn visit_map<M: MapAccess<'de>>(self, mut map: M) -> std::result::Result<Dataset, M::Error> {
         if map.next_key::<String>()?.as_deref() != Some("namespace") {
             return Err(de::Error::custom("namespace: missing, misspelled or misordered first key"));
@@ -91,6 +95,8 @@ impl<'de> Visitor<'de> for DatasetVisitor {
 }
 
 impl<'de> Deserialize<'de> for Dataset {
+    /// Justified: This private serde adapter inherits the dataset input boundary, which records the complete source and parsed result without adding Debug bounds to the deserializer.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
         deserializer.deserialize_map(DatasetVisitor)
     }
@@ -125,6 +131,16 @@ fn json_value(value: toml::Value, key: &str) -> Result<Value> {
     }
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "envelope::input"
+    ),
+    ret
+)]
 pub fn input(text: &str) -> Result<Dataset> {
     let mut lines = text
         .lines()
@@ -167,10 +183,30 @@ pub fn input(text: &str) -> Result<Dataset> {
     })
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "envelope::json"
+    ),
+    ret
+)]
 pub fn json(text: &str) -> Result<Dataset> {
     serde_json::from_str(text).map_err(Error::from)
 }
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "envelope::bytes"
+    ),
+    ret
+)]
 pub fn bytes(dataset: &Dataset) -> Result<Vec<u8>> {
     let mut bytes = serde_json::to_vec_pretty(dataset)?;
     bytes.push(b'\n');

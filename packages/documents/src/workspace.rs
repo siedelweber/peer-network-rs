@@ -2,6 +2,16 @@ use std::path::{Path, PathBuf};
 
 use crate::{Result, read};
 
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "DOCUMENTS",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "workspace::vendors"
+    ),
+    ret
+)]
 pub fn vendors(root: &Path) -> Result<Vec<PathBuf>> {
     let manifest_path = root.join("Cargo.toml");
     let manifest: toml::Value =

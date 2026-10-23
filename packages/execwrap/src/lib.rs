@@ -30,6 +30,8 @@ pub enum Stream {
 impl Stream {
     /// Uppercase label, e.g. `"STDOUT"`.
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn label(self) -> &'static str {
         match self {
             Self::Stdout => "STDOUT",
@@ -91,6 +93,8 @@ pub struct RoutingConfig {
 impl RoutingConfig {
     /// True when the stream is being written to a log file.
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn is_stream_redirected(&self, stream: Stream) -> bool {
         if self.redirect.is_some() || self.redirect_prefixed.is_some() {
             return true;
@@ -318,6 +322,16 @@ fn collect_file_specs(cfg: &RoutingConfig) -> Result<Vec<FileSpec>, ExecError> {
 /// Returns [`ExecError::AmbiguousRedirection`] when one file — by
 /// filesystem identity, not merely lexical path equality — is
 /// configured for multiple routing kinds.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "EXECWRAP",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "preflight_routing"
+    ),
+    ret
+)]
 pub fn preflight_routing(cfg: &RoutingConfig) -> Result<(), ExecError> {
     collect_file_specs(cfg).map(|_specs| ())
 }
@@ -327,6 +341,16 @@ pub fn preflight_routing(cfg: &RoutingConfig) -> Result<(), ExecError> {
 /// # Errors
 ///
 /// Returns the underlying I/O error from directory creation or file open.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "EXECWRAP",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "safe_open"
+    ),
+    ret
+)]
 pub fn safe_open(path: &Path) -> io::Result<File> {
     if let Some(parent) = path.parent()
         && !parent.as_os_str().is_empty()
@@ -375,6 +399,12 @@ pub struct ExecOutcome {
 /// Panics if the child's stdout/stderr pipes cannot be taken after being
 /// configured as piped, which should never happen.
 pub fn run(command: &[OsString], cfg: &RoutingConfig, mut notify: impl FnMut(&Notification)) -> Result<ExecOutcome, ExecError> {
+    let scope = cli_common::observation::scope(
+        "EXECWRAP",
+        "rule:observe:spans",
+        "run",
+        &(command, cfg, "notification callback: opaque capability"),
+    );
     let observation = cli_common::observation::Observation::current();
     let mut operation = observation.as_ref().map(|o| o.operation(cli_common::observation::OperationKind::Child, serde_json::json!({
         "command": command.iter().map(|arg| arg.as_encoded_bytes()).collect::<Vec<_>>(), "command_debug": format!("{command:?}"), "configuration": format!("{cfg:?}")
@@ -392,6 +422,7 @@ pub fn run(command: &[OsString], cfg: &RoutingConfig, mut notify: impl FnMut(&No
             ),
         }
     }
+    scope.finish(&result);
     result
 }
 
@@ -610,27 +641,47 @@ enum ChannelMessage {
     Error { stream: Stream, error: io::Error },
 }
 
-fn spawn_reader<R: Read + Send + 'static>(stream: Stream, mut source: R, tx: Sender<ChannelMessage>) -> thread::JoinHandle<()> {
+fn spawn_reader<R: Read + Send + 'static>(stream: Stream, source: R, tx: Sender<ChannelMessage>) -> thread::JoinHandle<()> {
+    let dispatch = tracing::dispatcher::get_default(Clone::clone);
+    let parent = tracing::Span::current();
     thread::spawn(move || {
-        let mut buffer = [0_u8; 8192];
-        loop {
-            match source.read(&mut buffer) {
-                Ok(0) => {
-                    let _ignored = tx.send(ChannelMessage::Eof { stream });
-                    break;
-                }
-                Ok(read) => {
-                    let data = buffer[..read].to_vec();
-                    if tx.send(ChannelMessage::Data { stream, data }).is_err() {
-                        break;
-                    }
-                }
-                Err(ref error) if error.kind() == io::ErrorKind::Interrupted => {}
-                Err(error) => {
-                    let _ignored = tx.send(ChannelMessage::Error { stream, error });
+        let _dispatch = tracing::dispatcher::set_default(&dispatch);
+        let _parent = parent.enter();
+        read_stream(stream, source, &tx);
+    })
+}
+
+fn read_stream<R: Read>(stream: Stream, mut source: R, tx: &Sender<ChannelMessage>) {
+    let scope = cli_common::observation::scope(
+        "EXECWRAP",
+        "rule:observe:spans",
+        "read_stream",
+        &(stream, std::any::type_name::<R>(), "channel capability"),
+    );
+    let mut outcome = cli_common::observation::Outcome::Success;
+    let mut buffer = [0_u8; 8192];
+    loop {
+        match source.read(&mut buffer) {
+            Ok(0) => {
+                let _ignored = tx.send(ChannelMessage::Eof { stream });
+                break;
+            }
+            Ok(read) => {
+                tracing::info!(public_child_bytes=?&buffer[..read], work_bytes=read as u64);
+                let data = buffer[..read].to_vec();
+                if tx.send(ChannelMessage::Data { stream, data }).is_err() {
+                    outcome = cli_common::observation::Outcome::Cancelled;
                     break;
                 }
             }
+            Err(ref error) if error.kind() == io::ErrorKind::Interrupted => {}
+            Err(error) => {
+                tracing::info!(public_read_error=?error);
+                outcome = cli_common::observation::Outcome::Error;
+                let _ignored = tx.send(ChannelMessage::Error { stream, error });
+                break;
+            }
         }
-    })
+    }
+    scope.finish_with(outcome, &());
 }

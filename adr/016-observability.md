@@ -39,3 +39,42 @@
 
 **Amendment (Core scope and remainder)** · `amend:observe:core-remainder` The operation and dependency declarations for this half-step are in ci/observe-core.json. (`gate:observe:foundation`) and (`gate:design:observability-foundation`) remain open: step 4b owns instrumentation of all four packages, the mechanical coverage gate and its negative fixtures, the full disabled/filtered/sampled/export-failed comparison matrix, cross-task and asynchronous context, secret acquisition and exposure-consumer review, whole private configuration and driver boundaries, zeroization witnesses, export and the recorder-to-provider bridge. The service tier remains held until real services are provisioned. The local carriers establish representation properties only; (`inv:observe:secret-boundary`) stays held for every integration that explicitly exposes private contents.
 
+
+**Amendment (Reviewed export and census dependencies)** · `amend:observe:export-dependencies` This settles the compatible dependency set for (`proposal:observe:export`) and the parser choice for (`proposal:observe:enforcement`). The table records the locked registry manifests and Cargo's resolved features; crates.io is the source of record. The OpenTelemetry API, SDK, HTTP abstraction and OTLP exporter use one 0.33.1 generation; tracing-opentelemetry 0.34.0 consumes that generation. The provider bridge witness compiles and exercises their real OTLP encoders against a local transport. Default SDK logging and network-client features are disabled; no collector is a gate dependency. Syn 2 parses the checked host configuration with full syntax and locations; Syn 3 is a resolved transitive dependency, not the census parser. The auxiliary HTTP, bytes and futures executor crates support the explicit bounded transport worker, while quote and proc-macro2 support the syntax census.
+
+| Dependency | Locked version | Licence | Resolved features |
+|---|---|---|---|
+| bytes | 1.12.1 | MIT | default, std |
+| futures-executor | 0.3.34 | MIT OR Apache-2.0 | default, std |
+| http | 1.5.0 | MIT OR Apache-2.0 | default, std |
+| opentelemetry | 0.33.1 | Apache-2.0 | futures, futures-core, futures-sink, metrics, pin-project-lite, thiserror, trace |
+| opentelemetry-http | 0.33.1 | Apache-2.0 | none |
+| opentelemetry-otlp | 0.33.1 | Apache-2.0 | http, http-proto, httpdate, metrics, opentelemetry-http, prost, trace |
+| opentelemetry_sdk | 0.33.1 | Apache-2.0 | experimental_metrics_custom_reader, metrics, percent-encoding, rand, trace |
+| proc-macro2 | 1.0.107 | MIT OR Apache-2.0 | default, proc-macro, span-locations |
+| quote | 1.0.47 | MIT OR Apache-2.0 | default, proc-macro |
+| syn | 2.0.119 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut |
+| syn | 3.0.9 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut |
+| tracing-opentelemetry | 0.34.0 | MIT | none |
+
+**Amendment (Bounded provider bridge)** · `amend:observe:provider-bridge` Under (`proposal:observe:export`), the single JsonRecorder forwards each admitted counter delta, gauge value and histogram sample to its SDK meter provider, with the same units and histogram bounds. Its seven fixed stems and nine measures form 98 finite series after terminal outcomes; arbitrary attributes cannot create another series. Production trace export receives only a fully serialized record that passed the one-MiB record limit, through a 64-entry worker queue. The SDK delivery envelope is labelled by this proposal and measures delivery only: the complete record carries the operation's own monotonic seconds, identity, parent and outcome. SDK instants are Unix-epoch nanoseconds as specified by OTLP; local JSON instants remain explicit UTC. The unrestricted tracing adapter is a compatibility witness, not a second production formatter that could bypass the record bound. Queue loss and controlled exporter failures are counted separately from results; the final drain is bounded to 100 milliseconds outside binding computation.
+
+**Amendment (Export credential admission)** · `amend:observe:export-credentials` Under (`inv:observe:secret-boundary`), ExportConfig owns a secret credential and an admitted transport whose retained private connection configuration must also be protected. The SDK receives only fixed public placeholder endpoints and public OTLP bodies, never private headers or addresses. Bootstrap refuses the OTLP environment endpoint, header, timeout, compression and protocol overrides by variable name before dependency construction; the executable must initialize before concurrent environment mutation. The local transport witness borrows the protected credential only for authentication comparison, preserves it in no ordinary error, and injects finite unavailable failures. A separate secret-owned connection fixture covers direct reads, failed parsing of a numeric field, protected error retention and zeroization before destruction. Actual service transports and drivers remain individually held for their owning service slice; these fixtures do not admit an unspecified driver.
+
+
+
+**Caveat (Opaque capability representations)** · `cav:observe:capability-representations` The current-source review for (`rule:observe:privacy`) distinguishes public data from opaque Rust capabilities. A generic reader, writer, iterator, parser or callback has only its declared trait contract; observation names that unavailable representation and its type or role, without adding a Debug bound, consuming an extra iterator item, invoking a callback twice or serializing a value twice. Public bytes, consumed items, parsed command configuration, errors and serialized results are recorded at the boundary that actually obtains them. The current executable configurations and containing type declarations are part of the review, not a claim that an arbitrary future capability implementation has no private state. New implementations, secret-bearing fields and exposure consumers require renewed admission; a protected credential is never converted into a printable capability field.
+
+
+
+**Amendment (Source-bound coverage admission)** · `amend:observe:coverage-admission` Under (`proposal:observe:enforcement`), ci/observe.py runs the Rust syntax parser for the four production packages on the supported host configuration; default and no-default builds coincide because these packages declare no features. Development-only pn-testkit is outside this production configuration. The checked operation register binds source items, owners, labels, fields, runtime metric declarations, local exceptions, reviewed helper bodies, generator mappings and containing types. A changed source body or type invalidates its separate full-recording, secret-flow and exposure-consumer review. Public trait methods are conservatively included even for private implementation types. Const evaluation, bootstrap, formatting recursion and inherited adapters have individual justified exceptions with resolving boundary witnesses; helper identities are a finite reviewed set. Mechanical success does not purport to prove semantic privacy. The gate writes source-matched mechanical and reviewer-confirmed assessments to .lane/observation-coverage.json, and the evidence join refuses a missing, stale or failed assessment.
+
+**Table (Production operation census)** · `tab:observe:operation-census` These counts join the checked source register; generators are explicit reviewed mappings, not a claimed count of expanded function bodies.
+
+| Package | Operations | Instrumented | Local exceptions | Reviewed helpers | Generators |
+|---|---:|---:|---:|---:|---:|
+| cli-common | 106 | 30 | 73 | 3 | 36 |
+| documents | 18 | 12 | 6 | 0 | 10 |
+| execwrap | 12 | 8 | 4 | 0 | 11 |
+| pn-interchange | 153 | 134 | 18 | 1 | 89 |
+

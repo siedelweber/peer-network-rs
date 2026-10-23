@@ -49,6 +49,8 @@ pub enum PublicationMode {
 impl PublicationMode {
     /// The Unix mode this publication class carries.
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn octal(self) -> u32 {
         match self {
             Self::Public => 0o644,
@@ -67,6 +69,16 @@ impl PublicationMode {
 /// # Errors
 ///
 /// Propagates the underlying `fchmod` failure.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "publication::set_publication_mode"
+    ),
+    ret
+)]
 pub fn set_publication_mode(file: &std::fs::File, mode: PublicationMode) -> io::Result<()> {
     #[cfg(unix)]
     {
@@ -102,6 +114,16 @@ pub enum DestinationState {
 /// An unreadable destination is reported as [`DestinationState::StaleBytes`]
 /// so the caller republishes it through the ordinary staged path and
 /// surfaces any real failure there.
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "publication::inspect_destination"
+    ),
+    ret
+)]
 pub fn inspect_destination(path: &Path, bytes: &[u8], mode: PublicationMode) -> DestinationState {
     if !std::fs::read(path).is_ok_and(|current| current == bytes) {
         return DestinationState::StaleBytes;
@@ -137,6 +159,16 @@ fn destination_mode_matches(_path: &Path, _mode: PublicationMode) -> bool {
 ///
 /// Propagates the underlying `chmod` failure.
 #[cfg(unix)]
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "publication::repair_publication_mode"
+    ),
+    ret
+)]
 pub fn repair_publication_mode(path: &Path, mode: PublicationMode) -> io::Result<()> {
     use std::os::unix::fs::PermissionsExt as _;
     std::fs::set_permissions(path, std::fs::Permissions::from_mode(mode.octal()))
@@ -153,6 +185,7 @@ pub fn repair_publication_mode(_path: &Path, _mode: PublicationMode) -> io::Resu
 }
 
 /// One output of a multi-output generation command.
+#[derive(Debug)]
 pub struct PublicationAsset<'a> {
     /// Stable diagnostic role of this output (never file contents).
     pub role: &'a str,
@@ -177,6 +210,8 @@ pub struct PublicationChange {
 impl PublicationChange {
     /// A destination that already carried the required bytes and mode.
     #[must_use]
+    /// Justified: Const evaluation cannot emit runtime events; the caller operation accounts its execution without changing this compile-time contract.
+    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     pub const fn unchanged(self) -> bool {
         !self.bytes_changed && !self.mode_changed
     }
@@ -249,6 +284,16 @@ enum PlannedPublication {
 /// [`BatchPublicationError::Stage`] with every final destination
 /// untouched; [`BatchPublicationError::Publish`] when a final rename
 /// fails after staging (earlier members may already be published).
+#[tracing::instrument(
+    name = "rule:observe:spans",
+    fields(
+        execution_owner = "CLICOMMON",
+        claim_owner = "ROOT",
+        claim_label = "rule:observe:spans",
+        source_item = "publication::publish_batch"
+    ),
+    ret
+)]
 pub fn publish_batch(assets: &[PublicationAsset<'_>]) -> Result<Vec<PublicationResult>, BatchPublicationError> {
     // Phase 1 — validate: lexically distinct destinations and usable
     // parent directories before anything is derived on disk.

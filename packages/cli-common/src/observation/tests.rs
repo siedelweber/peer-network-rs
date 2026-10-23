@@ -2,6 +2,290 @@ use super::*;
 use crate::secrets::{PrivateBytes, PrivateString, SecretBox, SecretRole, SecretString};
 use std::sync::Mutex;
 
+/// Claim: A private connection aggregate stays secret-owned during acquisition and a failed parse, including its host and numeric port; diagnostics retain only its marker, and the secret carrier zeroizes the entire aggregate before its destructor observes it.
+/// ´claim:cli:private-configuration-remains-owned-through-failure-and-drop´
+/// ´test:unit:private-configuration´
+#[test]
+fn private_configuration() {
+    use secrecy::{ExposeSecret, ExposeSecretMut, zeroize::Zeroize};
+    use std::io::Read;
+    struct Connection {
+        bytes: [u8; 64],
+        port: u16,
+        erased: Arc<std::sync::atomic::AtomicBool>,
+    }
+    impl Zeroize for Connection {
+        fn zeroize(&mut self) {
+            self.bytes.zeroize();
+            self.port.zeroize();
+        }
+    }
+    impl Drop for Connection {
+        fn drop(&mut self) {
+            assert!(self.bytes.iter().all(|byte| *byte == 0));
+            assert_eq!(self.port, 0);
+            self.erased.store(true, Ordering::Relaxed);
+        }
+    }
+    #[derive(Debug)]
+    struct ParseFailure {
+        configuration: SecretBox<Connection>,
+    }
+    fn parse_connection(mut configuration: SecretBox<Connection>, length: usize) -> Result<SecretBox<Connection>, ParseFailure> {
+        let port = std::str::from_utf8(&configuration.expose_secret().bytes[..length])
+            .ok()
+            .and_then(|text| text.rsplit(':').next()?.parse::<u16>().ok());
+        if let Some(port) = port {
+            configuration.expose_secret_mut().port = port;
+            Ok(configuration)
+        } else {
+            Err(ParseFailure { configuration })
+        }
+    }
+    let erased = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let mut configuration = SecretBox::new(Box::new(Connection {
+        bytes: [0; 64],
+        port: 0,
+        erased: erased.clone(),
+    }));
+    let mut reader = std::io::Cursor::new(b"private-host:user:credential:invalid-port");
+    // Necessary read targets protected storage directly; the parser borrows it
+    // only for validation, and the failure owns the same protected aggregate.
+    let length = reader.read(&mut configuration.expose_secret_mut().bytes).unwrap();
+    configuration.expose_secret_mut().port = 5432;
+    let failure = parse_connection(configuration, length).unwrap_err();
+    let diagnostic = format!("{failure:?}");
+    assert!(!diagnostic.contains("private-host"));
+    assert!(!diagnostic.contains("credential"));
+    assert!(!diagnostic.contains("5432"));
+    assert!(diagnostic.contains("REDACTED"));
+    assert_eq!(failure.configuration.expose_secret().port, 5432);
+    drop(failure);
+    assert!(erased.load(Ordering::Relaxed));
+}
+
+#[derive(Debug, Default)]
+struct LocalExport {
+    requests: Mutex<Vec<(String, Vec<u8>)>>,
+    fail: bool,
+}
+impl crate::observation_export::ExportTransport for LocalExport {
+    fn send(
+        &self,
+        request: http::Request<bytes::Bytes>,
+        credential: &PrivateString,
+    ) -> Result<http::Response<bytes::Bytes>, crate::observation_export::ExportFailure> {
+        use secrecy::ExposeSecret;
+        // Necessary authentication comparison borrows the protected value and
+        // neither stores it nor includes it in an error or dependency request.
+        assert_eq!(credential.secret().expose_secret(), "fixture-private-token");
+        assert!(!format!("{request:?}").contains("fixture-private-token"));
+        self.requests
+            .lock()
+            .unwrap()
+            .push((request.uri().path().to_owned(), request.body().to_vec()));
+        if self.fail {
+            Err(crate::observation_export::ExportFailure::Unavailable)
+        } else {
+            Ok(http::Response::new(bytes::Bytes::new()))
+        }
+    }
+}
+
+fn export_fixture(fail: bool) -> (Arc<crate::observation_export::Bridge>, Arc<LocalExport>) {
+    let transport = Arc::new(LocalExport {
+        fail,
+        ..LocalExport::default()
+    });
+    let config = crate::observation_export::ExportConfig {
+        transport: transport.clone(),
+        credential: PrivateString::new(SecretRole::Authentication, SecretString::from("fixture-private-token")),
+    };
+    (Arc::new(crate::observation_export::Bridge::new(config).unwrap()), transport)
+}
+
+/// Claim: The JSON recorder forwards the same admitted byte increments into the SDK counter; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.
+/// ´claim:cli:provider-bridge-preserves-counts-and-secret-boundary´
+/// ´test:unit:provider-bridge´
+#[test]
+fn provider_bridge() {
+    use opentelemetry_sdk::metrics::data::{AggregatedMetrics, MetricData};
+    let (bridge, transport) = export_fixture(false);
+    let recorder = JsonRecorder::with_meter(Some(&bridge.meter()));
+    metrics::with_local_recorder(&recorder, || {
+        metrics::counter!(format!("{}__work_bytes", STEMS[0])).increment(7);
+    });
+    let measured = bridge.collected();
+    let metric = measured
+        .scope_metrics()
+        .flat_map(opentelemetry_sdk::metrics::data::ScopeMetrics::metrics)
+        .find(|metric| metric.name() == format!("{}__work_bytes", STEMS[0]))
+        .unwrap();
+    let AggregatedMetrics::U64(MetricData::Sum(sum)) = metric.data() else {
+        panic!("counter must retain its integer sum");
+    };
+    assert_eq!(
+        sum.data_points()
+            .map(opentelemetry_sdk::metrics::data::SumDataPoint::value)
+            .collect::<Vec<_>>(),
+        [7]
+    );
+    let snapshot = recorder.snapshot();
+    assert_eq!(
+        snapshot["instruments"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|row| row["name"] == metric.name())
+            .unwrap()["counter"],
+        7
+    );
+    let subscriber = tracing_subscriber::registry().with(tracing_opentelemetry::layer().with_tracer(bridge.tracer()));
+    tracing::subscriber::with_default(subscriber, || {
+        let _span = tracing::info_span!("rule:observe:spans", public_payload = "unfiltered-public-value").entered();
+        tracing::info!(public_result = 23);
+    });
+    bridge.flush();
+    let requests = transport.requests.lock().unwrap();
+    assert!(requests.iter().any(|(path, body)| {
+        path == "/v1/traces"
+            && body
+                .windows(b"unfiltered-public-value".len())
+                .any(|bytes| bytes == b"unfiltered-public-value")
+    }));
+    assert!(requests.iter().any(|(path, body)| path == "/v1/metrics" && !body.is_empty()));
+    assert_eq!(bridge.lost.load(Ordering::Relaxed), 0);
+    let (failed, _) = export_fixture(true);
+    let recorder = JsonRecorder::with_meter(Some(&failed.meter()));
+    metrics::with_local_recorder(&recorder, || {
+        metrics::counter!(format!("{}__work_bytes", STEMS[0])).increment(11);
+    });
+    failed.flush();
+    assert_eq!(failed.lost.load(Ordering::Relaxed), 1);
+    assert!(
+        failed
+            .failures
+            .lock()
+            .unwrap()
+            .iter()
+            .all(|error| !error.contains("fixture-private-token"))
+    );
+    let measured = failed.collected();
+    let metric = measured
+        .scope_metrics()
+        .flat_map(opentelemetry_sdk::metrics::data::ScopeMetrics::metrics)
+        .find(|metric| metric.name() == format!("{}__work_bytes", STEMS[0]))
+        .unwrap();
+    let AggregatedMetrics::U64(MetricData::Sum(sum)) = metric.data() else {
+        panic!("counter remains present after export failure");
+    };
+    assert_eq!(
+        sum.data_points()
+            .map(opentelemetry_sdk::metrics::data::SumDataPoint::value)
+            .collect::<Vec<_>>(),
+        [11]
+    );
+}
+
+/// Claim: An instrumented future re-enters the same labelled parent only while polled, includes the injected suspension interval, and leaves the polling thread outside its span after both pending and ready polls.
+/// ´claim:cli:async-context-follows-polls-not-thread-lifetime´
+/// ´test:unit:async-context´
+#[test]
+fn async_context() {
+    use std::future::Future;
+    use std::task::{Context, Poll, Waker};
+    use tracing::Instrument;
+    let (observation, clock, capture) = fixture();
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+    tracing::subscriber::with_default(subscriber, || {
+        let span = tracing::info_span!(
+            "rule:observe:spans",
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "async-fixture"
+        );
+        let mut pending = true;
+        let mut future = std::pin::pin!(
+            async {
+                std::future::poll_fn(|_| {
+                    assert_eq!(tracing::Span::current().metadata().unwrap().name(), "rule:observe:spans");
+                    if std::mem::take(&mut pending) {
+                        Poll::Pending
+                    } else {
+                        Poll::Ready(())
+                    }
+                })
+                .await;
+                tracing::info!("return" = 23);
+                23
+            }
+            .instrument(span),
+        );
+        let mut context = Context::from_waker(Waker::noop());
+        assert!(future.as_mut().poll(&mut context).is_pending());
+        assert!(tracing::Span::current().is_none());
+        clock.0.store(250, Ordering::Relaxed);
+        assert_eq!(future.as_mut().poll(&mut context), Poll::Ready(23));
+        assert!(tracing::Span::current().is_none());
+    });
+    let rows = records(&observation, &capture);
+    let completion = rows.iter().find(|row| row["event_kind"] == "completion").unwrap();
+    assert_eq!(completion["detail"]["duration_seconds"], 0.25);
+    assert_eq!(completion["detail"]["outcome"], "success");
+    assert_eq!(completion["detail"]["result"], 23);
+}
+
+/// Claim: A Debug implementation that attempts nested observation cannot recurse into the accounting layer; the outer public field remains complete and the bounded loss counter names the rejected recursive attempt.
+/// ´claim:cli:recursive-observation-is-loss-not-recursion´
+/// ´test:unit:recursive-observation´
+#[test]
+fn recursive_observation() {
+    struct Recursive<'a>(&'a AtomicU64);
+    impl std::fmt::Debug for Recursive<'_> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            tracing::info!(nested = "attempt");
+            assert!(Observing::enter(self.0).is_none());
+            f.write_str("complete-public-field")
+        }
+    }
+    let (observation, _, capture) = fixture();
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+    tracing::subscriber::with_default(subscriber, || tracing::info!(payload=?Recursive(&observation.lost)));
+    let rows = records(&observation, &capture);
+    assert_eq!(rows.len(), 1);
+    assert_eq!(rows[0]["fields"]["payload"], "complete-public-field");
+    assert!(observation.lost.load(Ordering::Relaxed) > 0);
+}
+
+/// Claim: Dropping a polled but unfinished asynchronous operation closes its metering as cancelled, while no completion result is fabricated from the clock.
+/// ´claim:cli:dropped-futures-record-cancellation-without-a-result´
+/// ´test:unit:async-cancellation´
+#[test]
+fn async_cancellation() {
+    use std::future::Future;
+    use std::task::{Context, Waker};
+    use tracing::Instrument;
+    let (observation, _, capture) = fixture();
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+    tracing::subscriber::with_default(subscriber, || {
+        let span = tracing::info_span!(
+            "rule:observe:spans",
+            execution_owner = "CLICOMMON",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "cancel-fixture",
+            asynchronous = true
+        );
+        let mut future = std::pin::pin!(std::future::pending::<()>().instrument(span));
+        assert!(future.as_mut().poll(&mut Context::from_waker(Waker::noop())).is_pending());
+    });
+    let rows = records(&observation, &capture);
+    let completion = rows.iter().find(|row| row["event_kind"] == "completion").unwrap();
+    assert_eq!(completion["detail"]["outcome"], "cancelled");
+    assert!(completion["detail"]["result"].is_null());
+}
+
 struct ManualClock(AtomicU64);
 impl Clock for ManualClock {
     fn elapsed(&self) -> Duration {
@@ -194,7 +478,7 @@ fn secret_representations() {
     assert!(observed.contains("[REDACTED]"));
     assert!(format!("{:?}", bytes.secret()).contains("REDACTED"));
     let (observation, _, capture) = fixture();
-    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone()));
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
     tracing::subscriber::with_default(subscriber, || tracing::error!(error = ?error, "nested private field"));
     let emitted = serde_json::to_string(&records(&observation, &capture)).unwrap();
     assert!(!emitted.contains("private-sentinel"));
@@ -216,7 +500,7 @@ fn metric_registry() {
     });
     let snapshot = recorder.snapshot();
     let rows = snapshot["instruments"].as_array().unwrap();
-    assert_eq!(rows.len(), 36);
+    assert_eq!(rows.len(), 98);
     assert_eq!(snapshot["lost_updates"], 3);
     assert_eq!(
         rows.iter()
@@ -232,8 +516,10 @@ fn metric_registry() {
 #[test]
 fn filtered_accounting() {
     let (observation, _, capture) = fixture();
-    let subscriber = tracing_subscriber::registry()
-        .with(AccountingLayer(observation.clone()).with_filter(tracing_subscriber::filter::LevelFilter::OFF));
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(
+        observation.clone(),
+        Some(tracing_subscriber::EnvFilter::new("off")),
+    ));
     tracing::subscriber::with_default(subscriber, || {
         let mut operation = observation.operation(OperationKind::Command, json!({"argument":"public-token-value"}));
         tracing::info!(payload = "public-token-value", "filtered");
@@ -243,7 +529,7 @@ fn filtered_accounting() {
     let rows = records(&observation, &capture);
     assert!(!rows.iter().any(|r| r["kind"] == "trace"));
     assert_eq!(rows.last().unwrap()["detail"]["work"]["value"], 5);
-    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone()));
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
     tracing::subscriber::with_default(subscriber, || {
         let span = tracing::info_span!("rule:observe:metering", public = "whole value");
         let _entered = span.enter();

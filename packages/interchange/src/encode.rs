@@ -83,6 +83,16 @@ impl Value {
     /// assert_eq!(v.to_canonical_bytes(), [0x64, 0x49, 0x45, 0x54, 0x46]);
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "encode::Value::to_canonical_bytes"
+        ),
+        ret
+    )]
     pub fn to_canonical_bytes(&self) -> Vec<u8> {
         let mut out = Vec::with_capacity(self.canonical_len());
         self.write_canonical(&mut out);
@@ -98,6 +108,16 @@ impl Value {
     /// Value::Unsigned(1).write_canonical(&mut out);
     /// assert_eq!(out, [0xff, 0x01]);
     /// ```
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "encode::Value::write_canonical"
+        ),
+        ret
+    )]
     pub fn write_canonical(&self, out: &mut Vec<u8>) {
         let mut work: Vec<&Value> = vec![self];
         while let Some(value) = work.pop() {
@@ -139,6 +159,16 @@ impl Value {
     /// assert_eq!(v.canonical_len(), v.to_canonical_bytes().len());
     /// ```
     #[must_use]
+    #[tracing::instrument(
+        name = "rule:observe:spans",
+        fields(
+            execution_owner = "INTERCHANGE",
+            claim_owner = "ROOT",
+            claim_label = "rule:observe:spans",
+            source_item = "encode::Value::canonical_len"
+        ),
+        ret
+    )]
     pub fn canonical_len(&self) -> usize {
         let mut total = 0usize;
         let mut work: Vec<&Value> = vec![self];

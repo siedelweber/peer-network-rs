@@ -18,6 +18,10 @@ tracing = { workspace = true }
 serde_json = { workspace = true }
 
 [dev-dependencies]
+pn-interchange = { path = "../interchange" }
+documents = { path = "../documents" }
+http.workspace = true
+bytes.workspace = true
 serde_json = { workspace = true }
 tempfile = { workspace = true }
 
