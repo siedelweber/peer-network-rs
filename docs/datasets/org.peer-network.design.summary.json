@@ -18,7 +18,7 @@
     },
     {
       "category": "chapter",
-      "count": 81,
+      "count": 88,
       "name": "02 Comparator"
     },
     {
@@ -38,12 +38,12 @@
     },
     {
       "category": "chapter",
-      "count": 208,
+      "count": 205,
       "name": "6 Epoch"
     },
     {
       "category": "chapter",
-      "count": 45,
+      "count": 44,
       "name": "7 Sorting"
     },
     {
@@ -78,7 +78,7 @@
     },
     {
       "category": "chapter",
-      "count": 102,
+      "count": 101,
       "name": "D Dynamics"
     },
     {
@@ -144,7 +144,7 @@
     },
     {
       "category": "totals",
-      "count": 1632,
+      "count": 1634,
       "name": "inventory"
     },
     {
@@ -154,7 +154,7 @@
     },
     {
       "category": "labels",
-      "count": 1541,
+      "count": 1543,
       "name": "explicit"
     },
     {

@@ -14,6 +14,6 @@ rows = [
     { question = "Q05", topic = "certification procedure and refinement policy", class = "OWNER-CALL" },
     { question = "Q07", topic = "authentication realization subject to the binding formation properties", class = "ANSWERED" },
     { question = "Q15", topic = "declared domain profiles", class = "OWNER-CALL" },
-    { question = "Q20", topic = "fixed structural floor, published wall controller and boundary snapshot convention", class = "DEFECT", status = "two floors chartered; deployment declaration fixed; economic calibration, controller performance and snapshot timing open" },
+    { question = "Q20", topic = "fixed structural floor, published wall controller and marker-bound snapshot policy", class = "DEFECT", status = "two floors chartered; deployment declaration fixed; economic calibration and controller performance open; accepted-snapshot consistency chartered; compulsory and timed acceptance not asserted" },
   ] },
 ]

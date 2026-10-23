@@ -84,8 +84,8 @@
         {
           "class": "DEFECT",
           "question": "Q20",
-          "status": "two floors chartered; deployment declaration fixed; economic calibration, controller performance and snapshot timing open",
-          "topic": "fixed structural floor, published wall controller and boundary snapshot convention"
+          "status": "two floors chartered; deployment declaration fixed; economic calibration and controller performance open; accepted-snapshot consistency chartered; compulsory and timed acceptance not asserted",
+          "topic": "fixed structural floor, published wall controller and marker-bound snapshot policy"
         }
       ],
       "name": "deployment-choices"

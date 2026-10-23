@@ -13,7 +13,7 @@
       "name": "records"
     },
     {
-      "contract": "four-object disclosures and permanent target provenance",
+      "contract": "four-object disclosures and permanent target provenance; fixed marker policy, recognized lineage and accepted-set bounds, single-count destruction snapshots and dimensioned cost evidence",
       "first_bite": 2,
       "implementations": "mock and Elements",
       "name": "burn"
@@ -79,7 +79,7 @@
       "name": "api"
     },
     {
-      "contract": "settled burns, grants, quotas and recovery",
+      "contract": "settled burns, grants, quotas and recovery; fixed marker policy, recognized lineage and accepted-set bounds, single-count destruction snapshots and dimensioned cost evidence",
       "first_bite": 2,
       "implementations": "mock and Elements plus PostgreSQL",
       "name": "devnet"

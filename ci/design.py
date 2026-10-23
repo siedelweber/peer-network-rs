@@ -50,7 +50,7 @@ def validate():
     # Claim: nonempty release pins cover every current inventory and constants field.
     inventory = data('inventory')
     constants = data('constants')
-    if not (len(inventory) == 1632 and len({row['label'] for row in inventory}) == 1632):
+    if not (len(inventory) == 1634 and len({row['label'] for row in inventory}) == 1634):
         raise ValueError('inventory label census')
     if not (len(constants) == 542 and len({row['id'] for row in constants}) == 542):
         raise ValueError('constants id census')
@@ -160,10 +160,10 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.26.3'
-ADDED_INVENTORY_PIN = '168c857b172ffe8c10fbfe153977e7b0d83e96d20b1e5c0e2bd72468259ae02f'
-REFRESHED_CONSTANTS_PIN = 'a5f41236d2a66582ed4f02304893e62448b3b3c8e3551e27733bced8ac9203c9'
-RELEASE_QUESTIONS_PIN = 'f0f3591d8e48acf2dc94bdfa069da82b53ff136e63fe58e7491e740996f399e9'
+PAPER_TAG = 'network-v0.27.0'
+ADDED_INVENTORY_PIN = '4f6a86fc067638c27bdece04ffe7293ac8cc686f04c7c3ae5ea92f8402628ad7'
+REFRESHED_CONSTANTS_PIN = '3d8fa9cfad18760fef98a21638f6b175c9f500917f6830b9457b2f0902b08899'
+RELEASE_QUESTIONS_PIN = 'f723ee5e56844b1d8e4fa6425a3152594034556bc3e5e6fb8f253ca852055f5c'
 
 
 CRATES_PIN = 'b8188551b1f51e6afa88329f46b4a5d82391fdba4ecefea489043ceca227e476'

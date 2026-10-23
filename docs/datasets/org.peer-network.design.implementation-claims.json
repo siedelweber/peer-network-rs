@@ -30,6 +30,9 @@
     {
       "bites": [
         2,
+        5,
+        8,
+        9,
         11
       ],
       "claim": "claim:burn:missing-required-burn-disclosures-prevent-readiness",
@@ -44,7 +47,8 @@
       "name": "burn-disclosures",
       "owner": "pn-records",
       "requirements": [
-        "burn-boundary"
+        "burn-boundary",
+        "final-state"
       ],
       "status": "held; no test-site mint or execution yet",
       "suite": "burn"

@@ -29,9 +29,11 @@
         "proposal:design:storage-placement",
         "sig:design:storage",
         "verif:design:storage-history",
-        "model:design:wall-floor"
+        "model:design:wall-floor",
+        "rule:design:marker-recognition",
+        "alg:design:burn-snapshot"
       ],
-      "evidence": "Introduce nrz-scalar, nrz-accuracy and nrz-cas as git dependencies from the public Naturrhythmuszentrum repository on branch main; review the lockfile resolution and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases. Under the accepted infrastructure amendment, introduce the host storage slice with real PostgreSQL beta history tests from its first implementation; first pass whole-configuration secret typing through PostgreSQL driver state and errors. Introduce the sole Elements RPC integration in pn-wallet and the optional development-network host edge with its runtime guard; real-service and mock suites begin here. No pre-1.0 migration support is promised. Retain the exact declared floor, controller edition and source constant definitions; distinguish them from evaluated values and rounded displays.",
+      "evidence": "Introduce nrz-scalar, nrz-accuracy and nrz-cas as git dependencies from the public Naturrhythmuszentrum repository on branch main; review the lockfile resolution and supported representation before encoding ledger values; pass constant correspondence, old-vintage retention and charged-value certification cases. Under the accepted infrastructure amendment, introduce the host storage slice with real PostgreSQL beta history tests from its first implementation; first pass whole-configuration secret typing through PostgreSQL driver state and errors. Introduce the sole Elements RPC integration in pn-wallet and the optional development-network host edge with its runtime guard; real-service and mock suites begin here. No pre-1.0 migration support is promised. Retain the exact declared floor, controller edition and source constant definitions; distinguish them from evaluated values and rounded displays. Define burn amounts and dimensioned positive unit costs without a universal lower bound; retain separate event costs, bootstrap-empty and operator-absence evidence. Introduce marker-policy and evidence carriers, recognize markers under the declared policy, and mint the burn disclosure and recognition claims before any sample is supported.",
       "ordinal": 2,
       "requirements": [
         "burn-boundary",
@@ -73,7 +75,7 @@
         "alg:design:recipients",
         "alg:design:base"
       ],
-      "evidence": "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, revocation ties and dependency-permutation invariance. Extend real PostgreSQL tests to immutable debit vintages, atomic result references and earlier verdicts unaffected by later-effective rules.",
+      "evidence": "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, revocation ties and dependency-permutation invariance. Extend real PostgreSQL tests to immutable debit vintages, atomic result references and earlier verdicts unaffected by later-effective rules. Derive gross increments from newly accepted destruction identities at the common marker, including delayed acceptance and empty act epochs; reject policy/history mixing and double counting before applying the writing-epoch debit.",
       "ordinal": 5,
       "requirements": [
         "final-state",
@@ -102,7 +104,7 @@
         "alg:design:schedules",
         "inv:design:atomic-admission"
       ],
-      "evidence": "Require the fixed floor, published controller and exact comparison procedure; verify both floor declarations, zero/empty width, deadband equality, signed caps, lead, input quarantine and numeraire covariance. Certify each epoch on its own width, exercise the reference final-set gate evidence and preserve atomic rejection. Keep economic, tracking and snapshot holds explicit.",
+      "evidence": "Require the fixed floor, published controller and exact comparison procedure; verify both floor declarations, zero/empty width, deadband equality, signed caps, lead, input quarantine and numeraire covariance. Certify each epoch on its own width, exercise the reference final-set gate evidence and preserve atomic rejection. Keep economic and tracking holds explicit; do not infer compulsory or timed burn acceptance. Require common-marker evidence for every final-state gate; no later reader observation supplies burn membership.",
       "ordinal": 7,
       "requirements": [
         "admission",
@@ -116,7 +118,7 @@
         "model:design:package",
         "proto:design:encoding"
       ],
-      "evidence": "Use the accepted encoding and infrastructure dependency, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases. Add the bounded API transport-reading mode to pn-interchange before the API adapter: mint scoped claims for equal decoded values, byte/item/depth/nesting bounds and strict rejection of the same noncanonical original bytes, without a second CBOR dependency or a changed canonical corpus. Complete atomic admitted-result persistence and public-input rebuild evidence against the real PostgreSQL beta. Extend pn-wallet with spending and wallet-backed request recovery, introduce pn-client with its GraphQL extension and unchanged node relays, and both pn-command surfaces over the pn and pn-client GraphQL executors; require the client-workflow plan before spending or administration is supported.",
+      "evidence": "Use the accepted encoding and infrastructure dependency, assign namespace and theory, and pass canonical vectors, complete section checks and strict/tolerant boundary cases. Add the bounded API transport-reading mode to pn-interchange before the API adapter: mint scoped claims for equal decoded values, byte/item/depth/nesting bounds and strict rejection of the same noncanonical original bytes, without a second CBOR dependency or a changed canonical corpus. Complete atomic admitted-result persistence and public-input rebuild evidence against the real PostgreSQL beta. Extend pn-wallet with spending and wallet-backed request recovery, introduce pn-client with its GraphQL extension and unchanged node relays, and both pn-command surfaces over the pn and pn-client GraphQL executors; require the client-workflow plan before spending or administration is supported. Encode and atomically persist the fixed marker policy identity and edition, marker lineage and interpretation, complete accepted sets and public verification evidence. Canonical vectors must bind them to the same prior state, accepted acts, burn increment and writing-epoch debit.",
       "ordinal": 8,
       "requirements": [
         "publication",
@@ -129,7 +131,7 @@
         "alg:design:reconstruction",
         "rule:design:comparison"
       ],
-      "evidence": "Reconstruct from public causes and attribute section mutations; compare independent small-case results and replay the declared refinement policy. Reconstruct the wall proposal and delivered charge, exact floor comparison, contributing width, fence and reference certificate comparisons.",
+      "evidence": "Reconstruct from public causes and attribute section mutations; compare independent small-case results and replay the declared refinement policy. Reconstruct the wall proposal and delivered charge, exact floor comparison, contributing width, fence and reference certificate comparisons. Verify the marker sequence and accepted sets from disclosed evidence without a live node; recompute distinct-destruction increments and detect missing, substituted or mixed-history evidence.",
       "ordinal": 9,
       "requirements": [
         "replay",

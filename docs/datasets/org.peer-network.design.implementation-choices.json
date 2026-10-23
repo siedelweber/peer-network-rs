@@ -37,10 +37,10 @@
       "settlement": "Closed deployment choice; normalized does not mean equal and profiles are disclosed even when a reference profile is uniform."
     },
     {
-      "fields": "fixed chartered floor and exact comparison procedure, numeraire, controller edition and initialization, absolute/relative caps, deadband, one-boundary lead and shared snapshot convention",
+      "fields": "fixed chartered floor and exact comparison procedure, numeraire, controller edition and initialization, absolute/relative caps, deadband, one-boundary lead and shared recognized marker snapshot under its fixed pre-genesis policy",
       "name": "wall-policy",
       "question": "Q20",
-      "settlement": "The floor declaration and controller constraints are settled; economic calibration, controller performance and snapshot timing retain explicit evidence holds."
+      "settlement": "The floor declaration, controller constraints and conditional accepted-snapshot consistency are settled; economics and controller performance remain open, and acceptance timing or marker production is not promised."
     }
   ]
 }

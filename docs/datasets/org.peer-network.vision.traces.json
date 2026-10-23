@@ -16,7 +16,9 @@
     {
       "labels": [
         "def:comparator:burn-interface",
-        "subsec:deployment:realization-obligations"
+        "subsec:deployment:realization-obligations",
+        "post:comparator:marker-bound-settlement",
+        "cond:comparator:burn-unit-cost-projection"
       ],
       "name": "burn-boundary"
     },
@@ -51,7 +53,8 @@
         "post:epoch:standing-epoch-set-determinism",
         "post:epoch:standing-memorylessness",
         "prop:deployment:allocation-input-completeness",
-        "def:epoch:standing-domain-profile"
+        "def:epoch:standing-domain-profile",
+        "def:epoch:proposed-final-act-state"
       ],
       "name": "final-state"
     },
@@ -84,7 +87,8 @@
       "labels": [
         "def:network:write",
         "post:epoch:final-act-sequence-closure",
-        "post:network:host-contract"
+        "post:network:host-contract",
+        "post:epoch:final-edge-set"
       ],
       "name": "final-membership"
     },
@@ -122,7 +126,8 @@
     {
       "labels": [
         "post:network:host-contract",
-        "post:deployment:canonical-standing-publication"
+        "post:deployment:canonical-standing-publication",
+        "post:epoch:final-edge-set"
       ],
       "name": "publication"
     },
@@ -132,7 +137,8 @@
         "subsec:deployment:conserved-standing-reproducibility",
         "rem:deployment:completeness-safety-orthogonal",
         "post:network:host-contract",
-        "rem:graph:authentication-realization-out-of-scope"
+        "rem:graph:authentication-realization-out-of-scope",
+        "prop:comparator:marker-settlement-consistency"
       ],
       "name": "replay"
     },

@@ -24,17 +24,31 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Exercise complete and missing address samples, settlement depth, provenance and conditional operator-bound evidence.",
+      "cases": "Exercise missing samples, depth, finality, provenance, denomination and terms, separate event costs, applicable operator proof or explained absence, and empty pre-opening capacity. Accept positive unit costs below one. Challenge nonempty genesis acceptance and opening credit from lineage alone, skipped or duplicate successors, changed policy, copied markers without lineage, unavailable openings, invalid or out-of-lineage acceptance, dropped predecessors, duplicate destruction aliases and changed addresses; include delayed acceptance and an empty accepted increment.",
       "decision": "dec:design:burn-boundary",
       "fixture": "burn-disclosures",
       "hold": "External destruction and settlement assurance remain deployment obligations.",
       "labels": [
         "def:comparator:burn-interface",
-        "subsec:deployment:realization-obligations"
+        "subsec:deployment:realization-obligations",
+        "post:comparator:marker-bound-settlement",
+        "cond:comparator:marker-lineage-succession",
+        "cond:comparator:marker-network-acceptance",
+        "cond:comparator:marker-causal-dependence",
+        "cond:comparator:marker-single-count",
+        "def:comparator:marker-burn-snapshot",
+        "eq:comparator:marker-burn-snapshot",
+        "prop:comparator:marker-settlement-consistency",
+        "cond:comparator:burn-unit-cost-projection",
+        "cond:comparator:burn-non-transferability",
+        "cond:comparator:burn-settlement-amount",
+        "cond:comparator:burn-revision-floor",
+        "cond:comparator:burn-bootstrap-capacity",
+        "cond:comparator:burn-operator-audit-bound"
       ],
       "name": "burn-boundary",
-      "oracle": "Manual four-object boundary inventory and independent disclosure checklist against the declared realization.",
-      "property": "Changing evidence cannot add a fifth mathematical input; required evidence omission prevents publication readiness.",
+      "oracle": "Independent finite-history enumeration of lineage, policy-defined accepted sets and distinct destruction identities, plus a dimensioned cost and disclosure checklist.",
+      "property": "A recognized marker and fixed policy determine one gross snapshot and increment, counting each accepted destruction once; no later observation changes it. Gross monotonicity holds only along the same history, not for debited residual balances. Recognition supplies no liveness guarantee or fifth monetary input.",
       "requirements": [
         "burn-boundary"
       ],
@@ -80,7 +94,7 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Charge two successive declared prices, then change the current price; prior debits must remain unchanged.",
+      "cases": "Charge two successive declared prices, then change the current price; prior debits must remain unchanged. Accept an older lineage burn at a later marker, including an epoch with no authored acts; deduplicate aliases and preserve the writing-epoch debit.",
       "decision": "dec:design:ledger-vintages",
       "fixture": "charged-vintage-cases",
       "hold": "Non-rational charged-value support is held until its equality and certification contract is reviewed.",
@@ -97,7 +111,7 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Unequal domain profiles, Invitation A-leg versus T-leg, repeated fold cells, home-resolved acts and revocation ties.",
+      "cases": "Unequal domain profiles, Invitation A-leg versus T-leg, repeated fold cells, home-resolved acts and revocation ties. Reject mixed marker histories or policy editions; derive balances, emission and width from the same accepted burn increment.",
       "decision": "dec:design:final-state",
       "fixture": "compiler-cases",
       "hold": "The released reference conserved fixture supplies an oracle; implementation executions and other input families remain held. Legacy staged expectations are not substitutes.",
@@ -105,7 +119,8 @@
         "post:epoch:standing-epoch-set-determinism",
         "post:epoch:standing-memorylessness",
         "prop:deployment:allocation-input-completeness",
-        "def:epoch:standing-domain-profile"
+        "def:epoch:standing-domain-profile",
+        "def:epoch:proposed-final-act-state"
       ],
       "name": "final-state",
       "oracle": "Small direct cell and recipient tables written independently of production aggregation.",
@@ -171,14 +186,15 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Overlapping principal closures sharing a parent, interleaved blocks, missing parent, target/minimum and maximum-duration closures.",
+      "cases": "Overlapping principal closures sharing a parent, interleaved blocks, missing parent, target/minimum and maximum-duration closures. Require the common recognized final marker independently of dependent-act closure; act order alone cannot supply the burn snapshot.",
       "decision": "dec:design:final-membership",
       "fixture": "closure-partition-cases",
       "hold": "Earliest host determination is attested boundary evidence; replay cannot reconstruct unwritten demand.",
       "labels": [
         "def:network:write",
         "post:epoch:final-act-sequence-closure",
-        "post:network:host-contract"
+        "post:network:host-contract",
+        "post:epoch:final-edge-set"
       ],
       "name": "final-membership",
       "oracle": "Exhaustive closure-set intersection and component enumeration on small proposed histories.",
@@ -213,7 +229,7 @@
       "cases": "Both chartered floors, exact ridge comparison, zero width, empty live domain, deadband equality, capped upward/downward steps, recoinage, fixed-ledger numeraire change and a next epoch wider than its predecessor.",
       "decision": "dec:design:policy-schedules",
       "fixture": "wall-controller-cases",
-      "hold": "Deployment declarations and snapshot evidence remain required; economics and controller performance are open separately from in-epoch safety.",
+      "hold": "Deployment declarations and verified marker evidence remain required; economics and controller performance remain open, while recognition proves accepted-snapshot consistency without compulsory or timed acceptance.",
       "labels": [
         "def:epoch:safety-threshold",
         "def:epoch:policy-floor",
@@ -240,13 +256,14 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references.",
+      "cases": "Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references. Require marker policy identity and edition, lineage and interpretation, complete accepted sets and their verification evidence; reject an asserted total in their place.",
       "decision": "dec:design:publication",
       "fixture": "canonical-package-cases",
       "hold": "The encoding and infrastructure dependency are accepted; namespace assignment, complete CDDL theory and independent byte vectors remain required for canonical compatibility.",
       "labels": [
         "post:network:host-contract",
-        "post:deployment:canonical-standing-publication"
+        "post:deployment:canonical-standing-publication",
+        "post:epoch:final-edge-set"
       ],
       "name": "publication",
       "oracle": "Independently authored byte vectors and a section-by-section semantic inventory.",
@@ -257,7 +274,7 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Mutate each package section, omit an act and alter a charged vintage, rung verdict or rounding disclosure.",
+      "cases": "Mutate each package section, omit an act and alter a charged vintage, rung verdict or rounding disclosure. Mutate marker policy, predecessor, lineage, accepted sets or openings; independently derive first-acceptance increments and reject missing evidence rather than silently dropping records.",
       "decision": "dec:design:replay",
       "fixture": "reconstruction-mutations",
       "hold": "Cross-implementation agreement is held until an independent implementation runs the declared profile.",
@@ -266,7 +283,8 @@
         "subsec:deployment:conserved-standing-reproducibility",
         "rem:deployment:completeness-safety-orthogonal",
         "post:network:host-contract",
-        "rem:graph:authentication-realization-out-of-scope"
+        "rem:graph:authentication-realization-out-of-scope",
+        "prop:comparator:marker-settlement-consistency"
       ],
       "name": "replay",
       "oracle": "A public-input verifier and independently implemented small-case mathematics, not a host-cache comparison.",

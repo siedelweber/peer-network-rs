@@ -116,7 +116,7 @@
       "topic": "Dependent-set partition"
     },
     {
-      "ambiguity": "The raw snapshot defines simple paths while depth-buffered two-register propagation can revisit vertices without recording visited sets. (def:graph:raw-snapshot-path) (alg:epoch:double-cover-bfs) (lem:epoch:double-cover-bfs-correctness)",
+      "ambiguity": "The raw snapshot defines simple paths while depth-buffered two-register propagation can revisit vertices without recording visited sets. (def:graph:raw-snapshot-path) (alg:epoch:exact-signed-raw-traversal) (lem:epoch:double-cover-bfs-correctness)",
       "class": "DEFECT",
       "id": "Q12",
       "instruction": "Your refusal to assert exact equivalence is justified. Hold the optional service's simple-path compliance claim; do not silently redefine its output as bounded-walk registers.",
@@ -202,7 +202,7 @@
       "instruction": "Certify ``cond:epoch:safety-declared-floor`` against the declared floor's exact defining object: enclosure refinement or rejection for the exact ridge, exact comparison with $3/37$ where the representation permits it. The wall remains computed, subject to the host contract's enclosure discipline. Publish the representation and comparison procedure, preserve one consummated debit vintage per epoch, and keep the declaration fixed; a change is public and structural with regenerated evidence, never a host-policy choice.",
       "reading": "Study judgment: Treat the next-threshold rule as a required calibration decision, including zero width and rapid width growth, not a free host choice.",
       "section": "Q20 — Threshold calibration",
-      "status": "**Status: two floors chartered; deployment declaration fixed; economic calibration, controller performance and snapshot timing open.** The exact ridge image and rational $3/37$ share one at-or-beyond-ridge proposition and one economics corollary for the declared floor. Before the first epoch the deployment publishes its fixed declaration and ``cond:epoch:safety-declared-floor`` comparison procedure. The published controller retains its zero-width and empty-domain target and floor/deadband/cap order; the greatest rung proved passing certifies each epoch on its own width under the labelled conditions of ``def:epoch:safety-threshold``.",
+      "status": "**Status: two floors chartered; deployment declaration fixed; economic calibration and controller performance open; accepted-snapshot consistency chartered; compulsory and timed acceptance not asserted.** The exact ridge image and rational $3/37$ share one at-or-beyond-ridge proposition and one economics corollary for the declared floor. Before the first epoch the deployment publishes its fixed declaration and ``cond:epoch:safety-declared-floor`` comparison procedure. The published controller retains its zero-width and empty-domain target and floor/deadband/cap order; the greatest rung proved passing certifies each epoch on its own width under the labelled conditions of ``def:epoch:safety-threshold``.",
       "topic": "Threshold calibration"
     },
     {
