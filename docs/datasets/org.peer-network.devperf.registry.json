@@ -10,7 +10,7 @@
       "budget_ms": 5000,
       "label": "expt:devperf:design-correspondence",
       "measured_ms": 283,
-      "measurement": "Five paired runs on the same full corpus on the compute node measured 26.123, 25.903, 28.599, 25.870 and 26.643 seconds before, and 0.249, 0.245, 0.257, 0.250 and 0.282 seconds after; the rounded maximum after is 283 milliseconds. Exact commands, source identity and pressure indicators remain in the untracked measurement artifacts",
+      "measurement": "Five paired runs on the same full corpus on the compute node measured 26.123, 25.903, 28.599, 25.870 and 26.643 seconds before, and 0.249, 0.245, 0.257, 0.250 and 0.282 seconds after; the rounded up maximum after is 283 milliseconds. Exact commands, source identity and pressure indicators remain in the untracked measurement artifacts",
       "name": "design-correspondence",
       "operation": "full design correspondence check",
       "ordinary_budget": "ordinary-check",
