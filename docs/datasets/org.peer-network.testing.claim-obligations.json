@@ -873,17 +873,18 @@
     },
     {
       "admission": {
-        "evidence": "ROOT::amend:xchg:adopted-artifact-entry; ROOT::tab:xchg:adopted-artifact-evidence; four responsibilities retained without an unprovable authoring-order claim",
-        "evidence_kind": "The historical-order amendment and itemized present evidence in amend:xchg:adopted-artifact-entry and tab:xchg:adopted-artifact-evidence.",
+        "evidence": "ROOT::amend:xchg:sequence-entry-admission",
+        "evidence_kind": "Explicit amendment of the historical ordering condition, judged on its merits, with the present four-module separation",
         "owner": "Interchange contract reviewer",
-        "status": "submitted"
+        "status": "admitted"
       },
+      "admission_basis": "review",
       "claims": [],
-      "closing_condition": "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation.",
+      "closing_condition": "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition. The historical condition is replaced by present artifact evidence under (`amend:xchg:adopted-artifact-entry`).",
       "closing_step": "Entry condition of gate:design:bite-1",
       "entry_gate": "ROOT::gate:design:bite-1",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Independent review must judge the explicit replacement of unavailable historical ordering evidence by current artifact evidence.",
+      "missing": "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition. The historical condition is replaced by present artifact evidence under (`amend:xchg:adopted-artifact-entry`).",
       "name": "ROOT::dec:xchg:slice-sequencing",
       "owner": "Interchange contract reviewer",
       "path": "adr/010-interchange-design.md",
@@ -1500,19 +1501,23 @@
     },
     {
       "admission": {
-        "evidence": "ROOT::amend:labels:entry-conformance-submission; ci/test_linter_entry.py; deployed fixture outcomes and named unproven clauses",
-        "evidence_kind": "Itemized deployed-linter conformance evidence for every implementation-gate clause, with fixture results and explicit unresolved capability limits.",
+        "evidence": "ROOT::amend:labels:entry-admission",
+        "evidence_kind": "Deployed-checker conformance fixtures over isolated trees for each witnessable clause, the current-corpus check for this record's clause, and the adoption-data discharge of the synthetic-citation and anchor-harvest clauses",
         "owner": "Linter integration reviewer",
-        "status": "submitted"
+        "status": "admitted"
       },
+      "admission_basis": "executed",
       "claims": [
         "ROOT::claim:discipline:duplicate-fixtures-name-both-sites",
         "ROOT::claim:discipline:fixture-carriers-separate-text-from-evidence",
+        "ROOT::claim:discipline:fixture-import-owner-must-be-registered",
+        "ROOT::claim:discipline:fixture-import-requires-citation-parentheses",
         "ROOT::claim:discipline:fixture-imports-preserve-owner-boundaries",
         "ROOT::claim:discipline:fixture-index-cannot-supply-its-target",
         "ROOT::claim:discipline:fixture-inventory-follows-the-asset",
         "ROOT::claim:discipline:fixture-kind-warrants-cannot-overlap",
         "ROOT::claim:discipline:fixture-near-misses-are-not-occurrences",
+        "ROOT::claim:discipline:fixture-no-form-span-is-text",
         "ROOT::claim:discipline:fixture-projection-is-scoped-to-its-inputs",
         "ROOT::claim:discipline:fixture-projection-reaches-a-fixed-point",
         "ROOT::claim:discipline:fixture-reserved-kinds-require-a-profile",
@@ -1520,18 +1525,18 @@
         "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic",
         "ROOT::claim:discipline:fixture-traversal-order-does-not-select-meaning"
       ],
-      "closing_condition": "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation.",
+      "closing_condition": "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them. The two inactive clauses are discharged, with a re-entry trigger, by (`amend:labels:entry-vacuous-clauses`).",
       "closing_step": "Entry condition of gate:design:bite-1",
       "entry_gate": "ROOT::gate:design:bite-1",
       "evidence_paragraph": "ROOT::amend:labels:entry-executed-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Independent review must establish the submitted conformance clauses, including an available synthetic-citation and anchor-harvest fixture interface and the currently unmet bracket-free-token refusal.",
+      "missing": "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them. The two inactive clauses are discharged, with a re-entry trigger, by (`amend:labels:entry-vacuous-clauses`).",
       "name": "ROOT::gate:labels:implementation",
       "owner": "Linter integration reviewer",
       "path": "adr/001-label-calculus.md",
-      "premises": "Finite isolated deployed-checker fixtures establish only the clauses and limits itemized in amend:labels:entry-conformance-submission. Synthetic citation and anchor programs and bracket-free refusal remain unproved; independent admission is still required.",
+      "premises": "Finite isolated deployed-checker fixtures for the itemized active clauses, current-corpus checking for this record, and adoption-data discharge with a re-entry trigger for the two inactive clauses. Admission is recorded independently of current execution support.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [
@@ -1762,17 +1767,18 @@
     },
     {
       "admission": {
-        "evidence": "ROOT::amend:xchg:concept-review-submission; itemized purpose, consumers, completeness, discipline, scope and verification review",
-        "evidence_kind": "Itemized independent concept review against accepted conventions; draft in amend:xchg:concept-review-submission.",
+        "evidence": "ROOT::amend:xchg:concept-entry-admission",
+        "evidence_kind": "Independent itemized concept review against records 008, 009 and 010 and the current code",
         "owner": "Interchange contract reviewer",
-        "status": "submitted"
+        "status": "admitted"
       },
+      "admission_basis": "review",
       "claims": [],
-      "closing_condition": "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation.",
+      "closing_condition": "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review.",
       "closing_step": "Entry condition of gate:design:bite-1",
       "entry_gate": "ROOT::gate:design:bite-1",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Independent review must confirm or correct the submitted purpose, consumers, completeness, scope and verification-frame judgments.",
+      "missing": "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review.",
       "name": "ROOT::gate:xchg:concept-review",
       "owner": "Interchange contract reviewer",
       "path": "adr/009-interchange-concept.md",
@@ -1781,22 +1787,29 @@
     },
     {
       "admission": {
-        "evidence": "ROOT::amend:xchg:adopted-artifact-entry; ROOT::tab:xchg:adopted-artifact-evidence; present artifact evidence replaces unavailable authoring history",
-        "evidence_kind": "Present corpus transcription sources, locked dependency review, adoption audit and commissioning evidence, and current witnesses under amend:xchg:adopted-artifact-entry.",
+        "evidence": "ROOT::amend:xchg:implementation-entry-admission",
+        "evidence_kind": "Amended entry condition with present artifact evidence: source-stated and reviewer-checked vectors, locked dependency review, adoption decisions and current witnesses",
         "owner": "Interchange implementer and contract reviewer",
-        "status": "submitted"
+        "status": "admitted"
       },
-      "claims": [],
-      "closing_condition": "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation.",
+      "admission_basis": "executed",
+      "claims": [
+        "INTERCHANGE::claim:vectors:the-corpus-keeps-its-seeded-counts",
+        "INTERCHANGE::claim:vectors:a-canonical-vector-re-encodes-to-its-own-bytes",
+        "INTERCHANGE::claim:vectors:a-refusal-vector-is-refused-where-it-stands"
+      ],
+      "closing_condition": "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order. The historical condition is replaced by present artifact evidence under (`amend:xchg:adopted-artifact-entry`).",
       "closing_step": "Entry condition of gate:design:bite-1",
       "entry_gate": "ROOT::gate:design:bite-1",
+      "evidence_paragraph": "EXECWRAP::amend:foundation:entry-interchange-execution",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Independent review must judge the amended present-artifact evidence; original authoring order and start-time provenance are unavailable and are not asserted.",
+      "missing": "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order. The historical condition is replaced by present artifact evidence under (`amend:xchg:adopted-artifact-entry`).",
       "name": "ROOT::gate:xchg:implementation",
       "owner": "Interchange implementer and contract reviewer",
       "path": "adr/010-interchange-design.md",
+      "premises": "The retained 93-row corpus, its declared sources and explained Appendix A omissions; the historical conditions are explicitly replaced by reviewed present artifact evidence. Executions establish roster and predicates, not authoring order.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -1836,17 +1849,18 @@
     },
     {
       "admission": {
-        "evidence": "ROOT::amend:interchange:bite-one-contract-map; ROOT::amend:interchange:bite-one-map-limit; all bite-1 producer and reader roles mapped before implementation",
-        "evidence_kind": "The complete bite-1 producer/reader map to the one canonical contract and its admission limits in amend:interchange:bite-one-contract-map and amend:interchange:bite-one-map-limit.",
+        "evidence": "ROOT::amend:interchange:entry-admission",
+        "evidence_kind": "Design-level producer and reader map to the one canonical contract, with rejected local alternatives, admitted before the first domain consumer",
         "owner": "Bite 1 implementer and interchange contract reviewer",
-        "status": "submitted"
+        "status": "admitted"
       },
+      "admission_basis": "review",
       "claims": [],
-      "closing_condition": "Independent review confirms or corrects the submitted evidence package, then the loop records admission; submitted evidence does not authorize implementation.",
+      "closing_condition": "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer.",
       "closing_step": "Entry condition of gate:design:bite-1",
       "entry_gate": "ROOT::gate:design:bite-1",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Independent review must admit the design-level producer/reader map and its rejected local alternatives before domain implementation begins.",
+      "missing": "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer.",
       "name": "ROOT::req:interchange:fixed-once",
       "owner": "Bite 1 implementer and interchange contract reviewer",
       "path": "adr/008-interchange-conventions.md",

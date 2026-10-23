@@ -191,13 +191,17 @@ def bite_one_started(root):
     return False
 
 
-def enforce_entry(obligations, started, required=None):
+def enforce_entry(obligations, started, required=None, paragraphs=None):
     """A named entry hold remains a prerequisite, not a future-work caption."""
     entries=[row for row in obligations if row.get('entry_gate')=='ROOT::gate:design:bite-1']
     if required is not None and {row['name'] for row in entries}!=required:
         raise StructuralError('bite-1 entry register differs from the source amendment')
     pending=[]
+    checked=[]
     for row in entries:
+        basis=row.get('admission_basis')
+        if basis not in ('review','executed'):
+            raise StructuralError('bite-1 entry requires a declared admission basis')
         admission=row.get('admission',{})
         if (not row.get('owner') or admission.get('owner')!=row['owner'] or not isinstance(admission.get('evidence_kind'),str) or not admission['evidence_kind'].strip()
                 or admission.get('status') not in ('held','submitted','admitted')):
@@ -205,9 +209,17 @@ def enforce_entry(obligations, started, required=None):
         admitted=admission['status']=='admitted'
         if admission['status'] in ('submitted','admitted') and (not isinstance(admission.get('evidence'),str) or not admission['evidence'].strip()):
             raise StructuralError('bite-1 entry admission requires evidence')
-        if row['status']!='scoped-passed' or not admitted: pending.append(row['name'])
+        if admitted:
+            evidence=(paragraphs or {}).get(admission['evidence'])
+            if (not evidence or not admission['evidence'].startswith('ROOT::amend:')
+                    or row['name'] not in evidence.get('citations',set())):
+                raise StructuralError('bite-1 entry admission evidence does not resolve to an amendment citing its row')
+        clear=admitted and (basis=='review' or row['status']=='scoped-passed')
+        if not clear: pending.append(row['name'])
+        checked.append(dict(name=row['name'],basis=basis,status='clear' if clear else 'pending'))
     if started and pending:
         raise StructuralError('bite-1 entry evidence remains held: '+str(sorted(pending)))
+    return checked
 
 
 def checked_linter(path,sites):
@@ -272,7 +284,9 @@ def main(argv=None):
         result = evaluate(sites, expected, areas, obligations, declared, paragraphs,
                           [r for r in records if r.get('scope')=='case'], source)
         entry = paragraphs['ROOT::amend:decomposition:bite-one-entry-evidence']['citations'] & set(obligations)
-        enforce_entry(result['obligations'], bite_one_started(root), entry-{'ROOT::gate:design:bite-1'})
+        result['entries']=enforce_entry(result['obligations'], bite_one_started(root), entry-{'ROOT::gate:design:bite-1'}, paragraphs)
+        for row in result['entries']:
+            print(f'CLAIM-ENTRY name={row["name"]} basis={row["basis"]} status={row["status"]}')
         reviews = reviewed_sites(sites, json.loads(Path('ci/claim_review.json').read_text()), json.loads(Path('ci/claim_gloss_baseline.json').read_text()))
         Path('.lane/claim-gloss-review.json').write_text(json.dumps({'schema':1,'source':source,'sites':reviews},indent=2)+'\n')
         offenders = [{k:s[k] for k in ('owner','path','line','function','operation','claim','gloss')} for s in sites if respells(s)]

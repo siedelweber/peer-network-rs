@@ -122,6 +122,34 @@ class Conformance(unittest.TestCase):
         tree=self.tree();tree.write('root/reserved.md','## Test · `test:unit:invented`\n')
         code,row=tree.check();self.assertEqual(code,3);self.assertEqual([f['code'] for f in row['findings']],['unwarranted_reserved_kind'])
 
+    def test_unregistered_prefix(self):
+        """Claim: An import naming an undeclared owner fails with unregistered_prefix, so a missing owner cannot be mistaken for a local resolution or ignored text.
+        ´claim:discipline:fixture-import-owner-must-be-registered´
+        ´test:integration:test-unregistered-prefix´
+        """
+        tree=self.tree();tree.write('peer/body.md','(`[UNKNOWN-sec:fixture:target]`)\n')
+        code,row=tree.check();self.assertEqual(code,3)
+        self.assertEqual([f['code'] for f in row['findings']],['unregistered_prefix'])
+
+    def test_non_parenthesized_import(self):
+        """Claim: A bracketed import without citation parentheses fails with non_parenthesized_import even when its target exists, preserving the distinction between a citation and a bare imported form.
+        ´claim:discipline:fixture-import-requires-citation-parentheses´
+        ´test:integration:test-non-parenthesized-import´
+        """
+        tree=self.tree();tree.write('root/target.md','## Target · `sec:fixture:target`\n')
+        tree.write('peer/body.md','`[ROOT-sec:fixture:target]`\n')
+        code,row=tree.check();self.assertEqual(code,3)
+        self.assertEqual([f['code'] for f in row['findings']],['non_parenthesized_import'])
+
+    def test_no_form_span(self):
+        """Claim: A parenthesized prefix-label pair without import brackets contributes no occurrence and never fails resolution; only a near-miss warning may accompany this ordinary text.
+        ´claim:discipline:fixture-no-form-span-is-text´
+        ´test:integration:test-no-form-span´
+        """
+        tree=self.tree();tree.write('peer/body.md','(`ROOT-sec:fixture:target`)\n')
+        code,row=tree.check();self.assertEqual((code,row['mints'],row['citations_resolved']),(0,0,0))
+        self.assertTrue(all(f['code']=='near_miss' for f in row['findings']))
+
     def test_near_misses(self):
         """Claim: A label-shaped backtick in a Rust comment produces a warning without minting or resolving anything, keeping mistaken delimiters visible without granting them evidential authority.
         ´claim:discipline:fixture-near-misses-are-not-occurrences´

@@ -36,32 +36,21 @@ def fixture():
 
 class Evidence(unittest.TestCase):
     def test_bite_one_entry(self):
-        """Claim: A conventional records directory or a renamed pn-records workspace member triggers entry refusal until every row has passing scoped support and its named owner's admission with an evidence kind and recorded evidence; status alone cannot clear the hold.
+        """Claim: Either a records directory or a renamed pn-records member activates the complete entry register; missing owner, evidence kind, basis or admission cannot be bypassed by a passing test status.
         ´claim:testing:bite-one-entry-holds-block-implementation´
         ´test:integration:test-bite-one-entry´
         """
         from claims import enforce_entry, bite_one_started
-        import copy
-        row=dict(name='ROOT::req:testing:fixture',entry_gate='ROOT::gate:design:bite-1',status='held',owner='reviewer',admission=dict(owner='reviewer',evidence_kind='contract review',status='held'))
+        row=dict(name='ROOT::req:testing:fixture',entry_gate='ROOT::gate:design:bite-1',status='scoped-passed',owner='reviewer',admission_basis='executed',admission=dict(owner='reviewer',evidence_kind='contract review',status='held'))
         enforce_entry([row],False)
         with self.assertRaisesRegex(StructuralError,'bite-1 entry evidence remains held'):
             enforce_entry([row],True)
-        row['status']='scoped-passed'
-        with self.assertRaises(StructuralError):enforce_entry([row],True)
-        row['admission'].update(status='submitted',evidence='prepared review package')
-        enforce_entry([row],False)
-        with self.assertRaises(StructuralError):enforce_entry([row],True)
-        invalid=copy.deepcopy(row);invalid['admission'].pop('evidence')
-        with self.assertRaises(StructuralError):enforce_entry([invalid],False)
-        row['admission'].update(status='admitted',evidence='recorded contract admission')
-        enforce_entry([row],True)
-        invalid=copy.deepcopy(row); invalid['admission'].pop('evidence')
-        with self.assertRaises(StructuralError):enforce_entry([invalid],True)
         for key in ('owner','evidence_kind'):
-            invalid=copy.deepcopy(row); invalid['admission'].pop(key)
+            invalid=deepcopy(row);invalid['admission'].pop(key)
             with self.assertRaises(StructuralError):enforce_entry([invalid],False)
-        row['status']='failed'
-        with self.assertRaises(StructuralError):enforce_entry([row],True)
+        for basis in (None,'inferred'):
+            invalid=deepcopy(row);invalid['admission_basis']=basis
+            with self.assertRaisesRegex(StructuralError,'declared admission basis'):enforce_entry([invalid],False)
         with self.assertRaisesRegex(StructuralError,'entry register differs'):
             enforce_entry([],False,{row['name']})
         import tempfile
@@ -76,6 +65,47 @@ class Evidence(unittest.TestCase):
             self.assertFalse(bite_one_started(root))
             (root/'packages/records').mkdir(parents=True)
             self.assertTrue(bite_one_started(root))
+
+    def test_review_admission(self):
+        """Claim: A review-basis entry clears only with its owner's admitted, resolving amendment, without inventing executable claims for a review fact; absent admission or an unrelated evidence label refuses entry.
+        ´claim:testing:review-admission-requires-resolving-evidence´
+        ´test:integration:test-review-admission´
+        """
+        from claims import enforce_entry
+        name='ROOT::gate:testing:fixture';label='ROOT::amend:testing:admission'
+        paragraphs={label:dict(citations={name})}
+        row=dict(name=name,entry_gate='ROOT::gate:design:bite-1',status="held",claims=[],owner='reviewer',admission_basis='review',admission=dict(owner='reviewer',evidence_kind='fixture evidence',status='admitted',evidence=label))
+        self.assertEqual(enforce_entry([row],True,paragraphs=paragraphs)[0]['status'],'clear')
+        for status in ('held','submitted'):
+            invalid=deepcopy(row);invalid['admission']['status']=status
+            with self.assertRaisesRegex(StructuralError,'remains held'):enforce_entry([invalid],True,paragraphs=paragraphs)
+        for evidence in ('ROOT::amend:testing:missing','review round outside the tree',''):
+            invalid=deepcopy(row);invalid['admission']['evidence']=evidence
+            with self.assertRaises(StructuralError):enforce_entry([invalid],True,paragraphs=paragraphs)
+        with self.assertRaisesRegex(StructuralError,'does not resolve'):
+            enforce_entry([row],True,paragraphs={label:dict(citations=set())})
+
+    def test_executed_admission(self):
+        """Claim: An executed-basis entry clears only with its owner's admitted, resolving amendment, and current scoped execution support; absent admission or an unrelated evidence label refuses entry.
+        ´claim:testing:executed-admission-requires-resolving-evidence´
+        ´test:integration:test-executed-admission´
+        """
+        from claims import enforce_entry
+        name='ROOT::gate:testing:fixture';label='ROOT::amend:testing:admission'
+        paragraphs={label:dict(citations={name})}
+        row=dict(name=name,entry_gate='ROOT::gate:design:bite-1',status="scoped-passed",claims=[],owner='reviewer',admission_basis='executed',admission=dict(owner='reviewer',evidence_kind='fixture evidence',status='admitted',evidence=label))
+        self.assertEqual(enforce_entry([row],True,paragraphs=paragraphs)[0]['status'],'clear')
+        for status in ('held','submitted'):
+            invalid=deepcopy(row);invalid['admission']['status']=status
+            with self.assertRaisesRegex(StructuralError,'remains held'):enforce_entry([invalid],True,paragraphs=paragraphs)
+        for evidence in ('ROOT::amend:testing:missing','review round outside the tree',''):
+            invalid=deepcopy(row);invalid['admission']['evidence']=evidence
+            with self.assertRaises(StructuralError):enforce_entry([invalid],True,paragraphs=paragraphs)
+        with self.assertRaisesRegex(StructuralError,'does not resolve'):
+            enforce_entry([row],True,paragraphs={label:dict(citations=set())})
+        for status in ('held','failed'):
+            invalid=deepcopy(row);invalid['status']=status
+            with self.assertRaisesRegex(StructuralError,'remains held'):enforce_entry([invalid],True,paragraphs=paragraphs)
 
     def test_shared_failure(self):
         """A failing sibling defeats the shared claim and its obligation despite another passing execution.
