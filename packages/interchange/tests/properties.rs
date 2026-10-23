@@ -972,7 +972,7 @@ fn a_value_nested_one_million_deep_clones_hashes_compares_and_satisfies() {
 /// The same depth reached through all three recursive constructors, so
 /// that no teardown path is left to the compiler's glue.
 ///
-/// Claim: A chain of 200000 array/map/tag units decodes, re-encodes identically and drops successfully, protecting mixed-constructor traversal at the declared depth.
+/// Claim: A chain of 200000 array/map/tag units decodes, re-encodes identically and drops successfully, witnessing traversal and teardown without the call stack through every recursive constructor.
 /// ´claim:properties:mixed-constructor-depth-is-traversable´
 /// ´test:integration:a-deep-chain-of-arrays-maps-and-tags-drops´
 #[test]
@@ -993,7 +993,7 @@ fn a_deep_chain_of_arrays_maps_and_tags_drops() {
 /// A chain of tags alone: the recursion the value model carries without
 /// an array or a map anywhere to intercept it.
 ///
-/// Claim: A chain of 500000 tags decodes, reports the exact encoded length and drops successfully, protecting the tag-only deep traversal path.
+/// Claim: A chain of 500000 tags decodes, reports the exact encoded length and drops successfully, witnessing tag-only traversal and teardown without the call stack.
 /// ´claim:properties:tag-only-depth-is-traversable´
 /// ´test:integration:a-deep-chain-of-tags-alone-drops´
 #[test]

@@ -44,10 +44,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Storage implementer and history reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:compatibility:history"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Execute atomic succession and prior-boundary verdict invariance against the durable store."
+closing_step = "Durable storage implementation slice before its first history consumer"
 
 [[rows]]
 name = "ROOT::dec:decomposition:bites"
@@ -370,8 +370,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:devperf:feedback"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:devperf:profiles"
@@ -382,8 +382,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:devperf:profiles"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:harness:client-packages"
@@ -392,10 +392,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Client implementer and schema reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:harness:client-packages"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Execute the wallet/client package-boundary and schema-subset contracts with the implemented client workflows."
+closing_step = "Client harness slice"
 
 [[rows]]
 name = "ROOT::dec:harness:client-schema"
@@ -404,10 +404,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Client implementer and schema reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:harness:client-schema"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Execute the wallet/client package-boundary and schema-subset contracts with the implemented client workflows."
+closing_step = "Client harness slice"
 
 [[rows]]
 name = "ROOT::dec:harness:levels"
@@ -418,8 +418,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:harness:levels"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:labels:policy"
@@ -430,8 +430,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:labels:policy"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:lint:policy"
@@ -442,8 +442,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:lint:policy"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:observe:foundation"
@@ -454,8 +454,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:observe:foundation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Observation step 4 and claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:observe:secrets"
@@ -466,8 +466,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:observe:secrets"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Observation step 4 and claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:observe:sinks"
@@ -478,8 +478,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:observe:sinks"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Observation step 4 and claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:output:policy"
@@ -490,8 +490,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:output:policy"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:render:policy"
@@ -502,8 +502,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:render:policy"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:storage:postgresql"
@@ -526,8 +526,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:testing:evidence"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:toolchain:compiler"
@@ -538,8 +538,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:toolchain:compiler"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:toolchain:minimum"
@@ -550,8 +550,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:toolchain:minimum"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:toolchain:release"
@@ -562,8 +562,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:toolchain:release"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::dec:xchg:cddl-coverage"
@@ -572,10 +572,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:cddl-coverage"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:crate-layout"
@@ -584,10 +584,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:crate-layout"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:evaluable-subset"
@@ -596,10 +596,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:evaluable-subset"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:float-bits"
@@ -608,10 +608,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:float-bits"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:nan-policy"
@@ -620,10 +620,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:nan-policy"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:nesting-policy"
@@ -632,10 +632,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:nesting-policy"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:prefix-public"
@@ -644,10 +644,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:prefix-public"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:public-printer"
@@ -656,10 +656,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:public-printer"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:refused-dependencies"
@@ -668,10 +668,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:refused-dependencies"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:regexp-engine"
@@ -680,10 +680,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:regexp-engine"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:regexp-seam"
@@ -692,10 +692,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:regexp-seam"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:registry-loading"
@@ -704,10 +704,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:registry-loading"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:restraint-enforcement"
@@ -716,10 +716,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:restraint-enforcement"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:slice-sequencing"
@@ -728,10 +728,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:slice-sequencing"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:theory-sharing"
@@ -740,10 +740,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:theory-sharing"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:type-identity"
@@ -752,10 +752,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:type-identity"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:utf8-policy"
@@ -764,10 +764,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:utf8-policy"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::dec:xchg:value-exhaustive"
@@ -776,10 +776,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:value-exhaustive"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::gate:api:implementation"
@@ -800,10 +800,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Release implementer and reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:compatibility:release"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Run the current-contract and public-history reconstruction checks at release; before 1.0 also execute running-system upgrades and publish the support policy."
+closing_step = "Release qualification; stable upgrade qualification before 1.0"
 
 [[rows]]
 name = "ROOT::gate:decomposition:correspondence"
@@ -964,12 +964,12 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:design:claim-foundation"
 path = "docs/design/implementation.md"
-status = "supported"
-claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:python-exhibits-resolve-to-source", "ROOT::claim:testing:python-edges-require-known-claims"]
+status = "scoped-supported"
+claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:python-exhibits-resolve-to-source", "ROOT::claim:testing:python-edges-require-known-claims", "ROOT::claim:testing:evidence-paragraphs-have-exact-edges", "ROOT::claim:testing:every-rewritten-gloss-has-review"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned. The decision-level evidence rows dec:harness:levels, dec:devperf:profiles, dec:devperf:feedback and dec:testing:evidence remain separately scoped; this support does not imply their unrestricted closure."
 closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
 closing_step = "Observation step 4 and service provisioning"
 premises = "Current Rust and Python source carriers, the declared gate configuration and controlled graph fixtures; the reviewed glosses and area stakes are item-specific review evidence, not semantic facts proved by the graph evaluator."
@@ -1038,12 +1038,12 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:design:harness-foundation"
 path = "docs/design/implementation.md"
-status = "supported"
+status = "scoped-supported"
 claims = ["TESTKIT::claim:testkit:duplicate-roster-prevents-effects", "TESTKIT::claim:testkit:generator-edition-vector", "TESTKIT::claim:testkit:seed-and-fault-replay", "TESTKIT::claim:testkit:all-predicates-retain-identity", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:missing-level-refused", "ROOT::claim:harness:unregistered-implementation-refused", "ROOT::claim:harness:dropped-case-refused", "ROOT::claim:harness:ignored-case-refused", "ROOT::claim:harness:mock-is-not-real", "ROOT::claim:harness:stale-source-refused", "ROOT::claim:harness:service-hold-visible", "ROOT::claim:harness:doctest-inventory-complete", "ROOT::claim:harness:doctest-identity-survives-line-shifts", "ROOT::claim:harness:benchmark-terminal-preflight", "ROOT::claim:harness:benchmark-correctness-fails", "ROOT::claim:harness:benchmark-regression-is-nonverdict", "ROOT::claim:harness:benchmark-stream-ownership", "ROOT::claim:harness:property-seed-required", "ROOT::claim:harness:development-only-support", "ROOT::claim:harness:undeclared-property-refused", "ROOT::claim:harness:source-seed-exploration", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:external-test-modules-keep-lints", "ROOT::claim:discipline:test-implementations-keep-lints"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned. The decision-level evidence rows dec:harness:levels, dec:devperf:profiles, dec:devperf:feedback and dec:testing:evidence remain separately scoped; this support does not imply their unrestricted closure."
 closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
 closing_step = "Observation step 4 and service provisioning"
 premises = "The declared fast-tier suites and implementations, fixture registry refusals, recorded property seeds, benchmark correctness and controlled timing comparisons, development-only dependency guard and testkit fixtures; no real service, domain or client implementation is inferred."
@@ -1076,12 +1076,12 @@ closing_step = "Observation step 4b; service evidence after provisioning"
 [[rows]]
 name = "ROOT::gate:design:performance-foundation"
 path = "docs/design/implementation.md"
-status = "supported"
+status = "scoped-supported"
 claims = ["ROOT::claim:devperf:correspondence-predicate-preserved", "ROOT::claim:devperf:noisy-clock-is-nonverdict", "ROOT::claim:devperf:cold-cache-is-nonverdict", "ROOT::claim:devperf:overlap-is-not-summed", "ROOT::claim:devperf:admission-is-nonverdict", "ROOT::claim:devperf:category-controls-classification", "ROOT::claim:devperf:exact-runner-version", "ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:findings-preserve-outcome-order", "ROOT::claim:devperf:missing-measurement-is-explicit", "ROOT::claim:devperf:structural-errors-distinct", "ROOT::claim:devperf:utc-is-explicit", "ROOT::claim:devperf:runner-policy-is-nonverdict", "ROOT::claim:devperf:result-accounting-is-explicit", "ROOT::claim:devperf:raw-duration-validation", "ROOT::claim:devperf:gate-profile-guards", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:benchmark-regression-is-nonverdict"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned. The decision-level evidence rows dec:harness:levels, dec:devperf:profiles, dec:devperf:feedback and dec:testing:evidence remain separately scoped; this support does not imply their unrestricted closure."
 closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
 closing_step = "Observation step 4 and service provisioning"
 premises = "The current gate profile and reviewed runner, structured current-source results and injected clock, cache, span, admission and duration fixtures; these establish reporter contracts and nonverdict behavior, not a performance baseline or controlled worker execution order."
@@ -1102,12 +1102,12 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:devperf:foundation"
 path = "adr/021-development-performance.md"
-status = "supported"
+status = "scoped-supported"
 claims = ["ROOT::claim:devperf:correspondence-predicate-preserved", "ROOT::claim:devperf:noisy-clock-is-nonverdict", "ROOT::claim:devperf:cold-cache-is-nonverdict", "ROOT::claim:devperf:overlap-is-not-summed", "ROOT::claim:devperf:admission-is-nonverdict", "ROOT::claim:devperf:category-controls-classification", "ROOT::claim:devperf:exact-runner-version", "ROOT::claim:devperf:timing-preserves-predicates", "ROOT::claim:devperf:findings-preserve-outcome-order", "ROOT::claim:devperf:missing-measurement-is-explicit", "ROOT::claim:devperf:structural-errors-distinct", "ROOT::claim:devperf:utc-is-explicit", "ROOT::claim:devperf:runner-policy-is-nonverdict", "ROOT::claim:devperf:result-accounting-is-explicit", "ROOT::claim:devperf:raw-duration-validation", "ROOT::claim:devperf:gate-profile-guards", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:benchmark-regression-is-nonverdict"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
-missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned. The decision-level evidence rows dec:harness:levels, dec:devperf:profiles, dec:devperf:feedback and dec:testing:evidence remain separately scoped; this support does not imply their unrestricted closure. Profile choices, runner and licence review, linker/cache disposition and withdrawal of the initial expensive candidate are recorded in amend:toolchain:measured-gate-profile, amend:devperf:measured-choices, amend:devperf:measured-runner, amend:devperf:measured-license, amend:devperf:measured-linker, amend:devperf:measured-cache and reg:devperf:expensive; no new benchmark baseline is claimed."
 closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
 closing_step = "Observation step 4 and service provisioning"
 premises = "The current gate profile and reviewed runner, structured current-source results and injected clock, cache, span, admission and duration fixtures; these establish reporter contracts and nonverdict behavior, not a performance baseline or controlled worker execution order."
@@ -1122,18 +1122,18 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:foundation:verification"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::gate:harness:foundation"
 path = "adr/020-testing-harness.md"
-status = "supported"
+status = "scoped-supported"
 claims = ["TESTKIT::claim:testkit:duplicate-roster-prevents-effects", "TESTKIT::claim:testkit:generator-edition-vector", "TESTKIT::claim:testkit:seed-and-fault-replay", "TESTKIT::claim:testkit:all-predicates-retain-identity", "ROOT::claim:harness:nextest-suite-arrival-envelope", "ROOT::claim:harness:missing-level-refused", "ROOT::claim:harness:unregistered-implementation-refused", "ROOT::claim:harness:dropped-case-refused", "ROOT::claim:harness:ignored-case-refused", "ROOT::claim:harness:mock-is-not-real", "ROOT::claim:harness:stale-source-refused", "ROOT::claim:harness:service-hold-visible", "ROOT::claim:harness:doctest-inventory-complete", "ROOT::claim:harness:doctest-identity-survives-line-shifts", "ROOT::claim:harness:benchmark-terminal-preflight", "ROOT::claim:harness:benchmark-correctness-fails", "ROOT::claim:harness:benchmark-regression-is-nonverdict", "ROOT::claim:harness:benchmark-stream-ownership", "ROOT::claim:harness:property-seed-required", "ROOT::claim:harness:development-only-support", "ROOT::claim:harness:undeclared-property-refused", "ROOT::claim:harness:source-seed-exploration", "ROOT::claim:discipline:test-lints-cannot-be-suppressed", "ROOT::claim:discipline:external-test-modules-keep-lints", "ROOT::claim:discipline:test-implementations-keep-lints"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
-missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned. The decision-level evidence rows dec:harness:levels, dec:devperf:profiles, dec:devperf:feedback and dec:testing:evidence remain separately scoped; this support does not imply their unrestricted closure."
 closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
 closing_step = "Observation step 4 and service provisioning"
 premises = "The declared fast-tier suites and implementations, fixture registry refusals, recorded property seeds, benchmark correctness and controlled timing comparisons, development-only dependency guard and testkit fixtures; no real service, domain or client implementation is inferred."
@@ -1146,10 +1146,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Identity-class implementer and adjudication reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:identity:implementation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Publish the exact recipe, consumer decision, stale conditions and no-identity outcomes with the admitted class and its witnesses."
+closing_step = "First identity-class admission slice"
 
 [[rows]]
 name = "ROOT::gate:kinds:adoption"
@@ -1160,8 +1160,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:kinds:adoption"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::gate:labels:implementation"
@@ -1172,8 +1172,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:labels:implementation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::gate:labels:verification"
@@ -1184,8 +1184,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:labels:verification"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::gate:lint:verification"
@@ -1196,8 +1196,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:lint:verification"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::gate:observe:foundation"
@@ -1220,8 +1220,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:output:verification"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::gate:render:verification"
@@ -1232,8 +1232,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:render:verification"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::gate:storage:evidence"
@@ -1250,12 +1250,12 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:testing:foundation"
 path = "adr/017-claim-based-testing.md"
-status = "supported"
-claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:python-exhibits-resolve-to-source", "ROOT::claim:testing:python-edges-require-known-claims"]
+status = "scoped-supported"
+claims = ["ROOT::claim:testing:sibling-failure-dominates", "ROOT::claim:testing:execution-identity-required", "ROOT::claim:testing:area-stakes-required", "ROOT::claim:testing:source-obligations-cannot-disappear", "ROOT::claim:testing:planned-names-are-not-evidence", "ROOT::claim:testing:every-source-site-is-declared", "ROOT::claim:testing:complete-executions-and-unique-mints", "ROOT::claim:testing:cited-evidence-or-owned-holds", "ROOT::claim:testing:requirement-edges-are-complete", "ROOT::claim:testing:identifier-respellings-are-reported", "ROOT::claim:testing:orphan-mints-are-refused", "ROOT::claim:testing:respelling-switch-controls-exit", "ROOT::claim:testing:review-is-bound-to-current-site", "ROOT::claim:testing:source-carriers-are-lexically-checked", "ROOT::claim:testing:exhibited-names-stay-out-of-census", "ROOT::claim:testing:python-exhibits-resolve-to-source", "ROOT::claim:testing:python-edges-require-known-claims", "ROOT::claim:testing:evidence-paragraphs-have-exact-edges", "ROOT::claim:testing:every-rewritten-gloss-has-review"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
-missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned."
+missing = "Tracing co-closure in step 4; service-dependent evidence remains held until real services are provisioned. The decision-level evidence rows dec:harness:levels, dec:devperf:profiles, dec:devperf:feedback and dec:testing:evidence remain separately scoped; this support does not imply their unrestricted closure."
 closing_condition = "Retain passing scoped evidence, add tracing and execute required real-service cases before full gate closure."
 closing_step = "Observation step 4 and service provisioning"
 premises = "Current Rust and Python source carriers, the declared gate configuration and controlled graph fixtures; the reviewed glosses and area stakes are item-specific review evidence, not semantic facts proved by the graph evaluator."
@@ -1270,8 +1270,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:toolchain:verification"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::gate:vision:contract"
@@ -1316,10 +1316,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:xchg:concept-review"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::gate:xchg:implementation"
@@ -1328,10 +1328,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for gate:xchg:implementation"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::req:design:limits"
@@ -1352,10 +1352,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Identity-class implementer and adjudication reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for req:identity:admission-record"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Publish the exact recipe, consumer decision, stale conditions and no-identity outcomes with the admitted class and its witnesses."
+closing_step = "First identity-class admission slice"
 
 [[rows]]
 name = "ROOT::req:identity:stop-record"
@@ -1364,10 +1364,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Identity-class implementer and adjudication reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for req:identity:stop-record"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Publish the exact recipe, consumer decision, stale conditions and no-identity outcomes with the admitted class and its witnesses."
+closing_step = "First identity-class admission slice"
 
 [[rows]]
 name = "ROOT::req:interchange:fixed-once"
@@ -1376,10 +1376,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for req:interchange:fixed-once"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::req:kinds:attestation-register"
@@ -1390,8 +1390,8 @@ realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Foundation implementer and repository reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for req:kinds:attestation-register"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Review the existing policy checks and scoped source-matched evidence alongside observation coverage; retain any unsupported contract portion explicitly."
+closing_step = "Observation coverage step 4b and repository policy evidence review"
 
 [[rows]]
 name = "ROOT::req:vision:admission"
@@ -1604,10 +1604,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:determinism"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::req:xchg:regexp-guard"
@@ -1616,10 +1616,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:regexp-guard"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::req:xchg:std-only"
@@ -1628,10 +1628,10 @@ status = "held"
 claims = []
 realizers = ["ROOT::dec:xchg:crate-layout"]
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:std-only"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::req:xchg:timing"
@@ -1640,10 +1640,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:timing"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::req:xchg:workspace-discipline"
@@ -1652,10 +1652,10 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:workspace-discipline"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"
 
 [[rows]]
 name = "ROOT::verif:design:api-conformance"
@@ -1928,8 +1928,7 @@ status = "held"
 claims = []
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
-owner = "Foundation implementer and repository reviewer"
+owner = "Interchange implementer and contract reviewer"
 missing = "Reviewed ordinary claim citations and scoped premises for verif:xchg:label-pattern-crosscheck"
-closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Claims audit step 3b"
-
+closing_condition = "Attach the existing canonical, theory, parser, registry and property witnesses to this exact contract with independently reviewed premises; no observation probe substitutes for a data-language law."
+closing_step = "Interchange contract evidence review before the first domain consumer"

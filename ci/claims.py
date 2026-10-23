@@ -133,7 +133,7 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     for row in declared:
         name = row['name']
         if row.get('path') != obligations[name]['path']: raise StructuralError('obligation source differs')
-        if row.get('status') not in {'held','supported'}: raise StructuralError('invalid obligation status')
+        if row.get('status') not in {'held','scoped-supported'}: raise StructuralError('invalid obligation status')
         if row['status']=='held' and any(not isinstance(row.get(k),str) or not row[k].strip() for k in ('hold','owner','missing','closing_condition','closing_step')):
             raise StructuralError('hold lacks owner or closing condition')
         if row['status']=='held' and row['hold'] not in paragraphs: raise StructuralError('unlabelled hold')
@@ -148,22 +148,27 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
             citations = paragraph.get('citations', set())
             evidence = paragraph.get('exhibits', set()) if claim in python_claims else citations
             if claim not in evidence or name not in citations: raise StructuralError('uncited evidence presented as coverage')
-        if row['status']=='supported' and not row['claims']: raise StructuralError('supported obligation lacks claims')
+        if row['status']=='scoped-supported' and not row['claims']: raise StructuralError('supported obligation lacks claims')
         if name.split('::',1)[1].startswith('req:'):
             edges = {key for key,value in obligations.items() if key != name and name in value['citations']}
             if set(row['realizers']) != edges: raise StructuralError('missing requirement edges')
             if not edges and row['status'] != 'held': raise StructuralError('requirement lacks realizing decision or plan')
         for target in row['realizers']:
             if target not in obligations: raise StructuralError('unresolved obligation edge')
-        state = 'failed' if any(states[c]=='failed' for c in row['claims']) else ('held' if row['status']=='held' else 'passed')
+        state = 'failed' if any(states[c]=='failed' for c in row['claims']) else ('held' if row['status']=='held' else 'scoped-passed')
         obligation_results.append({**row,'status':state})
+    for name in {r.get('evidence_paragraph') for r in declared if r.get('evidence_paragraph')}:
+        paragraph = paragraphs[name]
+        displayed = paragraph.get('exhibits',set()) | {n for n in paragraph.get('citations',set()) if '::claim:' in n}
+        edges = {n for row in declared if row.get('evidence_paragraph')==name for n in row['claims']}
+        if displayed != edges: raise StructuralError('evidence paragraph and row edges differ')
     # Dependent requirements inherit failed or held realizers to a fixed point.
     indexed = {r['name']:r for r in obligation_results}
     for _ in obligation_results:
         changed = False
         for row in obligation_results:
             dependencies = [indexed[n]['status'] for n in row['realizers']]
-            state = 'failed' if 'failed' in dependencies or row['status']=='failed' else ('held' if 'held' in dependencies or row['status']=='held' else 'passed')
+            state = 'failed' if 'failed' in dependencies or row['status']=='failed' else ('held' if 'held' in dependencies or row['status']=='held' else 'scoped-passed')
             if state != row['status']: row['status']=state; changed=True
         if not changed: break
     return dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]]) for n,s in sorted(states.items())], obligations=obligation_results)
@@ -181,7 +186,7 @@ def checked_linter(path,sites):
         raise StructuralError('independent source census differs from checked Rust profile')
 
 
-def reviewed_sites(sites, manifest):
+def reviewed_sites(sites, manifest, baseline=None):
     """Check review identities against source; semantic review remains item-specific."""
     if manifest.get('schema') != 1: raise StructuralError('claim review schema differs')
     actual = {s['operation']:s for s in sites}
@@ -195,6 +200,14 @@ def reviewed_sites(sites, manifest):
             raise StructuralError('stale claim gloss review: '+name)
         if not isinstance(row['before'],str) or not isinstance(row['review'],str) or not row['review'].strip():
             raise StructuralError('claim review lacks before gloss or assessment')
+    if baseline is not None:
+        if baseline.get('schema')!=1 or set(baseline.get('glosses',{}))!=set(actual):
+            raise StructuralError('gloss baseline omits or retains a source site')
+        required={n for n,s in actual.items() if baseline['glosses'][n]!=s['gloss']}
+        if required-seen: raise StructuralError('rewritten site lacks review: '+str(sorted(required-seen)))
+        for row in manifest['sites']:
+            if row['before']!=baseline['glosses'][row['operation']]:
+                raise StructuralError('review before gloss differs from baseline')
     return manifest['sites']
 
 
@@ -222,7 +235,7 @@ def main(argv=None):
                 raise StructuralError('public carrier mapping differs')
         result = evaluate(sites, expected, areas, obligations, declared, paragraphs,
                           [r for r in records if r.get('scope')=='case'], source)
-        reviews = reviewed_sites(sites, json.loads(Path('ci/claim_review.json').read_text()))
+        reviews = reviewed_sites(sites, json.loads(Path('ci/claim_review.json').read_text()), json.loads(Path('ci/claim_gloss_baseline.json').read_text()))
         Path('.lane/claim-gloss-review.json').write_text(json.dumps({'schema':1,'source':source,'sites':reviews},indent=2)+'\n')
         offenders = [{k:s[k] for k in ('owner','path','line','function','operation','claim','gloss')} for s in sites if respells(s)]
         Path('.lane/claim-respellings.json').write_text(json.dumps({'schema':1,'source':source,'offenders':offenders},indent=2)+'\n')
@@ -235,7 +248,7 @@ def main(argv=None):
         counts = Counter(r['status'] for r in result['obligations'])
         print(f'CLAIM-REVIEW sites={len(reviews)} artifact=.lane/claim-gloss-review.json')
         print(f'CLAIM-RESPELLINGS count={len(offenders)} artifact=.lane/claim-respellings.json enforcement={args.fail_respellings}')
-        print(f'CLAIM-EVIDENCE sites={len(sites)} claims={len(result["claims"])} obligations={len(obligations)} passed={counts["passed"]} failed={counts["failed"]} held={counts["held"]} artifact=.lane/claim-evidence.json')
+        print(f'CLAIM-EVIDENCE sites={len(sites)} claims={len(result["claims"])} obligations={len(obligations)} scoped_passed={counts["scoped-passed"]} failed={counts["failed"]} held={counts["held"]} artifact=.lane/claim-evidence.json')
         return int(any(r['status']=='failed' for r in result['claims']) or counts['failed']>0 or (args.fail_respellings and bool(offenders)))
     except (ValueError, KeyError, TypeError, OSError) as error:
         print('CLAIM-STRUCTURAL-ERROR '+str(error), file=sys.stderr)

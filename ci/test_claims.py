@@ -28,7 +28,7 @@ def fixture():
     return dict(sites=sites, expected_sites={'first','sibling'},
                 areas=[dict(owner='ROOT', area='testing', stake='Losing cases hides failures.', register=area, contract=area)],
                 obligations={obligation:dict(path='fixture.md',citations=set())},
-                declared=[dict(name=obligation,path='fixture.md',status='supported',claims=[claim],realizers=[],evidence_paragraph=evidence,premises='Both declared fixture executions in the fixed configuration.')],
+                declared=[dict(name=obligation,path='fixture.md',status='scoped-supported',claims=[claim],realizers=[],evidence_paragraph=evidence,premises='Both declared fixture executions in the fixed configuration.')],
                 paragraphs=paragraphs,
                 results=[dict(operation=n,source='current',configuration='fixture',outcome='passed') for n in ('first','sibling')],
                 source='current',configuration='fixture')
@@ -41,7 +41,7 @@ class Evidence(unittest.TestCase):
         ´test:testing:test-shared-failure´
         """
         data=fixture()
-        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'passed')
+        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'scoped-passed')
         data['results'][1]['outcome']='failed'
         result=evaluate(**data)
         self.assertEqual(result['claims'][0]['status'],'failed')
@@ -174,6 +174,7 @@ class Evidence(unittest.TestCase):
             Path('.lane/performance-events.jsonl').write_text('\n'.join(json.dumps(r) for r in records)+'\n')
             Path('.lane/harness-benchmarks.jsonl').write_text('')
             Path('ci/claim_review.json').write_text('{"schema":1,"sites":[]}')
+            Path('ci/claim_gloss_baseline.json').write_text(json.dumps({'schema':1,'glosses':{s['operation']:site_claim(s)['gloss'] for s in sites}}))
             Path('ci/observe-core.json').write_text('{"schema":1,"operations":[]}')
             for name,value in (('load_registry',registry),('census',sites),
                                ('claim_mints',{'ROOT::claim:testing:fixture':1}),('checked_linter',None),
@@ -212,7 +213,7 @@ class Evidence(unittest.TestCase):
                 '**Model (Plan)** · `model:testing:future` Planned ``claim:testing:future``.\n')
             paragraphs,_=prose(root)
         data['paragraphs'].update(paragraphs)
-        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'passed')
+        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'scoped-passed')
         evidence=data['paragraphs']['ROOT::amend:testing:fixture-evidence']
         evidence['exhibits'].add('ROOT::claim:testing:unknown')
         with self.assertRaisesRegex(StructuralError,'exhibit does not resolve'): evaluate(**data)
@@ -220,7 +221,7 @@ class Evidence(unittest.TestCase):
         for site in data['sites']: site['language']='rust'
         with self.assertRaisesRegex(StructuralError,'exhibit does not resolve'): evaluate(**data)
         evidence['exhibits']=set(); evidence['citations'].add(claim)
-        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'passed')
+        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'scoped-passed')
         for site in data['sites']: site['language']='python'
         with self.assertRaisesRegex(StructuralError,'Python claim requires exhibition'): evaluate(**data)
 
@@ -233,7 +234,7 @@ class Evidence(unittest.TestCase):
         for site in data['sites']: site['language']='python'
         evidence=data['paragraphs']['ROOT::amend:testing:fixture-evidence']
         evidence['citations'].remove(claim); evidence['exhibits']={claim}
-        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'passed')
+        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'scoped-passed')
         data['declared'][0]['claims'].append('ROOT::claim:testing:unknown')
         with self.assertRaisesRegex(StructuralError,'unresolved claim presented as evidence'): evaluate(**data)
         data['declared'][0]['claims']=[claim]; evidence['exhibits']=set()
@@ -272,6 +273,37 @@ class Evidence(unittest.TestCase):
             paragraphs,obligations=prose(root)
             self.assertEqual(set(paragraphs),{'ROOT::model:testing:future'})
             self.assertEqual(obligations,{})
+
+    def test_reverse_evidence_edges(self):
+        """A valid extra claim in a designated paragraph must also be an edge of one of its rows; merely passing its test cannot supply that missing relation.
+        ´claim:testing:evidence-paragraphs-have-exact-edges´
+        ´test:testing:test-reverse-evidence-edges´
+        """
+        data=fixture()
+        other='ROOT::claim:testing:extra'
+        data['sites'][1].update(claim=other,mint=True)
+        paragraph=data['paragraphs']['ROOT::amend:testing:fixture-evidence']
+        paragraph['citations'].add(other)
+        with self.assertRaisesRegex(StructuralError,'paragraph and row edges differ'): evaluate(**data)
+        data['declared'][0]['claims'].append(other)
+        self.assertEqual(evaluate(**data)['obligations'][0]['status'],'scoped-passed')
+
+    def test_required_gloss_reviews(self):
+        """Removing a rewritten site's review or changing its retained before wording refuses, while an unchanged site needs no invented rewrite review.
+        ´claim:testing:every-rewritten-gloss-has-review´
+        ´test:testing:test-required-gloss-reviews´
+        """
+        site=dict(operation='first',path='fixture.rs',claim='ROOT::claim:testing:fixture',gloss='The fixture rejects the invalid input.')
+        baseline=dict(schema=1,glosses={'first':'First.'})
+        manifest=dict(schema=1,sites=[])
+        with self.assertRaisesRegex(StructuralError,'rewritten site lacks review'): reviewed_sites([site],manifest,baseline)
+        row=dict(operation='first',path=site['path'],claim=site['claim'],before='First.',after=site['gloss'],review='Read the refusal assertion and its invalid input.')
+        manifest['sites']=[row]
+        self.assertEqual(reviewed_sites([site],manifest,baseline),[row])
+        row['before']='Other.'
+        with self.assertRaisesRegex(StructuralError,'before gloss'): reviewed_sites([site],manifest,baseline)
+        self.assertEqual(reviewed_sites([site],dict(schema=1,sites=[]),dict(schema=1,glosses={'first':site['gloss']})),[])
+        with self.assertRaisesRegex(StructuralError,'baseline omits'): reviewed_sites([site],dict(schema=1,sites=[]),dict(schema=1,glosses={}))
 
 
 if __name__=='__main__':

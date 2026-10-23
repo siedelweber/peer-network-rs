@@ -60,10 +60,6 @@
         {
           "owner": "INTERCHANGE",
           "target": "TESTKIT"
-        },
-        {
-          "owner": "ROOT",
-          "target": "TESTKIT"
         }
       ],
       "name": "declaration",

@@ -446,16 +446,16 @@
       "path": "packages/interchange/tests/properties.rs",
       "claim": "INTERCHANGE::claim:properties:mixed-constructor-depth-is-traversable",
       "before": "The same depth reached through all three recursive constructors, so\nthat no teardown path is left to the compiler's glue.",
-      "after": "Claim: A chain of 200000 array/map/tag units decodes, re-encodes identically and drops successfully, protecting mixed-constructor traversal at the declared depth.",
-      "review": "Separate proposition: assigned its own mint after comparison with the shared claim."
+      "after": "Claim: A chain of 200000 array/map/tag units decodes, re-encodes identically and drops successfully, witnessing traversal and teardown without the call stack through every recursive constructor.",
+      "review": "Read the deep-chain construction, decode, length or byte equality and explicit drop; the fixture witnesses iterative traversal and teardown, not a declared maximum depth."
     },
     {
       "operation": "pn-interchange::properties::a_deep_chain_of_tags_alone_drops",
       "path": "packages/interchange/tests/properties.rs",
       "claim": "INTERCHANGE::claim:properties:tag-only-depth-is-traversable",
       "before": "A chain of tags alone: the recursion the value model carries without\nan array or a map anywhere to intercept it.",
-      "after": "Claim: A chain of 500000 tags decodes, reports the exact encoded length and drops successfully, protecting the tag-only deep traversal path.",
-      "review": "Separate proposition: assigned its own mint after comparison with the shared claim."
+      "after": "Claim: A chain of 500000 tags decodes, reports the exact encoded length and drops successfully, witnessing tag-only traversal and teardown without the call stack.",
+      "review": "Read the deep-chain construction, decode, length or byte equality and explicit drop; the fixture witnesses iterative traversal and teardown, not a declared maximum depth."
     },
     {
       "operation": "pn-interchange::restraint::a_major_type_seven_form_that_pins_its_information_is_a_provision",

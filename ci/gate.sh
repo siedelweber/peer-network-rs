@@ -53,7 +53,7 @@ run_step cargo-config python3 ci/discipline.py cargo-config
 run_step cargo-config-measurement python3 -B ci/measure_rustflags.py
 run_step vendor-set python3 ci/discipline.py vendor-set
 run_step member-lints python3 ci/discipline.py members
-# Preserve the engine source layout; its only local edits are the documented scalar aliases.
+# Preserve the engine source layout; README rule:vendor:regexml records the local aliases and XSD repetition correction.
 run_step fmt python3 ci/discipline.py fmt
 run_step clippy python3 ci/discipline.py clippy
 run_step nursery-advisory python3 ci/discipline.py nursery
