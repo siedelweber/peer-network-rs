@@ -3,7 +3,7 @@ use crate::{
     operation::{
         ForceProgressIterator, Operation, OperationControl, RepeatOperation, MATCHES_ZLS_ANYWHERE,
     },
-    re_flags::ReFlags,
+    re_flags::{Language, ReFlags},
     re_matcher::ReMatcher,
 };
 
@@ -15,6 +15,7 @@ pub(crate) struct Repeat {
     pub(crate) min: usize,
     pub(crate) max: usize,
     pub(crate) greedy: bool,
+    nullable_xsd: bool,
 }
 
 impl Repeat {
@@ -24,6 +25,7 @@ impl Repeat {
             min,
             max,
             greedy,
+            nullable_xsd: false,
         }
     }
 }
@@ -49,6 +51,8 @@ impl OperationControl for Repeat {
 
     fn optimize(self, flags: &ReFlags) -> Operation {
         let operation = self.operation.optimize(flags);
+        let nullable_xsd = flags.language() == Language::XSD
+            && operation.matches_empty_string() == MATCHES_ZLS_ANYWHERE;
         let min = if self.min == 0 && operation.matches_empty_string() == MATCHES_ZLS_ANYWHERE {
             // turns (a?)* into (a?)+
             1
@@ -60,6 +64,7 @@ impl OperationControl for Repeat {
             min,
             max: self.max,
             greedy: self.greedy,
+            nullable_xsd,
         })
     }
 
@@ -81,6 +86,9 @@ impl OperationControl for Repeat {
         matcher: &'a ReMatcher,
         position: usize,
     ) -> Box<dyn Iterator<Item = usize> + 'a> {
+        if self.nullable_xsd && matcher.anchored_match() {
+            return self.nullable_matches(matcher, position);
+        }
         let mut iterators: Vec<Box<dyn Iterator<Item = usize>>> = Vec::new();
         let mut positions = Vec::new();
         let bound = self.max.min(matcher.search.len() - position + 1);
@@ -139,6 +147,46 @@ impl OperationControl for Repeat {
 
     fn children(&self) -> Vec<Operation> {
         vec![self.operation.as_ref().clone()]
+    }
+}
+
+impl Repeat {
+    // Local fork correction alongside the anchored matcher and operation budget
+    // (Paligo/regexml#15): nullable repetition for anchored XSD membership.
+    // This correction has not been submitted upstream. Copyright and MPL-2.0
+    // terms remain in COPYRIGHT and LICENSE-MPL2 without alteration.
+    //
+    // In XSD there are no backreferences or position-dependent empty matches.
+    // If epsilon is in L, L{min,max} equals (L minus epsilon){0,max}:
+    // empty iterations can pad any shorter derivation to the minimum.
+    // Breadth-first discovery records the fewest consuming iterations to each
+    // position. Revisiting it cannot permit a new suffix within max, so each
+    // position is expanded once, without enumerating duplicate empty paths.
+    // This also avoids the old subject-length cap on mandatory empty iterations
+    // and ForceProgressIterator's premature end after duplicate endpoints.
+    // Only boolean anchored matching uses this path: XPath and the unanchored
+    // capture-producing APIs retain their existing traversal and capture order.
+    fn nullable_matches<'a>(
+        &'a self,
+        matcher: &'a ReMatcher,
+        position: usize,
+    ) -> Box<dyn Iterator<Item = usize> + 'a> {
+        let mut reached = std::collections::BTreeSet::from([position]);
+        let mut pending = std::collections::VecDeque::from([(position, 0)]);
+        while let Some((start, count)) = pending.pop_front() {
+            if reached.len() == matcher.search.len() - position + 1 {
+                break;
+            }
+            if count == self.max {
+                continue;
+            }
+            for end in self.operation.matches_iter(matcher, start) {
+                if end > start && reached.insert(end) {
+                    pending.push_back((end, count + 1));
+                }
+            }
+        }
+        Box::new(reached.into_iter().rev())
     }
 }
 
@@ -293,6 +341,28 @@ impl Iterator for ReluctantRepeatIterator<'_> {
 #[cfg(test)]
 mod tests {
     use crate::Regex;
+
+    #[test]
+    fn test_nullable_counted_xsd() {
+        for (pattern, subject, expected) in [
+            ("(a?){0}a{0}", "a", false),
+            ("(a?){2}", "", true),
+            ("(a?){2}", "aa", true),
+            ("(a?){2}", "aaa", false),
+            ("(a?){20}a{20}", "aaaaaaaaaaaaaaaaaaaa", true),
+            ("(a*){8}", "", true),
+            ("(|a){8}", "aaa", true),
+            ("((a?){2}){3}", "aaaaaa", true),
+            ("((a?){2}){3}", "aaaaaaa", false),
+            ("(a?){3,5}", "a", true),
+            ("(a?){3,5}", "aaaaaa", false),
+            ("(a?){3,}", "", true),
+        ] {
+            let regex = Regex::xsd(pattern, "").unwrap();
+            assert_eq!(regex.is_full_match_bounded(subject, 100_000), Ok(expected), "{pattern} / {subject:?}");
+            assert_eq!(regex.is_full_match(subject), expected, "{pattern} / {subject:?}");
+        }
+    }
 
     #[test]
     fn test_repeat_simple() {

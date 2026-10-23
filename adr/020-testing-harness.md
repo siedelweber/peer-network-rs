@@ -44,7 +44,7 @@
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
 | execwrap | active | unit | execwrap-rust | fast | 25 |
 | execwrap::integration | active | integration | execwrap-rust | fast | 18 |
-| pn-interchange | active | unit | pn-interchange-rust | fast | 223 |
+| pn-interchange | active | unit | pn-interchange-rust | fast | 225 |
 | pn-interchange::integration | active | integration | pn-interchange-rust | fast | 14 |
 | pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |
 | pn-interchange::deterministic_encoding | active | integration | pn-interchange-rust | fast | 13 |
@@ -59,7 +59,7 @@
 | pn-interchange::theories | active | integration | pn-interchange-rust | fast | 21 |
 | pn-interchange::vectors | active | integration | pn-interchange-rust | fast | 3 |
 | pn-interchange::versions | active | integration | pn-interchange-rust | fast | 6 |
-| regexml | active | unit | regexml-rust | fast | 16 |
+| regexml | active | unit | regexml-rust | fast | 17 |
 | regexml::test_backtrack | active | integration | regexml-rust | fast | 16 |
 | regexml::test_problems | active | integration | regexml-rust | fast | 6 |
 | regexml::test_qt_analyze_string | active | integration | regexml-rust | fast | 25 |

@@ -53,8 +53,8 @@
 //! discipline. The anchored discipline this seam requires is
 //! `Regex::is_full_match_bounded`, exposed by the pinned fork this crate
 //! depends on (the anchored exposure is filed upstream as
-//! Paligo/regexml#15; when the fork's surface merges and releases, the
-//! dependency repoints at crates.io and the fork retires).
+//! Paligo/regexml#15; retirement also requires the local nullable-counted
+//! repetition correction (´[ROOT-amend:xchg:nullable-counted-repetition]´)).
 //! [`XsdPattern::is_match`] goes through it and through nothing else, so a
 //! pattern matches exactly when it accounts for the whole subject, within
 //! [`OPS_BUDGET`] operations.
@@ -90,6 +90,10 @@ use std::sync::Arc;
 use regexml::Regex;
 
 use crate::error::RegexpError;
+
+#[cfg(test)]
+#[path = "regexp_oracle.rs"]
+mod oracle;
 
 /// The operation budget of one [`XsdPattern::is_match`] call.
 ///
@@ -449,7 +453,7 @@ mod tests {
     /// A refusal must never be disguised as "no match", since callers need
     /// to distinguish an exhausted search from a completed predicate.
     ///
-    /// Claim: Exponential subjects refuse at the fixed production and intermediate operation limits, while a benign match completes at the intermediate limit.
+    /// Claim: Nested a-plus, nested x-plus, overlapping a-or-b-or-ab, and nested character-class plus refuse at both operation limits; nested a-star and duplicate alternatives complete false, and nullable counted optionals complete true, within 1000 operations, matching the independent oracle.
     /// ´claim:regexp:the-budget-bounds-every-walk´
     /// ´test:unit:pathological-patterns´
     #[test]
@@ -476,8 +480,17 @@ mod tests {
             assert!(compiled.regex.is_full_match_bounded(subject, 1).is_err());
             let intermediate = compiled.regex.is_full_match_bounded(subject, intermediate_limit);
             let production = compiled.is_match(subject);
-            assert!(matches!(intermediate, Ok(false) | Err(regexml::Error::BudgetExceeded)));
-            assert!(matches!(production, Ok(false) | Err(RegexpError::BudgetExhausted { .. })));
+            let expected = super::oracle::accepts(pattern, subject);
+            assert!(
+                matches!(intermediate, Ok(answer) if answer == expected)
+                    || matches!(intermediate, Err(regexml::Error::BudgetExceeded)),
+                "{pattern}: {intermediate:?}"
+            );
+            assert!(
+                matches!(production, Ok(answer) if answer == expected)
+                    || matches!(production, Err(RegexpError::BudgetExhausted { .. })),
+                "{pattern}: {production:?}"
+            );
             refusals.push((intermediate.is_err(), production.is_err()));
         }
         assert_eq!(
@@ -492,6 +505,100 @@ mod tests {
                 (true, true)
             ]
         );
+    }
+
+    /// Claim: The independent automaton recognizes the hand-derived languages of the seven guard subjects and nullable counted families, including empty and nested alternatives.
+    /// ´claim:regexp:the-oracle-agrees-with-language-facts´
+    /// ´test:unit:oracle-language-facts´
+    #[test]
+    fn oracle_language_facts() {
+        let accepts = super::oracle::accepts;
+        for (pattern, subject, expected) in [
+            ("(a+)+b", "a".repeat(30), false),
+            ("(a*)*b", "a".repeat(30), false),
+            ("(a|a)*b", "a".repeat(30), false),
+            ("(x+x+)+y", "x".repeat(30), false),
+            ("(a|b|ab)*c", "ab".repeat(20), false),
+            ("(a?){20}a{20}", "a".repeat(20), true),
+            ("([a-z]+)+$", "a".repeat(40), false),
+        ] {
+            assert_eq!(accepts(pattern, &subject), expected, "{pattern}");
+        }
+        for n in [0, 1, 2, 3, 5, 8, 20] {
+            for length in 0..=2 * n + 2 {
+                let subject = "a".repeat(length);
+                for (pattern, expected) in [
+                    (format!("(a?){{{n}}}a{{{n}}}"), (n..=2 * n).contains(&length)),
+                    (format!("(a*){{{n}}}"), n > 0 || length == 0),
+                    (format!("(|a){{{n}}}"), length <= n),
+                    (format!("((a?){{2}}){{{n}}}"), length <= 2 * n),
+                ] {
+                    assert_eq!(accepts(&pattern, &subject), expected, "{pattern} / {length}");
+                    assert!(!accepts(&pattern, &format!("{subject}b")), "{pattern}");
+                }
+            }
+        }
+        for min in 0..=4 {
+            for max in min..=6 {
+                for length in 0..=8 {
+                    assert_eq!(accepts(&format!("(a?){{{min},{max}}}"), &"a".repeat(length)), length <= max);
+                }
+            }
+        }
+        for (pattern, subject, expected) in [
+            ("(a?){2,}", "", true),
+            ("((|a)b?){2,3}", "ababab", true),
+            ("((|a)b?){2,3}", "aaaa", false),
+            ("((a|b)?){3}", "bab", true),
+            ("((a|b)?){3}", "baba", false),
+            ("([a-z]+)+$", "abc$", true),
+        ] {
+            assert_eq!(accepts(pattern, subject), expected, "{pattern}");
+        }
+    }
+
+    /// Claim: Nullable counted repetitions agree with an independent automaton for bounded exhaustive subjects, including mandatory empty iterations, nested groups and range bounds.
+    /// ´claim:regexp:nullable-counts-preserve-membership´
+    /// ´test:unit:nullable-counted-membership´
+    #[test]
+    fn nullable_counted_membership() {
+        let mut patterns = Vec::new();
+        for n in [0, 1, 2, 3, 5, 8, 20] {
+            patterns.extend([
+                format!("(a?){{{n}}}a{{{n}}}"),
+                format!("(a*){{{n}}}"),
+                format!("(|a){{{n}}}"),
+                format!("((a?){{2}}){{{n}}}"),
+                format!("(a?){{{n},}}"),
+            ]);
+        }
+        for min in 0..=4 {
+            for max in min..=6 {
+                patterns.push(format!("(a?){{{min},{max}}}"));
+            }
+        }
+        patterns.extend(["((|a)b?){2,3}".into(), "((a|b)?){3}".into()]);
+        let mut subjects = Vec::new();
+        for length in 0..=5 {
+            for bits in 0..(1 << length) {
+                subjects.push(
+                    (0..length)
+                        .map(|bit| if bits & (1 << bit) == 0 { 'a' } else { 'b' })
+                        .collect::<String>(),
+                );
+            }
+        }
+        subjects.extend((6..=42).map(|length| "a".repeat(length)));
+        for pattern in patterns {
+            let compiled = compile(&pattern);
+            for subject in &subjects {
+                assert_eq!(
+                    compiled.is_match(subject).expect("bounded fixture completes"),
+                    super::oracle::accepts(&pattern, subject),
+                    "{pattern} / {subject:?}"
+                );
+            }
+        }
     }
 
     /// Nested quantifiers must compile without losing the required suffix,

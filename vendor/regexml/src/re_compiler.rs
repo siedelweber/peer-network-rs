@@ -751,8 +751,11 @@ impl ReCompiler {
                         // '*' and '+' are equivalent
                         quantifier_type = Some('*');
                     }
-                    Some('{') => {
-                        // bounds are meaningless
+                    Some('{') if self.re_flags.language() != Language::XSD => {
+                        // Retain the upstream XPath traversal. In XSD, nullable
+                        // operands still have a meaningful upper bound: (a?){2}
+                        // cannot match aaa. The anchored matcher handles empty
+                        // iterations without discarding either declared bound.
                         quantifier_type = Some('*')
                     }
                     _ => {}
