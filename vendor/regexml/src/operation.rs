@@ -16,7 +16,7 @@ use crate::op_repeat::Repeat;
 use crate::op_sequence::Sequence;
 use crate::op_unambiguous_repeat::UnambiguousRepeat;
 
-use crate::re_flags::ReFlags;
+use crate::re_flags::{Language, ReFlags};
 use crate::re_matcher::ReMatcher;
 
 pub(crate) const MATCHES_ZLS_AT_START: u32 = 1;
@@ -194,24 +194,30 @@ impl Iterator for BudgetIterator<'_> {
     }
 }
 
-// The ForceProgressIterator is used to protect against non-termination;
-// specifically, iterators that return an infinite number of zero-length
-// matches. After getting a certain number of zero-length matches at the same
-// position, next returns None. (Potentially this gives problems with an
-// expression such as (a?|b?|c?|d) that can legitimately return more than one
-// zero-length match).
+// A repetition can produce duplicate non-empty endpoints from distinct paths;
+// those paths must not terminate XSD membership before another suffix is tried.
+// In XSD, cut off repeated endpoints only at the repetition's starting position
+// (zero-length progress). Nullable XSD operands use their own endpoint search.
+// XPath keeps the upstream duplicate cut-off and its known membership defects.
+// Local correction; existing COPYRIGHT and LICENSE-MPL2 terms are unchanged.
 pub(crate) struct ForceProgressIterator<'a> {
     base: Box<dyn Iterator<Item = usize> + 'a>,
     count_zero_length: usize,
     current_pos: Option<usize>,
+    zero_length_position: Option<usize>,
 }
 
 impl<'a> ForceProgressIterator<'a> {
-    pub(crate) fn new(base: Box<dyn Iterator<Item = usize> + 'a>) -> Self {
+    pub(crate) fn new(
+        base: Box<dyn Iterator<Item = usize> + 'a>,
+        position: usize,
+        language: Language,
+    ) -> Self {
         Self {
             base,
             count_zero_length: 0,
             current_pos: None,
+            zero_length_position: (language == Language::XSD).then_some(position),
         }
     }
 }
@@ -223,7 +229,9 @@ impl Iterator for ForceProgressIterator<'_> {
             return None;
         }
         let p = Some(self.base.next()?);
-        if p == self.current_pos {
+        if p == self.current_pos
+            && (self.zero_length_position.is_none() || p == self.zero_length_position)
+        {
             self.count_zero_length += 1;
         } else {
             self.count_zero_length = 0;

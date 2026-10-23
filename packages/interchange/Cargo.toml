@@ -8,7 +8,8 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-# The workspace vendors the anchored matcher and budget pending upstream release (Paligo/regexml#15).
+# Public anchored-plus-budget fork (Paligo/regexml#15), scalar aliases and local XSD repetition corrections; see README.
+# Retire when upstream releases the anchored matcher, budget and both repetition corrections.
 regexml.workspace = true
 thiserror = { workspace = true }
 

@@ -86,7 +86,7 @@ impl OperationControl for Repeat {
         matcher: &'a ReMatcher,
         position: usize,
     ) -> Box<dyn Iterator<Item = usize> + 'a> {
-        if self.nullable_xsd && matcher.anchored_match() {
+        if self.nullable_xsd {
             return self.nullable_matches(matcher, position);
         }
         let mut iterators: Vec<Box<dyn Iterator<Item = usize>>> = Vec::new();
@@ -121,27 +121,31 @@ impl OperationControl for Repeat {
             }
             // Now return an iterator which returns all the matching positions
             // in order
-            Box::new(ForceProgressIterator::new(Box::new(
-                GreedyRepeatIterator::new(
+            Box::new(ForceProgressIterator::new(
+                Box::new(GreedyRepeatIterator::new(
                     matcher,
                     self.operation.as_ref(),
                     iterators,
                     positions,
                     bound,
                     self.min,
-                ),
-            )))
+                )),
+                position,
+                matcher.program.flags.language(),
+            ))
         } else {
             // reluctant (non-greedy) repeat.
-            Box::new(ForceProgressIterator::new(Box::new(
-                ReluctantRepeatIterator::new(
+            Box::new(ForceProgressIterator::new(
+                Box::new(ReluctantRepeatIterator::new(
                     matcher,
                     self.operation.as_ref(),
                     position,
                     self.min,
                     self.max,
-                ),
-            )))
+                )),
+                position,
+                matcher.program.flags.language(),
+            ))
         }
     }
 
@@ -152,7 +156,7 @@ impl OperationControl for Repeat {
 
 impl Repeat {
     // Local fork correction alongside the anchored matcher and operation budget
-    // (Paligo/regexml#15): nullable repetition for anchored XSD membership.
+    // (Paligo/regexml#15): nullable repetition for anchored and unanchored XSD matching.
     // This correction has not been submitted upstream. Copyright and MPL-2.0
     // terms remain in COPYRIGHT and LICENSE-MPL2 without alteration.
     //
@@ -164,8 +168,10 @@ impl Repeat {
     // position is expanded once, without enumerating duplicate empty paths.
     // This also avoids the old subject-length cap on mandatory empty iterations
     // and ForceProgressIterator's premature end after duplicate endpoints.
-    // Only boolean anchored matching uses this path: XPath and the unanchored
-    // capture-producing APIs retain their existing traversal and capture order.
+    // All XSD entry points use this path, including the empty-string probe.
+    // Endpoint sets are preserved, but capture order inside nullable repetition
+    // need not agree with upstream. XPath retains its original traversal and
+    // its known nullable-count and duplicate-endpoint membership defects.
     fn nullable_matches<'a>(
         &'a self,
         matcher: &'a ReMatcher,
@@ -344,6 +350,44 @@ mod tests {
 
     #[test]
     fn test_nullable_counted_xsd() {
+        let nullable = Regex::xsd("(a?){5}", "").unwrap();
+        let found = nullable.is_match("aa");
+        println!("XSD nullable is_match aa: {found}");
+        let nullable = Regex::xsd("(a?){2}", "").unwrap();
+        let empty = nullable.is_match("");
+        let replacement = nullable.replace_all("bbb", "X");
+        println!("XSD nullable empty: {empty}; replace_all: {replacement:?}");
+        let mut correct = found && empty
+            && matches!(replacement, Err(crate::Error::MatchesEmptyString));
+        for duplicates in [4, 5, 6] {
+            let pattern = format!("({}aa)+ab", "a|".repeat(duplicates));
+            let regex = Regex::xsd(&pattern, "").unwrap();
+            for subject in ["aab", "aaab", "aaaab"] {
+                let full = regex.is_full_match(subject);
+                let bounded = regex.is_full_match_bounded(subject, 100_000);
+                let search = regex.is_match(subject);
+                println!("XSD duplicates={duplicates} subject={subject}: full={full} bounded={bounded:?} search={search}");
+                correct &= full && bounded == Ok(true) && search;
+            }
+        }
+        for (pattern, subject, retained) in [
+            ("^(a?){2}$", "aaa", true),
+            ("^(a?){0}$", "a", true),
+            ("^(a?){20}a{20}$", "aaaaaaaaaaaaaaaaaaaa", false),
+            ("^(a|a|a|a|a|aa)+ab$", "aab", false),
+        ] {
+            let actual = Regex::xpath(pattern, "").unwrap().is_match(subject);
+            println!("XPath unchanged {pattern} / {subject:?}: {actual}");
+            assert_eq!(actual, retained, "XPath traversal remains upstream behavior");
+        }
+        assert!(correct, "XSD repetition witnesses must match their language answers");
+        let suffix = Regex::xsd("(a?){2}b", "").unwrap();
+        assert_eq!(suffix.replace_all("aab", "X"), Ok("X".to_owned()));
+        let duplicate = Regex::xsd("(a|a|a|a|a|aa)+ab", "").unwrap();
+        assert_eq!(
+            duplicate.is_full_match_bounded("aab", 1),
+            Err(crate::Error::BudgetExceeded)
+        );
         for (pattern, subject, expected) in [
             ("(a?){0}a{0}", "a", false),
             ("(a?){2}", "", true),
