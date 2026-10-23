@@ -1112,6 +1112,7 @@ version = "0.1.0"
 dependencies = [
  "cli-common",
  "metrics",
+ "pn-testkit",
  "serde_json",
  "thiserror",
  "tracing",
@@ -1120,6 +1121,18 @@ dependencies = [
 [[package]]
 name = "pn-testkit"
 version = "0.1.0"
+dependencies = [
+ "proptest",
+]
+
+[[package]]
+name = "pn-verification"
+version = "0.1.0"
+dependencies = [
+ "pn-records",
+ "pn-testkit",
+ "serde_json",
+]
 
 [[package]]
 name = "portable-atomic"

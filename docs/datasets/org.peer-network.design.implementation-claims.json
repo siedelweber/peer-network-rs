@@ -73,7 +73,7 @@
       "requirements": [
         "complete-acts"
       ],
-      "status": "minted with two integration witnesses; unit, crate/public-surface, conformance and property evidence held for the harness-evidence slice",
+      "status": "minted with local unit, public-surface and integration witnesses, shared conformance and recorded inner and outer properties; full bite review pending; partition and downstream ledger evidence held",
       "suite": "records"
     },
     {

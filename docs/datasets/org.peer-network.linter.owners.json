@@ -10,6 +10,26 @@
       "imports": [],
       "may_cite": [
         {
+          "owner": "VERIFICATION",
+          "target": "TESTKIT"
+        },
+        {
+          "owner": "VERIFICATION",
+          "target": "ROOT"
+        },
+        {
+          "owner": "VERIFICATION",
+          "target": "RECORDS"
+        },
+        {
+          "owner": "RECORDS",
+          "target": "TESTKIT"
+        },
+        {
+          "owner": "ROOT",
+          "target": "VERIFICATION"
+        },
+        {
           "owner": "RECORDS",
           "target": "ROOT"
         },
@@ -87,9 +107,15 @@
         "EXECWRAP",
         "TESTKIT",
         "RECORDS",
+        "VERIFICATION",
         "VENDOR"
       ],
       "partitions": [
+        {
+          "name": "verification-package",
+          "owner": "VERIFICATION",
+          "pattern": "%s\"packages/verification/\" *VCHAR"
+        },
         {
           "name": "records-package",
           "owner": "RECORDS",

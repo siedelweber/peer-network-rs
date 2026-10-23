@@ -107,6 +107,30 @@ def distribution(summary):
 
 
 class Processes(unittest.TestCase):
+    def test_generated_records_refusals(self):
+        """Claim: Each single corruption of the same seeded records DAG retains its exact typed refusal at default and trace, and both metric distributions contain nineteen refusals and no errors.
+        ´claim:discipline:generated-records-refusals-retain-outcomes´
+        ´test:integration:test-generated-records-refusals´
+        """
+        from properties import seed
+        from harness import source_id
+        recorded_seed=seed(source_id())
+        distributions={};outputs={}
+        for mode in ('default','trace'):
+            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/generated_refusals')],mode,
+                           os.environ|{'PN_OBSERVE_LEVEL':mode,'PN_RECORDS_SEED':recorded_seed})
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+            outputs[mode]=result.stdout
+            rows=[json.loads(line) for line in result.stderr.splitlines()]
+            summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
+            distributions[mode]={k:v for k,v in distribution(summary).items() if k[0].startswith('records__')}
+            stem='records__root__sig__design__records__'
+            self.assertEqual(distributions[mode][stem+'completed_operations','refusal'],19)
+            self.assertNotIn((stem+'completed_operations','error'),distributions[mode])
+            print('RECORDS-GENERATED level='+mode+' seed='+recorded_seed+' corruptions=19 distribution='+json.dumps({str(k):v for k,v in distributions[mode].items()},sort_keys=True))
+        self.assertEqual(distributions['default'],distributions['trace'])
+        self.assertEqual(outputs['default'],outputs['trace'])
+
     def test_interchange_refusal(self):
         """Claim: Canonical value/document decode, content-key and prefix validation, routing and unheld acceptance retain their exact rejection predicates at default and trace, booking fifteen boundary refusals and no errors with identical complete outcome distributions; a truncated prefix still returns its original error.
         ´claim:discipline:interchange-refusals-have-contract-outcomes´

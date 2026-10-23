@@ -187,7 +187,7 @@ def syntax_census():
     for package in metadata['packages']:
         path=Path(package['manifest_path']).relative_to(Path.cwd()).parent
         if path.parts[0]!='packages':continue
-        if path.name=='testkit':continue
+        if path.name in {'testkit','verification'}:continue
         for target in package['targets']:
             if not set(target['kind']) & {'lib','bin'}:continue
             roots.append(dict(package=package['name'],owner=OWNERS[path.name],path=str(Path(target['src_path']).relative_to(Path.cwd()))))
@@ -196,9 +196,10 @@ def syntax_census():
     output=command(['cargo','run','--offline','--locked','--profile','gate','-q','-p','cli-common','--example','observe_census'],input=json.dumps(request))
     result=json.loads(output)
     result['source']=source_id()
-    result['declared_configuration']='five production packages, host target, default and no-default features; development-only pn-testkit is outside this production configuration'
+    result['declared_configuration']='five production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration'
     for package in metadata['packages']:
-        if package['id'] in metadata['workspace_members'] and '/packages/' in package['manifest_path'] and package['features'] and not (package['name']=='cli-common' and package['features']=={'observation-test-hook':[]}):
+        admitted={'cli-common':{'observation-test-hook':[]},'pn-records':{'test-support':[]}}
+        if package['id'] in metadata['workspace_members'] and '/packages/' in package['manifest_path'] and package['features'] and package['features']!=admitted.get(package['name']):
             raise StructuralError('new first-party feature configuration requires census admission')
     return result
 

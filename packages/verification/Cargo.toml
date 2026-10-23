@@ -1,0 +1,16 @@
+[package]
+name = "pn-verification"
+description = "Development-only outer witnesses of the records public contract"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+version.workspace = true
+
+[dev-dependencies]
+pn-records = { path = "../records", features = ["test-support"] }
+pn-testkit.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

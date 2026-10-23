@@ -4,6 +4,11 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
+/// Development-only fixture generator shared with the outer verification tier.
+/// (´def:acts:test-support´)
+#[cfg(any(test, feature = "test-support"))]
+pub mod test_support;
+
 /// Authored identity before finalization or host ordering.
 /// (´def:acts:identity´)
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -1174,6 +1179,20 @@ impl<'a> BoundaryInputs<'a> {
 #[cfg(test)]
 mod tests {
     use super::{ActId, EdgeId, Role};
+
+    /// Claim: A generated paired history and proposal snapshot contains one act entry per identity and two owned legs per paired act, so the internal validated carrier never promotes co-legs to accounting units.
+    /// (´claim:acts:complete-acts-are-counted-once´)
+    /// ´test:unit:whole-act-carrier´
+    #[test]
+    fn whole_act_carrier() {
+        let case = super::test_support::generate(&[u64::MAX; 8]);
+        let history = super::validate_history(&case.history, &case.names).unwrap();
+        let records = super::validate_record(&case.proposals, &history, &[]).unwrap();
+        assert_eq!(records.acts.len(), case.proposals.len());
+        assert!(records.acts.iter().all(|act| act.legs.len() == 2));
+        let boundary = super::assemble_boundary_inputs(&records, case.boundary).unwrap();
+        assert_eq!(boundary.acts.len(), case.proposals.len());
+    }
 
     /// Claim: Validating a batch retains the same immutable history allocations, so repeated consumers do not copy the accepted history's act bodies or reference roster.
     /// ´claim:acts:history-storage-is-shared´

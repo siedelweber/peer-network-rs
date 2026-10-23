@@ -267,3 +267,39 @@ allowances = []
 
 [TESTKIT."profile.claims-conform"]
 allowances = []
+
+[VERIFICATION."labels.citations-import-form"]
+allowances = []
+
+[VERIFICATION."labels.citations-imported-resolve"]
+allowances = []
+
+[VERIFICATION."labels.citations-layer-conform"]
+allowances = []
+
+[VERIFICATION."labels.citations-local-resolve"]
+allowances = []
+
+[VERIFICATION."labels.generated-regions-conform"]
+allowances = []
+
+[VERIFICATION."labels.heads-conform"]
+allowances = []
+
+[VERIFICATION."labels.mints-kind-conform"]
+allowances = []
+
+[VERIFICATION."labels.mints-unique"]
+allowances = []
+
+[VERIFICATION."labels.mints-well-formed"]
+allowances = []
+
+[VERIFICATION."labels.outlines-conform"]
+allowances = []
+
+[VERIFICATION."profile.tests-conform"]
+allowances = []
+
+[VERIFICATION."profile.claims-conform"]
+allowances = []

@@ -2674,6 +2674,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-testkit::tests::replay_and_shrink",
         "pn-testkit::tests::duplicate_roster",
         "pn-testkit::tests::generator_vector"
       ],
@@ -3013,6 +3014,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_observe_runtime.Processes.test_generated_records_refusals",
         "ci::test_observe_runtime.Processes.test_interchange_refusal",
         "ci::test_observe_runtime.Processes.test_four_mode_results",
         "ci::test_observe_runtime.Processes.test_records_entry",
@@ -3077,6 +3079,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::tests::whole_act_carrier",
         "pn-records::tests::history_storage_is_shared",
         "pn-records::tests::identity_components"
       ],
@@ -3091,6 +3094,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::public::whole_act_boundary",
         "pn-records::public::structural_duplicates",
         "pn-records::public::missing_co_legs",
         "pn-records::public::required_references",
@@ -3125,6 +3129,132 @@
       "level": "integration",
       "name": "pn-records::integration",
       "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-records::properties::closure_model",
+        "pn-records::properties::typed_corruptions"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-records::properties",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-records::conformance::shared_cases"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-records::conformance",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::records-dag-1::records-records::duplicate",
+        "contract::records-dag-1::records-records::missing-leg",
+        "contract::records-dag-1::records-records::leg-removal",
+        "contract::records-dag-1::records-records::unresolved-reference",
+        "contract::records-dag-1::records-records::parent-missing",
+        "contract::records-dag-1::records-records::parent-late",
+        "contract::records-dag-1::records-records::parent-duplicate",
+        "contract::records-dag-1::records-records::parent-unsorted",
+        "contract::records-dag-1::records-records::parent-self",
+        "contract::records-dag-1::records-records::parent-bound",
+        "contract::records-dag-1::records-records::dependency-missing",
+        "contract::records-dag-1::records-records::dependency-late",
+        "contract::records-dag-1::records-records::dependency-duplicate",
+        "contract::records-dag-1::records-records::dependency-unsorted",
+        "contract::records-dag-1::records-records::dependency-self",
+        "contract::records-dag-1::records-records::dependency-bound",
+        "contract::records-dag-1::records-records::history-duplicate",
+        "contract::records-dag-1::records-records::edge-only-history",
+        "contract::records-dag-1::records-records::cut-placement",
+        "contract::records-dag-1::records-records::overlapping-closures"
+      ],
+      "claim": "claim:acts:shared-conformance-preserves-whole-acts",
+      "claim_owner": "RECORDS",
+      "contract_edition": "records-dag-1",
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "records-records",
+      "parent_case": "pn-records::conformance::shared_cases",
+      "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-verification::properties::closure_model",
+        "pn-verification::properties::typed_corruptions"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-verification::properties",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-verification::conformance::shared_cases"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-verification::conformance",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::records-dag-1::records-verification::duplicate",
+        "contract::records-dag-1::records-verification::missing-leg",
+        "contract::records-dag-1::records-verification::leg-removal",
+        "contract::records-dag-1::records-verification::unresolved-reference",
+        "contract::records-dag-1::records-verification::parent-missing",
+        "contract::records-dag-1::records-verification::parent-late",
+        "contract::records-dag-1::records-verification::parent-duplicate",
+        "contract::records-dag-1::records-verification::parent-unsorted",
+        "contract::records-dag-1::records-verification::parent-self",
+        "contract::records-dag-1::records-verification::parent-bound",
+        "contract::records-dag-1::records-verification::dependency-missing",
+        "contract::records-dag-1::records-verification::dependency-late",
+        "contract::records-dag-1::records-verification::dependency-duplicate",
+        "contract::records-dag-1::records-verification::dependency-unsorted",
+        "contract::records-dag-1::records-verification::dependency-self",
+        "contract::records-dag-1::records-verification::dependency-bound",
+        "contract::records-dag-1::records-verification::history-duplicate",
+        "contract::records-dag-1::records-verification::edge-only-history",
+        "contract::records-dag-1::records-verification::cut-placement",
+        "contract::records-dag-1::records-verification::overlapping-closures"
+      ],
+      "claim": "claim:verification:shared-conformance-preserves-whole-acts",
+      "claim_owner": "VERIFICATION",
+      "contract_edition": "records-dag-1",
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "records-verification",
+      "parent_case": "pn-verification::conformance::shared_cases",
+      "runner": "contract",
       "status": "active",
       "tier": "fast"
     }

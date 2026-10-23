@@ -6,6 +6,27 @@
 use std::collections::BTreeSet;
 use std::time::{Duration, Instant};
 
+/// Reviewed strategy and value-tree shrinking implementation for consumers.
+/// (´def:testkit:property-config´)
+pub use proptest;
+
+/// Bounded replayable properties with proptest's value-tree shrinking.
+/// The gate supplies source-derived `PROPTEST_RNG_SEED`, cases and algorithm;
+/// local callers inherit the same environment interface. There is no clock timeout.
+/// (´def:testkit:property-config´)
+#[must_use]
+pub fn property_config(corpus: &'static str) -> proptest::test_runner::Config {
+    proptest::test_runner::Config {
+        cases: 256,
+        fork: false,
+        timeout: 0,
+        max_shrink_time: 0,
+        max_shrink_iters: u32::MAX,
+        failure_persistence: Some(Box::new(proptest::test_runner::FileFailurePersistence::Direct(corpus))),
+        ..proptest::test_runner::Config::default()
+    }
+}
+
 /// One declared input; predicates belong to the shared adapter.
 /// (´def:testkit:case´)
 pub struct Case<T> {
@@ -131,6 +152,33 @@ impl FaultPlan {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Claim: Repeating a fixed seed returns the same deliberately failing integer shrunk to seven, proving replay and minimization without a timed oracle.
+    /// ´claim:testkit:recorded-seed-replays-a-shrunk-failure´
+    /// ´test:unit:replay-and-shrink´
+    #[test]
+    fn replay_and_shrink() {
+        use proptest::test_runner::{RngSeed, TestError, TestRunner};
+        let config = proptest::test_runner::Config {
+            rng_seed: RngSeed::Fixed(17),
+            failure_persistence: None,
+            ..property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/controlled.txt"))
+        };
+        let run = || {
+            let visited = std::cell::RefCell::new(Vec::new());
+            let result = TestRunner::new(config.clone()).run(&(7_u64..1000), |value| {
+                visited.borrow_mut().push(value);
+                proptest::prop_assert!(value < 7);
+                Ok(())
+            });
+            assert!(matches!(result, Err(TestError::Fail(_, 7))));
+            visited.into_inner()
+        };
+        let visited = run();
+        assert!(visited[0] > 7);
+        assert!(visited.len() > 1);
+        assert_eq!(visited, run());
+    }
 
     /// Claim: Two cases sharing one identifier return `InvalidRoster` without invoking the adapter, preventing ambiguous result identities and preflight side effects.
     /// ´claim:testkit:duplicate-roster-prevents-effects´

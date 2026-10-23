@@ -191,3 +191,13 @@ establishment = "defined"
 reader = "proptest-seed"
 definition = "The cc record supplies the literal 256-bit random generator state to replay a failing label generator case; the comment records the shrunk counterexample. It asserts no content identity."
 paths = ["packages/interchange/proptest-regressions/cddl/mod.txt"]
+
+[[rows]]
+family = "records-property-seeds"
+group = "property regressions"
+measures = "ChaCha random generator seed, not a content digest or identity"
+producer = "proptest failure persistence"
+establishment = "defined"
+reader = "proptest-seed"
+definition = "The cc record supplies the literal 256-bit random generator state for the shared records DAG strategy; the comment records its shrunk counterexample. Both inner and outer consumers replay this public test input, which asserts no content identity."
+paths = ["packages/records/proptest-regressions/properties.txt", "packages/verification/proptest-regressions/properties.txt"]

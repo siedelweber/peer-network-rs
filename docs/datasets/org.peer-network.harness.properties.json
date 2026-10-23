@@ -258,6 +258,50 @@
       "name": "pn-interchange::cddl::tests::the_pattern_matches_every_label_the_scanner_accepts",
       "regressions": "packages/interchange/proptest-regressions",
       "seed_policy": "source-v1"
+    },
+    {
+      "algorithm": "cc",
+      "case_count_kind": "configured-successful-cases; persisted regressions run additionally",
+      "cases": 256,
+      "dependency": "proptest 1.12.0",
+      "edition": "records-dag-1",
+      "generator": "packages/records/src/test_support.rs",
+      "name": "pn-records::properties::closure_model",
+      "regressions": "packages/records/proptest-regressions",
+      "seed_policy": "source-v1"
+    },
+    {
+      "algorithm": "cc",
+      "case_count_kind": "configured-successful-cases; persisted regressions run additionally",
+      "cases": 256,
+      "dependency": "proptest 1.12.0",
+      "edition": "records-dag-1",
+      "generator": "packages/records/src/test_support.rs",
+      "name": "pn-records::properties::typed_corruptions",
+      "regressions": "packages/records/proptest-regressions",
+      "seed_policy": "source-v1"
+    },
+    {
+      "algorithm": "cc",
+      "case_count_kind": "configured-successful-cases; persisted regressions run additionally",
+      "cases": 256,
+      "dependency": "proptest 1.12.0",
+      "edition": "records-dag-1",
+      "generator": "packages/records/src/test_support.rs",
+      "name": "pn-verification::properties::closure_model",
+      "regressions": "packages/verification/proptest-regressions",
+      "seed_policy": "source-v1"
+    },
+    {
+      "algorithm": "cc",
+      "case_count_kind": "configured-successful-cases; persisted regressions run additionally",
+      "cases": 256,
+      "dependency": "proptest 1.12.0",
+      "edition": "records-dag-1",
+      "generator": "packages/records/src/test_support.rs",
+      "name": "pn-verification::properties::typed_corruptions",
+      "regressions": "packages/verification/proptest-regressions",
+      "seed_policy": "source-v1"
     }
   ]
 }

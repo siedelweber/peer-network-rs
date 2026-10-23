@@ -253,3 +253,47 @@ edition = "existing-generator-and-shrinker-1"
 dependency = "proptest 1.12.0"
 regressions = "packages/interchange/proptest-regressions"
 case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-records::properties::closure_model"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support.rs"
+edition = "records-dag-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/records/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-records::properties::typed_corruptions"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support.rs"
+edition = "records-dag-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/records/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-verification::properties::closure_model"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support.rs"
+edition = "records-dag-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/verification/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-verification::properties::typed_corruptions"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support.rs"
+edition = "records-dag-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/verification/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"

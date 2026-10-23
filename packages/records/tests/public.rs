@@ -1,4 +1,20 @@
 mod common;
+
+/// Claim: Public validation and boundary assembly preserve two distinct paired act identities as two complete acts with four owned legs, preventing public consumers from counting a co-leg as an act.
+/// (´claim:acts:complete-acts-are-counted-once´)
+/// ´test:integration:whole-act-boundary´
+#[test]
+fn whole_act_boundary() {
+    let candidates = [
+        common::act(1, pn_records::Layout::Paired),
+        common::act(2, pn_records::Layout::Paired),
+    ];
+    let records = pn_records::validate_record(&candidates, &common::resolved(), &[]).unwrap();
+    let boundary = pn_records::assemble_boundary_inputs(&records, 8).unwrap();
+    assert_eq!(boundary.acts().len(), 2);
+    assert_eq!(boundary.acts().iter().map(|act| act.legs().len()).sum::<usize>(), 4);
+    assert_ne!(boundary.acts()[0].id(), boundary.acts()[1].id());
+}
 use common::{act, named, resolved};
 use pn_records::{
     Declaration, DeclarationCause, DeclarationId, DependencyProjection, DependencyStatus, InvalidCause, Layout, PublicReference,

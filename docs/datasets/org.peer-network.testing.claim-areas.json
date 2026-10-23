@@ -250,6 +250,13 @@
       "owner": "RECORDS",
       "register": "RECORDS::sec:acts:area-acts",
       "stake": "Collapsing parallel identities, admitting partial co-legs or erasing required protocol references changes the complete act set before any domain accounting."
+    },
+    {
+      "area": "verification",
+      "contract": "VERIFICATION::sec:verification:area-verification",
+      "owner": "VERIFICATION",
+      "register": "VERIFICATION::sec:verification:area-verification",
+      "stake": "If the outer records witnesses fail, a downstream consumer can accept incomplete acts, miscount causal closure membership or mistake an invalid batch for validated history."
     }
   ]
 }
