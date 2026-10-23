@@ -5,6 +5,10 @@ if [ -z "${TMPDIR:-}" ] || [ ! -d "$TMPDIR" ]; then
     echo "GATE-STRUCTURAL-ERROR: TMPDIR must name an existing caller-provided temporary directory" >&2
     exit 2
 fi
+if [ -z "${LINTER_BIN:-}" ] || [ ! -x "$LINTER_BIN" ]; then
+    echo "GATE-STRUCTURAL-ERROR: LINTER_BIN must name an executable caller-provided linter" >&2
+    exit 2
+fi
 failed=0
 statuses=()
 mkdir -p .lane
@@ -66,7 +70,7 @@ run_step determinism-documents cargo run -p documents --locked --profile gate --
 run_step design-correspondence python3 -B ci/design.py
 run_step design-tests python3 -B ci/run_ci.py test_design
 run_step harness-matrix python3 -B ci/harness.py --matrix
-run_step linter "${LINTER_BIN:-/workspace/loops/siedelweber/tools/bin/orchestration-linter}" check --root .
+run_step linter "$LINTER_BIN" check --root .
 run_step token python3 ci/discipline.py token
 run_step hash-citations python3 -B ci/discipline.py hash-citations
 run_step suppressions python3 ci/discipline.py suppressions
