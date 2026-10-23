@@ -204,6 +204,8 @@ pub struct Observation {
     diagnostic_sender: SyncSender<Vec<u8>>,
     queued_bytes: Arc<AtomicU64>,
     lost: Arc<AtomicU64>,
+    delivered: Arc<AtomicU64>,
+    full_trace: bool,
     clock: Arc<dyn Clock>,
     recorder: JsonRecorder,
     next_id: Arc<AtomicU64>,
@@ -226,6 +228,8 @@ impl Observation {
         let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Vec<u8>>(8);
         let lost = Arc::new(AtomicU64::new(0));
         let worker_lost = lost.clone();
+        let delivered = Arc::new(AtomicU64::new(0));
+        let worker_delivered = delivered.clone();
         let queued_bytes = Arc::new(AtomicU64::new(0));
         let worker_queued = queued_bytes.clone();
         let artifact_root = content::root();
@@ -249,6 +253,8 @@ impl Observation {
                 })();
                 if result.is_err() {
                     worker_lost.fetch_add(1, Ordering::Relaxed);
+                } else {
+                    worker_delivered.fetch_add(1, Ordering::Relaxed);
                 }
             };
             while let Ok(first) = receiver.recv() {
@@ -286,6 +292,8 @@ impl Observation {
             diagnostic_sender,
             queued_bytes,
             lost,
+            delivered,
+            full_trace: false,
             clock,
             recorder: bridge
                 .as_ref()
@@ -304,6 +312,7 @@ impl Observation {
     }
 
     fn emit(&self, mut record: Value) {
+        record["process_id"] = json!(std::process::id());
         record["timestamp"] = json!(self.clock.utc());
         record["timestamp_accuracy"] = json!(if record["timestamp"].is_null() {
             "unavailable"
@@ -524,7 +533,15 @@ pub struct Operation {
     finished: bool,
 }
 impl Operation {
-    fn record(&self, event: &str, detail: Value) {
+    fn record(&self, event: &str, mut detail: Value) {
+        if !self.observation.full_trace {
+            if !matches!(self.kind, OperationKind::Command) || event != "completion" {
+                return;
+            }
+            if let Some(detail) = detail.as_object_mut() {
+                detail.remove("result");
+            }
+        }
         let mut envelope = json!({"kind":"metering","name":self.kind.label(),"claim_owner":"ROOT","claim_label":self.kind.label(),
             "execution_owner":self.kind.owner(),"operation":format!("{:?}",self.kind),"operation_id":self.id,"parent_id":self.parent,"event_kind":event});
         envelope["detail"] = detail;
@@ -704,6 +721,19 @@ impl Visit for Fields {
         self.insert(field, json!(value), 5);
     }
 }
+// Identity and outcome only: default emission never formats public payloads.
+#[derive(Default)]
+struct SummaryFields(Fields);
+impl Visit for SummaryFields {
+    /// Justified: The delivery visitor selects accounting identity without recursively observing itself.
+    fn record_debug(&mut self, _field: &Field, _value: &dyn fmt::Debug) {}
+    /// Justified: The delivery visitor selects accounting identity without recursively observing itself.
+    fn record_str(&mut self, field: &Field, value: &str) {
+        if matches!(field.name(), "execution_owner" | "source_item" | "outcome") {
+            self.0.record_str(field, value);
+        }
+    }
+}
 struct SpanAccount {
     fields: Fields,
     started: Duration,
@@ -721,17 +751,39 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
         };
         if let Some(span) = context.span(id) {
             let mut fields = Fields::default();
-            attributes.record(&mut fields);
+            if self.0.full_trace {
+                attributes.record(&mut fields);
+            } else {
+                let mut summary = SummaryFields::default();
+                attributes.record(&mut summary);
+                fields = summary.0;
+            }
             if fields.2 {
                 self.0.lost.fetch_add(1, Ordering::Relaxed);
                 return;
             }
-            let kind = match fields.0.get("execution_owner").and_then(Value::as_str) {
-                Some("DOCUMENTS") => Some(OperationKind::Document),
-                Some("INTERCHANGE") => Some(OperationKind::Interchange),
-                Some("CLICOMMON") => Some(OperationKind::PublicCli),
-                Some("EXECWRAP") => Some(OperationKind::PublicExec),
-                _ => None,
+            let command = matches!(
+                fields.0.get("source_item").and_then(Value::as_str),
+                Some(
+                    "run_stdout_json_command"
+                        | "run_no_stdout_command"
+                        | "run_no_stdout_command_async"
+                        | "run_check_command"
+                        | "execute"
+                )
+            );
+            let kind = if command {
+                Some(OperationKind::Command)
+            } else if !self.0.full_trace {
+                return;
+            } else {
+                match fields.0.get("execution_owner").and_then(Value::as_str) {
+                    Some("DOCUMENTS") => Some(OperationKind::Document),
+                    Some("INTERCHANGE") => Some(OperationKind::Interchange),
+                    Some("CLICOMMON") => Some(OperationKind::PublicCli),
+                    Some("EXECWRAP") => Some(OperationKind::PublicExec),
+                    _ => None,
+                }
             };
             let parent = span.parent().and_then(|parent| {
                 parent
@@ -757,6 +809,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
         };
         if let Some(span) = context.span(id)
             && let Some(account) = span.extensions_mut().get_mut::<SpanAccount>()
+            && self.0.full_trace
         {
             values.record(&mut account.fields);
         }
@@ -768,7 +821,14 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
             return;
         };
         let mut fields = Fields::default();
-        event.record(&mut fields);
+        let diagnostic = *event.metadata().level() <= tracing::Level::WARN;
+        if self.0.full_trace || diagnostic {
+            event.record(&mut fields);
+        } else {
+            let mut summary = SummaryFields::default();
+            event.record(&mut summary);
+            fields = summary.0;
+        }
         if let Some(span) = context.event_span(event)
             && let Some(account) = span.extensions_mut().get_mut::<SpanAccount>()
         {
@@ -787,6 +847,9 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
             {
                 operation.work_bytes(bytes);
             }
+        }
+        if !self.0.full_trace && !diagnostic {
+            return;
         }
         if fields.2 {
             self.0.lost.fetch_add(1, Ordering::Relaxed);
@@ -837,6 +900,9 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                 };
                 operation.complete(outcome, account.result.unwrap_or(Value::Null));
             }
+            if !self.0.full_trace {
+                return;
+            }
             if account.fields.2 {
                 self.0.lost.fetch_add(1, Ordering::Relaxed);
                 return;
@@ -856,6 +922,12 @@ impl Drop for BootstrapGuard {
         if let Some(observation) = &self.0 {
             observation.summarize();
             observation.flush();
+            observation.emit(json!({"kind":"observation_status","availability":"enabled",
+                "level":if observation.full_trace {"trace"} else {"default"},
+                "delivered_records":observation.delivered.load(Ordering::Relaxed),
+                "count_scope":"records preceding this status; status excluded",
+                "claim_owner":"ROOT","claim_label":"dec:observe:sinks","execution_owner":"CLICOMMON"}));
+            observation.flush();
         }
     }
 }
@@ -864,7 +936,7 @@ impl Drop for BootstrapGuard {
 /// Disabled observation installs nothing. Library operations never call this function.
 ///
 /// # Errors
-/// Refuses an existing global installation or an unavailable writer thread by name.
+/// Refuses an unknown or non-UTF-8 `PN_OBSERVE_LEVEL`, an existing global installation or an unavailable writer thread by name.
 /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
 /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn bootstrap(enabled: bool, debug: bool, default_level: tracing::Level) -> Result<BootstrapGuard, &'static str> {
@@ -895,13 +967,26 @@ pub fn bootstrap_with_export(
     bootstrap_inner(enabled, debug, default_level, bridge, started).map_err(Into::into)
 }
 
+fn emission_level(value: Option<&str>) -> Result<bool, &'static str> {
+    match value {
+        None | Some("default") => Ok(false),
+        Some("trace") => Ok(true),
+        Some(_) => Err("PN_OBSERVE_LEVEL must be default or trace"),
+    }
+}
+
 fn bootstrap_inner(
     enabled: bool,
-    debug: bool,
-    default_level: tracing::Level,
+    _debug: bool,
+    _default_level: tracing::Level,
     bridge: Option<Arc<crate::observation_export::Bridge>>,
     started: Instant,
 ) -> Result<BootstrapGuard, &'static str> {
+    let level = match std::env::var("PN_OBSERVE_LEVEL") {
+        Ok(value) => emission_level(Some(&value))?,
+        Err(std::env::VarError::NotPresent) => emission_level(None)?,
+        Err(std::env::VarError::NotUnicode(_)) => return Err("PN_OBSERVE_LEVEL must be UTF-8: default or trace"),
+    };
     if !enabled {
         let status = Observation::with_writer(StderrSink, Arc::new(SystemClock(Instant::now())))
             .map_err(|_| "observation status writer unavailable")?;
@@ -913,20 +998,19 @@ fn bootstrap_inner(
     if GLOBAL.get().is_some() {
         return Err("observation already initialized");
     }
-    let observation = Observation::with_writer_bridge(StderrSink, Arc::new(SystemClock(started)), bridge)
+    let mut observation = Observation::with_writer_bridge(StderrSink, Arc::new(SystemClock(started)), bridge)
         .map_err(|_| "observation writer unavailable")?;
-    let selection = crate::tracing_filter(debug, default_level);
-    let filter = tracing_subscriber::EnvFilter::try_new(&selection.directive)
-        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"));
+    observation.full_trace = level;
+    // Legacy verbosity arguments do not silently enable payload persistence.
     tracing_subscriber::registry()
-        .with(AccountingLayer(observation.clone(), Some(filter)))
+        .with(AccountingLayer(observation.clone(), None))
         .try_init()
         .map_err(|_| "subscriber already initialized")?;
     metrics::set_global_recorder(observation.recorder.clone()).map_err(|_| "metrics recorder already initialized")?;
     GLOBAL
         .set(observation.clone())
         .map_err(|_| "observation already initialized")?;
-    let mut operation=observation.operation(OperationKind::Bootstrap,json!({"filter":selection.directive,"sampling":"filter only","queue_records":QUEUE_RECORDS,"record_capacity_bytes":RECORD_LIMIT}));
+    let mut operation=observation.operation(OperationKind::Bootstrap,json!({"level":if observation.full_trace {"trace"} else {"default"},"queue_records":QUEUE_RECORDS,"record_capacity_bytes":RECORD_LIMIT}));
     operation.started = Duration::ZERO;
     operation.finish(
         Outcome::Success,

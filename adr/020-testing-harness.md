@@ -38,7 +38,7 @@
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
-| cli-common | active | unit | cli-common-rust | fast | 78 |
+| cli-common | active | unit | cli-common-rust | fast | 79 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
 | documents::integration | active | integration | documents-rust | fast | 28 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
@@ -105,7 +105,7 @@
 | rfc8949-refusal | active | integration | pn-interchange-rust | fast | 26 |
 | foundation-benchmarks | active | integration | pn-interchange-rust | fast | 2 |
 | ci::test_claims | active | unit | ci-python | fast | 20 |
-| ci::test_observe | active | unit | ci-python | fast | 9 |
+| ci::test_observe | active | unit | ci-python | fast | 11 |
 | ci::test_observe_runtime | active | integration | ci-python | fast | 1 |
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
 

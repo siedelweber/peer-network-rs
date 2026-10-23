@@ -6306,6 +6306,84 @@
     {
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
+      "item": "observation::<SummaryFields as Visit>::record_debug",
+      "owner": "CLICOMMON",
+      "signature": "fn record_debug (& mut self , _field : & Field , _value : & dyn fmt :: Debug)",
+      "claim": "ROOT::rule:observe:spans",
+      "fields": [
+        "complete available argument representation",
+        "result or explicit unavailable capability representation",
+        "terminal outcome",
+        "inclusive duration_seconds",
+        "declared own work",
+        "qualified resource totals"
+      ],
+      "metrics": [
+        "clicommon__root__rule__observe__spans__started_operations",
+        "clicommon__root__rule__observe__spans__completed_operations",
+        "clicommon__root__rule__observe__spans__work_bytes",
+        "clicommon__root__rule__observe__spans__work_operations",
+        "clicommon__root__rule__observe__spans__active_operations",
+        "clicommon__root__rule__observe__spans__resource_current_bytes",
+        "clicommon__root__rule__observe__spans__elapsed_seconds",
+        "clicommon__root__rule__observe__spans__workload_bytes",
+        "clicommon__root__rule__observe__spans__workload_operations"
+      ],
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "recursion",
+        "justification": "Justified: The delivery visitor selects accounting identity without recursively observing itself.",
+        "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+        "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+        "class_decision": "delivery",
+        "enclosing_operations": [
+          "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation"
+        ]
+      }
+    },
+    {
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "item": "observation::<SummaryFields as Visit>::record_str",
+      "owner": "CLICOMMON",
+      "signature": "fn record_str (& mut self , field : & Field , value : & str)",
+      "claim": "ROOT::rule:observe:spans",
+      "fields": [
+        "complete available argument representation",
+        "result or explicit unavailable capability representation",
+        "terminal outcome",
+        "inclusive duration_seconds",
+        "declared own work",
+        "qualified resource totals"
+      ],
+      "metrics": [
+        "clicommon__root__rule__observe__spans__started_operations",
+        "clicommon__root__rule__observe__spans__completed_operations",
+        "clicommon__root__rule__observe__spans__work_bytes",
+        "clicommon__root__rule__observe__spans__work_operations",
+        "clicommon__root__rule__observe__spans__active_operations",
+        "clicommon__root__rule__observe__spans__resource_current_bytes",
+        "clicommon__root__rule__observe__spans__elapsed_seconds",
+        "clicommon__root__rule__observe__spans__workload_bytes",
+        "clicommon__root__rule__observe__spans__workload_operations"
+      ],
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "recursion",
+        "justification": "Justified: The delivery visitor selects accounting identity without recursively observing itself.",
+        "witness": "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
+        "boundary": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
+        "class_decision": "delivery",
+        "enclosing_operations": [
+          "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation"
+        ]
+      }
+    },
+    {
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
       "item": "observation::<AccountingLayer as Layer < S >>::on_new_span",
       "owner": "CLICOMMON",
       "signature": "fn on_new_span (& self , attributes : & Attributes < '_ > , id : & Id , context : Context < '_ , S >)",
@@ -8963,7 +9041,7 @@
         "clicommon__root__rule__observe__spans__workload_operations"
       ],
       "mode": "reviewed-helper",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = observation :: bootstrap (true , debug , default_level) . ok () ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }"
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => guard , Err (error) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } } ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }"
     },
     {
       "package": "cli-common",
@@ -13624,7 +13702,7 @@
       "body": "{ content :: bytes (value) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::public_bytes. UTF-8 uses a tagged JSON string; other bytes use padded RFC 4648 base64 and their original length.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::public_bytes. UTF-8 uses a tagged JSON string; other bytes use padded RFC 4648 base64 and their original length. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13638,14 +13716,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::public_bytes. UTF-8 uses a tagged JSON string; other bytes use padded RFC 4648 base64 and their original length."
+      "item_premise": "This body inherits the delivery decision for observation::public_bytes. UTF-8 uses a tagged JSON string; other bytes use padded RFC 4648 base64 and their original length. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Observing as Drop>::drop",
       "body": "{ OBSERVING . set (false) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Observing as Drop>::drop.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Observing as Drop>::drop. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13659,14 +13737,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Observing as Drop>::drop."
+      "item_premise": "This body inherits the delivery decision for observation::<Observing as Drop>::drop. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::scope",
       "body": "{ Scope (tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = owner , claim_owner = \"ROOT\" , claim_label = label , source_item = item , arguments =? arguments) . entered ()) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::scope.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::scope. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13680,14 +13758,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::scope."
+      "item_premise": "This body inherits the delivery decision for observation::scope. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Scope::finish",
       "body": "{ tracing :: info ! (\"return\" =? result) ; drop (self . 0) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Scope::finish.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Scope::finish. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13701,14 +13779,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Scope::finish."
+      "item_premise": "This body inherits the delivery decision for observation::Scope::finish. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Scope::finish_with",
       "body": "{ tracing :: info ! (outcome = outcome . name () , \"return\" =? result) ; drop (self . 0) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Scope::finish_with.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Scope::finish_with. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13722,14 +13800,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Scope::finish_with."
+      "item_premise": "This body inherits the delivery decision for observation::Scope::finish_with. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::UtcInstant::parse",
       "body": "{ if ! value . ends_with ('Z') { return Err (if value . get (19 ..) . is_some_and (| s | s . contains ('+') || s . contains ('-')) { \"offset instant refused\" } else { \"naive instant refused\" }) ; } let b = value . as_bytes () ; if b . len () < 20 || b [4] != b'-' || b [7] != b'-' || b [10] != b'T' || b [13] != b':' || b [16] != b':' { return Err (\"malformed UTC instant\") ; } let number = | start , end | { value . get (start .. end) . filter (| s | s . bytes () . all (| b | b . is_ascii_digit ())) . and_then (| s | s . parse :: < u32 > () . ok ()) . ok_or (\"malformed UTC instant\") } ; let year = number (0 , 4) ? ; let month = number (5 , 7) ? ; let day = number (8 , 10) ? ; let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) ; let days = match month { 1 | 3 | 5 | 7 | 8 | 10 | 12 => 31 , 4 | 6 | 9 | 11 => 30 , 2 => { if leap { 29 } else { 28 } } _ => 0 , } ; if day == 0 || day > days || number (11 , 13) ? > 23 || number (14 , 16) ? > 59 || number (17 , 19) ? > 59 { return Err (\"malformed UTC instant\") ; } if b . len () != 20 && (b [19] != b'.' || b . len () < 22 || ! b [20 .. b . len () - 1] . iter () . all (u8 :: is_ascii_digit)) { return Err (\"malformed UTC instant\") ; } Ok (Self (value . into ())) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::UtcInstant::parse.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::UtcInstant::parse. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13743,14 +13821,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::UtcInstant::parse."
+      "item_premise": "This body inherits the delivery decision for observation::UtcInstant::parse. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<SystemClock as Clock>::elapsed",
       "body": "{ self . 0 . elapsed () }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<SystemClock as Clock>::elapsed.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<SystemClock as Clock>::elapsed. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13764,14 +13842,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<SystemClock as Clock>::elapsed."
+      "item_premise": "This body inherits the delivery decision for observation::<SystemClock as Clock>::elapsed. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<SystemClock as Clock>::utc",
       "body": "{ let mut text = String :: new () ; tracing_subscriber :: fmt :: time :: SystemTime . format_time (& mut tracing_subscriber :: fmt :: format :: Writer :: new (& mut text)) . ok () ? ; UtcInstant :: parse (& text) . ok () }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<SystemClock as Clock>::utc.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<SystemClock as Clock>::utc. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13785,14 +13863,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<SystemClock as Clock>::utc."
+      "item_premise": "This body inherits the delivery decision for observation::<SystemClock as Clock>::utc. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Limited as fmt :: Write>::write_str",
       "body": "{ self . write_all (value . as_bytes ()) . map_err (| _ | fmt :: Error) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Limited as fmt :: Write>::write_str.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Limited as fmt :: Write>::write_str. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13806,14 +13884,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Limited as fmt :: Write>::write_str."
+      "item_premise": "This body inherits the delivery decision for observation::<Limited as fmt :: Write>::write_str. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Limited as Write>::write",
       "body": "{ if self . 0 . len () . saturating_add (bytes . len ()) > CAPTURE_LIMIT { return Err (io :: Error :: other (\"observation record capacity\")) ; } self . 0 . extend_from_slice (bytes) ; Ok (bytes . len ()) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Limited as Write>::write.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Limited as Write>::write. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13827,14 +13905,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Limited as Write>::write."
+      "item_premise": "This body inherits the delivery decision for observation::<Limited as Write>::write. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Limited as Write>::flush",
       "body": "{ Ok (()) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Limited as Write>::flush.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Limited as Write>::flush. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13848,14 +13926,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Limited as Write>::flush."
+      "item_premise": "This body inherits the delivery decision for observation::<Limited as Write>::flush. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::current",
       "body": "{ GLOBAL . get () . cloned () }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Observation::current.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Observation::current. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13869,14 +13947,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Observation::current."
+      "item_premise": "This body inherits the delivery decision for observation::Observation::current. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
       "body": "{ self . operation_with_parent (kind , arguments , None) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Observation::operation.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Observation::operation. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13890,14 +13968,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Observation::operation."
+      "item_premise": "This body inherits the delivery decision for observation::Observation::operation. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Observation::summarize",
       "body": "{ if let Some (bridge) = & self . bridge { bridge . flush () ; let failures = bridge . failures . try_lock () . ok () . map (| values | values . clone ()) ; self . emit (json ! ({ \"kind\" : \"export_summary\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"proposal:observe:export\" , \"execution_owner\" : \"CLICOMMON\" , \"lost_exports\" : bridge . lost . load (Ordering :: Relaxed) , \"failures\" : failures })) ; } self . emit (json ! ({ \"kind\" : \"metric_summary\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"conv:observe:metrics\" , \"execution_owner\" : \"CLICOMMON\" , \"metrics\" : self . recorder . snapshot () }) ,) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Observation::summarize.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Observation::summarize. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13911,14 +13989,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Observation::summarize."
+      "item_premise": "This body inherits the delivery decision for observation::Observation::summarize. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Operation::child",
       "body": "{ self . observation . operation_with_parent (kind , arguments , Some (self . id)) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::child.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::child. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13932,14 +14010,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Operation::child."
+      "item_premise": "This body inherits the delivery decision for observation::Operation::child. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Operation::work_bytes",
       "body": "{ self . work_observed = true ; if let Some (total) = self . work . checked_add (bytes) { self . work = total ; } else { self . work = u64 :: MAX ; self . work_overflow = true ; } metrics :: with_local_recorder (& self . observation . recorder , | | { metrics :: counter ! (format ! (\"{}__work_bytes\" , self . kind . stem ())) . increment (bytes) ; }) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::work_bytes.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::work_bytes. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13953,14 +14031,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Operation::work_bytes."
+      "item_premise": "This body inherits the delivery decision for observation::Operation::work_bytes. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Operation::resources",
       "body": "{ let accuracy = current_accuracy ; let previous = self . current . value . unwrap_or (0) ; let measured = if matches ! (accuracy , Accuracy :: Unavailable) { 0 } else { current } ; if self . current . value . is_some () || ! matches ! (accuracy , Accuracy :: Unavailable) { metrics :: with_local_recorder (& self . observation . recorder , | | { let gauge = metrics :: gauge ! (format ! (\"{}__resource_current_bytes\" , self . kind . stem ())) ; gauge . increment (estimate (measured) - estimate (previous)) ; }) ; } if matches ! (accuracy , Accuracy :: Unavailable) { self . current = Resource :: unavailable () ; } else { self . current = Resource { value : Some (current) , accuracy , unit : \"bytes\" , } ; self . high_water = Resource { value : Some (current . max (self . high_water . value . unwrap_or (0))) , accuracy : if matches ! (self . high_water . accuracy , Accuracy :: Estimated) { Accuracy :: Estimated } else { accuracy } , unit : \"bytes\" , } ; } self . cumulative = Resource { value : (! matches ! (cumulative_accuracy , Accuracy :: Unavailable)) . then_some (cumulative) , accuracy : cumulative_accuracy , unit : \"bytes\" , } ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::resources. Current and cumulative accuracy are independent; unavailable current readings retain the observed high-water mark.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::resources. Current and cumulative accuracy are independent; unavailable current readings retain the observed high-water mark. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13974,14 +14052,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Operation::resources. Current and cumulative accuracy are independent; unavailable current readings retain the observed high-water mark."
+      "item_premise": "This body inherits the delivery decision for observation::Operation::resources. Current and cumulative accuracy are independent; unavailable current readings retain the observed high-water mark. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Operation::progress",
       "body": "{ self . record (\"progress\" , content) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::progress.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::progress. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -13995,14 +14073,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Operation::progress."
+      "item_premise": "This body inherits the delivery decision for observation::Operation::progress. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::Operation::finish",
       "body": "{ self . complete (outcome . name () , result) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::finish.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::Operation::finish. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14016,14 +14094,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::Operation::finish."
+      "item_premise": "This body inherits the delivery decision for observation::Operation::finish. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Operation as Drop>::drop",
       "body": "{ if ! self . finished { self . complete (if std :: thread :: panicking () { \"unwinding\" } else { \"incomplete\" } , Value :: Null) ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Operation as Drop>::drop.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Operation as Drop>::drop. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14037,14 +14115,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Operation as Drop>::drop."
+      "item_premise": "This body inherits the delivery decision for observation::<Operation as Drop>::drop. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Fields as Visit>::record_debug",
       "body": "{ let mut text = Limited (Vec :: new ()) ; if fmt :: write (& mut text , format_args ! (\"{value:?}\")) . is_err () { self . 2 = true ; return ; } let length = text . 0 . len () ; if let Ok (text) = String :: from_utf8 (text . 0) { self . insert (field , content :: structured (& text) , length) ; } else { self . 2 = true ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_debug.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_debug. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14058,14 +14136,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_debug."
+      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_debug. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Fields as Visit>::record_str",
       "body": "{ if value . len () . saturating_add (self . 1) > CAPTURE_LIMIT { self . 2 = true ; } else { self . insert (field , json ! (value) , value . len ()) ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_str.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_str. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14079,14 +14157,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_str."
+      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_str. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Fields as Visit>::record_u64",
       "body": "{ self . insert (field , json ! (value) , 20) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_u64.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_u64. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14100,14 +14178,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_u64."
+      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_u64. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Fields as Visit>::record_i64",
       "body": "{ self . insert (field , json ! (value) , 21) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_i64.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_i64. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14121,14 +14199,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_i64."
+      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_i64. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<Fields as Visit>::record_bool",
       "body": "{ self . insert (field , json ! (value) , 5) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_bool.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<Fields as Visit>::record_bool. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14142,14 +14220,56 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_bool."
+      "item_premise": "This body inherits the delivery decision for observation::<Fields as Visit>::record_bool. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
+    },
+    {
+      "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<SummaryFields as Visit>::record_debug",
+      "body": "{ }",
+      "full_recording": {
+        "status": "reviewer-confirmed",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<SummaryFields as Visit>::record_debug. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
+        "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+      },
+      "secret_flow": {
+        "status": "reviewer-confirmed",
+        "premises": "The current production model has no domain credentials. ExportConfig retains a protected credential and admits only transports that preserve whole private configuration, retained state and errors; future service transports remain held. Protected-carrier and configuration failure/drop witnesses cover the present boundary.",
+        "negative_probe": "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop"
+      },
+      "exposure_consumers": {
+        "status": "reviewer-confirmed",
+        "premises": "No production ExposeSecret consumer is admitted by this source item. The controlled transport fixture borrows only for an authentication comparison; the failed-parser fixture keeps its owned buffer protected. New consumers or type fields invalidate this source-bound review.",
+        "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
+      },
+      "class_decision": "delivery",
+      "item_premise": "This body inherits the delivery decision for observation::<SummaryFields as Visit>::record_debug. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
+    },
+    {
+      "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<SummaryFields as Visit>::record_str",
+      "body": "{ if matches ! (field . name () , \"execution_owner\" | \"source_item\" | \"outcome\") { self . 0 . record_str (field , value) ; } }",
+      "full_recording": {
+        "status": "reviewer-confirmed",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<SummaryFields as Visit>::record_str. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
+        "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
+      },
+      "secret_flow": {
+        "status": "reviewer-confirmed",
+        "premises": "The current production model has no domain credentials. ExportConfig retains a protected credential and admits only transports that preserve whole private configuration, retained state and errors; future service transports remain held. Protected-carrier and configuration failure/drop witnesses cover the present boundary.",
+        "negative_probe": "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop"
+      },
+      "exposure_consumers": {
+        "status": "reviewer-confirmed",
+        "premises": "No production ExposeSecret consumer is admitted by this source item. The controlled transport fixture borrows only for an authentication comparison; the failed-parser fixture keeps its owned buffer protected. New consumers or type fields invalidate this source-bound review.",
+        "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
+      },
+      "class_decision": "delivery",
+      "item_premise": "This body inherits the delivery decision for observation::<SummaryFields as Visit>::record_str. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_new_span",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; attributes . record (& mut fields) ; if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } let kind = match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , }) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else if ! self . 0 . full_trace { return ; } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , }) ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_new_span.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_new_span. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14163,14 +14283,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_new_span."
+      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_new_span. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_record",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () { values . record (& mut account . fields) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (id) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () && self . 0 . full_trace { values . record (& mut account . fields) ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_record.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_record. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14184,14 +14304,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_record."
+      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_record. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_event",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; let mut fields = Fields :: default () ; event . record (& mut fields) ; if let Some (span) = context . event_span (event) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () { if let Some (value) = fields . 0 . get (\"return\") { account . result = Some (value . clone ()) ; } account . outcome = match fields . 0 . get (\"outcome\") . and_then (Value :: as_str) { Some (\"success\") => Some (\"success\") , Some (\"refusal\") => Some (\"refusal\") , Some (\"error\") => Some (\"error\") , Some (\"cancelled\") => Some (\"cancelled\") , _ => account . outcome , } ; if let Some (bytes) = fields . 0 . get (\"work_bytes\") . and_then (Value :: as_u64) && let Some (operation) = & mut account . operation { operation . work_bytes (bytes) ; } } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } if self . 1 . as_ref () . is_some_and (| filter | { ! < tracing_subscriber :: EnvFilter as Layer < S > > :: enabled (filter , event . metadata () , context . clone ()) }) { return ; } let mut spans = Vec :: new () ; if let Some (scope) = context . event_scope (event) { for span in scope . from_root () { if let Some (account) = span . extensions () . get :: < SpanAccount > () { if account . fields . 2 || spans . len () == 64 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } spans . push (json ! ({ \"name\" : span . name () , \"fields\" : account . fields . 0 })) ; } } } self . 0 . emit (json ! ({ \"kind\" : \"trace\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"origin\" : event . metadata () . target () , \"name\" : \"rule:observe:spans\" , \"origin_name\" : event . metadata () . name () , \"level\" : event . metadata () . level () . as_str () , \"fields\" : fields . 0 , \"spans\" : spans })) ; }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; let mut fields = Fields :: default () ; let diagnostic = * event . metadata () . level () <= tracing :: Level :: WARN ; if self . 0 . full_trace || diagnostic { event . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; event . record (& mut summary) ; fields = summary . 0 ; } if let Some (span) = context . event_span (event) && let Some (account) = span . extensions_mut () . get_mut :: < SpanAccount > () { if let Some (value) = fields . 0 . get (\"return\") { account . result = Some (value . clone ()) ; } account . outcome = match fields . 0 . get (\"outcome\") . and_then (Value :: as_str) { Some (\"success\") => Some (\"success\") , Some (\"refusal\") => Some (\"refusal\") , Some (\"error\") => Some (\"error\") , Some (\"cancelled\") => Some (\"cancelled\") , _ => account . outcome , } ; if let Some (bytes) = fields . 0 . get (\"work_bytes\") . and_then (Value :: as_u64) && let Some (operation) = & mut account . operation { operation . work_bytes (bytes) ; } } if ! self . 0 . full_trace && ! diagnostic { return ; } if fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } if self . 1 . as_ref () . is_some_and (| filter | { ! < tracing_subscriber :: EnvFilter as Layer < S > > :: enabled (filter , event . metadata () , context . clone ()) }) { return ; } let mut spans = Vec :: new () ; if let Some (scope) = context . event_scope (event) { for span in scope . from_root () { if let Some (account) = span . extensions () . get :: < SpanAccount > () { if account . fields . 2 || spans . len () == 64 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } spans . push (json ! ({ \"name\" : span . name () , \"fields\" : account . fields . 0 })) ; } } } self . 0 . emit (json ! ({ \"kind\" : \"trace\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"origin\" : event . metadata () . target () , \"name\" : \"rule:observe:spans\" , \"origin_name\" : event . metadata () . name () , \"level\" : event . metadata () . level () . as_str () , \"fields\" : fields . 0 , \"spans\" : spans })) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_event.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_event. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14205,14 +14325,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_event."
+      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_event. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_close",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (& id) && let Some (account) = span . extensions_mut () . remove :: < SpanAccount > () { if let Some (mut operation) = account . operation { let outcome = if std :: thread :: panicking () { \"unwinding\" } else if let Some (outcome) = account . outcome { outcome } else if account . result . as_ref () . is_some_and (| value | value [\"constructor\"] == \"Err\") { \"error\" } else if account . result . is_some () { \"success\" } else if account . fields . 0 . get (\"asynchronous\") . and_then (Value :: as_bool) == Some (true) { \"cancelled\" } else { \"incomplete\" } ; operation . complete (outcome , account . result . unwrap_or (Value :: Null)) ; } if account . fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } self . 0 . emit (json ! ({ \"kind\" : \"span_envelope\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"name\" : \"rule:observe:spans\" , \"origin_name\" : span . name () , \"fields\" : account . fields . 0 , \"duration_seconds\" : self . 0 . clock . elapsed () . checked_sub (account . started) . map (| d | d . as_secs_f64 ()) , \"outcome\" : \"unobservable; explicit operation completion is authoritative\" })) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0 . lost) else { return ; } ; if let Some (span) = context . span (& id) && let Some (account) = span . extensions_mut () . remove :: < SpanAccount > () { if let Some (mut operation) = account . operation { let outcome = if std :: thread :: panicking () { \"unwinding\" } else if let Some (outcome) = account . outcome { outcome } else if account . result . as_ref () . is_some_and (| value | value [\"constructor\"] == \"Err\") { \"error\" } else if account . result . is_some () { \"success\" } else if account . fields . 0 . get (\"asynchronous\") . and_then (Value :: as_bool) == Some (true) { \"cancelled\" } else { \"incomplete\" } ; operation . complete (outcome , account . result . unwrap_or (Value :: Null)) ; } if ! self . 0 . full_trace { return ; } if account . fields . 2 { self . 0 . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } self . 0 . emit (json ! ({ \"kind\" : \"span_envelope\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"rule:observe:spans\" , \"execution_owner\" : \"CLICOMMON\" , \"name\" : \"rule:observe:spans\" , \"origin_name\" : span . name () , \"fields\" : account . fields . 0 , \"duration_seconds\" : self . 0 . clock . elapsed () . checked_sub (account . started) . map (| d | d . as_secs_f64 ()) , \"outcome\" : \"unobservable; explicit operation completion is authoritative\" })) ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_close.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_close. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14226,14 +14346,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_close."
+      "item_premise": "This body inherits the delivery decision for observation::<AccountingLayer as Layer < S >>::on_close. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<BootstrapGuard as Drop>::drop",
-      "body": "{ if let Some (observation) = & self . 0 { observation . summarize () ; observation . flush () ; } }",
+      "body": "{ if let Some (observation) = & self . 0 { observation . summarize () ; observation . flush () ; observation . emit (json ! ({ \"kind\" : \"observation_status\" , \"availability\" : \"enabled\" , \"level\" : if observation . full_trace { \"trace\" } else { \"default\" } , \"delivered_records\" : observation . delivered . load (Ordering :: Relaxed) , \"count_scope\" : \"records preceding this status; status excluded\" , \"claim_owner\" : \"ROOT\" , \"claim_label\" : \"dec:observe:sinks\" , \"execution_owner\" : \"CLICOMMON\" })) ; observation . flush () ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<BootstrapGuard as Drop>::drop.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<BootstrapGuard as Drop>::drop. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14247,14 +14367,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<BootstrapGuard as Drop>::drop."
+      "item_premise": "This body inherits the delivery decision for observation::<BootstrapGuard as Drop>::drop. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::bootstrap",
       "body": "{ bootstrap_inner (enabled , debug , default_level , None , Instant :: now ()) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::bootstrap.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::bootstrap. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14268,14 +14388,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::bootstrap."
+      "item_premise": "This body inherits the delivery decision for observation::bootstrap. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::bootstrap_with_export",
       "body": "{ let started = Instant :: now () ; let bridge = if enabled { Some (Arc :: new (crate :: observation_export :: Bridge :: new (config) ?)) } else { None } ; bootstrap_inner (enabled , debug , default_level , bridge , started) . map_err (Into :: into) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::bootstrap_with_export.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::bootstrap_with_export. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14289,14 +14409,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::bootstrap_with_export."
+      "item_premise": "This body inherits the delivery decision for observation::bootstrap_with_export. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<StderrSink as Write>::write",
       "body": "{ crate :: LockedStderrWriter :: locked_stderr () . write_all (bytes) ? ; Ok (bytes . len ()) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<StderrSink as Write>::write.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<StderrSink as Write>::write. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14310,14 +14430,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<StderrSink as Write>::write."
+      "item_premise": "This body inherits the delivery decision for observation::<StderrSink as Write>::write. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<StderrSink as Write>::flush",
       "body": "{ Ok (()) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<StderrSink as Write>::flush.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation::<StderrSink as Write>::flush. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14331,14 +14451,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<StderrSink as Write>::flush."
+      "item_premise": "This body inherits the delivery decision for observation::<StderrSink as Write>::flush. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Client as HttpClient>::send_bytes",
       "body": "{ Box :: pin (async move { self . 0 . transport . send (request , & self . 0 . credential) . map_err (| error | Box :: new (error) as HttpError) }) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Client as HttpClient>::send_bytes.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Client as HttpClient>::send_bytes. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14352,14 +14472,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Client as HttpClient>::send_bytes."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Client as HttpClient>::send_bytes. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Reader as MetricReader>::register_pipeline",
       "body": "{ self . 0 . register_pipeline (pipeline) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::register_pipeline.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::register_pipeline. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14373,14 +14493,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::register_pipeline."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::register_pipeline. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Reader as MetricReader>::collect",
       "body": "{ self . 0 . collect (metrics) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::collect.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::collect. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14394,14 +14514,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::collect."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::collect. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Reader as MetricReader>::force_flush",
       "body": "{ self . 0 . force_flush () }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::force_flush.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::force_flush. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14415,14 +14535,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::force_flush."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::force_flush. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Reader as MetricReader>::shutdown_with_timeout",
       "body": "{ self . 0 . shutdown_with_timeout (timeout) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::shutdown_with_timeout.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::shutdown_with_timeout. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14436,14 +14556,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::shutdown_with_timeout."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::shutdown_with_timeout. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Reader as MetricReader>::temporality",
       "body": "{ self . 0 . temporality (kind) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::temporality.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Reader as MetricReader>::temporality. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14457,14 +14577,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::temporality."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Reader as MetricReader>::temporality. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Processor as SpanProcessor>::on_start",
       "body": "{ }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::on_start.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::on_start. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14478,14 +14598,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::on_start."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::on_start. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Processor as SpanProcessor>::on_end",
       "body": "{ if self . sender . try_send (Message :: Span (Box :: new (span))) . is_err () { self . lost . fetch_add (1 , Ordering :: Relaxed) ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::on_end.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::on_end. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14499,14 +14619,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::on_end."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::on_end. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Processor as SpanProcessor>::force_flush",
       "body": "{ Ok (()) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::force_flush.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::force_flush. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14520,14 +14640,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::force_flush."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::force_flush. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_export.rs::observation_export::<Processor as SpanProcessor>::shutdown_with_timeout",
       "body": "{ Ok (()) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::shutdown_with_timeout.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::shutdown_with_timeout. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14541,14 +14661,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::shutdown_with_timeout."
+      "item_premise": "This body inherits the delivery decision for observation_export::<Processor as SpanProcessor>::shutdown_with_timeout. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<Instrument as CounterFn>::increment",
       "body": "{ self . update (| t | { if let Some (total) = t . counter . checked_add (value) { t . counter = total ; if let Some (SdkInstrument :: Counter (counter)) = & self . sdk { counter . add (value , & []) ; } } else { t . counter = u64 :: MAX ; self . lost . fetch_add (1 , Ordering :: Relaxed) ; } }) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::increment.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::increment. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14562,14 +14682,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::increment."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::increment. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<Instrument as CounterFn>::absolute",
       "body": "{ self . update (| t | { let delta = value . saturating_sub (t . counter) ; t . counter = t . counter . max (value) ; if let Some (SdkInstrument :: Counter (counter)) = & self . sdk { counter . add (delta , & []) ; } }) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::absolute.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::absolute. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14583,14 +14703,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::absolute."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::absolute. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<Instrument as GaugeFn>::increment",
       "body": "{ if value . is_finite () { self . update (| t | { t . gauge += value ; if let Some (SdkInstrument :: Gauge (gauge)) = & self . sdk { gauge . record (t . gauge , & []) ; } }) ; } else { self . lost . fetch_add (1 , Ordering :: Relaxed) ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::increment.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::increment. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14604,14 +14724,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::increment."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::increment. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<Instrument as GaugeFn>::decrement",
       "body": "{ GaugeFn :: increment (self , - value) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::decrement.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::decrement. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14625,14 +14745,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::decrement."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::decrement. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<Instrument as GaugeFn>::set",
       "body": "{ if value . is_finite () { self . update (| t | { t . gauge = value ; if let Some (SdkInstrument :: Gauge (gauge)) = & self . sdk { gauge . record (t . gauge , & []) ; } }) ; } else { self . lost . fetch_add (1 , Ordering :: Relaxed) ; } }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::set.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::set. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14646,14 +14766,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::set."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as GaugeFn>::set. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<Instrument as HistogramFn>::record",
       "body": "{ if ! value . is_finite () || value < 0.0 { self . lost . fetch_add (1 , Ordering :: Relaxed) ; return ; } self . update (| t | { t . count = t . count . saturating_add (1) ; t . sum += value ; let bucket = self . bounds . iter () . position (| b | value <= * b) . unwrap_or (4) ; t . buckets [bucket] = t . buckets [bucket] . saturating_add (1) ; if let Some (SdkInstrument :: Histogram (histogram)) = & self . sdk { histogram . record (value , & []) ; } }) ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as HistogramFn>::record.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<Instrument as HistogramFn>::record. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14667,14 +14787,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as HistogramFn>::record."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as HistogramFn>::record. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<JsonRecorder as Recorder>::describe_counter",
       "body": "{ self . describe (& key , unit , \"counter\") ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_counter.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_counter. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14688,14 +14808,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_counter."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_counter. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<JsonRecorder as Recorder>::describe_gauge",
       "body": "{ self . describe (& key , unit , \"gauge\") ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_gauge.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_gauge. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14709,14 +14829,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_gauge."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_gauge. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<JsonRecorder as Recorder>::describe_histogram",
       "body": "{ self . describe (& key , unit , \"histogram\") ; }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_histogram.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_histogram. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14730,14 +14850,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_histogram."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::describe_histogram. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<JsonRecorder as Recorder>::register_counter",
       "body": "{ self . instrument (key , \"counter\") . map_or_else (Counter :: noop , Counter :: from_arc) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_counter.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_counter. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14751,14 +14871,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_counter."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_counter. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<JsonRecorder as Recorder>::register_gauge",
       "body": "{ self . instrument (key , \"gauge\") . map_or_else (Gauge :: noop , Gauge :: from_arc) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_gauge.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_gauge. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14772,14 +14892,14 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_gauge."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_gauge. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<JsonRecorder as Recorder>::register_histogram",
       "body": "{ self . instrument (key , \"histogram\") . map_or_else (Histogram :: noop , Histogram :: from_arc) }",
       "full_recording": {
         "status": "reviewer-confirmed",
-        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_histogram.",
+        "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_histogram. Payload capture and persistence are conditional on trace; default command accounting and diagnostics remain available.",
         "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
       },
       "secret_flow": {
@@ -14793,7 +14913,7 @@
         "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
       },
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_histogram."
+      "item_premise": "This body inherits the delivery decision for observation_metrics::<JsonRecorder as Recorder>::register_histogram. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation."
     },
     {
       "operation": "cli-common::packages/cli-common/src/publication.rs::publication::PublicationMode::octal",
@@ -15658,7 +15778,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/lib.rs::run_stdout_json_command",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = observation :: bootstrap (true , debug , default_level) . ok () ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_stdout_json_command\" , & (command_name , debug , default_level , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } match run () { Ok (output) => match emit (& output) { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to write JSON to stdout\") ; CommandExit :: Failure . exit_code () } } , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => guard , Err (error) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_stdout_json_command\" , & (command_name , debug , default_level , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } match run () { Ok (output) => match emit (& output) { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to write JSON to stdout\") ; CommandExit :: Failure . exit_code () } } , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
       "full_recording": {
         "status": "reviewer-confirmed",
         "premises": "Control records, argv, public errors and serialized output are recorded at command boundaries. Parser and callback capabilities are described without an extra invocation. Non-string panic payloads have no introspection contract and are explicitly unavailable. This body inherits the public-cli decision for run_stdout_json_command.",
@@ -15679,7 +15799,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = observation :: bootstrap (true , debug , default_level) . ok () ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_no_stdout_command\" , & (command_name , debug , default_level , std :: any :: type_name :: < Run > ()) ,) ; let result = match run () { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => guard , Err (error) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_no_stdout_command\" , & (command_name , debug , default_level , std :: any :: type_name :: < Run > ()) ,) ; let result = match run () { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
       "full_recording": {
         "status": "reviewer-confirmed",
         "premises": "Control records, argv, public errors and serialized output are recorded at command boundaries. Parser and callback capabilities are described without an extra invocation. Non-string panic payloads have no introspection contract and are explicitly unavailable. This body inherits the public-cli decision for run_no_stdout_command.",
@@ -15700,7 +15820,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = observation :: bootstrap (true , debug , default_level) . ok () ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }",
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => guard , Err (error) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } } ; let debug_requested = debug ; let span = tracing :: info_span ! (\"rule:observe:spans\" , execution_owner = \"CLICOMMON\" , claim_owner = \"ROOT\" , claim_label = \"rule:observe:spans\" , source_item = \"run_no_stdout_command_async\" , asynchronous = true , command_name , debug_requested , default_level =? default_level , callback = std :: any :: type_name ::< Run > ()) ; tracing :: Instrument :: instrument (async { let result = match run () . await { Ok (()) => CommandExit :: Success . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; CommandExit :: Failure . exit_code () } } ; tracing :: info ! (outcome = if result == ExitCode :: SUCCESS { \"success\" } else { \"error\" } , \"return\" =? result) ; result } , span ,) . await }",
       "full_recording": {
         "status": "reviewer-confirmed",
         "premises": "Control records, argv, public errors and serialized output are recorded at command boundaries. Parser and callback capabilities are described without an extra invocation. Non-string panic payloads have no introspection contract and are explicitly unavailable. This body inherits the public-cli decision for run_no_stdout_command_async.",
@@ -15721,7 +15841,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/lib.rs::run_check_command",
-      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = observation :: bootstrap (true , debug , default_level) . ok () ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_check_command\" , & (command_name , debug , default_level , output , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if output . report . is_none () && output . stamp . is_none () && let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } let outcome = match run () { Ok (outcome) => outcome , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; return CommandExit :: Failure . exit_code () ; } } ; let published = if outcome . clean { finish_check_command (command_name , output , & outcome . report) } else { match (& output . report , & output . stamp) { (None , None) => finish_check_command (command_name , output , & outcome . report) , (Some (report_path) , Some (stamp_path)) => { ensure_distinct_outputs (& [(\"report\" , report_path) , (\"stamp\" , stamp_path)]) . map_err (CheckResultError :: from) . and_then (| () | { write_json_report_if_changed (report_path , & outcome . report) . map (| _change | ()) . map_err (CheckResultError :: from) }) } _ => Err (CheckResultError :: InvalidMode) , } } ; match published { Ok (()) if outcome . clean => CommandExit :: Success . exit_code () , Ok (()) => ExitCode :: from (3) , Err (CheckResultError :: TtyRefusal) => CommandExit :: Usage . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to publish the check result\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
+      "body": "{ install_json_panic_hook (command_name) ; let _observation_guard = match observation :: bootstrap (true , debug , default_level) { Ok (guard) => guard , Err (error) => { let mut record = ControlPlaneRecord :: usage_error (command_name , \"observation_configuration\") ; error . clone_into (& mut record . message) ; let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } } ; let scope = crate :: observation :: scope (\"CLICOMMON\" , \"rule:observe:spans\" , \"run_check_command\" , & (command_name , debug , default_level , output , std :: any :: type_name :: < Run > ()) ,) ; let result = (| | { if output . report . is_none () && output . stamp . is_none () && let Some (record) = stdout_tty_refusal_record (command_name) { let _ignored = emit_control_plane_record (& record) ; return CommandExit :: Usage . exit_code () ; } let outcome = match run () { Ok (outcome) => outcome , Err (error) => { tracing :: error ! (error = % error , \"command failed\") ; return CommandExit :: Failure . exit_code () ; } } ; let published = if outcome . clean { finish_check_command (command_name , output , & outcome . report) } else { match (& output . report , & output . stamp) { (None , None) => finish_check_command (command_name , output , & outcome . report) , (Some (report_path) , Some (stamp_path)) => { ensure_distinct_outputs (& [(\"report\" , report_path) , (\"stamp\" , stamp_path)]) . map_err (CheckResultError :: from) . and_then (| () | { write_json_report_if_changed (report_path , & outcome . report) . map (| _change | ()) . map_err (CheckResultError :: from) }) } _ => Err (CheckResultError :: InvalidMode) , } } ; match published { Ok (()) if outcome . clean => CommandExit :: Success . exit_code () , Ok (()) => ExitCode :: from (3) , Err (CheckResultError :: TtyRefusal) => CommandExit :: Usage . exit_code () , Err (error) => { tracing :: error ! (error = % error , \"failed to publish the check result\") ; CommandExit :: Failure . exit_code () } } }) () ; scope . finish_with (if result == ExitCode :: SUCCESS { observation :: Outcome :: Success } else if result == ExitCode :: from (2) || result == ExitCode :: from (3) { observation :: Outcome :: Refusal } else { observation :: Outcome :: Error } , & result ,) ; result }",
       "full_recording": {
         "status": "reviewer-confirmed",
         "premises": "Control records, argv, public errors and serialized output are recorded at command boundaries. Parser and callback capabilities are described without an extra invocation. Non-string panic payloads have no introspection contract and are explicitly unavailable. This body inherits the public-cli decision for run_check_command.",
@@ -17613,6 +17733,20 @@
       ]
     },
     {
+      "item": "observation::SummaryFields",
+      "kind": "derive",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [derive (Default)]",
+      "expansion_review": "The declaration supplies only source-visible state and derives; adapters inherit their consuming labelled operation without extra execution.",
+      "boundaries": [
+        "cli-common::packages/cli-common/src/lib.rs::run_stdout_json_command",
+        "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command",
+        "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
+        "cli-common::packages/cli-common/src/lib.rs::run_check_command"
+      ]
+    },
+    {
       "item": "observation_export::ExportFailure",
       "kind": "derive",
       "package": "cli-common",
@@ -18801,7 +18935,7 @@
       "item": "observation::Observation",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "# [doc = \" Cloneable operation context; no initialization occurs in library operations.\"] # [derive (Clone)] pub struct Observation { sender : SyncSender < Message > , summary_sender : SyncSender < Vec < u8 > > , flush_sender : SyncSender < SyncSender < () > > , diagnostic_sender : SyncSender < Vec < u8 > > , queued_bytes : Arc < AtomicU64 > , lost : Arc < AtomicU64 > , clock : Arc < dyn Clock > , recorder : JsonRecorder , next_id : Arc < AtomicU64 > , bridge : Option < Arc < crate :: observation_export :: Bridge > > , }"
+      "syntax": "# [doc = \" Cloneable operation context; no initialization occurs in library operations.\"] # [derive (Clone)] pub struct Observation { sender : SyncSender < Message > , summary_sender : SyncSender < Vec < u8 > > , flush_sender : SyncSender < SyncSender < () > > , diagnostic_sender : SyncSender < Vec < u8 > > , queued_bytes : Arc < AtomicU64 > , lost : Arc < AtomicU64 > , delivered : Arc < AtomicU64 > , full_trace : bool , clock : Arc < dyn Clock > , recorder : JsonRecorder , next_id : Arc < AtomicU64 > , bridge : Option < Arc < crate :: observation_export :: Bridge > > , }"
     },
     {
       "item": "observation::OperationKind",
@@ -18838,6 +18972,12 @@
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
       "syntax": "# [derive (Default)] struct Fields (Map < String , Value > , usize , bool) ;"
+    },
+    {
+      "item": "observation::SummaryFields",
+      "package": "cli-common",
+      "path": "packages/cli-common/src/observation.rs",
+      "syntax": "# [derive (Default)] struct SummaryFields (Fields) ;"
     },
     {
       "item": "observation::SpanAccount",
@@ -19207,7 +19347,7 @@
     {
       "name": "delivery",
       "status": "reviewer-confirmed",
-      "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker.",
+      "premises": "The observer owns queue admission, timestamps, metric accounting, encoding, artifact publication and export. These bodies run under the labelled command operation and never recursively instrument observation. Public payload representation changes do not feed a binding return; delivery failures count loss. Artifact publication occurs only on the delivery worker. Full content is a capability selected by PN_OBSERVE_LEVEL=trace. Default span visits retain only command identity and outcome and never call payload Debug; command completion, WARN/ERROR, summaries and status remain emitted. Successful writes and whole-record loss are separately counted.",
       "operations": [
         "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation"
       ]

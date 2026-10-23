@@ -1432,6 +1432,14 @@
       "claim": "CLICOMMON::claim:cli:summary-capacity-survives-ordinary-saturation",
       "after": "Claim: A saturated ordinary queue cannot consume diagnostic, metric-summary, export-summary or drain-request capacity; rendezvous-controlled delivery observes these records and acknowledges the drain without extending a timeout.",
       "review": "Read the blocked-writer rendezvous: fill the ordinary queue, admit a diagnostic, both terminal summaries and an independent drain request, release the writer and wait on explicit acknowledgments. The test asserts delivery and zero loss without a wall-clock oracle."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_four_mode_results",
+      "path": "ci/test_observe_runtime.py",
+      "before": "Claim: Disabled, enabled, selected-out and locally failing-export executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes.",
+      "claim": "ROOT::claim:discipline:four-observation-modes-preserve-command-results",
+      "after": "Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes; an unknown emission level refuses document execution with a named configuration diagnostic.",
+      "review": "Read the four-mode process fixture: the same workload runs disabled, default, trace and trace with controlled export failure; exact exit and stdout are compared, default absence of spans and zero delivery loss are independently asserted."
     }
   ]
 }

@@ -13,7 +13,9 @@ failed=0
 statuses=()
 mkdir -p .lane
 export PN_OBSERVE_ARTIFACT_DIR="$PWD/.lane/observations"
+export PN_OBSERVE_LEVEL=default
 gate_started=$(date -u +%s.%N)
+python3 -B ci/gate_resources.py sample .lane/gate-resource-start.json || failed=1
 source_id=$(time git rev-parse HEAD)
 export CARGO_NET_OFFLINE=true
 rm -f .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json
@@ -21,14 +23,18 @@ run_step() {
     local name=$1
     shift
     local status started ended wall
+    python3 -B ci/gate_resources.py sample ".lane/gate-${name}-resource-start.json" || failed=1
     started=$(date -u +%s.%N)
     { time "$@"; } > ".lane/gate-${name}.log" 2>&1
     status=$?
     ended=$(date -u +%s.%N)
+    python3 -B ci/gate_resources.py sample ".lane/gate-${name}-resource-end.json" || failed=1
     wall=$(awk -v s="$started" -v e="$ended" 'BEGIN { printf "%.6f", e-s }')
-    python3 -B ci/observation_log.py ".lane/gate-${name}.log" ".lane/gate-${name}.observations.jsonl"
+    cat ".lane/gate-${name}.log"
+    printf 'STEP=%s STATUS=%s WALL=%ss ' "$name" "$status" "$wall"
+    python3 -B ci/gate_observation_counts.py ".lane/gate-${name}.log" || failed=1
+    python3 -B ci/gate_resources.py report ".lane/gate-${name}-resource-start.json" ".lane/gate-${name}-resource-end.json"
     if [ "$?" -ne 0 ]; then failed=1; fi
-    printf 'STEP=%s STATUS=%s WALL=%ss\n' "$name" "$status" "$wall"
     statuses+=("$name=$status/${wall}s")
     if [ "$status" -ne 0 ]; then failed=1; fi
     # Reporting has its own structural status; elapsed time never changes status.
@@ -94,7 +100,10 @@ grep 'NURSERY-FINDINGS=' .lane/gate-nursery-advisory.log || true
 printf 'STEP-SUMMARY %s\n' "${statuses[*]}"
 python3 ci/discipline.py diagnostics
 gate_ended=$(date -u +%s.%N)
+python3 -B ci/gate_resources.py sample .lane/gate-resource-end.json || failed=1
 gate_wall=$(awk -v s="$gate_started" -v e="$gate_ended" 'BEGIN { printf "%.6f", e-s }')
+printf 'GATE-RESOURCES WALL=%ss ' "$gate_wall"
+python3 -B ci/gate_resources.py report .lane/gate-resource-start.json .lane/gate-resource-end.json || failed=1
 python3 -B ci/devperf.py --operation gate --duration-s "$gate_wall" --outcome "exit:$failed" \
     --source "$source_id" --budget gate --findings .lane/performance-findings.jsonl
 if [ "$?" -ne 0 ]; then failed=1; fi

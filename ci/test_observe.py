@@ -24,6 +24,44 @@ def fixture():
 
 
 class Admission(unittest.TestCase):
+    def test_resource_samples(self):
+        """Claim: Cgroup counters, PSI percentages and memory readings retain their units and start/end deltas, while an absent file or migrated cgroup makes its delta unavailable rather than zero.
+        ´claim:discipline:cgroup-deltas-preserve-unavailable-readings´
+        ´test:integration:test-resource-samples´
+        """
+        import tempfile
+        from pathlib import Path
+        from gate_resources import sample, report
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            (root/'cpu.stat').write_text('usage_usec 10\nuser_usec 6\nsystem_usec 4\nnr_throttled 0\n')
+            (root/'cpu.pressure').write_text('some avg10=1.0 avg60=2.0 avg300=3.0 total=100\n')
+            (root/'memory.current').write_text('50\n')
+            start=sample(root)
+            (root/'cpu.stat').write_text('usage_usec 30\nuser_usec 16\nsystem_usec 14\nnr_throttled 2\n')
+            (root/'memory.current').write_text('40\n')
+            end=sample(root)
+            delta=report(start,end)['deltas']
+            self.assertEqual(delta['cpu.stat.usage_usec'],20)
+            self.assertEqual(delta['cpu.stat.nr_throttled'],2)
+            self.assertEqual(delta['memory.current'],-10)
+            self.assertIsNone(delta['memory.peak'])
+            self.assertIsNone(delta['io.pressure.some.total'])
+            self.assertEqual(start['values']['cpu.pressure.some.avg10'],1.0)
+            end['cgroup']='another'
+            self.assertTrue(all(v is None for v in report(start,end)['deltas'].values()))
+
+    def test_process_delivery_counts(self):
+        """Claim: Inline warning and error counts remain distinct from verdicts, and each process retains its delivered and lost counts without treating missing delivery evidence as a measured zero.
+        ´claim:discipline:process-delivery-counts-remain-independent´
+        ´test:integration:test-process-delivery-counts´
+        """
+        from gate_observation_counts import counts
+        result=counts([b'{"level":"WARN"}',b'{"level":"ERROR"}',b'{"kind":"observation_status","process_id":7,"delivered_records":4,"lost_records":2}',b'not json'])
+        self.assertEqual((result['warn'],result['error'],result['loss']),(1,1,2))
+        self.assertEqual(result['processes'][0]['delivered'],5)
+        self.assertEqual(counts([b'{"kind":"observation_status"}'])['processes'][0]['delivered'],None)
+
     def test_observation_streams(self):
         """Claim: Gate routing preserves complete observation bytes in the artifact and leaves diagnostics and malformed lines byte-identical in the main log, without treating an observation level as a verdict.
         ´claim:discipline:observation-stream-routing-is-lossless´

@@ -772,6 +772,9 @@
     "cli-common::observation::tests::summary_capacity": "Claim: A saturated ordinary queue cannot consume the reserved metric-summary slot; rendezvous-controlled delivery observes the summary before draining the queued ordinary records, without extending a timeout.",
     "ci::test_claims.Evidence.test_bite_one_entry": "Claim: An owned bite-1 entry hold blocks a records implementation even when other scoped evidence passes; only admitted source-matched support clears that prerequisite.",
     "ci::test_harness.Harness.test_interchange_manifest": "Claim: The current shared interchange library has no feature or binary branch and no unreviewed production dependency; its source-bound Value enum remains exhaustive, keeping one declared public configuration.",
-    "ci::test_harness.Harness.test_case_level_declaration": "Claim: An explicit integration case retains its binary suite and implementation while receiving the integration budget; undeclared case identities, absent levels and missing premises cannot create overrides."
+    "ci::test_harness.Harness.test_case_level_declaration": "Claim: An explicit integration case retains its binary suite and implementation while receiving the integration budget; undeclared case identities, absent levels and missing premises cannot create overrides.",
+    "cli-common::observation::tests::default_emission": "Claim: Default emission never formats operation payloads, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.",
+    "ci::test_observe.Admission.test_resource_samples": "Claim: Cgroup counters, PSI percentages and memory readings retain their units and start/end deltas, while an absent file or migrated cgroup makes its delta unavailable rather than zero.",
+    "ci::test_observe.Admission.test_process_delivery_counts": "Claim: Inline warning and error counts remain distinct from verdicts, and each process retains its delivered and lost counts without treating missing delivery evidence as a measured zero."
   }
 }

@@ -8,7 +8,9 @@ use std::path::Path;
 use std::process::{Command, Output};
 
 fn execwrap() -> Command {
-    Command::new(env!("CARGO_BIN_EXE_execwrap"))
+    let mut command = Command::new(env!("CARGO_BIN_EXE_execwrap"));
+    command.env("PN_OBSERVE_LEVEL", "trace");
+    command
 }
 
 fn run(args: &[&str]) -> Output {

@@ -1,5 +1,50 @@
 use super::*;
 
+/// Claim: Default emission never formats operation payloads, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.
+/// ´claim:cli:default-emission-retains-problems-and-cost´
+/// ´test:unit:default-emission´
+#[test]
+fn default_emission() {
+    struct MustNotFormat;
+    impl fmt::Debug for MustNotFormat {
+        fn fmt(&self, _: &mut fmt::Formatter<'_>) -> fmt::Result {
+            panic!("default captured content")
+        }
+    }
+    assert_eq!(emission_level(None), Ok(false));
+    assert_eq!(emission_level(Some("default")), Ok(false));
+    assert_eq!(emission_level(Some("trace")), Ok(true));
+    assert_eq!(
+        emission_level(Some("unknown")),
+        Err("PN_OBSERVE_LEVEL must be default or trace")
+    );
+    let (mut observation, clock, capture) = fixture();
+    observation.full_trace = false;
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+    tracing::subscriber::with_default(subscriber, || {
+        let command = scope("CLICOMMON", "rule:observe:spans", "run_stdout_json_command", &MustNotFormat);
+        let nested = scope("CLICOMMON", "rule:observe:spans", "nested", &MustNotFormat);
+        nested.finish(&MustNotFormat);
+        tracing::warn!(message = "public warning");
+        tracing::error!(message = "public error");
+        clock.0.store(1500, Ordering::Relaxed);
+        command.finish_with(Outcome::Success, &MustNotFormat);
+    });
+    drop(BootstrapGuard(Some(observation.clone())));
+    let rows = records(&observation, &capture);
+    assert_eq!(rows.len(), 5);
+    assert_eq!(rows.iter().filter(|row| row["level"] == "WARN").count(), 1);
+    assert_eq!(rows.iter().filter(|row| row["level"] == "ERROR").count(), 1);
+    let completion = rows.iter().find(|row| row["kind"] == "metering").unwrap();
+    assert_eq!(completion["detail"]["duration_seconds"], 1.5);
+    assert_eq!(completion["detail"]["outcome"], "success");
+    assert!(completion["detail"].get("result").is_none());
+    assert!(rows.iter().all(|row| row["kind"] != "span_envelope"));
+    let status = rows.iter().find(|row| row["kind"] == "observation_status").unwrap();
+    assert_eq!(status["delivered_records"], 4);
+    assert_eq!(status["lost_records"], 0);
+}
+
 /// Claim: Public byte representations preserve UTF-8, NUL and invalid UTF-8 exactly, and structural values retain constructors, field keys and escaped string contents rather than nesting Debug text.
 /// ´claim:cli:public-content-encoding-is-lossless´
 /// ´test:unit:public-content-encoding´
@@ -118,7 +163,7 @@ fn summary_capacity() {
     let clock = Arc::new(ManualClock(AtomicU64::new(0)));
     let diagnostic = Arc::new(std::sync::atomic::AtomicBool::new(false));
     let export = Arc::new(std::sync::atomic::AtomicBool::new(false));
-    let observation = Observation::with_writer(
+    let mut observation = Observation::with_writer(
         Blocked {
             entered,
             release: released,
@@ -130,6 +175,7 @@ fn summary_capacity() {
         clock,
     )
     .unwrap();
+    observation.full_trace = true;
     observation.emit(json!({"public":"first"}));
     entry.recv().unwrap();
     for i in 0..QUEUE_RECORDS {
@@ -458,7 +504,11 @@ fn fixture() -> (Observation, Arc<ManualClock>, Capture) {
     let clock = Arc::new(ManualClock(AtomicU64::new(0)));
     let capture = Capture::default();
     (
-        Observation::with_writer(capture.clone(), clock.clone()).unwrap(),
+        {
+            let mut observation = Observation::with_writer(capture.clone(), clock.clone()).unwrap();
+            observation.full_trace = true;
+            observation
+        },
         clock,
         capture,
     )

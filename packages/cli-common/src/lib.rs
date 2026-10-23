@@ -775,14 +775,14 @@ pub fn try_init_json_tracing(level: tracing::Level) -> bool {
     observation::bootstrap(true, false, level).is_ok()
 }
 
-/// Initialise JSON stderr tracing with `RUST_LOG` / `--debug` precedence.
+/// Initialise JSON stderr observation at `PN_OBSERVE_LEVEL`; legacy verbosity arguments do not enable payload persistence.
 /// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
 /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
 pub fn init_json_tracing_with_debug(debug: bool, default_level: tracing::Level) {
     let _installed = try_init_json_tracing_with_debug(debug, default_level);
 }
 
-/// Try to initialise JSON stderr tracing with `RUST_LOG` / `--debug` precedence.
+/// Try to initialise JSON stderr observation at `PN_OBSERVE_LEVEL`; legacy verbosity arguments do not enable payload persistence.
 ///
 /// Returns `false` if another subscriber is already installed.
 #[must_use]
@@ -825,7 +825,15 @@ where
     Run: FnOnce() -> Result<Output, CommandError>,
 {
     install_json_panic_hook(command_name);
-    let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
+    let _observation_guard = match observation::bootstrap(true, debug, default_level) {
+        Ok(guard) => guard,
+        Err(error) => {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
+            error.clone_into(&mut record.message);
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
+    };
     let scope = crate::observation::scope(
         "CLICOMMON",
         "rule:observe:spans",
@@ -882,7 +890,15 @@ where
     Run: FnOnce() -> Result<(), CommandError>,
 {
     install_json_panic_hook(command_name);
-    let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
+    let _observation_guard = match observation::bootstrap(true, debug, default_level) {
+        Ok(guard) => guard,
+        Err(error) => {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
+            error.clone_into(&mut record.message);
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
+    };
     let scope = crate::observation::scope(
         "CLICOMMON",
         "rule:observe:spans",
@@ -927,7 +943,15 @@ where
     RunFuture: Future<Output = Result<(), CommandError>>,
 {
     install_json_panic_hook(command_name);
-    let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
+    let _observation_guard = match observation::bootstrap(true, debug, default_level) {
+        Ok(guard) => guard,
+        Err(error) => {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
+            error.clone_into(&mut record.message);
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
+    };
     let debug_requested = debug;
     let span = tracing::info_span!("rule:observe:spans", execution_owner="CLICOMMON", claim_owner="ROOT", claim_label="rule:observe:spans", source_item="run_no_stdout_command_async", asynchronous=true, command_name, debug_requested, default_level=?default_level, callback=std::any::type_name::<Run>());
     tracing::Instrument::instrument(
@@ -977,7 +1001,15 @@ where
     Run: FnOnce() -> Result<CheckOutcome<Report>, CommandError>,
 {
     install_json_panic_hook(command_name);
-    let _observation_guard = observation::bootstrap(true, debug, default_level).ok();
+    let _observation_guard = match observation::bootstrap(true, debug, default_level) {
+        Ok(guard) => guard,
+        Err(error) => {
+            let mut record = ControlPlaneRecord::usage_error(command_name, "observation_configuration");
+            error.clone_into(&mut record.message);
+            let _ignored = emit_control_plane_record(&record);
+            return CommandExit::Usage.exit_code();
+        }
+    };
     let scope = crate::observation::scope(
         "CLICOMMON",
         "rule:observe:spans",

@@ -7,12 +7,12 @@
   ],
   "rows": [
     {
-      "exceptions": 74,
-      "generators": 36,
+      "exceptions": 76,
+      "generators": 37,
       "helpers": 3,
       "instrumented": 30,
       "name": "cli-common",
-      "operations": 107
+      "operations": 109
     },
     {
       "exceptions": 6,

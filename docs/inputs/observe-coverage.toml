@@ -3,11 +3,11 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "cli-common"
-operations = 107
+operations = 109
 instrumented = 30
-exceptions = 74
+exceptions = 76
 helpers = 3
-generators = 36
+generators = 37
 
 [[rows]]
 name = "documents"

@@ -17,7 +17,7 @@ def run(argv, **kwargs):
 
 class Processes(unittest.TestCase):
     def test_four_mode_results(self):
-        """Claim: Disabled, enabled, selected-out and locally failing-export executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes.
+        """Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes; an unknown emission level refuses document execution with a named configuration diagnostic.
         ´claim:discipline:four-observation-modes-preserve-command-results´
         ´test:integration:test-four-mode-results´
         """
@@ -37,8 +37,10 @@ class Processes(unittest.TestCase):
                 self.assertEqual(result.returncode,0 if command[0]=='git' else 3,result.stderr.decode())
             samples={}
             artifact=Path('.lane/observation-comparison');artifact.mkdir(exist_ok=True)
-            for mode in ('disabled','enabled','sampled','failing-export'):
-                result=run([str(target/'examples/observation_compare'),mode,str(root)],env=env)
+            for mode in ('disabled','default','trace','failing-export'):
+                objects=artifact/(mode+'-objects')
+                selected=env | {'PN_OBSERVE_LEVEL':'trace' if mode in ('trace','failing-export') else 'default', 'PN_OBSERVE_ARTIFACT_DIR':str(objects.resolve())}
+                result=run([str(target/'examples/observation_compare'),mode,str(root)],env=selected)
                 self.assertEqual(result.returncode,0,result.stderr.decode())
                 samples[mode]=(result.returncode,result.stdout)
                 (artifact/(mode+'.stdout')).write_bytes(result.stdout)
@@ -49,6 +51,12 @@ class Processes(unittest.TestCase):
                     self.assertEqual(len(rows),1)
                     self.assertEqual(rows[0].get('availability'),'disabled')
                     self.assertEqual(rows[0].get('kind'),'observation_status')
+                elif mode=='default':
+                    self.assertFalse(any(row.get('kind') in ('trace','span_envelope') for row in rows))
+                    status=next(row for row in rows if row.get('kind')=='observation_status')
+                    self.assertEqual(status['lost_records'],0)
+                    self.assertEqual(status['delivered_records'],len(rows)-1)
+                    self.assertFalse(objects.exists())
                 else:self.assertTrue(any(row.get('kind')=='span_envelope' for row in rows))
                 if mode=='failing-export':self.assertTrue(any(row.get('kind')=='export_summary' and row['lost_exports']>0 for row in rows))
             self.assertTrue(all(sample==samples['disabled'] for sample in samples.values()))
@@ -60,6 +68,11 @@ class Processes(unittest.TestCase):
             self.assertEqual(report['child_stderr'],list(b'diagnostic'))
             self.assertEqual(report['child_exit'],7)
             self.assertFalse(report['child_loss'])
+            refused=run([str(target/'documents'),'check'],cwd=root,env=env | {'PN_OBSERVE_LEVEL':'unknown'})
+            self.assertEqual(refused.returncode,2)
+            self.assertEqual(refused.stdout,b'')
+            diagnostic=json.loads(refused.stderr)
+            self.assertIn('PN_OBSERVE_LEVEL',diagnostic['message'])
 
 
 if __name__=='__main__':unittest.main()
