@@ -1,6 +1,6 @@
 # Development support · `guide:testkit:support`
 
-**Section (testkit)** · `sec:testkit:area-testkit` If support loses cases, implementation identities or replay inputs, passing tests can conceal a contract failure. This unpublished, dependency-free package is used only through development dependencies under (`[ROOT-proposal:harness:packages]`).
+**Section (testkit)** · `sec:testkit:area-testkit` {{ row('org.peer-network.testing.claim-areas', owner='TESTKIT', area='testkit').stake }} This unpublished, dependency-free package is used only through development dependencies under (`[ROOT-proposal:harness:packages]`).
 
 **Definition (Runner)** · `def:testkit:runner-interface` `run` validates a suite edition, unique case identifiers and unique implementation names before executing their complete Cartesian product. An adapter receives each unchanged input and returns its predicate; every returned result retains the identity and elapsed `Duration`. The caller owns persistence and joins these results with source and configuration. Adapter panics remain test failures; they are never converted into passing cases. No retry, timeout, filtering, printing or global subscriber is installed.
 

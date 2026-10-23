@@ -186,6 +186,7 @@ fn validate_output(document: &str, vendors: &[PathBuf]) -> Result<()> {
             document,
             "README.md"
                 | "packages/documents/README.md"
+                | "packages/interchange/README.md"
                 | "packages/cli-common/README.md"
                 | "packages/execwrap/README.md"
                 | "packages/testkit/README.md"

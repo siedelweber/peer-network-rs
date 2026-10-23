@@ -1,0 +1,9 @@
+# Interchange · `guide:interchange:overview`
+
+**Setup (Evidence ownership)** · `setup:interchange:claims` This package owns its value, schema and registry claims under (`[ROOT-rec:testing:decision]`). Each area's entry states the risk of a failed claim; the entry is a local contract boundary, not evidence of a concept requirement. Item-specific gloss and stake review remains in the claims audit.
+
+## Claim areas · `sec:interchange:areas`
+{% for area in rows('org.peer-network.testing.claim-areas') if area.owner == 'INTERCHANGE' %}
+
+**Section ({{ area.area }})** · `{{ area.register | replace('INTERCHANGE::', '') }}` {{ area.stake }}
+{% endfor %}

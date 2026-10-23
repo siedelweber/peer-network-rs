@@ -46,6 +46,7 @@ run_step harness-registry python3 -B ci/harness.py
 run_step harness-tests python3 -B ci/run_ci.py test_harness
 run_step testkit-guard python3 -B ci/testkit_guard.py
 run_step testkit-tests python3 -B ci/run_ci.py test_testkit
+run_step claim-tests python3 -B ci/run_ci.py test_claims
 run_step devperf-tests python3 -B ci/run_ci.py test_devperf
 run_step build-policy python3 ci/discipline.py build-policy
 run_step cargo-config python3 ci/discipline.py cargo-config
@@ -74,6 +75,7 @@ run_step design-tests python3 -B ci/run_ci.py test_design
 run_step benchmarks python3 -B ci/benchmarks.py
 run_step harness-matrix python3 -B ci/harness.py --matrix
 run_step linter "$LINTER_BIN" check --root .
+run_step claim-evidence python3 -B ci/claims.py
 run_step token python3 ci/discipline.py token
 run_step hash-citations python3 -B ci/discipline.py hash-citations
 run_step suppressions python3 ci/discipline.py suppressions

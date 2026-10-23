@@ -5,9 +5,13 @@ attributes or unaccounted runnable cases fail the later inventory equality.
 """
 
 import ast
+from collections import Counter
+import io
+import json
 from pathlib import Path
 import re
 import tomllib
+import tokenize
 
 from devperf import StructuralError
 
@@ -15,9 +19,10 @@ OWNERS = {'interchange': 'INTERCHANGE', 'cli-common': 'CLICOMMON',
           'execwrap': 'EXECWRAP', 'documents': 'DOCUMENTS', 'testkit': 'TESTKIT'}
 RAW_STRING = re.compile(r'(?:br|r)(#*)"')
 CHAR_LITERAL = re.compile(r"'(?:\\(?:u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2}|.)|[^'\\\n])'")
+DOC_ATTRIBUTE = re.compile(r'#\[doc\s*=\s*("(?:[^"\\]|\\.)*")\s*\]')
 
 
-def rust_mask(text):
+def rust_mask(text, comments=None):
     result = list(text)
     i = 0
     while i < len(text):
@@ -25,6 +30,7 @@ def rust_mask(text):
         if text.startswith('//', i):
             i = text.find('\n', i)
             if i < 0: i = len(text)
+            if comments is not None: comments.append(text[start:i])
         elif text.startswith('/*', i):
             depth = 1
             i += 2
@@ -33,6 +39,7 @@ def rust_mask(text):
                 elif text.startswith('*/', i): depth -= 1; i += 2
                 else: i += 1
             if depth: raise StructuralError('unterminated Rust comment')
+            if comments is not None: comments.append(text[start:i])
         else:
             raw = RAW_STRING.match(text, i)
             if raw:
@@ -90,6 +97,10 @@ def rust_sites(path, text, package, owner, aliases=None):
         doc = []
         for line in reversed(before):
             stripped = line.strip()
+            attribute = DOC_ATTRIBUTE.fullmatch(stripped)
+            if attribute:
+                doc.append(json.loads(attribute[1]))
+                continue
             if not stripped or stripped.startswith('#['): continue
             if stripped.startswith('///'): doc.append(stripped[3:].strip())
             else: break
@@ -134,3 +145,30 @@ def property_roster(sites, declarations):
     actual = {s['operation'] for s in sites if s['property']}
     if actual != set(declarations):
         raise StructuralError(f'property declarations differ from proptest source: missing={sorted(actual-set(declarations))} stale={sorted(set(declarations)-actual)}')
+
+
+def claim_mints(root):
+    """Inventory comment/docstring mints independently of executable-site attachment."""
+    root=Path(root)
+    mints=Counter()
+    def collect(owner, carriers):
+        for carrier in carriers:
+            for label in re.findall(r'(?<!\()´(claim:[a-z0-9-]+:[a-z0-9.-]+)´',carrier):
+                mints[owner+'::'+label]+=1
+    for directory,owner in OWNERS.items():
+        for path in (root/'packages'/directory).rglob('*.rs'):
+            if not {'src','tests'}.intersection(path.relative_to(root).parts[2:]): continue
+            comments=[]
+            source=path.read_text()
+            masked=rust_mask(source,comments)
+            for attribute in DOC_ATTRIBUTE.finditer(source):
+                if masked[attribute.start():].startswith('#[doc'):
+                    comments.append(json.loads(attribute[1]))
+            collect(owner,comments)
+    for path in (root/'ci').glob('*.py'):
+        source=path.read_text()
+        tree=ast.parse(source)
+        carriers=[ast.get_docstring(n) or '' for n in ast.walk(tree) if isinstance(n,(ast.Module,ast.ClassDef,ast.FunctionDef,ast.AsyncFunctionDef))]
+        carriers.extend(t.string for t in tokenize.generate_tokens(io.StringIO(source).readline) if t.type==tokenize.COMMENT)
+        collect('ROOT',carriers)
+    return mints

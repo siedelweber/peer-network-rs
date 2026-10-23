@@ -51,3 +51,25 @@
 **Section (harness)** · `sec:foundation:area-harness` If harness discipline fails, a fast substitute can conceal a real-service defect, a passing test can lack a claim, or a client retry can repeat an irreversible effect. (`rec:harness:decision`) fixes test levels, shared suites, functional substitutes and client evidence.
 
 **Section (devperf)** · `sec:foundation:area-devperf` If development performance fails, slow feedback hides defects or noisy timings make correct evidence appear unreliable. (`rec:devperf:decision`) requires measured budgets, owned findings and registered expensive work while keeping timing outside test and gate verdicts.
+
+
+## CI claim areas · `sec:foundation:claim-areas`
+
+
+**Section (design)** · `sec:foundation:claim-area-design` If correspondence claims fail, changed release fields or lost source pins can be accepted without evidence.
+
+
+**Section (devperf)** · `sec:foundation:claim-area-devperf` If performance-reporting claims fail, durations can change semantic verdicts or missing observations can be invented.
+
+
+**Section (discipline)** · `sec:foundation:claim-area-discipline` If build-discipline claims fail, a package, test item or output path can evade the workspace checks.
+
+
+**Section (harness)** · `sec:foundation:claim-area-harness` If harness claims fail, undeclared, missing or misidentified executions can appear as passing evidence.
+
+
+**Section (hash-citations)** · `sec:foundation:claim-area-hash-citations` If identity-citation claims fail, unresolved identities can enter tracked prose or ordinary words can be refused as identities.
+
+
+**Section (testing)** · `sec:foundation:claim-area-testing` If evidence-gate claims fail, missing obligations, unowned claims or failed siblings can be hidden by coverage totals.
+

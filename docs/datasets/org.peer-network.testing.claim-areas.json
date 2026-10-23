@@ -1,0 +1,248 @@
+{
+  "namespace": "org.peer-network.testing.claim-areas",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "area": "cli",
+      "contract": "CLICOMMON::sec:clicommon:area-cli",
+      "owner": "CLICOMMON",
+      "register": "CLICOMMON::sec:clicommon:area-cli",
+      "stake": "If command-line claims fail, callers can lose result bytes, receive malformed diagnostics, or mistake failure for success."
+    },
+    {
+      "area": "cli",
+      "contract": "DOCUMENTS::sec:documents:area-cli",
+      "owner": "DOCUMENTS",
+      "register": "DOCUMENTS::sec:documents:area-cli",
+      "stake": "If command contract claims fail, machine callers cannot distinguish results from diagnostics or rely on process status before using an output."
+    },
+    {
+      "area": "envelope",
+      "contract": "DOCUMENTS::sec:documents:area-envelope",
+      "owner": "DOCUMENTS",
+      "register": "DOCUMENTS::sec:documents:area-envelope",
+      "stake": "If envelope claims fail, a malformed or incompatible structured file can be treated as valid data before its identity is established."
+    },
+    {
+      "area": "render",
+      "contract": "DOCUMENTS::sec:documents:area-render",
+      "owner": "DOCUMENTS",
+      "register": "DOCUMENTS::sec:documents:area-render",
+      "stake": "If rendering claims fail, committed documents can silently drift from their inputs or conceal unsupported premises."
+    },
+    {
+      "area": "cli",
+      "contract": "EXECWRAP::sec:execwrap:area-cli",
+      "owner": "EXECWRAP",
+      "register": "EXECWRAP::sec:execwrap:area-cli",
+      "stake": "If command-line claims fail, callers can lose result bytes, receive malformed diagnostics, or mistake failure for success."
+    },
+    {
+      "area": "acceptance",
+      "contract": "INTERCHANGE::sec:interchange:area-acceptance",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-acceptance",
+      "stake": "If acceptance claims fail, document stamps can select the wrong reader or turn a refusal into acceptance."
+    },
+    {
+      "area": "ast",
+      "contract": "INTERCHANGE::sec:interchange:area-ast",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-ast",
+      "stake": "If syntax-tree claims fail, parsed distinctions can disappear before validation or printing."
+    },
+    {
+      "area": "cddl",
+      "contract": "INTERCHANGE::sec:interchange:area-cddl",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-cddl",
+      "stake": "If CDDL claims fail, schema acceptance can disagree with the declared label language or evaluable subset."
+    },
+    {
+      "area": "companion",
+      "contract": "INTERCHANGE::sec:interchange:area-companion",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-companion",
+      "stake": "If companion claims fail, an earlier reader can receive a schema with unintended edits."
+    },
+    {
+      "area": "documents",
+      "contract": "INTERCHANGE::sec:interchange:area-documents",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-documents",
+      "stake": "If document claims fail, malformed envelopes or unsupported values can cross the interchange boundary."
+    },
+    {
+      "area": "encoding",
+      "contract": "INTERCHANGE::sec:interchange:area-encoding",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-encoding",
+      "stake": "If encoding claims fail, equal values can receive different names or encoded bytes can lose their meaning."
+    },
+    {
+      "area": "fragment",
+      "contract": "INTERCHANGE::sec:interchange:area-fragment",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-fragment",
+      "stake": "If fragment claims fail, unsupported schema forms can enter algorithms whose guarantees require the assignable fragment."
+    },
+    {
+      "area": "inclusion",
+      "contract": "INTERCHANGE::sec:interchange:area-inclusion",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-inclusion",
+      "stake": "If inclusion claims fail, incompatible theories can be mistaken for additive refinements."
+    },
+    {
+      "area": "labels",
+      "contract": "INTERCHANGE::sec:interchange:area-labels",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-labels",
+      "stake": "If label claims fail, identifiers can be parsed ambiguously or accepted outside their canonical language."
+    },
+    {
+      "area": "lex",
+      "contract": "INTERCHANGE::sec:interchange:area-lex",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-lex",
+      "stake": "If lexical claims fail, invalid input can be tokenized as a different valid schema or diagnostics can identify the wrong position."
+    },
+    {
+      "area": "parse",
+      "contract": "INTERCHANGE::sec:interchange:area-parse",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-parse",
+      "stake": "If parsing claims fail, schema structure can change or adversarial nesting can cause repeated descent."
+    },
+    {
+      "area": "prefix",
+      "contract": "INTERCHANGE::sec:interchange:area-prefix",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-prefix",
+      "stake": "If prefix claims fail, incomplete bytes can select a reader prematurely or require more bytes than the declared bound."
+    },
+    {
+      "area": "print",
+      "contract": "INTERCHANGE::sec:interchange:area-print",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-print",
+      "stake": "If printing claims fail, schema text can change meaning or fail to reach its canonical fixed point."
+    },
+    {
+      "area": "properties",
+      "contract": "INTERCHANGE::sec:interchange:area-properties",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-properties",
+      "stake": "If sampled metatheorem claims fail, canonical names, bounded routing or compatibility invariants have a concrete counterexample."
+    },
+    {
+      "area": "regexp",
+      "contract": "INTERCHANGE::sec:interchange:area-regexp",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-regexp",
+      "stake": "If regular-expression claims fail, supported patterns can decide the wrong match or exceed the declared work limit."
+    },
+    {
+      "area": "registry",
+      "contract": "INTERCHANGE::sec:interchange:area-registry",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-registry",
+      "stake": "If registry claims fail, invalid or ambiguous theory histories can be admitted as supported versions."
+    },
+    {
+      "area": "resolve",
+      "contract": "INTERCHANGE::sec:interchange:area-resolve",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-resolve",
+      "stake": "If resolution claims fail, names and generic parameters can bind outside their declared scope."
+    },
+    {
+      "area": "restraint",
+      "contract": "INTERCHANGE::sec:interchange:area-restraint",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-restraint",
+      "stake": "If restraint claims fail, an implicit schema reach can admit forbidden values."
+    },
+    {
+      "area": "satisfaction",
+      "contract": "INTERCHANGE::sec:interchange:area-satisfaction",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-satisfaction",
+      "stake": "If satisfaction claims fail, a document can receive the wrong schema-conformance verdict."
+    },
+    {
+      "area": "theories",
+      "contract": "INTERCHANGE::sec:interchange:area-theories",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-theories",
+      "stake": "If theory claims fail, registered schema identity and validation can diverge."
+    },
+    {
+      "area": "vectors",
+      "contract": "INTERCHANGE::sec:interchange:area-vectors",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-vectors",
+      "stake": "If vector claims fail, interchange behavior disagrees with the independent named conformance cases."
+    },
+    {
+      "area": "versions",
+      "contract": "INTERCHANGE::sec:interchange:area-versions",
+      "owner": "INTERCHANGE",
+      "register": "INTERCHANGE::sec:interchange:area-versions",
+      "stake": "If version claims fail, edition ordering and compatibility can select an unsupported schema."
+    },
+    {
+      "area": "design",
+      "contract": "ROOT::sec:foundation:claim-area-design",
+      "owner": "ROOT",
+      "register": "ROOT::sec:foundation:claim-area-design",
+      "stake": "If correspondence claims fail, changed release fields or lost source pins can be accepted without evidence."
+    },
+    {
+      "area": "devperf",
+      "contract": "ROOT::sec:foundation:claim-area-devperf",
+      "owner": "ROOT",
+      "register": "ROOT::sec:foundation:claim-area-devperf",
+      "stake": "If performance-reporting claims fail, durations can change semantic verdicts or missing observations can be invented."
+    },
+    {
+      "area": "discipline",
+      "contract": "ROOT::sec:foundation:claim-area-discipline",
+      "owner": "ROOT",
+      "register": "ROOT::sec:foundation:claim-area-discipline",
+      "stake": "If build-discipline claims fail, a package, test item or output path can evade the workspace checks."
+    },
+    {
+      "area": "harness",
+      "contract": "ROOT::sec:foundation:claim-area-harness",
+      "owner": "ROOT",
+      "register": "ROOT::sec:foundation:claim-area-harness",
+      "stake": "If harness claims fail, undeclared, missing or misidentified executions can appear as passing evidence."
+    },
+    {
+      "area": "hash-citations",
+      "contract": "ROOT::sec:foundation:claim-area-hash-citations",
+      "owner": "ROOT",
+      "register": "ROOT::sec:foundation:claim-area-hash-citations",
+      "stake": "If identity-citation claims fail, unresolved identities can enter tracked prose or ordinary words can be refused as identities."
+    },
+    {
+      "area": "testing",
+      "contract": "ROOT::sec:foundation:claim-area-testing",
+      "owner": "ROOT",
+      "register": "ROOT::sec:foundation:claim-area-testing",
+      "stake": "If evidence-gate claims fail, missing obligations, unowned claims or failed siblings can be hidden by coverage totals."
+    },
+    {
+      "area": "testkit",
+      "contract": "TESTKIT::sec:testkit:area-testkit",
+      "owner": "TESTKIT",
+      "register": "TESTKIT::sec:testkit:area-testkit",
+      "stake": "If support loses cases, implementation identities or replay inputs, passing tests can conceal a contract failure."
+    }
+  ]
+}

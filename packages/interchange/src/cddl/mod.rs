@@ -670,6 +670,8 @@ mod tests {
         /// directions — an unanchored matcher would answer true for every
         /// near miss that merely *contains* a label, and only the forward
         /// half would survive.
+        #[doc = "´claim:cddl:sampled-near-labels-have-agreeing-recognizers´"]
+        #[doc = "´test:unit:the-two-label-recognizers-agree´"]
         #[test]
         fn the_two_label_recognizers_agree(text in near_label()) {
             prop_assert_eq!(
@@ -684,6 +686,8 @@ mod tests {
         /// matches — the forward half of the biconditional above, called out
         /// on its own because it is what would catch a pattern that had
         /// drifted from the grammar.
+        #[doc = "´claim:cddl:sampled-scanner-labels-match-the-schema-pattern´"]
+        #[doc = "´test:unit:the-pattern-matches-every-label-the-scanner-accepts´"]
         #[test]
         fn the_pattern_matches_every_label_the_scanner_accepts(text in near_label()) {
             if crate::NamespaceLabel::parse(&text).is_ok() {

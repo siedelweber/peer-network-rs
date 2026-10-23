@@ -62,8 +62,11 @@ class Correspondence(unittest.TestCase):
     def check(self):
         return subprocess.run([sys.executable, '-B', '-O', str(REPOSITORY / 'ci/design.py')], cwd=self.root, capture_output=True, text=True)
 
-    # Claim: both rendered release tags are pinned independently of accepted-study projections.
     def test_release_tags(self):
+        """both rendered release tags are pinned independently of accepted-study projections.
+        ´claim:design:release-identities-are-pinned´
+        ´test:design:test-release-tags´
+        """
         path = self.root / 'docs/datasets/org.peer-network.design.publication.json'
         original = path.read_text()
         for name in ('paper', 'questions'):
@@ -76,8 +79,11 @@ class Correspondence(unittest.TestCase):
                 self.assertIn(f'{name}: paper release tag changed', result.stderr)
         path.write_text(original)
 
-    # Claim: release additions, refreshed fields and answer fields cannot drift behind the study projections.
     def test_release_projections(self):
+        """release additions, refreshed fields and answer fields cannot drift behind the study projections.
+        ´claim:design:release-fields-cannot-drift´
+        ´test:design:test-release-projections´
+        """
         for name, marker, field in [('inventory', 'added_at', 'label'), ('constants', 'refreshed_at', 'cites'), ('constants', 'refreshed_at', 'class'), ('constants', 'refreshed_at', 'home'), ('questions', 'status', 'status'), ('questions', 'status', 'section'), ('questions', 'status', 'ambiguity')]:
             with self.subTest(name=name, field=field):
                 path = self.root / f'docs/datasets/org.peer-network.design.{name}.json'
@@ -90,8 +96,11 @@ class Correspondence(unittest.TestCase):
                 self.assertIn(f'{name}: release projection changed', result.stderr)
                 path.write_text(original)
 
-    # Claim: optimized Python still rejects changed crate responsibilities and bite order through their pins.
     def test_pinned_decisions_under_optimization(self):
+        """optimized Python still rejects changed crate responsibilities and bite order through their pins.
+        ´claim:design:optimized-validation-keeps-pins´
+        ´test:design:test-pinned-decisions-under-optimization´
+        """
         for name, field in [('crates', 'responsibility'), ('bites', 'slice')]:
             with self.subTest(name=name):
                 path = self.root / f'docs/datasets/org.peer-network.design.{name}.json'
@@ -104,8 +113,11 @@ class Correspondence(unittest.TestCase):
                 self.assertIn(f'{name}: source projection changed', result.stderr)
                 path.write_text(original)
 
-    # Claim: tracked first-party documents and templates refuse bare paper labels while vendored members remain excluded.
     def test_tracked_prose_boundaries(self):
+        """tracked first-party documents and templates refuse bare paper labels while vendored members remain excluded.
+        ´claim:design:paper-mints-stay-exhibited´
+        ´test:design:test-tracked-prose-boundaries´
+        """
         vendor = self.root / 'vendor/example/README.md'
         vendor.parent.mkdir(parents=True)
         vendor.write_text('`def:comparator:burn-interface`\n')

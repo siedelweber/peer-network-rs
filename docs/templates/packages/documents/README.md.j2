@@ -8,10 +8,10 @@
 
 ## Claim areas · `sec:documents:areas`
 
-**Section (envelope)** · `sec:documents:area-envelope` If envelope claims fail, a malformed or incompatible structured file can be treated as valid data before its identity is established.
+**Section (envelope)** · `sec:documents:area-envelope` {{ row('org.peer-network.testing.claim-areas', owner='DOCUMENTS', area='envelope').stake }}
 
-**Section (render)** · `sec:documents:area-render` If rendering claims fail, committed documents can silently drift from their inputs or conceal unsupported premises.
+**Section (render)** · `sec:documents:area-render` {{ row('org.peer-network.testing.claim-areas', owner='DOCUMENTS', area='render').stake }}
 
-**Section (cli)** · `sec:documents:area-cli` If command contract claims fail, machine callers cannot distinguish results from diagnostics or rely on process status before using an output.
+**Section (cli)** · `sec:documents:area-cli` {{ row('org.peer-network.testing.claim-areas', owner='DOCUMENTS', area='cli').stake }}
 
 **Convention (Release support)** · `conv:documents:release-support` Dataset admission and command contracts describe the current engine. They carry no promise of cross-release compatibility or migrations before 1.0 (`[ROOT-rule:compatibility:pre-one]`).

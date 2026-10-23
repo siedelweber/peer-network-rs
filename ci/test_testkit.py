@@ -82,6 +82,12 @@ class SupportGuard(unittest.TestCase):
             self.assertEqual(out.getvalue(), '')
             self.assertEqual(len(err.getvalue().splitlines()), 1)
             self.assertIsInstance(json.loads(err.getvalue()), dict)
+        out, err = io.StringIO(), io.StringIO()
+        with patch.object(out, 'isatty', side_effect=OSError('preflight failed')), contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            self.assertEqual(benchmarks.main(), 1)
+        self.assertEqual(out.getvalue(), '')
+        self.assertEqual(len(err.getvalue().splitlines()), 1)
+        self.assertEqual(json.loads(err.getvalue())['exception'], 'OSError')
 
 
     def test_property_seed(self):

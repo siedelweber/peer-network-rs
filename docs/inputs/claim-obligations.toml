@@ -1,0 +1,1923 @@
+namespace = "org.peer-network.testing.claim-obligations"
+version = [1, 0, 0]
+
+[[rows]]
+name = "ROOT::dec:api:encoding-boundary"
+path = "adr/018-public-api.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:api:encoding-boundary"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:api:graphql"
+path = "adr/018-public-api.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:api:graphql"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:api:schema"
+path = "adr/018-public-api.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:api:schema"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:compatibility:history"
+path = "adr/014-forward-only-development.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:compatibility:history"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:decomposition:bites"
+path = "adr/007-crate-decomposition.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:decomposition:bites"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:decomposition:burn"
+path = "adr/007-crate-decomposition.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:decomposition:burn"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:decomposition:constants"
+path = "adr/007-crate-decomposition.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:decomposition:constants"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:decomposition:crates"
+path = "adr/007-crate-decomposition.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:decomposition:crates"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:decomposition:encoding"
+path = "adr/007-crate-decomposition.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:decomposition:encoding"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:decomposition:fixtures"
+path = "adr/007-crate-decomposition.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:decomposition:fixtures"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:decomposition:numbers"
+path = "adr/007-crate-decomposition.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:decomposition:numbers"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:admission"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:admission"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:burn-boundary"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:burn-boundary"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:certificate"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:certificate"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:complete-acts"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:complete-acts"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:conservation"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:conservation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:constants"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:constants"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:final-membership"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:final-membership"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:final-state"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:final-state"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:formation-title"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:formation-title"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:ledger-vintages"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:ledger-vintages"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:policy-schedules"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:policy-schedules"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:public-inputs"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:public-inputs"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:publication"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:publication"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:raw-readings"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:raw-readings"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:replay"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:replay"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:rung-verdicts"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:rung-verdicts"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:design:terminal-separation"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:design:terminal-separation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:devnet:elements"
+path = "adr/019-development-network.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:devnet:elements"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:devnet:release"
+path = "adr/019-development-network.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:devnet:release"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:devperf:feedback"
+path = "adr/021-development-performance.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:devperf:feedback"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:devperf:profiles"
+path = "adr/021-development-performance.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:devperf:profiles"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:harness:client-packages"
+path = "adr/020-testing-harness.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:harness:client-packages"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:harness:client-schema"
+path = "adr/020-testing-harness.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:harness:client-schema"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:harness:levels"
+path = "adr/020-testing-harness.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:harness:levels"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:labels:policy"
+path = "adr/001-label-calculus.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:labels:policy"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:lint:policy"
+path = "adr/005-lint-discipline.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:lint:policy"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:observe:foundation"
+path = "adr/016-observability.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:observe:foundation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Observation step 4 and claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:observe:secrets"
+path = "adr/016-observability.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:observe:secrets"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Observation step 4 and claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:observe:sinks"
+path = "adr/016-observability.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:observe:sinks"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Observation step 4 and claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:output:policy"
+path = "adr/004-command-line-output-contract.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:output:policy"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:render:policy"
+path = "adr/003-templated-documentation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:render:policy"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:storage:postgresql"
+path = "adr/015-durable-storage.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:storage:postgresql"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::dec:testing:evidence"
+path = "adr/017-claim-based-testing.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:testing:evidence"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:toolchain:compiler"
+path = "adr/013-toolchain-and-build-profile.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:toolchain:compiler"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:toolchain:minimum"
+path = "adr/013-toolchain-and-build-profile.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:toolchain:minimum"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:toolchain:release"
+path = "adr/013-toolchain-and-build-profile.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:toolchain:release"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:cddl-coverage"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:cddl-coverage"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:crate-layout"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:crate-layout"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:evaluable-subset"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:evaluable-subset"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:float-bits"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:float-bits"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:nan-policy"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:nan-policy"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:nesting-policy"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:nesting-policy"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:prefix-public"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:prefix-public"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:public-printer"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:public-printer"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:refused-dependencies"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:refused-dependencies"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:regexp-engine"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:regexp-engine"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:regexp-seam"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:regexp-seam"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:registry-loading"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:registry-loading"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:restraint-enforcement"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:restraint-enforcement"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:slice-sequencing"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:slice-sequencing"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:theory-sharing"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:theory-sharing"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:type-identity"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:type-identity"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:utf8-policy"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:utf8-policy"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::dec:xchg:value-exhaustive"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for dec:xchg:value-exhaustive"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:api:implementation"
+path = "adr/018-public-api.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:api:implementation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:compatibility:release"
+path = "adr/014-forward-only-development.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:compatibility:release"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:decomposition:correspondence"
+path = "adr/007-crate-decomposition.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:decomposition:correspondence"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:api-bites"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:api-bites"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-1"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-1"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-10"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-10"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-11"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-11"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-2"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-2"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-3"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-3"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-4"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-4"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-5"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-5"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-6"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-6"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-7"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-7"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-8"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-8"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:bite-9"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-9"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:claim-foundation"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:claim-foundation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b and observation step 4"
+
+[[rows]]
+name = "ROOT::gate:design:dependency-readiness"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:dependency-readiness"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:devnet-bites"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:devnet-bites"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:document-integrity"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:document-integrity"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:domain-entry"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:domain-entry"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:harness-bites"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:harness-bites"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:harness-foundation"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:harness-foundation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b and observation step 4; service provisioning for the service tier"
+
+[[rows]]
+name = "ROOT::gate:design:implementation-evidence"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:implementation-evidence"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:design:observability-foundation"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:observability-foundation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Observation step 4 and claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:design:performance-foundation"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:design:performance-foundation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b and observation step 4; service provisioning for the service tier"
+
+[[rows]]
+name = "ROOT::gate:devnet:implementation"
+path = "adr/019-development-network.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:devnet:implementation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:devperf:foundation"
+path = "adr/021-development-performance.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:devperf:foundation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b and observation step 4; service provisioning for the service tier"
+
+[[rows]]
+name = "ROOT::gate:foundation:verification"
+path = "README.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:foundation:verification"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:harness:foundation"
+path = "adr/020-testing-harness.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:harness:foundation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b and observation step 4; service provisioning for the service tier"
+
+[[rows]]
+name = "ROOT::gate:identity:implementation"
+path = "adr/006-identity-adjudication.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:identity:implementation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:kinds:adoption"
+path = "adr/002-environment-kinds.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:kinds:adoption"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:labels:implementation"
+path = "adr/001-label-calculus.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:labels:implementation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:labels:verification"
+path = "adr/001-label-calculus.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:labels:verification"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:lint:verification"
+path = "adr/005-lint-discipline.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:lint:verification"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:observe:foundation"
+path = "adr/016-observability.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:observe:foundation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Observation step 4 and claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:output:verification"
+path = "adr/004-command-line-output-contract.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:output:verification"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:render:verification"
+path = "adr/003-templated-documentation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:render:verification"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:storage:evidence"
+path = "adr/015-durable-storage.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:storage:evidence"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:testing:foundation"
+path = "adr/017-claim-based-testing.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:testing:foundation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b and observation step 4"
+
+[[rows]]
+name = "ROOT::gate:toolchain:verification"
+path = "adr/013-toolchain-and-build-profile.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:toolchain:verification"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:vision:contract"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:vision:contract"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:vision:current-evidence"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:vision:current-evidence"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:vision:uncertainty"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:vision:uncertainty"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::gate:xchg:concept-review"
+path = "adr/009-interchange-concept.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:xchg:concept-review"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::gate:xchg:implementation"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for gate:xchg:implementation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::req:design:limits"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:design:limits"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:identity:admission-record"
+path = "adr/006-identity-adjudication.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:identity:admission-record"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::req:identity:stop-record"
+path = "adr/006-identity-adjudication.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:identity:stop-record"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::req:interchange:fixed-once"
+path = "adr/008-interchange-conventions.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:interchange:fixed-once"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::req:kinds:attestation-register"
+path = "adr/002-environment-kinds.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:kinds:attestation-register"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::req:vision:admission"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:admission", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-7"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:admission"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:burn-boundary"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:burn-boundary", "ROOT::dec:devnet:elements", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-2"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:burn-boundary"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:certificate"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:certificate", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-6"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:certificate"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:complete-acts"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:complete-acts", "ROOT::gate:design:bite-1", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-4"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:complete-acts"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:conservation"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:conservation", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-5", "ROOT::gate:design:bite-6"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:conservation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:constants"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:constants", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-2"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:constants"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:final-membership"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:final-membership", "ROOT::gate:design:bite-1", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-7", "ROOT::req:vision:admission"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:final-membership"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:final-state"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:final-state", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-5"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:final-state"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:formation-title"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:formation-title", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-3", "ROOT::gate:design:bite-4"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:formation-title"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:ledger-vintages"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:ledger-vintages", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-2", "ROOT::gate:design:bite-5"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:ledger-vintages"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:policy-schedules"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:policy-schedules", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-7"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:policy-schedules"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:public-inputs"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:public-inputs", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-8", "ROOT::gate:design:bite-9"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:public-inputs"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:publication"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:publication", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-8"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:publication"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:raw-readings"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:raw-readings", "ROOT::gate:design:bite-10", "ROOT::gate:design:bite-11"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:raw-readings"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:replay"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:replay", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-9"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:replay"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:rung-verdicts"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:rung-verdicts", "ROOT::gate:design:bite-11", "ROOT::gate:design:bite-6"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:rung-verdicts"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:vision:terminal-separation"
+path = "docs/design/concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:design:terminal-separation", "ROOT::gate:design:bite-10", "ROOT::gate:design:bite-11"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:vision:terminal-separation"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::req:xchg:determinism"
+path = "adr/009-interchange-concept.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:determinism"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::req:xchg:regexp-guard"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:regexp-guard"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::req:xchg:std-only"
+path = "adr/009-interchange-concept.md"
+status = "held"
+claims = []
+realizers = ["ROOT::dec:xchg:crate-layout"]
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:std-only"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::req:xchg:timing"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:timing"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::req:xchg:workspace-discipline"
+path = "adr/009-interchange-concept.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for req:xchg:workspace-discipline"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+
+[[rows]]
+name = "ROOT::verif:design:api-conformance"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:api-conformance"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:burn-disclosures"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:burn-disclosures"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:canonical-package-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:canonical-package-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:charged-vintage-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:charged-vintage-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:client-workflows"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:client-workflows"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:closure-partition-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:closure-partition-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:compiler-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:compiler-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:complete-cause-package"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:complete-cause-package"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:devnet-conformance"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:devnet-conformance"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:effective-edition-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:effective-edition-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:fence-residual-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:fence-residual-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:formation-title-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:formation-title-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:gate-unit-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:gate-unit-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:numerical-boundaries"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:numerical-boundaries"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:read-site-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:read-site-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:reconstruction-mutations"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:reconstruction-mutations"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:rung-policy-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:rung-policy-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:simple-path-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:simple-path-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:storage-history"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:storage-history"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:transport-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:transport-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:wall-controller-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:wall-controller-cases"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:design:whole-act-counting"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Domain implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:design:whole-act-counting"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Assigned domain bite, with evidence review in bite 11"
+
+[[rows]]
+name = "ROOT::verif:xchg:label-pattern-crosscheck"
+path = "adr/010-interchange-design.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Foundation implementer and repository reviewer"
+missing = "Reviewed ordinary claim citations and scoped premises for verif:xchg:label-pattern-crosscheck"
+closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
+closing_step = "Claims audit step 3b"
+

@@ -441,6 +441,8 @@ fn minimal_width(x: f64) -> FloatWidth {
 proptest! {
     /// Every structure has exactly one name, and byte equality of names
     /// decides equality of structures.
+    #[doc = "´claim:properties:generated-values-have-unique-canonical-names´"]
+    #[doc = "´test:integration:unique-names-decoding-inverts-encoding´"]
     #[test]
     fn unique_names_decoding_inverts_encoding(v in any_value()) {
         let bytes = v.to_canonical_bytes();
@@ -448,6 +450,8 @@ proptest! {
         prop_assert_eq!(decoded, v);
     }
 
+    #[doc = "(´claim:properties:generated-values-have-unique-canonical-names´)"]
+    #[doc = "´test:integration:unique-names-encoding-is-stable-through-decoding´"]
     #[test]
     fn unique_names_encoding_is_stable_through_decoding(v in any_value()) {
         let bytes = v.to_canonical_bytes();
@@ -455,12 +459,16 @@ proptest! {
         prop_assert_eq!(decoded.to_canonical_bytes(), bytes);
     }
 
+    #[doc = "(´claim:properties:generated-values-have-unique-canonical-names´)"]
+    #[doc = "´test:integration:unique-names-byte-equality-decides-structure-equality´"]
     #[test]
     fn unique_names_byte_equality_decides_structure_equality((a, b) in any_value_pair()) {
         prop_assert_eq!(a == b, a.to_canonical_bytes() == b.to_canonical_bytes());
     }
 
     /// The order implemented directly is the order the names have.
+    #[doc = "´claim:properties:generated-value-order-follows-canonical-bytes´"]
+    #[doc = "´test:integration:canonical-order-agrees-with-the-order-of-names´"]
     #[test]
     fn canonical_order_agrees_with_the_order_of_names((a, b) in any_value_pair()) {
         prop_assert_eq!(
@@ -471,6 +479,8 @@ proptest! {
 
     /// A map holds its entries in that same order, which is what makes the
     /// decoder's check over adjacent byte ranges the right check.
+    #[doc = "´claim:properties:generated-map-keys-have-strict-canonical-order´"]
+    #[doc = "´test:integration:map-entries-stand-in-ascending-key-order´"]
     #[test]
     fn map_entries_stand_in_ascending_key_order(pairs in prop::collection::vec((any_value(), any_value()), 0..8)) {
         let map = map_of(pairs);
@@ -480,6 +490,8 @@ proptest! {
 
     /// The length reported without producing the name is the length of the
     /// name.
+    #[doc = "´claim:properties:generated-encoded-length-is-exact´"]
+    #[doc = "´test:integration:canonical-len-agrees-with-the-name´"]
     #[test]
     fn canonical_len_agrees_with_the_name(v in any_value()) {
         prop_assert_eq!(v.canonical_len(), v.to_canonical_bytes().len());
@@ -490,6 +502,8 @@ proptest! {
     /// changes nothing (idempotence), and the width is *minimal* — no
     /// narrower `FloatWidth` round-trips to the same `f64`, checked against
     /// an independent width oracle.
+    #[doc = "´claim:properties:sampled-floats-use-the-independent-minimal-width´"]
+    #[doc = "´test:integration:float-reduction-is-minimal´"]
     #[test]
     fn float_reduction_is_minimal(v in any::<f64>()) {
         if let Ok(float) = Float::from_f64(v) {
@@ -506,6 +520,8 @@ proptest! {
 
     /// Bytes outside the language are refused, never repaired — and never
     /// by panicking.
+    #[doc = "´claim:properties:sampled-bytes-are-refused-or-preserved´"]
+    #[doc = "´test:integration:arbitrary-bytes-are-answered-rather-than-survived´"]
     #[test]
     fn arbitrary_bytes_are_answered_rather_than_survived(bytes in prop::collection::vec(any::<u8>(), 0..24)) {
         if let Ok(value) = Value::from_canonical_bytes(&bytes) {
@@ -516,6 +532,8 @@ proptest! {
     /// One spelling, one encoding: string equality, byte equality, and
     /// encoded-item equality coincide on labels, and parsing is inverse to
     /// printing.
+    #[doc = "´claim:properties:generated-labels-have-one-byte-spelling´"]
+    #[doc = "´test:integration:one-spelling-parsing-and-printing-are-inverse´"]
     #[test]
     fn one_spelling_parsing_and_printing_are_inverse(text in any_label()) {
         let label = NamespaceLabel::parse(&text).expect("generated from the ABNF");
@@ -525,6 +543,8 @@ proptest! {
         prop_assert_eq!(NamespaceLabel::parse(&printed).ok(), Some(label));
     }
 
+    #[doc = "(´claim:properties:generated-labels-have-one-byte-spelling´)"]
+    #[doc = "´test:integration:one-spelling-string-equality-is-byte-equality´"]
     #[test]
     fn one_spelling_string_equality_is_byte_equality((a, b) in (any_label(), any_label())) {
         let first = Value::Text(Text::from(a.clone()));
@@ -540,6 +560,8 @@ proptest! {
     /// NFD alike, and no normalization can produce a second byte form.
     /// Checked here without a normalization dependency, exactly as the
     /// demonstration argues it.
+    #[doc = "´claim:properties:generated-labels-stay-printable-ascii´"]
+    #[doc = "´test:integration:one-spelling-every-label-is-ascii´"]
     #[test]
     fn one_spelling_every_label_is_ascii(text in any_label()) {
         let label = NamespaceLabel::parse(&text).expect("generated from the ABNF");
@@ -550,6 +572,8 @@ proptest! {
 
     /// A string outside the language is refused, and refused as the kind of
     /// fault it is.
+    #[doc = "´claim:properties:generated-label-mutations-refuse-by-class´"]
+    #[doc = "´test:integration:one-spelling-mutations-leave-the-language´"]
     #[test]
     fn one_spelling_mutations_leave_the_language(
         text in any_label(),
@@ -565,6 +589,8 @@ proptest! {
     /// Bounded determination: the envelope is settled by at most a
     /// 296-byte prefix, and the bounded read agrees with the full decode —
     /// giving the same answer with nothing beyond the bound to read.
+    #[doc = "´claim:properties:generated-envelopes-settle-within-the-prefix-bound´"]
+    #[doc = "´test:integration:bounded-determination-peek-agrees-within-the-bound´"]
     #[test]
     fn bounded_determination_peek_agrees_within_the_bound(document in any_document()) {
         let bytes = document.to_canonical_bytes();
@@ -592,6 +618,8 @@ proptest! {
     /// against no lower one — which is only enough if "verbatim" composes
     /// along the chain. The design asserts that it does; this is the
     /// assertion made executable rather than trusted.
+    #[doc = "´claim:properties:generated-inclusion-chains-compose´"]
+    #[doc = "´test:integration:inclusion-composes-along-a-chain´"]
     #[test]
     fn inclusion_composes_along_a_chain(chain in any_minor_chain()) {
         if !consecutive_inclusion(&chain) {
@@ -620,6 +648,8 @@ proptest! {
     /// document level: key 0 of a `Document` came through the ABNF scanner,
     /// and this judgment runs it through the base theory's `.regexp` and
     /// its `.size (3..255)`.
+    #[doc = "´claim:properties:generated-documents-satisfy-the-base-schema´"]
+    #[doc = "´test:integration:every-document-satisfies-the-base-theory´"]
     #[test]
     fn every_document_satisfies_the_base_theory(document in any_document()) {
         prop_assert!(satisfies_global(&document).holds());
@@ -633,6 +663,8 @@ proptest! {
     /// metatheorem says the answer agrees with the emitter's. Quantified
     /// over the same generated chains conservativity is, under the same
     /// premise the registry actually checks.
+    #[doc = "´claim:properties:generated-additive-chains-preserve-earlier-companions´"]
+    #[doc = "´test:integration:forward-compatibility-a-conforming-document-meets-every-earlier-companion´"]
     #[test]
     fn forward_compatibility_a_conforming_document_meets_every_earlier_companion(
         chain in any_minor_chain(),
@@ -668,6 +700,8 @@ proptest! {
     /// The reason a reader that holds only an earlier minor can still be
     /// spoken to: nothing a later minor adds is ever demanded of a document
     /// the earlier one describes.
+    #[doc = "´claim:properties:generated-additions-remain-optional´"]
+    #[doc = "´test:integration:conservativity-a-key-absent-earlier-is-optional-later´"]
     #[test]
     fn conservativity_a_key_absent_earlier_is_optional_later(chain in any_minor_chain()) {
         if !consecutive_inclusion(&chain) {
@@ -698,6 +732,8 @@ proptest! {
     /// strictly — and it meets them in that order and never goes back: a
     /// strict acceptance is final, and a tolerant one is provisional only
     /// upward.
+    #[doc = "´claim:properties:generated-reader-growth-preserves-verdict-order´"]
+    #[doc = "´test:integration:acceptance-monotonicity-a-verdict-moves-only-toward-the-stamp´"]
     #[test]
     fn acceptance_monotonicity_a_verdict_moves_only_toward_the_stamp(
         chain in any_minor_chain(),
@@ -741,6 +777,8 @@ proptest! {
     /// claim becoming checkable the moment knowledge reaches it. The skipped
     /// minor is never 0: it must sit above a floor for the tolerant phase to
     /// exist at all.
+    #[doc = "´claim:properties:generated-unassigned-stamps-end-in-refusal´"]
+    #[doc = "´test:integration:acceptance-monotonicity-a-stamp-never-assigned-turns-to-rejection´"]
     #[test]
     fn acceptance_monotonicity_a_stamp_never_assigned_turns_to_rejection(
         chain in any_minor_chain(),
@@ -783,6 +821,8 @@ proptest! {
     /// or companion inside it. Quantified over one document of the label the
     /// reader knows and one of whatever the document generator drew, most
     /// often a label it does not.
+    #[doc = "´claim:properties:generated-prefix-dispatch-preserves-envelope-routing´"]
+    #[doc = "´test:integration:bounded-determination-the-prefix-routes-as-the-envelope-does´"]
     #[test]
     fn bounded_determination_the_prefix_routes_as_the_envelope_does(
         chain in any_minor_chain(),
@@ -815,6 +855,8 @@ proptest! {
     /// one is a partition point. The check is the cheap way to notice if
     /// it ever stops resting on it. Quantified over content no theory of the
     /// chain need admit at all, as well as over content one does.
+    #[doc = "´claim:properties:generated-stamp-search-agrees-with-linear-oracle´"]
+    #[doc = "´test:integration:stamping-the-binary-search-agrees-with-a-linear-scan´"]
     #[test]
     fn stamping_the_binary_search_agrees_with_a_linear_scan(
         chain in any_minor_chain(),

@@ -127,13 +127,13 @@ def run():
 
 
 def main():
-    if sys.stdout.isatty():
-        print(json.dumps({'error': 'stdout terminal refused before benchmark effects'}), file=sys.stderr)
-        return 2
-    if sys.argv[1:]:
-        print(json.dumps({'error': 'benchmark runner takes no arguments; declarations are committed data'}), file=sys.stderr)
-        return 2
     try:
+        if sys.stdout.isatty():
+            print(json.dumps({'error': 'stdout terminal refused before benchmark effects'}), file=sys.stderr)
+            return 2
+        if sys.argv[1:]:
+            print(json.dumps({'error': 'benchmark runner takes no arguments; declarations are committed data'}), file=sys.stderr)
+            return 2
         # Own any incidental Python output as well as both child streams.
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
             summary, status = run()

@@ -807,3 +807,14 @@ implementation = "pn-interchange-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["benchmark::canonical-encode", "benchmark::canonical-decode"]
+
+[[rows]]
+kind = "suite"
+name = "ci::test_claims"
+status = "active"
+runner = "ci"
+level = "unit"
+implementation = "ci-python"
+tier = "fast"
+budget = "pure-suite"
+cases = ["ci::test_claims.Evidence.test_missing_area", "ci::test_claims.Evidence.test_missing_results_and_mints", "ci::test_claims.Evidence.test_orphan_mint", "ci::test_claims.Evidence.test_planned_census", "ci::test_claims.Evidence.test_planned_name", "ci::test_claims.Evidence.test_removed_obligation", "ci::test_claims.Evidence.test_requirement_edges", "ci::test_claims.Evidence.test_respellings", "ci::test_claims.Evidence.test_shared_failure", "ci::test_claims.Evidence.test_source_carriers", "ci::test_claims.Evidence.test_stale_result", "ci::test_claims.Evidence.test_uncited_evidence_and_holds", "ci::test_claims.Evidence.test_undeclared_site"]

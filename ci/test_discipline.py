@@ -27,8 +27,11 @@ from hash_citations import audit, establish, occurrences
 
 
 class WorkspaceChecks(unittest.TestCase):
-    # Claim: feature-minimal and documentation checks include a new binary-only member, exclude the engine and ignore nonmembers.
     def test_discovered_members(self):
+        """feature-minimal and documentation checks include a new binary-only member, exclude the engine and ignore nonmembers.
+        ´claim:discipline:new-members-receive-feature-checks´
+        ´test:discipline:test-discovered-members´
+        """
         metadata = {"workspace_members": ["engine", "new", "existing"], "packages": [
             {"id": "engine", "name": "regexml"},
             {"id": "new", "name": "new-tool", "targets": [{"kind": ["bin"]}]},
@@ -44,8 +47,11 @@ class WorkspaceChecks(unittest.TestCase):
 
 
 class HashCitations(unittest.TestCase):
-    # Claim: imported literal families distinguish replay and encoding data from identity claims.
     def test_interchange_literal_boundaries(self):
+        """imported literal families distinguish replay and encoding data from identity claims.
+        ´claim:discipline:literal-warrants-are-bounded´
+        ´test:discipline:test-interchange-literal-boundaries´
+        """
         root = Path.cwd()
         def reader(name):
             return establish(root, {"reader": name, "establishment": "defined"})
@@ -60,8 +66,11 @@ class HashCitations(unittest.TestCase):
         self.assertTrue(reader("regexp-subject")("a" * 8, 'subject = "' + "a" * 8 + '"'))
         self.assertFalse(reader("interchange-literal")(seed, seed))
 
-    # Claim: a provenance family requires the exact declared public Git commit locator.
     def test_public_git_locator(self):
+        """a provenance family requires the exact declared public Git commit locator.
+        ´claim:discipline:public-locators-identify-objects´
+        ´test:discipline:test-public-git-locator´
+        """
         commit = "f" * 40
         rule = {"reader": "public-git", "establishment": "resolvable", "commit": commit,
                 "locator": "https://github.com/example/engine/commit/" + commit}
@@ -196,8 +205,11 @@ class HashCitations(unittest.TestCase):
             claims.add(lines[1])
             self.assertEqual(lines[2], "´test:discipline:" + name.replace("_", "-") + "´")
 
-    # Claim: an uncovered value, a stale family and a reader establishment the checker cannot validate each fail the audit.
     def test_hash_accounting(self):
+        """an uncovered value, a stale family and a reader establishment the checker cannot validate each fail the audit.
+        ´claim:discipline:identity-occurrences-need-warrants´
+        ´test:discipline:test-hash-accounting´
+        """
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             sample = root / "sample.rs"
@@ -224,8 +236,11 @@ class HashCitations(unittest.TestCase):
                 with self.subTest(field=field), self.assertRaises(ValueError):
                     audit(root, ["sample.rs"], table)
 
-    # Claim: the complete tracked set includes binary content and hexadecimal pathnames, with read failures surfaced.
     def test_hash_carrier(self):
+        """the complete tracked set includes binary content and hexadecimal pathnames, with read failures surfaced.
+        ´claim:discipline:identity-warrants-bind-carriers´
+        ´test:discipline:test-hash-carrier´
+        """
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "sample.rs").write_bytes(b"\x00" + b"f" * 64)
@@ -238,8 +253,11 @@ class HashCitations(unittest.TestCase):
             with self.assertRaises(ValueError):
                 audit(root, ["absent.rs"], self.table())
 
-    # Claim: every CLI audit discovers Git's tracked set anew; an untracked hexadecimal value enters the verdict only after staging.
     def test_hash_tracked_cli(self):
+        """every CLI audit discovers Git's tracked set anew; an untracked hexadecimal value enters the verdict only after staging.
+        ´claim:discipline:tracked-identities-are-checked´
+        ´test:discipline:test-hash-tracked-cli´
+        """
         script = Path(__file__).with_name("discipline.py").resolve()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -298,8 +316,11 @@ class SourceDiscipline(unittest.TestCase):
             with self.assertRaises(ValueError):
                 validate_build_policy(root)
 
-    # Claim: controlled stream boundaries admit only their named operation; printing and unrelated items still refuse.
     def test_controlled_stream_boundaries(self):
+        """controlled stream boundaries admit only their named operation; printing and unrelated items still refuse.
+        ´claim:discipline:output-exceptions-stay-local´
+        ´test:discipline:test-controlled-stream-boundaries´
+        """
         path = Path('packages/cli-common/src/lib.rs')
         self.assertFalse(source_findings(path, 'pub fn emit() { io::stdout(); }', 'printing'))
         self.assertTrue(source_findings(path, 'pub fn other() { io::stdout(); }', 'printing'))
@@ -307,8 +328,11 @@ class SourceDiscipline(unittest.TestCase):
         self.assertTrue(source_findings(path, 'pub fn emit() { std::process::exit(1); }', 'printing'))
         self.assertTrue(source_findings(Path('src/lib.rs'), 'pub fn emit() { io::stdout(); }', 'printing'))
 
-    # Claim: direct calls, imported aliases and inactive printing all refuse.
     def test_printing(self):
+        """direct calls, imported aliases and inactive printing all refuse.
+        ´claim:discipline:uncontrolled-output-is-refused´
+        ´test:discipline:test-printing´
+        """
         for source in [
             'fn main() { process::exit(3); }',
             'use std::process::exit; fn main() { exit(3); }',
@@ -321,8 +345,11 @@ class SourceDiscipline(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertTrue(source_findings(Path('src/lib.rs'), source, 'printing'))
 
-    # Claim: inner, conditional and inline-test suppressions refuse, including nesting.
     def test_suppressions(self):
+        """inner, conditional and inline-test suppressions refuse, including nesting.
+        ´claim:discipline:test-lints-cannot-be-suppressed´
+        ´test:discipline:test-suppressions´
+        """
         for source in [
             '#![cfg_attr(all(), allow(clippy::pedantic))]',
             '# ! [ cfg_attr(all(), allow(clippy::pedantic)) ]',
@@ -338,19 +365,28 @@ class SourceDiscipline(unittest.TestCase):
         self.assertFalse(source_findings(Path('src/lib.rs'), source, 'suppressions'))
         self.assertTrue(source_findings(Path('tests/probe.rs'), source, 'suppressions'))
 
-    # Claim: examples in comments and literals are not executable source.
     def test_literals(self):
+        """examples in comments and literals are not executable source.
+        ´claim:discipline:comments-and-strings-are-not-code´
+        ´test:discipline:test-literals´
+        """
         source = '/* outer /* nested */ print!("x"); */ const X: &str = r###"exit(1)"###;'
         self.assertFalse(source_findings(Path('src/lib.rs'), source, 'printing'))
 
-    # Claim: missing inheritance and any member-local lint table fail the manifest rule.
     def test_member_lints(self):
+        """missing inheritance and any member-local lint table fail the manifest rule.
+        ´claim:discipline:members-inherit-workspace-lints´
+        ´test:discipline:test-member-lints´
+        """
         self.assertTrue(inherits_lints(tomllib.loads('[lints]\nworkspace = true\n')))
         for source in ['', '[lints]\nworkspace = false\n', '[lints]\nworkspace = true\n[lints.rust]\nunused = "allow"\n']:
             self.assertFalse(inherits_lints(tomllib.loads(source)))
 
-    # Claim: out-of-line test modules and their descendants are suppression-free test trees.
     def test_external_test_modules(self):
+        """out-of-line test modules and their descendants are suppression-free test trees.
+        ´claim:discipline:external-test-modules-keep-lints´
+        ´test:discipline:test-external-test-modules´
+        """
         sources = {
             Path('src/lib.rs'): '#[cfg(test)] mod checks;',
             Path('src/checks.rs'): 'mod nested;\n// Justified: Exact values are required.\n#[allow(clippy::float_cmp)] fn exact() {}',
@@ -361,8 +397,11 @@ class SourceDiscipline(unittest.TestCase):
         for path in marked:
             self.assertTrue(source_findings(path, sources[path], 'suppressions', path in marked))
 
-    # Claim: any test-configured item, including impls and constants, rejects suppressions.
     def test_other_test_items(self):
+        """any test-configured item, including impls and constants, rejects suppressions.
+        ´claim:discipline:test-implementations-keep-lints´
+        ´test:discipline:test-other-test-items´
+        """
         for source in [
             '#[cfg(test)] impl Thing { // Justified: Exact values are required.\n#[allow(clippy::float_cmp)] fn exact() {} }',
             '#[cfg(test)] // Justified: Exact values are required.\n#[allow(clippy::float_cmp)] const VALUE: bool = true;',
@@ -370,8 +409,11 @@ class SourceDiscipline(unittest.TestCase):
         ]:
             self.assertTrue(source_findings(Path('src/lib.rs'), source, 'suppressions'))
 
-    # Claim: tracked Cargo settings cannot supply rustflags or lint-level command flags.
     def test_cargo_config(self):
+        """tracked Cargo settings cannot supply rustflags or lint-level command flags.
+        ´claim:discipline:configuration-cannot-relax-lints´
+        ´test:discipline:test-cargo-config´
+        """
         for source in [
             '[build]\nrustflags = ["-A", "clippy::pedantic"]',
             '[target.example]\nrustflags = []',
@@ -381,8 +423,11 @@ class SourceDiscipline(unittest.TestCase):
             self.assertTrue(cargo_config_findings(tomllib.loads(source)))
         self.assertFalse(cargo_config_findings(tomllib.loads('[build]\njobs = 2')))
 
-    # Claim: only undated nightly with both answering components satisfies the policy.
     def test_toolchain_versions(self):
+        """only undated nightly with both answering components satisfies the policy.
+        ´claim:discipline:toolchain-family-is-consistent´
+        ´test:discipline:test-toolchain-versions´
+        """
         versions = ['rustc 1.101.0-nightly (abcdef 2026-10-16)', 'cargo 1.101.0-nightly', 'clippy 0.1.101', 'rustfmt 1.9.0-nightly']
         validate_toolchain('nightly', versions, ['rustfmt', 'clippy'])
         for channel in ['nightly-2026-10-16', 'stable', '1.99.1']:
@@ -399,9 +444,12 @@ class SourceDiscipline(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_toolchain('nightly', ['rustc 1.99.1', *versions[1:]], ['rustfmt', 'clippy'])
 
-    # Claim: the real advisory invocation emits and counts a known nursery warning despite warnings-deny in the manifest.
     @unittest.skipUnless(os.environ.get('FOUNDATION_COMPUTE_TESTS') == '1', 'compute-node compiler witness')
     def test_nursery_warning(self):
+        """The real advisory invocation emits and counts a known nursery warning despite warnings-deny in the manifest.
+        ´claim:discipline:advisory-invocation-counts-real-warnings´
+        ´test:discipline:test-nursery-warning´
+        """
         with crate('foundation-nursery-probe', 'pub fn candidate(value: u32) -> u32 { value + 1 }\n', '[lints.rust]\nwarnings = "deny"\n[lints.clippy]\nnursery = "allow"\n') as root:
             result, count = run_clippy(root, advisory=True)
             self.assertEqual(result.returncode, 0, result.stderr)
