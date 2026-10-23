@@ -3,9 +3,9 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "cli-common"
-operations = 106
+operations = 107
 instrumented = 30
-exceptions = 73
+exceptions = 74
 helpers = 3
 generators = 36
 
@@ -28,7 +28,7 @@ generators = 11
 [[rows]]
 name = "pn-interchange"
 operations = 153
-instrumented = 134
-exceptions = 18
+instrumented = 118
+exceptions = 34
 helpers = 1
 generators = 89

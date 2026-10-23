@@ -407,7 +407,12 @@ pub fn run(command: &[OsString], cfg: &RoutingConfig, mut notify: impl FnMut(&No
     );
     let observation = cli_common::observation::Observation::current();
     let mut operation = observation.as_ref().map(|o| o.operation(cli_common::observation::OperationKind::Child, serde_json::json!({
-        "command": command.iter().map(|arg| arg.as_encoded_bytes()).collect::<Vec<_>>(), "command_debug": format!("{command:?}"), "configuration": format!("{cfg:?}")
+        "command": command.iter().map(|arg| cli_common::observation::public_bytes(arg.as_encoded_bytes())).collect::<Vec<_>>(),
+        "configuration": {"redirect":cfg.redirect.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
+            "redirect_output":cfg.redirect_output.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
+            "redirect_error":cfg.redirect_error.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
+            "redirect_prefixed":cfg.redirect_prefixed.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
+            "notify_on_write":cfg.notify_on_write,"debug":cfg.debug,"quiet":cfg.quiet}
     })));
     let result = run_observed(command, cfg, &mut notify, &mut operation);
     if let Some(operation) = operation {
@@ -521,7 +526,9 @@ fn run_observed(
             ChannelMessage::Data { stream, data } => {
                 if let Some(operation) = operation {
                     operation.work_bytes(u64::try_from(data.len()).unwrap_or(u64::MAX));
-                    operation.progress(serde_json::json!({"stream":stream.label(),"bytes":data}));
+                    operation.progress(
+                        serde_json::json!({"stream":stream.label(),"bytes":cli_common::observation::public_bytes(&data)}),
+                    );
                 }
                 let subscribers = match stream {
                     Stream::Stdout => &stdout_subscribers,
@@ -667,7 +674,7 @@ fn read_stream<R: Read>(stream: Stream, mut source: R, tx: &Sender<ChannelMessag
                 break;
             }
             Ok(read) => {
-                tracing::info!(public_child_bytes=?&buffer[..read], work_bytes=read as u64);
+                tracing::info!(public_child_bytes=?cli_common::observation::public_bytes(&buffer[..read]), work_bytes=read as u64);
                 let data = buffer[..read].to_vec();
                 if tx.send(ChannelMessage::Data { stream, data }).is_err() {
                     outcome = cli_common::observation::Outcome::Cancelled;

@@ -483,8 +483,34 @@ fn observation_preserves_child_results() {
     let bytes: Vec<u8> = records
         .iter()
         .filter(|r| r["event_kind"] == "progress")
-        .flat_map(|r| r["detail"]["bytes"].as_array().unwrap())
-        .map(|b| u8::try_from(b.as_u64().unwrap()).unwrap())
+        .flat_map(|r| {
+            let value = &r["detail"]["bytes"];
+            let text = value["data"].as_str().unwrap();
+            if value["encoding"] == "utf-8" {
+                return text.as_bytes().to_vec();
+            }
+            assert_eq!(value["encoding"], "base64");
+            let mut decoded = Vec::new();
+            let mut bits = 0_u32;
+            let mut count = 0;
+            for byte in text.bytes().take_while(|byte| *byte != b'=') {
+                let digit = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+                    .iter()
+                    .position(|b| *b == byte)
+                    .unwrap();
+                bits = (bits << 6) | u32::try_from(digit).unwrap();
+                count += 6;
+                if count >= 8 {
+                    count -= 8;
+                    decoded.push(u8::try_from((bits >> count) & 255).unwrap());
+                }
+            }
+            assert_eq!(
+                decoded.len(),
+                usize::try_from(value["length_bytes"].as_u64().unwrap()).unwrap()
+            );
+            decoded
+        })
         .collect();
     assert_eq!(bytes, enabled.stdout);
     assert!(

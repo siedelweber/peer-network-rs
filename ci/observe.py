@@ -53,6 +53,11 @@ def validate(census, registry, labels, claims):
             raise StructuralError('undeclared metric attribute')
     reviews={row['operation']:row for row in registry['reviews']}
     if len(reviews)!=len(registry['reviews']) or set(reviews)!=required:raise StructuralError('missing or duplicate semantic review')
+    classes={row['name']:row for row in registry.get('class_decisions',[])}
+    if len(classes)!=len(registry.get('class_decisions',[])):raise StructuralError('duplicate semantic class decision')
+    for decision in classes.values():
+        if decision.get('status')!='reviewer-confirmed' or not decision.get('premises') or not decision.get('operations') or not set(decision['operations'])<=set(rows):
+            raise StructuralError('invalid semantic class decision')
     for name,row in rows.items():
         function=functions[name]
         if row['owner']!=function['owner']:raise StructuralError('wrong operation owner')
@@ -78,6 +83,10 @@ def validate(census, registry, labels, claims):
                 raise StructuralError('exception lacks item-local justification')
             if exception.get('witness') not in claims or exception.get('boundary') not in rows:
                 raise StructuralError('exception lacks enclosing boundary witness')
+            decision=classes.get(exception.get('class_decision'),{})
+            inherited=exception.get('enclosing_operations',[])
+            if not inherited or not set(inherited)<=set(decision.get('operations',[])) or exception['boundary'] not in inherited:
+                raise StructuralError('exception lacks enclosing class operations')
             seen={name}
             target=exception['boundary']
             while rows[target]['mode']=='exception':
@@ -93,6 +102,8 @@ def validate(census, registry, labels, claims):
         else:raise StructuralError('unknown observation coverage mode')
         review=reviews[name]
         if review.get('body')!=function['body']:raise StructuralError('stale semantic review body')
+        if review.get('class_decision') not in classes or not review.get('item_premise'):
+            raise StructuralError('missing body-bound semantic class decision')
         for field in ('full_recording','secret_flow','exposure_consumers'):
             assessment=review.get(field,{})
             if assessment.get('status')!='reviewer-confirmed' or not assessment.get('premises') or assessment.get('negative_probe') not in claims:

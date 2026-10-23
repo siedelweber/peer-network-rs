@@ -14,7 +14,7 @@
 //! | `json_line_writer_appends_newline`      | JSON record helper writes one complete line.     |
 //! | `usage_error_record_carries_fields`    | Usage records include exit code and clap kind.   |
 //! | `tty_refusal_record_carries_fields`    | TTY refusal records identify stdout and code 2.  |
-//! | `panic_record_omits_unavailable_payload` | Panic records hide payloads without debug.    |
+//! | `panic_record_omits_unavailable_payload` | An unavailable non-string payload is not invented. |
 //! | `panic_record_carries_public_payload`    | Panic records can expose string payloads.        |
 //! | `panic_payload_message_extracts_string_payloads` | String panic payloads are downcast.     |
 //! | `parse_args_from_returns_help_record`  | Clap help becomes JSON stderr control data.      |

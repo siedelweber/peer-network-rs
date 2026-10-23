@@ -1,0 +1,218 @@
+namespace = "org.peer-network.observe.dependency-review"
+version = [1, 0, 0]
+
+[[rows]]
+name = "anyhow"
+version = "1.0.104"
+license = "MIT OR Apache-2.0"
+features = "default, std"
+role = "derive-time diagnostics"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "async-trait"
+version = "0.1.92"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "HTTP transport async trait expansion"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "block-buffer"
+version = "0.10.4"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "digest block buffering"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "bumpalo"
+version = "3.20.3"
+license = "MIT OR Apache-2.0"
+features = "default"
+role = "WebAssembly macro arena"
+condition = "Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host."
+
+[[rows]]
+name = "cpufeatures"
+version = "0.2.17"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "CPU SHA instruction selection"
+condition = "SHA-256 runtime CPU detection on x86, x86_64 or aarch64."
+
+[[rows]]
+name = "crypto-common"
+version = "0.1.7"
+license = "MIT OR Apache-2.0"
+features = "std"
+role = "digest shared traits"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "digest"
+version = "0.10.7"
+license = "MIT OR Apache-2.0"
+features = "alloc, block-buffer, core-api, default, std"
+role = "digest interface"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "futures-channel"
+version = "0.3.34"
+license = "MIT OR Apache-2.0"
+features = "alloc, default, std"
+role = "SDK completion channels"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "futures-macro"
+version = "0.3.34"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "future combinator expansion"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "futures-task"
+version = "0.3.34"
+license = "MIT OR Apache-2.0"
+features = "alloc, std"
+role = "task and wake primitives"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "futures-util"
+version = "0.3.34"
+license = "MIT OR Apache-2.0"
+features = "alloc, async-await, async-await-macro, futures-macro, futures-sink, sink, slab, std"
+role = "SDK and executor combinators"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "generic-array"
+version = "0.14.7"
+license = "MIT"
+features = "more_lengths"
+role = "fixed-size digest buffers"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "js-sys"
+version = "0.3.106"
+license = "MIT OR Apache-2.0"
+features = "default, std, unsafe-eval"
+role = "JavaScript bindings"
+condition = "Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host."
+
+[[rows]]
+name = "opentelemetry-proto"
+version = "0.33.1"
+license = "Apache-2.0"
+features = "gen-tonic-messages, metrics, prost, trace"
+role = "OTLP message schemas"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "portable-atomic"
+version = "1.15.0"
+license = "Apache-2.0 OR MIT"
+features = "fallback"
+role = "atomic fallback"
+condition = "32-bit metrics or SDK targets without 64-bit atomics; not selected on x86_64."
+
+[[rows]]
+name = "ppv-lite86"
+version = "0.2.21"
+license = "MIT OR Apache-2.0"
+features = "simd, std"
+role = "ChaCha vector operations"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "prost-derive"
+version = "0.14.4"
+license = "Apache-2.0"
+features = "none"
+role = "OTLP message derives"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "rand_chacha"
+version = "0.9.0"
+license = "MIT OR Apache-2.0"
+features = "std"
+role = "trace-ID generator"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "rand_core"
+version = "0.9.5"
+license = "MIT OR Apache-2.0"
+features = "os_rng, std"
+role = "random generator traits"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "rustversion"
+version = "1.0.23"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "compiler capability selection"
+condition = "Host proc macro through rapidhash; also a conditional WebAssembly build dependency."
+
+[[rows]]
+name = "sha2"
+version = "0.10.9"
+license = "MIT OR Apache-2.0"
+features = "std"
+role = "SHA-256 content addressing"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "typenum"
+version = "1.20.1"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "digest type-level sizes"
+condition = "Active host dependency; follows the selected consumer feature."
+
+[[rows]]
+name = "wasm-bindgen"
+version = "0.2.129"
+license = "MIT OR Apache-2.0"
+features = "std"
+role = "WebAssembly binding support"
+condition = "Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host."
+
+[[rows]]
+name = "wasm-bindgen-macro"
+version = "0.2.129"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "WebAssembly binding macro"
+condition = "Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host."
+
+[[rows]]
+name = "wasm-bindgen-macro-support"
+version = "0.2.129"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "WebAssembly macro implementation"
+condition = "Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host."
+
+[[rows]]
+name = "wasm-bindgen-shared"
+version = "0.2.129"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "WebAssembly shared metadata"
+condition = "Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host."
+
+[[rows]]
+name = "web-time"
+version = "1.1.0"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "browser clock"
+condition = "Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host."

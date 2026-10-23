@@ -536,6 +536,11 @@ fn clean_result() -> Result<()> {
         .map(serde_json::from_str)
         .collect::<std::result::Result<_, _>>()?;
     assert!(records.iter().any(|record| record["kind"] == "metric_summary"));
+    assert!(
+        records
+            .iter()
+            .all(|record| record["level"] != "ERROR" && record["level"] != "WARN")
+    );
     Ok(())
 }
 

@@ -1,5 +1,6 @@
 """Negative admission fixtures for syntax coverage and semantic review bindings."""
 import copy
+import io
 import unittest
 
 from devperf import StructuralError
@@ -14,14 +15,28 @@ def fixture():
     operation.update(claim='ROOT::rule:observe:spans',mode='instrumented',fields=['arguments','result'],metrics=['fixture__elapsed_seconds'])
     name=identity(function)
     assessment=dict(status='reviewer-confirmed',premises='The fixture has no credential field and returns unit.',negative_probe='ROOT::claim:discipline:semantic-review-is-bound-to-source')
-    review=dict(operation=name,body=function['body'],full_recording=assessment,secret_flow=assessment,exposure_consumers=assessment)
+    review=dict(operation=name,body=function['body'],full_recording=assessment,secret_flow=assessment,exposure_consumers=assessment,class_decision='fixture',item_premise='The body returns unit with no credential or public payload.')
     data=dict(schema=1,functions=[function],generators=[])
-    register=dict(schema=1,named_operations=[],operations=[operation],generators=[],reviews=[review],
+    register=dict(schema=1,named_operations=[],operations=[operation],generators=[],reviews=[review],class_decisions=[dict(name='fixture',status='reviewer-confirmed',premises='Public unit operation.',operations=[name])],
                   metrics=[dict(name='fixture__elapsed_seconds',unit='seconds',kind='histogram',attributes={})])
     return data,register,{'ROOT::rule:observe:spans'},{assessment['negative_probe']}
 
 
 class Admission(unittest.TestCase):
+    def test_observation_streams(self):
+        """Claim: Gate routing preserves complete observation bytes in the artifact and leaves diagnostics and malformed lines byte-identical in the main log, without treating an observation level as a verdict.
+        ´claim:discipline:observation-stream-routing-is-lossless´
+        ´test:integration:test-observation-streams´
+        """
+        from observation_log import separate
+        observation = b'{"kind":"trace","level":"ERROR","fields":{"public":"whole"}}\n'
+        diagnostic = b'{"kind":"runtime_error","message":"public"}\n'
+        malformed = b'not json\xff\n'
+        output, artifact = io.BytesIO(), io.BytesIO()
+        self.assertEqual(separate(io.BytesIO(observation + diagnostic + malformed), artifact, output), 1)
+        self.assertEqual(artifact.getvalue(), observation)
+        self.assertEqual(output.getvalue(), diagnostic + malformed)
+
     def test_omitted_instrumentation(self):
         """Claim: A registered public function whose parsed body has no reviewed boundary refuses, even when its declaration and semantic review remain present.
         ´claim:discipline:public-bodies-require-parsed-boundaries´
@@ -86,14 +101,16 @@ class Admission(unittest.TestCase):
         anchor_row=copy.deepcopy(row);anchor_row['item']='outer';base[1]['operations'].append(anchor_row)
         anchor_review=copy.deepcopy(base[1]['reviews'][0]);anchor_review['operation']=identity(anchor);base[1]['reviews'].append(anchor_review)
         function['attributes']=[reason];function['boundary']=None;row['mode']='exception'
-        row['exception']=dict(rule='ROOT::rule:observe:spans',kind='inherited',justification=reason,witness=next(iter(base[3])),boundary=identity(anchor))
+        base[1]['class_decisions'][0]['operations'].append(identity(anchor))
+        row['exception']=dict(rule='ROOT::rule:observe:spans',kind='inherited',justification=reason,witness=next(iter(base[3])),boundary=identity(anchor),class_decision='fixture',enclosing_operations=[identity(anchor)])
         self.assertEqual(validate(*base)['exceptions'],1)
-        for mutation in ('rule','local','witness','const','cycle'):
+        for mutation in ('rule','local','witness','const','cycle','enclosing'):
             args=copy.deepcopy(base);function=args[0]['functions'][0];row=args[1]['operations'][0]
             if mutation=='rule':row['exception']['rule']='all rules'
             elif mutation=='local':function['attributes']=[]
             elif mutation=='witness':row['exception']['witness']='ROOT::claim:missing:witness'
             elif mutation=='cycle':row['exception']['boundary']=identity(function)
+            elif mutation=='enclosing':row['exception']['enclosing_operations']=[]
             else:row['exception']['kind']='const'
             with self.assertRaises(StructuralError):validate(*args)
 
@@ -110,6 +127,9 @@ class Admission(unittest.TestCase):
         with self.assertRaisesRegex(StructuralError,'stale semantic'):validate(*args)
         args=fixture();args[0]['types']=[{'item':'Connection','syntax':'struct Connection { password: String }'}]
         with self.assertRaisesRegex(StructuralError,'type declarations changed'):validate(*args)
+        for field in ('class_decision','item_premise'):
+            args=fixture();args[1]['reviews'][0].pop(field)
+            with self.assertRaisesRegex(StructuralError,'body-bound semantic class'):validate(*args)
 
     def test_generated_mapping(self):
         """Claim: A newly generated entry point cannot disappear from the census join or be admitted by copying its syntax without an expansion review and enclosing boundaries.

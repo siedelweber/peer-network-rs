@@ -223,16 +223,7 @@ impl Ord for Value {
     /// The comparison walks an explicit worklist rather than the call
     /// stack: a value deep enough to overflow a recursive comparator is
     /// exactly the value a hostile input produces.
-    #[tracing::instrument(
-        name = "rule:observe:spans",
-        fields(
-            execution_owner = "INTERCHANGE",
-            claim_owner = "ROOT",
-            claim_label = "rule:observe:spans",
-            source_item = "value::<Value as Ord>::cmp"
-        ),
-        ret
-    )]
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn cmp(&self, other: &Value) -> Ordering {
         let mut work: Vec<(&Value, &Value)> = vec![(self, other)];
         while let Some((a, b)) = work.pop() {
@@ -267,57 +258,30 @@ impl Ord for Value {
 }
 
 impl PartialOrd for Value {
-    /// Justified: The canonical partial-order delegation inherits the instrumented total-order comparison boundary without changing its required canonical body.
-    /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn partial_cmp(&self, other: &Value) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
 impl Clone for Value {
-    #[tracing::instrument(
-        name = "rule:observe:spans",
-        fields(
-            execution_owner = "INTERCHANGE",
-            claim_owner = "ROOT",
-            claim_label = "rule:observe:spans",
-            source_item = "value::<Value as Clone>::clone"
-        ),
-        ret
-    )]
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn clone(&self) -> Value {
         clone_iter(self)
     }
 }
 
 impl PartialEq for Value {
-    #[tracing::instrument(
-        name = "rule:observe:spans",
-        fields(
-            execution_owner = "INTERCHANGE",
-            claim_owner = "ROOT",
-            claim_label = "rule:observe:spans",
-            source_item = "value::<Value as PartialEq>::eq"
-        ),
-        ret
-    )]
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn eq(&self, other: &Value) -> bool {
         eq_iter(vec![(self, other)])
     }
 }
 
 impl Hash for Value {
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn hash<H: Hasher>(&self, state: &mut H) {
-        let scope = crate::observe::scope(
-            "INTERCHANGE",
-            "rule:observe:spans",
-            "value::<Value as Hash>::hash",
-            &(self, "opaque Hasher capability"),
-        );
-        {
-            hash_iter(vec![self], state);
-        };
-        scope.finish(&());
+        hash_iter(vec![self], state);
     }
 }
 
@@ -791,50 +755,24 @@ impl TryFrom<Vec<u8>> for Text {
 pub struct Array(Vec<Value>);
 
 impl Clone for Array {
-    #[tracing::instrument(
-        name = "rule:observe:spans",
-        fields(
-            execution_owner = "INTERCHANGE",
-            claim_owner = "ROOT",
-            claim_label = "rule:observe:spans",
-            source_item = "value::<Array as Clone>::clone"
-        ),
-        ret
-    )]
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn clone(&self) -> Array {
         Array(self.0.iter().map(clone_iter).collect())
     }
 }
 
 impl PartialEq for Array {
-    #[tracing::instrument(
-        name = "rule:observe:spans",
-        fields(
-            execution_owner = "INTERCHANGE",
-            claim_owner = "ROOT",
-            claim_label = "rule:observe:spans",
-            source_item = "value::<Array as PartialEq>::eq"
-        ),
-        ret
-    )]
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn eq(&self, other: &Array) -> bool {
         self.0.len() == other.0.len() && eq_iter(self.0.iter().zip(other.0.iter()).collect())
     }
 }
 
 impl Hash for Array {
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn hash<H: Hasher>(&self, state: &mut H) {
-        let scope = crate::observe::scope(
-            "INTERCHANGE",
-            "rule:observe:spans",
-            "value::<Array as Hash>::hash",
-            &(self, "opaque Hasher capability"),
-        );
-        {
-            self.0.len().hash(state);
-            hash_iter(self.0.iter().collect(), state);
-        };
-        scope.finish(&());
+        self.0.len().hash(state);
+        hash_iter(self.0.iter().collect(), state);
     }
 }
 
@@ -968,12 +906,9 @@ impl FromIterator<Value> for Array {
 }
 
 impl Drop for Array {
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn drop(&mut self) {
-        let scope = crate::observe::scope("INTERCHANGE", "rule:observe:spans", "value::<Array as Drop>::drop", &self);
-        {
-            tear_down(mem::take(&mut self.0));
-        };
-        scope.finish(&());
+        tear_down(mem::take(&mut self.0));
     }
 }
 
@@ -1005,16 +940,7 @@ impl Drop for Array {
 pub struct Map(Vec<(Value, Value)>);
 
 impl Clone for Map {
-    #[tracing::instrument(
-        name = "rule:observe:spans",
-        fields(
-            execution_owner = "INTERCHANGE",
-            claim_owner = "ROOT",
-            claim_label = "rule:observe:spans",
-            source_item = "value::<Map as Clone>::clone"
-        ),
-        ret
-    )]
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn clone(&self) -> Map {
         Map(self
             .0
@@ -1025,16 +951,7 @@ impl Clone for Map {
 }
 
 impl PartialEq for Map {
-    #[tracing::instrument(
-        name = "rule:observe:spans",
-        fields(
-            execution_owner = "INTERCHANGE",
-            claim_owner = "ROOT",
-            claim_label = "rule:observe:spans",
-            source_item = "value::<Map as PartialEq>::eq"
-        ),
-        ret
-    )]
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn eq(&self, other: &Map) -> bool {
         if self.0.len() != other.0.len() {
             return false;
@@ -1049,23 +966,15 @@ impl PartialEq for Map {
 }
 
 impl Hash for Map {
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn hash<H: Hasher>(&self, state: &mut H) {
-        let scope = crate::observe::scope(
-            "INTERCHANGE",
-            "rule:observe:spans",
-            "value::<Map as Hash>::hash",
-            &(self, "opaque Hasher capability"),
-        );
-        {
-            self.0.len().hash(state);
-            let mut work = Vec::with_capacity(self.0.len() * 2);
-            for (key, value) in &self.0 {
-                work.push(key);
-                work.push(value);
-            }
-            hash_iter(work, state);
-        };
-        scope.finish(&());
+        self.0.len().hash(state);
+        let mut work = Vec::with_capacity(self.0.len() * 2);
+        for (key, value) in &self.0 {
+            work.push(key);
+            work.push(value);
+        }
+        hash_iter(work, state);
     }
 }
 
@@ -1248,18 +1157,15 @@ impl Map {
 }
 
 impl Drop for Map {
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn drop(&mut self) {
-        let scope = crate::observe::scope("INTERCHANGE", "rule:observe:spans", "value::<Map as Drop>::drop", &self);
-        {
-            let entries = mem::take(&mut self.0);
-            let mut work = Vec::with_capacity(entries.len() * 2);
-            for (key, value) in entries {
-                work.push(key);
-                work.push(value);
-            }
-            tear_down(work);
-        };
-        scope.finish(&());
+        let entries = mem::take(&mut self.0);
+        let mut work = Vec::with_capacity(entries.len() * 2);
+        for (key, value) in entries {
+            work.push(key);
+            work.push(value);
+        }
+        tear_down(work);
     }
 }
 
@@ -1304,16 +1210,7 @@ pub struct Tag {
 }
 
 impl Clone for Tag {
-    #[tracing::instrument(
-        name = "rule:observe:spans",
-        fields(
-            execution_owner = "INTERCHANGE",
-            claim_owner = "ROOT",
-            claim_label = "rule:observe:spans",
-            source_item = "value::<Tag as Clone>::clone"
-        ),
-        ret
-    )]
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn clone(&self) -> Tag {
         Tag {
             number: self.number,
@@ -1323,34 +1220,17 @@ impl Clone for Tag {
 }
 
 impl PartialEq for Tag {
-    #[tracing::instrument(
-        name = "rule:observe:spans",
-        fields(
-            execution_owner = "INTERCHANGE",
-            claim_owner = "ROOT",
-            claim_label = "rule:observe:spans",
-            source_item = "value::<Tag as PartialEq>::eq"
-        ),
-        ret
-    )]
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn eq(&self, other: &Tag) -> bool {
         self.number == other.number && eq_iter(vec![(&self.item, &other.item)])
     }
 }
 
 impl Hash for Tag {
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn hash<H: Hasher>(&self, state: &mut H) {
-        let scope = crate::observe::scope(
-            "INTERCHANGE",
-            "rule:observe:spans",
-            "value::<Tag as Hash>::hash",
-            &(self, "opaque Hasher capability"),
-        );
-        {
-            self.number.hash(state);
-            hash_iter(vec![&self.item], state);
-        };
-        scope.finish(&());
+        self.number.hash(state);
+        hash_iter(vec![&self.item], state);
     }
 }
 
@@ -1454,12 +1334,11 @@ impl Tag {
 /// iteratively already and the worklist reaches a tag inside one of them
 /// without recursing.
 impl Drop for Tag {
+    /// Justified: Structural value traits inherit the labelled canonical coding and theory operation that consumes the value; recording them again would duplicate full payloads during hashing, comparison, cloning or teardown.
     fn drop(&mut self) {
-        let scope = crate::observe::scope("INTERCHANGE", "rule:observe:spans", "value::<Tag as Drop>::drop", &self);
         if matches!(*self.item, Value::Tag(_)) {
             tear_down(vec![self.take_item()]);
         }
-        scope.finish(&());
     }
 }
 

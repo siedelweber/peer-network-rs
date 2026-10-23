@@ -1,4 +1,134 @@
 use super::*;
+
+/// Claim: Public byte representations preserve UTF-8, NUL and invalid UTF-8 exactly, and structural values retain constructors, field keys and escaped string contents rather than nesting Debug text.
+/// ´claim:cli:public-content-encoding-is-lossless´
+/// ´test:unit:public-content-encoding´
+#[test]
+fn public_content_encoding() {
+    assert_eq!(
+        public_bytes(b"hello\0"),
+        json!({"encoding":"utf-8","data":"hello\0","length_bytes":6})
+    );
+    assert_eq!(
+        public_bytes(&[255, 0, 128]),
+        json!({"encoding":"base64","data":"/wCA","length_bytes":3})
+    );
+    assert_eq!(
+        public_bytes(&[255]),
+        json!({"encoding":"base64","data":"/w==","length_bytes":1})
+    );
+    assert_eq!(
+        public_bytes(&[255, 0]),
+        json!({"encoding":"base64","data":"/wA=","length_bytes":2})
+    );
+    let escaped = format!("\\u{{{:x}}}", u32::from('😀'));
+    let value = content::structured(&format!("Ok(Example {{ value: \"a\\n{escaped}\", bytes: [255, 0, 128] }})"));
+    assert_eq!(value["constructor"], "Ok");
+    let entries = &value["arguments"][0]["fields"]["entries"];
+    assert_eq!(entries[0], json!([{"atom":"value"},"a\n😀"]));
+    assert_eq!(entries[1][1]["sequence_u8"], public_bytes(&[255, 0, 128]));
+    assert_eq!(
+        content::structured("Err(\"public\")"),
+        json!({"constructor":"Err","arguments":["public"]})
+    );
+    assert_eq!(
+        content::structured("custom representation")["content"]["data"],
+        "custom representation"
+    );
+    let largest = u128::MAX.to_string();
+    assert_eq!(content::structured(&largest), json!({"atom":largest}));
+}
+
+/// Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt existing content is refused rather than trusted.
+/// ´claim:cli:large-content-is-addressed-once´
+/// ´test:unit:content-artifact-publication´
+#[test]
+fn content_artifact_publication() {
+    let directory = tempfile::tempdir().unwrap();
+    let original = json!({"payload":"x".repeat(65_536)});
+    let mut first = original.clone();
+    content::compact(&mut first, directory.path()).unwrap();
+    let artifact = &first["payload"]["artifact"];
+    let path = std::path::Path::new(artifact["path"].as_str().unwrap());
+    let bytes = std::fs::read(path).unwrap();
+    assert_eq!(serde_json::from_slice::<Value>(&bytes).unwrap(), original["payload"]);
+    assert_eq!(artifact["length_bytes"], bytes.len());
+    assert_eq!(
+        artifact["digest"],
+        format!("{:x}", <sha2::Sha256 as sha2::Digest>::digest(&bytes))
+    );
+    let mut second = original.clone();
+    content::compact(&mut second, directory.path()).unwrap();
+    assert_eq!(first, second);
+    assert_eq!(std::fs::read_dir(path.parent().unwrap()).unwrap().count(), 1);
+    std::fs::write(path, b"wrong").unwrap();
+    assert!(content::compact(&mut original.clone(), directory.path()).is_err());
+    let mut small = json!({"payload":"small"});
+    content::compact(&mut small, directory.path()).unwrap();
+    assert_eq!(small, json!({"payload":"small"}));
+}
+
+/// Claim: A saturated ordinary queue cannot consume the reserved metric-summary slot; rendezvous-controlled delivery observes the summary before draining the queued ordinary records, without extending a timeout.
+/// ´claim:cli:summary-capacity-survives-ordinary-saturation´
+/// ´test:unit:summary-capacity´
+#[test]
+fn summary_capacity() {
+    struct Blocked {
+        entered: mpsc::SyncSender<()>,
+        release: mpsc::Receiver<()>,
+        summary: mpsc::SyncSender<()>,
+        diagnostic: Arc<std::sync::atomic::AtomicBool>,
+        first: bool,
+    }
+    impl Write for Blocked {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            if self.first {
+                self.first = false;
+                self.entered.send(()).unwrap();
+                self.release.recv().unwrap();
+            }
+            let row: Value = serde_json::from_slice(bytes).unwrap();
+            if row["level"] == "ERROR" {
+                assert_eq!(row["message"], "complete public diagnostic");
+                self.diagnostic.store(true, Ordering::Relaxed);
+            }
+            if row["kind"] == "metric_summary" {
+                self.summary.send(()).unwrap();
+            }
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+    let (entered, entry) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
+    let (summary, seen) = mpsc::sync_channel(1);
+    let clock = Arc::new(ManualClock(AtomicU64::new(0)));
+    let diagnostic = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let observation = Observation::with_writer(
+        Blocked {
+            entered,
+            release: released,
+            summary,
+            diagnostic: diagnostic.clone(),
+            first: true,
+        },
+        clock,
+    )
+    .unwrap();
+    observation.emit(json!({"public":"first"}));
+    entry.recv().unwrap();
+    for i in 0..QUEUE_RECORDS {
+        observation.emit(json!({"public":i}));
+    }
+    observation.emit(json!({"level":"ERROR","message":"complete public diagnostic"}));
+    observation.summarize();
+    release.send(()).unwrap();
+    seen.recv().unwrap();
+    assert!(diagnostic.load(Ordering::Relaxed));
+    assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
+}
 use crate::secrets::{PrivateBytes, PrivateString, SecretBox, SecretRole, SecretString};
 use std::sync::Mutex;
 
@@ -254,7 +384,7 @@ fn recursive_observation() {
     tracing::subscriber::with_default(subscriber, || tracing::info!(payload=?Recursive(&observation.lost)));
     let rows = records(&observation, &capture);
     assert_eq!(rows.len(), 1);
-    assert_eq!(rows[0]["fields"]["payload"], "complete-public-field");
+    assert_eq!(rows[0]["fields"]["payload"], json!({"atom":"complete-public-field"}));
     assert!(observation.lost.load(Ordering::Relaxed) > 0);
 }
 
@@ -335,15 +465,15 @@ fn inclusive_metering() {
     let (observation, clock, capture) = fixture();
     let mut parent = observation.operation(OperationKind::Command, json!({"input":"public"}));
     parent.work_bytes(7);
-    parent.resources(12, 12, Accuracy::Exact);
+    parent.resources(12, Accuracy::Exact, 12, Accuracy::Exact);
     clock.0.store(100, Ordering::Relaxed);
     let mut child = parent.child(OperationKind::Child, json!({"argv":["child"]}));
     child.work_bytes(3);
-    child.resources(5, 8, Accuracy::Estimated);
-    child.resources(2, 10, Accuracy::Exact);
+    child.resources(5, Accuracy::Estimated, 8, Accuracy::Exact);
+    child.resources(2, Accuracy::Exact, 10, Accuracy::Estimated);
     clock.0.store(350, Ordering::Relaxed);
     child.finish(Outcome::Refusal, json!({"reason":"fixture"}));
-    parent.resources(2, 20, Accuracy::Exact);
+    parent.resources(2, Accuracy::Exact, 20, Accuracy::Exact);
     clock.0.store(500, Ordering::Relaxed);
     parent.finish(Outcome::Success, json!("done"));
     let rows = records(&observation, &capture);
@@ -358,6 +488,7 @@ fn inclusive_metering() {
     assert_eq!(completed[1]["detail"]["resources"]["cumulative"]["value"], 20);
     assert_eq!(completed[0]["detail"]["resources"]["current"]["accuracy"], "exact");
     assert_eq!(completed[0]["detail"]["resources"]["high_water"]["accuracy"], "estimated");
+    assert_eq!(completed[0]["detail"]["resources"]["cumulative"]["accuracy"], "estimated");
     assert!(completed[0]["detail"]["resources"]["cpu_seconds"]["value"].is_null());
     let mut overflow = observation.operation(OperationKind::Command, Value::Null);
     overflow.work_bytes(u64::MAX);
@@ -368,6 +499,18 @@ fn inclusive_metering() {
     assert!(detail["work"]["value"].is_null());
     assert_eq!(detail["work"]["accuracy"], "unavailable; counter overflow");
     assert_eq!(detail["outcome"], "success");
+    let mut missing = observation.operation(OperationKind::Command, Value::Null);
+    missing.resources(9, Accuracy::Exact, 12, Accuracy::Estimated);
+    missing.resources(0, Accuracy::Unavailable, 15, Accuracy::Exact);
+    missing.finish(Outcome::Success, Value::Null);
+    let rows = records(&observation, &capture);
+    let resources = &rows.last().unwrap()["detail"]["resources"];
+    assert!(resources["current"]["value"].is_null());
+    assert_eq!(resources["current"]["accuracy"], "unavailable");
+    assert_eq!(resources["high_water"]["value"], 9);
+    assert_eq!(resources["high_water"]["accuracy"], "exact");
+    assert_eq!(resources["cumulative"]["value"], 15);
+    assert_eq!(resources["cumulative"]["accuracy"], "exact");
 }
 
 /// Claim: Explicit error and cancellation, ordinary drop and unwinding produce four distinct terminal classes, with unavailable resources remaining null and every active gauge returning to zero.
@@ -541,14 +684,16 @@ fn filtered_accounting() {
     assert_eq!(trace["spans"][0]["fields"]["public"], "whole value");
 }
 
-/// Claim: Oversized records, full queues and disconnected sinks increment loss while terminal metrics still account success and zero active work; `try_send` never waits for queue capacity.
+/// Claim: Exhausted byte capacity, full queues and disconnected sinks increment loss while terminal metrics still account success and zero active work; injected capacity proves refusal without large allocations or waits.
 /// ´claim:cli:observation-loss-is-nonbinding´
 /// ´test:unit:bounded-loss´
 #[test]
 fn bounded_loss() {
     let (observation, _, _) = fixture();
-    observation.emit(json!({"payload":"x".repeat(RECORD_LIMIT)}));
+    observation.queued_bytes.store(CAPTURE_LIMIT as u64, Ordering::Relaxed);
+    observation.emit(json!({"payload":"public"}));
     assert_eq!(observation.lost.load(Ordering::Relaxed), 1);
+    observation.queued_bytes.store(0, Ordering::Relaxed);
     let (sender, receiver) = mpsc::sync_channel(1);
     let mut bounded = observation.clone();
     bounded.sender = sender;

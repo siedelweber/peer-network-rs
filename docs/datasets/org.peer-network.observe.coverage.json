@@ -7,12 +7,12 @@
   ],
   "rows": [
     {
-      "exceptions": 73,
+      "exceptions": 74,
       "generators": 36,
       "helpers": 3,
       "instrumented": 30,
       "name": "cli-common",
-      "operations": 106
+      "operations": 107
     },
     {
       "exceptions": 6,
@@ -31,10 +31,10 @@
       "operations": 12
     },
     {
-      "exceptions": 18,
+      "exceptions": 34,
       "generators": 89,
       "helpers": 1,
-      "instrumented": 134,
+      "instrumented": 118,
       "name": "pn-interchange",
       "operations": 153
     }

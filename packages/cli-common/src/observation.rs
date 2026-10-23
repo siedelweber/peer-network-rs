@@ -23,9 +23,19 @@ use tracing_subscriber::{Layer, layer::Context, prelude::*, registry::LookupSpan
 
 use crate::observation_metrics::{JsonRecorder, STEMS, estimate};
 
+mod content;
+
 const RECORD_LIMIT: usize = 1024 * 1024;
+const CAPTURE_LIMIT: usize = 64 * 1024 * 1024;
 const QUEUE_RECORDS: usize = 64;
 static GLOBAL: OnceLock<Observation> = OnceLock::new();
+
+/// Preserve public bytes as tagged UTF-8 or base64 for observation.
+/// Justified: Representation runs inside the labelled observation delivery operation and must not recursively observe itself.
+#[must_use]
+pub fn public_bytes(value: &[u8]) -> Value {
+    content::bytes(value)
+}
 
 thread_local! { static OBSERVING: std::cell::Cell<bool> = const { std::cell::Cell::new(false) }; }
 struct Observing;
@@ -158,6 +168,7 @@ impl Clock for SystemClock {
 enum Message {
     Record(Vec<u8>),
     Flush(SyncSender<()>),
+    Wake,
 }
 
 struct Limited(Vec<u8>);
@@ -172,7 +183,7 @@ impl Write for Limited {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
-        if self.0.len().saturating_add(bytes.len()) > RECORD_LIMIT {
+        if self.0.len().saturating_add(bytes.len()) > CAPTURE_LIMIT {
             return Err(io::Error::other("observation record capacity"));
         }
         self.0.extend_from_slice(bytes);
@@ -189,6 +200,9 @@ impl Write for Limited {
 #[derive(Clone)]
 pub struct Observation {
     sender: SyncSender<Message>,
+    summary_sender: SyncSender<Vec<u8>>,
+    diagnostic_sender: SyncSender<Vec<u8>>,
+    queued_bytes: Arc<AtomicU64>,
     lost: Arc<AtomicU64>,
     clock: Arc<dyn Clock>,
     recorder: JsonRecorder,
@@ -207,25 +221,60 @@ impl Observation {
         bridge: Option<Arc<crate::observation_export::Bridge>>,
     ) -> io::Result<Self> {
         let (sender, receiver) = mpsc::sync_channel(QUEUE_RECORDS);
+        let (summary_sender, summary_receiver) = mpsc::sync_channel::<Vec<u8>>(1);
+        let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Vec<u8>>(8);
         let lost = Arc::new(AtomicU64::new(0));
         let worker_lost = lost.clone();
+        let queued_bytes = Arc::new(AtomicU64::new(0));
+        let worker_queued = queued_bytes.clone();
+        let artifact_root = content::root();
+        let worker_bridge = bridge.clone();
         std::thread::Builder::new().name("observation-json".into()).spawn(move || {
             let mut writer = writer;
+            let mut deliver = |bytes: &[u8]| {
+                let result = (|| -> io::Result<()> {
+                    let mut record: Value = serde_json::from_slice(bytes)?;
+                    content::compact(&mut record, &artifact_root)?;
+                    let mut compact = serde_json::to_vec(&record)?;
+                    compact.push(b'\n');
+                    if compact.len() > RECORD_LIMIT {
+                        return Err(io::Error::other("observation delivery capacity"));
+                    }
+                    if let Some(bridge) = &worker_bridge {
+                        bridge.record(&compact);
+                    }
+                    writer.write_all(&compact)?;
+                    writer.flush()
+                })();
+                if result.is_err() {
+                    worker_lost.fetch_add(1, Ordering::Relaxed);
+                }
+            };
             while let Ok(message) = receiver.recv() {
+                for diagnostic in diagnostic_receiver.try_iter().take(8) {
+                    deliver(&diagnostic);
+                }
+                if let Ok(summary) = summary_receiver.try_recv() {
+                    deliver(&summary);
+                }
                 match message {
                     Message::Record(bytes) => {
-                        if writer.write_all(&bytes).and_then(|()| writer.flush()).is_err() {
-                            worker_lost.fetch_add(1, Ordering::Relaxed);
-                        }
+                        let charged = bytes.len() as u64;
+                        deliver(&bytes);
+                        worker_queued.fetch_sub(charged, Ordering::Relaxed);
                     }
                     Message::Flush(done) => {
                         let _ignored = done.try_send(());
                     }
+                    Message::Wake => {}
                 }
             }
         })?;
         Ok(Self {
             sender,
+            summary_sender,
+            diagnostic_sender,
+            queued_bytes,
             lost,
             clock,
             recorder: bridge
@@ -257,10 +306,34 @@ impl Observation {
             self.lost.fetch_add(1, Ordering::Relaxed);
             return;
         }
-        if let Some(bridge) = &self.bridge {
-            bridge.record(&bytes.0);
+        let reserved = if record["kind"] == "metric_summary" {
+            Some(&self.summary_sender)
+        } else if record["level"] == "ERROR" || record["level"] == "WARN" {
+            Some(&self.diagnostic_sender)
+        } else {
+            None
+        };
+        if let Some(sender) = reserved {
+            if bytes.0.len() > RECORD_LIMIT || sender.try_send(bytes.0).is_err() {
+                self.lost.fetch_add(1, Ordering::Relaxed);
+            } else {
+                let _wake = self.sender.try_send(Message::Wake);
+            }
+            return;
+        }
+        let charged = bytes.0.len() as u64;
+        if self
+            .queued_bytes
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |used| {
+                used.checked_add(charged).filter(|total| *total <= CAPTURE_LIMIT as u64)
+            })
+            .is_err()
+        {
+            self.lost.fetch_add(1, Ordering::Relaxed);
+            return;
         }
         if self.sender.try_send(Message::Record(bytes.0)).is_err() {
+            self.queued_bytes.fetch_sub(charged, Ordering::Relaxed);
             self.lost.fetch_add(1, Ordering::Relaxed);
         }
     }
@@ -470,7 +543,8 @@ impl Operation {
     /// Record current, high-water and cumulative resource bytes with explicit accuracy.
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
-    pub fn resources(&mut self, current: u64, cumulative: u64, accuracy: Accuracy) {
+    pub fn resources(&mut self, current: u64, current_accuracy: Accuracy, cumulative: u64, cumulative_accuracy: Accuracy) {
+        let accuracy = current_accuracy;
         let previous = self.current.value.unwrap_or(0);
         let measured = if matches!(accuracy, Accuracy::Unavailable) {
             0
@@ -485,8 +559,6 @@ impl Operation {
         }
         if matches!(accuracy, Accuracy::Unavailable) {
             self.current = Resource::unavailable();
-            self.high_water = Resource::unavailable();
-            self.cumulative = Resource::unavailable();
         } else {
             self.current = Resource {
                 value: Some(current),
@@ -502,12 +574,12 @@ impl Operation {
                 },
                 unit: "bytes",
             };
-            self.cumulative = Resource {
-                value: Some(cumulative),
-                accuracy,
-                unit: "bytes",
-            };
         }
+        self.cumulative = Resource {
+            value: (!matches!(cumulative_accuracy, Accuracy::Unavailable)).then_some(cumulative),
+            accuracy: cumulative_accuracy,
+            unit: "bytes",
+        };
     }
 
     /// Record full public progress content without affecting the relayed bytes.
@@ -569,7 +641,7 @@ struct Fields(Map<String, Value>, usize, bool);
 impl Fields {
     fn insert(&mut self, field: &Field, value: Value, bytes: usize) {
         self.1 = self.1.saturating_add(field.name().len()).saturating_add(bytes);
-        if self.1 > RECORD_LIMIT {
+        if self.1 > CAPTURE_LIMIT {
             self.2 = true;
         } else {
             self.0.insert(field.name().into(), value);
@@ -587,7 +659,7 @@ impl Visit for Fields {
         }
         let length = text.0.len();
         if let Ok(text) = String::from_utf8(text.0) {
-            self.insert(field, Value::String(text), length);
+            self.insert(field, content::structured(&text), length);
         } else {
             self.2 = true;
         }
@@ -595,7 +667,7 @@ impl Visit for Fields {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn record_str(&mut self, field: &Field, value: &str) {
-        if value.len().saturating_add(self.1) > RECORD_LIMIT {
+        if value.len().saturating_add(self.1) > CAPTURE_LIMIT {
             self.2 = true;
         } else {
             self.insert(field, json!(value), value.len());
@@ -739,12 +811,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                     "unwinding"
                 } else if let Some(outcome) = account.outcome {
                     outcome
-                } else if account
-                    .result
-                    .as_ref()
-                    .and_then(Value::as_str)
-                    .is_some_and(|value| value.starts_with("Err("))
-                {
+                } else if account.result.as_ref().is_some_and(|value| value["constructor"] == "Err") {
                     "error"
                 } else if account.result.is_some() {
                     "success"

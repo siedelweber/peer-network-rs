@@ -12,6 +12,7 @@ fi
 failed=0
 statuses=()
 mkdir -p .lane
+export PN_OBSERVE_ARTIFACT_DIR="$PWD/.lane/observations"
 gate_started=$(date -u +%s.%N)
 source_id=$(time git rev-parse HEAD)
 export CARGO_NET_OFFLINE=true
@@ -25,7 +26,8 @@ run_step() {
     status=$?
     ended=$(date -u +%s.%N)
     wall=$(awk -v s="$started" -v e="$ended" 'BEGIN { printf "%.6f", e-s }')
-    cat ".lane/gate-${name}.log"
+    python3 -B ci/observation_log.py ".lane/gate-${name}.log" ".lane/gate-${name}.observations.jsonl"
+    if [ "$?" -ne 0 ]; then failed=1; fi
     printf 'STEP=%s STATUS=%s WALL=%ss\n' "$name" "$status" "$wall"
     statuses+=("$name=$status/${wall}s")
     if [ "$status" -ne 0 ]; then failed=1; fi

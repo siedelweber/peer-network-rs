@@ -73,10 +73,51 @@
 
 | Package | Operations | Instrumented | Local exceptions | Reviewed helpers | Generators |
 |---|---:|---:|---:|---:|---:|
-| cli-common | 106 | 30 | 73 | 3 | 36 |
+| cli-common | 107 | 30 | 74 | 3 | 36 |
 | documents | 18 | 12 | 6 | 0 | 10 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
-| pn-interchange | 153 | 134 | 18 | 1 | 89 |
+| pn-interchange | 153 | 118 | 34 | 1 | 89 |
 
 
 **Amendment (Foundation observation scope)** · `amend:observe:foundation-evidence` The obligation register now attaches source-matched execution evidence for the implemented portions of (`gate:observe:foundation`) and (`gate:design:observability-foundation`) to the package-owned foundation observation evidence paragraph. Package claim citations remain in that register, where the linter permits their ownership direction; Python exhibits remain checked by the evidence join. Mechanical coverage, source-bound semantic admission, controlled local export and four-mode result comparisons support the current four-package surface. Real PostgreSQL and Elements services remain owned by the service implementer for the provisioning slice; domain suites by each domain implementer for the assigned domain bite; client harnesses and actual exporter transport admission by the client implementer for the client slice. Scoped support is not unrestricted gate closure.
+
+**Amendment (Complete transitive review)** · `amend:observe:transitive-review` Supplements (`amend:observe:export-dependencies`) with the omitted resolved crates and the SHA-256 content-store dependency admitted by (`amend:observe:compact-content`). Versions, licences and selected features below come from the locked registry manifests and resolved dependency edges, obtained offline after the locked fetch; crates.io remains the source of record. The target column distinguishes lockfile resolution from the current host build. SHA-256 and its support crates serve only content addressing, with no new network transport or binding interchange dependency.
+
+**Table (Additional observation dependency review)** · `tab:observe:transitive-review` Each row records its current selected features and target condition, including host-side macro dependencies and inactive browser branches.
+
+| Crate | Version | Licence | Features | Role | Target condition |
+|---|---|---|---|---|---|
+| anyhow | 1.0.104 | MIT OR Apache-2.0 | default, std | derive-time diagnostics | Active host dependency; follows the selected consumer feature. |
+| async-trait | 0.1.92 | MIT OR Apache-2.0 | none | HTTP transport async trait expansion | Active host dependency; follows the selected consumer feature. |
+| block-buffer | 0.10.4 | MIT OR Apache-2.0 | none | digest block buffering | Active host dependency; follows the selected consumer feature. |
+| bumpalo | 3.20.3 | MIT OR Apache-2.0 | default | WebAssembly macro arena | Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host. |
+| cpufeatures | 0.2.17 | MIT OR Apache-2.0 | none | CPU SHA instruction selection | SHA-256 runtime CPU detection on x86, x86_64 or aarch64. |
+| crypto-common | 0.1.7 | MIT OR Apache-2.0 | std | digest shared traits | Active host dependency; follows the selected consumer feature. |
+| digest | 0.10.7 | MIT OR Apache-2.0 | alloc, block-buffer, core-api, default, std | digest interface | Active host dependency; follows the selected consumer feature. |
+| futures-channel | 0.3.34 | MIT OR Apache-2.0 | alloc, default, std | SDK completion channels | Active host dependency; follows the selected consumer feature. |
+| futures-macro | 0.3.34 | MIT OR Apache-2.0 | none | future combinator expansion | Active host dependency; follows the selected consumer feature. |
+| futures-task | 0.3.34 | MIT OR Apache-2.0 | alloc, std | task and wake primitives | Active host dependency; follows the selected consumer feature. |
+| futures-util | 0.3.34 | MIT OR Apache-2.0 | alloc, async-await, async-await-macro, futures-macro, futures-sink, sink, slab, std | SDK and executor combinators | Active host dependency; follows the selected consumer feature. |
+| generic-array | 0.14.7 | MIT | more_lengths | fixed-size digest buffers | Active host dependency; follows the selected consumer feature. |
+| js-sys | 0.3.106 | MIT OR Apache-2.0 | default, std, unsafe-eval | JavaScript bindings | Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host. |
+| opentelemetry-proto | 0.33.1 | Apache-2.0 | gen-tonic-messages, metrics, prost, trace | OTLP message schemas | Active host dependency; follows the selected consumer feature. |
+| portable-atomic | 1.15.0 | Apache-2.0 OR MIT | fallback | atomic fallback | 32-bit metrics or SDK targets without 64-bit atomics; not selected on x86_64. |
+| ppv-lite86 | 0.2.21 | MIT OR Apache-2.0 | simd, std | ChaCha vector operations | Active host dependency; follows the selected consumer feature. |
+| prost-derive | 0.14.4 | Apache-2.0 | none | OTLP message derives | Active host dependency; follows the selected consumer feature. |
+| rand_chacha | 0.9.0 | MIT OR Apache-2.0 | std | trace-ID generator | Active host dependency; follows the selected consumer feature. |
+| rand_core | 0.9.5 | MIT OR Apache-2.0 | os_rng, std | random generator traits | Active host dependency; follows the selected consumer feature. |
+| rustversion | 1.0.23 | MIT OR Apache-2.0 | none | compiler capability selection | Host proc macro through rapidhash; also a conditional WebAssembly build dependency. |
+| sha2 | 0.10.9 | MIT OR Apache-2.0 | std | SHA-256 content addressing | Active host dependency; follows the selected consumer feature. |
+| typenum | 1.20.1 | MIT OR Apache-2.0 | none | digest type-level sizes | Active host dependency; follows the selected consumer feature. |
+| wasm-bindgen | 0.2.129 | MIT OR Apache-2.0 | std | WebAssembly binding support | Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host. |
+| wasm-bindgen-macro | 0.2.129 | MIT OR Apache-2.0 | none | WebAssembly binding macro | Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host. |
+| wasm-bindgen-macro-support | 0.2.129 | MIT OR Apache-2.0 | none | WebAssembly macro implementation | Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host. |
+| wasm-bindgen-shared | 0.2.129 | MIT OR Apache-2.0 | none | WebAssembly shared metadata | Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host. |
+| web-time | 1.1.0 | MIT OR Apache-2.0 | none | browser clock | Conditional WebAssembly/browser branch; resolved in the lock, not built for the current Linux host. |
+
+
+**Amendment (Compact full-content representation)** · `amend:observe:compact-content` Refines (`amend:observe:full-content`) without changing the public-content boundary. Public byte values use a tagged UTF-8 JSON string when valid, otherwise padded RFC 4648 base64, with their byte length. Available structural Debug carriers are decoded into tagged JSON constructors, fields, sequences and literals; custom formatting outside that grammar remains explicitly identified available text rather than guessed fields or an invented serialization contract. Opaque capabilities retain their declared unavailable representation. A complete JSON field exceeding 65,536 encoded bytes is stored once by SHA-256 content address, with digest, original encoded length and path replacing the inline representation; existing content is verified and atomic publication never overwrites an object. The default command store is .lane/observations/objects/sha256 beneath its working directory, overridden by PN_OBSERVE_ARTIFACT_DIR; the gate explicitly selects its checkout's .lane/observations. Artifact I/O runs on the delivery worker. Complete delivered records remain below one MiB; a larger envelope is itself addressed. Queue admission is bounded by 64 records and 64 MiB of captured serialized bytes, with a separate one-record, one-MiB summary slot and eight one-MiB diagnostic slots serviced before ordinary backlog; capacity, unavailable storage and disconnected delivery count whole-observation loss under (`rule:observe:sampling`), never field filtering or binding failure. Gate observation streams are retained byte for byte in .lane/gate-STEP.observations.jsonl, with counts and paths in the main log. Structural value traits inherit the consuming operation so hashing, comparison, clone and teardown do not repeatedly record the same whole value.
+
+**Amendment (Independent resource qualification)** · `amend:observe:resource-qualification` Implements the independent qualification promised by (`amend:observe:core-accounting`): resources accepts separate current and cumulative accuracy arguments. An unavailable current reading becomes null while retaining the previously observed high-water value and its accuracy; it does not claim that unobserved intervals had no higher usage. Cumulative availability is independent. The controlled witness checks mixed exact and estimated values and a later unavailable current reading without substituting zero.
+
+**Amendment (Body-bound class decisions)** · `amend:observe:semantic-classes` Refines (`amend:observe:coverage-admission`): the operation register records seven reviewer-confirmed semantic classes, their premises and named labelled operations. Each body binds to a class decision and an item-specific premise, alongside its existing separate full-recording, secret-flow and exposure assessments. Exceptions name the class and actual enclosing operation set; const, bootstrap and observation-internal exceptions remain distinct from structural value-trait inheritance. New payload representation, resource qualification and protected configuration bodies carry their additional premises locally. Mechanical checks reject missing class decisions or enclosing operation sets and changed bodies or types; they do not turn these semantic decisions into parser proofs.
