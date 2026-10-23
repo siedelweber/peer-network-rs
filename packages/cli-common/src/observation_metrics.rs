@@ -16,7 +16,7 @@ pub(super) const STEMS: [&str; 8] = [
     "interchange__root__rule__observe__spans",
     "clicommon__root__rule__observe__spans",
     "execwrap__root__rule__observe__spans",
-    "records__root__rule__observe__spans",
+    "records__root__sig__design__records",
 ];
 pub(super) const OUTCOMES: [&str; 6] = ["success", "refusal", "error", "cancelled", "unwinding", "incomplete"];
 
@@ -35,6 +35,17 @@ const MEASURES: [(&str, &str, &str); 9] = [
     ("elapsed_seconds", "histogram", "seconds"),
     ("workload_bytes", "histogram", "bytes"),
     ("workload_operations", "histogram", "operations"),
+];
+
+// The records contract owns these additional instruments; other owners do not.
+const RECORDS_MEASURES: [(&str, &str, &str); 7] = [
+    ("validated_records", "counter", "count"),
+    ("resolved_references", "counter", "count"),
+    ("refusals", "counter", "count"),
+    ("active_validation", "gauge", "operations"),
+    ("live_carrier_bytes", "gauge", "bytes"),
+    ("records_per_boundary", "histogram", "count"),
+    ("input_bytes", "histogram", "bytes"),
 ];
 
 #[derive(Default)]
@@ -175,7 +186,12 @@ impl JsonRecorder {
         let lost = Arc::new(AtomicU64::new(0));
         let mut instruments = BTreeMap::new();
         for stem in STEMS {
-            for (measure, kind, unit) in MEASURES {
+            let extra: &[(&str, &str, &str)] = if stem == "records__root__sig__design__records" {
+                &RECORDS_MEASURES
+            } else {
+                &[]
+            };
+            for (measure, kind, unit) in MEASURES.into_iter().chain(extra.iter().copied()) {
                 let outcomes: &[&str] = if measure == "completed_operations" { &OUTCOMES } else { &[""] };
                 for outcome in outcomes {
                     // The finite outcome is part of the SDK instrument name; no

@@ -366,7 +366,10 @@ impl Census {
                 }
                 Item::Const(value)
                     if module == "observation_metrics::"
-                        && matches!(value.ident.to_string().as_str(), "STEMS" | "MEASURES" | "OUTCOMES") =>
+                        && matches!(
+                            value.ident.to_string().as_str(),
+                            "STEMS" | "MEASURES" | "OUTCOMES" | "RECORDS_MEASURES"
+                        ) =>
                 {
                     self.constants.push(json!({"name":value.ident.to_string(),"value":literal_data(&value.expr).ok_or("nonliteral metric declaration")?}));
                 }

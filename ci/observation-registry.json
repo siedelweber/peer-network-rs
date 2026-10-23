@@ -3972,20 +3972,44 @@
       "path": "packages/records/src/lib.rs",
       "item": "ValidatedRecords < '_ >::acts",
       "owner": "RECORDS",
-      "signature": "fn acts (& self) -> & [AcceptedAct]",
-      "claim": "ROOT::rule:observe:spans",
+      "signature": "fn acts (& self) -> & [CandidateAct]",
+      "claim": "ROOT::sig:design:records",
       "mode": "instrumented",
-      "shape": "shape-records"
+      "shape": "shape-records",
+      "operation": "complete-act-access"
     },
     {
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
       "item": "validate_record",
       "owner": "RECORDS",
-      "signature": "fn validate_record < 'a > (acts : & 'a [AcceptedAct] , resolved : & BTreeSet < PublicReference > ,) -> Result < ValidatedRecords < 'a > , ValidationError >",
-      "claim": "ROOT::rule:observe:spans",
+      "signature": "fn validate_record < 'a > (acts : & 'a [CandidateAct] , history : & BTreeSet < PublicReference > , declarations : & [Declaration] ,) -> Result < ValidatedRecords < 'a > , ValidationError >",
+      "claim": "ROOT::sig:design:records",
       "mode": "instrumented",
-      "shape": "shape-records"
+      "shape": "shape-records",
+      "operation": "validate-record"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "resolve_public_reference",
+      "owner": "RECORDS",
+      "signature": "fn resolve_public_reference (records : & ValidatedRecords < '_ > , reference : & PublicReference ,) -> Result < ReferenceOrigin , ValidationError >",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "claim": "ROOT::sig:design:records",
+      "operation": "resolve-public-reference"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "select_effective_declaration",
+      "owner": "RECORDS",
+      "signature": "fn select_effective_declaration < 'a > (records : & 'a ValidatedRecords < '_ > , namespace : & str , name : & str , boundary : u64 ,) -> Result < & 'a Declaration , ValidationError >",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "claim": "ROOT::sig:design:records",
+      "operation": "select-effective-declaration"
     }
   ],
   "metrics": [
@@ -4431,13 +4455,13 @@
       "attributes": {}
     },
     {
-      "name": "records__root__rule__observe__spans__started_operations",
+      "name": "records__root__sig__design__records__started_operations",
       "kind": "counter",
       "unit": "operations",
       "attributes": {}
     },
     {
-      "name": "records__root__rule__observe__spans__completed_operations",
+      "name": "records__root__sig__design__records__completed_operations",
       "kind": "counter",
       "unit": "operations",
       "attributes": {
@@ -4452,45 +4476,87 @@
       }
     },
     {
-      "name": "records__root__rule__observe__spans__work_bytes",
+      "name": "records__root__sig__design__records__work_bytes",
       "kind": "counter",
       "unit": "bytes",
       "attributes": {}
     },
     {
-      "name": "records__root__rule__observe__spans__work_operations",
+      "name": "records__root__sig__design__records__work_operations",
       "kind": "counter",
       "unit": "operations",
       "attributes": {}
     },
     {
-      "name": "records__root__rule__observe__spans__active_operations",
+      "name": "records__root__sig__design__records__active_operations",
       "kind": "gauge",
       "unit": "operations",
       "attributes": {}
     },
     {
-      "name": "records__root__rule__observe__spans__resource_current_bytes",
+      "name": "records__root__sig__design__records__resource_current_bytes",
       "kind": "gauge",
       "unit": "bytes",
       "attributes": {}
     },
     {
-      "name": "records__root__rule__observe__spans__elapsed_seconds",
+      "name": "records__root__sig__design__records__elapsed_seconds",
       "kind": "histogram",
       "unit": "seconds",
       "attributes": {}
     },
     {
-      "name": "records__root__rule__observe__spans__workload_bytes",
+      "name": "records__root__sig__design__records__workload_bytes",
       "kind": "histogram",
       "unit": "bytes",
       "attributes": {}
     },
     {
-      "name": "records__root__rule__observe__spans__workload_operations",
+      "name": "records__root__sig__design__records__workload_operations",
       "kind": "histogram",
       "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__sig__design__records__validated_records",
+      "kind": "counter",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__sig__design__records__resolved_references",
+      "kind": "counter",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__sig__design__records__refusals",
+      "kind": "counter",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__sig__design__records__active_validation",
+      "kind": "gauge",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__sig__design__records__live_carrier_bytes",
+      "kind": "gauge",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__sig__design__records__records_per_boundary",
+      "kind": "histogram",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "records__root__sig__design__records__input_bytes",
+      "kind": "histogram",
+      "unit": "bytes",
       "attributes": {}
     }
   ],
@@ -6708,9 +6774,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<SummaryFields as Visit>::record_str",
-      "body": "{ if matches ! (field . name () , \"execution_owner\" | \"source_item\" | \"outcome\") { self . 0 . record_str (field , value) ; } }",
+      "body": "{ if matches ! (field . name () , \"execution_owner\" | \"source_item\" | \"operation\" | \"outcome\") { self . 0 . record_str (field , value) ; } }",
       "class_decision": "delivery",
-      "item_premise": "This body inherits the delivery decision for observation::<SummaryFields as Visit>::record_str. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
+      "item_premise": "This body inherits the delivery decision for observation::<SummaryFields as Visit>::record_str. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation. RECORDS registration uses its named contract stem, retains the bounded operation identity at default level, and declares seven owner-specific instruments without widening other owners or payload capture.",
       "assessments": {
         "full_recording": "review-203",
         "secret_flow": "review-002",
@@ -7755,7 +7821,7 @@
       "operation": "pn-records::packages/records/src/lib.rs::ValidatedRecords < '_ >::acts",
       "body": "{ self . acts }",
       "class_decision": "public-records",
-      "item_premise": "The ValidatedRecords < '_ >::acts body retains complete act ownership and reports its original typed result; public authentication bytes are evidence, not credentials.",
+      "item_premise": "The borrowed validated batch returns whole candidate acts, without flattening legs or promoting cryptographic authentication.",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
@@ -7764,14 +7830,36 @@
     },
     {
       "operation": "pn-records::packages/records/src/lib.rs::validate_record",
-      "body": "{ let mut identities = BTreeSet :: new () ; let mut references = resolved . clone () ; for act in acts { if ! identities . insert (& act . id) { return Err (ValidationError :: DuplicateAct (act . id . clone ())) ; } references . insert (PublicReference :: Act (act . id . clone ())) ; for projection in act . mandatory . iter () . chain (& act . removable) { references . insert (PublicReference :: Edge (projection . id . clone ())) ; } } for act in acts { let invalid = | field | ValidationError :: InvalidRepresentation { act : act . id . clone () , field , } ; if ! valid_id (& act . id) || act . author != act . id . author || act . family != act . id . family { return Err (invalid (\"identity\")) ; } if act . authentication_evidence . is_empty () { return Err (invalid (\"authentication_evidence\")) ; } let mut fields = BTreeSet :: new () ; for (name , quantity) in & act . body . quantities { if name . is_empty () || quantity . unit . is_empty () || ! fields . insert (name) { return Err (invalid (\"quantities\")) ; } } let required : & [Role] = match act . body . layout { Layout :: Binary => & [Role :: Binary] , Layout :: Paired => & [Role :: A , Role :: T] , } ; let mut roles = BTreeSet :: new () ; for projection in act . mandatory . iter () . chain (& act . removable) { if projection . id . act != act . id || ! required . contains (& projection . id . role) { return Err (invalid (\"projection_identity\")) ; } if ! roles . insert (projection . id . role) { return Err (ValidationError :: DuplicateEdge (projection . id . clone ())) ; } for reference in [& projection . source , & projection . target] { if ! valid_reference (reference) { return Err (invalid (\"projection_reference\")) ; } if ! references . contains (reference) { return Err (ValidationError :: UnresolvedReference (reference . clone ())) ; } } } if act . mandatory . iter () . any (| p | p . removal != Removal :: Live) { return Err (invalid (\"mandatory_removal\")) ; } for role in required { if ! roles . contains (role) { return Err (ValidationError :: MissingCoLeg { act : act . id . clone () , role : * role , }) ; } } for reference in & act . protocol_references { if ! valid_reference (reference) { return Err (invalid (\"protocol_reference\")) ; } if ! references . contains (reference) { return Err (ValidationError :: UnresolvedReference (reference . clone ())) ; } } } Ok (ValidatedRecords { acts }) }",
+      "body": "{ let bytes = carrier_bytes (acts) ; metrics :: gauge ! (\"records__root__sig__design__records__active_validation\") . increment (1.0) ; metrics :: gauge ! (\"records__root__sig__design__records__live_carrier_bytes\") . increment (bytes) ; metrics :: histogram ! (\"records__root__sig__design__records__input_bytes\") . record (bytes) ; let result = validate (acts , history , declarations) ; metrics :: gauge ! (\"records__root__sig__design__records__live_carrier_bytes\") . decrement (bytes) ; metrics :: gauge ! (\"records__root__sig__design__records__active_validation\") . decrement (1.0) ; if result . is_ok () { metrics :: counter ! (\"records__root__sig__design__records__validated_records\") . increment (u64 :: try_from (acts . len ()) . unwrap_or (u64 :: MAX)) ; } else { refused () ; } result }",
       "class_decision": "public-records",
-      "item_premise": "The validate_record body retains complete act ownership and reports its original typed result; public authentication bytes are evidence, not credentials.",
+      "item_premise": "The candidate representation has one identity, immutable structural legs and act-owned removal facts; validation records full public inputs and typed errors. Metrics receive only counts and explicitly partial byte estimates and never control validation.",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::resolve_public_reference",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "body": "{ let result = if ! valid_reference (reference) { Err (ValidationError :: InvalidReference (reference . clone ())) } else if records . history . contains (reference) { Ok (ReferenceOrigin :: History) } else if records . acts . iter () . any (| act | match reference { PublicReference :: Act (id) => id == & act . id , PublicReference :: Edge (id) => act . legs . iter () . any (| leg | & leg . id == id) , PublicReference :: Named { .. } => false , }) { Ok (ReferenceOrigin :: Batch) } else { Err (ValidationError :: UnresolvedReference (reference . clone ())) } ; if result . is_ok () { metrics :: counter ! (\"records__root__sig__design__records__resolved_references\") . increment (1) ; } else { refused () ; } result }",
+      "item_premise": "The immutable view contains accepted history and the batch. Structural identities remain resolvable after dependency removal; full queries and typed origins or refusals are public."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::select_effective_declaration",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "body": "{ let selected = records . declarations . iter () . filter (| d | d . id . namespace == namespace && d . id . name == name && d . announced_at <= boundary && d . effective_at <= boundary) . max_by_key (| d | d . effective_at) ; selected . ok_or_else (| | { refused () ; ValidationError :: MissingDeclaration { namespace : namespace . into () , name : name . into () , boundary , } }) }",
+      "item_premise": "The immutable view contains only validated opaque editions. Selection uses announcement and effective boundaries without declaration content semantics; full key, boundary and result are public."
     }
   ],
   "generators": [
@@ -9132,7 +9220,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "Role",
@@ -9141,7 +9229,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "EdgeId",
@@ -9150,7 +9238,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "PublicReference",
@@ -9159,7 +9247,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "Layout",
@@ -9168,7 +9256,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "Removal",
@@ -9177,7 +9265,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "Projection",
@@ -9186,7 +9274,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "Quantity",
@@ -9195,7 +9283,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "StructuralBody",
@@ -9204,25 +9292,70 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
-      "item": "AcceptedAct",
+      "item": "CandidateAct",
       "kind": "derive",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+    },
+    {
+      "item": "RemovableProjections",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+    },
+    {
+      "item": "InvalidCause",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "ValidationError",
       "kind": "derive",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+    },
+    {
+      "item": "DeclarationId",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+    },
+    {
+      "item": "Declaration",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
+    },
+    {
+      "item": "ReferenceOrigin",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     },
     {
       "item": "ValidatedRecords",
@@ -9231,7 +9364,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Standard structural derives visit declared fields only and inherit the complete public-records boundary set."
+      "expansion_review": "Structural derives and thiserror display/source implementations inspect their public declared fields only; the derived traits inherit the records contract boundaries and introduce no secret or exporter access."
     }
   ],
   "reviewed_types": [
@@ -10349,7 +10482,7 @@
       "item": "Projection",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" One owned edge projection; never an independent accounting record.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Projection { # [doc = \" Structural identity, checked against the owning act and layout.\"] pub id : EdgeId , # [doc = \" Exact source reference.\"] pub source : PublicReference , # [doc = \" Exact target reference.\"] pub target : PublicReference , # [doc = \" Removal state; mandatory projections must remain live.\"] pub removal : Removal , }"
+      "syntax": "# [doc = \" One owned edge projection; never an independent accounting record.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Projection { # [doc = \" Structural identity, checked against the owning act and layout.\"] pub id : EdgeId , # [doc = \" Exact source reference.\"] pub source : PublicReference , # [doc = \" Exact target reference.\"] pub target : PublicReference , # [doc = \" Untrusted input only: any supplied leg removal fact is refused.\"] # [doc = \" Validated legs always carry None; dependency status derives from the act.\"] pub removal : Option < Removal > , }"
     },
     {
       "item": "Quantity",
@@ -10364,22 +10497,52 @@
       "syntax": "# [doc = \" Structural content retained unchanged by local validation.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StructuralBody { # [doc = \" Required role set; endpoint and family semantics are later contracts.\"] pub layout : Layout , # [doc = \" Named exact quantities; duplicate field names are ambiguous and refused.\"] pub quantities : Vec < (String , Quantity) > , }"
     },
     {
-      "item": "AcceptedAct",
+      "item": "CandidateAct",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" An accepted-act candidate whose local representation must be validated.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct AcceptedAct { # [doc = \" Authored structural identity.\"] pub id : ActId , # [doc = \" Public author; must equal the identity's author.\"] pub author : String , # [doc = \" Declared family; must equal the identity's family.\"] pub family : String , # [doc = \" Unchanged structural body with units and vintages.\"] pub body : StructuralBody , # [doc = \" Non-removable complete-act projections.\"] pub mandatory : Vec < Projection > , # [doc = \" Tombstonable dependency projections, still owned by this act.\"] pub removable : Vec < Projection > , # [doc = \" Immutable protocol references, independently required even after removal.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public authentication evidence; retained, not cryptographically certified.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Accepted finalization epoch, not identity or a quantity's vintage.\"] pub finalization_epoch : u64 , # [doc = \" Host-authoritative order; never used for identity equality.\"] pub authoritative_position : u64 , }"
+      "syntax": "# [doc = \" An unchecked act candidate; downstream operations require `ValidatedRecords`.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateAct { # [doc = \" Authored structural identity.\"] pub id : ActId , # [doc = \" Unchanged structural body with units and vintages.\"] pub body : StructuralBody , # [doc = \" Immutable structural legs, always owned together by this candidate.\"] pub legs : Vec < Projection > , # [doc = \" One-way removal facts for the act, never for an individual co-leg.\"] pub projections : RemovableProjections , # [doc = \" Immutable protocol references, independently required even after removal.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public authentication evidence; retained, not cryptographically certified.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Accepted finalization epoch, not identity or a quantity's vintage.\"] pub finalization_epoch : u64 , # [doc = \" Host-authoritative order; never used for identity equality.\"] pub authoritative_position : u64 , }"
+    },
+    {
+      "item": "RemovableProjections",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Act-level content and dependency projections, independent of structural legs.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct RemovableProjections { # [doc = \" Content removal does not erase structural identity or public references.\"] pub content : Removal , # [doc = \" Every dependency edge derives this single act-owned removal fact.\"] pub dependency : Removal , }"
+    },
+    {
+      "item": "InvalidCause",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Finite local representation causes, suitable for exhaustive matching.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum InvalidCause { # [doc = \" The identity's author is empty.\"] # [error (\"empty author\")] EmptyAuthor , # [doc = \" The identity's family is empty.\"] # [error (\"empty family\")] EmptyFamily , # [doc = \" Authentication evidence is absent; nonempty evidence is not authenticated here.\"] # [error (\"empty authentication evidence\")] EmptyAuthentication , # [doc = \" A quantity field has no name.\"] # [error (\"empty quantity name\")] EmptyQuantityName , # [doc = \" Two quantity fields claim one name.\"] # [error (\"duplicate quantity name\")] DuplicateQuantityName , # [doc = \" A quantity has no unit.\"] # [error (\"empty quantity unit\")] EmptyUnit , # [doc = \" A leg names another act, including an inconsistent author or family.\"] # [error (\"wrong projection parent\")] ProjectionParent , # [doc = \" A role is outside the structural layout.\"] # [error (\"projection role outside layout\")] ProjectionRole , # [doc = \" A reference contains an empty structural component.\"] # [error (\"empty reference component\")] ReferenceComponent , # [doc = \" An untrusted leg attempts to own a removal fact.\"] # [error (\"removal fact on structural leg\")] CoLegRemoval , # [doc = \" An act's content or dependency tombstone does not follow acceptance.\"] # [error (\"tombstone at or before acceptance\")] TombstonePosition , }"
     },
     {
       "item": "ValidationError",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Typed local refusal; no refusal asserts a standing or formation verdict.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum ValidationError { # [doc = \" Even identical duplicate rows are ambiguous input, not silently deduplicated.\"] DuplicateAct (ActId) , # [doc = \" Two projections claim the same parent/role identity.\"] DuplicateEdge (EdgeId) , # [doc = \" A required reference is absent from the supplied resolution set and batch.\"] UnresolvedReference (PublicReference) , # [doc = \" The layout's complete role set is absent.\"] MissingCoLeg { act : ActId , role : Role } , # [doc = \" A local field, parent, role, removal or unit declaration is inconsistent.\"] InvalidRepresentation { act : ActId , field : & 'static str } , }"
+      "syntax": "# [doc = \" Typed local refusal; exhaustive while this workspace package is unpublished.\"] # [doc = \" Consumers must handle new variants at compile time. No standing verdict is implied.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ValidationError { # [doc = \" Duplicate batch or previously accepted identity, even with different host positions.\"] # [error (\"ambiguous act identity: {0:?}\")] DuplicateAct (ActId) , # [doc = \" Two legs claim the same parent and role.\"] # [error (\"ambiguous edge identity: {0:?}\")] DuplicateEdge (EdgeId) , # [doc = \" A required reference is absent from accepted history and the validated batch.\"] # [error (\"unresolved required reference: {0:?}\")] UnresolvedReference (PublicReference) , # [doc = \" The layout's complete role set is absent.\"] # [error (\"missing {role:?} co-leg of {act:?}\")] MissingCoLeg { act : ActId , role : Role } , # [doc = \" A local structural field is invalid for the named typed reason.\"] # [error (\"invalid local representation of {act:?}: {cause}\")] InvalidRepresentation { act : ActId , cause : InvalidCause } , # [doc = \" Previously accepted history or a query contains an invalid reference.\"] # [error (\"invalid structural reference: {0:?}\")] InvalidReference (PublicReference) , # [doc = \" Declaration identities and boundaries must be locally well formed.\"] # [error (\"invalid declaration: {0:?}\")] InvalidDeclaration (DeclarationId) , # [doc = \" Repeated identities cannot silently replace old editions.\"] # [error (\"duplicate declaration identity: {0:?}\")] DuplicateDeclaration (DeclarationId) , # [doc = \" Two editions would take effect at the same boundary for the same key.\"] # [error (\"ambiguous effective declaration: {0:?}\")] AmbiguousDeclaration (DeclarationId) , # [doc = \" No announced and effective edition exists at the requested boundary.\"] # [error (\"no effective declaration for {namespace}/{name} at {boundary}\")] MissingDeclaration { namespace : String , name : String , boundary : u64 } , }"
+    },
+    {
+      "item": "DeclarationId",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Typed edition identity without a declaration payload or byte encoding.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct DeclarationId { # [doc = \" Nonempty structural namespace.\"] pub namespace : String , # [doc = \" Nonempty declaration key within that namespace.\"] pub name : String , # [doc = \" Structural edition identity, not a sort priority.\"] pub edition : u64 , }"
+    },
+    {
+      "item": "Declaration",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Announcement and effective boundaries for an opaque declaration identity.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Declaration { # [doc = \" Immutable edition identity; contents belong to bite 2.\"] pub id : DeclarationId , # [doc = \" Boundary at which this edition was publicly announced.\"] pub announced_at : u64 , # [doc = \" First boundary where the edition is in force, not before announcement.\"] pub effective_at : u64 , }"
+    },
+    {
+      "item": "ReferenceOrigin",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Which immutable validated source resolves a public identity.\"] # [doc = \" (´def:acts:references´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum ReferenceOrigin { # [doc = \" Caller-supplied previously accepted history.\"] History , # [doc = \" A complete act or leg in this validated batch.\"] Batch , }"
     },
     {
       "item": "ValidatedRecords",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Read-only complete acts; borrowing prevents mutation after validation.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Debug)] pub struct ValidatedRecords < 'a > { acts : & 'a [AcceptedAct] , }"
+      "syntax": "# [doc = \" Read-only complete acts; borrowing prevents mutation after validation.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Debug)] pub struct ValidatedRecords < 'a > { acts : & 'a [CandidateAct] , history : BTreeSet < PublicReference > , declarations : Vec < Declaration > , }"
     }
   ],
   "class_decisions": [
@@ -10544,18 +10707,26 @@
         "terminal outcome",
         "inclusive duration_seconds",
         "declared own work",
-        "qualified resource totals"
+        "qualified resource totals",
+        "bounded operation identity"
       ],
       "metrics": [
-        "records__root__rule__observe__spans__started_operations",
-        "records__root__rule__observe__spans__completed_operations",
-        "records__root__rule__observe__spans__work_bytes",
-        "records__root__rule__observe__spans__work_operations",
-        "records__root__rule__observe__spans__active_operations",
-        "records__root__rule__observe__spans__resource_current_bytes",
-        "records__root__rule__observe__spans__elapsed_seconds",
-        "records__root__rule__observe__spans__workload_bytes",
-        "records__root__rule__observe__spans__workload_operations"
+        "records__root__sig__design__records__started_operations",
+        "records__root__sig__design__records__completed_operations",
+        "records__root__sig__design__records__work_bytes",
+        "records__root__sig__design__records__work_operations",
+        "records__root__sig__design__records__active_operations",
+        "records__root__sig__design__records__resource_current_bytes",
+        "records__root__sig__design__records__elapsed_seconds",
+        "records__root__sig__design__records__workload_bytes",
+        "records__root__sig__design__records__workload_operations",
+        "records__root__sig__design__records__validated_records",
+        "records__root__sig__design__records__resolved_references",
+        "records__root__sig__design__records__refusals",
+        "records__root__sig__design__records__active_validation",
+        "records__root__sig__design__records__live_carrier_bytes",
+        "records__root__sig__design__records__records_per_boundary",
+        "records__root__sig__design__records__input_bytes"
       ]
     }
   },

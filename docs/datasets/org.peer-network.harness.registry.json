@@ -2984,6 +2984,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_observe.Admission.test_records_operation_field",
         "ci::test_observe.Admission.test_duplicate_metric",
         "ci::test_observe.Admission.test_generated_mapping",
         "ci::test_observe.Admission.test_derived_class_completeness",
@@ -3087,7 +3088,11 @@
         "pn-records::public::structural_duplicates",
         "pn-records::public::missing_co_legs",
         "pn-records::public::required_references",
-        "pn-records::public::invalid_local_fields"
+        "pn-records::public::invalid_local_fields",
+        "pn-records::public::projection_removal",
+        "pn-records::public::reference_resolution",
+        "pn-records::public::effective_declarations",
+        "pn-records::public::invalid_declarations"
       ],
       "implementation": "pn-records-rust",
       "kind": "suite",

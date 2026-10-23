@@ -1111,7 +1111,9 @@ name = "pn-records"
 version = "0.1.0"
 dependencies = [
  "cli-common",
+ "metrics",
  "serde_json",
+ "thiserror",
  "tracing",
 ]
 

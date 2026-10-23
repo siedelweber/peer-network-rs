@@ -1480,6 +1480,38 @@
       "before": "Claim: An owned bite-1 entry hold blocks a records implementation even when other scoped evidence passes; only admitted source-matched support clears that prerequisite.",
       "after": "Claim: Either a records directory or a renamed pn-records member activates the complete entry register; missing owner, evidence kind, basis or admission cannot be bypassed by a passing test status.",
       "review": "Read the entry guard and both basis fixtures: this site proves activation and structural fields; the separate basis claims prove resolving admission and execution requirements."
+    },
+    {
+      "operation": "cli-common::observation::tests::status_after_stalled_delivery",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:status-counts-are-stamped-after-preceding-delivery",
+      "before": "Claim: With more than one delivery batch pending behind a stalled writer at guard drop, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.",
+      "after": "Claim: With the writer stalled at guard drop, an expired drain and a backlog above 65 records that fits one worker iteration, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.",
+      "review": "Read the assertions and retained claim: the backlog fits one worker iteration; the claim now states the arranged stalled-writer and expired-drain state."
+    },
+    {
+      "operation": "pn-records::public::missing_co_legs",
+      "path": "packages/records/tests/public.rs",
+      "claim": "RECORDS::claim:acts:both-co-legs-are-required",
+      "before": "Claim: Removing either required paired role refuses that exact missing co-leg through the public validator, so a half act cannot become an accounting unit.",
+      "after": "Claim: Removing either required paired role refuses that exact missing co-leg through the public validator, so this completeness check cannot admit a candidate with either required role absent.",
+      "review": "Read the assertions and retained claim: the public fixtures assert each finite refusal cause or the exact missing role; no broader membership or authentication result is claimed."
+    },
+    {
+      "operation": "pn-records::public::invalid_local_fields",
+      "path": "packages/records/tests/public.rs",
+      "claim": "RECORDS::claim:acts:invalid-local-fields-refuse",
+      "before": "Claim: Empty identity or unit fields, conflicting author, wrong projection parent and removal of a mandatory leg each refuse as a typed local representation error, without claiming cryptographic authentication or family formation.",
+      "after": "Claim: Each malformed identity, quantity, authentication, parent, role or reference fixture refuses its exact typed cause; author and family exist only in the structural identity, preventing a second conflicting carrier copy.",
+      "review": "Read the assertions and retained claim: the public fixtures assert each finite refusal cause or the exact missing role; no broader membership or authentication result is claimed."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_records_entry",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+      "before": "Claim: The first domain entry counts and times successful validation, complete-act access and a missing-co-leg refusal at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.",
+      "after": "Claim: The first domain entry counts and times successful validation, complete-act access, reference resolution and historical edition selection, plus their typed refusals at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.",
+      "review": "Read the assertions and retained claim: the process executes seven operations and checks exact outcome and crate-metric totals, with identical default/trace counts and disabled stdout."
     }
   ]
 }

@@ -81,10 +81,11 @@ def validate(census, registry, labels, claims):
         constants={row['name']:row['value'] for row in census['metric_constants']}
         expected={stem+'__'+measure:(kind,unit,{'outcome':constants['OUTCOMES']} if measure=='completed_operations' else {})
                   for stem in constants['STEMS'] for measure,kind,unit in constants['MEASURES']}
+        expected.update({'records__root__sig__design__records__'+measure:(kind,unit,{}) for measure,kind,unit in constants.get('RECORDS_MEASURES',[])})
         actual={name:(row['kind'],row['unit'],row['attributes']) for name,row in metrics.items()}
         if actual!=expected:raise StructuralError('runtime metric declarations differ from registry')
     for metric in metrics.values():
-        if metric['unit'] not in {'bytes','seconds','operations'}:raise StructuralError('undeclared metric unit')
+        if metric['unit'] not in {'bytes','seconds','operations','count'}:raise StructuralError('undeclared metric unit')
         if metric['kind'] not in {'counter','gauge','histogram'}:raise StructuralError('undeclared metric kind')
         if metric['attributes'] not in ({},{'outcome':['success','refusal','error','cancelled','unwinding','incomplete']}):
             raise StructuralError('undeclared metric attribute')
@@ -113,6 +114,7 @@ def validate(census, registry, labels, claims):
             else:
                 actual=(boundary.get('owner'),'ROOT::'+boundary.get('label',''),boundary.get('item'))
             if actual!=(row['owner'],row['claim'],row['item']):raise StructuralError('wrong instrumentation owner or label')
+            if row['owner']=='RECORDS' and (not row.get('operation') or boundary.get('operation')!=row['operation']):raise StructuralError('missing or wrong records operation field')
         elif row['mode']=='exception':
             exception=row.get('exception',{})
             if exception.get('rule')!='ROOT::rule:observe:spans' or exception.get('kind') not in {'const','bootstrap','recursion','inherited'}:

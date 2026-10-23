@@ -832,7 +832,7 @@ level = "unit"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_observe.Admission.test_duplicate_metric", "ci::test_observe.Admission.test_generated_mapping", "ci::test_observe.Admission.test_derived_class_completeness", "ci::test_observe.Admission.test_invalid_exception", "ci::test_observe.Admission.test_observation_streams", "ci::test_observe.Admission.test_omitted_instrumentation", "ci::test_observe.Admission.test_process_delivery_counts", "ci::test_observe.Admission.test_resource_samples", "ci::test_observe.Admission.test_semantic_review", "ci::test_observe.Admission.test_stale_operation", "ci::test_observe.Admission.test_undeclared_dimension", "ci::test_observe.Admission.test_wrong_identity"]
+cases = ["ci::test_observe.Admission.test_records_operation_field", "ci::test_observe.Admission.test_duplicate_metric", "ci::test_observe.Admission.test_generated_mapping", "ci::test_observe.Admission.test_derived_class_completeness", "ci::test_observe.Admission.test_invalid_exception", "ci::test_observe.Admission.test_observation_streams", "ci::test_observe.Admission.test_omitted_instrumentation", "ci::test_observe.Admission.test_process_delivery_counts", "ci::test_observe.Admission.test_resource_samples", "ci::test_observe.Admission.test_semantic_review", "ci::test_observe.Admission.test_stale_operation", "ci::test_observe.Admission.test_undeclared_dimension", "ci::test_observe.Admission.test_wrong_identity"]
 
 [[rows]]
 kind = "suite"
@@ -894,7 +894,7 @@ level = "public-surface"
 implementation = "pn-records-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-records::public::structural_duplicates", "pn-records::public::missing_co_legs", "pn-records::public::required_references", "pn-records::public::invalid_local_fields"]
+cases = ["pn-records::public::structural_duplicates", "pn-records::public::missing_co_legs", "pn-records::public::required_references", "pn-records::public::invalid_local_fields", "pn-records::public::projection_removal", "pn-records::public::reference_resolution", "pn-records::public::effective_declarations", "pn-records::public::invalid_declarations"]
 
 [[rows]]
 kind = "suite"

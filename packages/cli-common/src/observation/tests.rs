@@ -412,7 +412,7 @@ fn summary_capacity() {
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
 }
 
-/// Claim: With more than one delivery batch pending behind a stalled writer at guard drop, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.
+/// Claim: With the writer stalled at guard drop, an expired drain and a backlog above 65 records that fits one worker iteration, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.
 /// ´claim:cli:status-counts-are-stamped-after-preceding-delivery´
 /// ´test:unit:status-after-stalled-delivery´
 #[test]
@@ -1035,7 +1035,21 @@ fn metric_registry() {
     });
     let snapshot = recorder.snapshot(true);
     let rows = snapshot["instruments"].as_array().unwrap();
-    assert_eq!(rows.len(), 112);
+    assert_eq!(rows.len(), 119);
+    for stem in STEMS {
+        let count = rows
+            .iter()
+            .filter(|row| row["name"].as_str().unwrap().starts_with(stem))
+            .count();
+        assert_eq!(
+            count,
+            if stem == "records__root__sig__design__records" {
+                21
+            } else {
+                14
+            }
+        );
+    }
     assert_eq!(snapshot["lost_updates"], 3);
     assert_eq!(
         rows.iter()

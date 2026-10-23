@@ -9,6 +9,8 @@ version.workspace = true
 
 [dependencies]
 tracing.workspace = true
+thiserror.workspace = true
+metrics.workspace = true
 
 [dev-dependencies]
 cli-common.workspace = true

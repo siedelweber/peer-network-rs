@@ -498,7 +498,7 @@ impl OperationKind {
             Self::Interchange => STEMS[4],
             Self::PublicCli => STEMS[5],
             Self::PublicExec => STEMS[6],
-            Self::Records => STEMS[7],
+            Self::Records => "records__root__sig__design__records",
         }
     }
     const fn label(self) -> &'static str {
@@ -506,7 +506,8 @@ impl OperationKind {
             Self::Command => "rule:observe:metering",
             Self::Child => "rule:observe:privacy",
             Self::Bootstrap => "dec:observe:sinks",
-            Self::Document | Self::Interchange | Self::PublicCli | Self::PublicExec | Self::Records => "rule:observe:spans",
+            Self::Document | Self::Interchange | Self::PublicCli | Self::PublicExec => "rule:observe:spans",
+            Self::Records => "sig:design:records",
         }
     }
     const fn owner(self) -> &'static str {
@@ -837,7 +838,7 @@ impl Visit for SummaryFields {
     }
     /// Justified: The delivery visitor selects accounting identity without recursively observing itself.
     fn record_str(&mut self, field: &Field, value: &str) {
-        if matches!(field.name(), "execution_owner" | "source_item" | "outcome") {
+        if matches!(field.name(), "execution_owner" | "source_item" | "operation" | "outcome") {
             self.0.record_str(field, value);
         }
     }

@@ -87,7 +87,7 @@ def distribution(summary):
 
 class Processes(unittest.TestCase):
     def test_records_entry(self):
-        """Claim: The first domain entry counts and times successful validation, complete-act access and a missing-co-leg refusal at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.
+        """Claim: The first domain entry counts and times successful validation, complete-act access, reference resolution and historical edition selection, plus their typed refusals at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.
         ´claim:discipline:records-entry-is-observed-without-changing-results´
         ´test:integration:test-records-entry´
         """
@@ -108,16 +108,26 @@ class Processes(unittest.TestCase):
             if mode=='disabled':continue
             summary=next(row['metrics'] for row in rows if row.get('kind')=='metric_summary')
             accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith('records__')}
-            stem='records__root__rule__observe__spans__'
-            self.assertEqual(accounting[mode],{(stem+'started_operations',''):3,(stem+'completed_operations','success'):2,(stem+'completed_operations','error'):1})
+            stem='records__root__sig__design__records__'
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):7,(stem+'completed_operations','success'):4,(stem+'completed_operations','error'):3})
             elapsed=next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')
-            self.assertEqual(elapsed['count'],3)
+            self.assertEqual(elapsed['count'],7)
+            instruments={row['name']:row for row in summary['instruments']}
+            for name,value in [('validated_records',2),('resolved_references',1),('refusals',3)]:
+                self.assertEqual(instruments[stem+name]['counter'],value)
+            for name in ('active_validation','live_carrier_bytes'):
+                self.assertEqual(instruments[stem+name]['gauge'],0)
+            self.assertEqual(instruments[stem+'input_bytes']['count'],2)
+            self.assertEqual(summary['lost_updates'],0)
             status=next(row for row in rows if row.get('kind')=='observation_status')
             self.assertEqual(status['delivered_records'],len(rows)-1)
             self.assertEqual(status['lost_records'],0)
             if mode=='default':self.assertFalse(any(row.get('kind')=='span_envelope' for row in rows))
-            else:self.assertIn(b'authentication_evidence',result.stderr)
-            print('RECORDS-OBSERVATION level='+mode+' started=3 success=2 error=1 timed=3')
+            else:
+                self.assertIn(b'authentication_evidence',result.stderr)
+                for operation in (b'validate-record',b'resolve-public-reference',b'select-effective-declaration'):
+                    self.assertIn(operation,result.stderr)
+            print('RECORDS-OBSERVATION level='+mode+' started=7 success=4 error=3 timed=7 validated=2 resolved=1 refusals=3')
         self.assertTrue(all(value==samples['disabled'] for value in samples.values()))
         self.assertEqual(accounting['default'],accounting['trace'])
 

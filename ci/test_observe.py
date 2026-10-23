@@ -24,6 +24,22 @@ def fixture():
 
 
 class Admission(unittest.TestCase):
+    def test_records_operation_field(self):
+        """Claim: A records boundary must carry the operation declared by its registry row; removing or changing the parsed field refuses coverage even when owner, label and result capture still agree.
+        ´claim:discipline:records-operation-field-is-checked´
+        ´test:integration:test-records-operation-field´
+        """
+        data, register, labels, claims = fixture()
+        function, operation = data['functions'][0], register['operations'][0]
+        function['owner'] = operation['owner'] = 'RECORDS'
+        function['boundary']['execution_owner'] = 'RECORDS'
+        operation['operation'] = function['boundary']['operation'] = 'validate-record'
+        validate(data, register, labels, claims)
+        for value in (None, 'resolve-public-reference'):
+            function['boundary']['operation'] = value
+            with self.assertRaisesRegex(StructuralError, 'records operation field'):
+                validate(data, register, labels, claims)
+
     def test_resource_samples(self):
         """Claim: Bash-sampled node-load counters retain units and unavailable readings, PSI stall deltas divide by wall rather than subtracting averages, and the final join keeps a step's own CPU separate; missing or corrupt samples never invent zero work.
         ´claim:discipline:cgroup-deltas-preserve-unavailable-readings´

@@ -43,7 +43,9 @@
       "contracts": [
         "sig:design:graph",
         "alg:design:formation",
-        "alg:design:geometry"
+        "alg:design:geometry",
+        "alg:design:dependency-partition",
+        "verif:design:closure-partition-cases"
       ],
       "evidence": "Declare petgraph once in workspace dependencies on the latest 0.8 release, with defaults std, graphmap, stable_graph and matrix_graph plus serde-1, and inherit it in pn-graph. Freeze family census, endpoint typing and tensor pipeline; verify deterministic reconstruction indices, unrelated-index stability after removal, parallel projections and revalidation of deserialized state; compare exact geometry and independently enclosed nonlinear probes, rejecting partial formation. Keep serde graph bytes outside canonical publication and binding replay comparison.",
       "ordinal": 3,

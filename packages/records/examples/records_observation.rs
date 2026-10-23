@@ -4,7 +4,9 @@
 mod common;
 
 use cli_common::observation::{BootstrapError, bootstrap};
-use pn_records::{Layout, validate_record};
+use pn_records::{
+    Declaration, DeclarationId, Layout, PublicReference, resolve_public_reference, select_effective_declaration, validate_record,
+};
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
@@ -20,12 +22,29 @@ fn main() -> ExitCode {
         }
     };
     let records = [common::act(1, Layout::Binary), common::act(2, Layout::Paired)];
-    let accepted = validate_record(&records, &common::resolved()).expect("complete fixture");
+    let declarations = [Declaration {
+        id: DeclarationId {
+            namespace: "rules".into(),
+            name: "edition".into(),
+            edition: 1,
+        },
+        announced_at: 1,
+        effective_at: 2,
+    }];
+    let accepted = validate_record(&records, &common::resolved(), &declarations).expect("complete fixture");
     let count = accepted.acts().len();
+    let reference = PublicReference::Act(records[0].id.clone());
+    let resolved = resolve_public_reference(&accepted, &reference).is_ok();
+    let unresolved = resolve_public_reference(&accepted, &common::named("absent")).is_err();
+    let selected = select_effective_declaration(&accepted, "rules", "edition", 2)
+        .unwrap()
+        .id
+        .edition;
+    let no_edition = select_effective_declaration(&accepted, "rules", "edition", 0).is_err();
     let mut missing = common::act(3, Layout::Paired);
-    missing.mandatory.pop();
-    let refused = validate_record(&[missing], &common::resolved()).is_err();
-    let exit = if cli_common::emit(&serde_json::json!({"accepted_acts":count,"missing_co_leg_refused":refused})).is_ok() {
+    missing.legs.pop();
+    let refused = validate_record(&[missing], &common::resolved(), &[]).is_err();
+    let exit = if cli_common::emit(&serde_json::json!({"accepted_acts":count,"missing_co_leg_refused":refused,"resolved":resolved,"unresolved":unresolved,"edition":selected,"no_edition":no_edition})).is_ok() {
         ExitCode::SUCCESS
     } else {
         ExitCode::FAILURE

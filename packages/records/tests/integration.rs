@@ -8,16 +8,9 @@ use pn_records::{Layout, validate_record};
 #[test]
 fn complete_acts_count_once() {
     let records = [act(1, Layout::Binary), act(2, Layout::Paired)];
-    let validated = validate_record(&records, &resolved()).unwrap();
+    let validated = validate_record(&records, &resolved(), &[]).unwrap();
     assert_eq!(validated.acts().len(), 2);
-    assert_eq!(
-        validated
-            .acts()
-            .iter()
-            .map(|a| a.mandatory.len() + a.removable.len())
-            .sum::<usize>(),
-        3
-    );
+    assert_eq!(validated.acts().iter().map(|a| a.legs.len()).sum::<usize>(), 3);
     assert_eq!(validated.acts(), records);
     assert_eq!(validated.acts()[1].body.quantities[0].1.vintage, 2);
     assert_eq!(validated.acts()[1].finalization_epoch, 5);

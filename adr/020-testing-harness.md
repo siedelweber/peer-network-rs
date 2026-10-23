@@ -105,12 +105,12 @@
 | rfc8949-refusal | active | integration | pn-interchange-rust | fast | 26 |
 | foundation-benchmarks | active | integration | pn-interchange-rust | fast | 2 |
 | ci::test_claims | active | unit | ci-python | fast | 23 |
-| ci::test_observe | active | unit | ci-python | fast | 12 |
+| ci::test_observe | active | unit | ci-python | fast | 13 |
 | ci::test_observe_runtime | active | integration | ci-python | fast | 3 |
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
 | ci::test_linter_entry | active | integration | ci-python | fast | 16 |
 | pn-records | active | unit | pn-records-rust | fast | 1 |
-| pn-records::public | active | public-surface | pn-records-rust | fast | 4 |
+| pn-records::public | active | public-surface | pn-records-rust | fast | 8 |
 | pn-records::integration | active | integration | pn-records-rust | fast | 1 |
 
 

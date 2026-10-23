@@ -5,7 +5,7 @@ version = [1, 0, 0]
 name = "pn-records"
 labels = ["sig:design:records"]
 operations = "validate-record, resolve-public-reference, assemble-boundary-inputs, select-effective-declaration"
-metrics = "Counters: validated records, resolved references and refusals (count). Gauges: active validation and live carrier bytes. Histograms: records per boundary (count), input bytes and elapsed seconds."
+metrics = "Counters: validated records, resolved references and refusals (count, sums). Gauges: active validation (operations) and estimated live input-carrier bytes during validation. Histograms: records per assembled boundary (count; held until assembly), estimated validation input bytes and inclusive elapsed seconds. The contract-keyed spans carry the bounded operation field; metric attributes are empty except the common finite outcome set."
 
 [[rows]]
 name = "pn-graph"
