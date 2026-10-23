@@ -883,7 +883,7 @@ level = "unit"
 implementation = "pn-records-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-records::tests::identity_components"]
+cases = ["pn-records::tests::history_storage_is_shared", "pn-records::tests::identity_components"]
 
 [[rows]]
 kind = "suite"

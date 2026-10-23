@@ -468,7 +468,7 @@ fn summary_capacity() {
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
 }
 
-/// Claim: With the writer stalled at guard drop, an expired drain and a backlog above 65 records that fits one worker iteration, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.
+/// Claim: With the writer stalled at guard drop and an injected drain timeout, the arranged backlog fits one worker iteration; after release the final status counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.
 /// ´claim:cli:status-counts-are-stamped-after-preceding-delivery´
 /// ´test:unit:status-after-stalled-delivery´
 #[test]

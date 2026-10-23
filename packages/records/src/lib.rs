@@ -2,6 +2,7 @@
 //! (´[ROOT-amend:design:bite-one-internal-envelopes]´)
 
 use std::collections::{BTreeMap, BTreeSet};
+use std::sync::Arc;
 
 /// Authored identity before finalization or host ordering.
 /// (´def:acts:identity´)
@@ -217,8 +218,8 @@ pub struct ValidatedAct {
 /// (´def:acts:history´)
 #[derive(Clone, Debug)]
 pub struct ValidatedHistory {
-    acts: Vec<ValidatedAct>,
-    references: BTreeSet<PublicReference>,
+    acts: Arc<Vec<ValidatedAct>>,
+    references: Arc<BTreeSet<PublicReference>>,
 }
 
 /// Finite declaration representation causes.
@@ -252,15 +253,12 @@ pub enum DependencyCause {
     /// An act cannot depend on itself.
     #[error("self dependency")]
     SelfDependency,
-    /// A dependency is absent from fixed accepted history.
+    /// A dependency is absent from both fixed accepted history and the proposed batch.
     #[error("missing dependency")]
     Missing,
     /// Each dependency must strictly precede its dependent act.
     #[error("dependency does not precede act")]
     NotEarlier,
-    /// A closure needs content that has been tombstoned.
-    #[error("dependency content unavailable")]
-    Unavailable,
     /// Fixed history must precede the boundary, and proposals must not precede it.
     #[error("act on wrong side of boundary")]
     BoundaryPlacement,
@@ -522,7 +520,7 @@ fn validate(
     declarations: &[Declaration],
 ) -> Result<ValidatedRecords, ValidationError> {
     let mut identities = BTreeSet::new();
-    let mut references = history.references.clone();
+    let mut references = history.references.as_ref().clone();
     for act in acts {
         if history.references.contains(&PublicReference::Act(act.id.clone())) || !identities.insert(&act.id) {
             return Err(ValidationError::DuplicateAct(act.id.clone()));
@@ -532,7 +530,12 @@ fn validate(
             references.insert(PublicReference::Edge(leg.id.clone()));
         }
     }
-    let available: Vec<_> = history.acts.iter().cloned().chain(acts.iter().map(validated_act)).collect();
+    let available: BTreeMap<_, _> = history
+        .acts
+        .iter()
+        .map(|act| (&act.id, act.authoritative_position))
+        .chain(acts.iter().map(|act| (&act.id, act.authoritative_position)))
+        .collect();
     for act in acts {
         validate_act(act, &references)?;
         validate_dependencies(act, &available)?;
@@ -770,7 +773,7 @@ fn dependency_error(act: &ActId, dependency: Option<&ActId>, cause: DependencyCa
     }
 }
 
-fn validate_dependencies(act: &CandidateAct, history: &[ValidatedAct]) -> Result<(), ValidationError> {
+fn validate_dependencies(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) -> Result<(), ValidationError> {
     let DependencyProjection::Full(dependencies) = &act.projections.dependency else {
         return Ok(());
     };
@@ -787,18 +790,17 @@ fn validate_dependencies(act: &CandidateAct, history: &[ValidatedAct]) -> Result
         if dependency == &act.id {
             return Err(dependency_error(&act.id, Some(dependency), DependencyCause::SelfDependency));
         }
-        let target = history
-            .iter()
-            .find(|target| &target.id == dependency)
+        let target = available
+            .get(dependency)
             .ok_or_else(|| dependency_error(&act.id, Some(dependency), DependencyCause::Missing))?;
-        if target.authoritative_position >= act.authoritative_position {
+        if *target >= act.authoritative_position {
             return Err(dependency_error(&act.id, Some(dependency), DependencyCause::NotEarlier));
         }
     }
     Ok(())
 }
 
-fn validate_parents(act: &CandidateAct, available: &[ValidatedAct]) -> Result<(), ValidationError> {
+fn validate_parents(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) -> Result<(), ValidationError> {
     let error = |parent: Option<&ActId>, cause| ValidationError::Parent {
         act: act.id.clone(),
         parent: parent.cloned(),
@@ -816,10 +818,9 @@ fn validate_parents(act: &CandidateAct, available: &[ValidatedAct]) -> Result<()
             return Err(error(Some(parent), ParentCause::SelfParent));
         }
         let target = available
-            .iter()
-            .find(|target| &target.id == parent)
+            .get(parent)
             .ok_or_else(|| error(Some(parent), ParentCause::Missing))?;
-        if target.authoritative_position >= act.authoritative_position {
+        if *target >= act.authoritative_position {
             return Err(error(Some(parent), ParentCause::NotEarlier));
         }
     }
@@ -870,14 +871,14 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
     for act in acts {
         validate_act(act, &references)?;
     }
-    let validated: Vec<_> = acts.iter().map(validated_act).collect();
+    let available: BTreeMap<_, _> = acts.iter().map(|act| (&act.id, act.authoritative_position)).collect();
     for act in acts {
-        validate_dependencies(act, &validated)?;
-        validate_parents(act, &validated)?;
+        validate_dependencies(act, &available)?;
+        validate_parents(act, &available)?;
     }
     Ok(ValidatedHistory {
-        acts: validated,
-        references,
+        acts: Arc::new(acts.iter().map(validated_act).collect()),
+        references: Arc::new(references),
     })
 }
 
@@ -905,7 +906,7 @@ pub fn dependency_status(records: &ValidatedRecords, edge: &EdgeId) -> Result<De
     } else if let Some(act) = records
         .acts
         .iter()
-        .chain(&records.history.acts)
+        .chain(records.history.acts.iter())
         .find(|act| act.legs.iter().any(|leg| &leg.id == edge))
     {
         Ok(match &act.projections.dependency {
@@ -980,7 +981,7 @@ fn carrier_count(count: usize) -> f64 {
 }
 
 fn assemble(records: &ValidatedRecords, boundary: u64) -> Result<BoundaryInputs<'_>, ValidationError> {
-    for act in &records.history.acts {
+    for act in records.history.acts.iter() {
         if act.authoritative_position >= boundary {
             return Err(dependency_error(&act.id, None, DependencyCause::BoundaryPlacement));
         }
@@ -1343,6 +1344,25 @@ impl<'a> BoundaryInputs<'a> {
 #[cfg(test)]
 mod tests {
     use super::{ActId, EdgeId, Role};
+
+    /// Claim: Validating a batch retains the same immutable history allocations, so repeated consumers do not copy the accepted history's act bodies or reference roster.
+    /// ´claim:acts:history-storage-is-shared´
+    /// ´test:unit:history-storage-is-shared´
+    #[test]
+    fn history_storage_is_shared() {
+        let history = super::validate_history(
+            &[],
+            &[super::PublicReference::Named {
+                namespace: "fixture".into(),
+                name: "accepted".into(),
+            }],
+        )
+        .unwrap();
+        let records = super::validate_record(&[], &history, &[]).unwrap();
+        assert!(super::Arc::ptr_eq(&history.acts, &records.history.acts));
+        assert!(super::Arc::ptr_eq(&history.references, &records.history.references));
+        assert_eq!(history.references.len(), 1);
+    }
 
     /// Claim: Structural equality distinguishes each author, local sequence and family component and each edge role, while reconstructing the same components preserves identity without host metadata.
     /// ´claim:acts:identity-is-structural´

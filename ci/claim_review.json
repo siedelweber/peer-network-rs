@@ -1486,8 +1486,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:status-counts-are-stamped-after-preceding-delivery",
       "before": "Claim: With more than one delivery batch pending behind a stalled writer at guard drop, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.",
-      "after": "Claim: With the writer stalled at guard drop, an expired drain and a backlog above 65 records that fits one worker iteration, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.",
-      "review": "Read the assertions and retained claim: the backlog fits one worker iteration; the claim now states the arranged stalled-writer and expired-drain state."
+      "after": "Claim: With the writer stalled at guard drop and an injected drain timeout, the arranged backlog fits one worker iteration; after release the final status counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.",
+      "review": "The writer is stalled before drop; injected drain refusal leaves the arranged backlog within one worker iteration. Release then exposes the final status and the deliberate reserved-channel loss, without proving a general exit guarantee."
     },
     {
       "operation": "pn-records::public::missing_co_legs",

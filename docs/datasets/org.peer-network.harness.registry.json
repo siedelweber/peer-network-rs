@@ -3075,6 +3075,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::tests::history_storage_is_shared",
         "pn-records::tests::identity_components"
       ],
       "implementation": "pn-records-rust",

@@ -8058,7 +8058,7 @@
     },
     {
       "operation": "pn-records::packages/records/src/lib.rs::dependency_status",
-      "body": "{ let reference = PublicReference :: Edge (edge . clone ()) ; let result = if ! valid_id (& edge . act) { Err (ValidationError :: InvalidReference (reference)) } else if let Some (act) = records . acts . iter () . chain (& records . history . acts) . find (| act | act . legs . iter () . any (| leg | & leg . id == edge)) { Ok (match & act . projections . dependency { DependencyProjection :: FullEmpty => DependencyStatus :: FullEmpty , DependencyProjection :: Full (_) => DependencyStatus :: Full , DependencyProjection :: Tombstoned (position) => DependencyStatus :: Tombstoned (* position) , }) } else { Err (ValidationError :: UnresolvedReference (reference)) } ; if result . is_err () { refused () ; } result }",
+      "body": "{ let reference = PublicReference :: Edge (edge . clone ()) ; let result = if ! valid_id (& edge . act) { Err (ValidationError :: InvalidReference (reference)) } else if let Some (act) = records . acts . iter () . chain (records . history . acts . iter ()) . find (| act | act . legs . iter () . any (| leg | & leg . id == edge)) { Ok (match & act . projections . dependency { DependencyProjection :: FullEmpty => DependencyStatus :: FullEmpty , DependencyProjection :: Full (_) => DependencyStatus :: Full , DependencyProjection :: Tombstoned (position) => DependencyStatus :: Tombstoned (* position) , }) } else { Err (ValidationError :: UnresolvedReference (reference)) } ; if result . is_err () { refused () ; } result }",
       "class_decision": "public-records",
       "assessments": {
         "full_recording": "records-full_recording",
@@ -8076,7 +8076,7 @@
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "Locally validates whole candidates, with asserted parents and placement dependencies resolved against fixed history or earlier proposals. Typed refusal and public snapshot content are observed; counters never influence acceptance."
+      "item_premise": "Builds one borrowed identity-to-position index per call and shares the immutable accepted history allocations. Locally validates whole candidates, with asserted parents and placement dependencies resolved against fixed history or earlier proposals. Typed refusal and public snapshot content are observed; counters never influence acceptance."
     },
     {
       "operation": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
@@ -11094,7 +11094,7 @@
       "item": "ValidatedHistory",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Previously accepted whole acts and external names, checked locally before use.\"] # [doc = \" The constructor checks representation, not host admission or authentication.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug)] pub struct ValidatedHistory { acts : Vec < ValidatedAct > , references : BTreeSet < PublicReference > , }"
+      "syntax": "# [doc = \" Previously accepted whole acts and external names, checked locally before use.\"] # [doc = \" The constructor checks representation, not host admission or authentication.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug)] pub struct ValidatedHistory { acts : Arc < Vec < ValidatedAct > > , references : Arc < BTreeSet < PublicReference > > , }"
     },
     {
       "item": "DeclarationCause",
@@ -11106,7 +11106,7 @@
       "item": "DependencyCause",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Dependency and boundary refusals preserve missing information as missing.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum DependencyCause { # [doc = \" Full-empty has its own explicit representation.\"] # [error (\"empty full list; use full-empty\")] EmptyFull , # [doc = \" Input exceeds the declared local bound.\"] # [error (\"dependency list exceeds bound\")] TooMany , # [doc = \" The list must increase strictly by structural act identity.\"] # [error (\"dependency list is not canonical\")] NonCanonical , # [doc = \" An act cannot depend on itself.\"] # [error (\"self dependency\")] SelfDependency , # [doc = \" A dependency is absent from fixed accepted history.\"] # [error (\"missing dependency\")] Missing , # [doc = \" Each dependency must strictly precede its dependent act.\"] # [error (\"dependency does not precede act\")] NotEarlier , # [doc = \" A closure needs content that has been tombstoned.\"] # [error (\"dependency content unavailable\")] Unavailable , # [doc = \" Fixed history must precede the boundary, and proposals must not precede it.\"] # [error (\"act on wrong side of boundary\")] BoundaryPlacement , }"
+      "syntax": "# [doc = \" Dependency and boundary refusals preserve missing information as missing.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum DependencyCause { # [doc = \" Full-empty has its own explicit representation.\"] # [error (\"empty full list; use full-empty\")] EmptyFull , # [doc = \" Input exceeds the declared local bound.\"] # [error (\"dependency list exceeds bound\")] TooMany , # [doc = \" The list must increase strictly by structural act identity.\"] # [error (\"dependency list is not canonical\")] NonCanonical , # [doc = \" An act cannot depend on itself.\"] # [error (\"self dependency\")] SelfDependency , # [doc = \" A dependency is absent from both fixed accepted history and the proposed batch.\"] # [error (\"missing dependency\")] Missing , # [doc = \" Each dependency must strictly precede its dependent act.\"] # [error (\"dependency does not precede act\")] NotEarlier , # [doc = \" Fixed history must precede the boundary, and proposals must not precede it.\"] # [error (\"act on wrong side of boundary\")] BoundaryPlacement , }"
     },
     {
       "item": "InvalidCause",
