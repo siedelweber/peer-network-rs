@@ -140,7 +140,7 @@ impl Parser<'_> {
         self.space();
         if self.text.get(self.position..)?.starts_with("[REDACTED]") {
             self.position += "[REDACTED]".len();
-            return Some(json!("[REDACTED]"));
+            return Some(json!({"representation":"secret-marker","marker":"[REDACTED]"}));
         }
         match *self.text.as_bytes().get(self.position)? {
             b'"' => return self.quoted(b'"').map(Value::String),
@@ -285,18 +285,15 @@ fn artifact(encoded: &[u8], root: &Path) -> io::Result<Value> {
     let directory = root.join("objects").join("sha256");
     std::fs::create_dir_all(&directory)?;
     let path = directory.join(&digest);
-    // Each worker owns its temporary file. Hard-link publication is atomic and
-    // cannot overwrite an already published object from another command.
-    if !path.exists() {
+    // A fresh, synced object atomically replaces corrupt content. Concurrent
+    // publishers of the same digest write identical verified bytes.
+    if std::fs::read(&path).ok().as_deref() != Some(encoded) {
         let temporary = tempfile::NamedTempFile::new_in(&directory)?;
         let mut file = temporary.as_file();
         file.write_all(encoded)?;
-        file.flush()?;
-        match temporary.persist_noclobber(&path) {
-            Ok(_) => {}
-            Err(error) if error.error.kind() == io::ErrorKind::AlreadyExists => {}
-            Err(error) => return Err(error.error),
-        }
+        file.sync_all()?;
+        temporary.persist(&path).map_err(|error| error.error)?;
+        std::fs::File::open(&directory)?.sync_all()?;
     }
     // An existing object must be complete; never silently reuse corrupt bytes.
     if std::fs::read(&path)? != encoded {
@@ -307,6 +304,7 @@ fn artifact(encoded: &[u8], root: &Path) -> io::Result<Value> {
 
 /// Resolve the caller-owned artifact root without creating it before work.
 /// Justified: Artifact configuration belongs to the executable-owned observation bootstrap and must not recursively observe itself.
-pub(super) fn root() -> PathBuf {
-    std::env::var_os("PN_OBSERVE_ARTIFACT_DIR").map_or_else(|| PathBuf::from(".lane/observations"), PathBuf::from)
+pub(super) fn root() -> io::Result<PathBuf> {
+    let path = std::env::var_os("PN_OBSERVE_ARTIFACT_DIR").map_or_else(|| PathBuf::from(".lane/observations"), PathBuf::from);
+    std::path::absolute(path)
 }

@@ -2,57 +2,76 @@
 import json
 from pathlib import Path
 import sys
-import time
 
 
-def cgroup_root(proc=Path('/proc/self/cgroup'), mount=Path('/sys/fs/cgroup')):
-    for line in proc.read_text().splitlines():
-        if line.startswith('0::'):
-            relative = line[3:].lstrip('/')
-            # Namespaced mounts expose the current cgroup at the mount root.
-            candidate = mount / relative
-            return candidate if (candidate / 'cgroup.procs').exists() else mount
-    return None
+def raw_sample(path):
+    try:
+        lines=Path(path).read_text().splitlines()
+        epoch=float(lines[0].split('=',1)[1]); root=lines[1].split('=',1)[1]
+        files={}; name=None
+        for line in lines[2:]:
+            if line.startswith('['): name=line[1:-1]; files[name]=[]
+            elif name: files[name].append(line)
+        values={f'cpu.stat.{key}':None for key in ('usage_usec','user_usec','system_usec','nr_periods','nr_throttled','throttled_usec')}
+        values.update({f'{resource}.pressure.{kind}.{field}':None for resource in ('cpu','memory','io') for kind in ('some','full') for field in ('avg10','avg60','avg300','total')})
+        for line in files.get('cpu.stat',[]):
+            parts=line.split()
+            if len(parts)==2: values['cpu.stat.'+parts[0]]=int(parts[1])
+        for resource in ('cpu','memory','io'):
+            for line in files.get(resource+'.pressure',[]):
+                parts=line.split()
+                if parts and parts[0] in ('some','full'):
+                    for pair in parts[1:]:
+                        field,value=pair.split('=')
+                        values[f'{resource}.pressure.{parts[0]}.{field}']=float(value)
+        for name in ('memory.current','memory.peak'):
+            value=''.join(files.get(name,[]))
+            values[name]=int(value) if value.isdigit() else None
+        return dict(epoch_seconds=epoch,cgroup=root or None,values=values)
+    except (OSError,ValueError,IndexError): return dict(epoch_seconds=None,cgroup=None,values={})
 
 
-def sample(root):
-    values = {}
-    def read(name):
-        try:
-            return (root / name).read_text() if root else None
-        except (FileNotFoundError, PermissionError):
-            return None
-    cpu = read('cpu.stat')
-    fields = dict(line.split() for line in cpu.splitlines()) if cpu else {}
-    for name in ('usage_usec', 'user_usec', 'system_usec', 'nr_periods', 'nr_throttled', 'throttled_usec'):
-        values['cpu.stat.' + name] = int(fields[name]) if name in fields else None
-    for resource in ('cpu', 'memory', 'io'):
-        pressure = read(resource + '.pressure')
-        rows = {row.split()[0]: dict(pair.split('=') for pair in row.split()[1:]) for row in pressure.splitlines()} if pressure else {}
-        for kind in ('some', 'full'):
-            for field in ('avg10', 'avg60', 'avg300', 'total'):
-                value = rows.get(kind, {}).get(field)
-                values[f'{resource}.pressure.{kind}.{field}'] = (int(value) if field == 'total' else float(value)) if value is not None else None
-    for name in ('memory.current', 'memory.peak'):
-        value = read(name)
-        values[name] = int(value) if value is not None else None
-    return dict(epoch_seconds=time.time(), cgroup=str(root) if root else None, values=values)
+def joined(start,end,wall):
+    keys=set(start['values'])|set(end['values'])
+    delta={k:(end['values'].get(k)-start['values'][k] if start['cgroup'] and start['cgroup']==end['cgroup'] and start['values'].get(k) is not None and end['values'].get(k) is not None else None) for k in keys if '.avg' not in k}
+    pressure={f'{r}.{kind}': (delta.get(f'{r}.pressure.{kind}.total')/1e6/wall if delta.get(f'{r}.pressure.{kind}.total') is not None and wall>0 else None) for r in ('cpu','memory','io') for kind in ('some','full')}
+    return dict(start=start,end=end,node_load_deltas=delta,node_pressure_fraction=pressure)
 
 
-def report(start, end):
-    same = start['cgroup'] == end['cgroup']
-    delta = {key: end['values'][key] - value if same and value is not None and end['values'][key] is not None else None for key, value in start['values'].items()}
-    return dict(start=start, end=end, deltas=delta, unavailable='null denotes an absent or inaccessible reading, or an incomparable delta',
-                units='epoch_seconds: Unix UTC seconds; *_usec and PSI total: microseconds; PSI averages: percent (deltas: percentage points); memory: bytes; periods: counts',
-                scope='shared cgroup; deltas include concurrent processes; memory deltas are end minus start, not allocation totals')
+def cpu_from_log(lines):
+    import re
+    matches=[re.fullmatch(r'OWN-TIME user=([0-9.]+) sys=([0-9.]+)',line) for line in lines]
+    match=next((m for m in reversed(matches) if m),None)
+    return (float(match[1]),float(match[2])) if match else (None,None)
+
+
+def process_cpu(path):
+    import re
+    try:
+        values=re.findall(r'([0-9]+)m([0-9.]+)s',Path(path).read_text())
+        seconds=[60*int(m)+float(s) for m,s in values]
+        return (seconds[0]+seconds[2],seconds[1]+seconds[3])
+    except (OSError,ValueError,IndexError):return (None,None)
 
 
 def main():
-    if sys.argv[1] == 'sample':
-        Path(sys.argv[2]).write_text(json.dumps(sample(cgroup_root())) + '\n')
-    else:
-        start, end = (json.loads(Path(p).read_text()) for p in sys.argv[2:4])
-        print('CGROUP=' + json.dumps(report(start, end), separators=(',', ':')))
+    from gate_observation_counts import counts
+    root=Path(sys.argv[1])
+    print('RESOURCE-LEGEND own_user_s/own_sys_s=process-and-child CPU seconds; node_load=shared cgroup, not gate CPU; node_psi=delta stall microseconds/1000000/wall seconds (some/full, upper bounds on gate stall); raw PSI averages=percent, no average deltas; cpu.stat=kernel microseconds/counts; memory=bytes; epoch_seconds=Unix UTC seconds; unavailable=null')
+    reports=[]
+    for line in (root/'gate-steps.tsv').read_text().splitlines():
+        name,status,started,ended=line.split('\t'); wall=float(ended)-float(started)
+        lines=(root/f'gate-{name}.log').read_text(errors='replace').splitlines()
+        own=cpu_from_log(lines); counted=counts(lines)
+        resource=joined(raw_sample(root/f'gate-{name}-resource-start.raw'),raw_sample(root/f'gate-{name}-resource-end.raw'),wall)
+        reports.append(dict(step=name,wall_seconds=wall,own_user_s=own[0],own_sys_s=own[1],**resource))
+        print(f'STEP={name} STATUS={status} WALL={wall:.6f}s own_user_s={own[0]} own_sys_s={own[1]} node_load=true node_psi='+json.dumps(resource['node_pressure_fraction'],separators=(',',':'))+' warn={warn} error={error} loss={loss} processes='.format(**counted)+json.dumps(counted['processes'],separators=(',',':')))
+    wall=float(sys.argv[2]); begin=process_cpu(root/'gate-cpu-start.raw'); end=process_cpu(root/'gate-cpu-end.raw')
+    own=[b-a if a is not None and b is not None else None for a,b in zip(begin,end)]
+    resource=joined(raw_sample(root/'gate-resource-start.raw'),raw_sample(root/'gate-resource-end.raw'),wall)
+    reports.append(dict(step='gate',wall_seconds=wall,own_user_s=own[0],own_sys_s=own[1],**resource))
+    (root/'gate-resources.json').write_text(json.dumps(reports,indent=2)+'\n')
+    print(f'GATE-RESOURCES WALL={wall:.6f}s own_user_s={own[0]} own_sys_s={own[1]} node_load=true node_psi='+json.dumps(resource['node_pressure_fraction'],separators=(',',':'))+' artifact=.lane/gate-resources.json')
 
 
 if __name__ == '__main__':

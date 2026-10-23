@@ -679,7 +679,7 @@
       "name": "ROOT::dec:xchg:crate-layout",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
-      "premises": "The checked current manifest declares the std-only library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
+      "premises": "The checked crate root has no `no_std` attribute and the manifest declares one library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
       "status": "scoped-supported"
     },
@@ -719,6 +719,7 @@
     },
     {
       "claims": [
+        "INTERCHANGE::claim:encoding:float-acquisition-refuses-noncanonical-nans",
         "INTERCHANGE::claim:encoding:a-float-stands-in-its-shortest-form",
         "INTERCHANGE::claim:properties:sampled-floats-use-the-independent-minimal-width"
       ],
@@ -730,7 +731,7 @@
       "name": "ROOT::dec:xchg:nan-policy",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
-      "premises": "Canonical float fixtures pin accepted widths and NaN refusals; sampled bit patterns are compared to the independent width oracle. The bounded corpus and recorded property cases support the present implementation.",
+      "premises": "Acquisition fixtures refuse noncanonical NaN payloads and the negative sign with `NonCanonicalFloat`; canonical float fixtures pin accepted widths and decoder refusals; sampled bit patterns are compared to the independent width oracle. The bounded corpus and recorded property cases support the present implementation.",
       "realizers": [],
       "status": "scoped-supported"
     },
@@ -796,7 +797,7 @@
       "name": "ROOT::dec:xchg:refused-dependencies",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
-      "premises": "The checked current manifest declares the std-only library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
+      "premises": "The checked crate root has no `no_std` attribute and the manifest declares one library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
       "status": "scoped-supported"
     },
@@ -871,6 +872,12 @@
       "status": "scoped-supported"
     },
     {
+      "admission": {
+        "evidence": "",
+        "evidence_kind": "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition.",
+        "owner": "Interchange contract reviewer",
+        "status": "held"
+      },
       "claims": [],
       "closing_condition": "Reconcile the four historical implementation slices with their recorded sequence, or obtain an explicit amendment of that historical ordering condition.",
       "closing_step": "Entry condition of gate:design:bite-1",
@@ -945,7 +952,7 @@
       "name": "ROOT::dec:xchg:value-exhaustive",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/010-interchange-design.md",
-      "premises": "The checked current manifest declares the std-only library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
+      "premises": "The checked crate root has no `no_std` attribute and the manifest declares one library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [],
       "status": "scoped-supported"
     },
@@ -1277,15 +1284,21 @@
     },
     {
       "claims": [
+        "CLICOMMON::claim:cli:artifact-root-is-fixed-before-directory-change",
         "CLICOMMON::claim:cli:accounting-survives-trace-filtering",
+        "CLICOMMON::claim:cli:all-bootstrap-routes-preserve-configuration-refusal",
         "CLICOMMON::claim:cli:async-context-follows-polls-not-thread-lifetime",
+        "CLICOMMON::claim:cli:custom-debug-errors-remain-errors",
+        "CLICOMMON::claim:cli:default-emission-retains-problems-and-cost",
         "CLICOMMON::claim:cli:dropped-futures-record-cancellation-without-a-result",
         "CLICOMMON::claim:cli:invalid-clock-cannot-change-outcome",
+        "CLICOMMON::claim:cli:large-content-is-addressed-once",
         "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
         "CLICOMMON::claim:cli:metric-series-are-declared-and-bounded",
         "CLICOMMON::claim:cli:observation-loss-is-nonbinding",
         "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop",
         "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary",
+        "CLICOMMON::claim:cli:public-content-encoding-is-lossless",
         "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
         "CLICOMMON::claim:cli:secret-carriers-protect-nested-errors",
         "CLICOMMON::claim:cli:terminal-accounting-distinguishes-incomplete-work",
@@ -1486,6 +1499,12 @@
       "status": "scoped-supported"
     },
     {
+      "admission": {
+        "evidence": "",
+        "evidence_kind": "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them.",
+        "owner": "Linter integration reviewer",
+        "status": "held"
+      },
       "claims": [],
       "closing_condition": "Attach itemized deployed-linter conformance evidence for all implementation-gate clauses, including synthetic citations, anchor harvesting and traversal-order independence; a clean current corpus alone does not prove them.",
       "closing_step": "Entry condition of gate:design:bite-1",
@@ -1535,15 +1554,21 @@
     },
     {
       "claims": [
+        "CLICOMMON::claim:cli:artifact-root-is-fixed-before-directory-change",
         "CLICOMMON::claim:cli:accounting-survives-trace-filtering",
+        "CLICOMMON::claim:cli:all-bootstrap-routes-preserve-configuration-refusal",
         "CLICOMMON::claim:cli:async-context-follows-polls-not-thread-lifetime",
+        "CLICOMMON::claim:cli:custom-debug-errors-remain-errors",
+        "CLICOMMON::claim:cli:default-emission-retains-problems-and-cost",
         "CLICOMMON::claim:cli:dropped-futures-record-cancellation-without-a-result",
         "CLICOMMON::claim:cli:invalid-clock-cannot-change-outcome",
+        "CLICOMMON::claim:cli:large-content-is-addressed-once",
         "CLICOMMON::claim:cli:metering-preserves-inclusive-time-and-owned-work",
         "CLICOMMON::claim:cli:metric-series-are-declared-and-bounded",
         "CLICOMMON::claim:cli:observation-loss-is-nonbinding",
         "CLICOMMON::claim:cli:private-configuration-remains-owned-through-failure-and-drop",
         "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary",
+        "CLICOMMON::claim:cli:public-content-encoding-is-lossless",
         "CLICOMMON::claim:cli:recursive-observation-is-loss-not-recursion",
         "CLICOMMON::claim:cli:secret-carriers-protect-nested-errors",
         "CLICOMMON::claim:cli:terminal-accounting-distinguishes-incomplete-work",
@@ -1720,6 +1745,12 @@
       "status": "held"
     },
     {
+      "admission": {
+        "evidence": "",
+        "evidence_kind": "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review.",
+        "owner": "Interchange contract reviewer",
+        "status": "held"
+      },
       "claims": [],
       "closing_condition": "Record the itemized confirmation of purpose, consumers, completeness, scope and verification frame against the accepted conventions; test executions cannot retrospectively make that review.",
       "closing_step": "Entry condition of gate:design:bite-1",
@@ -1733,6 +1764,12 @@
       "status": "held"
     },
     {
+      "admission": {
+        "evidence": "",
+        "evidence_kind": "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order.",
+        "owner": "Interchange implementer and contract reviewer",
+        "status": "held"
+      },
       "claims": [],
       "closing_condition": "Supply provenance for vector transcription and dependency verification at implementation start, alongside the now-present timing and regexp-guard evidence; current green tests do not establish historical order.",
       "closing_step": "Entry condition of gate:design:bite-1",
@@ -1782,6 +1819,12 @@
       "status": "held"
     },
     {
+      "admission": {
+        "evidence": "",
+        "evidence_kind": "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer.",
+        "owner": "Bite 1 implementer and interchange contract reviewer",
+        "status": "held"
+      },
       "claims": [],
       "closing_condition": "Map every bite-1 interchange producer and reader to the one canonical contract and reject local convention alternatives before adding the first domain consumer.",
       "closing_step": "Entry condition of gate:design:bite-1",
@@ -2145,7 +2188,7 @@
       "name": "ROOT::req:xchg:std-only",
       "owner": "Foundation implementer and repository reviewer",
       "path": "adr/009-interchange-concept.md",
-      "premises": "The checked current manifest declares the std-only library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
+      "premises": "The checked crate root has no `no_std` attribute and the manifest declares one library, no feature matrix or binary, and only the accepted production dependencies. The source-bound Value declaration remains exhaustive. Test-only corpus/benchmark dependencies do not enter that production graph.",
       "realizers": [
         "ROOT::dec:xchg:crate-layout",
         "ROOT::verif:testing:foundation-admissions"

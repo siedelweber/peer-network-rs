@@ -14,6 +14,14 @@ fn unavailable_observation() {
         });
         assert!(ran);
         assert_eq!(result, std::process::ExitCode::SUCCESS);
+        for result in [
+            crate::init_json_tracing(tracing::Level::INFO),
+            crate::try_init_json_tracing(tracing::Level::INFO),
+            crate::init_json_tracing_with_debug(false, tracing::Level::INFO),
+            crate::try_init_json_tracing_with_debug(false, tracing::Level::INFO),
+        ] {
+            assert!(matches!(result, Err(BootstrapError::Unavailable(_))));
+        }
     } else {
         let result = std::process::Command::new(std::env::current_exe().unwrap())
             .args(["--exact", "observation::tests::unavailable_observation"])
@@ -25,7 +33,52 @@ fn unavailable_observation() {
     }
 }
 
-/// Claim: Default emission never formats operation payloads, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.
+/// Claim: Export bootstrap and legacy initialization helpers preserve typed configuration refusal for invalid emission settings, and exporter environment configuration is refused by name before any secret reaches an SDK builder.
+/// ´claim:cli:all-bootstrap-routes-preserve-configuration-refusal´
+/// ´test:unit:typed-export-bootstrap´
+#[test]
+fn typed_export_bootstrap() {
+    if let Some(mode) = std::env::var_os("PN_TEST_EXPORT_CONFIGURATION") {
+        let config = crate::observation_export::ExportConfig {
+            transport: Arc::new(LocalExport::default()),
+            credential: PrivateString::new(SecretRole::Authentication, SecretString::from("fixture-private-token")),
+        };
+        let result = bootstrap_with_export(true, false, tracing::Level::INFO, config);
+        if mode == "level" {
+            assert!(matches!(
+                result,
+                Err(BootstrapError::Configuration(EmissionConfigurationError::UnknownLevel))
+            ));
+            for result in [
+                crate::init_json_tracing(tracing::Level::INFO),
+                crate::try_init_json_tracing(tracing::Level::INFO),
+                crate::init_json_tracing_with_debug(false, tracing::Level::INFO),
+                crate::try_init_json_tracing_with_debug(false, tracing::Level::INFO),
+            ] {
+                assert!(matches!(result, Err(BootstrapError::Configuration(_))));
+            }
+        } else {
+            assert!(
+                matches!(result, Err(BootstrapError::Configuration(EmissionConfigurationError::ExporterEnvironment(name))) if name == "OTEL_EXPORTER_OTLP_HEADERS")
+            );
+        }
+    } else {
+        for mode in ["level", "export"] {
+            let mut command = std::process::Command::new(std::env::current_exe().unwrap());
+            command
+                .args(["--exact", "observation::tests::typed_export_bootstrap"])
+                .env("PN_TEST_EXPORT_CONFIGURATION", mode)
+                .env("PN_OBSERVE_LEVEL", if mode == "level" { "invalid" } else { "default" });
+            if mode == "export" {
+                command.env("OTEL_EXPORTER_OTLP_HEADERS", "private-fixture");
+            }
+            let result = command.output().unwrap();
+            assert!(result.status.success(), "{}", String::from_utf8_lossy(&result.stdout));
+        }
+    }
+}
+
+/// Claim: Default emission counts and times nested labelled work without constructing byte payloads or formatting Debug content, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.
 /// ´claim:cli:default-emission-retains-problems-and-cost´
 /// ´test:unit:default-emission´
 #[test]
@@ -49,7 +102,15 @@ fn default_emission() {
     tracing::subscriber::with_default(subscriber, || {
         let command = scope("CLICOMMON", "rule:observe:spans", "run_stdout_json_command", &MustNotFormat);
         let nested = scope("CLICOMMON", "rule:observe:spans", "nested", &MustNotFormat);
-        nested.finish(&MustNotFormat);
+        clock.0.store(500, Ordering::Relaxed);
+        assert_eq!(
+            observation.capture(|| {
+                let _encoded = public_bytes(b"must not be built");
+                panic!("default built bytes")
+            }),
+            Value::Null
+        );
+        nested.finish_with(Outcome::Success, &MustNotFormat);
         tracing::warn!(message = "public warning");
         tracing::error!(message = "public error");
         clock.0.store(1500, Ordering::Relaxed);
@@ -68,6 +129,21 @@ fn default_emission() {
     let status = rows.iter().find(|row| row["kind"] == "observation_status").unwrap();
     assert_eq!(status["delivered_records"], 4);
     assert_eq!(status["lost_records"], 0);
+    let metrics = &rows.iter().find(|row| row["kind"] == "metric_summary").unwrap()["metrics"];
+    let series = metrics["instruments"].as_array().unwrap();
+    let started = series
+        .iter()
+        .find(|r| r["name"] == "clicommon__root__rule__observe__spans__started_operations")
+        .unwrap();
+    assert_eq!(started["counter"], 1);
+    let elapsed = series
+        .iter()
+        .find(|r| r["name"] == "clicommon__root__rule__observe__spans__elapsed_seconds")
+        .unwrap();
+    assert_eq!(elapsed["count"], 1);
+    assert_eq!(elapsed["sum"], 0.5);
+    assert!(metrics["declared_but_unobserved"].as_u64().unwrap() > 0);
+    assert!(series.len() < usize::try_from(metrics["declared_series"].as_u64().unwrap()).unwrap());
 }
 
 /// Claim: Public byte representations preserve UTF-8, NUL and invalid UTF-8 exactly, and structural values retain constructors, field keys and escaped string contents rather than nesting Debug text.
@@ -109,7 +185,7 @@ fn public_content_encoding() {
     assert_eq!(content::structured(&largest), json!({"atom":largest}));
 }
 
-/// Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt existing content is refused rather than trusted.
+/// Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from a fresh synced file rather than trusted.
 /// ´claim:cli:large-content-is-addressed-once´
 /// ´test:unit:content-artifact-publication´
 #[test]
@@ -139,10 +215,67 @@ fn content_artifact_publication() {
     assert_eq!(another["detail"]["result"], first["payload"]);
     assert_eq!(std::fs::read_dir(path.parent().unwrap()).unwrap().count(), 1);
     std::fs::write(path, b"wrong").unwrap();
-    assert!(content::compact(&mut original.clone(), directory.path()).is_err());
+    content::compact(&mut original.clone(), directory.path()).unwrap();
+    assert_eq!(std::fs::read(path).unwrap(), bytes);
+    assert!(content::root().unwrap().is_absolute());
     let mut small = json!({"payload":"small"});
     content::compact(&mut small, directory.path()).unwrap();
     assert_eq!(small, json!({"payload":"small"}));
+}
+
+/// Claim: A relative artifact root is fixed at observer initialization, so changing the command's working directory before delivery cannot redirect a large public payload into the new directory.
+/// ´claim:cli:artifact-root-is-fixed-before-directory-change´
+/// ´test:unit:artifact-root-survives-directory-change´
+#[test]
+fn artifact_root_survives_directory_change() {
+    if std::env::var_os("PN_TEST_ARTIFACT_ROOT").is_some() {
+        let initial = std::env::current_dir().unwrap();
+        let (observation, _, capture) = fixture();
+        let changed = initial.join("changed");
+        std::fs::create_dir(&changed).unwrap();
+        std::env::set_current_dir(&changed).unwrap();
+        observation.emit(json!({"kind":"trace","payload":"x".repeat(65_536)}));
+        let (done, drained) = mpsc::sync_channel(1);
+        observation.flush_sender.send(done).unwrap();
+        observation.sender.send(Message::Wake).unwrap();
+        drained.recv().unwrap();
+        let rows = records(&observation, &capture);
+        let path = std::path::Path::new(rows[0]["payload"]["artifact"]["path"].as_str().unwrap());
+        assert!(path.is_absolute());
+        assert!(path.starts_with(initial.join("relative-observations")));
+        assert!(path.is_file());
+        assert!(!changed.join("relative-observations").exists());
+    } else {
+        let root = tempfile::tempdir().unwrap();
+        let output = std::process::Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "observation::tests::artifact_root_survives_directory_change"])
+            .current_dir(root.path())
+            .env("PN_TEST_ARTIFACT_ROOT", "1")
+            .env("PN_OBSERVE_ARTIFACT_DIR", "relative-observations")
+            .output()
+            .unwrap();
+        assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stdout));
+    }
+}
+
+/// Claim: A return whose outer constructor is Err completes as error even when its serde JSON error payload requires lossless custom Debug fallback; outcome classification cannot depend on the inner formatting grammar.
+/// ´claim:cli:custom-debug-errors-remain-errors´
+/// ´test:unit:custom-debug-error-outcome´
+#[test]
+fn custom_debug_error_outcome() {
+    let (observation, _, capture) = fixture();
+    let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+    tracing::subscriber::with_default(subscriber, || {
+        let scope = scope("CLICOMMON", "rule:observe:spans", "error-fixture", &());
+        let result = serde_json::from_str::<Value>("{");
+        assert!(result.is_err());
+        scope.finish(&result);
+    });
+    let rows = records(&observation, &capture);
+    let completion = rows.iter().find(|r| r["event_kind"] == "completion").unwrap();
+    assert_eq!(completion["detail"]["outcome"], "error");
+    assert_eq!(completion["detail"]["result"]["representation"], "custom-debug");
+    assert_ne!(content::structured("[REDACTED]"), content::structured("\"[REDACTED]\""));
 }
 
 /// Claim: A saturated ordinary queue cannot consume diagnostic, metric-summary, export-summary or drain-request capacity; rendezvous-controlled delivery observes these records and acknowledges the drain without extending a timeout.
@@ -349,7 +482,7 @@ fn provider_bridge() {
             .collect::<Vec<_>>(),
         [7]
     );
-    let snapshot = recorder.snapshot();
+    let snapshot = recorder.snapshot(true);
     assert_eq!(
         snapshot["instruments"]
             .as_array()
@@ -637,7 +770,7 @@ fn terminal_accounting() {
             .iter()
             .all(|r| r["detail"]["resources"]["current"]["value"].is_null())
     );
-    let snapshot = observation.recorder.snapshot();
+    let snapshot = observation.recorder.snapshot(true);
     assert!(
         snapshot["instruments"]
             .as_array()
@@ -734,7 +867,7 @@ fn metric_registry() {
         metrics::counter!(format!("{}__work_bytes",STEMS[0]),"request"=>"unbounded").increment(11);
         metrics::gauge!(format!("{}__work_bytes", STEMS[0])).set(12.0);
     });
-    let snapshot = recorder.snapshot();
+    let snapshot = recorder.snapshot(true);
     let rows = snapshot["instruments"].as_array().unwrap();
     assert_eq!(rows.len(), 98);
     assert_eq!(snapshot["lost_updates"], 3);
@@ -800,7 +933,7 @@ fn bounded_loss() {
         .operation(OperationKind::Command, Value::Null)
         .finish(Outcome::Success, json!(0));
     assert_eq!(bounded.lost.load(Ordering::Relaxed), 5);
-    let snapshot = bounded.recorder.snapshot();
+    let snapshot = bounded.recorder.snapshot(true);
     let instruments = snapshot["instruments"].as_array().unwrap();
     assert_eq!(
         instruments

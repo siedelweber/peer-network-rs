@@ -38,7 +38,7 @@
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
-| cli-common | active | unit | cli-common-rust | fast | 80 |
+| cli-common | active | unit | cli-common-rust | fast | 83 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
 | documents::integration | active | integration | documents-rust | fast | 28 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
@@ -47,7 +47,7 @@
 | pn-interchange | active | unit | pn-interchange-rust | fast | 233 |
 | pn-interchange::integration | active | integration | pn-interchange-rust | fast | 14 |
 | pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |
-| pn-interchange::deterministic_encoding | active | integration | pn-interchange-rust | fast | 13 |
+| pn-interchange::deterministic_encoding | active | integration | pn-interchange-rust | fast | 14 |
 | pn-interchange::documents | active | integration | pn-interchange-rust | fast | 11 |
 | pn-interchange::inclusion | active | integration | pn-interchange-rust | fast | 27 |
 | pn-interchange::labels | active | integration | pn-interchange-rust | fast | 10 |

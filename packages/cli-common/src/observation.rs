@@ -37,6 +37,13 @@ pub fn public_bytes(value: &[u8]) -> Value {
     content::bytes(value)
 }
 
+/// Whether the executable has selected full payload capture.
+/// Justified: This accessor gates representation only; accounting never reads it to decide whether work occurred.
+#[must_use]
+pub fn trace_enabled() -> bool {
+    GLOBAL.get().is_some_and(|observation| observation.full_trace)
+}
+
 thread_local! { static OBSERVING: std::cell::Cell<bool> = const { std::cell::Cell::new(false) }; }
 struct Observing;
 impl Observing {
@@ -232,7 +239,7 @@ impl Observation {
         let worker_delivered = delivered.clone();
         let queued_bytes = Arc::new(AtomicU64::new(0));
         let worker_queued = queued_bytes.clone();
-        let artifact_root = content::root();
+        let artifact_root = content::root()?;
         let worker_bridge = bridge.clone();
         std::thread::Builder::new().name("observation-json".into()).spawn(move || {
             let mut writer = writer;
@@ -402,6 +409,12 @@ impl Observation {
         operation
     }
 
+    /// Construct public payloads only when full tracing is selected.
+    /// Justified: The observation level gates representation, never binding computation or accounting.
+    pub fn capture(&self, payload: impl FnOnce() -> Value) -> Value {
+        if self.full_trace { payload() } else { Value::Null }
+    }
+
     /// Emit a bounded snapshot from the same recorder that owns API instruments.
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
@@ -413,7 +426,7 @@ impl Observation {
         }
         self.emit(
             json!({"kind":"metric_summary","claim_owner":"ROOT","claim_label":"conv:observe:metrics",
-            "execution_owner":"CLICOMMON","metrics":self.recorder.snapshot()}),
+            "execution_owner":"CLICOMMON","metrics":self.recorder.snapshot(self.full_trace)}),
         );
     }
 }
@@ -617,8 +630,10 @@ impl Operation {
     /// Record full public progress content without affecting the relayed bytes.
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
-    pub fn progress(&self, content: Value) {
-        self.record("progress", content);
+    pub fn progress(&self, content: impl FnOnce() -> Value) {
+        if self.observation.full_trace {
+            self.record("progress", content());
+        }
     }
 
     /// Complete once with a bounded outcome and full public result or error.
@@ -669,7 +684,7 @@ impl Drop for Operation {
 }
 
 #[derive(Default)]
-struct Fields(Map<String, Value>, usize, bool);
+struct Fields(Map<String, Value>, usize, bool, Option<&'static str>);
 impl Fields {
     fn insert(&mut self, field: &Field, value: Value, bytes: usize) {
         self.1 = self.1.saturating_add(field.name().len()).saturating_add(bytes);
@@ -691,6 +706,9 @@ impl Visit for Fields {
         }
         let length = text.0.len();
         if let Ok(text) = String::from_utf8(text.0) {
+            if field.name() == "return" {
+                self.3 = Some(if text.starts_with("Err(") { "error" } else { "success" });
+            }
             self.insert(field, content::structured(&text), length);
         } else {
             self.2 = true;
@@ -727,6 +745,18 @@ struct SummaryFields(Fields);
 impl Visit for SummaryFields {
     /// Justified: The delivery visitor selects accounting identity without recursively observing itself.
     fn record_debug(&mut self, _field: &Field, _value: &dyn fmt::Debug) {}
+    /// Justified: Accounting accepts declared work without capturing public payloads.
+    fn record_u64(&mut self, field: &Field, value: u64) {
+        if field.name() == "work_bytes" {
+            self.0.record_u64(field, value);
+        }
+    }
+    /// Justified: Accounting retains asynchronous identity without capturing public payloads.
+    fn record_bool(&mut self, field: &Field, value: bool) {
+        if field.name() == "asynchronous" {
+            self.0.record_bool(field, value);
+        }
+    }
     /// Justified: The delivery visitor selects accounting identity without recursively observing itself.
     fn record_str(&mut self, field: &Field, value: &str) {
         if matches!(field.name(), "execution_owner" | "source_item" | "outcome") {
@@ -774,8 +804,6 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
             );
             let kind = if command {
                 Some(OperationKind::Command)
-            } else if !self.0.full_trace {
-                return;
             } else {
                 match fields.0.get("execution_owner").and_then(Value::as_str) {
                     Some("DOCUMENTS") => Some(OperationKind::Document),
@@ -835,6 +863,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
             if let Some(value) = fields.0.get("return") {
                 account.result = Some(value.clone());
             }
+            account.outcome = fields.3.or(account.outcome);
             account.outcome = match fields.0.get("outcome").and_then(Value::as_str) {
                 Some("success") => Some("success"),
                 Some("refusal") => Some("refusal"),
@@ -933,7 +962,7 @@ impl Drop for BootstrapGuard {
 }
 
 /// Executable startup distinguishes invalid configuration from nonbinding observer availability.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum BootstrapError {
     /// The command must refuse invalid observation configuration before executing work.
     #[error(transparent)]
@@ -944,8 +973,11 @@ pub enum BootstrapError {
 }
 
 /// Refused values of the executable-owned emission setting.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum EmissionConfigurationError {
+    /// Environment-owned exporter settings bypass secret-owned acquisition.
+    #[error("{0} refused; use secret-owned ExportConfig")]
+    ExporterEnvironment(String),
     /// Only the two declared emission modes are accepted.
     #[error("PN_OBSERVE_LEVEL must be default or trace")]
     UnknownLevel,
@@ -955,8 +987,11 @@ pub enum EmissionConfigurationError {
 }
 
 /// Nonbinding failures of the observer's process-global installation or delivery worker.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum ObserverUnavailable {
+    /// The local SDK or export worker could not be initialized.
+    #[error("{0}")]
+    Exporter(String),
     /// The disabled-status writer could not start.
     #[error("observation status writer unavailable")]
     StatusWriter,
@@ -999,14 +1034,15 @@ pub fn bootstrap_with_export(
     debug: bool,
     default_level: tracing::Level,
     config: crate::observation_export::ExportConfig,
-) -> Result<BootstrapGuard, Box<dyn std::error::Error + Send + Sync>> {
+) -> Result<BootstrapGuard, BootstrapError> {
+    let _level = configured_level()?;
     let started = Instant::now();
     let bridge = if enabled {
         Some(Arc::new(crate::observation_export::Bridge::new(config)?))
     } else {
         None
     };
-    bootstrap_inner(enabled, debug, default_level, bridge, started).map_err(Into::into)
+    bootstrap_inner(enabled, debug, default_level, bridge, started)
 }
 
 fn emission_level(value: Option<&str>) -> Result<bool, BootstrapError> {
@@ -1017,6 +1053,14 @@ fn emission_level(value: Option<&str>) -> Result<bool, BootstrapError> {
     }
 }
 
+fn configured_level() -> Result<bool, BootstrapError> {
+    match std::env::var("PN_OBSERVE_LEVEL") {
+        Ok(value) => emission_level(Some(&value)),
+        Err(std::env::VarError::NotPresent) => emission_level(None),
+        Err(std::env::VarError::NotUnicode(_)) => Err(EmissionConfigurationError::NonUtf8Level.into()),
+    }
+}
+
 fn bootstrap_inner(
     enabled: bool,
     _debug: bool,
@@ -1024,11 +1068,7 @@ fn bootstrap_inner(
     bridge: Option<Arc<crate::observation_export::Bridge>>,
     started: Instant,
 ) -> Result<BootstrapGuard, BootstrapError> {
-    let level = match std::env::var("PN_OBSERVE_LEVEL") {
-        Ok(value) => emission_level(Some(&value))?,
-        Err(std::env::VarError::NotPresent) => emission_level(None)?,
-        Err(std::env::VarError::NotUnicode(_)) => return Err(EmissionConfigurationError::NonUtf8Level.into()),
-    };
+    let level = configured_level()?;
     if !enabled {
         let status = Observation::with_writer(StderrSink, Arc::new(SystemClock(Instant::now())))
             .map_err(|_| ObserverUnavailable::StatusWriter)?;

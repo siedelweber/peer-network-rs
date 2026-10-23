@@ -3,9 +3,9 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "cli-common"
-operations = 109
+operations = 113
 instrumented = 30
-exceptions = 76
+exceptions = 80
 helpers = 3
 generators = 40
 

@@ -25,31 +25,46 @@ def fixture():
 
 class Admission(unittest.TestCase):
     def test_resource_samples(self):
-        """Claim: Cgroup counters, PSI percentages and memory readings retain their units and start/end deltas, while an absent file or migrated cgroup makes its delta unavailable rather than zero.
+        """Claim: Bash-sampled node-load counters retain units and unavailable readings, PSI stall deltas divide by wall rather than subtracting averages, and the final join keeps a step's own CPU separate; missing or corrupt samples never invent zero work.
         ´claim:discipline:cgroup-deltas-preserve-unavailable-readings´
         ´test:integration:test-resource-samples´
         """
         import tempfile
         from pathlib import Path
-        from gate_resources import sample, report
+        from gate_resources import raw_sample, joined, cpu_from_log
+        import subprocess
+        script=Path(__file__).resolve().with_name('gate_resources.sh')
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
             (root/'cpu.stat').write_text('usage_usec 10\nuser_usec 6\nsystem_usec 4\nnr_throttled 0\n')
             (root/'cpu.pressure').write_text('some avg10=1.0 avg60=2.0 avg300=3.0 total=100\n')
             (root/'memory.current').write_text('50\n')
-            start=sample(root)
+            def sample():
+                output=root/'sample.raw'
+                subprocess.run(['bash','-c','source "$1"; gate_resource_sample "$2" "$3"','fixture',str(script),str(output),str(root)],check=True)
+                return raw_sample(output)
+            start=sample()
             (root/'cpu.stat').write_text('usage_usec 30\nuser_usec 16\nsystem_usec 14\nnr_throttled 2\n')
             (root/'memory.current').write_text('40\n')
-            end=sample(root)
-            delta=report(start,end)['deltas']
+            (root/'cpu.pressure').write_text('some avg10=3.0 avg60=4.0 avg300=5.0 total=200100\n')
+            end=sample()
+            result=joined(start,end,2.0)
+            delta=result['node_load_deltas']
             self.assertEqual(delta['cpu.stat.usage_usec'],20)
             self.assertEqual(delta['cpu.stat.nr_throttled'],2)
             self.assertEqual(delta['memory.current'],-10)
             self.assertIsNone(delta['memory.peak'])
-            self.assertIsNone(delta['io.pressure.some.total'])
+            self.assertIsNone(delta.get('io.pressure.some.total'))
             self.assertEqual(start['values']['cpu.pressure.some.avg10'],1.0)
+            self.assertNotIn('cpu.pressure.some.avg10',delta)
+            self.assertEqual(result['node_pressure_fraction']['cpu.some'],0.1)
+            self.assertEqual(cpu_from_log(['OWN-TIME user=1.2 sys=0.3']),(1.2,0.3))
+            self.assertEqual(cpu_from_log([]),(None,None))
             end['cgroup']='another'
-            self.assertTrue(all(v is None for v in report(start,end)['deltas'].values()))
+            self.assertTrue(all(v is None for v in joined(start,end,2)['node_load_deltas'].values()))
+            self.assertTrue(all(v is None for v in joined(raw_sample(root/'missing'),end,2)['node_load_deltas'].values()))
+            (root/'bad').write_text('corrupt')
+            self.assertIsNone(raw_sample(root/'bad')['cgroup'])
 
     def test_process_delivery_counts(self):
         """Claim: Inline warning and error counts remain distinct from verdicts, and each process retains its delivered and lost counts without treating missing delivery evidence as a measured zero.

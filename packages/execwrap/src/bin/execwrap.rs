@@ -53,13 +53,9 @@ struct Args {
     #[arg(long = "change-directory", short = 'C', value_name = "DIR")]
     change_directory: Option<PathBuf>,
 
-    /// Enable debug-level diagnostic logging.
+    /// Retained output-contract flag; does not select observation level. Use `PN_OBSERVE_LEVEL`.
     #[arg(long, short = 'd')]
     debug: bool,
-
-    /// Suppress info-level diagnostic logging.
-    #[arg(long, short = 'q')]
-    quiet: bool,
 
     /// Observation delivery mode, independent of command results.
     #[arg(long, value_enum, default_value_t = ObservationMode::Enabled)]
@@ -93,7 +89,7 @@ fn main() -> ExitCode {
     let _observation_guard = match cli_common::observation::bootstrap(
         args.observation == ObservationMode::Enabled,
         args.debug,
-        default_level(&args),
+        tracing::Level::INFO,
     ) {
         Ok(guard) => Some(guard),
         Err(error @ cli_common::observation::BootstrapError::Configuration(_)) => {
@@ -118,7 +114,6 @@ fn execute(args: Args) -> ExitCode {
             redirect_prefixed: args.redirect_prefixed,
             notify_on_write: args.notify_on_write,
             debug: args.debug,
-            quiet: args.quiet,
         };
 
         // Conflicting routing for one path is an invalid argument
@@ -188,14 +183,6 @@ fn wrapper_exit_from_child_status(status: i32) -> ExitCode {
         0 => CommandExit::Success.exit_code(),
         1 | 2 => CommandExit::Failure.exit_code(),
         other => ExitCode::from(u8::try_from(other).unwrap_or(1)),
-    }
-}
-
-const fn default_level(args: &Args) -> tracing::Level {
-    if args.quiet {
-        tracing::Level::WARN
-    } else {
-        tracing::Level::INFO
     }
 }
 

@@ -14,6 +14,27 @@ mod support;
 use pn_interchange::{Array, Bytes, Map, Simple, Tag, Text, Value};
 use support::{hex_to_bytes, offset_of, variant_name};
 
+/// Claim: Float acquisition preserves the sole canonical NaN and refuses both signs and multiple quiet or signalling NaN payloads with `NonCanonicalFloat`, preventing acquisition from silently normalizing distinct input bits.
+/// ´claim:encoding:float-acquisition-refuses-noncanonical-nans´
+/// ´test:integration:float-acquisition-refuses-noncanonical-nans´
+#[test]
+fn float_acquisition_refuses_noncanonical_nans() {
+    use pn_interchange::{Float, ValueError};
+    let canonical = Float::CANONICAL_NAN.to_f64().to_bits();
+    assert_eq!(Float::from_f64(f64::from_bits(canonical)).unwrap(), Float::CANONICAL_NAN);
+    for sign in [0, 1_u64 << 63] {
+        for payload in [1, 2, 0x0008_0000_0000_0000, 0x0008_0000_0000_0001, 0x000f_ffff_ffff_ffff] {
+            let bits = sign | 0x7ff0_0000_0000_0000 | payload;
+            if bits != canonical {
+                assert!(
+                    matches!(Float::from_f64(f64::from_bits(bits)), Err(ValueError::NonCanonicalFloat)),
+                    "{bits:016x}"
+                );
+            }
+        }
+    }
+}
+
 fn refusal(bytes: &[u8]) -> (&'static str, usize) {
     match Value::from_canonical_bytes(bytes) {
         Ok(value) => panic!("{bytes:02x?} was accepted as {value:?}"),

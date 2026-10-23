@@ -119,10 +119,10 @@
       "scope": "one-file incremental rebuild"
     },
     {
-      "budget_ms": 60000,
+      "budget_ms": 90000,
       "category": "aggregate",
       "name": "gate",
-      "reason": "The measured quiet gate takes fifty to fifty-eight seconds; a minute retains that feedback target without normalizing contention.",
+      "reason": "Complete default-level accounting measured 59.889 s and 52.189 s on the pinned worker, with own user/system CPU of 84.745/48.895 s and 63.712/34.957 s. Ninety seconds gives about fifty percent margin over the larger low-pressure sample; heavily contended runs remain warnings, not the feedback target.",
       "scope": "warm per-change repository gate"
     },
     {

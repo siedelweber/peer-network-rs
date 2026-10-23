@@ -76,7 +76,14 @@ impl Writer {
             "EXECWRAP",
             "rule:observe:spans",
             "writer::Writer::new",
-            &serde_json::json!({"file_type":std::any::type_name::<W>(),"file_state":"unavailable: Write has no Debug contract","add_prefix":add_prefix,"wrap_length":wrap_length,"props":format!("{props:?}"),"debug":debug}),
+            &(
+                std::any::type_name::<W>(),
+                "file state unavailable: Write has no Debug contract",
+                add_prefix,
+                wrap_length,
+                &props,
+                debug,
+            ),
         );
         let result = Self {
             file: Box::new(file),
@@ -88,7 +95,7 @@ impl Writer {
             stdout_buffer: Vec::new(),
             stderr_buffer: Vec::new(),
         };
-        observation.finish(&serde_json::json!(format!("{result:?}")));
+        observation.finish(&result);
         result
     }
 

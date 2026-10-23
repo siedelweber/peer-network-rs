@@ -177,12 +177,35 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     return dict(claims=[dict(name=n,status=s,sites=[x['operation'] for x in claims[n]]) for n,s in sorted(states.items())], obligations=obligation_results)
 
 
+def bite_one_started(root):
+    """Both the conventional directory and a renamed workspace member trigger entry."""
+    import glob
+    if (root/'packages/records').exists(): return True
+    workspace=tomllib.loads((root/'Cargo.toml').read_text()).get('workspace',{})
+    excluded={Path(p) for pattern in workspace.get('exclude',[]) for p in glob.glob(str(root/pattern))}
+    for pattern in workspace.get('members',[]):
+        for member in glob.glob(str(root/pattern)):
+            if Path(member) in excluded: continue
+            manifest=Path(member)/'Cargo.toml'
+            if manifest.is_file() and tomllib.loads(manifest.read_text()).get('package',{}).get('name')=='pn-records': return True
+    return False
+
+
 def enforce_entry(obligations, started, required=None):
     """A named entry hold remains a prerequisite, not a future-work caption."""
     entries=[row for row in obligations if row.get('entry_gate')=='ROOT::gate:design:bite-1']
     if required is not None and {row['name'] for row in entries}!=required:
         raise StructuralError('bite-1 entry register differs from the source amendment')
-    pending=[row['name'] for row in entries if row['status']!='scoped-passed']
+    pending=[]
+    for row in entries:
+        admission=row.get('admission',{})
+        if (not row.get('owner') or admission.get('owner')!=row['owner'] or not isinstance(admission.get('evidence_kind'),str) or not admission['evidence_kind'].strip()
+                or admission.get('status') not in ('held','admitted')):
+            raise StructuralError('bite-1 entry admission requires owner and evidence kind')
+        admitted=admission['status']=='admitted'
+        if admitted and (not isinstance(admission.get('evidence'),str) or not admission['evidence'].strip()):
+            raise StructuralError('bite-1 entry admission requires evidence')
+        if row['status']!='scoped-passed' or not admitted: pending.append(row['name'])
     if started and pending:
         raise StructuralError('bite-1 entry evidence remains held: '+str(sorted(pending)))
 
@@ -249,7 +272,7 @@ def main(argv=None):
         result = evaluate(sites, expected, areas, obligations, declared, paragraphs,
                           [r for r in records if r.get('scope')=='case'], source)
         entry = paragraphs['ROOT::amend:decomposition:bite-one-entry-evidence']['citations'] & set(obligations)
-        enforce_entry(result['obligations'], (root/'packages/records').exists(), entry-{'ROOT::gate:design:bite-1'})
+        enforce_entry(result['obligations'], bite_one_started(root), entry-{'ROOT::gate:design:bite-1'})
         reviews = reviewed_sites(sites, json.loads(Path('ci/claim_review.json').read_text()), json.loads(Path('ci/claim_gloss_baseline.json').read_text()))
         Path('.lane/claim-gloss-review.json').write_text(json.dumps({'schema':1,'source':source,'sites':reviews},indent=2)+'\n')
         offenders = [{k:s[k] for k in ('owner','path','line','function','operation','claim','gloss')} for s in sites if respells(s)]

@@ -248,10 +248,17 @@ impl JsonRecorder {
         }
     }
 
-    pub(super) fn snapshot(&self) -> Value {
+    pub(super) fn snapshot(&self, full_trace: bool) -> Value {
         let mut rows = Vec::new();
+        let mut unobserved = 0;
         for ((name, outcome), instrument) in self.instruments.iter() {
             if let Ok(t) = instrument.totals.try_lock() {
+                if !t.observed {
+                    unobserved += 1;
+                    if !full_trace {
+                        continue;
+                    }
+                }
                 rows.push(
                     json!({"name":name,"kind":instrument.kind,"unit":instrument.unit,"outcome":outcome,
                     "counter":if name.ends_with("work_bytes") && !t.observed {None}else{Some(t.counter)},"gauge":if name.ends_with("resource_current_bytes") && !t.observed {None}else{Some(t.gauge)},"count":t.count,"sum":t.sum,"buckets":t.buckets,
@@ -262,7 +269,7 @@ impl JsonRecorder {
                 self.lost.fetch_add(1, Ordering::Relaxed);
             }
         }
-        json!({"instruments":rows,"lost_updates":self.lost.load(Ordering::Relaxed),"counter_accuracy":"exact_if_no_loss","floating_point_accuracy":"estimated"})
+        json!({"instruments":rows,"declared_series":self.instruments.len(),"declared_but_unobserved":unobserved,"roster":if full_trace {"full"} else {"observed"},"lost_updates":self.lost.load(Ordering::Relaxed),"counter_accuracy":"exact_if_no_loss","floating_point_accuracy":"estimated"})
     }
 }
 

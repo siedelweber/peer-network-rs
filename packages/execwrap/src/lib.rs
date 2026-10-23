@@ -84,10 +84,8 @@ pub struct RoutingConfig {
     pub redirect_prefixed: Option<PathBuf>,
     /// Emit notifications when log files are written.
     pub notify_on_write: bool,
-    /// Enable debug-level diagnostic logging.
+    /// Retained output-contract control; never selects observation emission.
     pub debug: bool,
-    /// Suppress info-level diagnostic logging.
-    pub quiet: bool,
 }
 
 impl RoutingConfig {
@@ -406,26 +404,30 @@ pub fn run(command: &[OsString], cfg: &RoutingConfig, mut notify: impl FnMut(&No
         &(command, cfg, "notification callback: opaque capability"),
     );
     let observation = cli_common::observation::Observation::current();
-    let mut operation = observation.as_ref().map(|o| o.operation(cli_common::observation::OperationKind::Child, serde_json::json!({
+    let mut operation = observation.as_ref().map(|o| o.operation(cli_common::observation::OperationKind::Child, o.capture(|| serde_json::json!({
         "command": command.iter().map(|arg| cli_common::observation::public_bytes(arg.as_encoded_bytes())).collect::<Vec<_>>(),
         "configuration": {"redirect":cfg.redirect.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
             "redirect_output":cfg.redirect_output.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
             "redirect_error":cfg.redirect_error.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
             "redirect_prefixed":cfg.redirect_prefixed.as_ref().map(|p|cli_common::observation::public_bytes(p.as_os_str().as_encoded_bytes())),
-            "notify_on_write":cfg.notify_on_write,"debug":cfg.debug,"quiet":cfg.quiet}
-    })));
+            "notify_on_write":cfg.notify_on_write,"debug":cfg.debug}
+    }))));
     let result = run_observed(command, cfg, &mut notify, &mut operation);
     if let Some(operation) = operation {
-        match &result {
-            Ok(outcome) => operation.finish(
-                cli_common::observation::Outcome::Success,
-                serde_json::json!({"exit_code":outcome.exit_code,"data_loss":outcome.data_loss}),
-            ),
-            Err(error) => operation.finish(
-                cli_common::observation::Outcome::Error,
-                serde_json::json!({"error":error.to_string(),"structured_result":"enclosing run span return"}),
-            ),
-        }
+        let content = observation.as_ref().map_or(serde_json::Value::Null, |o| {
+            o.capture(|| match &result {
+                Ok(outcome) => serde_json::json!({"exit_code":outcome.exit_code,"data_loss":outcome.data_loss}),
+                Err(error) => serde_json::json!({"error":error.to_string(),"structured_result":"enclosing run span return"}),
+            })
+        });
+        operation.finish(
+            if result.is_ok() {
+                cli_common::observation::Outcome::Success
+            } else {
+                cli_common::observation::Outcome::Error
+            },
+            content,
+        );
     }
     scope.finish(&result);
     result
@@ -527,7 +529,7 @@ fn run_observed(
                 if let Some(operation) = operation {
                     operation.work_bytes(u64::try_from(data.len()).unwrap_or(u64::MAX));
                     operation.progress(
-                        serde_json::json!({"stream":stream.label(),"bytes":cli_common::observation::public_bytes(&data)}),
+                        || serde_json::json!({"stream":stream.label(),"bytes":cli_common::observation::public_bytes(&data)}),
                     );
                 }
                 let subscribers = match stream {
@@ -674,7 +676,11 @@ fn read_stream<R: Read>(stream: Stream, mut source: R, tx: &Sender<ChannelMessag
                 break;
             }
             Ok(read) => {
-                tracing::info!(public_child_bytes=?cli_common::observation::public_bytes(&buffer[..read]), work_bytes=read as u64);
+                if cli_common::observation::trace_enabled() {
+                    tracing::info!(public_child_bytes=?cli_common::observation::public_bytes(&buffer[..read]), work_bytes=read as u64);
+                } else {
+                    tracing::info!(work_bytes = read as u64);
+                }
                 let data = buffer[..read].to_vec();
                 if tx.send(ChannelMessage::Data { stream, data }).is_err() {
                     outcome = cli_common::observation::Outcome::Cancelled;

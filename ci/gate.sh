@@ -15,7 +15,11 @@ mkdir -p .lane
 export PN_OBSERVE_ARTIFACT_DIR="$PWD/.lane/observations"
 export PN_OBSERVE_LEVEL=default
 gate_started=$(date -u +%s.%N)
-python3 -B ci/gate_resources.py sample .lane/gate-resource-start.json || failed=1
+source ci/gate_resources.sh
+resource_root=$(gate_cgroup_root 2>/dev/null) || resource_root=
+gate_resource_sample .lane/gate-resource-start.raw "$resource_root" 2>/dev/null || true
+times > .lane/gate-cpu-start.raw
+: > .lane/gate-steps.tsv
 source_id=$(time git rev-parse HEAD)
 export CARGO_NET_OFFLINE=true
 rm -f .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json
@@ -23,18 +27,16 @@ run_step() {
     local name=$1
     shift
     local status started ended wall
-    python3 -B ci/gate_resources.py sample ".lane/gate-${name}-resource-start.json" || failed=1
+    gate_resource_sample ".lane/gate-${name}-resource-start.raw" "$resource_root" 2>/dev/null || true
     started=$(date -u +%s.%N)
+    local TIMEFORMAT="OWN-TIME user=%U sys=%S"
     { time "$@"; } > ".lane/gate-${name}.log" 2>&1
     status=$?
     ended=$(date -u +%s.%N)
-    python3 -B ci/gate_resources.py sample ".lane/gate-${name}-resource-end.json" || failed=1
+    gate_resource_sample ".lane/gate-${name}-resource-end.raw" "$resource_root" 2>/dev/null || true
     wall=$(awk -v s="$started" -v e="$ended" 'BEGIN { printf "%.6f", e-s }')
     cat ".lane/gate-${name}.log"
-    printf 'STEP=%s STATUS=%s WALL=%ss ' "$name" "$status" "$wall"
-    python3 -B ci/gate_observation_counts.py ".lane/gate-${name}.log" || failed=1
-    python3 -B ci/gate_resources.py report ".lane/gate-${name}-resource-start.json" ".lane/gate-${name}-resource-end.json"
-    if [ "$?" -ne 0 ]; then failed=1; fi
+    printf '%s\t%s\t%s\t%s\n' "$name" "$status" "$started" "$ended" >> .lane/gate-steps.tsv
     statuses+=("$name=$status/${wall}s")
     if [ "$status" -ne 0 ]; then failed=1; fi
     # Reporting has its own structural status; elapsed time never changes status.
@@ -100,10 +102,15 @@ grep 'NURSERY-FINDINGS=' .lane/gate-nursery-advisory.log || true
 printf 'STEP-SUMMARY %s\n' "${statuses[*]}"
 python3 ci/discipline.py diagnostics
 gate_ended=$(date -u +%s.%N)
-python3 -B ci/gate_resources.py sample .lane/gate-resource-end.json || failed=1
+gate_resource_sample .lane/gate-resource-end.raw "$resource_root" 2>/dev/null || true
+times > .lane/gate-cpu-end.raw
 gate_wall=$(awk -v s="$gate_started" -v e="$gate_ended" 'BEGIN { printf "%.6f", e-s }')
-printf 'GATE-RESOURCES WALL=%ss ' "$gate_wall"
-python3 -B ci/gate_resources.py report .lane/gate-resource-start.json .lane/gate-resource-end.json || failed=1
+if ! python3 -B ci/gate_resources.py .lane "$gate_wall"; then
+    while IFS=$'\t' read -r name status started ended; do
+        printf 'STEP=%s STATUS=%s WALL=unavailable own_user_s=unavailable own_sys_s=unavailable node_load=unavailable sampler=unavailable\n' "$name" "$status"
+    done < .lane/gate-steps.tsv
+    printf 'GATE-RESOURCES WALL=%ss own_user_s=unavailable own_sys_s=unavailable node_load=unavailable sampler=unavailable\n' "$gate_wall"
+fi
 python3 -B ci/devperf.py --operation gate --duration-s "$gate_wall" --outcome "exit:$failed" \
     --source "$source_id" --budget gate --findings .lane/performance-findings.jsonl
 if [ "$?" -ne 0 ]; then failed=1; fi

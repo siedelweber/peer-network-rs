@@ -1286,8 +1286,8 @@
       "path": "packages/execwrap/tests/integration.rs",
       "claim": "EXECWRAP::claim:cli:redirect-error-only-still-forwards-stdout",
       "before": "redirect error only still forwards stdout.",
-      "after": "Claim: With only stderr redirected, quiet mode forwards exact stdout bytes and writes exact stderr bytes to its file, preserving the unsubscribed stream.",
-      "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+      "after": "Claim: With only stderr redirected, the wrapper forwards exact stdout bytes and writes exact stderr bytes to its file, preserving the unsubscribed stream.",
+      "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
     },
     {
       "operation": "execwrap::integration::bare_separator_invocation_succeeds",
@@ -1436,10 +1436,50 @@
     {
       "operation": "ci::test_observe_runtime.Processes.test_four_mode_results",
       "path": "ci/test_observe_runtime.py",
-      "before": "Claim: Disabled, enabled, selected-out and locally failing-export executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes.",
       "claim": "ROOT::claim:discipline:four-observation-modes-preserve-command-results",
-      "after": "Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes; an unknown emission level refuses document execution with a named configuration diagnostic.",
-      "review": "Read the four-mode process fixture: the same workload runs disabled, default, trace and trace with controlled export failure; exact exit and stdout are compared, default absence of spans and zero delivery loss are independently asserted."
+      "before": "Claim: Disabled, enabled, selected-out and locally failing-export executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes.",
+      "after": "Claim: Disabled, default, full-trace and locally failing-export full-trace executions preserve the four-package workload's exact JSON stdout and exit; all enabled modes count the same labelled operations, default omits only unobserved series, and an unknown level refuses document execution before work.",
+      "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+    },
+    {
+      "operation": "cli-common::observation::tests::default_emission",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:default-emission-retains-problems-and-cost",
+      "before": "Claim: Default emission never formats operation payloads, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.",
+      "after": "Claim: Default emission counts and times nested labelled work without constructing byte payloads or formatting Debug content, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.",
+      "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+    },
+    {
+      "operation": "cli-common::observation::tests::content_artifact_publication",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:large-content-is-addressed-once",
+      "before": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt existing content is refused rather than trusted.",
+      "after": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from a fresh synced file rather than trusted.",
+      "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+    },
+    {
+      "operation": "ci::test_claims.Evidence.test_bite_one_entry",
+      "path": "ci/test_claims.py",
+      "claim": "ROOT::claim:testing:bite-one-entry-holds-block-implementation",
+      "before": "Claim: An owned bite-1 entry hold blocks a records implementation even when other scoped evidence passes; only admitted source-matched support clears that prerequisite.",
+      "after": "Claim: A conventional records directory or a renamed pn-records workspace member triggers entry refusal until every row has passing scoped support and its named owner's admission with an evidence kind and recorded evidence; status alone cannot clear the hold.",
+      "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+    },
+    {
+      "operation": "ci::test_observe.Admission.test_resource_samples",
+      "path": "ci/test_observe.py",
+      "claim": "ROOT::claim:discipline:cgroup-deltas-preserve-unavailable-readings",
+      "before": "Claim: Cgroup counters, PSI percentages and memory readings retain their units and start/end deltas, while an absent file or migrated cgroup makes its delta unavailable rather than zero.",
+      "after": "Claim: Bash-sampled node-load counters retain units and unavailable readings, PSI stall deltas divide by wall rather than subtracting averages, and the final join keeps a step's own CPU separate; missing or corrupt samples never invent zero work.",
+      "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+    },
+    {
+      "operation": "pn-interchange::deterministic_encoding::float_acquisition_refuses_noncanonical_nans",
+      "path": "packages/interchange/tests/deterministic_encoding.rs",
+      "claim": "INTERCHANGE::claim:encoding:float-acquisition-refuses-noncanonical-nans",
+      "before": "Claim: Float acquisition preserves the sole canonical NaN and refuses both signs and multiple quiet or signalling NaN payloads with NonCanonicalFloat, preventing acquisition from silently normalizing distinct input bits.",
+      "after": "Claim: Float acquisition preserves the sole canonical NaN and refuses both signs and multiple quiet or signalling NaN payloads with `NonCanonicalFloat`, preventing acquisition from silently normalizing distinct input bits.",
+      "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
     }
   ]
 }

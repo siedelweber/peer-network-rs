@@ -149,7 +149,7 @@ pub(super) struct Bridge {
 }
 
 impl Bridge {
-    pub(super) fn new(config: ExportConfig) -> Result<Self, Box<dyn std::error::Error + Send + Sync>> {
+    pub(super) fn new(config: ExportConfig) -> Result<Self, crate::observation::BootstrapError> {
         // Acquisition wraps the owned environment buffer immediately; only presence
         // is examined, and dependency builders never see a private header value.
         for signal in ["", "TRACES_", "METRICS_"] {
@@ -157,7 +157,7 @@ impl Bridge {
                 let name = format!("OTEL_EXPORTER_OTLP_{signal}{setting}");
                 let secret = std::env::var_os(&name).map(|value| SecretBox::new(value.into_encoded_bytes().into_boxed_slice()));
                 if secret.is_some() {
-                    return Err(format!("{name} refused; use secret-owned ExportConfig").into());
+                    return Err(crate::observation::EmissionConfigurationError::ExporterEnvironment(name).into());
                 }
             }
         }
@@ -166,12 +166,14 @@ impl Bridge {
             .with_http()
             .with_endpoint("http://export.invalid/v1/traces")
             .with_http_client(Client(config.clone()))
-            .build()?;
+            .build()
+            .map_err(|error| crate::observation::ObserverUnavailable::Exporter(error.to_string()))?;
         let metric_exporter = opentelemetry_otlp::MetricExporter::builder()
             .with_http()
             .with_endpoint("http://export.invalid/v1/metrics")
             .with_http_client(Client(config))
-            .build()?;
+            .build()
+            .map_err(|error| crate::observation::ObserverUnavailable::Exporter(error.to_string()))?;
         let resource = opentelemetry_sdk::Resource::builder_empty()
             .with_attribute(KeyValue::new("service.name", "peer-network-command"))
             .build();
@@ -187,34 +189,37 @@ impl Bridge {
         let failures = Arc::new(Mutex::new(Vec::new()));
         let worker_failures = failures.clone();
         let worker_reader = reader.clone();
-        std::thread::Builder::new().name("observation-export".into()).spawn(move || {
-            use opentelemetry_sdk::metrics::exporter::PushMetricExporter;
-            while let Ok(message) = receiver.recv() {
-                let mut acknowledgement = None;
-                let result = match message {
-                    Message::Span(span) => futures_executor::block_on(span_exporter.export(vec![*span])),
-                    Message::Collect(done) => {
-                        let mut metrics = ResourceMetrics::default();
-                        let result = worker_reader
-                            .collect(&mut metrics)
-                            .and_then(|()| futures_executor::block_on(metric_exporter.export(&metrics)));
-                        acknowledgement = Some(done);
-                        result
+        std::thread::Builder::new()
+            .name("observation-export".into())
+            .spawn(move || {
+                use opentelemetry_sdk::metrics::exporter::PushMetricExporter;
+                while let Ok(message) = receiver.recv() {
+                    let mut acknowledgement = None;
+                    let result = match message {
+                        Message::Span(span) => futures_executor::block_on(span_exporter.export(vec![*span])),
+                        Message::Collect(done) => {
+                            let mut metrics = ResourceMetrics::default();
+                            let result = worker_reader
+                                .collect(&mut metrics)
+                                .and_then(|()| futures_executor::block_on(metric_exporter.export(&metrics)));
+                            acknowledgement = Some(done);
+                            result
+                        }
+                    };
+                    if let Err(error) = result {
+                        worker_lost.fetch_add(1, Ordering::Relaxed);
+                        if let Ok(mut failures) = worker_failures.try_lock()
+                            && failures.len() < CAPACITY
+                        {
+                            failures.push(error.to_string());
+                        }
                     }
-                };
-                if let Err(error) = result {
-                    worker_lost.fetch_add(1, Ordering::Relaxed);
-                    if let Ok(mut failures) = worker_failures.try_lock()
-                        && failures.len() < CAPACITY
-                    {
-                        failures.push(error.to_string());
+                    if let Some(done) = acknowledgement {
+                        let _ignored = done.try_send(());
                     }
                 }
-                if let Some(done) = acknowledgement {
-                    let _ignored = done.try_send(());
-                }
-            }
-        })?;
+            })
+            .map_err(|error| crate::observation::ObserverUnavailable::Exporter(error.to_string()))?;
         let tracer_provider = SdkTracerProvider::builder()
             .with_resource(resource)
             .with_span_processor(Processor {

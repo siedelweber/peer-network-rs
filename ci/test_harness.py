@@ -64,6 +64,7 @@ class Harness(unittest.TestCase):
         self.assertFalse(manifest.get('features'))
         self.assertFalse(manifest.get('bin'))
         self.assertTrue((root/'packages/interchange/src/lib.rs').is_file())
+        self.assertNotRegex((root/'packages/interchange/src/lib.rs').read_text(), r'\bno_std\b')
         self.assertFalse((root/'packages/interchange/src/main.rs').exists())
         self.assertEqual(set(manifest['dependencies']),{'regexml','thiserror','tracing'})
         self.assertTrue(manifest['lints']['workspace'])

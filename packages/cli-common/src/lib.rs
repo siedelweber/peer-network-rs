@@ -759,37 +759,47 @@ pub fn refuse_if_stdout_is_tty(binary_name: &str) {
 }
 
 /// Initialise `tracing-subscriber` with JSON output on stderr.
+/// # Errors
+/// Returns a typed configuration refusal or nonbinding observer unavailability.
 /// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
 /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
-pub fn init_json_tracing(level: tracing::Level) {
-    let _installed = try_init_json_tracing(level);
+pub fn init_json_tracing(level: tracing::Level) -> Result<observation::BootstrapGuard, observation::BootstrapError> {
+    try_init_json_tracing(level)
 }
 
 /// Try to initialise `tracing-subscriber` with JSON output on stderr.
 ///
-/// Returns `false` if another subscriber is already installed.
-#[must_use]
+/// # Errors
+/// Returns a typed configuration refusal or nonbinding observer unavailability.
 /// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
 /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
-pub fn try_init_json_tracing(level: tracing::Level) -> bool {
-    observation::bootstrap(true, false, level).is_ok()
+pub fn try_init_json_tracing(level: tracing::Level) -> Result<observation::BootstrapGuard, observation::BootstrapError> {
+    observation::bootstrap(true, false, level)
 }
 
 /// Initialise JSON stderr observation at `PN_OBSERVE_LEVEL`; legacy verbosity arguments do not enable payload persistence.
+/// # Errors
+/// Returns a typed configuration refusal or nonbinding observer unavailability.
 /// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
 /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
-pub fn init_json_tracing_with_debug(debug: bool, default_level: tracing::Level) {
-    let _installed = try_init_json_tracing_with_debug(debug, default_level);
+pub fn init_json_tracing_with_debug(
+    debug: bool,
+    default_level: tracing::Level,
+) -> Result<observation::BootstrapGuard, observation::BootstrapError> {
+    try_init_json_tracing_with_debug(debug, default_level)
 }
 
 /// Try to initialise JSON stderr observation at `PN_OBSERVE_LEVEL`; legacy verbosity arguments do not enable payload persistence.
 ///
-/// Returns `false` if another subscriber is already installed.
-#[must_use]
+/// # Errors
+/// Returns a typed configuration refusal or nonbinding observer unavailability.
 /// Justified: This executable bootstrap or termination adapter surrounds installation and handoff to the labelled command boundary; pre-installation control records remain direct and process termination fabricates no completion.
 /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
-pub fn try_init_json_tracing_with_debug(debug: bool, default_level: tracing::Level) -> bool {
-    observation::bootstrap(true, debug, default_level).is_ok()
+pub fn try_init_json_tracing_with_debug(
+    debug: bool,
+    default_level: tracing::Level,
+) -> Result<observation::BootstrapGuard, observation::BootstrapError> {
+    observation::bootstrap(true, debug, default_level)
 }
 
 /// Serialise `value` as one JSON object + trailing newline to stdout.
@@ -1131,7 +1141,7 @@ impl Write for LockedStderrWriter {
 /// binary's `Args` struct via `#[command(flatten)]`.
 #[derive(clap::Args)]
 pub struct BaseArgs {
-    /// Enable debug-level logging on stderr.
+    /// Retained output-contract flag; does not select observation level. Use `PN_OBSERVE_LEVEL`.
     #[arg(long)]
     pub debug: bool,
 }

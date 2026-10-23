@@ -3,6 +3,7 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "design-correspondence"
+label_name = "design-correspondence"
 label = "expt:devperf:design-correspondence"
 operation = "full design correspondence check"
 measured_ms = 283
@@ -14,3 +15,18 @@ reason = "Profiling attributed 32.550 of 32.973 instrumented seconds to 71175 re
 placement = "required per-change gate under the ordinary-check budget"
 owner = "foundation implementer and repository reviewer"
 settlement = "Withdrawn because indexing removed the expensive repeated scan without weakening its predicate. This entry records the withdrawal and preserves the historical citation target; it grants no exception"
+
+[[rows]]
+name = "pn-interchange::regexp::tests::nullable_counted_membership_20"
+label_name = "nullable-count-twenty"
+label = "expt:devperf:nullable-count-twenty"
+operation = "nullable counted repetition oracle and corrected matcher at count twenty"
+measured_ms = 157.7
+budget_ms = 200
+ordinary_budget = "unit"
+status = "admitted"
+measurement = "Paired initial 34.04 to 70.95 ms and warmed 33.34 to 70.67 ms; recorded gate 157.7 ms."
+reason = "The approximately 2.1-fold increase is the accepted cost of counted-search correctness: exact membership takes priority over oracle speed. The 200 ms warning budget rounds the recorded gate cost upward; it changes no predicate, retry or timeout."
+placement = "required fast-tier unit case"
+owner = "interchange implementer and contract reviewer"
+settlement = "Accepted correctness cost; revisit on matcher or fixture changes without weakening membership evidence."

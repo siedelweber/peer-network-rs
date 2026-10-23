@@ -55,7 +55,7 @@ fn workload() -> Result<serde_json::Value, Box<dyn std::error::Error + Send + Sy
 }
 
 fn main() -> ExitCode {
-    let mode = std::env::args().nth(1).unwrap_or_else(|| "enabled".into());
+    let mode = std::env::args().nth(1).unwrap_or_else(|| "default".into());
     let guard = if mode == "failing-export" {
         cli_common::observation::bootstrap_with_export(
             true,
@@ -66,31 +66,36 @@ fn main() -> ExitCode {
                 credential: PrivateString::new(SecretRole::Authentication, SecretString::from("fixture-private-token")),
             },
         )
-        .map_err(|error| error.to_string())
     } else {
-        cli_common::observation::bootstrap(
-            mode != "disabled",
-            false,
-            if mode == "sampled" {
-                tracing::Level::ERROR
-            } else {
-                tracing::Level::INFO
-            },
-        )
-        .map_err(|error| error.to_string())
+        cli_common::observation::bootstrap(mode != "disabled", false, tracing::Level::INFO)
     };
-    match guard {
-        // This executable already owns bootstrap. The convenience command runner
-        // would bootstrap again and turn the disabled comparison back on.
-        Ok(_guard) => match workload() {
-            Ok(output) => match cli_common::emit(&output) {
-                Ok(()) => ExitCode::SUCCESS,
-                Err(_) => ExitCode::FAILURE,
-            },
+    let _guard = match guard {
+        Ok(guard) => Some(guard),
+        Err(cli_common::observation::BootstrapError::Unavailable(_)) => None,
+        Err(error @ cli_common::observation::BootstrapError::Configuration(_)) => {
+            let mut record = cli_common::ControlPlaneRecord::usage_error("observation-compare", "observation_configuration");
+            record.message = error.to_string();
+            let _ignored = cli_common::emit_control_plane_record(&record);
+            return cli_common::CommandExit::Usage.exit_code();
+        }
+    };
+    // This executable already owns bootstrap. The convenience command runner
+    // would bootstrap again and turn the disabled comparison back on.
+    let exit = match workload() {
+        Ok(output) => match cli_common::emit(&output) {
+            Ok(()) => ExitCode::SUCCESS,
             Err(_) => ExitCode::FAILURE,
         },
-        Err(error) => cli_common::run_stdout_json_command("observation-compare", false, tracing::Level::INFO, || {
-            Err::<serde_json::Value, _>(error)
-        }),
+        Err(_) => ExitCode::FAILURE,
+    };
+    if std::env::var_os("PN_TEST_OBSERVATION_RENDEZVOUS").is_some() {
+        if let Some(observation) = cli_common::observation::Observation::current() {
+            observation.summarize();
+        }
+        // The process fixture releases this read after receiving its summary.
+        // This is test ordering, not a longer production drain deadline.
+        let mut released = [0];
+        let _ignored = std::io::Read::read_exact(&mut std::io::stdin(), &mut released);
     }
+    exit
 }

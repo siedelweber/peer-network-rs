@@ -325,7 +325,7 @@ fn public_child_urls_are_observed() {
 
 /// Redirecting only stderr must still relay stdout to the parent.
 ///
-/// Claim: With only stderr redirected, quiet mode forwards exact stdout bytes and writes exact stderr bytes to its file, preserving the unsubscribed stream.
+/// Claim: With only stderr redirected, the wrapper forwards exact stdout bytes and writes exact stderr bytes to its file, preserving the unsubscribed stream.
 /// ´claim:cli:redirect-error-only-still-forwards-stdout´
 /// ´test:integration:redirect-error-only-still-forwards-stdout´
 #[test]
@@ -334,7 +334,6 @@ fn redirect_error_only_still_forwards_stdout() {
     let log = dir.path().join("err.log");
 
     let output = run(&[
-        "--quiet",
         "--redirect-error",
         log.to_str().expect("utf8 path"),
         "--",
@@ -368,7 +367,7 @@ fn bare_separator_invocation_succeeds() {
 #[test]
 fn unredirected_streams_pass_through_pipes() {
     // No redirection at all: both streams relay.
-    let output = run(&["--quiet", "--", "sh", "-c", "printf 'out-bytes'; printf 'err-bytes' >&2"]);
+    let output = run(&["--", "sh", "-c", "printf 'out-bytes'; printf 'err-bytes' >&2"]);
     assert!(output.status.success());
     assert_eq!(output.stdout, b"out-bytes");
     let stderr = String::from_utf8_lossy(&output.stderr);
@@ -378,7 +377,6 @@ fn unredirected_streams_pass_through_pipes() {
     let dir = tempfile::tempdir().expect("tempdir");
     let log = dir.path().join("out.log");
     let output = run(&[
-        "--quiet",
         "--redirect-output",
         log.to_str().expect("utf8 path"),
         "--",
