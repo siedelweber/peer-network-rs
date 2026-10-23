@@ -517,7 +517,7 @@ fn status_after_stalled_delivery() {
     observation.refuse_drain_wait = true;
     observation.emit(json!({"public":"first"}));
     entry.recv_timeout(Duration::from_secs(30)).unwrap();
-    for index in 0..QUEUE_RECORDS - 5 {
+    for index in 0..59 {
         observation.emit(json!({"public":index}));
     }
     // Seed the reserved queues without redundant wakes: the ordinary queue
@@ -555,6 +555,75 @@ fn status_after_stalled_delivery() {
     );
     assert_eq!(status["drain_timeouts"], 1);
     assert_eq!(status["drain_unavailable"], 1);
+}
+
+/// Claim: A 241-record trace burst including its reserved metric summary survives a completely stalled writer without blocking the producer or losing records; final delivery counts equal captured rows after a rendezvous releases the writer.
+/// ´claim:cli:trace-bursts-fit-the-bounded-queue´
+/// ´test:unit:trace-burst-capacity´
+#[test]
+fn trace_burst_capacity() {
+    struct Stalled {
+        capture: Capture,
+        entered: mpsc::SyncSender<()>,
+        release: mpsc::Receiver<()>,
+        status: mpsc::SyncSender<()>,
+        first: bool,
+    }
+    impl Write for Stalled {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            if self.first {
+                self.first = false;
+                self.entered.send(()).unwrap();
+                self.release.recv().unwrap();
+            }
+            let result = self.capture.write(bytes)?;
+            if serde_json::from_slice::<Value>(bytes).unwrap()["kind"] == "observation_status" {
+                self.status.send(()).unwrap();
+            }
+            Ok(result)
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+    let capture = Capture::default();
+    let (entered, entry) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
+    let (status, seen) = mpsc::sync_channel(1);
+    let mut observation = Observation::with_writer(
+        Stalled {
+            capture: capture.clone(),
+            entered,
+            release: released,
+            status,
+            first: true,
+        },
+        Arc::new(ManualClock(AtomicU64::new(0))),
+    )
+    .unwrap();
+    observation.full_trace = true;
+    observation.refuse_drain_wait = true;
+    observation.emit(json!({"kind":"trace","public":0}));
+    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    for index in 1..240 {
+        observation.emit(json!({"kind":"trace","public":index}));
+    }
+    assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
+    drop(BootstrapGuard(Some(observation.clone())));
+    release.send(()).unwrap();
+    seen.recv_timeout(Duration::from_secs(30)).unwrap();
+    let bytes = capture.0.lock().unwrap();
+    let rows: Vec<Value> = bytes
+        .split(|byte| *byte == b'\n')
+        .filter(|row| !row.is_empty())
+        .map(|row| serde_json::from_slice(row).unwrap())
+        .collect();
+    assert_eq!(rows.len(), 242);
+    let status = rows.last().unwrap();
+    assert_eq!(status["kind"], "observation_status");
+    assert_eq!(status["delivered_records"], 241);
+    assert_eq!(status["lost_records"], 0);
+    assert_eq!(status["delivered_records"], rows.len() - 1);
 }
 
 /// Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait.

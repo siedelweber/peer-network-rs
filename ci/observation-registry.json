@@ -4043,6 +4043,193 @@
       "mode": "instrumented",
       "shape": "shape-records",
       "operation": "assemble-boundary-inputs"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedLeg::id",
+      "owner": "RECORDS",
+      "signature": "fn id (& self) -> & EdgeId",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedLeg::source",
+      "owner": "RECORDS",
+      "signature": "fn source (& self) -> & PublicReference",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedLeg::target",
+      "owner": "RECORDS",
+      "signature": "fn target (& self) -> & PublicReference",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::id",
+      "owner": "RECORDS",
+      "signature": "fn id (& self) -> & ActId",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::body",
+      "owner": "RECORDS",
+      "signature": "fn body (& self) -> & StructuralBody",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::legs",
+      "owner": "RECORDS",
+      "signature": "fn legs (& self) -> & [ValidatedLeg]",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::projections",
+      "owner": "RECORDS",
+      "signature": "fn projections (& self) -> & RemovableProjections",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::protocol_references",
+      "owner": "RECORDS",
+      "signature": "fn protocol_references (& self) -> & [PublicReference]",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::authentication_evidence",
+      "owner": "RECORDS",
+      "signature": "fn authentication_evidence (& self) -> & [u8]",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::finalization_epoch",
+      "owner": "RECORDS",
+      "signature": "fn finalization_epoch (& self) -> u64",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::authoritative_position",
+      "owner": "RECORDS",
+      "signature": "fn authoritative_position (& self) -> u64",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "PrincipalClosure::root",
+      "owner": "RECORDS",
+      "signature": "fn root (& self) -> & ActId",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "PrincipalClosure::members",
+      "owner": "RECORDS",
+      "signature": "fn members (& self) -> & [ActId]",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "BoundaryInputs < 'a >::boundary",
+      "owner": "RECORDS",
+      "signature": "fn boundary (& self) -> u64",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "BoundaryInputs < 'a >::acts",
+      "owner": "RECORDS",
+      "signature": "fn acts (& self) -> & [& 'a ValidatedAct]",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "BoundaryInputs < 'a >::closures",
+      "owner": "RECORDS",
+      "signature": "fn closures (& self) -> & [PrincipalClosure]",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "BoundaryInputs < 'a >::work",
+      "owner": "RECORDS",
+      "signature": "fn work (& self) -> Option < u64 >",
+      "claim": "ROOT::sig:design:records",
+      "mode": "instrumented",
+      "shape": "shape-records",
+      "operation": "complete-act-access"
     }
   ],
   "metrics": [
@@ -7945,6 +8132,193 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "Memoizes causal ancestors over the proposed set in strict placement order, excluding fixed history. Dependency tombstones have no closure role. Work increments are mirrored into records metering; private validation ensures resolved earlier parents. Returns proposals and their overlapping closures without partitioning."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedLeg::id",
+      "body": "{ & self . id }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedLeg::source",
+      "body": "{ & self . source }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedLeg::target",
+      "body": "{ & self . target }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::id",
+      "body": "{ & self . id }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::body",
+      "body": "{ & self . body }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::legs",
+      "body": "{ & self . legs }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::projections",
+      "body": "{ & self . projections }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::protocol_references",
+      "body": "{ & self . protocol_references }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::authentication_evidence",
+      "body": "{ & self . authentication_evidence }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::finalization_epoch",
+      "body": "{ self . finalization_epoch }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::authoritative_position",
+      "body": "{ self . authoritative_position }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::PrincipalClosure::root",
+      "body": "{ & self . root }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::PrincipalClosure::members",
+      "body": "{ & self . members }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::BoundaryInputs < 'a >::boundary",
+      "body": "{ self . boundary }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::BoundaryInputs < 'a >::acts",
+      "body": "{ & self . acts }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::BoundaryInputs < 'a >::closures",
+      "body": "{ & self . closures }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::BoundaryInputs < 'a >::work",
+      "body": "{ self . work }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
     }
   ],
   "generators": [
@@ -10708,13 +11082,13 @@
       "item": "ValidatedLeg",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Validated structural leg; no candidate removal field exists here.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedLeg { # [doc = \" Parent-and-role identity.\"] pub id : EdgeId , # [doc = \" Immutable source reference.\"] pub source : PublicReference , # [doc = \" Immutable target reference.\"] pub target : PublicReference , }"
+      "syntax": "# [doc = \" Validated structural leg; no candidate removal field exists here.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedLeg { # [doc = \" Parent-and-role identity.\"] id : EdgeId , # [doc = \" Immutable source reference.\"] source : PublicReference , # [doc = \" Immutable target reference.\"] target : PublicReference , }"
     },
     {
       "item": "ValidatedAct",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Immutable view owned by a validated snapshot, distinct from unchecked candidates.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedAct { # [doc = \" Structural identity, containing the sole author and family representation.\"] pub id : ActId , # [doc = \" Retained quantities, units, vintage and layout.\"] pub body : StructuralBody , # [doc = \" All required legs together, with act-derived dependency status.\"] pub legs : Vec < ValidatedLeg > , # [doc = \" Act-owned removable projections.\"] pub projections : RemovableProjections , # [doc = \" Immutable required public references.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public evidence retained without cryptographic certification.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Finalization epoch, not identity.\"] pub finalization_epoch : u64 , # [doc = \" Authoritative position, not identity.\"] pub authoritative_position : u64 , }"
+      "syntax": "# [doc = \" Immutable view owned by a validated snapshot, distinct from unchecked candidates.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedAct { # [doc = \" Structural identity, containing the sole author and family representation.\"] id : ActId , # [doc = \" Retained quantities, units, vintage and layout.\"] body : StructuralBody , # [doc = \" All required legs together, with act-derived dependency status.\"] legs : Vec < ValidatedLeg > , # [doc = \" Act-owned removable projections.\"] projections : RemovableProjections , # [doc = \" Immutable required public references.\"] protocol_references : Vec < PublicReference > , # [doc = \" Public evidence retained without cryptographic certification.\"] authentication_evidence : Vec < u8 > , # [doc = \" Finalization epoch, not identity.\"] finalization_epoch : u64 , # [doc = \" Authoritative position, not identity.\"] authoritative_position : u64 , }"
     },
     {
       "item": "ValidatedHistory",
@@ -10780,13 +11154,13 @@
       "item": "PrincipalClosure",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" One proposed root and its complete principal closure, without partition membership.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct PrincipalClosure { # [doc = \" Proposed structural root.\"] pub root : ActId , # [doc = \" Whole-act identities in authoritative order, with no duplicate within a closure.\"] pub members : Vec < ActId > , }"
+      "syntax": "# [doc = \" One proposed root and its complete principal closure, without partition membership.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct PrincipalClosure { # [doc = \" Proposed structural root.\"] root : ActId , # [doc = \" Whole-act identities in authoritative order, with no duplicate within a closure.\"] members : Vec < ActId > , }"
     },
     {
       "item": "BoundaryInputs",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Node visits, parent inspections, inherited-member insert attempts and emitted members.\"] # [doc = \" None means counter overflow, never a work-limit refusal.\"] pub work : Option < u64 > , # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] pub boundary : u64 , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] pub acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] pub closures : Vec < PrincipalClosure > , }"
+      "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Node visits, parent inspections, inherited-member insert attempts and emitted members.\"] # [doc = \" None means counter overflow, never a work-limit refusal.\"] work : Option < u64 > , # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] boundary : u64 , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] closures : Vec < PrincipalClosure > , }"
     }
   ],
   "class_decisions": [

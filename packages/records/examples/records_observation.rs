@@ -47,7 +47,7 @@ fn main() -> ExitCode {
     let mut missing = common::act(3, Layout::Paired);
     missing.legs.pop();
     let refused = validate_record(&[missing], &history, &[]).is_err();
-    let assembled = assemble_boundary_inputs(&accepted, 8).unwrap().acts.len();
+    let assembled = assemble_boundary_inputs(&accepted, 8).unwrap().acts().len();
     let misplaced = assemble_boundary_inputs(&accepted, 9).is_err();
     let exit = if cli_common::emit(&serde_json::json!({"empty_dependencies":empty_dependencies,"assembled":assembled,"misplaced":misplaced,"accepted_acts":count,"missing_co_leg_refused":refused,"resolved":resolved,"unresolved":unresolved,"edition":selected,"no_edition":no_edition})).is_ok() {
         ExitCode::SUCCESS

@@ -42,8 +42,9 @@ run_step() {
     # Reporting has its own structural status; elapsed time never changes status.
     local budget=ordinary-check
     if [ "$name" = tests ]; then budget=test-command; fi
+    if [ "$name" = observation-runtime ]; then budget=pure-suite; fi
     case "$name" in
-        clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests|benchmarks|observation-syntax|observation-runtime|observation-parser) budget=incremental-build ;;
+        clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests|benchmarks|observation-syntax|observation-build|observation-parser) budget=incremental-build ;;
     esac
     python3 -B ci/devperf.py --operation "$name" --duration-s "$wall" \
         --outcome "exit:$status" --source "$source_id" --budget "$budget" \
@@ -85,6 +86,7 @@ run_step determinism-documents cargo run -p documents --locked --profile gate --
 run_step design-correspondence python3 -B ci/design.py
 run_step design-tests python3 -B ci/run_ci.py test_design
 run_step benchmarks python3 -B ci/benchmarks.py
+run_step observation-build cargo build --offline --locked --profile gate -p execwrap -p pn-records --examples
 run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
 run_step observation-parser python3 -B ci/run_ci.py test_observe_syntax
 run_step observation-syntax python3 -B ci/observe.py

@@ -112,25 +112,18 @@ class Processes(unittest.TestCase):
         ´claim:discipline:interchange-refusals-have-contract-outcomes´
         ´test:integration:test-interchange-refusal´
         """
-        root=Path.cwd()
-        with tempfile.TemporaryDirectory(prefix='interchange-outcome-') as temporary:
-            fixture=Path(temporary);(fixture/'src').mkdir()
-            (fixture/'src/main.rs').write_bytes((root/'ci/fixtures/interchange_observation.rs').read_bytes())
-            (fixture/'Cargo.toml').write_text('[package]\nname="interchange-outcome-probe"\nversion="0.0.0"\nedition="2024"\n[workspace]\n[dependencies]\ncli-common={path='+json.dumps(str(root/'packages/cli-common'))+'}\npn-interchange={path='+json.dumps(str(root/'packages/interchange'))+'}\ntracing="0.1"\n[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\n')
-            build=run(['cargo','build','--offline','--profile','gate','--manifest-path',str(fixture/'Cargo.toml')])
-            self.assertEqual(build.returncode,0,build.stderr.decode())
-            distributions={}
-            for mode in ('default','trace'):
-                result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/interchange-outcome-probe')],mode,os.environ|{'PN_OBSERVE_LEVEL':mode})
-                self.assertEqual(result.returncode,0,result.stderr.decode())
-                rows=[json.loads(line) for line in result.stderr.splitlines()]
-                summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
-                stem='interchange__root__rule__observe__spans__'
-                distributions[mode]={k:v for k,v in distribution(summary).items() if k[0].startswith(stem)}
-                self.assertEqual(distributions[mode][stem+'completed_operations','refusal'],15)
-                self.assertNotIn((stem+'completed_operations','error'),distributions[mode])
-                print('INTERCHANGE-OBSERVATION level='+mode+' distribution='+json.dumps({str(k):v for k,v in distributions[mode].items()},sort_keys=True))
-            self.assertEqual(distributions['default'],distributions['trace'])
+        distributions={}
+        for mode in ('default','trace'):
+            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/interchange_observation')],mode,os.environ|{'PN_OBSERVE_LEVEL':mode})
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+            rows=[json.loads(line) for line in result.stderr.splitlines()]
+            summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
+            stem='interchange__root__rule__observe__spans__'
+            distributions[mode]={k:v for k,v in distribution(summary).items() if k[0].startswith(stem)}
+            self.assertEqual(distributions[mode][stem+'completed_operations','refusal'],15)
+            self.assertNotIn((stem+'completed_operations','error'),distributions[mode])
+            print('INTERCHANGE-OBSERVATION level='+mode+' distribution='+json.dumps({str(k):v for k,v in distributions[mode].items()},sort_keys=True))
+        self.assertEqual(distributions['default'],distributions['trace'])
 
     def test_records_entry(self):
         """Claim: The first domain entry counts and times successful validation, complete-act access, reference resolution and historical edition selection, validated history and boundary assembly, plus their typed refusals at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content.
@@ -138,8 +131,6 @@ class Processes(unittest.TestCase):
         ´test:integration:test-records-entry´
         """
         target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'
-        build=run(['cargo','build','--offline','--locked','--profile','gate','-p','pn-records','--example','records_observation'])
-        self.assertEqual(build.returncode,0,build.stderr.decode())
         artifact=Path('.lane/records-observation');artifact.mkdir(exist_ok=True)
         samples={};accounting={}
         for mode in ('disabled','default','trace'):
@@ -155,11 +146,11 @@ class Processes(unittest.TestCase):
             summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
             accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith('records__')}
             stem='records__root__sig__design__records__'
-            self.assertEqual(accounting[mode],{(stem+'started_operations',''):11,(stem+'completed_operations','success'):7,(stem+'completed_operations','refusal'):4})
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):12,(stem+'completed_operations','success'):8,(stem+'completed_operations','refusal'):4})
             elapsed=next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')
-            self.assertEqual(elapsed['count'],11)
+            self.assertEqual(elapsed['count'],12)
             per_operation={(row['operation'],row['outcome']):row['counter'] for row in summary['instruments'] if row['name']==stem+'completed_operations' and row['counter']}
-            expected={('dependency-status','success'):1,('validate-history','success'):1,('validate-record','success'):1,('validate-record','refusal'):1,('complete-act-access','success'):1,('resolve-public-reference','success'):1,('resolve-public-reference','refusal'):1,('select-effective-declaration','success'):1,('select-effective-declaration','refusal'):1,('assemble-boundary-inputs','success'):1,('assemble-boundary-inputs','refusal'):1}
+            expected={('dependency-status','success'):1,('validate-history','success'):1,('validate-record','success'):1,('validate-record','refusal'):1,('complete-act-access','success'):2,('resolve-public-reference','success'):1,('resolve-public-reference','refusal'):1,('select-effective-declaration','success'):1,('select-effective-declaration','refusal'):1,('assemble-boundary-inputs','success'):1,('assemble-boundary-inputs','refusal'):1}
             self.assertEqual(per_operation,expected)
             starts={row['operation']:row['counter'] for row in summary['instruments'] if row['name']==stem+'started_operations' and row['counter']}
             self.assertEqual(starts,{operation:sum(count for (name,_),count in expected.items() if name==operation) for operation,_ in expected})
@@ -171,7 +162,7 @@ class Processes(unittest.TestCase):
             self.assertEqual(instruments[stem+'input_bytes']['count'],3)
             self.assertEqual(instruments[stem+'records_per_boundary']['count'],1)
             self.assertEqual(instruments[stem+'records_per_boundary']['sum'],2)
-            self.assertEqual(instruments[stem+'work_operations']['counter'],15)
+            self.assertEqual(instruments[stem+'work_operations']['counter'],16)
             self.assertEqual(summary['lost_updates'],0)
             status=next(row for row in rows if row.get('kind')=='observation_status')
             self.assertEqual(status['delivered_records'],len(rows)-1)
@@ -181,7 +172,7 @@ class Processes(unittest.TestCase):
                 self.assertIn(b'authentication_evidence',result.stderr)
                 for operation in (b'validate-record',b'resolve-public-reference',b'select-effective-declaration'):
                     self.assertIn(operation,result.stderr)
-            print('RECORDS-OBSERVATION level='+mode+' started=11 success=7 refusal=4 error=0 timed=11 validated=2 resolved=1 refusals=4 assembled=2')
+            print('RECORDS-OBSERVATION level='+mode+' started=12 success=8 refusal=4 error=0 timed=12 validated=2 resolved=1 refusals=4 assembled=2')
         self.assertTrue(all(value==samples['disabled'] for value in samples.values()))
         self.assertEqual(accounting['default'],accounting['trace'])
 
@@ -219,8 +210,6 @@ class Processes(unittest.TestCase):
         ´test:integration:test-four-mode-results´
         """
         target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'
-        build=run(['cargo','build','--offline','--locked','--profile','gate','-p','execwrap','--example','observation_compare'])
-        self.assertEqual(build.returncode,0,build.stderr.decode())
         env={key:value for key,value in os.environ.items() if key!='RUST_LOG'}
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)

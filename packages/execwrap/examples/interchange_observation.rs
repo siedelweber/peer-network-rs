@@ -1,3 +1,5 @@
+//! Locked workspace witness for (´[ROOT-amend:observe:refusal-outcomes]´).
+
 use pn_interchange::{Content, ContentKey, Document, Envelope, NamespaceLabel, Registry, Value, Version};
 
 fn main() {
@@ -15,8 +17,14 @@ fn main() {
         Envelope::new(NamespaceLabel::parse("org.fixture").unwrap(), Version::new(1, 0, 0)),
         Content::new(),
     );
-    assert!(matches!(pn_interchange::accept(&Registry::new(), &document), pn_interchange::Verdict::Rejected(_)));
-    assert!(matches!(pn_interchange::dispatch_prefix(&Registry::new(), &document.to_canonical_bytes()).unwrap(), pn_interchange::Instrument::Refused(_)));
+    assert!(matches!(
+        pn_interchange::accept(&Registry::new(), &document),
+        pn_interchange::Verdict::Rejected(_)
+    ));
+    assert!(matches!(
+        pn_interchange::dispatch_prefix(&Registry::new(), &document.to_canonical_bytes()).unwrap(),
+        pn_interchange::Instrument::Refused(_)
+    ));
     drop(guard);
     if std::env::var_os("PN_TEST_OBSERVATION_RENDEZVOUS").is_some() {
         use std::io::Read;

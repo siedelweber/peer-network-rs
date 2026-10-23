@@ -183,11 +183,11 @@ pub enum DependencyStatus {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ValidatedLeg {
     /// Parent-and-role identity.
-    pub id: EdgeId,
+    id: EdgeId,
     /// Immutable source reference.
-    pub source: PublicReference,
+    source: PublicReference,
     /// Immutable target reference.
-    pub target: PublicReference,
+    target: PublicReference,
 }
 
 /// Immutable view owned by a validated snapshot, distinct from unchecked candidates.
@@ -195,21 +195,21 @@ pub struct ValidatedLeg {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ValidatedAct {
     /// Structural identity, containing the sole author and family representation.
-    pub id: ActId,
+    id: ActId,
     /// Retained quantities, units, vintage and layout.
-    pub body: StructuralBody,
+    body: StructuralBody,
     /// All required legs together, with act-derived dependency status.
-    pub legs: Vec<ValidatedLeg>,
+    legs: Vec<ValidatedLeg>,
     /// Act-owned removable projections.
-    pub projections: RemovableProjections,
+    projections: RemovableProjections,
     /// Immutable required public references.
-    pub protocol_references: Vec<PublicReference>,
+    protocol_references: Vec<PublicReference>,
     /// Public evidence retained without cryptographic certification.
-    pub authentication_evidence: Vec<u8>,
+    authentication_evidence: Vec<u8>,
     /// Finalization epoch, not identity.
-    pub finalization_epoch: u64,
+    finalization_epoch: u64,
     /// Authoritative position, not identity.
-    pub authoritative_position: u64,
+    authoritative_position: u64,
 }
 
 /// Previously accepted whole acts and external names, checked locally before use.
@@ -927,9 +927,9 @@ pub fn dependency_status(records: &ValidatedRecords, edge: &EdgeId) -> Result<De
 #[derive(Debug)]
 pub struct PrincipalClosure {
     /// Proposed structural root.
-    pub root: ActId,
+    root: ActId,
     /// Whole-act identities in authoritative order, with no duplicate within a closure.
-    pub members: Vec<ActId>,
+    members: Vec<ActId>,
 }
 
 /// Read-only whole-act inputs for the later graph partition.
@@ -938,13 +938,13 @@ pub struct PrincipalClosure {
 pub struct BoundaryInputs<'a> {
     /// Node visits, parent inspections, inherited-member insert attempts and emitted members.
     /// None means counter overflow, never a work-limit refusal.
-    pub work: Option<u64>,
+    work: Option<u64>,
     /// Fixed pre-epoch cut: history lies before it and proposals at or after it.
-    pub boundary: u64,
+    boundary: u64,
     /// Union of all closures, each whole act carried once in authoritative order.
-    pub acts: Vec<&'a ValidatedAct>,
+    acts: Vec<&'a ValidatedAct>,
     /// Overlap is retained; no connected components or disjoint blocks are computed.
-    pub closures: Vec<PrincipalClosure>,
+    closures: Vec<PrincipalClosure>,
 }
 
 /// Assemble principal closures against fixed pre-epoch history, preserving overlaps.
@@ -1037,6 +1037,307 @@ fn assemble(records: &ValidatedRecords, boundary: u64) -> Result<BoundaryInputs<
         closures,
         work,
     })
+}
+
+impl ValidatedLeg {
+    /// Read the validated id without permitting replacement.
+    /// (´def:acts:projection´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedLeg::id"
+        ),
+        ret
+    )]
+    pub fn id(&self) -> &EdgeId {
+        &self.id
+    }
+    /// Read the validated source without permitting replacement.
+    /// (´def:acts:projection´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedLeg::source"
+        ),
+        ret
+    )]
+    pub fn source(&self) -> &PublicReference {
+        &self.source
+    }
+    /// Read the validated target without permitting replacement.
+    /// (´def:acts:projection´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedLeg::target"
+        ),
+        ret
+    )]
+    pub fn target(&self) -> &PublicReference {
+        &self.target
+    }
+}
+
+impl ValidatedAct {
+    /// Read the validated id without permitting replacement.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedAct::id"
+        ),
+        ret
+    )]
+    pub fn id(&self) -> &ActId {
+        &self.id
+    }
+    /// Read the validated body without permitting replacement.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedAct::body"
+        ),
+        ret
+    )]
+    pub fn body(&self) -> &StructuralBody {
+        &self.body
+    }
+    /// Read the validated legs without permitting replacement.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedAct::legs"
+        ),
+        ret
+    )]
+    pub fn legs(&self) -> &[ValidatedLeg] {
+        &self.legs
+    }
+    /// Read the validated projections without permitting replacement.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedAct::projections"
+        ),
+        ret
+    )]
+    pub fn projections(&self) -> &RemovableProjections {
+        &self.projections
+    }
+    /// Read the validated protocol references without permitting replacement.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedAct::protocol_references"
+        ),
+        ret
+    )]
+    pub fn protocol_references(&self) -> &[PublicReference] {
+        &self.protocol_references
+    }
+    /// Read the validated authentication evidence without permitting replacement.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedAct::authentication_evidence"
+        ),
+        ret
+    )]
+    pub fn authentication_evidence(&self) -> &[u8] {
+        &self.authentication_evidence
+    }
+    /// Read the validated finalization epoch without permitting replacement.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedAct::finalization_epoch"
+        ),
+        ret
+    )]
+    pub fn finalization_epoch(&self) -> u64 {
+        self.finalization_epoch
+    }
+    /// Read the validated authoritative position without permitting replacement.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "ValidatedAct::authoritative_position"
+        ),
+        ret
+    )]
+    pub fn authoritative_position(&self) -> u64 {
+        self.authoritative_position
+    }
+}
+
+impl PrincipalClosure {
+    /// Read the validated root without permitting replacement.
+    /// (´def:acts:boundary-inputs´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "PrincipalClosure::root"
+        ),
+        ret
+    )]
+    pub fn root(&self) -> &ActId {
+        &self.root
+    }
+    /// Read the validated members without permitting replacement.
+    /// (´def:acts:boundary-inputs´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "PrincipalClosure::members"
+        ),
+        ret
+    )]
+    pub fn members(&self) -> &[ActId] {
+        &self.members
+    }
+}
+
+impl<'a> BoundaryInputs<'a> {
+    /// Read the validated boundary without permitting replacement.
+    /// (´def:acts:boundary-inputs´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "BoundaryInputs < 'a >::boundary"
+        ),
+        ret
+    )]
+    pub fn boundary(&self) -> u64 {
+        self.boundary
+    }
+    /// Read the validated acts without permitting replacement.
+    /// (´def:acts:boundary-inputs´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "BoundaryInputs < 'a >::acts"
+        ),
+        ret
+    )]
+    pub fn acts(&self) -> &[&'a ValidatedAct] {
+        &self.acts
+    }
+    /// Read the validated closures without permitting replacement.
+    /// (´def:acts:boundary-inputs´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "BoundaryInputs < 'a >::closures"
+        ),
+        ret
+    )]
+    pub fn closures(&self) -> &[PrincipalClosure] {
+        &self.closures
+    }
+    /// Read the validated work without permitting replacement.
+    /// (´def:acts:boundary-inputs´)
+    #[must_use]
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "complete-act-access",
+            source_item = "BoundaryInputs < 'a >::work"
+        ),
+        ret
+    )]
+    pub fn work(&self) -> Option<u64> {
+        self.work
+    }
 }
 
 #[cfg(test)]

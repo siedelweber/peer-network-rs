@@ -67,8 +67,8 @@ fn required_references() {
     let available = validate_history(&[], &[named("left"), named("right"), named("missing")]).unwrap();
     let records = [record.clone()];
     let view = validate_record(&records, &available, &[]).unwrap();
-    assert_eq!(view.acts()[0].id, record.id);
-    assert_eq!(view.acts()[0].projections, record.projections);
+    assert_eq!(view.acts()[0].id(), &record.id);
+    assert_eq!(view.acts()[0].projections(), &record.projections);
     assert_eq!(resolve_public_reference(&view, &edge), Ok(ReferenceOrigin::Batch));
 }
 
@@ -151,11 +151,11 @@ fn projection_removal() {
     record.projections.dependency = DependencyProjection::Tombstoned(9);
     let records = [record];
     let view = validate_record(&records, &resolved(), &[]).unwrap();
-    assert_eq!(view.acts()[0].legs.len(), 2);
-    for leg in &view.acts()[0].legs {
-        assert_eq!(dependency_status(&view, &leg.id), Ok(DependencyStatus::Tombstoned(9)));
+    assert_eq!(view.acts()[0].legs().len(), 2);
+    for leg in view.acts()[0].legs() {
+        assert_eq!(dependency_status(&view, leg.id()), Ok(DependencyStatus::Tombstoned(9)));
         assert_eq!(
-            resolve_public_reference(&view, &PublicReference::Edge(leg.id.clone())),
+            resolve_public_reference(&view, &PublicReference::Edge(leg.id().clone())),
             Ok(ReferenceOrigin::Batch)
         );
     }
@@ -327,7 +327,7 @@ fn dependency_content() {
     }
     let empty = validate_record(std::slice::from_ref(&root), &history, &[]).unwrap();
     assert_eq!(
-        dependency_status(&empty, &empty.acts()[0].legs[0].id),
+        dependency_status(&empty, empty.acts()[0].legs()[0].id()),
         Ok(DependencyStatus::FullEmpty)
     );
     let mut full = root;
@@ -335,9 +335,9 @@ fn dependency_content() {
     let view = validate_record(&[full], &history, &[]).unwrap();
     assert!(
         view.acts()[0]
-            .legs
+            .legs()
             .iter()
-            .all(|leg| dependency_status(&view, &leg.id) == Ok(DependencyStatus::Full))
+            .all(|leg| dependency_status(&view, leg.id()) == Ok(DependencyStatus::Full))
     );
 }
 
@@ -447,23 +447,27 @@ fn overlapping_closures() {
         }
         let view = validate_record(&proposals, &history, &[]).unwrap();
         let inputs = assemble_boundary_inputs(&view, 10).unwrap();
-        assert_eq!(inputs.boundary, 10);
+        assert_eq!(inputs.boundary(), 10);
         let expected = [vec![2], vec![2, 3], vec![2, 4], vec![2, 3, 5], vec![6]];
-        for (closure, ids) in inputs.closures.iter().zip(expected) {
-            assert_eq!(closure.members.iter().map(|id| id.sequence).collect::<Vec<_>>(), ids);
+        for (closure, ids) in inputs.closures().iter().zip(expected) {
+            assert_eq!(closure.members().iter().map(|id| id.sequence).collect::<Vec<_>>(), ids);
         }
-        let union: BTreeSet<_> = inputs.closures.iter().flat_map(|closure| closure.members.iter()).collect();
+        let union: BTreeSet<_> = inputs
+            .closures()
+            .iter()
+            .flat_map(|closure| closure.members().iter())
+            .collect();
         assert_eq!(union, proposals.iter().map(|act| &act.id).collect());
-        assert_eq!(inputs.acts.iter().map(|act| &act.id).collect::<BTreeSet<_>>(), union);
+        assert_eq!(inputs.acts().iter().map(|act| act.id()).collect::<BTreeSet<_>>(), union);
         assert!(
             inputs
-                .closures
+                .closures()
                 .iter()
-                .all(|closure| !closure.members.contains(&history_parent.id))
+                .all(|closure| !closure.members().contains(&history_parent.id))
         );
-        assert_eq!(inputs.acts[0].legs.len(), 2);
-        assert_eq!(inputs.acts[1].legs.len(), 2);
-        assert_eq!(inputs.work, Some(23));
+        assert_eq!(inputs.acts()[0].legs().len(), 2);
+        assert_eq!(inputs.acts()[1].legs().len(), 2);
+        assert_eq!(inputs.work(), Some(23));
     }
 }
 
@@ -494,8 +498,8 @@ fn boundary_refusals() {
     let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
     let view = validate_record(std::slice::from_ref(&root), &history, &[]).unwrap();
     let inputs = assemble_boundary_inputs(&view, 10).unwrap();
-    assert_eq!(inputs.acts.len(), 1);
-    assert_eq!(inputs.closures[0].members, vec![root.id]);
+    assert_eq!(inputs.acts().len(), 1);
+    assert_eq!(inputs.closures()[0].members(), vec![root.id]);
 }
 
 /// Claim: Asserted parents are canonical structural identifiers independent of removable dependency content; missing, self, duplicate, unsorted, excessive and non-earlier parents refuse their typed cause, while an earlier in-epoch parent is accepted.

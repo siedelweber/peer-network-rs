@@ -35,8 +35,8 @@ generators = 89
 
 [[rows]]
 name = "pn-records"
-operations = 7
-instrumented = 7
+operations = 24
+instrumented = 24
 exceptions = 0
 helpers = 0
 generators = 27

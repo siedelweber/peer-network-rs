@@ -73,7 +73,7 @@
       "requirements": [
         "complete-acts"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted with two integration witnesses; unit, crate/public-surface, conformance and property evidence held for the harness-evidence slice",
       "suite": "records"
     },
     {

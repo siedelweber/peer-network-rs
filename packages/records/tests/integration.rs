@@ -10,22 +10,22 @@ fn complete_acts_count_once() {
     let records = [act(1, Layout::Binary), act(2, Layout::Paired)];
     let validated = validate_record(&records, &resolved(), &[]).unwrap();
     assert_eq!(validated.acts().len(), 2);
-    assert_eq!(validated.acts().iter().map(|a| a.legs.len()).sum::<usize>(), 3);
+    assert_eq!(validated.acts().iter().map(|a| a.legs().len()).sum::<usize>(), 3);
     for (view, candidate) in validated.acts().iter().zip(&records) {
-        assert_eq!(view.id, candidate.id);
-        assert_eq!(view.body, candidate.body);
-        assert_eq!(view.protocol_references, candidate.protocol_references);
-        assert_eq!(view.authentication_evidence, candidate.authentication_evidence);
-        assert_eq!(view.finalization_epoch, candidate.finalization_epoch);
-        assert_eq!(view.authoritative_position, candidate.authoritative_position);
-        for (leg, original) in view.legs.iter().zip(&candidate.legs) {
-            assert_eq!(leg.id, original.id);
-            assert_eq!(leg.source, original.source);
-            assert_eq!(leg.target, original.target);
+        assert_eq!(view.id(), &candidate.id);
+        assert_eq!(view.body(), &candidate.body);
+        assert_eq!(view.protocol_references(), &candidate.protocol_references);
+        assert_eq!(view.authentication_evidence(), &candidate.authentication_evidence);
+        assert_eq!(view.finalization_epoch(), candidate.finalization_epoch);
+        assert_eq!(view.authoritative_position(), candidate.authoritative_position);
+        for (leg, original) in view.legs().iter().zip(&candidate.legs) {
+            assert_eq!(leg.id(), &original.id);
+            assert_eq!(leg.source(), &original.source);
+            assert_eq!(leg.target(), &original.target);
         }
     }
-    assert_eq!(validated.acts()[1].body.quantities[0].1.vintage, 2);
-    assert_eq!(validated.acts()[1].finalization_epoch, 5);
+    assert_eq!(validated.acts()[1].body().quantities[0].1.vintage, 2);
+    assert_eq!(validated.acts()[1].finalization_epoch(), 5);
 }
 
 /// (´claim:acts:complete-acts-are-counted-once´)
@@ -42,20 +42,20 @@ fn shared_ancestor_counts_once() {
     let proposals = [shared.clone(), roots[0].clone(), roots[1].clone()];
     let view = validate_record(&proposals, &resolved(), &[]).unwrap();
     let inputs = assemble_boundary_inputs(&view, 8).unwrap();
-    assert_eq!(inputs.closures.len(), 3);
-    assert!(inputs.closures.iter().all(|closure| closure.members.contains(&shared.id)));
-    assert_eq!(inputs.acts.len(), 3);
-    assert_eq!(inputs.acts.iter().filter(|act| act.id == shared.id).count(), 1);
-    assert_eq!(inputs.acts.iter().map(|act| act.legs.len()).sum::<usize>(), 5);
+    assert_eq!(inputs.closures().len(), 3);
+    assert!(inputs.closures().iter().all(|closure| closure.members().contains(&shared.id)));
+    assert_eq!(inputs.acts().len(), 3);
+    assert_eq!(inputs.acts().iter().filter(|act| act.id() == &shared.id).count(), 1);
+    assert_eq!(inputs.acts().iter().map(|act| act.legs().len()).sum::<usize>(), 5);
     let history = validate_history(&[shared], &[named("left"), named("right")]).unwrap();
     let view = validate_record(&roots, &history, &[]).unwrap();
     let inputs = assemble_boundary_inputs(&view, 9).unwrap();
-    assert_eq!(inputs.acts.len(), 2);
+    assert_eq!(inputs.acts().len(), 2);
     assert!(
         inputs
-            .closures
+            .closures()
             .iter()
-            .all(|closure| closure.members == vec![closure.root.clone()])
+            .all(|closure| closure.members() == vec![closure.root().clone()])
     );
-    assert_eq!(inputs.acts.iter().map(|act| act.legs.len()).sum::<usize>(), 3);
+    assert_eq!(inputs.acts().iter().map(|act| act.legs().len()).sum::<usize>(), 3);
 }
