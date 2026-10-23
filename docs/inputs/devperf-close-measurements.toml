@@ -1,0 +1,332 @@
+namespace = "org.peer-network.devperf.close-measurements"
+version = [1, 0, 0]
+
+[[rows]]
+name = "initial-1"
+campaign = "initial"
+configuration = "historical gate profile"
+case = "regexp::tests::nullable_counted_membership_20_equivalent"
+duration_ms = "34.039848"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.049432Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 47/9265 3131970"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "initial-2"
+campaign = "initial"
+configuration = "current gate profile"
+case = "regexp::tests::nullable_counted_membership_20"
+duration_ms = "70.951361"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.124975Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 51/9265 3131972"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "initial-3"
+campaign = "initial"
+configuration = "historical gate profile"
+case = "regexp::tests::oracle_language_facts"
+duration_ms = "56.111330"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.185380Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 49/9265 3131974"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "initial-4"
+campaign = "initial"
+configuration = "current gate profile"
+case = "regexp::tests::oracle_language_facts"
+duration_ms = "55.019226"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.244647Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 51/9265 3131976"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "initial-5"
+campaign = "initial"
+configuration = "historical gate profile"
+case = "tests::publication::an_absent_destination_is_published_publicly_readable"
+duration_ms = "24.728838"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.273932Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 48/9267 3131982"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "initial-6"
+campaign = "initial"
+configuration = "current gate profile"
+case = "tests::publication::an_absent_destination_is_published_publicly_readable"
+duration_ms = "3.280483"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.282004Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 48/9267 3131984"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "initial-7"
+campaign = "initial"
+configuration = "historical gate profile"
+case = "tests::publication::a_staging_failure_changes_no_final_destination"
+duration_ms = "0.521307"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.286602Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 48/9265 3131986"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "initial-8"
+campaign = "initial"
+configuration = "current gate profile"
+case = "tests::publication::a_staging_failure_changes_no_final_destination"
+duration_ms = "0.548257"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.291569Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 49/9265 3131988"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "initial-9"
+campaign = "initial"
+configuration = "historical aggregate, not like-for-like"
+case = "regexp::tests::nullable_counted_membership"
+duration_ms = "78.302951"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.374137Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 51/9265 3131990"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "initial-10"
+campaign = "initial"
+configuration = "current gate profile; no pre-4a counterpart"
+case = "observation::tests::provider_bridge"
+duration_ms = "106.820049"
+cache = "warm compiled binary; page cache retained; fresh process and per-test temporary roots"
+utc = "2026-10-23T12:43:50.487043Z"
+cpu = 11
+priority_nice = 19
+loadavg = "77.27 152.07 180.94 52/9265 3131992"
+context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
+level = "integration"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+
+[[rows]]
+name = "warmed-pair-1"
+campaign = "warmed-pair"
+configuration = "historical gate profile"
+case = "regexp::tests::nullable_counted_membership_20_equivalent"
+duration_ms = "33.340387"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:33.642573Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 39/9206 496407"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "34.915000"
+involuntary_context_switches = 4
+node_idle_percent = "64.52"
+
+[[rows]]
+name = "warmed-pair-2"
+campaign = "warmed-pair"
+configuration = "current gate profile"
+case = "regexp::tests::nullable_counted_membership_20"
+duration_ms = "70.669892"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:33.792001Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 39/9282 496418"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "72.416000"
+involuntary_context_switches = 4
+node_idle_percent = "64.55"
+
+[[rows]]
+name = "warmed-pair-3"
+campaign = "warmed-pair"
+configuration = "historical gate profile"
+case = "regexp::tests::oracle_language_facts"
+duration_ms = "55.883924"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:33.911099Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 32/9206 496427"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "57.466000"
+involuntary_context_switches = 4
+node_idle_percent = "65.93"
+
+[[rows]]
+name = "warmed-pair-4"
+campaign = "warmed-pair"
+configuration = "current gate profile"
+case = "regexp::tests::oracle_language_facts"
+duration_ms = "55.580675"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:34.029325Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 36/9214 496431"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "57.080000"
+involuntary_context_switches = 4
+node_idle_percent = "66.02"
+
+[[rows]]
+name = "warmed-pair-5"
+campaign = "warmed-pair"
+configuration = "historical gate profile"
+case = "tests::publication::an_absent_destination_is_published_publicly_readable"
+duration_ms = "2.550657"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:34.054606Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 37/9211 496435"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "1.973000"
+involuntary_context_switches = 6
+node_idle_percent = "68.75"
+
+[[rows]]
+name = "warmed-pair-6"
+campaign = "warmed-pair"
+configuration = "current gate profile"
+case = "tests::publication::an_absent_destination_is_published_publicly_readable"
+duration_ms = "1.649051"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:34.066186Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 38/9208 496439"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "2.349000"
+involuntary_context_switches = 5
+node_idle_percent = "62.86"
+
+[[rows]]
+name = "warmed-pair-7"
+campaign = "warmed-pair"
+configuration = "historical gate profile"
+case = "tests::publication::a_staging_failure_changes_no_final_destination"
+duration_ms = "0.636526"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:34.074626Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 35/9208 496443"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "2.052000"
+involuntary_context_switches = 7
+node_idle_percent = "80.00"
+
+[[rows]]
+name = "warmed-pair-8"
+campaign = "warmed-pair"
+configuration = "current gate profile"
+case = "tests::publication::a_staging_failure_changes_no_final_destination"
+duration_ms = "0.610447"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:34.083820Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 35/9208 496447"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "2.382000"
+involuntary_context_switches = 7
+node_idle_percent = "61.90"
+
+[[rows]]
+name = "warmed-pair-9"
+campaign = "warmed-pair"
+configuration = "historical aggregate, not like-for-like"
+case = "regexp::tests::nullable_counted_membership"
+duration_ms = "79.368025"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:34.248798Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 38/9208 496451"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "unit"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "80.862000"
+involuntary_context_switches = 4
+node_idle_percent = "66.00"
+
+[[rows]]
+name = "warmed-pair-10"
+campaign = "warmed-pair"
+configuration = "current gate profile; no pre-4a counterpart"
+case = "observation::tests::provider_bridge"
+duration_ms = "106.554115"
+cache = "warm compiled binary and one unmeasured invocation of this exact case immediately before the sample; fresh process and per-test temporary roots"
+utc = "2026-10-23T13:09:34.474063Z"
+cpu = 31
+priority_nice = 19
+loadavg = "46.40 63.56 121.90 37/9210 496461"
+context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+level = "integration"
+assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+child_cpu_ms = "10.062000"
+involuntary_context_switches = 6
+node_idle_percent = "67.60"
