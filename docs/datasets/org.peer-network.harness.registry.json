@@ -2950,6 +2950,7 @@
       "budget": "pure-suite",
       "cases": [
         "ci::test_claims.Evidence.test_bite_one_entry",
+        "ci::test_claims.Evidence.test_entry_basis_matches_authored_source",
         "ci::test_claims.Evidence.test_enforcement_switch",
         "ci::test_claims.Evidence.test_executed_admission",
         "ci::test_claims.Evidence.test_missing_area",

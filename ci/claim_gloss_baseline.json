@@ -805,6 +805,7 @@
     "ci::test_linter_entry.Conformance.test_non_parenthesized_import": "Claim: A bracketed import without citation parentheses fails with non_parenthesized_import even when its target exists, preserving the distinction between a citation and a bare imported form.",
     "ci::test_linter_entry.Conformance.test_no_form_span": "Claim: A parenthesized prefix-label pair without import brackets contributes no occurrence and never fails resolution; only a near-miss warning may accompany this ordinary text.",
     "cli-common::observation::tests::status_after_stalled_delivery": "Claim: With more than one delivery batch pending behind a stalled writer at guard drop, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.",
-    "cli-common::observation::tests::drain_timeout_preserves_loss": "Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait."
+    "cli-common::observation::tests::drain_timeout_preserves_loss": "Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait.",
+    "ci::test_claims.Evidence.test_entry_basis_matches_authored_source": "Claim: Changing an executed entry to review cannot bypass current execution support, because its basis must match the independently authored paragraph; duplicate and omitted classifications also refuse."
   }
 }

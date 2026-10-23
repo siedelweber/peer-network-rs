@@ -191,7 +191,21 @@ def bite_one_started(root):
     return False
 
 
-def enforce_entry(obligations, started, required=None, paragraphs=None):
+def entry_bases(paragraphs, required):
+    """Read the independent authored classification, not the rendered register."""
+    result={}
+    for basis in ('review','executed'):
+        label='ROOT::amend:decomposition:entry-'+basis+'-basis'
+        if label not in paragraphs:
+            raise StructuralError('missing authored entry basis paragraph: '+label)
+        for name in paragraphs[label]['citations'] & required:
+            if name in result: raise StructuralError('duplicate authored entry basis: '+name)
+            result[name]=basis
+    if set(result)!=required: raise StructuralError('authored entry bases omit an entry row')
+    return result
+
+
+def enforce_entry(obligations, started, required=None, paragraphs=None, bases=None):
     """A named entry hold remains a prerequisite, not a future-work caption."""
     entries=[row for row in obligations if row.get('entry_gate')=='ROOT::gate:design:bite-1']
     if required is not None and {row['name'] for row in entries}!=required:
@@ -202,6 +216,8 @@ def enforce_entry(obligations, started, required=None, paragraphs=None):
         basis=row.get('admission_basis')
         if basis not in ('review','executed'):
             raise StructuralError('bite-1 entry requires a declared admission basis')
+        if bases is not None and bases.get(row['name'])!=basis:
+            raise StructuralError('declared admission basis differs from authored entry basis: '+row['name'])
         admission=row.get('admission',{})
         if (not row.get('owner') or admission.get('owner')!=row['owner'] or not isinstance(admission.get('evidence_kind'),str) or not admission['evidence_kind'].strip()
                 or admission.get('status') not in ('held','submitted','admitted')):
@@ -284,7 +300,8 @@ def main(argv=None):
         result = evaluate(sites, expected, areas, obligations, declared, paragraphs,
                           [r for r in records if r.get('scope')=='case'], source)
         entry = paragraphs['ROOT::amend:decomposition:bite-one-entry-evidence']['citations'] & set(obligations)
-        result['entries']=enforce_entry(result['obligations'], bite_one_started(root), entry-{'ROOT::gate:design:bite-1'}, paragraphs)
+        required=entry-{'ROOT::gate:design:bite-1'}
+        result['entries']=enforce_entry(result['obligations'], bite_one_started(root), required, paragraphs, entry_bases(paragraphs,required))
         for row in result['entries']:
             print(f'CLAIM-ENTRY name={row["name"]} basis={row["basis"]} status={row["status"]}')
         reviews = reviewed_sites(sites, json.loads(Path('ci/claim_review.json').read_text()), json.loads(Path('ci/claim_gloss_baseline.json').read_text()))

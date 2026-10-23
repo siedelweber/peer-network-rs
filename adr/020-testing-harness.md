@@ -104,7 +104,7 @@
 | rfc8949-canonical | active | integration | pn-interchange-rust | fast | 67 |
 | rfc8949-refusal | active | integration | pn-interchange-rust | fast | 26 |
 | foundation-benchmarks | active | integration | pn-interchange-rust | fast | 2 |
-| ci::test_claims | active | unit | ci-python | fast | 22 |
+| ci::test_claims | active | unit | ci-python | fast | 23 |
 | ci::test_observe | active | unit | ci-python | fast | 12 |
 | ci::test_observe_runtime | active | integration | ci-python | fast | 2 |
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |

@@ -35,6 +35,28 @@ def fixture():
 
 
 class Evidence(unittest.TestCase):
+    def test_entry_basis_matches_authored_source(self):
+        """Claim: Changing an executed entry to review cannot bypass current execution support, because its basis must match the independently authored paragraph; duplicate and omitted classifications also refuse.
+        ´claim:testing:entry-basis-is-bound-to-authored-source´
+        ´test:integration:test-entry-basis-matches-authored-source´
+        """
+        from claims import entry_bases, enforce_entry
+        name='ROOT::gate:xchg:implementation'
+        review='ROOT::amend:decomposition:entry-review-basis'
+        executed='ROOT::amend:decomposition:entry-executed-basis'
+        paragraphs={review:dict(citations=set()),executed:dict(citations={name})}
+        bases=entry_bases(paragraphs,{name})
+        self.assertEqual(bases,{name:'executed'})
+        row=dict(name=name,entry_gate='ROOT::gate:design:bite-1',admission_basis='review')
+        with self.assertRaisesRegex(StructuralError,'differs from authored'):
+            enforce_entry([row],False,bases=bases)
+        paragraphs[review]['citations']={name}
+        with self.assertRaisesRegex(StructuralError,'duplicate authored'):
+            entry_bases(paragraphs,{name})
+        paragraphs[review]['citations']=set(); paragraphs[executed]['citations']=set()
+        with self.assertRaisesRegex(StructuralError,'omit an entry'):
+            entry_bases(paragraphs,{name})
+
     def test_bite_one_entry(self):
         """Claim: Either a records directory or a renamed pn-records member activates the complete entry register; missing owner, evidence kind, basis or admission cannot be bypassed by a passing test status.
         ´claim:testing:bite-one-entry-holds-block-implementation´
@@ -236,6 +258,8 @@ class Evidence(unittest.TestCase):
         records=[dict(r,scope='case',configuration=CONFIGURATION) for r in data['results']]
         registry=SimpleNamespace(cases={n:dict(runner='ci') for n in ('first','sibling')},matrix=lambda *_:None)
         data['paragraphs']['ROOT::amend:decomposition:bite-one-entry-evidence']={'citations':set()}
+        for basis in ('review','executed'):
+            data['paragraphs']['ROOT::amend:decomposition:entry-'+basis+'-basis']={'citations':set()}
         with tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
             previous=Path.cwd()
             stack.callback(os.chdir,previous)
