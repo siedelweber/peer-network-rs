@@ -147,7 +147,7 @@ fn policy_content_binding() {
     };
     assert_eq!(
         bind_marker_policy(&validate_record(&[], &history, &unknown).unwrap(), policy.clone(), &burn),
-        Err(BurnError::PolicyDigest)
+        Err(BurnError::UnsupportedPolicyRecipe)
     );
     let mut missing = declarations.clone();
     missing[1].content = DeclarationContent::Opaque;
@@ -632,4 +632,33 @@ fn successor_position() {
         case.history.markers.reverse();
         assert_eq!(fixtures::recognize(case).unwrap(), refused);
     }
+}
+
+/// Claim: Publication validates the complete policy first and returns its recipe with the digest; an invalid policy produces no declaration, and an unknown recipe has its own binding cause.
+/// ´claim:burn:policy-publication-validates-and-names-recipe´
+/// ´test:integration:policy-publication-recipe´
+#[test]
+fn policy_publication_recipe() {
+    use pn_records::constants::{MARKER_POLICY_RECIPE, marker_policy_declaration, marker_policy_digest};
+    let (policy, burn, mut declarations) = binding_fixture();
+    let content = marker_policy_declaration(&policy, &burn).unwrap();
+    assert_eq!(
+        content,
+        pn_records::DeclarationContent::MarkerPolicy {
+            recipe: MARKER_POLICY_RECIPE.into(),
+            digest: marker_policy_digest(&policy),
+        }
+    );
+    declarations[1].content = content;
+    assert!(bind_fixture(&policy, &burn, &declarations).is_ok());
+    let mut invalid = policy.clone();
+    invalid.identity.clear();
+    assert_eq!(marker_policy_declaration(&invalid, &burn), Err(BurnError::Policy));
+    if let pn_records::DeclarationContent::MarkerPolicy { recipe, .. } = &mut declarations[1].content {
+        *recipe = "unsupported-policy-recipe".into();
+    }
+    assert_eq!(
+        bind_fixture(&policy, &burn, &declarations),
+        Err(BurnError::UnsupportedPolicyRecipe)
+    );
 }

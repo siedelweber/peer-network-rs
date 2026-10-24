@@ -262,6 +262,9 @@ pub enum BurnError {
     DeploymentBinding,
     #[error("marker policy content differs from its declared digest")]
     PolicyDigest,
+    /// The declaration requires a recipe this implementation does not interpret.
+    #[error("unsupported marker policy recipe")]
+    UnsupportedPolicyRecipe,
     #[error("missing required publication: {0:?}")]
     Publication(Disclosure),
     #[error("audit evidence belongs to another edition or sample convention")]

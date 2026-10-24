@@ -42,9 +42,9 @@
       "exceptions": 53,
       "generators": 75,
       "helpers": 0,
-      "instrumented": 37,
+      "instrumented": 38,
       "name": "pn-records",
-      "operations": 90
+      "operations": 91
     }
   ]
 }

@@ -3095,6 +3095,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::public::burn::policy_publication_recipe",
         "pn-records::public::burn::successor_position",
         "pn-records::public::burn::copied_marker_names",
         "pn-records::public::burn::duplicate_deployment",

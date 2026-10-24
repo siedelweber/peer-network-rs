@@ -1968,6 +1968,14 @@
       "before": "",
       "after": "Claim: With an otherwise valid disclosure under either candidate rule, a successor placed before its named predecessor refuses Succession and retains exactly the preceding prefix; presentation order cannot repair it.",
       "review": "Read the valid control and sole position mutation from 20 to 5: both rules preserve m0 and m1, refuse Succession, and return identical results after reversing presentation. Duplicate positions and predecessor identity remain unchanged."
+    },
+    {
+      "operation": "pn-records::public::burn::policy_publication_recipe",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:policy-publication-validates-and-names-recipe",
+      "before": "",
+      "after": "Claim: Publication validates the complete policy first and returns its recipe with the digest; an invalid policy produces no declaration, and an unknown recipe has its own binding cause.",
+      "review": "Read the valid producer result and successful bind, identity-empty validation refusal without content, then unchanged digest under an unsupported recipe with a distinct cause. This witnesses publication ordering and cause separation, not a new digest algorithm."
     }
   ]
 }

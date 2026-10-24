@@ -6,6 +6,10 @@ use crate::{DeclarationId, ValidatedRecords, ValidationError, select_effective_d
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 
+/// Permanent recipe identifier for the validated marker-policy commitment.
+/// (´def:burn:marker-policy´)
+pub const MARKER_POLICY_RECIPE: &str = "pn-records/marker-policy/v1";
+
 /// Bind the marker/policy payload to the declaration effective at its genesis.
 /// The identity is the name within this fixed namespace; editions use canonical decimal spelling.
 /// (´def:burn:marker-policy´)
@@ -52,9 +56,14 @@ pub fn bind_marker_policy(
         {
             return Err(crate::burn::BurnError::PolicyBinding);
         }
+        if let DeclarationContent::MarkerPolicy { recipe, .. } = &declaration.content
+            && recipe != MARKER_POLICY_RECIPE
+        {
+            return Err(crate::burn::BurnError::UnsupportedPolicyRecipe);
+        }
         if declaration.content
             != (DeclarationContent::MarkerPolicy {
-                recipe: "pn-records/marker-policy/v1".into(),
+                recipe: MARKER_POLICY_RECIPE.into(),
                 digest: marker_policy_digest(&input),
             })
         {
@@ -68,8 +77,38 @@ pub fn bind_marker_policy(
     result
 }
 
+/// Validate a complete policy before producing its inseparable recipe and digest declaration.
+/// (´def:burn:marker-policy´)
+/// # Errors
+/// Returns the policy validation cause without producing publication content for invalid input.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "digest-marker-policy",
+        source_item = "constants::marker_policy_declaration"
+    ),
+    ret
+)]
+pub fn marker_policy_declaration(
+    input: &crate::burn::PolicyInput,
+    burn: &crate::burn::ValidatedBurn,
+) -> Result<DeclarationContent, crate::burn::BurnError> {
+    let result = crate::burn::validate_policy(input.clone(), burn).map(|_| DeclarationContent::MarkerPolicy {
+        recipe: MARKER_POLICY_RECIPE.into(),
+        digest: marker_policy_digest(input),
+    });
+    if result.is_err() {
+        super::refused();
+    }
+    result
+}
+
 /// Compute the internal, versioned SHA-256 commitment to every policy field.
 /// (´def:burn:marker-policy´)
+/// This raw recomputation helper is not a publication producer; use `marker_policy_declaration` to validate and carry the recipe.
 /// This is not a protocol document encoding. Fixed field order, u64 big-endian lengths,
 /// UTF-8 strings and explicit enum tags make the framing unambiguous.
 #[must_use]
@@ -102,7 +141,8 @@ pub fn marker_policy_digest(input: &crate::burn::PolicyInput) -> [u8; 32] {
         candidate_rule,
     } = input;
     let mut digest = Sha256::new();
-    digest.update(b"pn-records/marker-policy/v1\0");
+    digest.update(MARKER_POLICY_RECIPE.as_bytes());
+    digest.update([0]);
     for text in [
         identity,
         edition,
