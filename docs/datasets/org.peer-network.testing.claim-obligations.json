@@ -1006,6 +1006,12 @@
       "status": "held"
     },
     {
+      "admission": {
+        "evidence": "ROOT::amend:decomposition:bite-one-admission",
+        "evidence_kind": "Independent complete-bite review of the records carrier and scoped execution evidence",
+        "owner": "Domain implementer and repository reviewer",
+        "status": "admitted"
+      },
       "claims": [
         "RECORDS::claim:acts:identity-is-structural",
         "RECORDS::claim:acts:complete-acts-are-counted-once",
@@ -1034,16 +1040,16 @@
         "TESTKIT::claim:testkit:recorded-seed-replays-a-shrunk-failure"
       ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
-      "closing_step": "Complete bite-1 review after harness-evidence slice",
+      "closing_step": "Admitted in independent review round 44 within amend:decomposition:bite-one-admission",
       "evidence_paragraph": "VERIFICATION::amend:verification:bite-one-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Complete independent bite-1 review; membership partition remains held for pn-graph in bite 3, declared count and byte limits for bite 2.",
+      "missing": "No missing evidence within the admitted records carrier scope; later partition, declarations, host and ledger obligations retain their own bites under amend:decomposition:bite-one-admission.",
       "name": "ROOT::gate:design:bite-1",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
       "premises": "Finite structural, act-removal, whole-history, canonical dependency and asserted-parent, opaque declaration and outside-history causal closure-input fixtures, with local unit/public/integration levels, shared conformance, recorded inner and outer properties and runtime outcomes; no partition, family formation or declaration payload semantics is claimed.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],

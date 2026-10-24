@@ -898,14 +898,15 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:design:bite-1"
 path = "docs/design/implementation.md"
-status = "held"
+status = "scoped-supported"
 claims = ["RECORDS::claim:acts:identity-is-structural", "RECORDS::claim:acts:complete-acts-are-counted-once", "RECORDS::claim:acts:duplicates-refuse-and-parallel-identities-survive", "RECORDS::claim:acts:both-co-legs-are-required", "RECORDS::claim:acts:protocol-references-outlive-dependency-removal", "RECORDS::claim:acts:invalid-local-fields-refuse", "RECORDS::claim:acts:removal-belongs-to-act-projections", "RECORDS::claim:acts:references-resolve-against-accepted-history", "RECORDS::claim:acts:opaque-editions-preserve-as-of-selection", "RECORDS::claim:acts:ambiguous-declaration-histories-refuse", "RECORDS::claim:acts:dependency-lists-have-canonical-content", "RECORDS::claim:acts:dependencies-require-earlier-accepted-acts", "RECORDS::claim:acts:history-owns-its-structural-references", "RECORDS::claim:acts:overlapping-closures-retain-complete-inputs", "RECORDS::claim:acts:incomplete-boundary-inputs-refuse", "RECORDS::claim:acts:asserted-parents-are-canonical-and-earlier", "ROOT::claim:discipline:records-entry-is-observed-without-changing-results", "RECORDS::claim:acts:generated-closures-match-independent-search", "RECORDS::claim:acts:single-corruptions-retain-typed-causes", "RECORDS::claim:acts:shared-conformance-preserves-whole-acts", "VERIFICATION::claim:verification:generated-closures-match-independent-search", "VERIFICATION::claim:verification:single-corruptions-retain-typed-causes", "VERIFICATION::claim:verification:shared-conformance-preserves-whole-acts", "ROOT::claim:discipline:generated-records-refusals-retain-outcomes", "TESTKIT::claim:testkit:recorded-seed-replays-a-shrunk-failure"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Complete independent bite-1 review; membership partition remains held for pn-graph in bite 3, declared count and byte limits for bite 2."
+missing = "No missing evidence within the admitted records carrier scope; later partition, declarations, host and ledger obligations retain their own bites under amend:decomposition:bite-one-admission."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Complete bite-1 review after harness-evidence slice"
+closing_step = "Admitted in independent review round 44 within amend:decomposition:bite-one-admission"
+admission = { owner = "Domain implementer and repository reviewer", evidence_kind = "Independent complete-bite review of the records carrier and scoped execution evidence", status = "admitted", evidence = "ROOT::amend:decomposition:bite-one-admission" }
 
 evidence_paragraph = "VERIFICATION::amend:verification:bite-one-evidence"
 premises = "Finite structural, act-removal, whole-history, canonical dependency and asserted-parent, opaque declaration and outside-history causal closure-input fixtures, with local unit/public/integration levels, shared conformance, recorded inner and outer properties and runtime outcomes; no partition, family formation or declaration payload semantics is claimed."
