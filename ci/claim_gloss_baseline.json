@@ -842,6 +842,8 @@
     "pn-verification::properties::closure_model": "Claim: For generated finite causal DAGs, naive transitive search agrees with every closure, their union counts whole proposals once, both input orders preserve the exact work count, and adding a proposal increases work.",
     "pn-verification::properties::typed_corruptions": "Claim: Every declared single corruption of a valid generated batch returns its exact typed refusal in both input orders, keeping rejection distinct from accidental invalid fixtures.",
     "ci::test_observe_runtime.Processes.test_generated_records_refusals": "Claim: Each single corruption of the same seeded records DAG retains its exact typed refusal at default and trace, and both metric distributions contain nineteen refusals and no errors.",
-    "cli-common::observation::tests::compaction_branching": "Claim: A shallow 256-branch payload below the inline limit remains inline; adding a common thirty-level wrapper requires at most two nesting chunks rather than one object per leaf, and compaction preserves parseable envelopes without a timing verdict."
+    "cli-common::observation::tests::compaction_branching": "Claim: A shallow 256-branch payload below the inline limit remains inline; adding a common thirty-level wrapper requires at most two nesting chunks rather than one object per leaf, and compaction preserves parseable envelopes without a timing verdict.",
+    "cli-common::observation::tests::cutoff_before_publication": "",
+    "cli-common::observation::tests::shared_transport_cutoff": "Claim: With records and final status sharing a transport lock, a write already in flight at an injected cutoff precedes the status and reconciles exactly as one in-flight record, while the queued summary remains undelivered."
   }
 }

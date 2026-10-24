@@ -260,7 +260,9 @@ pub struct Observation {
     delivered: Arc<AtomicU64>,
     closing: Arc<std::sync::atomic::AtomicBool>,
     final_writer: Arc<Mutex<Box<dyn Write + Send>>>,
-    publication: Arc<Mutex<()>>,
+    publication: Arc<Mutex<bool>>,
+    #[cfg(test)]
+    before_publication: PublicationPause,
     drain_timeouts: Arc<AtomicU64>,
     drain_unavailable: Arc<AtomicU64>,
     #[cfg(test)]
@@ -272,6 +274,9 @@ pub struct Observation {
     bridge: Option<Arc<crate::observation_export::Bridge>>,
 }
 
+#[cfg(test)]
+type PublicationPause = Arc<Mutex<Option<Box<dyn FnOnce() + Send>>>>;
+
 struct Delivery {
     worker_delivered: Arc<AtomicU64>,
     worker_lost: Arc<AtomicU64>,
@@ -279,7 +284,9 @@ struct Delivery {
     worker_unavailable: Arc<AtomicU64>,
     worker_causes: Arc<LossCauses>,
     artifact_root: std::path::PathBuf,
-    publication: Arc<Mutex<()>>,
+    publication: Arc<Mutex<bool>>,
+    #[cfg(test)]
+    before_publication: PublicationPause,
     closing: Arc<std::sync::atomic::AtomicBool>,
     worker_bridge: Option<Arc<crate::observation_export::Bridge>>,
     worker_queued: Arc<AtomicU64>,
@@ -364,6 +371,17 @@ impl Delivery {
                 cause = 2;
                 return Err(io::Error::other("observation delivery capacity"));
             }
+            #[cfg(test)]
+            if let Some(pause) = self.before_publication.lock().unwrap().take() {
+                pause();
+            }
+            {
+                let mut publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+                if self.closing.load(Ordering::Acquire) {
+                    return Ok(());
+                }
+                *publication = true;
+            }
             if let Some(bridge) = &worker_bridge {
                 bridge.record(&compact);
             }
@@ -372,10 +390,11 @@ impl Delivery {
             writer.flush()
         })();
         // Only completion accounting holds this lock; transport I/O never does.
-        let _publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        let mut publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         if self.closing.load(Ordering::Acquire) {
             return;
         }
+        *publication = false;
         if result.is_err() {
             worker_causes.note(worker_lost, cause);
         } else {
@@ -406,7 +425,11 @@ impl Observation {
         let worker_delivered = delivered.clone();
         let closing = Arc::new(std::sync::atomic::AtomicBool::new(false));
         let worker_closing = closing.clone();
-        let publication = Arc::new(Mutex::new(()));
+        let publication = Arc::new(Mutex::new(false));
+        #[cfg(test)]
+        let before_publication = Arc::new(Mutex::new(None));
+        #[cfg(test)]
+        let worker_before_publication = Arc::clone(&before_publication);
         let worker_publication = publication.clone();
         let drain_timeouts = Arc::new(AtomicU64::new(0));
         let worker_timeouts = drain_timeouts.clone();
@@ -426,6 +449,8 @@ impl Observation {
                 artifact_root,
                 worker_bridge,
                 publication: worker_publication,
+                #[cfg(test)]
+                before_publication: worker_before_publication,
                 closing: worker_closing.clone(),
                 worker_queued,
             };
@@ -444,6 +469,8 @@ impl Observation {
             closing,
             final_writer: Arc::new(Mutex::new(Box::new(StderrSink))),
             publication,
+            #[cfg(test)]
+            before_publication,
             drain_timeouts,
             drain_unavailable,
             #[cfg(test)]
@@ -546,8 +573,9 @@ impl Observation {
         // declared 64 MiB queue: one second plus one second per charged MiB.
         // The deadline bounds waiting for queued and in-flight publication.
         // Completion accounting never holds its lock across transport I/O;
-        // unfinished writes at the cutoff are undelivered. The synchronous
-        // final status write itself can block on its transport.
+        // one reserved publication at cutoff is reported as in-flight, separately
+        // from queued undelivered records. Shipped records and final status
+        // share stderr and its write lock; the final write can block there.
         let charged = self.queued_bytes.load(Ordering::Relaxed);
         let millis = 1000 + charged.div_ceil(1024 * 1024).min(64) * 1000;
         self.flush_for(Duration::from_millis(millis));
@@ -556,11 +584,12 @@ impl Observation {
         let delivered = self.delivered.load(Ordering::Acquire);
         let lost = self.lost.load(Ordering::Acquire);
         let attempted = self.attempted.load(Ordering::Acquire);
-        let undelivered = attempted.saturating_sub(delivered.saturating_add(lost));
+        let in_flight = u64::from(*publication);
+        let undelivered = attempted.saturating_sub(delivered.saturating_add(lost).saturating_add(in_flight));
         let record = json!({"kind":"observation_status","availability":"enabled",
             "level":if self.full_trace {"trace"} else {"default"},
-            "count_scope":"records preceding this status; status excluded; queued cutoff records are undelivered",
-            "delivered_records":delivered,"lost_records":lost,"undelivered_records":undelivered,
+            "count_scope":"completed records at cutoff; status excluded; one reserved publication may finish around status",
+            "delivered_records":delivered,"lost_records":lost,"undelivered_records":undelivered,"in_flight_records":in_flight,
             "attempted_records":attempted,"loss_causes":self.loss_causes.snapshot(),
             "drain_timeouts":self.drain_timeouts.load(Ordering::Relaxed),
             "drain_unavailable":self.drain_unavailable.load(Ordering::Relaxed),
@@ -568,11 +597,11 @@ impl Observation {
             "claim_owner":"ROOT","claim_label":"dec:observe:sinks","execution_owner":"CLICOMMON"});
         drop(publication);
         // A synchronous final status cannot be stranded behind the bounded queue.
-        if let Ok(mut writer) = self.final_writer.lock() {
-            let _reported = serde_json::to_writer(&mut *writer, &record)
-                .map_err(io::Error::other)
-                .and_then(|()| writer.write_all(b"\n"))
-                .and_then(|()| writer.flush());
+        if let (Ok(mut writer), Ok(mut bytes)) = (self.final_writer.lock(), serde_json::to_vec(&record)) {
+            // One complete line takes the shared stderr lock once, so an
+            // in-flight record cannot split the status's JSON fragments.
+            bytes.push(b'\n');
+            let _reported = writer.write_all(&bytes).and_then(|()| writer.flush());
         }
     }
 

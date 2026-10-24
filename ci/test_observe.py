@@ -129,7 +129,7 @@ class Admission(unittest.TestCase):
             self.assertEqual((pending['lost_records'],pending['undelivered_records'],pending['verdict_effect']),(0,2,'none'))
         from test_observe_runtime import witness
         from contextlib import redirect_stdout
-        status={'kind':'observation_status','process_id':8,'delivered_records':1,'lost_records':0,'level':'trace'}
+        status={'kind':'observation_status','process_id':8,'delivered_records':1,'in_flight_records':0,'undelivered_records':0,'attempted_records':1,'lost_records':0,'level':'trace'}
         captured=io.StringIO()
         with redirect_stdout(captured):witness(['fixture'],7,0,b'{"process_id":8,"kind":"trace"}\n'+json.dumps(status).encode())
         self.assertEqual(counts(captured.getvalue().splitlines())['processes'][0]['delivered'],2)

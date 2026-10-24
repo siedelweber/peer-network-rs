@@ -24,7 +24,9 @@ def witness(argv, status, wall, stderr, injected=False):
         print(prefix+f" delivered={row.get('delivered_records','unavailable')} lost={row.get('lost_records','unavailable')} observation_status="+json.dumps(row,sort_keys=True))
         if not injected and row.get('level')=='trace':
             delivered=sum(item.get('process_id')==row['process_id'] for item in records)-1
-            if row['delivered_records']!=delivered:raise AssertionError('trace delivered count differs from captured records')
+            if row['in_flight_records'] not in (0,1):raise AssertionError('invalid in-flight count')
+            if row['delivered_records']+row['in_flight_records']!=delivered:raise AssertionError('trace publication count differs from captured records')
+            if row['attempted_records']!=row['delivered_records']+row['in_flight_records']+row['lost_records']+row['undelivered_records']:raise AssertionError('attempted records do not reconcile')
         if not injected and row.get('level')=='trace' and row.get('lost_records',0)+row.get('undelivered_records',0)>0:
             from devperf import report_loss
             from harness import source_id
@@ -190,7 +192,8 @@ class Processes(unittest.TestCase):
             self.assertEqual(instruments[stem+'assembly_steps']['counter'],4)
             self.assertEqual(summary['lost_updates'],0)
             status=next(row for row in rows if row.get('kind')=='observation_status')
-            self.assertEqual(status['delivered_records'],len(rows)-1)
+            self.assertEqual(status['delivered_records']+status['in_flight_records'],len(rows)-1)
+            self.assertEqual(status['attempted_records'],status['delivered_records']+status['in_flight_records']+status['lost_records']+status['undelivered_records'])
             self.assertEqual(status['lost_records'],0)
             if mode=='default':self.assertFalse(any(row.get('kind')=='span_envelope' for row in rows))
             else:
@@ -273,12 +276,14 @@ class Processes(unittest.TestCase):
                     self.assertFalse(any(row.get('kind') in ('trace','span_envelope') for row in rows))
                     status=next(row for row in rows if row.get('kind')=='observation_status')
                     self.assertEqual(status['lost_records'],0)
-                    self.assertEqual(status['delivered_records'],len(rows)-1)
+                    self.assertEqual(status['delivered_records']+status['in_flight_records'],len(rows)-1)
+                    self.assertEqual(status['attempted_records'],status['delivered_records']+status['in_flight_records']+status['lost_records']+status['undelivered_records'])
                     self.assertFalse(objects.exists())
                 else:
                     self.assertTrue(any(row.get('kind')=='span_envelope' for row in rows))
                     status=next(row for row in rows if row.get('kind')=='observation_status')
-                    self.assertEqual(status['delivered_records'],len(rows)-1)
+                    self.assertEqual(status['delivered_records']+status['in_flight_records'],len(rows)-1)
+                    self.assertEqual(status['attempted_records'],status['delivered_records']+status['in_flight_records']+status['lost_records']+status['undelivered_records'])
                     self.assertEqual(status['lost_records'],0)
                     self.assertTrue(all(value==0 for value in status['loss_causes'].values()))
                 if mode=='failing-export':self.assertTrue(any(row.get('kind')=='export_summary' and row['lost_exports']>0 for row in rows))

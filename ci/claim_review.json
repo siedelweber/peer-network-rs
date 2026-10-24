@@ -1450,14 +1450,6 @@
       "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
     },
     {
-      "operation": "cli-common::observation::tests::content_artifact_publication",
-      "path": "packages/cli-common/src/observation/tests.rs",
-      "claim": "CLICOMMON::claim:cli:large-content-is-addressed-once",
-      "before": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt existing content is refused rather than trusted.",
-      "after": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from a fresh flushed file rather than trusted, with directory synchronization once per record.",
-      "review": "The unchanged assertions verify digest bytes, stable payload identity through changing duration envelopes, one stored object, atomic repair and small inline values. The representation policy now flushes object files and syncs the directory once per record; the test makes no crash-durability claim."
-    },
-    {
       "operation": "ci::test_observe.Admission.test_resource_samples",
       "path": "ci/test_observe.py",
       "claim": "ROOT::claim:discipline:cgroup-deltas-preserve-unavailable-readings",
@@ -1558,8 +1550,24 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:exit-reports-the-undelivered-tail",
       "before": "Claim: When an injected exit deadline expires with a stalled writer, guard destruction synchronously reports every attempted record as delivered, lost or undelivered before any reader release, so process exit needs no status rendezvous and cannot hide its queued tail.",
-      "after": "Claim: With a writer blocked inside write and a zero injected drain deadline, guard destruction returns before that writer is released and reports the in-flight record and queued tail as undelivered, while the separately captured synchronous status remains readable.",
-      "review": "The writer signals from inside write before guard drop starts. A zero injected drain deadline must return before transport release; a watchdog releases the writer for cleanup if the old lock-held path wedges. The status pins the in-flight record in 242 undelivered attempts."
+      "after": "Claim: With a writer blocked inside write and a zero injected drain deadline, guard destruction returns before release and reports one in-flight record separately from the queued-undelivered tail, while the independently captured synchronous status reconciles every attempt.",
+      "review": "Read the injected cutoff and channel rendezvous: the blocked transport reserves one in-flight publication, while the paused pre-publication record cannot cross the cutoff. The assertions reconcile disjoint counts without an elapsed-time predicate."
+    },
+    {
+      "operation": "cli-common::observation::tests::cutoff_before_publication",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:cutoff-refuses-unstarted-publication",
+      "before": "",
+      "after": "Claim: A record paused after compaction but before publication cannot reach the writer after guard drop closes the queue; its attempt remains queued-undelivered with no in-flight reservation.",
+      "review": "Read the injected cutoff and channel rendezvous: the blocked transport reserves one in-flight publication, while the paused pre-publication record cannot cross the cutoff. The assertions reconcile disjoint counts without an elapsed-time predicate."
+    },
+    {
+      "operation": "cli-common::observation::tests::content_artifact_publication",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:large-content-is-addressed-once",
+      "before": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt existing content is refused rather than trusted.",
+      "after": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from a fresh flushed file rather than trusted, with directory synchronization once per record.",
+      "review": "The unchanged assertions verify digest bytes, stable payload identity through changing duration envelopes, one stored object, atomic repair and small inline values. The representation policy now flushes object files and syncs the directory once per record; the test makes no crash-durability claim."
     }
   ]
 }

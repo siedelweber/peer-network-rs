@@ -114,6 +114,8 @@
         "cli-common::observation::tests::recursive_observation",
         "cli-common::observation::tests::async_cancellation",
         "cli-common::observation::tests::exit_reports_pending_delivery",
+        "cli-common::observation::tests::cutoff_before_publication",
+        "cli-common::observation::tests::shared_transport_cutoff",
         "cli-common::observation::tests::compaction_branching",
         "cli-common::observation::tests::deep_payload_delivery",
         "cli-common::observation::tests::inclusive_metering",

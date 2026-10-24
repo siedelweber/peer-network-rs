@@ -932,7 +932,7 @@ impl Write for Capture {
         Ok(())
     }
 }
-/// Claim: With a writer blocked inside write and a zero injected drain deadline, guard destruction returns before that writer is released and reports the in-flight record and queued tail as undelivered, while the separately captured synchronous status remains readable.
+/// Claim: With a writer blocked inside write and a zero injected drain deadline, guard destruction returns before release and reports one in-flight record separately from the queued-undelivered tail, while the independently captured synchronous status reconciles every attempt.
 /// ´claim:cli:exit-reports-the-undelivered-tail´
 /// ´test:unit:exit-reports-pending-delivery´
 #[test]
@@ -985,7 +985,8 @@ fn exit_reports_pending_delivery() {
     assert_eq!(row["attempted_records"], 242);
     assert_eq!(row["delivered_records"], 0);
     assert_eq!(row["lost_records"], 0);
-    assert_eq!(row["undelivered_records"], 242);
+    assert_eq!(row["undelivered_records"], 241);
+    assert_eq!(row["in_flight_records"], 1);
     assert_eq!(row["drain_timeouts"], 1);
     assert!(observation.closing.load(Ordering::Acquire));
 }
@@ -1399,4 +1400,115 @@ fn compaction_branching() {
     assert!(artifacts <= 2);
     let encoded = serde_json::to_vec(&record).unwrap();
     assert_eq!(serde_json::from_slice::<Value>(&encoded).unwrap(), record);
+}
+
+/// Claim: A record paused after compaction but before publication cannot reach the writer after guard drop closes the queue; its attempt remains queued-undelivered with no in-flight reservation.
+/// ´claim:cli:cutoff-refuses-unstarted-publication´
+/// ´test:unit:cutoff-before-publication´
+#[test]
+fn cutoff_before_publication() {
+    let (mut observation, _, capture) = fixture();
+    observation.refuse_drain_wait = true;
+    let status = Capture::default();
+    observation.final_writer = Arc::new(Mutex::new(Box::new(status.clone())));
+    let (entered, entry) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
+    let (finished, completion) = mpsc::sync_channel(1);
+    *observation.before_publication.lock().unwrap() = Some(Box::new(move || {
+        entered.send(()).unwrap();
+        released.recv().unwrap();
+        finished.send(()).unwrap();
+    }));
+    observation.emit(json!({"kind":"trace","public":"queued"}));
+    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    drop(BootstrapGuard(Some(observation.clone())));
+    release.send(()).unwrap();
+    completion.recv_timeout(Duration::from_secs(30)).unwrap();
+    // A flush acknowledgement or disconnect follows the resumed delivery.
+    observation.refuse_drain_wait = false;
+    observation.flush_for(Duration::from_secs(30));
+    let row: Value = serde_json::from_slice(&status.0.lock().unwrap()).unwrap();
+    assert_eq!(row["attempted_records"], 2);
+    assert_eq!(row["delivered_records"], 0);
+    assert_eq!(row["in_flight_records"], 0);
+    assert_eq!(row["undelivered_records"], 2);
+    assert!(capture.0.lock().unwrap().is_empty());
+}
+
+/// Claim: With records and final status sharing a transport lock, a write already in flight at an injected cutoff precedes the status and reconciles exactly as one in-flight record, while the queued summary remains undelivered.
+/// ´claim:cli:shared-transport-cutoff-reconciles-exactly´
+/// ´test:unit:shared-transport-cutoff´
+#[test]
+fn shared_transport_cutoff() {
+    struct RecordWriter {
+        capture: Capture,
+        entered: mpsc::SyncSender<()>,
+        release: mpsc::Receiver<()>,
+    }
+    impl Write for RecordWriter {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            let mut capture = self.capture.0.lock().unwrap();
+            self.entered.send(()).unwrap();
+            self.release.recv().unwrap();
+            capture.extend_from_slice(bytes);
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+    struct StatusWriter {
+        capture: Capture,
+        cutoff: Option<mpsc::SyncSender<()>>,
+    }
+    impl Write for StatusWriter {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            if let Some(cutoff) = self.cutoff.take() {
+                cutoff.send(()).unwrap();
+            }
+            self.capture.write(bytes)
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+    let capture = Capture::default();
+    let (entered, entry) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
+    let (cutoff, at_cutoff) = mpsc::sync_channel(1);
+    let mut observation = Observation::with_writer(
+        RecordWriter {
+            capture: capture.clone(),
+            entered,
+            release: released,
+        },
+        Arc::new(ManualClock(AtomicU64::new(0))),
+    )
+    .unwrap();
+    observation.refuse_drain_wait = true;
+    observation.final_writer = Arc::new(Mutex::new(Box::new(StatusWriter {
+        capture: capture.clone(),
+        cutoff: Some(cutoff),
+    })));
+    observation.emit(json!({"kind":"trace"}));
+    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    let guard = BootstrapGuard(Some(observation));
+    let thread = std::thread::spawn(move || drop(guard));
+    at_cutoff.recv_timeout(Duration::from_secs(30)).unwrap();
+    release.send(()).unwrap();
+    thread.join().unwrap();
+    let bytes = capture.0.lock().unwrap();
+    let rows: Vec<Value> = bytes
+        .split(|b| *b == b'\n')
+        .filter(|line| !line.is_empty())
+        .map(|line| serde_json::from_slice(line).unwrap())
+        .collect();
+    let status = rows.last().unwrap();
+    assert_eq!(status["kind"], "observation_status");
+    assert_eq!(status["delivered_records"], 0);
+    assert_eq!(status["in_flight_records"], 1);
+    assert_eq!(status["lost_records"], 0);
+    assert_eq!(status["undelivered_records"], 1);
+    assert_eq!(status["attempted_records"], 2);
+    assert_eq!(rows.len() - 1, 1);
 }
