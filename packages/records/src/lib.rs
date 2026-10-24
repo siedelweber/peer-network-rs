@@ -416,7 +416,7 @@ pub enum DeclarationContent {
     /// Immutable deployment genesis, not selected by a marker policy payload.
     Deployment { genesis_at: u64 },
     /// SHA-256 of the complete marker policy under the internal policy digest framing.
-    MarkerPolicy { digest: [u8; 32] },
+    MarkerPolicy { recipe: String, digest: [u8; 32] },
 }
 
 /// Announcement and effective boundaries for an opaque declaration identity.

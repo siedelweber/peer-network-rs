@@ -165,6 +165,7 @@ pub fn recognize(case: BurnCase) -> Result<RecognizedMarkers, BurnError> {
             announced_at: 0,
             effective_at: 0,
             content: crate::DeclarationContent::MarkerPolicy {
+                recipe: "pn-records/marker-policy/v1".into(),
                 digest: crate::constants::marker_policy_digest(&case.policy),
             },
         },

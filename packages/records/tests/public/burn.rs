@@ -22,6 +22,7 @@ fn policy_declaration_binding() {
         announced_at: 0,
         effective_at: 0,
         content: pn_records::DeclarationContent::MarkerPolicy {
+            recipe: "pn-records/marker-policy/v1".into(),
             digest: marker_policy_digest(&fixture.policy),
         },
     };
@@ -101,6 +102,7 @@ fn policy_content_binding() {
             announced_at: 0,
             effective_at: 0,
             content: DeclarationContent::MarkerPolicy {
+                recipe: "pn-records/marker-policy/v1".into(),
                 digest: marker_policy_digest(&policy),
             },
         },
@@ -138,6 +140,15 @@ fn policy_content_binding() {
             "{field}"
         );
     }
+    let mut unknown = declarations.clone();
+    unknown[1].content = DeclarationContent::MarkerPolicy {
+        recipe: "unsupported-policy-recipe".into(),
+        digest: marker_policy_digest(&policy),
+    };
+    assert_eq!(
+        bind_marker_policy(&validate_record(&[], &history, &unknown).unwrap(), policy.clone(), &burn),
+        Err(BurnError::PolicyDigest)
+    );
     let mut missing = declarations.clone();
     missing[1].content = DeclarationContent::Opaque;
     assert_eq!(

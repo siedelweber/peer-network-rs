@@ -54,6 +54,7 @@ pub fn bind_marker_policy(
         }
         if declaration.content
             != (DeclarationContent::MarkerPolicy {
+                recipe: "pn-records/marker-policy/v1".into(),
                 digest: marker_policy_digest(&input),
             })
         {
@@ -85,30 +86,45 @@ pub fn bind_marker_policy(
 )]
 pub fn marker_policy_digest(input: &crate::burn::PolicyInput) -> [u8; 32] {
     use crate::burn::{CandidateRule, Encoding};
+    let crate::burn::PolicyInput {
+        identity,
+        edition,
+        sequence,
+        initial_marker,
+        placement_procedure,
+        cadence,
+        verification_profile,
+        published_at,
+        genesis_at,
+        stability_buffer,
+        open_placement,
+        encoding,
+        candidate_rule,
+    } = input;
     let mut digest = Sha256::new();
     digest.update(b"pn-records/marker-policy/v1\0");
     for text in [
-        &input.identity,
-        &input.edition,
-        &input.sequence,
-        &input.initial_marker,
-        &input.placement_procedure,
-        &input.cadence,
-        &input.verification_profile,
+        identity,
+        edition,
+        sequence,
+        initial_marker,
+        placement_procedure,
+        cadence,
+        verification_profile,
     ] {
         digest.update((text.len() as u64).to_be_bytes());
         digest.update(text.as_bytes());
     }
-    for value in [input.published_at, input.genesis_at, input.stability_buffer] {
+    for value in [published_at, genesis_at, stability_buffer] {
         digest.update(value.to_be_bytes());
     }
-    digest.update([u8::from(input.open_placement)]);
-    digest.update([match input.encoding {
+    digest.update([u8::from(*open_placement)]);
+    digest.update([match encoding {
         Encoding::CompleteList => 0,
         Encoding::PublicCommitment => 1,
         Encoding::WholePrefixAcceptAll => 2,
     }]);
-    digest.update([match input.candidate_rule {
+    digest.update([match candidate_rule {
         CandidateRule::FirstValidInHistoryOrder => 0,
         CandidateRule::UniquePerIndex => 1,
     }]);
