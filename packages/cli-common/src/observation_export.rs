@@ -146,6 +146,8 @@ pub(super) struct Bridge {
     pub(super) failures: Arc<Mutex<Vec<String>>>,
     #[cfg(test)]
     reader: Reader,
+    #[cfg(test)]
+    pub(super) exported: Arc<Mutex<Vec<ResourceMetrics>>>,
 }
 
 impl Bridge {
@@ -189,6 +191,10 @@ impl Bridge {
         let failures = Arc::new(Mutex::new(Vec::new()));
         let worker_failures = failures.clone();
         let worker_reader = reader.clone();
+        #[cfg(test)]
+        let exported = Arc::new(Mutex::new(Vec::new()));
+        #[cfg(test)]
+        let worker_exported = exported.clone();
         std::thread::Builder::new()
             .name("observation-export".into())
             .spawn(move || {
@@ -202,6 +208,10 @@ impl Bridge {
                             let result = worker_reader
                                 .collect(&mut metrics)
                                 .and_then(|()| futures_executor::block_on(metric_exporter.export(&metrics)));
+                            #[cfg(test)]
+                            if result.is_ok() {
+                                worker_exported.lock().unwrap().push(metrics);
+                            }
                             acknowledgement = Some(done);
                             result
                         }
@@ -235,6 +245,8 @@ impl Bridge {
             failures,
             #[cfg(test)]
             reader,
+            #[cfg(test)]
+            exported,
         })
     }
 

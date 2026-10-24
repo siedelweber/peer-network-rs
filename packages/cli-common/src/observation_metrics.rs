@@ -67,16 +67,14 @@ struct Instrument {
     unit: &'static str,
     bounds: [f64; 4],
     totals: Mutex<Totals>,
-    counter: AtomicU64,
-    counter_exported: AtomicU64,
-    counter_observed: AtomicBool,
+    counter: Arc<AtomicU64>,
+    counter_observed: Arc<AtomicBool>,
     counter_lost: Arc<AtomicU64>,
     lost: Arc<AtomicU64>,
     sdk: Option<SdkInstrument>,
 }
 
 enum SdkInstrument {
-    Counter(opentelemetry::metrics::Counter<u64>),
     Gauge(opentelemetry::metrics::Gauge<f64>),
     Histogram(opentelemetry::metrics::Histogram<f64>),
 }
@@ -218,8 +216,24 @@ impl JsonRecorder {
                         } else {
                             [1.0, 1024.0, 65_536.0, 1_048_576.0]
                         };
-                        let sdk = meter.map(|meter| match kind {
-                            "counter" => SdkInstrument::Counter(meter.u64_counter(sdk_name).with_unit(unit).build()),
+                        let counter = Arc::new(AtomicU64::new(0));
+                        let counter_observed = Arc::new(AtomicBool::new(false));
+                        if kind == "counter"
+                            && let Some(meter) = meter
+                        {
+                            let total = counter.clone();
+                            let observed = counter_observed.clone();
+                            meter
+                                .u64_observable_counter(sdk_name.clone())
+                                .with_unit(unit)
+                                .with_callback(move |observer| {
+                                    if observed.load(Ordering::Acquire) {
+                                        observer.observe(total.load(Ordering::Relaxed), &[]);
+                                    }
+                                })
+                                .build();
+                        }
+                        let sdk = meter.filter(|_| kind != "counter").map(|meter| match kind {
                             "gauge" => SdkInstrument::Gauge(meter.f64_gauge(sdk_name).with_unit(unit).build()),
                             _ => SdkInstrument::Histogram(
                                 meter
@@ -236,9 +250,8 @@ impl JsonRecorder {
                                 unit,
                                 bounds,
                                 totals: Mutex::new(Totals::default()),
-                                counter: AtomicU64::new(0),
-                                counter_exported: AtomicU64::new(0),
-                                counter_observed: AtomicBool::new(false),
+                                counter,
+                                counter_observed,
                                 counter_lost: counter_lost.clone(),
                                 lost: lost.clone(),
                                 sdk,
@@ -321,13 +334,6 @@ impl JsonRecorder {
                 instrument.totals.try_lock().ok().map(|t| t.clone())
             };
             if let Some(t) = totals {
-                // SDK publication belongs to collection, never the binding caller's increment.
-                if let Some(SdkInstrument::Counter(counter)) = &instrument.sdk {
-                    let published = instrument.counter_exported.fetch_max(t.counter, Ordering::Relaxed);
-                    if t.counter > published {
-                        counter.add(t.counter - published, &[]);
-                    }
-                }
                 if !t.observed {
                     unobserved += 1;
                     if !full_trace {

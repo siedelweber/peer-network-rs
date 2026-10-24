@@ -13082,7 +13082,7 @@
       "item": "observation_export::Bridge",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation_export.rs",
-      "syntax": "pub (super) struct Bridge { pub (super) meter_provider : SdkMeterProvider , tracer_provider : SdkTracerProvider , sender : mpsc :: SyncSender < Message > , pub (super) lost : Arc < AtomicU64 > , pub (super) failures : Arc < Mutex < Vec < String > > > , # [cfg (test)] reader : Reader , }"
+      "syntax": "pub (super) struct Bridge { pub (super) meter_provider : SdkMeterProvider , tracer_provider : SdkTracerProvider , sender : mpsc :: SyncSender < Message > , pub (super) lost : Arc < AtomicU64 > , pub (super) failures : Arc < Mutex < Vec < String > > > , # [cfg (test)] reader : Reader , # [cfg (test)] pub (super) exported : Arc < Mutex < Vec < ResourceMetrics > > > , }"
     },
     {
       "item": "observation_metrics::Totals",
@@ -13094,13 +13094,13 @@
       "item": "observation_metrics::Instrument",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation_metrics.rs",
-      "syntax": "struct Instrument { kind : & 'static str , unit : & 'static str , bounds : [f64 ; 4] , totals : Mutex < Totals > , counter : AtomicU64 , counter_exported : AtomicU64 , counter_observed : AtomicBool , counter_lost : Arc < AtomicU64 > , lost : Arc < AtomicU64 > , sdk : Option < SdkInstrument > , }"
+      "syntax": "struct Instrument { kind : & 'static str , unit : & 'static str , bounds : [f64 ; 4] , totals : Mutex < Totals > , counter : Arc < AtomicU64 > , counter_observed : Arc < AtomicBool > , counter_lost : Arc < AtomicU64 > , lost : Arc < AtomicU64 > , sdk : Option < SdkInstrument > , }"
     },
     {
       "item": "observation_metrics::SdkInstrument",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation_metrics.rs",
-      "syntax": "enum SdkInstrument { Counter (opentelemetry :: metrics :: Counter < u64 >) , Gauge (opentelemetry :: metrics :: Gauge < f64 >) , Histogram (opentelemetry :: metrics :: Histogram < f64 >) , }"
+      "syntax": "enum SdkInstrument { Gauge (opentelemetry :: metrics :: Gauge < f64 >) , Histogram (opentelemetry :: metrics :: Histogram < f64 >) , }"
     },
     {
       "item": "observation_metrics::JsonRecorder",

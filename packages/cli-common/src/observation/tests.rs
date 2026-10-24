@@ -741,20 +741,71 @@ fn export_fixture(fail: bool) -> (Arc<crate::observation_export::Bridge>, Arc<Lo
     (Arc::new(crate::observation_export::Bridge::new(config).unwrap()), transport)
 }
 
-/// Claim: Snapshot collection forwards each admitted atomic counter delta to the SDK exactly once, including across repeated collections; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.
+fn assert_exported_operations(batch: &opentelemetry_sdk::metrics::data::ResourceMetrics, summary: &Value, expected: u64) {
+    use opentelemetry_sdk::metrics::data::{AggregatedMetrics, MetricData};
+    for (measure, outcome) in [("started_operations", ""), ("completed_operations", "success")] {
+        let name = format!("{}__{measure}", STEMS[0]);
+        let exported_name = if outcome.is_empty() {
+            name.clone()
+        } else {
+            format!("{name}__{outcome}")
+        };
+        let metric = batch
+            .scope_metrics()
+            .flat_map(opentelemetry_sdk::metrics::data::ScopeMetrics::metrics)
+            .find(|metric| metric.name() == exported_name)
+            .expect("production collection contains operation counters");
+        let AggregatedMetrics::U64(MetricData::Sum(sum)) = metric.data() else {
+            panic!("operation counter is a sum");
+        };
+        let values: Vec<_> = sum
+            .data_points()
+            .map(opentelemetry_sdk::metrics::data::SumDataPoint::value)
+            .collect();
+        assert_eq!(values, [expected]);
+        let local = summary["metrics"]["instruments"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|row| row["name"] == name && row["outcome"] == outcome)
+            .unwrap();
+        assert_eq!(local["counter"], expected);
+    }
+}
+
+/// Claim: Production summarize exports the same started and completed atomic totals as its JSON summary before any snapshot, including across repeated collections; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.
 /// ´claim:cli:provider-bridge-preserves-counts-and-secret-boundary´
 /// ´test:unit:provider-bridge´
 #[test]
 fn provider_bridge() {
     use opentelemetry_sdk::metrics::data::{AggregatedMetrics, MetricData};
+    let (bridge, _) = export_fixture(false);
+    let capture = Capture::default();
+    let observation = Observation::with_writer_bridge(
+        capture.clone(),
+        Arc::new(ManualClock(AtomicU64::new(0))),
+        Some(bridge.clone()),
+    )
+    .unwrap();
+    for expected in [1, 2] {
+        observation
+            .operation(OperationKind::Command, Value::Null)
+            .finish(Outcome::Success, Value::Null);
+        observation.summarize();
+        let rows = records(&observation, &capture);
+        let summary = rows.iter().rev().find(|row| row["kind"] == "metric_summary").unwrap();
+        let batches = bridge.exported.lock().unwrap();
+        let batch = batches.last().expect("summarize exports before taking its JSON snapshot");
+        assert_exported_operations(batch, summary, expected);
+    }
+    drop(observation);
     let (bridge, transport) = export_fixture(false);
     let recorder = JsonRecorder::with_meter(Some(&bridge.meter()));
     metrics::with_local_recorder(&recorder, || {
         metrics::counter!(format!("{}__work_bytes", STEMS[0])).increment(7);
     });
-    let snapshot = recorder.snapshot(true);
-    recorder.snapshot(true);
     let measured = bridge.collected();
+    let snapshot = recorder.snapshot(true);
     let metric = measured
         .scope_metrics()
         .flat_map(opentelemetry_sdk::metrics::data::ScopeMetrics::metrics)
@@ -798,7 +849,6 @@ fn provider_bridge() {
     metrics::with_local_recorder(&recorder, || {
         metrics::counter!(format!("{}__work_bytes", STEMS[0])).increment(11);
     });
-    recorder.snapshot(true);
     failed.flush();
     assert_eq!(failed.lost.load(Ordering::Relaxed), 1);
     assert!(
