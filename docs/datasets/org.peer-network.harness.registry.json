@@ -95,6 +95,7 @@
         "cli-common::observation::tests::provider_bridge": "integration"
       },
       "cases": [
+        "cli-common::observation::tests::artifact_digest_vector",
         "cli-common::observation::tests::unavailable_observation",
         "cli-common::observation::tests::typed_export_bootstrap",
         "cli-common::observation::tests::default_emission",
@@ -2470,6 +2471,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_discipline.HashCitations.test_artifact_vector",
         "ci::test_discipline.HashCitations.test_hash_accounting",
         "ci::test_discipline.HashCitations.test_hash_carrier",
         "ci::test_discipline.HashCitations.test_hash_tracked_cli",
@@ -3096,6 +3098,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::public::burn::policy_digest_vectors",
         "pn-records::public::burn::policy_publication_recipe",
         "pn-records::public::burn::successor_position",
         "pn-records::public::burn::copied_marker_names",

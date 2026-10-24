@@ -241,11 +241,10 @@ fn explicit_refusal_precedence() {
         let summary = rows.iter().find(|row| row["kind"] == "metric_summary").unwrap();
         let mut instruments = summary["metrics"]["instruments"].clone();
         if instruments["encoding"] == "json" {
-            use sha2::{Digest, Sha256};
             let artifact = &instruments["artifact"];
             let payload = std::fs::read(artifact["path"].as_str().unwrap()).unwrap();
             assert_eq!(artifact["length_bytes"], payload.len());
-            assert_eq!(artifact["digest"], format!("{:x}", Sha256::digest(&payload)));
+            assert_eq!(artifact["digest"], digest_hex(&payload));
             instruments = serde_json::from_slice(&payload).unwrap();
         }
         for outcome in ["refusal", "error"] {
@@ -315,10 +314,7 @@ fn content_artifact_publication() {
     let bytes = std::fs::read(path).unwrap();
     assert_eq!(serde_json::from_slice::<Value>(&bytes).unwrap(), original["payload"]);
     assert_eq!(artifact["length_bytes"], bytes.len());
-    assert_eq!(
-        artifact["digest"],
-        format!("{:x}", <sha2::Sha256 as sha2::Digest>::digest(&bytes))
-    );
+    assert_eq!(artifact["digest"], digest_hex(&bytes));
     let mut second = original.clone();
     content::compact(&mut second, directory.path()).unwrap();
     assert_eq!(first, second);
@@ -1636,8 +1632,6 @@ fn counter_contention() {
 /// ´test:unit:host-owner-accounting´
 #[test]
 fn host_owner_accounting() {
-    use sha2::{Digest, Sha256};
-
     for trace in [false, true] {
         let (mut observation, clock, capture) = fixture();
         observation.full_trace = trace;
@@ -1653,7 +1647,7 @@ fn host_owner_accounting() {
         if let Some(path) = instruments["artifact"]["path"].as_str() {
             let bytes = std::fs::read(path).unwrap();
             assert_eq!(instruments["artifact"]["length_bytes"], bytes.len());
-            assert_eq!(instruments["artifact"]["digest"], format!("{:x}", Sha256::digest(&bytes)));
+            assert_eq!(instruments["artifact"]["digest"], digest_hex(&bytes));
             instruments = serde_json::from_slice(&bytes).unwrap();
         }
         let series = instruments.as_array().unwrap();
@@ -1676,4 +1670,43 @@ fn host_owner_accounting() {
                 .all(|row| row["counter"] == 0)
         );
     }
+}
+
+fn digest_hex(bytes: &[u8]) -> String {
+    use sha2::{Digest, Sha256};
+    use std::fmt::Write as _;
+    let mut text = String::with_capacity(64);
+    for byte in Sha256::digest(bytes) {
+        write!(&mut text, "{byte:02x}").unwrap();
+    }
+    text
+}
+
+/// Claim: A fixed public JSON payload retains the literal lowercase SHA-256 address captured on the prior implementing line, in both the artifact field and its objects/sha256 filename; the expected text is not formatted by the library under test.
+/// ´claim:cli:artifact-address-retains-fixed-digest-text´
+/// ´test:unit:artifact-digest-vector´
+#[test]
+fn artifact_digest_vector() {
+    let vector: Value = serde_json::from_str(include_str!("artifact-digest-v1.json")).unwrap();
+    assert_eq!(vector["recipe"], "json-string-utf8");
+    let payload = vector["payload"]
+        .as_str()
+        .unwrap()
+        .repeat(usize::try_from(vector["repeat"].as_u64().unwrap()).unwrap());
+    let expected = vector["digest"].as_str().unwrap();
+    assert_eq!(expected.len(), 64);
+    assert!(
+        expected
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+    );
+    let directory = tempfile::tempdir().unwrap();
+    let mut value = json!({"payload":payload});
+    let encoded = serde_json::to_vec(&value["payload"]).unwrap();
+    content::compact(&mut value, directory.path()).unwrap();
+    let artifact = &value["payload"]["artifact"];
+    assert_eq!(artifact["digest"], expected);
+    let path = std::path::Path::new(artifact["path"].as_str().unwrap());
+    assert_eq!(path, directory.path().join("objects").join("sha256").join(expected));
+    assert_eq!(std::fs::read(path).unwrap(), encoded);
 }

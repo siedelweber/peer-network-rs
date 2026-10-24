@@ -2160,6 +2160,30 @@
       "before": "",
       "after": "Claim: An absent or empty PostgreSQL binary-directory declaration refuses by name before the gate runs any step, without exposing an endpoint or substituting a node path.",
       "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+    },
+    {
+      "operation": "pn-records::public::burn::policy_digest_vectors",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:policy-digest-recipe-preserves-known-bytes",
+      "before": "",
+      "after": "Claim: The permanent marker-policy recipe preserves its exact SHA-256 bytes for all encoding and candidate-rule discriminants across a cryptographic-library change; the expected bytes come from independently framed public inputs.",
+      "review": "Read all seven length-framed strings, three big-endian integers, Boolean and both enum discriminants against the permanent recipe. Six fixed expected byte arrays were independently framed with Python hashlib and executed on both implementing lines. The fixture asserts digest identity, not validation of these illustrative policy fields."
+    },
+    {
+      "operation": "cli-common::observation::tests::artifact_digest_vector",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:artifact-address-retains-fixed-digest-text",
+      "before": "",
+      "after": "Claim: A fixed public JSON payload retains the literal lowercase SHA-256 address captured on the prior implementing line, in both the artifact field and its objects/sha256 filename; the expected text is not formatted by the library under test.",
+      "review": "Read the fixed payload construction and the assertions against the committed digest literal, the complete objects/sha256 path and the stored encoded bytes. The expected literal was captured on the green old-line artifact producer before the formatter adaptation and independently checked with hashlib."
+    },
+    {
+      "operation": "ci::test_discipline.HashCitations.test_artifact_vector",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:hashcitations:artifact-vector-binds-its-payload",
+      "before": "",
+      "after": "The artifact address family recomputes its declared payload, refusing a substituted digest, changed payload or unknown recipe rather than accepting any identity-shaped literal.",
+      "review": "Read the positive digest resolution and the three independently mutated digest, payload and recipe cases. Each must be refused by the family reader; no library-formatted expected digest is used by the Rust witness."
     }
   ]
 }

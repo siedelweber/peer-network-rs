@@ -910,6 +910,9 @@
     "pn-host::transport_evidence::public_transport": "",
     "pn-host::public::scram_bound_refusals": "",
     "pn-host::public::acquisition_bound_refusals": "",
-    "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory": ""
+    "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory": "",
+    "pn-records::public::burn::policy_digest_vectors": "",
+    "cli-common::observation::tests::artifact_digest_vector": "",
+    "ci::test_discipline.HashCitations.test_artifact_vector": ""
   }
 }

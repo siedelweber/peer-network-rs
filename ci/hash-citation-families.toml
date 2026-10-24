@@ -2,6 +2,17 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 [[rows]]
+family = "artifact-address-vector"
+group = "first-party observation"
+measures = "SHA-256 of the fixed UTF-8 JSON string payload"
+producer = "cli-common artifact publication on the prior implementing line"
+establishment = "recomputable"
+reader = "artifact-vector"
+source = "packages/cli-common/src/observation/artifact-digest-v1.json"
+definition = "Repeat the declared public string, encode it as a compact UTF-8 JSON string including quotation marks, and compute SHA-256. The Rust witness compares the stored literal with both the artifact digest field and its objects/sha256 filename. This preserves the existing content-address recipe."
+paths = ["packages/cli-common/src/observation/artifact-digest-v1.json"]
+
+[[rows]]
 family = "observation-source-literals"
 group = "Checked Rust syntax mirrored in operation admission"
 measures = "Numeric literals and code-unit witnesses, not source identities"

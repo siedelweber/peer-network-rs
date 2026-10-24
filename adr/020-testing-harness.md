@@ -38,7 +38,7 @@
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
-| cli-common | active | unit | cli-common-rust | fast | 95 |
+| cli-common | active | unit | cli-common-rust | fast | 96 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
 | documents::integration | active | integration | documents-rust | fast | 28 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
@@ -75,7 +75,7 @@
 | regexml-doctests | active | doctest | regexml-rust | fast | 1 |
 | ci::test_design | active | integration | ci-python | fast | 6 |
 | ci::test_devperf | active | unit | ci-python | fast | 14 |
-| ci::test_discipline | active | integration | ci-python | fast | 26 |
+| ci::test_discipline | active | integration | ci-python | fast | 27 |
 | ci::test_harness | active | unit | ci-python | fast | 12 |
 | planned-burn | held | held | none | service | 0 |
 | planned-graph | held | held | none | fast | 0 |
@@ -109,7 +109,7 @@
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
 | ci::test_linter_entry | active | integration | ci-python | fast | 16 |
 | pn-records | active | unit | pn-records-rust | fast | 5 |
-| pn-records::public | active | public-surface | pn-records-rust | fast | 42 |
+| pn-records::public | active | public-surface | pn-records-rust | fast | 43 |
 | pn-records::integration | active | integration | pn-records-rust | fast | 2 |
 | pn-records::properties | active | public-surface | pn-records-rust | fast | 4 |
 | pn-records::conformance | active | integration | pn-records-rust | fast | 3 |

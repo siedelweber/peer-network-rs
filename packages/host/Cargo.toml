@@ -12,12 +12,11 @@ version.workspace = true
 cli-common.workspace = true
 tracing.workspace = true
 secrecy.workspace = true
-zeroize = { version = "=1.9.1", default-features = false, features = ["alloc"] }
 tokio-postgres = { version = "=0.7.18", default-features = false }
 tokio = { version = "=1.54.1", default-features = false, features = ["rt", "net", "io-util", "sync", "time"] }
 hmac = { version = "=0.13.0", default-features = false, features = ["zeroize"] }
 pbkdf2 = { version = "=0.13.0", default-features = false, features = ["hmac"] }
-sha2 = { version = "=0.11.1", default-features = false, features = ["zeroize"] }
+sha2.workspace = true
 getrandom = { version = "=0.4.3", default-features = false }
 base64 = { version = "=0.23.1", default-features = false }
 

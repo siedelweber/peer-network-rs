@@ -662,3 +662,38 @@ fn policy_publication_recipe() {
         Err(BurnError::UnsupportedPolicyRecipe)
     );
 }
+
+/// Claim: The permanent marker-policy recipe preserves its exact SHA-256 bytes for all encoding and candidate-rule discriminants across a cryptographic-library change; the expected bytes come from independently framed public inputs.
+/// ´claim:burn:policy-digest-recipe-preserves-known-bytes´
+/// ´test:integration:policy-digest-vectors´
+#[test]
+fn policy_digest_vectors() {
+    use pn_records::burn::{CandidateRule, PolicyInput};
+    let rows: Vec<(usize, usize, [u8; 32])> = serde_json::from_str(include_str!("policy-digest-v1.json")).unwrap();
+    for (encoding, candidate_rule, expected) in rows {
+        let policy = PolicyInput {
+            identity: "marker/policy".into(),
+            edition: "edition-7".into(),
+            sequence: "sequence-public".into(),
+            initial_marker: "genesis".into(),
+            placement_procedure: "open placement".into(),
+            cadence: "cadence-public".into(),
+            verification_profile: "verifier-v1".into(),
+            published_at: 3,
+            genesis_at: 11,
+            stability_buffer: 5,
+            open_placement: true,
+            encoding: [
+                Encoding::CompleteList,
+                Encoding::PublicCommitment,
+                Encoding::WholePrefixAcceptAll,
+            ][encoding],
+            candidate_rule: [CandidateRule::FirstValidInHistoryOrder, CandidateRule::UniquePerIndex][candidate_rule],
+        };
+        assert_eq!(
+            pn_records::constants::marker_policy_digest(&policy),
+            expected,
+            "{encoding}/{candidate_rule}"
+        );
+    }
+}

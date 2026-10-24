@@ -1,6 +1,8 @@
 """Account for tracked hexadecimal values without recomputing their subjects."""
 
 import ast
+import hashlib
+import json
 import fnmatch
 import pathlib
 import re
@@ -81,6 +83,16 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == "artifact-vector" and standing == "recomputable":
+        vector = json.loads(relative_file(root, rule["source"]).read_text())
+        if (vector.get("recipe") != "json-string-utf8" or not isinstance(vector.get("payload"), str)
+                or type(vector.get("repeat")) is not int or not 0 < vector["repeat"] <= 65536):
+            raise ValueError("hash citations: invalid artifact vector recipe")
+        encoded = json.dumps(vector["payload"] * vector["repeat"], ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+        expected = hashlib.sha256(encoded).hexdigest()
+        if vector.get("digest") != expected:
+            raise ValueError("hash citations: artifact vector differs from its payload")
+        return lambda value, _line: value == expected
     if kind == "ancestor-commit" and standing == "resolvable":
         commit = rule["commit"]
         if not re.fullmatch(r"[0-9a-f]{40}", commit):

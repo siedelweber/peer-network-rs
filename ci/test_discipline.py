@@ -74,6 +74,28 @@ class WorkspaceChecks(unittest.TestCase):
 
 
 class HashCitations(unittest.TestCase):
+    def test_artifact_vector(self):
+        """The artifact address family recomputes its declared payload, refusing a substituted digest, changed payload or unknown recipe rather than accepting any identity-shaped literal.
+        ´claim:hashcitations:artifact-vector-binds-its-payload´
+        ´test:integration:test-artifact-vector´
+        """
+        source = Path('packages/cli-common/src/observation/artifact-digest-v1.json')
+        vector = json.loads(source.read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root/'vector.json'
+            rule = dict(reader='artifact-vector', establishment='recomputable', source='vector.json')
+            path.write_text(json.dumps(vector))
+            check = establish(root, rule)
+            self.assertTrue(check(vector['digest'], ''))
+            self.assertFalse(check('f'*64, ''))
+            for field, value in [('digest', 'f'*64), ('payload', 'y'), ('recipe', 'unknown')]:
+                changed = dict(vector)
+                changed[field] = value
+                path.write_text(json.dumps(changed))
+                with self.assertRaisesRegex(ValueError, 'artifact vector'):
+                    establish(root, rule)
+
     def test_interchange_literal_boundaries(self):
         """imported literal families distinguish replay and encoding data from identity claims.
         ´claim:discipline:literal-warrants-are-bounded´

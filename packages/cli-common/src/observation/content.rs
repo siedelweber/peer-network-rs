@@ -308,7 +308,11 @@ fn compact_tree(value: &mut Value, root: &Path) -> io::Result<(usize, usize)> {
 }
 
 fn artifact(encoded: &[u8], root: &Path) -> io::Result<Value> {
-    let digest = format!("{:x}", Sha256::digest(encoded));
+    use std::fmt::Write as _;
+    let mut digest = String::with_capacity(64);
+    for byte in Sha256::digest(encoded) {
+        write!(&mut digest, "{byte:02x}").map_err(io::Error::other)?;
+    }
     let directory = root.join("objects").join("sha256");
     std::fs::create_dir_all(&directory)?;
     let path = directory.join(&digest);

@@ -1,0 +1,6 @@
+{
+  "recipe": "json-string-utf8",
+  "payload": "x",
+  "repeat": 65536,
+  "digest": "afb3bbecac846785e46b87edbed49d7e06a9e186e9ce70ef8e59b33c9c72145f"
+}
