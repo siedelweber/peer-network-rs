@@ -887,6 +887,23 @@
     "pn-records::public::burn::policy_publication_binding": "",
     "pn-records::public::burn::policy_open_placement_binding": "",
     "pn-records::public::burn::successor_position": "",
-    "pn-records::public::burn::policy_publication_recipe": ""
+    "pn-records::public::burn::policy_publication_recipe": "",
+    "cli-common::observation::tests::host_owner_accounting": "",
+    "pn-host::postgresql::real_transports": "",
+    "pn-host::postgresql::real_authentication_refusals": "",
+    "pn-host::postgresql::real_cancellation": "",
+    "pn-host::postgresql::private_server_echo": "",
+    "pn-host::postgresql::serialization_conflict": "",
+    "pn-host::postgresql::connection_loss_and_drop": "",
+    "pn-host::public::case_before_input": "",
+    "pn-host::public::configuration_carrier": "",
+    "pn-host::public::impostor_authentication": "",
+    "pn-host::public::authentication_disconnect": "",
+    "pn-host::public::stock_configuration_control": "",
+    "pn-host::public::impostor_server_proof": "",
+    "ci::test_host_runtime.HostRuntime.test_public_transport": "",
+    "pn-host::config::tests::secret_json_grammar": "",
+    "pn-host::tests::wire_filter_boundary": "",
+    "ci::test_host_runtime.HostRuntime.test_dependency_pins": ""
   }
 }

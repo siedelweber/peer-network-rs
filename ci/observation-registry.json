@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "configuration": "five production packages, host target, default and no-default features; development-only pn-testkit is outside this production configuration",
+  "configuration": "six production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration",
   "named_operations": [
     "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
     "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
@@ -5338,6 +5338,282 @@
       "shape": "shape-records",
       "mode": "instrumented",
       "operation": "digest-marker-policy"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/config.rs",
+      "item": "config::Configuration::acquire",
+      "owner": "HOST",
+      "signature": "fn acquire (case : Option < & str > , reader : & mut impl Read) -> Result < Self , Refusal >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/config.rs",
+      "item": "config::<Configuration as fmt :: Debug>::fmt",
+      "owner": "HOST",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/secret.rs",
+      "item": "secret::<Buffer as fmt :: Debug>::fmt",
+      "owner": "HOST",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/wire.rs",
+      "item": "wire::<Socket as fmt :: Debug>::fmt",
+      "owner": "HOST",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/wire.rs",
+      "item": "wire::<Socket as AsyncRead>::poll_read",
+      "owner": "HOST",
+      "signature": "fn poll_read (self : Pin < & mut Self > , cx : & mut Context < '_ > , bytes : & mut ReadBuf < '_ >) -> Poll < std :: io :: Result < () > >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/wire.rs",
+      "item": "wire::<Socket as AsyncWrite>::poll_write",
+      "owner": "HOST",
+      "signature": "fn poll_write (self : Pin < & mut Self > , cx : & mut Context < '_ > , bytes : & [u8]) -> Poll < std :: io :: Result < usize > >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/wire.rs",
+      "item": "wire::<Socket as AsyncWrite>::poll_flush",
+      "owner": "HOST",
+      "signature": "fn poll_flush (self : Pin < & mut Self > , cx : & mut Context < '_ >) -> Poll < std :: io :: Result < () > >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/wire.rs",
+      "item": "wire::<Socket as AsyncWrite>::poll_shutdown",
+      "owner": "HOST",
+      "signature": "fn poll_shutdown (self : Pin < & mut Self > , cx : & mut Context < '_ >) -> Poll < std :: io :: Result < () > >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "<ForwardingTask as Drop>::drop",
+      "owner": "HOST",
+      "signature": "fn drop (& mut self)",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "<Refusal as fmt :: Display>::fmt",
+      "owner": "HOST",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "<PrivateDiagnostic as fmt :: Debug>::fmt",
+      "owner": "HOST",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "<Session as fmt :: Debug>::fmt",
+      "owner": "HOST",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "<Session as Drop>::drop",
+      "owner": "HOST",
+      "signature": "fn drop (& mut self)",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "Session::connect",
+      "owner": "HOST",
+      "signature": "async fn connect (config : Configuration) -> Result < Self , Refusal >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "Session::client",
+      "owner": "HOST",
+      "signature": "fn client (& self) -> & tokio_postgres :: Client",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "Session::cancel",
+      "owner": "HOST",
+      "signature": "async fn cancel (& self) -> Result < () , Refusal >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "Session::private_diagnostics",
+      "owner": "HOST",
+      "signature": "fn private_diagnostics (& self) -> Result < Vec < PrivateDiagnostic > , Refusal >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "observe_public_frame",
+      "owner": "HOST",
+      "signature": "fn observe_public_frame (frame : & wire :: Frame)",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -5970,6 +6246,69 @@
       "name": "records__root__sig__design__records__assembly_steps",
       "kind": "counter",
       "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__started_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__completed_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {
+        "outcome": [
+          "success",
+          "refusal",
+          "error",
+          "cancelled",
+          "unwinding",
+          "incomplete"
+        ]
+      }
+    },
+    {
+      "name": "host__root__sig__design__storage__work_bytes",
+      "kind": "counter",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__work_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__active_operations",
+      "kind": "gauge",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__resource_current_bytes",
+      "kind": "gauge",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__elapsed_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__workload_bytes",
+      "kind": "histogram",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__workload_operations",
+      "kind": "histogram",
+      "unit": "operations",
       "attributes": {}
     }
   ],
@@ -8198,9 +8537,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_new_span",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"HOST\") => Some (OperationKind :: Host) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
       "class_decision": "delivery",
-      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure.",
+      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure. The authorized HOST dispatch selects its own storage stem; host-owner-accounting checks it independently of the other owners.",
       "assessments": {
         "full_recording": "review-204",
         "secret_flow": "review-002",
@@ -10230,6 +10569,204 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "The publication producer validates public policy content against validated burn before returning its recipe and digest together; refusal preserves the typed cause and records refusal without constructing a publication."
+    },
+    {
+      "operation": "pn-host::packages/host/src/config.rs::config::Configuration::acquire",
+      "class_decision": "host-transport",
+      "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"config::Configuration::acquire\" , & \"secret connection input\" ,) ; let result = Self :: read (case , reader) ; if result . is_err () { tracing :: info ! (outcome = \"refusal\") ; } else { tracing :: info ! (store_link_case = \"host-secured\") ; } operation . finish (& result) ; result }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. The public case is checked before the reader is touched, and field decoding allocates only secret-owned buffers."
+    },
+    {
+      "operation": "pn-host::packages/host/src/config.rs::config::<Configuration as fmt :: Debug>::fmt",
+      "class_decision": "host-transport",
+      "body": "{ f . write_str (\"Configuration { role: store-connection, value: [REDACTED] }\") }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/secret.rs::secret::<Buffer as fmt :: Debug>::fmt",
+      "class_decision": "host-transport",
+      "body": "{ f . write_str (\"SecretBuffer { role: store-transport, value: [REDACTED] }\") }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as fmt :: Debug>::fmt",
+      "class_decision": "host-transport",
+      "body": "{ f . write_str (\"Socket { role: store-transport, value: [REDACTED] }\") }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as AsyncRead>::poll_read",
+      "class_decision": "host-transport",
+      "body": "{ match & mut self . get_mut () . 0 { Transport :: Unix (s) => Pin :: new (s) . poll_read (cx , bytes) , Transport :: Tcp (s) => Pin :: new (s) . poll_read (cx , bytes) , } }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as AsyncWrite>::poll_write",
+      "class_decision": "host-transport",
+      "body": "{ match & mut self . get_mut () . 0 { Transport :: Unix (s) => Pin :: new (s) . poll_write (cx , bytes) , Transport :: Tcp (s) => Pin :: new (s) . poll_write (cx , bytes) , } }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as AsyncWrite>::poll_flush",
+      "class_decision": "host-transport",
+      "body": "{ match & mut self . get_mut () . 0 { Transport :: Unix (s) => Pin :: new (s) . poll_flush (cx) , Transport :: Tcp (s) => Pin :: new (s) . poll_flush (cx) , } }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as AsyncWrite>::poll_shutdown",
+      "class_decision": "host-transport",
+      "body": "{ match & mut self . get_mut () . 0 { Transport :: Unix (s) => Pin :: new (s) . poll_shutdown (cx) , Transport :: Tcp (s) => Pin :: new (s) . poll_shutdown (cx) , } }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::<ForwardingTask as Drop>::drop",
+      "class_decision": "host-transport",
+      "body": "{ self . 0 . abort () ; }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::<Refusal as fmt :: Display>::fmt",
+      "class_decision": "host-transport",
+      "body": "{ write ! (f , \"store link refused: {self:?}\") }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::<PrivateDiagnostic as fmt :: Debug>::fmt",
+      "class_decision": "host-transport",
+      "body": "{ f . debug_tuple (\"PrivateDiagnostic\") . field (& self . 0) . finish () }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::<Session as fmt :: Debug>::fmt",
+      "class_decision": "host-transport",
+      "body": "{ f . write_str (\"Session { store_link_case: host-secured, private_state: [REDACTED], persistence: disabled }\") }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::<Session as Drop>::drop",
+      "class_decision": "host-transport",
+      "body": "{ for task in & self . tasks { task . abort () ; } }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::Session::connect",
+      "class_decision": "host-transport",
+      "body": "{ let result = Self :: connect_inner (config) . await ; if let Err (cause) = & result { tracing :: info ! (outcome = if matches ! (cause , Refusal :: Transport | Refusal :: Entropy) { \"error\" } else { \"refusal\" }) ; } result }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. Future-aware instrumentation enters only while polled; forwarding tasks retain the span and are aborted with their owner."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::Session::client",
+      "class_decision": "host-transport",
+      "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"Session::client\" , & self) ; let result = & self . client ; operation . finish (& \"public placeholder client\") ; result }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::Session::cancel",
+      "class_decision": "host-transport",
+      "body": "{ let result = self . cancel_inner () . await ; if result . is_err () { tracing :: info ! (outcome = \"error\") ; } result }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. Future-aware instrumentation enters only while polled; forwarding tasks retain the span and are aborted with their owner."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::Session::private_diagnostics",
+      "class_decision": "host-transport",
+      "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"Session::private_diagnostics\" , & self) ; let result = self . diagnostics . lock () . map (| mut values | std :: mem :: take (& mut * values)) . map_err (| _ | Refusal :: PrivateDiagnostic) ; operation . finish (& result) ; result }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::observe_public_frame",
+      "class_decision": "host-transport",
+      "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"observe_public_frame\" , & if cli_common :: observation :: trace_enabled () { Some ((frame . kind , cli_common :: observation :: public_bytes (frame . payload . bytes ()))) } else { None } ,) ; let result = () ; operation . finish (& result) ; }",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes."
     }
   ],
   "generators": [
@@ -12275,6 +12812,15 @@
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
       "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
+    },
+    {
+      "item": "Refusal",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
+      "class_decision": "host-transport",
+      "expansion_review": "Refusal derives inspect only bounded fieldless variants; tracing attributes use role-only private carrier Debug and Instrument future lifetimes, with explicit bounded outcome events."
     }
   ],
   "reviewed_types": [
@@ -12984,7 +13530,7 @@
       "item": "observation::OperationKind",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , }"
+      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , # [doc = \" Host service transport and storage boundary operations.\"] Host , }"
     },
     {
       "item": "observation::Outcome",
@@ -13813,6 +14359,66 @@
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
       "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Node visits, parent inspections, inherited-member insert attempts and emitted members.\"] # [doc = \" None means counter overflow, never a work-limit refusal.\"] work : Option < u64 > , # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] boundary : u64 , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] closures : Vec < PrincipalClosure > , }"
+    },
+    {
+      "item": "config::Configuration",
+      "package": "pn-host",
+      "path": "packages/host/src/config.rs",
+      "syntax": "# [doc = \" A store configuration acquired under the public host-secured link case.\"] # [doc = \" (´def:host:connection-configuration´)\"] # [doc = \" The private fields have neither Display nor serialization. Parsing failures\"] # [doc = \" contain only bounded causes, never a parser's copy of the input.\"] # [doc = \"\"] # [doc = \" ```compile_fail\"] # [doc = \" fn display(config: pn_host::Configuration) { let _ = format!(\\\"{config}\\\"); }\"] # [doc = \" ```\"] # [doc = \"\"] # [doc = \" ```compile_fail\"] # [doc = \" fn serialize(config: pn_host::Configuration) { let _ = serde_json::to_vec(&config); }\"] # [doc = \" ```\"] pub struct Configuration { data : Buffer , fields : [Range < usize > ; 6] , }"
+    },
+    {
+      "item": "config::Json",
+      "package": "pn-host",
+      "path": "packages/host/src/config.rs",
+      "syntax": "struct Json < 'a > { bytes : & 'a [u8] , at : usize , }"
+    },
+    {
+      "item": "secret::Buffer",
+      "package": "pn-host",
+      "path": "packages/host/src/secret.rs",
+      "syntax": "pub (crate) struct Buffer { bytes : SecretBox < [u8] > , length : usize , }"
+    },
+    {
+      "item": "wire::Transport",
+      "package": "pn-host",
+      "path": "packages/host/src/wire.rs",
+      "syntax": "enum Transport { Unix (UnixStream) , Tcp (TcpStream) , }"
+    },
+    {
+      "item": "wire::Socket",
+      "package": "pn-host",
+      "path": "packages/host/src/wire.rs",
+      "syntax": "pub (crate) struct Socket (Transport) ;"
+    },
+    {
+      "item": "wire::Frame",
+      "package": "pn-host",
+      "path": "packages/host/src/wire.rs",
+      "syntax": "pub (crate) struct Frame { pub (crate) kind : u8 , pub (crate) payload : Buffer , }"
+    },
+    {
+      "item": "ForwardingTask",
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "syntax": "struct ForwardingTask (tokio :: task :: JoinHandle < () >) ;"
+    },
+    {
+      "item": "Refusal",
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "syntax": "# [doc = \" Bounded refusal causes contain no service-supplied strings or source errors.\"] # [doc = \" (´def:host:refusal´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum Refusal { # [doc = \" No public store-link case was declared.\"] MissingCase , # [doc = \" The public case vocabulary does not contain this declaration.\"] UnknownCase , # [doc = \" Guarded transport remains held.\"] HeldCase , # [doc = \" Private acquisition failed.\"] ConfigurationIo , # [doc = \" The connection-only JSON did not satisfy its schema.\"] ConfigurationSyntax , # [doc = \" A fixed protocol representation bound was exceeded.\"] RepresentationLimit , # [doc = \" This route avoids ordinary hostname storage in a resolver.\"] NumericEndpointRequired , # [doc = \" Transport failure; the operating-system error is not retained.\"] Transport , # [doc = \" Invalid framing or message order.\"] Protocol , # [doc = \" Password authentication failed inside the secret boundary.\"] ServerAuthentication , # [doc = \" Cleartext password requests are forbidden.\"] Cleartext , # [doc = \" MD5 authentication is forbidden.\"] Md5 , # [doc = \" GSS authentication is forbidden.\"] Gss , # [doc = \" SSPI authentication is forbidden.\"] Sspi , # [doc = \" Kerberos authentication is forbidden.\"] Kerberos , # [doc = \" `AuthenticationOk` preceded a verified SCRAM server signature.\"] PrematureAuthenticationOk , # [doc = \" No supported authentication mechanism was offered.\"] UnsupportedAuthentication , # [doc = \" Invalid SCRAM attribute encoding.\"] ScramFormat , # [doc = \" The declared iteration count exceeds the reviewed work bound.\"] ScramIterations , # [doc = \" The server did not extend the client nonce.\"] ServerNonce , # [doc = \" The server proof does not authenticate the transcript.\"] ServerSignature , # [doc = \" The operating system could not supply a fresh nonce.\"] Entropy , # [doc = \" The public placeholder driver handoff failed.\"] DriverHandoff , # [doc = \" A server diagnostic remains private and terminates the driver stream.\"] PrivateDiagnostic , # [doc = \" Cancellation lacks an authenticated backend capability.\"] Cancellation , }"
+    },
+    {
+      "item": "PrivateDiagnostic",
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "syntax": "# [doc = \" A whole, secret-typed server diagnostic; no string or serialization accessor.\"] # [doc = \" (´def:host:private-server-diagnostic´)\"] pub struct PrivateDiagnostic (Buffer) ;"
+    },
+    {
+      "item": "Session",
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "syntax": "# [doc = \" A transport-only connection; this package defines no persistence operation.\"] # [doc = \" (´def:host:session´)\"] # [doc = \" Queries must concern public data. Service metadata is not public query data.\"] # [doc = \" Unclassified server diagnostics stay secret-typed and close this stream.\"] pub struct Session { client : tokio_postgres :: Client , config : Arc < Configuration > , backend_key : Arc < Mutex < Option < Buffer > > > , diagnostics : Arc < Mutex < Vec < PrivateDiagnostic > > > , tasks : Vec < tokio :: task :: JoinHandle < () > > , }"
     }
   ],
   "class_decisions": [
@@ -13882,6 +14488,14 @@
       "premises": "Internal records are public structural carriers. Validation records complete candidate acts and the caller-supplied resolution set, then its typed result; borrowed access records the unchanged complete acts. No codec, subscriber installation, secret acquisition or ExposeSecret consumer occurs. Structural Clone, Debug, Eq and Ord implementations inherit both labelled boundaries, with no duplicate trace on trait plumbing. External callers owe their own labelled boundary.",
       "membership": {
         "labelled_package": "pn-records"
+      }
+    },
+    {
+      "name": "host-transport",
+      "status": "reviewer-confirmed",
+      "premises": "The host transport is a secret-terminating boundary, not persistence. Acquisition, sockets, startup, authentication and cancellation borrow secret-owned buffers; only bounded public placeholders and structurally admitted public frames cross into the upstream driver. Fixed diagnostics preserve their bytes; other whole messages stay secret-owned. This source review is bounded to the declared fixture and protocol profile; independent integration admission remains held.",
+      "membership": {
+        "labelled_package": "pn-host"
       }
     }
   ],
@@ -13998,6 +14612,27 @@
         "records__root__sig__design__records__records_per_boundary",
         "records__root__sig__design__records__input_bytes",
         "records__root__sig__design__records__assembly_steps"
+      ]
+    },
+    "shape-host": {
+      "fields": [
+        "public case and role-only private carrier markers",
+        "full admitted public protocol frames at trace",
+        "bounded outcome",
+        "inclusive duration_seconds",
+        "declared invocation work",
+        "qualified resource totals"
+      ],
+      "metrics": [
+        "host__root__sig__design__storage__started_operations",
+        "host__root__sig__design__storage__completed_operations",
+        "host__root__sig__design__storage__work_bytes",
+        "host__root__sig__design__storage__work_operations",
+        "host__root__sig__design__storage__active_operations",
+        "host__root__sig__design__storage__resource_current_bytes",
+        "host__root__sig__design__storage__elapsed_seconds",
+        "host__root__sig__design__storage__workload_bytes",
+        "host__root__sig__design__storage__workload_operations"
       ]
     }
   },
@@ -15501,6 +16136,21 @@
       "status": "reviewer-confirmed",
       "premises": "Internal records are public structural carriers. Validation records complete candidate acts and the caller-supplied resolution set, then its typed result; borrowed access records the unchanged complete acts. No codec, subscriber installation, secret acquisition or ExposeSecret consumer occurs. Structural Clone, Debug, Eq and Ord implementations inherit both labelled boundaries, with no duplicate trace on trait plumbing. External callers owe their own labelled boundary.",
       "negative_probe": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary"
+    },
+    "host-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "The host transport is a secret-terminating boundary, not persistence. Acquisition, sockets, startup, authentication and cancellation borrow secret-owned buffers; only bounded public placeholders and structurally admitted public frames cross into the upstream driver. Fixed diagnostics preserve their bytes; other whole messages stay secret-owned. This source review is bounded to the declared fixture and protocol profile; independent integration admission remains held.",
+      "negative_probe": "ROOT::claim:discipline:host-transport-observation-retains-the-secret-boundary"
+    },
+    "host-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "The host transport is a secret-terminating boundary, not persistence. Acquisition, sockets, startup, authentication and cancellation borrow secret-owned buffers; only bounded public placeholders and structurally admitted public frames cross into the upstream driver. Fixed diagnostics preserve their bytes; other whole messages stay secret-owned. This source review is bounded to the declared fixture and protocol profile; independent integration admission remains held.",
+      "negative_probe": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage"
+    },
+    "host-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "The host transport is a secret-terminating boundary, not persistence. Acquisition, sockets, startup, authentication and cancellation borrow secret-owned buffers; only bounded public placeholders and structurally admitted public frames cross into the upstream driver. Fixed diagnostics preserve their bytes; other whole messages stay secret-owned. This source review is bounded to the declared fixture and protocol profile; independent integration admission remains held.",
+      "negative_probe": "HOST::claim:host:configuration-never-formats-private-input"
     }
   }
 }

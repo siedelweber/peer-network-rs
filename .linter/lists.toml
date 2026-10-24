@@ -303,3 +303,39 @@ allowances = []
 
 [VERIFICATION."profile.claims-conform"]
 allowances = []
+
+[HOST."labels.citations-import-form"]
+allowances = []
+
+[HOST."labels.citations-imported-resolve"]
+allowances = []
+
+[HOST."labels.citations-layer-conform"]
+allowances = []
+
+[HOST."labels.citations-local-resolve"]
+allowances = []
+
+[HOST."labels.generated-regions-conform"]
+allowances = []
+
+[HOST."labels.heads-conform"]
+allowances = []
+
+[HOST."labels.mints-kind-conform"]
+allowances = []
+
+[HOST."labels.mints-unique"]
+allowances = []
+
+[HOST."labels.mints-well-formed"]
+allowances = []
+
+[HOST."labels.outlines-conform"]
+allowances = []
+
+[HOST."profile.tests-conform"]
+allowances = []
+
+[HOST."profile.claims-conform"]
+allowances = []

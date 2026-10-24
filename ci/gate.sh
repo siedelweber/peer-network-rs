@@ -14,6 +14,8 @@ statuses=()
 mkdir -p .lane
 export PN_OBSERVE_ARTIFACT_DIR="$PWD/.lane/observations"
 export PN_OBSERVE_LEVEL=default
+export PN_HOST_TEST_ROOT="$PWD/.lane/host-postgres"
+trap 'python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"' EXIT
 gate_started=$(date -u +%s.%N)
 source ci/gate_resources.sh
 resource_root=$(gate_cgroup_root 2>/dev/null) || resource_root=
@@ -44,7 +46,7 @@ run_step() {
     if [ "$name" = tests ]; then budget=test-command; fi
     if [ "$name" = observation-runtime ]; then budget=pure-suite; fi
     case "$name" in
-        clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests|benchmarks|observation-syntax|observation-build|observation-parser) budget=incremental-build ;;
+        clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests|benchmarks|observation-syntax|observation-build|host-observation-build|observation-parser) budget=incremental-build ;;
     esac
     python3 -B ci/devperf.py --operation "$name" --duration-s "$wall" \
         --outcome "exit:$status" --source "$source_id" --budget "$budget" \
@@ -70,6 +72,7 @@ run_step member-lints python3 ci/discipline.py members
 run_step fmt python3 ci/discipline.py fmt
 run_step clippy python3 ci/discipline.py clippy
 run_step nursery-advisory python3 ci/discipline.py nursery
+run_step host-postgresql-start python3 -B ci/host_postgresql.py start --root "$PN_HOST_TEST_ROOT"
 run_step tests python3 -B ci/discipline.py tests
 run_step test-budgets python3 -B ci/devperf.py --input .lane/performance-events.jsonl --findings .lane/performance-findings.jsonl
 # Discover first-party members for feature-minimal builds and documentation.
@@ -88,6 +91,9 @@ run_step design-tests python3 -B ci/run_ci.py test_design
 run_step benchmarks python3 -B ci/benchmarks.py
 run_step observation-build cargo build --offline --locked --profile gate -p execwrap -p pn-records --features pn-records/test-support --examples
 run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
+run_step host-observation-build cargo build --offline --locked --profile gate -p pn-host --example transport_evidence
+run_step host-observation-runtime python3 -B ci/run_ci.py test_host_runtime
+run_step host-postgresql-stop python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"
 run_step observation-parser python3 -B ci/run_ci.py test_observe_syntax
 run_step observation-syntax python3 -B ci/observe.py
 run_step harness-matrix python3 -B ci/harness.py --matrix

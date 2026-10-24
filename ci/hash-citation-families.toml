@@ -224,3 +224,24 @@ locator = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum/commit/b
 commit = "b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
 definition = "The public main commit supplies nrz-scalar, nrz-accuracy and nrz-cas. The manifest rev and Cargo.lock fix the same reviewed source revision; the accepting record and numeric dependency dataset retain the licence, resolved features and representation limits reviewed before numeric carriers."
 paths = ["Cargo.toml", "Cargo.lock", "ci/hash-citation-families.toml", "docs/inputs/numeric-dependencies.toml", "docs/datasets/org.peer-network.numeric.dependencies.json", "docs/templates/adr/007-crate-decomposition.md.j2", "adr/007-crate-decomposition.md", "packages/records/NOTICE-NUMERIC"]
+
+[[rows]]
+family = "host-crate-archives"
+group = "host transport dependencies"
+measures = "SHA-256 of a registry crate archive"
+producer = "Cargo lock resolution"
+establishment = "resolvable"
+reader = "cargo-archive"
+source = "Cargo.lock"
+definition = "The package name and exact version in the host dependency register locate the unmodified crates.io archive; its checksum must equal Cargo.lock."
+paths = ["docs/inputs/host-dependencies.toml", "docs/datasets/org.peer-network.storage.dependencies.json", "adr/015-durable-storage.md", "docs/templates/adr/015-durable-storage.md.j2"]
+
+[[rows]]
+family = "host-protocol-literals"
+group = "host transport implementation"
+measures = "Explicit protocol integers and Unicode code units, not identities"
+producer = "PostgreSQL protocol framing and JSON character grammar"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "Explicit integer and escape literals denote protocol bytes, ASCII ranges and Unicode scalar boundaries; no bare identity-shaped value is admitted."
+paths = ["packages/host/**/*.rs"]

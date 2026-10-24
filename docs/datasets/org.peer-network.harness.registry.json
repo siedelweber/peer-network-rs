@@ -77,8 +77,8 @@
     {
       "kind": "tier",
       "name": "service",
-      "reason": "no provisioned service worker or admitted service implementation",
-      "status": "held"
+      "reason": "The gate owns PostgreSQL 19 RC 1 for transport evidence only; storage persistence and other service suites remain held.",
+      "status": "active"
     },
     {
       "kind": "tier",
@@ -95,7 +95,6 @@
         "cli-common::observation::tests::provider_bridge": "integration"
       },
       "cases": [
-        "cli-common::observation::tests::counter_contention",
         "cli-common::observation::tests::unavailable_observation",
         "cli-common::observation::tests::typed_export_bootstrap",
         "cli-common::observation::tests::default_emission",
@@ -115,9 +114,6 @@
         "cli-common::observation::tests::recursive_observation",
         "cli-common::observation::tests::async_cancellation",
         "cli-common::observation::tests::exit_reports_pending_delivery",
-        "cli-common::observation::tests::cutoff_before_publication",
-        "cli-common::observation::tests::shared_transport_cutoff",
-        "cli-common::observation::tests::compaction_branching",
         "cli-common::observation::tests::deep_payload_delivery",
         "cli-common::observation::tests::inclusive_metering",
         "cli-common::observation::tests::terminal_accounting",
@@ -127,6 +123,11 @@
         "cli-common::observation::tests::metric_registry",
         "cli-common::observation::tests::filtered_accounting",
         "cli-common::observation::tests::bounded_loss",
+        "cli-common::observation::tests::compaction_branching",
+        "cli-common::observation::tests::cutoff_before_publication",
+        "cli-common::observation::tests::shared_transport_cutoff",
+        "cli-common::observation::tests::counter_contention",
+        "cli-common::observation::tests::host_owner_accounting",
         "cli-common::tests::emit_writes_one_json_line",
         "cli-common::tests::emit_propagates_writer_error",
         "cli-common::tests::partial_stdout_write_during_emit_is_not_reverted",
@@ -3466,6 +3467,98 @@
       "name": "burn-verification",
       "parent_case": "pn-verification::conformance::burn_cases",
       "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "contract": "secret transport carrier and impostor protocol boundary",
+      "edition": "0.1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-host-rust"
+    },
+    {
+      "contract": "PostgreSQL 19 RC 1 transport only; persistence disabled",
+      "edition": "19rc1",
+      "evidence": "real",
+      "kind": "implementation",
+      "name": "pn-host-postgresql"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-host::public::case_before_input",
+        "pn-host::public::configuration_carrier",
+        "pn-host::public::impostor_authentication",
+        "pn-host::public::authentication_disconnect",
+        "pn-host::public::stock_configuration_control",
+        "pn-host::public::impostor_server_proof"
+      ],
+      "implementation": "pn-host-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-host::public",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-host::postgresql::real_transports",
+        "pn-host::postgresql::real_authentication_refusals",
+        "pn-host::postgresql::real_cancellation",
+        "pn-host::postgresql::private_server_echo",
+        "pn-host::postgresql::serialization_conflict",
+        "pn-host::postgresql::connection_loss_and_drop"
+      ],
+      "implementation": "pn-host-postgresql",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-host::postgresql",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "service"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "ci::test_host_runtime.HostRuntime.test_dependency_pins",
+        "ci::test_host_runtime.HostRuntime.test_public_transport"
+      ],
+      "implementation": "pn-host-postgresql",
+      "kind": "suite",
+      "level": "integration",
+      "name": "ci::test_host_runtime",
+      "runner": "ci",
+      "status": "active",
+      "tier": "service"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "doctest::packages/host/src/config.rs - config::Configuration [example 1]",
+        "doctest::packages/host/src/config.rs - config::Configuration [example 2]"
+      ],
+      "implementation": "pn-host-rust",
+      "kind": "suite",
+      "level": "doctest",
+      "name": "pn-host-doctests",
+      "runner": "doctest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-host::config::tests::secret_json_grammar",
+        "pn-host::tests::wire_filter_boundary"
+      ],
+      "implementation": "pn-host-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-host",
+      "runner": "nextest",
       "status": "active",
       "tier": "fast"
     }

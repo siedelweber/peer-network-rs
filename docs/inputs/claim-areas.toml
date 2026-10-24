@@ -281,3 +281,10 @@ area = "burn"
 stake = "Omitted disclosures or repaired marker sets can fabricate readiness, move destruction between addresses, or count one destruction more than once."
 register = "RECORDS::sec:burn:area-burn"
 contract = "RECORDS::sec:burn:area-burn"
+
+[[rows]]
+owner = "HOST"
+area = "host"
+stake = "If the transport boundary fails, service reachability or credentials can enter public driver state, or an unauthenticated service can supply storage results."
+register = "HOST::sec:host:area-host"
+contract = "HOST::sec:host:area-host"

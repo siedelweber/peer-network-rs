@@ -10,6 +10,18 @@
       "imports": [],
       "may_cite": [
         {
+          "owner": "HOST",
+          "target": "ROOT"
+        },
+        {
+          "owner": "HOST",
+          "target": "CLICOMMON"
+        },
+        {
+          "owner": "ROOT",
+          "target": "HOST"
+        },
+        {
           "owner": "VERIFICATION",
           "target": "TESTKIT"
         },
@@ -108,9 +120,15 @@
         "TESTKIT",
         "RECORDS",
         "VERIFICATION",
+        "HOST",
         "VENDOR"
       ],
       "partitions": [
+        {
+          "name": "host-package",
+          "owner": "HOST",
+          "pattern": "%s\"packages/host/\" *VCHAR"
+        },
         {
           "name": "verification-package",
           "owner": "VERIFICATION",

@@ -1976,6 +1976,142 @@
       "before": "",
       "after": "Claim: Publication validates the complete policy first and returns its recipe with the digest; an invalid policy produces no declaration, and an unknown recipe has its own binding cause.",
       "review": "Read the valid producer result and successful bind, identity-empty validation refusal without content, then unchanged digest under an unsupported recipe with a distinct cause. This witnesses publication ordering and cause separation, not a new digest algorithm."
+    },
+    {
+      "operation": "cli-common::observation::tests::host_owner_accounting",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:host-operations-retain-owner-accounting",
+      "before": "",
+      "after": "Claim: A HOST-labelled store operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::postgresql::real_transports",
+      "path": "packages/host/tests/postgresql.rs",
+      "claim": "HOST::claim:host:real-service-preserves-public-statements",
+      "before": "",
+      "after": "Claim: PostgreSQL 19 RC 1 authenticates through SCRAM over both host-secured transports, while the driver sees public placeholders and preserves public extended-protocol values and SQL errors.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::postgresql::real_authentication_refusals",
+      "path": "packages/host/tests/postgresql.rs",
+      "claim": "HOST::claim:host:real-authentication-errors-stay-bounded",
+      "before": "",
+      "after": "Claim: Wrong passwords, absent roles and absent databases fail inside the secret-owning authentication boundary, with no server echo in Debug, Display or source chains.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::postgresql::real_cancellation",
+      "path": "packages/host/tests/postgresql.rs",
+      "claim": "HOST::claim:host:cancellation-keeps-the-backend-capability-private",
+      "before": "",
+      "after": "Claim: The real backend capability cancels a running query while the driver's cancellation token remains a public placeholder and the same connection can recover.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::postgresql::private_server_echo",
+      "path": "packages/host/tests/postgresql.rs",
+      "claim": "HOST::claim:host:server-echo-is-private-before-driver-errors",
+      "before": "",
+      "after": "Claim: Post-authentication errors and notices echoing the authenticated private role are retained whole as typed private data before the upstream driver can construct a printable database diagnostic.",
+      "review": "Read both real server statements: current_user supplies the authenticated private role in an error and a notice; the stream closes before an upstream printable diagnostic, and one whole role-only carrier is retained in each case."
+    },
+    {
+      "operation": "pn-host::postgresql::serialization_conflict",
+      "path": "packages/host/tests/postgresql.rs",
+      "claim": "HOST::claim:host:serialization-conflicts-retain-the-public-cause",
+      "before": "",
+      "after": "Claim: Two real repeatable-read transactions preserve the public serialization-failure cause through the shim and permit rollback, rather than hiding transaction conflicts as connection loss.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::postgresql::connection_loss_and_drop",
+      "path": "packages/host/tests/postgresql.rs",
+      "claim": "HOST::claim:host:connection-loss-and-drop-retain-no-private-errors",
+      "before": "",
+      "after": "Claim: Losing the real backend closes the driver without a retained private diagnostic string, and dropping a session aborts the forwarding tasks while a query is pending.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::public::case_before_input",
+      "path": "packages/host/tests/public.rs",
+      "claim": "HOST::claim:host:case-precedes-private-acquisition",
+      "before": "",
+      "after": "Claim: The store case is explicit and checked before acquisition reads any private input, so no address can silently choose a held transport.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::public::configuration_carrier",
+      "path": "packages/host/tests/public.rs",
+      "claim": "HOST::claim:host:configuration-never-formats-private-input",
+      "before": "",
+      "after": "Claim: A complete private JSON configuration and malformed sentinel input have only role-marked Debug or bounded errors, including their source chains.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::public::impostor_authentication",
+      "path": "packages/host/tests/public.rs",
+      "claim": "HOST::claim:host:only-scram-can-authenticate-the-service",
+      "before": "",
+      "after": "Claim: An impostor cannot obtain a cleartext, MD5, GSS, SSPI or Kerberos response or bypass SCRAM by sending `AuthenticationOk` before a verified server proof.",
+      "review": "Read both real server statements: current_user supplies the authenticated private role in an error and a notice; the stream closes before an upstream printable diagnostic, and one whole role-only carrier is retained in each case."
+    },
+    {
+      "operation": "pn-host::public::authentication_disconnect",
+      "path": "packages/host/tests/public.rs",
+      "claim": "HOST::claim:host:authentication-disconnect-retains-no-reachability",
+      "before": "",
+      "after": "Claim: Closing the service during startup yields a bounded transport refusal rather than retaining the endpoint, role or password in an error.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::public::stock_configuration_control",
+      "path": "packages/host/tests/public.rs",
+      "claim": "HOST::claim:host:stock-configuration-is-a-sensitive-positive-control",
+      "before": "",
+      "after": "Claim: The sentinel check detects private retained configuration in the unmodified driver, so role-only shim formatting is checked against a leaking positive control.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::public::impostor_server_proof",
+      "path": "packages/host/tests/public.rs",
+      "claim": "HOST::claim:host:scram-requires-the-server-transcript-proof",
+      "before": "",
+      "after": "Claim: An impostor that offers SCRAM and extends the nonce still cannot authenticate without the server's transcript proof; a false proof refuses before placeholder handoff.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_public_transport",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:host-transport-observation-retains-the-secret-boundary",
+      "before": "",
+      "after": "Claim: Default and trace runs against the real host-secured service retain identical public results and lossless host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials.",
+      "review": "Read the fixture construction, concrete assertions and bounded causes against the transport implementation. The premise is the isolated public fixture on PostgreSQL 19 RC 1 or the named impostor; this does not admit persistence or guarded transport."
+    },
+    {
+      "operation": "pn-host::config::tests::secret_json_grammar",
+      "path": "packages/host/src/config.rs",
+      "claim": "HOST::claim:host:secret-json-has-one-field-interpretation",
+      "before": "",
+      "after": "Claim: Direct secret parsing gives JSON escapes their Unicode scalar meaning while refusing isolated surrogates, repeated fields and trailing input, so malformed private configuration cannot acquire a different interpretation.",
+      "review": "Read each input and exact byte or typed-cause assertion against the private carrier and wire filter; successful fixed public content remains unchanged, while malformed and private content is refused or quarantined before ordinary driver storage."
+    },
+    {
+      "operation": "pn-host::tests::wire_filter_boundary",
+      "path": "packages/host/src/lib.rs",
+      "claim": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+      "before": "",
+      "after": "Claim: Backend keys and private session parameters are intercepted before driver allocation; an unclassified parameter or diagnostic is retained whole behind role-only Debug, while fixed public diagnostics retain their exact bytes.",
+      "review": "Read each input and exact byte or typed-cause assertion against the private carrier and wire filter; successful fixed public content remains unchanged, while malformed and private content is refused or quarantined before ordinary driver storage."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_dependency_pins",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:host-archive-pins-cover-the-reachable-closure",
+      "before": "",
+      "after": "Claim: The host's complete reachable lock closure must match its reviewed archive pins; a changed checksum, an omitted package or a duplicate review row refuses before the service starts.",
+      "review": "Read the Cargo.lock traversal and three isolated alterations: checksum replacement, omitted row and duplicate row each raise the named refusal before PostgreSQL startup."
     }
   ]
 }
