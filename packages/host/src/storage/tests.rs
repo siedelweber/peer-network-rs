@@ -320,7 +320,7 @@ fn storage_schema_identity() {
         let store = store("storage-schema.json").await;
         store
             .session
-            .client
+            .client()
             .execute("UPDATE public.pn_store_identity SET identity='foreign-schema-fixture'", &[])
             .await
             .unwrap();
@@ -421,28 +421,95 @@ fn storage_historical_constants() {
     });
 }
 
-/// Claim: Both permanent storage digest domains match independent SHA-256 vectors over the canonical empty-array bytes; changing a separator or recipe spelling fails the literal correspondence.
+/// Claim: All six fixed validated family projections and the recognition disclosure match independently encoded canonical bytes and SHA-256 literals; changing field order, an enum spelling or a digest domain breaks durable recipe correspondence.
 /// ´claim:history:storage-digest-domains-are-permanent´
 /// ´test:unit:storage-digest-vectors´
 #[test]
 fn storage_digest_vectors() {
+    use pn_records::constants::{ConstantDefinition, EditionInput, bind_constants};
+    use pn_records::numerics::{ComparisonLimits, ExactLimits, Floor, NumericContext};
+    use pn_records::{Declaration, DeclarationContent, DeclarationId};
     use std::fmt::Write;
+    let mut context = NumericContext::new(ExactLimits::default(), ComparisonLimits::new(100, 100)).unwrap();
+    let two = context.literal("2").unwrap();
+    let unit = context.burn_per_action(&two, "burn").unwrap();
+    let nu = context.numeraire("nu", &unit).unwrap();
+    let declarations: Vec<_> = [(1, 10), (2, 20)]
+        .into_iter()
+        .map(|(edition, at)| Declaration {
+            id: DeclarationId {
+                namespace: "numeric".into(),
+                name: "constants".into(),
+                edition,
+            },
+            announced_at: at,
+            effective_at: at,
+            content: DeclarationContent::Opaque,
+        })
+        .collect();
+    let history = pn_records::validate_history(&[], &[]).unwrap();
+    let records = pn_records::validate_record(&[], &history, &declarations).unwrap();
+    let inputs: Vec<_> = declarations
+        .iter()
+        .map(|d| EditionInput {
+            id: d.id.clone(),
+            floor: if d.id.edition == 1 {
+                Floor::RationalThreeThirtySevenths
+            } else {
+                Floor::RidgeImage
+            },
+            numeraire: nu.clone(),
+            formula_edition: "formula".into(),
+            controller_edition: format!("controller-{}", d.id.edition),
+            constants: vec![ConstantDefinition::Literal {
+                name: "margin".into(),
+                value: two.clone(),
+            }],
+            permitted_overrides: vec![],
+            domain_profiles: vec!["finite".into()],
+            numerical_procedure: "exact-or-indecisive".into(),
+            authentication_realization: "fixture".into(),
+            publication_profile: "internal".into(),
+        })
+        .collect();
+    let constants = bind_constants(&records, inputs).unwrap();
+    let constant_payload = Payload::constants(constants.resolve("numeric", "constants", 10).unwrap()).unwrap();
+
+    let mut case = pn_records::test_support::burn::generate(&[19]);
+    case.history.records.retain(|v| v.identity == "r0");
+    case.history.markers.truncate(2);
+    case.history.markers[1].lineage = std::collections::BTreeSet::from(["r0".into()]);
+    let (burn, policy, history) = validated(case);
+    let disclosure = encoding::disclosure(&history).to_canonical_bytes();
+    let payloads = [
+        constant_payload,
+        Payload::rule(&encoding::text("public-rule-v1")).unwrap(),
+        Payload::marker_policy(&policy).unwrap(),
+        Payload::lineage(&history).unwrap(),
+        Payload::burn_publication(&burn).unwrap(),
+        Payload::recognition(&history).unwrap(),
+    ];
     let vectors: serde_json::Value = serde_json::from_str(include_str!("vectors.json")).unwrap();
+    assert_eq!(vectors.as_array().unwrap().len(), 7);
     for row in vectors.as_array().unwrap() {
-        let recipe = row["recipe"].as_str().unwrap();
-        assert!([PAYLOAD_RECIPE, DISCLOSURE_RECIPE].contains(&recipe));
+        let family = row["family"].as_str().unwrap();
+        let actual = if family == "disclosure" {
+            disclosure.as_slice()
+        } else {
+            payloads.iter().find(|p| p.family.name() == family).unwrap().bytes()
+        };
         let bytes: Vec<_> = row["canonical_bytes"]
             .as_array()
             .unwrap()
             .iter()
             .map(|v| u8::try_from(v.as_u64().unwrap()).unwrap())
             .collect();
-        assert_eq!(Value::from_canonical_bytes(&bytes).unwrap(), encoding::array([]));
+        assert_eq!(actual, bytes, "projection {family}");
         let mut text = String::new();
-        for byte in digest(recipe, &bytes) {
+        for byte in digest(row["recipe"].as_str().unwrap(), actual) {
             write!(&mut text, "{byte:02x}").unwrap();
         }
-        assert_eq!(text, row["digest"].as_str().unwrap());
+        assert_eq!(text, row["digest"].as_str().unwrap(), "digest {family}");
     }
 }
 
@@ -476,13 +543,14 @@ fn storage_runtime() {
         if std::env::var_os("PN_HOST_STORAGE_PRIVATE_CONTROL").is_some() {
             let private: String = store
                 .session
-                .client
+                .client()
                 .query_one("SELECT current_user", &[])
                 .await
                 .unwrap()
                 .get(0);
             assert_ne!(private.len(), 0);
         }
+        store.audit_history().await.unwrap();
         // Drain the request queue before dropping the session and observer.
         store.load_boundary(2, &[]).await.unwrap();
     });
@@ -514,5 +582,38 @@ fn storage_restart() {
                 .version,
             input
         );
+    });
+}
+
+/// Claim: Requested-key append and active-boundary reads preserve selected identities as unrelated retained history grows by two orders of magnitude; the full audit remains a separate operation, and timing is reported rather than asserted.
+/// ´claim:history:bounded-reads-ignore-unrelated-history´
+/// ´test:unit:storage-scaling´
+#[test]
+fn storage_scaling() {
+    runtime().block_on(async {
+        let mut store = store("storage-scaling.json").await;
+        let mut count = 0;
+        for size in [10, 100, 2000] {
+            while count < size {
+                let key = format!("unrelated-{count}");
+                store.append_effective_successor(version(Family::Rule, &key, "one", 100, Some(7)), None).await.unwrap();
+                count += 1;
+            }
+            let start = std::time::Instant::now();
+            let key = format!("measured-{size}");
+            store.append_effective_successor(version(Family::Rule, &key, "one", 1, Some(731)), None).await.unwrap();
+            let append_wall = start.elapsed().as_secs_f64();
+            let start = std::time::Instant::now();
+            let boundary = store.load_boundary(1, &[(Family::Rule, key.clone())]).await.unwrap();
+            let load_wall = start.elapsed().as_secs_f64();
+            assert!(boundary.rows.iter().all(|r| r.version.key.starts_with("measured-")));
+            assert!(boundary.rows.iter().any(|r| r.version.key == key));
+            cli_common::emit(&serde_json::json!({"kind":"storage_scaling","retained_unrelated":size,"append_seconds":append_wall,"load_seconds":load_wall})).unwrap();
+        }
+        store.audit_history().await.unwrap();
+        store.session.client().execute("UPDATE public.pn_versions SET payload=$1 WHERE key LIKE 'unrelated-%'", &[&vec![0_u8]]).await.unwrap();
+        store.load_boundary(1, &[]).await.unwrap();
+        store.append_effective_successor(version(Family::Rule, "after-unrelated-damage", "one", 2, Some(7)), None).await.unwrap();
+        assert_eq!(store.audit_history().await, Err(StorageError::CorruptHistory));
     });
 }

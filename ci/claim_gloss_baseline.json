@@ -929,6 +929,9 @@
     "pn-host::storage::tests::storage_runtime": "",
     "pn-host::storage::tests::storage_restart": "",
     "ci::test_host_runtime.HostRuntime.test_storage_statements": "",
-    "ci::test_host_runtime.HostRuntime.test_storage_restart": ""
+    "ci::test_host_runtime.HostRuntime.test_storage_restart": "",
+    "pn-host::scram::tests::ceiling_login_progress": "",
+    "pn-host::storage::tests::storage_scaling": "",
+    "ci::test_host_runtime.HostRuntime.test_statement_type_boundary": ""
   }
 }

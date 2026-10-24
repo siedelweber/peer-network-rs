@@ -1090,7 +1090,7 @@ level = "integration"
 implementation = "pn-host-postgresql"
 tier = "service"
 budget = "postgresql-suite"
-cases = ["ci::test_host_runtime.HostRuntime.test_storage_statements", "ci::test_host_runtime.HostRuntime.test_storage_restart", "ci::test_host_runtime.HostRuntime.test_independent_instances", "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory", "ci::test_host_runtime.HostRuntime.test_dependency_pins", "ci::test_host_runtime.HostRuntime.test_public_transport", "ci::test_host_runtime.HostRuntime.test_sensitive_result_control"]
+cases = ["ci::test_host_runtime.HostRuntime.test_statement_type_boundary", "ci::test_host_runtime.HostRuntime.test_storage_statements", "ci::test_host_runtime.HostRuntime.test_storage_restart", "ci::test_host_runtime.HostRuntime.test_independent_instances", "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory", "ci::test_host_runtime.HostRuntime.test_dependency_pins", "ci::test_host_runtime.HostRuntime.test_public_transport", "ci::test_host_runtime.HostRuntime.test_sensitive_result_control"]
 
 [[rows]]
 kind = "suite"
@@ -1112,7 +1112,7 @@ level = "unit"
 implementation = "pn-host-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-host::config::tests::secret_json_grammar", "pn-host::tests::wire_filter_boundary", "pn-host::tests::relay_refusals", "pn-host::scram::tests::derivation_cost"]
+cases = ["pn-host::config::tests::secret_json_grammar", "pn-host::tests::wire_filter_boundary", "pn-host::tests::relay_refusals", "pn-host::scram::tests::ceiling_login_progress", "pn-host::scram::tests::derivation_cost"]
 
 [[rows]]
 kind = "suite"
@@ -1134,7 +1134,7 @@ level = "unit"
 implementation = "pn-host-memory-and-postgresql"
 tier = "service"
 budget = "postgresql-suite"
-cases = ["pn-host::storage::tests::storage_contract", "pn-host::storage::tests::storage_competing_writers", "pn-host::storage::tests::storage_rebuild", "pn-host::storage::tests::storage_recognition_disclosure", "pn-host::storage::tests::storage_schema_identity", "pn-host::storage::tests::storage_historical_constants", "pn-host::storage::tests::storage_digest_vectors", "pn-host::storage::tests::storage_runtime", "pn-host::storage::tests::storage_restart"]
+cases = ["pn-host::storage::tests::storage_contract", "pn-host::storage::tests::storage_competing_writers", "pn-host::storage::tests::storage_rebuild", "pn-host::storage::tests::storage_recognition_disclosure", "pn-host::storage::tests::storage_schema_identity", "pn-host::storage::tests::storage_historical_constants", "pn-host::storage::tests::storage_digest_vectors", "pn-host::storage::tests::storage_runtime", "pn-host::storage::tests::storage_restart", "pn-host::storage::tests::storage_scaling"]
 
 [[rows]]
 kind = "implementation"

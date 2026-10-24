@@ -46,7 +46,12 @@ async fn exercise() -> Result<(), Refusal> {
         .get(0);
     assert_eq!(computed, "public_row_".repeat(3));
     if std::env::var_os("PN_HOST_SENSITIVE_ROW_CONTROL").is_some() {
-        let private: String = session.client().query_one("SELECT current_user", &[]).await.unwrap().get(0);
+        let private: String = session
+            .client()
+            .query_one("SELECT current_user, 128::int4", &[])
+            .await
+            .unwrap()
+            .get(0);
         assert_ne!(private.len(), 0);
     }
     let error = session.client().query_one("SELECT 1 / 0", &[]).await.unwrap_err();

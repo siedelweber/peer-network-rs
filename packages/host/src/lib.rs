@@ -123,7 +123,7 @@ impl fmt::Debug for PrivateDiagnostic {
 /// ```
 /// Unclassified server diagnostics stay secret-typed and close this stream.
 pub struct Session {
-    client: tokio_postgres::Client,
+    client: storage::StatementClient,
     config: Arc<Configuration>,
     backend_key: Arc<Mutex<Option<Buffer>>>,
     diagnostics: Arc<Mutex<Vec<PrivateDiagnostic>>>,
@@ -208,17 +208,15 @@ impl Session {
         let bridge_diagnostics = Arc::clone(&diagnostics);
         let bridge_refusal = Arc::clone(&last_refusal);
         let bridge = tokio::spawn(async move {
-            let result = relay(Relay {
+            let _result = relay(Relay {
                 shim,
                 socket,
                 startup,
                 key: bridge_key,
                 diagnostics: bridge_diagnostics,
+                refusal: bridge_refusal,
             })
             .await;
-            if let Err(cause) = result {
-                *bridge_refusal.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = Some(cause);
-            }
         });
         let mut placeholder = tokio_postgres::Config::new();
         placeholder
@@ -234,7 +232,7 @@ impl Session {
             let _result = connection.await;
         });
         Ok(Self {
-            client,
+            client: storage::StatementClient::new(client),
             config: Arc::new(config),
             backend_key: key,
             diagnostics,
@@ -248,7 +246,7 @@ impl Session {
     #[cfg(test)]
     pub(crate) fn client(&self) -> &tokio_postgres::Client {
         let operation = cli_common::observation::scope("HOST", "sig:design:storage", "Session::client", &self);
-        let result = &self.client;
+        let result = self.client.fixture();
         operation.finish(&"public placeholder client");
         result
     }
@@ -318,6 +316,7 @@ async fn forward(
     startup: Vec<wire::Frame>,
     bridge_key: Arc<Mutex<Option<Buffer>>>,
     bridge_diagnostics: Arc<Mutex<Vec<PrivateDiagnostic>>>,
+    refusal: Arc<Mutex<Option<Refusal>>>,
 ) -> Result<(), Refusal> {
     let length = shim.read_u32().await.map_err(|_| Refusal::DriverHandoff)?;
     let mut placeholder = Buffer::new();
@@ -343,6 +342,7 @@ async fn forward(
     let mut outbound = ForwardingTask(tokio::spawn(relay_outbound(Outbound {
         client: client_read,
         server: server_write,
+        refusal: Arc::clone(&refusal),
     })));
     let inbound = async {
         loop {
@@ -364,6 +364,9 @@ async fn forward(
         inbound.as_mut().poll(cx)
     })
     .await;
+    if let Err(cause) = result {
+        *refusal.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = Some(cause);
+    }
     if !outbound_finished {
         outbound.0.abort();
         let _completion = (&mut outbound.0).await;
@@ -381,6 +384,7 @@ struct Relay {
     startup: Vec<wire::Frame>,
     key: Arc<Mutex<Option<Buffer>>>,
     diagnostics: Arc<Mutex<Vec<PrivateDiagnostic>>>,
+    refusal: Arc<Mutex<Option<Refusal>>>,
 }
 impl fmt::Debug for Relay {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
@@ -391,6 +395,7 @@ impl fmt::Debug for Relay {
 struct Outbound {
     client: tokio::io::ReadHalf<tokio::io::DuplexStream>,
     server: tokio::io::WriteHalf<wire::Socket>,
+    refusal: Arc<Mutex<Option<Refusal>>>,
 }
 impl fmt::Debug for Outbound {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
@@ -418,8 +423,9 @@ async fn relay(state: Relay) -> Result<(), Refusal> {
         startup,
         key,
         diagnostics,
+        refusal,
     } = state;
-    let result = forward(shim, socket, startup, key, diagnostics).await;
+    let result = forward(shim, socket, startup, key, diagnostics, refusal).await;
     if let Err(cause) = &result {
         tracing::warn!(cause = ?cause, outcome = if matches!(cause, Refusal::Transport) { "error" } else { "refusal" }, "store relay refused");
     }
@@ -439,7 +445,11 @@ async fn relay(state: Relay) -> Result<(), Refusal> {
     ret
 )]
 async fn relay_outbound(state: Outbound) -> Result<(), Refusal> {
-    let Outbound { mut client, mut server } = state;
+    let Outbound {
+        mut client,
+        mut server,
+        refusal,
+    } = state;
     let result = async {
         loop {
             let frame = wire::read(&mut client).await?;
@@ -452,6 +462,8 @@ async fn relay_outbound(state: Outbound) -> Result<(), Refusal> {
     }
     .await;
     if let Err(cause) = &result {
+        // Publish before either outbound half is dropped and EOF becomes visible.
+        *refusal.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = Some(*cause);
         tracing::warn!(cause = ?cause, outcome = if matches!(cause, Refusal::Transport) { "error" } else { "refusal" }, "store outbound relay refused");
     }
     result
@@ -637,6 +649,7 @@ mod tests {
                 startup: Vec::new(),
                 key,
                 diagnostics,
+                refusal: std::sync::Arc::new(Mutex::new(None)),
             }));
             let startup = b"\0\x03\0\0client_encoding\0UTF8\0user\0pn_public_placeholder\0database\0pn_public_placeholder\0\0";
             driver.write_u32(u32::try_from(startup.len()).unwrap() + 4).await.unwrap();

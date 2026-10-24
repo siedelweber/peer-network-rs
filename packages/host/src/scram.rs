@@ -68,6 +68,26 @@ fn authentication(frame: &wire::Frame, expected: u32) -> Result<&[u8], Refusal> 
     }
     Ok(rest)
 }
+async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<SecretBox<[u8; 32]>, Refusal> {
+    tokio::task::spawn_blocking(move || {
+        #[cfg(test)]
+        if password.bytes() == b"public-progress-password" {
+            let hook = PROGRESS_HOOK.lock().unwrap().take();
+            if let Some((started, progress)) = hook {
+                let _ = started.send(());
+                progress
+                    .recv_timeout(std::time::Duration::from_secs(3))
+                    .map_err(|_| Refusal::ScramFormat)?;
+            }
+        }
+        let mut salted = SecretBox::new(Box::new([0; 32]));
+        pbkdf2::pbkdf2::<Hmac<Sha256>>(password.bytes(), salt.bytes(), iterations, salted.expose_secret_mut())
+            .map_err(|_| Refusal::ScramFormat)?;
+        Ok(salted)
+    })
+    .await
+    .map_err(|_| Refusal::ScramFormat)?
+}
 pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result<(), Refusal> {
     wire::startup(socket, config).await?;
     let mechanisms = wire::read(socket).await?;
@@ -101,9 +121,7 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
         .and_then(|v| v.parse::<u32>().ok())
         .filter(|v| ITERATIONS.contains(v))
         .ok_or(Refusal::ScramIterations)?;
-    let mut salted = SecretBox::new(Box::new([0; 32]));
-    pbkdf2::pbkdf2::<Hmac<Sha256>>(config.field(4), salt.bytes(), iterations, salted.expose_secret_mut())
-        .map_err(|_| Refusal::ScramFormat)?;
+    let salted = derive(Buffer::from_bytes(config.field(4))?, salt, iterations).await?;
     let client_key = mac(salted.expose_secret(), b"Client Key")?;
     let mut stored = SecretBox::new(Box::new([0; 32]));
     Digest::finalize_into(
@@ -153,7 +171,52 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
 }
 
 #[cfg(test)]
+static PROGRESS_HOOK: std::sync::Mutex<Option<(tokio::sync::oneshot::Sender<()>, std::sync::mpsc::Receiver<()>)>> =
+    std::sync::Mutex::new(None);
+
+#[cfg(test)]
 mod tests {
+    /// Claim: A current-thread executor forwards a public relay frame while a ceiling login is inside its blocking derivation job; a bounded rendezvous fails if that job is moved back onto the executor.
+    /// ´claim:host:ceiling-login-leaves-relay-progress-independent´
+    /// ´test:unit:ceiling-login-progress´
+    #[test]
+    fn ceiling_login_progress() {
+        use super::*;
+        use tokio::io::AsyncReadExt;
+        let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
+        runtime.block_on(async {
+            let config = Configuration::acquire(Some("host-secured"), &mut br#"{"transport":"unix","endpoint":"public-fixture","port":"1","user":"public-user","password":"public-progress-password","database":"public-database"}"#.as_slice()).unwrap();
+            let (mut socket, mut server) = wire::fixture_pair();
+            let (started, ready) = tokio::sync::oneshot::channel();
+            let (progress, receive) = std::sync::mpsc::channel();
+            *PROGRESS_HOOK.lock().unwrap() = Some((started, receive));
+            let login = tokio::spawn(async move { super::login(&mut socket, &config).await });
+            let peer = tokio::spawn(async move {
+                let size = server.read_u32().await.unwrap();
+                let mut startup = vec![0; usize::try_from(size).unwrap()-4];
+                server.read_exact(&mut startup).await.unwrap();
+                wire::send(&mut server, b'R', b"\0\0\0\x0aSCRAM-SHA-256\0\0").await.unwrap();
+                let initial = wire::read(&mut server).await.unwrap();
+                let offset = initial.payload.bytes().windows(2).position(|v| v == b"r=").unwrap()+2;
+                let mut first = Buffer::from_bytes(b"\0\0\0\x0br=").unwrap();
+                first.append(&initial.payload.bytes()[offset..]).unwrap();
+                first.append(b"-server,s=c2FsdA==,i=600000").unwrap();
+                wire::send(&mut server, b'R', first.bytes()).await.unwrap();
+                let proof = wire::read(&mut server).await.unwrap();
+                assert_eq!(proof.kind,b'p');
+                wire::send(&mut server,b'E',b"public fixture ends after proof").await.unwrap();
+            });
+            ready.await.unwrap();
+            let (mut sending, mut receiving) = tokio::io::duplex(64);
+            let relay = tokio::spawn(async move { wire::send(&mut sending,b'D',b"public-progress").await.unwrap(); });
+            assert_eq!(wire::read(&mut receiving).await.unwrap().payload.bytes(),b"public-progress");
+            progress.send(()).unwrap();
+            relay.await.unwrap();
+            assert_eq!(login.await.unwrap(),Err(Refusal::ServerAuthentication));
+            peer.await.unwrap();
+        });
+    }
+
     /// Claim: The SCRAM cost campaign derives the same public fixture key twice at each declared work factor; timing is reported without changing authentication or a test verdict.
     /// ´claim:host:scram-work-factor-cost-is-nonbinding´
     /// ´test:unit:derivation-cost´

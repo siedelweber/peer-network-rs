@@ -124,11 +124,11 @@
 | burn-verification | active | integration | pn-records-rust | fast | 40 |
 | pn-host::public | active | public-surface | pn-host-rust | fast | 8 |
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 8 |
-| ci::test_host_runtime | active | integration | pn-host-postgresql | service | 7 |
+| ci::test_host_runtime | active | integration | pn-host-postgresql | service | 8 |
 | pn-host-doctests | active | doctest | pn-host-rust | fast | 3 |
-| pn-host | active | unit | pn-host-rust | fast | 4 |
+| pn-host | active | unit | pn-host-rust | fast | 5 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
-| pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 9 |
+| pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 10 |
 
 
 **Amendment (Matrix and remaining support)** · `amend:harness:matrix-evidence` The untracked .lane/harness-matrix.json artifact and HARNESS-MATRIX gate summary publish source/configuration/implementation/tier results and explicit holds under (`rule:harness:tiers`). The service tier has no provisioned worker and remains held, never passed by fast evidence. Planned storage, burn and API suites remain held with no implementation, as do the other unimplemented domain contracts in (`model:design:harness-suites`). The support step has completed pn-testkit and its own four registered tests under the level and claim discipline, applicable dependency reviews, property seed/replay and missing-seed probes, benchmark correctness/smoke and regression probes, and all four packages' unit/public-surface/integration levels. The existing conformance cases of documents, cli-common and execwrap and the canonical vectors and properties of pn-interchange are preserved under (`conv:xchg:metatheorems-as-tests`); the support step routes all 93 interchange vector rows through the contract runner. The claims step owns the complete four-package conformance/obligation audit and any missing canonical-vector witnesses it identifies. Item-local lint discipline without test suppressions is met by the current clippy, member-lint and suppression checks; the claims step still audits each site's claim and obligation. Internal-module public-surface declarations were corrected to unit by the support step, with external public-surface witnesses added. Tracing in the observation step is a co-closure condition alongside the claims step; (`gate:harness:foundation`) and (`gate:design:harness-foundation`) remain open. The performance tier awaits reviewed comparable baseline campaigns, and the service, domain and client implementation steps own their respective held conformance evidence. Registry declaration and successful rendering do not create service conformance or executed claims.

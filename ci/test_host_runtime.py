@@ -19,17 +19,48 @@ def private_occurs(value, text):
     return bool(re.search(r'(?<![\d.])'+re.escape(value)+r'(?![\d.])',text)) if value.isdecimal() else value in text
 
 def decoded_content(value):
-    """Include binary protocol payloads in leakage scans, after artifact expansion."""
+    """Scan expanded JSON and serde-Value Debug objects, including binary frames."""
+    def scalar(item):
+        if isinstance(item,dict) and item.get('constructor')=='String' and len(item.get('arguments',[]))==1:
+            return item['arguments'][0]
+        return item
     if isinstance(value,dict):
-        if value.get('encoding')=='base64':
-            return base64.b64decode(value['data'],validate=True).decode('utf-8',errors='replace')
-        return '\n'.join(decoded_content(v) for v in value.values())
+        encoded=value
+        if value.get('type')=='Object':
+            entries=value.get('fields',{}).get('entries',[])
+            if all(isinstance(pair,list) and len(pair)==2 and isinstance(pair[0],str) for pair in entries):
+                encoded={key:scalar(item) for key,item in entries}
+        decoded=''
+        if encoded.get('encoding')=='base64':
+            decoded=base64.b64decode(encoded['data'],validate=True).decode('utf-8',errors='replace')+'\n'
+        return decoded+'\n'.join(str(k)+'\n'+decoded_content(v) for k,v in value.items())
     if isinstance(value,list):
         return '\n'.join(decoded_content(v) for v in value)
     return str(value)
 
 
 class HostRuntime(unittest.TestCase):
+    def test_statement_type_boundary(self):
+        """Claim: Production modules cannot name a raw driver client outside its private wrapper, and an inline SQL string fails compilation at the wrapper's Statement parameter, so a new call site cannot bypass the reviewed vocabulary.
+        ´claim:discipline:storage-statement-types-refuse-inline-sql´
+        ´test:integration:test-statement-type-boundary´
+        """
+        from host_statements import check
+        self.assertTrue(check())
+        source=Path('packages/host/src/storage.rs')
+        original=source.read_bytes()
+        fixture=b'\n#[cfg(test)] async fn forbidden_inline_sql(t: &StatementTransaction<\'_>) { let _ = t.query("SELECT current_user", &[]).await; }\n'
+        try:
+            source.write_bytes(original+fixture)
+            result=subprocess.run(['cargo','check','--offline','--locked','-p','pn-host','--tests'],capture_output=True,check=False,timeout=180)
+        finally:
+            source.write_bytes(original)
+        Path('.lane/host-statement-compile-fail.log').write_bytes(result.stderr)
+        self.assertNotEqual(result.returncode,0)
+        self.assertIn(b'E0308',result.stderr)
+        self.assertIn(b'expected `Statement`, found `&str`',result.stderr)
+        self.assertIn(b'forbidden_inline_sql',result.stderr)
+
     def test_storage_statements(self):
         """Claim: Every closed storage statement is exercised under trace and its decoded DataRows contain only public fixture content; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.
         ´claim:discipline:storage-results-preserve-the-secret-boundary´
@@ -56,9 +87,9 @@ class HostRuntime(unittest.TestCase):
             outputs.append([line for line in result.stdout.splitlines() if line.startswith(b'{')])
             if level=='trace':
                 self.assertIn('public_storage_payload_731',text)
-                source=Path('packages/host/src/storage.rs').read_text()
-                statements=re.findall(r'const (?:BOOTSTRAP_LOCK|HAS_TABLES|HAS_IDENTITY|CREATE|SET_IDENTITY|GET_IDENTITY|LOCK_HISTORY|READ_HISTORY|CLOSE|INSERT):\s*&str\s*=\s*"([^"]+)";',source)
-                self.assertEqual(len(statements),10)
+                source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
+                statements=re.findall(r'Self::[A-Za-z]+\s*=>\s*(?:\{\s*)?"([^"\n]+)"',source)
+                self.assertEqual(len(statements),12)
                 for statement in statements:self.assertIn(statement,text)
             print(f'STORAGE-RUNTIME level={level} wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]}')
         self.assertEqual(outputs[0],outputs[1])
@@ -165,7 +196,7 @@ class HostRuntime(unittest.TestCase):
             self.assertEqual(len(warnings),13)
             for line in warnings:
                 print(line.decode(),flush=True)
-            text=json.dumps(rows,ensure_ascii=False)
+            text=decoded_content(rows)
             for cause in ('MissingCase','HeldCase','UnknownCase','RepresentationLimit','Transport','Protocol','PrivateDiagnostic'):
                 self.assertIn(cause,text)
             self.assertNotIn('private_unread_input',text)
@@ -196,7 +227,7 @@ class HostRuntime(unittest.TestCase):
         print(flush=True)
 
     def test_sensitive_result_control(self):
-        """Claim: A test-only metadata query reaches the expanded DataRow scan and is rejected at the private role sentinel, so an outbound bind value cannot satisfy the result-path leakage control.
+        """Claim: A test-only metadata query returns the private role alongside a binary integer, forcing base64 recording; only decoded-content scanning finds the role, so the leakage control covers binary DataRows rather than outbound bind values.
         ´claim:discipline:result-row-control-detects-private-metadata´
         ´test:integration:test-sensitive-result-control´
         """
@@ -207,7 +238,8 @@ class HostRuntime(unittest.TestCase):
         wall=time.monotonic()-started
         self.assertEqual(result.returncode,0)
         rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
-        text=json.dumps(rows,ensure_ascii=False)
+        text=decoded_content(rows)
+        self.assertNotIn(json.loads((Path(os.environ['PN_HOST_TEST_ROOT'])/'unix.json').read_text())['user'], json.dumps(rows))
         config=json.loads((Path(os.environ['PN_HOST_TEST_ROOT'])/'unix.json').read_text())
         role=config['user']
         self.assertTrue(private_occurs(role,text))

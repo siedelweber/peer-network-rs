@@ -1,11 +1,14 @@
 Host transport dependency provenance
 
-All external sources are unmodified registry archives obtained and checksum-verified
-by Cargo. Exact versions, archive checksums, licences and unified features are in
+External sources include unmodified registry archives checksum-verified by Cargo
+and the reviewed nrz-scalar, nrz-accuracy and nrz-cas git packages. Their public
+repository, pinned revision, AGPL-3.0-only obligations and distribution notices
+are retained in packages/records/NOTICE-NUMERIC. Exact versions, archive checksums, licences and unified features are in
 docs/inputs/host-dependencies.toml and record 015. Cargo.lock pins the full closure.
 Original source notices remain in the archives; no dependency source is vendored.
 Distribution must retain the selected MIT permission notices, Apache-2.0 terms
-where selected, and unicode-normalization's additional Unicode-3.0 terms.
+including Apache-2.0-only dependencies, Zlib terms, and all Unicode-3.0
+terms in the reviewed table, including unicode-normalization's additional terms.
 Platform-only packages remain reviewed lock resolutions, not Linux evidence.
 The new parking_lot_core build script runs on the build host. Existing reachable
 async-trait and rustversion procedural macros retain their upstream build role.

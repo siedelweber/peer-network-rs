@@ -1827,7 +1827,7 @@ version = "1.54.1"
 checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
 licence = "MIT"
 msrv = "1.85"
-features = ["bytes", "default", "io-util", "libc", "mio", "net", "rt", "socket2", "sync", "time", "windows-sys"]
+features = ["bytes", "default", "io-util", "libc", "mio", "net", "rt", "rt-multi-thread", "socket2", "sync", "time", "windows-sys"]
 build_time = "none"
 procedural_macros = []
 

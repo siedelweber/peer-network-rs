@@ -207,38 +207,43 @@ fn relay_throughput() {
 /// ´test:unit:outbound-refusal´
 #[test]
 fn outbound_refusal() {
-    runtime().block_on(async {
-        let session = Session::connect(configuration("unix.json")).await.unwrap();
-        let checker = Session::connect(configuration("tcp.json")).await.unwrap();
-        let pid: i32 = session
-            .client()
-            .query_one("SELECT pg_backend_pid()", &[])
-            .await
-            .unwrap()
-            .get(0);
-        session.client().batch_execute("BEGIN").await.unwrap();
-        let statement = " ".repeat(1_048_576);
-        let error = tokio::time::timeout(std::time::Duration::from_secs(3), session.client().batch_execute(&statement))
-            .await
-            .expect("outbound refusal must close the driver")
-            .unwrap_err();
-        assert!(error.is_closed());
-        assert_eq!(session.last_refusal(), Some(crate::Refusal::RepresentationLimit));
-        tokio::time::timeout(std::time::Duration::from_secs(3), async {
-            loop {
-                let present: bool = checker
-                    .client()
-                    .query_one("SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid=$1)", &[&pid])
-                    .await
-                    .unwrap()
-                    .get(0);
-                if !present {
-                    break;
+    tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(2)
+        .enable_all()
+        .build()
+        .unwrap()
+        .block_on(async {
+            let session = Session::connect(configuration("unix.json")).await.unwrap();
+            let checker = Session::connect(configuration("tcp.json")).await.unwrap();
+            let pid: i32 = session
+                .client()
+                .query_one("SELECT pg_backend_pid()", &[])
+                .await
+                .unwrap()
+                .get(0);
+            session.client().batch_execute("BEGIN").await.unwrap();
+            let statement = " ".repeat(1_048_576);
+            let error = tokio::time::timeout(std::time::Duration::from_secs(3), session.client().batch_execute(&statement))
+                .await
+                .expect("outbound refusal must close the driver")
+                .unwrap_err();
+            assert!(error.is_closed());
+            assert_eq!(session.last_refusal(), Some(crate::Refusal::RepresentationLimit));
+            tokio::time::timeout(std::time::Duration::from_secs(3), async {
+                loop {
+                    let present: bool = checker
+                        .client()
+                        .query_one("SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid=$1)", &[&pid])
+                        .await
+                        .unwrap()
+                        .get(0);
+                    if !present {
+                        break;
+                    }
+                    tokio::task::yield_now().await;
                 }
-                tokio::task::yield_now().await;
-            }
-        })
-        .await
-        .expect("refused connection must release its server session");
-    });
+            })
+            .await
+            .expect("refused connection must release its server session");
+        });
 }

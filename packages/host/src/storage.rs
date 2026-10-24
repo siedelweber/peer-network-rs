@@ -404,10 +404,16 @@ impl MemoryStore {
             "storage::MemoryStore::append_effective_successor",
             &(&version, predecessor),
         );
-        let mut next = self.history.clone();
+        let key = (version.family, version.key.clone());
+        let mut next = History::new();
+        if let Some(rows) = self.history.get(&key) {
+            next.insert(key.clone(), rows.clone());
+        }
         let result = classified(append(&mut next, version, predecessor));
-        if result.is_ok() {
-            self.history = next;
+        if result.is_ok()
+            && let Some(rows) = next.remove(&key)
+        {
+            self.history.insert(key, rows);
         }
         span.finish(&result);
         result
@@ -429,17 +435,118 @@ impl MemoryStore {
     }
 }
 
-// Closed statement vocabulary: no caller SQL and no session metadata projections.
-const BOOTSTRAP_LOCK: &str = "SELECT pg_advisory_xact_lock(73100481)";
-const HAS_TABLES: &str = "SELECT EXISTS(SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname NOT IN ('pg_catalog','information_schema') AND c.relkind IN ('r','p'))";
-const HAS_IDENTITY: &str = "SELECT to_regclass('public.pn_store_identity') IS NOT NULL";
-const CREATE: &str = "CREATE TABLE public.pn_store_identity(identity text PRIMARY KEY); CREATE TABLE public.pn_versions(family text NOT NULL, key text NOT NULL, edition text NOT NULL, announced bigint NOT NULL, opens bigint NOT NULL, payload bytea, digest bytea, disclosure bytea, PRIMARY KEY(family,key,edition), UNIQUE(family,key,opens)); CREATE INDEX pn_recognition_disclosure ON public.pn_versions(disclosure) WHERE family='unsettled-recognition'; CREATE TABLE public.pn_closures(family text NOT NULL, key text NOT NULL, edition text NOT NULL, closes bigint NOT NULL, PRIMARY KEY(family,key,edition), FOREIGN KEY(family,key,edition) REFERENCES public.pn_versions(family,key,edition));";
-const SET_IDENTITY: &str = "INSERT INTO public.pn_store_identity VALUES ($1)";
-const GET_IDENTITY: &str = "SELECT identity FROM public.pn_store_identity";
-const LOCK_HISTORY: &str = "LOCK TABLE public.pn_versions IN SHARE ROW EXCLUSIVE MODE";
-const READ_HISTORY: &str = "SELECT v.family,v.key,v.edition,v.announced,v.opens,v.payload,v.digest,v.disclosure,c.closes FROM public.pn_versions v LEFT JOIN public.pn_closures c USING(family,key,edition) ORDER BY v.family,v.key,v.opens";
-const CLOSE: &str = "INSERT INTO public.pn_closures(family,key,edition,closes) VALUES($1,$2,$3,$4)";
-const INSERT: &str = "INSERT INTO public.pn_versions(family,key,edition,announced,opens,payload,digest,disclosure) VALUES($1,$2,$3,$4,$5,$6,$7,$8)";
+// Closed statement vocabulary: only this module can construct a statement.
+#[derive(Clone, Copy)]
+enum Statement {
+    BootstrapLock,
+    HasTables,
+    HasIdentity,
+    Create,
+    SetIdentity,
+    GetIdentity,
+    LockHistory,
+    ReadHistory,
+    ReadKey,
+    ReadBoundary,
+    Close,
+    Insert,
+}
+impl Statement {
+    const fn sql(self) -> &'static str {
+        match self {
+            Self::BootstrapLock => "SELECT pg_advisory_xact_lock(73100481)",
+            Self::HasTables => {
+                "SELECT EXISTS(SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname NOT IN ('pg_catalog','information_schema') AND c.relkind IN ('r','p'))"
+            }
+            Self::HasIdentity => "SELECT to_regclass('public.pn_store_identity') IS NOT NULL",
+            Self::Create => {
+                "Create TABLE public.pn_store_identity(identity text PRIMARY KEY); Create TABLE public.pn_versions(family text NOT NULL, key text NOT NULL, edition text NOT NULL, announced bigint NOT NULL, opens bigint NOT NULL, payload bytea, digest bytea, disclosure bytea, PRIMARY KEY(family,key,edition), UNIQUE(family,key,opens)); Create INDEX pn_recognition_disclosure ON public.pn_versions(disclosure) WHERE family='unsettled-recognition'; Create TABLE public.pn_closures(family text NOT NULL, key text NOT NULL, edition text NOT NULL, closes bigint NOT NULL, PRIMARY KEY(family,key,edition), FOREIGN KEY(family,key,edition) REFERENCES public.pn_versions(family,key,edition));"
+            }
+            Self::SetIdentity => "Insert INTO public.pn_store_identity VALUES ($1)",
+            Self::GetIdentity => "SELECT identity FROM public.pn_store_identity",
+            Self::LockHistory => "LOCK TABLE public.pn_versions IN SHARE ROW EXCLUSIVE MODE",
+            Self::ReadHistory => {
+                "SELECT v.family,v.key,v.edition,v.announced,v.opens,v.payload,v.digest,v.disclosure,c.closes FROM public.pn_versions v LEFT JOIN public.pn_closures c USING(family,key,edition) ORDER BY v.family,v.key,v.opens"
+            }
+            Self::ReadKey => {
+                "SELECT v.family,v.key,v.edition,v.announced,v.opens,v.payload,v.digest,v.disclosure,c.closes FROM public.pn_versions v LEFT JOIN public.pn_closures c USING(family,key,edition) WHERE v.family=$1 AND v.key=$2 ORDER BY v.opens"
+            }
+            Self::ReadBoundary => {
+                "SELECT v.family,v.key,v.edition,v.announced,v.opens,v.payload,v.digest,v.disclosure,c.closes FROM public.pn_versions v LEFT JOIN public.pn_closures c USING(family,key,edition) WHERE v.opens <= $1 AND (c.closes IS NULL OR c.closes > $1) ORDER BY v.family,v.key,v.opens"
+            }
+            Self::Close => "Insert INTO public.pn_closures(family,key,edition,closes) VALUES($1,$2,$3,$4)",
+            Self::Insert => {
+                "Insert INTO public.pn_versions(family,key,edition,announced,opens,payload,digest,disclosure) VALUES($1,$2,$3,$4,$5,$6,$7,$8)"
+            }
+        }
+    }
+}
+
+// The raw driver stays inside this wrapper; even other crate modules cannot issue SQL.
+#[derive(Debug)]
+pub(crate) struct StatementClient {
+    raw: tokio_postgres::Client,
+}
+impl StatementClient {
+    /// Justified: Private driver wrapping inherits `Session::connect`; it acquires no additional connection or public content.
+    pub(crate) fn new(raw: tokio_postgres::Client) -> Self {
+        Self { raw }
+    }
+    /// Justified: Connection-status access inherits the enclosing session operation and exposes no driver data.
+    pub(crate) fn is_closed(&self) -> bool {
+        self.raw.is_closed()
+    }
+    #[cfg(test)]
+    pub(crate) fn fixture(&self) -> &tokio_postgres::Client {
+        &self.raw
+    }
+    async fn transaction(&mut self) -> Result<StatementTransaction<'_>, tokio_postgres::Error> {
+        Ok(StatementTransaction(self.raw.transaction().await?))
+    }
+    async fn snapshot(&mut self) -> Result<StatementTransaction<'_>, tokio_postgres::Error> {
+        Ok(StatementTransaction(
+            self.raw
+                .build_transaction()
+                .isolation_level(tokio_postgres::IsolationLevel::RepeatableRead)
+                .read_only(true)
+                .start()
+                .await?,
+        ))
+    }
+}
+struct StatementTransaction<'a>(tokio_postgres::Transaction<'a>);
+impl StatementTransaction<'_> {
+    async fn query(
+        &self,
+        statement: Statement,
+        params: &[&(dyn tokio_postgres::types::ToSql + Sync)],
+    ) -> Result<Vec<tokio_postgres::Row>, tokio_postgres::Error> {
+        self.0.query(statement.sql(), params).await
+    }
+    async fn query_one(
+        &self,
+        statement: Statement,
+        params: &[&(dyn tokio_postgres::types::ToSql + Sync)],
+    ) -> Result<tokio_postgres::Row, tokio_postgres::Error> {
+        self.0.query_one(statement.sql(), params).await
+    }
+    async fn execute(
+        &self,
+        statement: Statement,
+        params: &[&(dyn tokio_postgres::types::ToSql + Sync)],
+    ) -> Result<u64, tokio_postgres::Error> {
+        self.0.execute(statement.sql(), params).await
+    }
+    async fn batch_execute(&self, statement: Statement) -> Result<(), tokio_postgres::Error> {
+        self.0.batch_execute(statement.sql()).await
+    }
+    async fn commit(self) -> Result<(), tokio_postgres::Error> {
+        self.0.commit().await
+    }
+    async fn rollback(self) -> Result<(), tokio_postgres::Error> {
+        self.0.rollback().await
+    }
+}
 
 /// PostgreSQL adapter; the raw session and statement vocabulary stay private.
 /// (´def:host:effective-storage´)
@@ -489,17 +596,17 @@ impl PostgresStore {
     async fn open_inner(session: &mut Session) -> Result<(), StorageError> {
         let mut meter = TransactionMeter::new();
         let transaction = session.client.transaction().await.map_err(|_| StorageError::Transport)?;
-        observed(transaction.query(BOOTSTRAP_LOCK, &[])).await?;
-        let exists: bool = observed(transaction.query_one(HAS_IDENTITY, &[])).await?.get(0);
+        observed(transaction.query(Statement::BootstrapLock, &[])).await?;
+        let exists: bool = observed(transaction.query_one(Statement::HasIdentity, &[])).await?.get(0);
         if !exists {
-            let occupied: bool = observed(transaction.query_one(HAS_TABLES, &[])).await?.get(0);
+            let occupied: bool = observed(transaction.query_one(Statement::HasTables, &[])).await?.get(0);
             if occupied {
                 return Err(StorageError::SchemaIdentity);
             }
-            observed(transaction.batch_execute(CREATE)).await?;
-            observed(transaction.execute(SET_IDENTITY, &[&SCHEMA])).await?;
+            observed(transaction.batch_execute(Statement::Create)).await?;
+            observed(transaction.execute(Statement::SetIdentity, &[&SCHEMA])).await?;
         }
-        let rows = observed(transaction.query(GET_IDENTITY, &[])).await?;
+        let rows = observed(transaction.query(Statement::GetIdentity, &[])).await?;
         if rows.len() != 1 || rows[0].get::<_, String>(0) != SCHEMA {
             return Err(StorageError::SchemaIdentity);
         }
@@ -527,20 +634,36 @@ impl PostgresStore {
     }
     async fn load_inner(&mut self, at: u64, required: &[(Family, String)]) -> Result<Boundary, StorageError> {
         let mut meter = TransactionMeter::new();
-        let transaction = self
-            .session
-            .client
-            .build_transaction()
-            .isolation_level(tokio_postgres::IsolationLevel::RepeatableRead)
-            .read_only(true)
-            .start()
-            .await
-            .map_err(|_| StorageError::Transport)?;
-        let history = read(&transaction).await?;
+        let transaction = self.session.client.snapshot().await.map_err(|_| StorageError::Transport)?;
+        let at_sql = i64::try_from(at).map_err(|_| StorageError::Representation)?;
+        let history = read(&transaction, Statement::ReadBoundary, &[&at_sql], false).await?;
         let result = boundary(&history, at, required);
         transaction.commit().await.map_err(|_| StorageError::Transport)?;
         meter.commit();
         result
+    }
+    /// Verify every retained payload and complete interval chain in one snapshot.
+    /// (´def:host:effective-storage´)
+    /// # Errors
+    /// Refuses corrupt history or a failed transport without substituting a boundary read.
+    #[tracing::instrument(
+        name = "sig:design:storage",
+        fields(
+            execution_owner = "HOST",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:storage",
+            source_item = "storage::PostgresStore::audit_history",
+            asynchronous = true
+        ),
+        ret
+    )]
+    pub async fn audit_history(&mut self) -> Result<(), StorageError> {
+        let mut meter = TransactionMeter::new();
+        let transaction = self.session.client.snapshot().await.map_err(|_| StorageError::Transport)?;
+        let result = read(&transaction, Statement::ReadHistory, &[], true).await.map(|_| ());
+        transaction.commit().await.map_err(|_| StorageError::Transport)?;
+        meter.commit();
+        classified(result)
     }
     /// Serialize succession, appending closure and successor in the same transaction.
     /// (´def:host:effective-storage´)
@@ -575,9 +698,15 @@ impl PostgresStore {
         let mut meter = TransactionMeter::new();
         let transaction = self.session.client.transaction().await.map_err(|_| StorageError::Transport)?;
         let queue = QueueMeter::new();
-        observed(transaction.batch_execute(LOCK_HISTORY)).await?;
+        observed(transaction.batch_execute(Statement::LockHistory)).await?;
         drop(queue);
-        let mut history = read(&transaction).await?;
+        let mut history = read(
+            &transaction,
+            Statement::ReadKey,
+            &[&version.family.name(), &version.key],
+            true,
+        )
+        .await?;
         if !append(&mut history, version.clone(), predecessor)? {
             metrics::counter!("host__root__sig__design__storage__retries").increment(1);
             transaction.rollback().await.map_err(|_| StorageError::Transport)?;
@@ -586,7 +715,7 @@ impl PostgresStore {
         let family = version.family.name();
         let opens = i64::try_from(version.opens_at).map_err(|_| StorageError::Representation)?;
         if let Some(prior) = predecessor {
-            observed(transaction.execute(CLOSE, &[&family, &version.key, &prior.edition, &opens])).await?;
+            observed(transaction.execute(Statement::Close, &[&family, &version.key, &prior.edition, &opens])).await?;
         }
         if fault == 1 {
             return Err(StorageError::Injected);
@@ -599,7 +728,7 @@ impl PostgresStore {
             .as_ref()
             .and_then(|v| v.disclosure.as_ref().map(<[u8; 32]>::as_slice));
         observed(transaction.execute(
-            INSERT,
+            Statement::Insert,
             &[
                 &family,
                 &version.key,
@@ -627,8 +756,13 @@ async fn observed<T>(future: impl std::future::Future<Output = Result<T, tokio_p
     metrics::histogram!("host__root__sig__design__storage__query_elapsed_seconds").record(started.elapsed().as_secs_f64());
     result
 }
-async fn read(transaction: &tokio_postgres::Transaction<'_>) -> Result<History, StorageError> {
-    let rows = observed(transaction.query(READ_HISTORY, &[])).await?;
+async fn read(
+    transaction: &StatementTransaction<'_>,
+    statement: Statement,
+    params: &[&(dyn tokio_postgres::types::ToSql + Sync)],
+    complete: bool,
+) -> Result<History, StorageError> {
+    let rows = observed(transaction.query(statement, params)).await?;
     let mut history = History::new();
     for row in rows {
         let family = match row.get::<_, String>(0).as_str() {
@@ -684,9 +818,10 @@ async fn read(transaction: &tokio_postgres::Transaction<'_>) -> Result<History, 
         }
         versions.push(EffectiveRow { version, closes_at });
     }
-    if history
-        .values()
-        .any(|rows| rows.last().is_some_and(|row| row.closes_at.is_some()))
+    if complete
+        && history
+            .values()
+            .any(|rows| rows.last().is_some_and(|row| row.closes_at.is_some()))
     {
         return Err(StorageError::CorruptHistory);
     }

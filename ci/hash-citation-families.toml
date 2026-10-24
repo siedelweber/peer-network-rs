@@ -277,5 +277,15 @@ producer = "ci/storage_vectors.py"
 establishment = "recomputable"
 reader = "storage-vectors"
 source = "packages/host/src/storage/vectors.json"
-definition = "Independent hashlib framing checks each recipe identifier, zero separator and canonical empty-array bytes before accepting the literal digest."
+definition = "Independent canonical encoding and hashlib framing check each recipe identifier, zero separator and complete fixed-fixture projection before accepting the literal digest, for all six families and the recognition disclosure."
 paths = ["packages/host/src/storage/vectors.json"]
+
+[[rows]]
+family = "storage-vector-cbor-literals"
+group = "independent storage projection reader"
+measures = "CBOR simple-value initial bytes, not identities"
+producer = "RFC 8949 section 3.3 simple-value assignments"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "The null, true and false byte escapes are assigned CBOR simple values in the restricted independent fixture encoder. They denote encoding bytes rather than hash identities; bare identity-shaped values remain excluded."
+paths = ["ci/storage_vectors.py"]

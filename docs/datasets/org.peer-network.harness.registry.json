@@ -3531,6 +3531,7 @@
     {
       "budget": "postgresql-suite",
       "cases": [
+        "ci::test_host_runtime.HostRuntime.test_statement_type_boundary",
         "ci::test_host_runtime.HostRuntime.test_storage_statements",
         "ci::test_host_runtime.HostRuntime.test_storage_restart",
         "ci::test_host_runtime.HostRuntime.test_independent_instances",
@@ -3568,6 +3569,7 @@
         "pn-host::config::tests::secret_json_grammar",
         "pn-host::tests::wire_filter_boundary",
         "pn-host::tests::relay_refusals",
+        "pn-host::scram::tests::ceiling_login_progress",
         "pn-host::scram::tests::derivation_cost"
       ],
       "implementation": "pn-host-rust",
@@ -3602,7 +3604,8 @@
         "pn-host::storage::tests::storage_historical_constants",
         "pn-host::storage::tests::storage_digest_vectors",
         "pn-host::storage::tests::storage_runtime",
-        "pn-host::storage::tests::storage_restart"
+        "pn-host::storage::tests::storage_restart",
+        "pn-host::storage::tests::storage_scaling"
       ],
       "implementation": "pn-host-memory-and-postgresql",
       "kind": "suite",

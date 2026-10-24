@@ -24,6 +24,7 @@ getrandom = { version = "=0.4.3", default-features = false }
 base64 = { version = "=0.23.1", default-features = false }
 
 [dev-dependencies]
+tokio = { version = "=1.54.1", default-features = false, features = ["rt-multi-thread"] }
 serde_json.workspace = true
 pn-records = { path = "../records", features = ["test-support"] }
 

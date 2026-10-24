@@ -2087,7 +2087,7 @@
       "claim": "ROOT::claim:discipline:host-transport-observation-retains-the-secret-boundary",
       "before": "",
       "after": "Claim: After a successful-query drain barrier, default and trace runs against the real host-secured service retain identical public results and lossless host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials.",
-      "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "review": "Read decoded-content scanning after recursive artifact expansion; private reachability is searched inside base64 frames as well as ordinary JSON, with exact mode outcomes retained."
     },
     {
       "operation": "pn-host::config::tests::secret_json_grammar",
@@ -2191,7 +2191,7 @@
       "claim": "HOST::claim:host:outbound-refusal-releases-the-session",
       "before": "",
       "after": "Claim: An oversized outbound driver frame closes the connection promptly, retains its bounded refusal and releases the real backend with its open transaction, so an idle inbound relay cannot wedge storage.",
-      "review": "Read the oversized SimpleQuery and open transaction arrangement: the exact closed error, stored RepresentationLimit and absence of the backend PID jointly witness both stream and session release."
+      "review": "Read the two-worker runtime, immediate accessor after closed connection and backend disappearance; cause publication precedes stream release in both directions."
     },
     {
       "operation": "pn-host::scram::tests::derivation_cost",
@@ -2206,8 +2206,8 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:result-row-control-detects-private-metadata",
       "before": "",
-      "after": "Claim: A test-only metadata query reaches the expanded DataRow scan and is rejected at the private role sentinel, so an outbound bind value cannot satisfy the result-path leakage control.",
-      "review": "Read the opt-in current_user query and expanded trace scan: the private role must actually be found, proving sensitivity to a DataRow-only value."
+      "after": "Claim: A test-only metadata query returns the private role alongside a binary integer, forcing base64 recording; only decoded-content scanning finds the role, so the leakage control covers binary DataRows rather than outbound bind values.",
+      "review": "Read the private current_user plus binary int4=128 result: the role must be absent from encoded JSON yet present after base64 decoding, proving this control exercises the binary path."
     },
     {
       "operation": "ci::test_observe_syntax.Syntax.test_parsed_boundaries",
@@ -2286,8 +2286,8 @@
       "before": "",
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:storage-digest-domains-are-permanent",
-      "after": "Claim: Both permanent storage digest domains match independent SHA-256 vectors over the canonical empty-array bytes; changing a separator or recipe spelling fails the literal correspondence.",
-      "review": "Read the independent literal domain vectors over canonical empty-array bytes; the producer must match without deriving its expectation from its own output."
+      "after": "Claim: All six fixed validated family projections and the recognition disclosure match independently encoded canonical bytes and SHA-256 literals; changing field order, an enum spelling or a digest domain breaks durable recipe correspondence.",
+      "review": "Read seven complete fixed projections: actual production constructors are compared byte-for-byte with independently constructed CBOR and SHA-256 values; all family names and the recognition disclosure are present."
     },
     {
       "operation": "pn-host::storage::tests::storage_runtime",
@@ -2311,7 +2311,7 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary",
       "after": "Claim: Every closed storage statement is exercised under trace and its decoded DataRows contain only public fixture content; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.",
-      "review": "Read fresh per-level databases, decoded binary trace scanning for every configuration value, all ten statement strings, identical public output and the private DataRow control."
+      "review": "Read all twelve enum statement arms exercised under trace including the separate audit, and decoded DataRow scanning with the existing negative control."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_storage_restart",
@@ -2320,6 +2320,30 @@
       "claim": "ROOT::claim:discipline:storage-restart-preserves-committed-bytes",
       "after": "Claim: A real PostgreSQL restart preserves the committed public version byte for byte; the second probe reads without appending, so successful replay cannot hide lost durability by recreating the row.",
       "review": "Read pg_ctl restart between separate binary invocations; the second sets the read-only probe flag and must find the existing version."
+    },
+    {
+      "operation": "pn-host::scram::tests::ceiling_login_progress",
+      "before": "",
+      "path": "packages/host/src/scram.rs",
+      "claim": "HOST::claim:host:ceiling-login-leaves-relay-progress-independent",
+      "after": "Claim: A current-thread executor forwards a public relay frame while a ceiling login is inside its blocking derivation job; a bounded rendezvous fails if that job is moved back onto the executor.",
+      "review": "Read the current-thread login against a controlled server at 600000 rounds and its bounded blocking-job rendezvous: another task forwards a public frame before the proof completes; inline derivation prevents that progress."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_scaling",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:bounded-reads-ignore-unrelated-history",
+      "after": "Claim: Requested-key append and active-boundary reads preserve selected identities as unrelated retained history grows by two orders of magnitude; the full audit remains a separate operation, and timing is reported rather than asserted.",
+      "review": "Read three increasing unrelated-history sizes, exact active-row predicates, reported per-operation clocks, separate full audit and corruption of an excluded key: bounded operations still pass while audit detects it."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_statement_type_boundary",
+      "before": "",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:storage-statement-types-refuse-inline-sql",
+      "after": "Claim: Production modules cannot name a raw driver client outside its private wrapper, and an inline SQL string fails compilation at the wrapper's Statement parameter, so a new call site cannot bypass the reviewed vocabulary.",
+      "review": "Read the production type-name guard and injected cfg(test) inline-string call: compiler E0308 must specifically name Statement versus &str, and source bytes are restored in finally."
     }
   ]
 }

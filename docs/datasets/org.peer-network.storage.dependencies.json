@@ -2320,6 +2320,7 @@
         "mio",
         "net",
         "rt",
+        "rt-multi-thread",
         "socket2",
         "sync",
         "time",

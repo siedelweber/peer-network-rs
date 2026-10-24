@@ -4,6 +4,9 @@ from pathlib import Path
 import subprocess
 import sys
 
+from host_statements import check
+check()
+
 result = subprocess.run(['cargo', 'test', '--offline', '--locked', '--profile', 'gate',
                          '-p', 'pn-host', '--lib', '--no-run', '--message-format=json'],
                         capture_output=True, check=False)
@@ -18,4 +21,4 @@ for line in result.stdout.splitlines():
 if len(binaries) != 1:
     raise SystemExit('host evidence requires exactly one test binary')
 Path('.lane/host-test-binary.txt').write_text(binaries[0]+'\n')
-print('HOST-EVIDENCE-BUILD configuration=cfg(test) production_client=private')
+print('HOST-EVIDENCE-BUILD configuration=cfg(test) production_client=typed-closed')
