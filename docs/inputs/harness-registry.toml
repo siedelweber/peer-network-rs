@@ -516,16 +516,6 @@ cases = ["ci::test_harness.Harness.test_case_level_declaration", "ci::test_harne
 
 [[rows]]
 kind = "suite"
-name = "planned-records"
-status = "held"
-tier = "fast"
-implementation = ""
-cases = []
-reason = "contract not implemented; first contributing domain bite 1"
-contract = "identity, carrier validation and effective declarations"
-
-[[rows]]
-kind = "suite"
 name = "planned-burn"
 status = "held"
 tier = "service"

@@ -2526,16 +2526,6 @@
     },
     {
       "cases": [],
-      "contract": "identity, carrier validation and effective declarations",
-      "implementation": "",
-      "kind": "suite",
-      "name": "planned-records",
-      "reason": "contract not implemented; first contributing domain bite 1",
-      "status": "held",
-      "tier": "fast"
-    },
-    {
-      "cases": [],
       "contract": "four-object disclosures and permanent target provenance",
       "implementation": "",
       "kind": "suite",
