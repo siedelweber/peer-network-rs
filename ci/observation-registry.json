@@ -4349,6 +4349,676 @@
         "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
         "class_decision": "public-records"
       }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::new",
+      "owner": "RECORDS",
+      "signature": "fn new (limits : Limits , comparisons : nrz_accuracy :: Limits) -> Result < Self , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-new"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::literal",
+      "owner": "RECORDS",
+      "signature": "fn literal (& mut self , source : & str) -> Result < Literal , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-literal"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::computed",
+      "owner": "RECORDS",
+      "signature": "fn computed (& mut self , literal : & Literal) -> Result < Computed , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-computed"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::burn",
+      "owner": "RECORDS",
+      "signature": "fn burn (& mut self , literal : & Literal , unit : & str) -> Result < BurnAmount , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-burn"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::burn_per_action",
+      "owner": "RECORDS",
+      "signature": "fn burn_per_action (& mut self , literal : & Literal , unit : & str) -> Result < BurnPerAction , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-burn-per-action"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::standing",
+      "owner": "RECORDS",
+      "signature": "fn standing (& mut self , literal : & Literal , unit : & str) -> Result < FullStanding , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-standing"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::numeraire",
+      "owner": "RECORDS",
+      "signature": "fn numeraire (& mut self , identity : & str , amount : & BurnAmount) -> Result < Numeraire , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-numeraire"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::reduce",
+      "owner": "RECORDS",
+      "signature": "fn reduce (& mut self , standing : & FullStanding , numeraire : & Numeraire) -> Result < ReducedStanding , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-reduce"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::unit_cost",
+      "owner": "RECORDS",
+      "signature": "fn unit_cost (& mut self , literal : & Literal , denomination : & str , burn_unit : & str , terms : & str ,) -> Result < UnitCost , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-unit-cost"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::apply_cost",
+      "owner": "RECORDS",
+      "signature": "fn apply_cost (& mut self , cost : & UnitCost , amount : & BurnAmount) -> Result < ExternalCost , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-apply-cost"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::combined_cost",
+      "owner": "RECORDS",
+      "signature": "fn combined_cost (& mut self , cost : & UnitCost , theta : & BurnAmount , rho : & ReducedStanding ,) -> Result < ExternalCost , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-combined-cost"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::recording_cost",
+      "owner": "RECORDS",
+      "signature": "fn recording_cost (& mut self , literal : & Literal , denomination : & str , terms : & str ,) -> Result < RecordingEventCost , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-recording-cost"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::recoin",
+      "owner": "RECORDS",
+      "signature": "fn recoin (& mut self , amount : & BurnAmount , numeraire : & Numeraire , factor : & Literal , new_unit : & str ,) -> Result < (BurnAmount , Numeraire) , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-recoin"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::reprice",
+      "owner": "RECORDS",
+      "signature": "fn reprice (& mut self , amount : & BurnAmount , market_factor : & Literal) -> Result < BurnAmount , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-reprice"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::compare_floor",
+      "owner": "RECORDS",
+      "signature": "fn compare_floor (& mut self , wall : & Computed , floor : Floor) -> Result < FloorComparison , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-compare-floor"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::charged_price",
+      "owner": "RECORDS",
+      "signature": "fn charged_price (& mut self , wall : & Computed , numeraire : & Numeraire , floor : Floor) -> Result < ChargedPrice , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-charged-price"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::consummate",
+      "owner": "RECORDS",
+      "signature": "fn consummate (& mut self , price : & ChargedPrice , actions : ActionCount , boundary : u64 ,) -> Result < ChargedVintage , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-consummate"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::NumericContext::display",
+      "owner": "RECORDS",
+      "signature": "fn display (& mut self , value : & Computed , fractional_digits : u8) -> Result < RoundedDisplay , NumericError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "numeric-display"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::Literal::exact",
+      "owner": "RECORDS",
+      "signature": "fn exact (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::Computed::exact",
+      "owner": "RECORDS",
+      "signature": "fn exact (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::BurnAmount::exact",
+      "owner": "RECORDS",
+      "signature": "fn exact (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::BurnPerAction::exact",
+      "owner": "RECORDS",
+      "signature": "fn exact (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::FullStanding::exact",
+      "owner": "RECORDS",
+      "signature": "fn exact (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::ReducedStanding::exact",
+      "owner": "RECORDS",
+      "signature": "fn exact (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::UnitCost::exact",
+      "owner": "RECORDS",
+      "signature": "fn exact (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::ExternalCost::exact",
+      "owner": "RECORDS",
+      "signature": "fn exact (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::RecordingEventCost::exact",
+      "owner": "RECORDS",
+      "signature": "fn exact (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::BurnAmount::unit",
+      "owner": "RECORDS",
+      "signature": "fn unit (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::BurnPerAction::unit",
+      "owner": "RECORDS",
+      "signature": "fn unit (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::FullStanding::unit",
+      "owner": "RECORDS",
+      "signature": "fn unit (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::Literal::source",
+      "owner": "RECORDS",
+      "signature": "fn source (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::Numeraire::identity",
+      "owner": "RECORDS",
+      "signature": "fn identity (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::Numeraire::amount",
+      "owner": "RECORDS",
+      "signature": "fn amount (& self) -> & BurnAmount",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::ReducedStanding::numeraire",
+      "owner": "RECORDS",
+      "signature": "fn numeraire (& self) -> & Numeraire",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::RoundedDisplay::text",
+      "owner": "RECORDS",
+      "signature": "fn text (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::ChargedPrice::price",
+      "owner": "RECORDS",
+      "signature": "fn price (& self) -> & BurnPerAction",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::ChargedPrice::wall",
+      "owner": "RECORDS",
+      "signature": "fn wall (& self) -> & Computed",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::ChargedPrice::numeraire",
+      "owner": "RECORDS",
+      "signature": "fn numeraire (& self) -> & Numeraire",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::ChargedVintage::charged",
+      "owner": "RECORDS",
+      "signature": "fn charged (& self) -> & BurnAmount",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::ChargedVintage::price",
+      "owner": "RECORDS",
+      "signature": "fn price (& self) -> & ChargedPrice",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::ChargedVintage::boundary",
+      "owner": "RECORDS",
+      "signature": "fn boundary (& self) -> u64",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "item": "constants::bind_constants",
+      "owner": "RECORDS",
+      "signature": "fn bind_constants (records : & ValidatedRecords , inputs : Vec < EditionInput >) -> Result < ConstantsHistory < '_ > , ConstantsError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "bind-constants"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "item": "constants::ConstantsHistory < '_ >::resolve",
+      "owner": "RECORDS",
+      "signature": "fn resolve (& self , namespace : & str , name : & str , boundary : u64) -> Result < & ConstantsEdition , ConstantsError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "resolve-constants"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "item": "constants::ConstantsEdition::content",
+      "owner": "RECORDS",
+      "signature": "fn content (& self) -> & EditionInput",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "item": "constants::ConstantsEdition::floor_source",
+      "owner": "RECORDS",
+      "signature": "fn floor_source (& self) -> & ConstantDefinition",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+        "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
     }
   ],
   "metrics": [
@@ -4800,8 +5470,28 @@
       "attributes": {
         "operation": [
           "assemble-boundary-inputs",
+          "bind-constants",
           "complete-act-access",
           "dependency-status",
+          "numeric-apply-cost",
+          "numeric-burn",
+          "numeric-burn-per-action",
+          "numeric-charged-price",
+          "numeric-combined-cost",
+          "numeric-compare-floor",
+          "numeric-computed",
+          "numeric-consummate",
+          "numeric-display",
+          "numeric-literal",
+          "numeric-new",
+          "numeric-numeraire",
+          "numeric-recoin",
+          "numeric-recording-cost",
+          "numeric-reduce",
+          "numeric-reprice",
+          "numeric-standing",
+          "numeric-unit-cost",
+          "resolve-constants",
           "resolve-public-reference",
           "select-effective-declaration",
           "validate-history",
@@ -4824,8 +5514,28 @@
         ],
         "operation": [
           "assemble-boundary-inputs",
+          "bind-constants",
           "complete-act-access",
           "dependency-status",
+          "numeric-apply-cost",
+          "numeric-burn",
+          "numeric-burn-per-action",
+          "numeric-charged-price",
+          "numeric-combined-cost",
+          "numeric-compare-floor",
+          "numeric-computed",
+          "numeric-consummate",
+          "numeric-display",
+          "numeric-literal",
+          "numeric-new",
+          "numeric-numeraire",
+          "numeric-recoin",
+          "numeric-recording-cost",
+          "numeric-reduce",
+          "numeric-reprice",
+          "numeric-standing",
+          "numeric-unit-cost",
+          "resolve-constants",
           "resolve-public-reference",
           "select-effective-declaration",
           "validate-history",
@@ -8444,6 +9154,501 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::new",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { Ok (Self { budget : Budget :: new (limits) ? , comparisons : comparisons . start () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { let value = Rational :: parse (source , & mut self . budget) ? ; Ok (Literal { source : source . into () , exact : Exact :: new (value , & mut self . budget) ? , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::computed",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { literal . exact . value . check (& self . budget , nrz_cas :: Location :: new (\"records computed admission\")) ? ; Ok (Computed { exact : literal . exact . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::burn",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { nonempty (unit) ? ; sign (& literal . exact , false) ? ; Ok (BurnAmount { exact : literal . exact . clone () , unit : unit . into () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::burn_per_action",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { nonempty (unit) ? ; sign (& literal . exact , false) ? ; Ok (BurnPerAction { exact : literal . exact . clone () , unit : unit . into () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::standing",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { nonempty (unit) ? ; sign (& literal . exact , false) ? ; Ok (FullStanding { exact : literal . exact . clone () , unit : unit . into () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::numeraire",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { nonempty (identity) ? ; sign (& amount . exact , true) ? ; Ok (Numeraire { identity : identity . into () , amount : amount . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::reduce",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { units (& standing . unit , & numeraire . amount . unit) ? ; let value = standing . exact . value . div (& numeraire . amount . exact . value , & mut self . budget) ? ; Ok (ReducedStanding { exact : Exact :: new (value , & mut self . budget) ? , numeraire : numeraire . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::unit_cost",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { sign (& literal . exact , true) ? ; nonempty (denomination) ? ; nonempty (burn_unit) ? ; nonempty (terms) ? ; Ok (UnitCost { exact : literal . exact . clone () , denomination : denomination . into () , burn_unit : burn_unit . into () , terms : terms . into () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::apply_cost",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { units (& cost . burn_unit , & amount . unit) ? ; let value = cost . exact . value . mul (& amount . exact . value , & mut self . budget) ? ; Ok (ExternalCost { exact : Exact :: new (value , & mut self . budget) ? , denomination : cost . denomination . clone () , terms : cost . terms . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::combined_cost",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { units (& theta . unit , & rho . numeraire . amount . unit) ? ; let full = rho . exact . value . mul (& rho . numeraire . amount . exact . value , & mut self . budget) ? ; let value = theta . exact . value . add (& full , & mut self . budget) ? ; let amount = BurnAmount { exact : Exact :: new (value , & mut self . budget) ? , unit : theta . unit . clone () , } ; self . apply_cost (cost , & amount) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::recording_cost",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { sign (& literal . exact , false) ? ; nonempty (denomination) ? ; nonempty (terms) ? ; Ok (RecordingEventCost { exact : literal . exact . clone () , denomination : denomination . into () , terms : terms . into () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::recoin",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { sign (& factor . exact , true) ? ; nonempty (new_unit) ? ; units (& amount . unit , & numeraire . amount . unit) ? ; let a = amount . exact . value . mul (& factor . exact . value , & mut self . budget) ? ; let n = numeraire . amount . exact . value . mul (& factor . exact . value , & mut self . budget) ? ; Ok ((BurnAmount { exact : Exact :: new (a , & mut self . budget) ? , unit : new_unit . into () , } , Numeraire { identity : numeraire . identity . clone () , amount : BurnAmount { exact : Exact :: new (n , & mut self . budget) ? , unit : new_unit . into () , } , } ,)) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::reprice",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { sign (& market_factor . exact , true) ? ; let value = amount . exact . value . div (& market_factor . exact . value , & mut self . budget) ? ; Ok (BurnAmount { exact : Exact :: new (value , & mut self . budget) ? , unit : amount . unit . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::compare_floor",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { if self . comparisons . reserve_attempt (1) . is_err () { return Ok (FloorComparison :: Indecisive) ; } if floor == Floor :: RidgeImage { return Ok (FloorComparison :: Indecisive) ; } let compared = (| | { let rational = Rational :: parse (\"3/37\" , & mut self . budget) ? ; wall . exact . value . compare (& rational , & mut self . budget) }) () ; Ok (match compared { Ok (Ordering :: Less) => FloorComparison :: Below , Ok (Ordering :: Equal) => FloorComparison :: Equal , Ok (Ordering :: Greater) => FloorComparison :: Above , Err (_) => FloorComparison :: Indecisive , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::charged_price",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { match self . compare_floor (wall , floor) ? { FloorComparison :: Below => return Err (NumericError :: BelowFloor) , FloorComparison :: Indecisive => return Err (NumericError :: Indecisive) , FloorComparison :: Equal | FloorComparison :: Above => { } } let value = wall . exact . value . mul (& numeraire . amount . exact . value , & mut self . budget) ? ; Ok (ChargedPrice { wall : wall . clone () , numeraire : numeraire . clone () , floor , price : BurnPerAction { exact : Exact :: new (value , & mut self . budget) ? , unit : numeraire . amount . unit . clone () , } , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::consummate",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { let count = Rational :: parse (& actions . 0 . to_string () , & mut self . budget) ? ; let value = price . price . exact . value . mul (& count , & mut self . budget) ? ; Ok (ChargedVintage { price : price . clone () , actions , boundary , charged : BurnAmount { exact : Exact :: new (value , & mut self . budget) ? , unit : price . price . unit . clone () , } , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::display",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { if fractional_digits > 18 { return Err (NumericError :: DisplayBound) ; } let arithmetic = nrz_scalar :: ArithmeticContext :: new () ? ; let literal = nrz_scalar :: NumericLiteral :: new (& value . exact . canonical , nrz_scalar :: LiteralLimits :: default ()) ? ; let decoded = literal . decode :: < f64 > (& arithmetic) ? ; Ok (RoundedDisplay { text : format ! (\"{:.*}\" , usize :: from (fractional_digits) , decoded . center () . get ()) , fractional_digits , arithmetic_revision : arithmetic . revision () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision. The floating conversion is explicitly nonbinding display text and cannot enter the charged-price argument type."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::Literal::exact",
+      "class_decision": "public-records",
+      "body": "{ & self . exact . canonical }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::Computed::exact",
+      "class_decision": "public-records",
+      "body": "{ & self . exact . canonical }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::BurnAmount::exact",
+      "class_decision": "public-records",
+      "body": "{ & self . exact . canonical }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::BurnPerAction::exact",
+      "class_decision": "public-records",
+      "body": "{ & self . exact . canonical }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::FullStanding::exact",
+      "class_decision": "public-records",
+      "body": "{ & self . exact . canonical }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::ReducedStanding::exact",
+      "class_decision": "public-records",
+      "body": "{ & self . exact . canonical }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::UnitCost::exact",
+      "class_decision": "public-records",
+      "body": "{ & self . exact . canonical }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::ExternalCost::exact",
+      "class_decision": "public-records",
+      "body": "{ & self . exact . canonical }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::RecordingEventCost::exact",
+      "class_decision": "public-records",
+      "body": "{ & self . exact . canonical }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::BurnAmount::unit",
+      "class_decision": "public-records",
+      "body": "{ & self . unit }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::BurnPerAction::unit",
+      "class_decision": "public-records",
+      "body": "{ & self . unit }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::FullStanding::unit",
+      "class_decision": "public-records",
+      "body": "{ & self . unit }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::Literal::source",
+      "class_decision": "public-records",
+      "body": "{ & self . source }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::Numeraire::identity",
+      "class_decision": "public-records",
+      "body": "{ & self . identity }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::Numeraire::amount",
+      "class_decision": "public-records",
+      "body": "{ & self . amount }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::ReducedStanding::numeraire",
+      "class_decision": "public-records",
+      "body": "{ & self . numeraire }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::RoundedDisplay::text",
+      "class_decision": "public-records",
+      "body": "{ & self . text }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::ChargedPrice::price",
+      "class_decision": "public-records",
+      "body": "{ & self . price }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::ChargedPrice::wall",
+      "class_decision": "public-records",
+      "body": "{ & self . wall }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::ChargedPrice::numeraire",
+      "class_decision": "public-records",
+      "body": "{ & self . numeraire }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::ChargedVintage::charged",
+      "class_decision": "public-records",
+      "body": "{ & self . charged }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::ChargedVintage::price",
+      "class_decision": "public-records",
+      "body": "{ & self . price }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::ChargedVintage::boundary",
+      "class_decision": "public-records",
+      "body": "{ self . boundary }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/constants.rs::constants::bind_constants",
+      "class_decision": "public-records",
+      "body": "{ let result = bind (records , inputs) ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision. Declaration payloads retain public definitions and opaque realization identifiers; they contain no signing material."
+    },
+    {
+      "operation": "pn-records::packages/records/src/constants.rs::constants::ConstantsHistory < '_ >::resolve",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { let declaration = select_effective_declaration (self . records , namespace , name , boundary) ? ; self . editions . iter () . find (| e | e . input . id == declaration . id) . ok_or (ConstantsError :: EditionSet) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This exact numeric or declaration boundary records its public arguments and result at trace and its labelled outcome at every level. Retained canonical rational text supplies the full value beside the backend debug summary; limits and observation never supply an approximate binding decision. Declaration payloads retain public definitions and opaque realization identifiers; they contain no signing material."
+    },
+    {
+      "operation": "pn-records::packages/records/src/constants.rs::constants::ConstantsEdition::content",
+      "class_decision": "public-records",
+      "body": "{ & self . input }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation. Declaration payloads retain public definitions and opaque realization identifiers; they contain no signing material."
+    },
+    {
+      "operation": "pn-records::packages/records/src/constants.rs::constants::ConstantsEdition::floor_source",
+      "class_decision": "public-records",
+      "body": "{ & self . floor_source }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation. Declaration payloads retain public definitions and opaque realization identifiers; they contain no signing material."
     }
   ],
   "generators": [
@@ -9816,13 +11021,229 @@
       "class_decision": "public-execwrap"
     },
     {
+      "item": "numerics::NumericError",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::Exact",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::Literal",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::Computed",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::RoundedDisplay",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::ActionCount",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::Numeraire",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::ReducedStanding",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::UnitCost",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::ExternalCost",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::RecordingEventCost",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::Floor",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::FloorComparison",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::ChargedPrice",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::ChargedVintage",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::NumericContext",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::BurnAmount",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::BurnPerAction",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "numerics::FullStanding",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "constants::ConstantDefinition",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "constants::EditionInput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "constants::ConstantsEdition",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "constants::ConstantsHistory",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
+      "item": "constants::ConstantsError",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+    },
+    {
       "item": "ActId",
       "kind": "derive",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "Role",
@@ -9831,7 +11252,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "EdgeId",
@@ -9840,7 +11261,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "PublicReference",
@@ -9849,7 +11270,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "Layout",
@@ -9858,7 +11279,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "Removal",
@@ -9867,7 +11288,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "CandidateLeg",
@@ -9876,7 +11297,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "Quantity",
@@ -9885,7 +11306,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "StructuralBody",
@@ -9894,7 +11315,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "CandidateAct",
@@ -9903,7 +11324,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "RemovableProjections",
@@ -9912,7 +11333,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "DependencyProjection",
@@ -9921,7 +11342,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "DependencyStatus",
@@ -9930,7 +11351,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "ValidatedLeg",
@@ -9939,7 +11360,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "ValidatedAct",
@@ -9948,7 +11369,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "ValidatedHistory",
@@ -9957,7 +11378,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "DeclarationCause",
@@ -9966,7 +11387,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "DependencyCause",
@@ -9975,7 +11396,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "InvalidCause",
@@ -9984,7 +11405,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "ParentCause",
@@ -9993,7 +11414,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "ValidationError",
@@ -10002,7 +11423,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "DeclarationId",
@@ -10011,7 +11432,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "Declaration",
@@ -10020,7 +11441,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "ReferenceOrigin",
@@ -10029,7 +11450,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "ValidatedRecords",
@@ -10038,7 +11459,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "PrincipalClosure",
@@ -10047,7 +11468,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     },
     {
       "item": "BoundaryInputs",
@@ -10056,7 +11477,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed error displays inspect public fields only and inherit the records boundaries. No secret or exporter access occurs."
+      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
     }
   ],
   "reviewed_types": [
@@ -11145,6 +12566,150 @@
       "package": "execwrap",
       "path": "packages/execwrap/src/bin/execwrap.rs",
       "syntax": "# [derive (Debug , Parser)] # [command (name = \"execwrap\" , version , about = \"Spawn a command and route its stdout/stderr to log files\" , trailing_var_arg = false)] struct Args { # [doc = \" Redirect both STDOUT and STDERR to this file (raw, merged).\"] # [arg (long = \"redirect\" , value_name = \"FILE\")] redirect : Option < PathBuf > , # [doc = \" Redirect STDOUT to this file.\"] # [arg (long = \"redirect-output\" , value_name = \"FILE\")] redirect_output : Option < PathBuf > , # [doc = \" Redirect STDERR to this file.\"] # [arg (long = \"redirect-error\" , value_name = \"FILE\")] redirect_error : Option < PathBuf > , # [doc = \" Redirect both streams to this file with per-stream prefixes.\"] # [arg (long = \"redirect-prefixed\" , value_name = \"FILE\")] redirect_prefixed : Option < PathBuf > , # [doc = \" Emit notifications when log files are written.\"] # [arg (long = \"notify-on-write\")] notify_on_write : bool , # [doc = \" Change to this directory before executing the command.\"] # [arg (long = \"change-directory\" , short = 'C' , value_name = \"DIR\")] change_directory : Option < PathBuf > , # [doc = \" Add Writer write/line events at trace; does not select observation level. Use `PN_OBSERVE_LEVEL`.\"] # [arg (long , short = 'd')] debug : bool , # [doc = \" Observation delivery mode, independent of command results.\"] # [arg (long , value_enum , default_value_t = ObservationMode :: Enabled)] observation : ObservationMode , # [doc = \" Command and its arguments (after `--`).\"] # [arg (last = true , required = true , num_args = 1 .., value_name = \"COMMAND\")] command : Vec < OsString > , }"
+    },
+    {
+      "item": "numerics::NumericError",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" A typed refusal; the unpublished surface is exhaustive.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum NumericError { # [doc = \" Backend syntax or finite resource refusal.\"] # [error (\"exact backend: {0}\")] Backend (# [from] nrz_cas :: Fault) , # [doc = \" Scalar spelling or display refusal; never an approximate binding answer.\"] # [error (\"literal or display: {0}\")] Scalar (# [from] nrz_scalar :: ArithmeticFailure) , # [doc = \" Quantities cannot be negative; costs, factors and numeraires must be positive.\"] # [error (\"invalid quantity sign\")] Sign , # [doc = \" A required public identifier or terms string is empty.\"] # [error (\"empty unit, identity or terms\")] Empty , # [doc = \" Only matching unit names and named numeraires compose.\"] # [error (\"unit or numeraire mismatch\")] Units , # [doc = \" An exact comparison proves the wall below the floor.\"] # [error (\"wall below declared floor\")] BelowFloor , # [doc = \" Unsupported or exhausted comparison cannot authorize publication.\"] # [error (\"indecisive comparison\")] Indecisive , # [doc = \" A display request exceeds its representation bound.\"] # [error (\"display exceeds eighteen fractional digits\")] DisplayBound , }"
+    },
+    {
+      "item": "numerics::Exact",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)] struct Exact { canonical : String , value : Rational , }"
+    },
+    {
+      "item": "numerics::Literal",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Original exact literal and its reduced rational value, never a rounded display.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Literal { source : String , exact : Exact , }"
+    },
+    {
+      "item": "numerics::Computed",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" An exact computed rational, with no implicit conversion from display text.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Computed { exact : Exact , }"
+    },
+    {
+      "item": "numerics::RoundedDisplay",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Nonbinding rounded text and the explicit arithmetic revision used to obtain it.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RoundedDisplay { text : String , fractional_digits : u8 , arithmetic_revision : u32 , }"
+    },
+    {
+      "item": "numerics::ActionCount",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Count in actions, not in burn units; no multiplication by a unit cost exists.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct ActionCount (pub u64) ;"
+    },
+    {
+      "item": "numerics::Numeraire",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" An explicit positive burn quantity defining a named reduced coordinate system.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Numeraire { identity : String , amount : BurnAmount , }"
+    },
+    {
+      "item": "numerics::ReducedStanding",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Full standing divided by the retained, explicitly named numeraire.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ReducedStanding { exact : Exact , numeraire : Numeraire , }"
+    },
+    {
+      "item": "numerics::UnitCost",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Positive external denomination per burn unit, with applicable public terms.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct UnitCost { exact : Exact , denomination : String , burn_unit : String , terms : String , }"
+    },
+    {
+      "item": "numerics::ExternalCost",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" External cost of a burn quantity under the retained terms.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ExternalCost { exact : Exact , denomination : String , terms : String , }"
+    },
+    {
+      "item": "numerics::RecordingEventCost",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Separate recording-event audit evidence, never the destruction price projection.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecordingEventCost { exact : Exact , denomination : String , terms : String , }"
+    },
+    {
+      "item": "numerics::Floor",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Explicit floor alternatives; neither implements Default.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Floor { # [doc = \" Exactly three divided by thirty-seven.\"] RationalThreeThirtySevenths , # [doc = \" The defining ridge real mapped by p/(1-p), never an enclosure endpoint.\"] RidgeImage , }"
+    },
+    {
+      "item": "numerics::FloorComparison",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Exact wall-minus-floor evidence, or an honest lack of a decision.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum FloorComparison { Below , Equal , Above , Indecisive , }"
+    },
+    {
+      "item": "numerics::ChargedPrice",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" One coupled wall and numeraire; its burn-per-action image cannot be set separately.\"] # [doc = \" (´def:ledger:charged-coordinate´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ChargedPrice { wall : Computed , numeraire : Numeraire , price : BurnPerAction , floor : Floor , }"
+    },
+    {
+      "item": "numerics::ChargedVintage",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Immutable consummated charge with its own price, action count and boundary.\"] # [doc = \" (´def:ledger:charged-coordinate´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ChargedVintage { price : ChargedPrice , actions : ActionCount , charged : BurnAmount , boundary : u64 , }"
+    },
+    {
+      "item": "numerics::NumericContext",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Caller-supplied exact arithmetic limits and cumulative comparison attempts.\"] # [doc = \" (´def:numerics:exact-carriers´)\"] # [derive (Debug)] pub struct NumericContext { budget : Budget , comparisons : nrz_accuracy :: WorkBudget , }"
+    },
+    {
+      "item": "numerics::BurnAmount",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" A nonnegative amount in the named burn unit.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnAmount { exact : Exact , unit : String , }"
+    },
+    {
+      "item": "numerics::BurnPerAction",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" A nonnegative burn-unit quantity per action, distinct from amounts and counts.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnPerAction { exact : Exact , unit : String , }"
+    },
+    {
+      "item": "numerics::FullStanding",
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "syntax": "# [doc = \" Nonnegative full standing in the named burn unit.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FullStanding { exact : Exact , unit : String , }"
+    },
+    {
+      "item": "constants::ConstantDefinition",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [doc = \" A retained source definition, distinct from computed values and rounded displays.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum ConstantDefinition { # [doc = \" Original exact literal; the source spelling is retained.\"] Literal { name : String , value : Literal } , # [doc = \" Exact symbolic definition and its public source label; no approximate evaluation is asserted.\"] Expression { name : String , expression : String , source_label : String , } , }"
+    },
+    {
+      "item": "constants::EditionInput",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [doc = \" Proposed public content for one opaque edition; binding validates its complete key set.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EditionInput { # [doc = \" The previously validated announcement/effective edition identity.\"] pub id : DeclarationId , # [doc = \" Explicit floor selection; no default or epoch override.\"] pub floor : Floor , # [doc = \" Explicit structural coordinate system.\"] pub numeraire : Numeraire , # [doc = \" Public formula edition identifier.\"] pub formula_edition : String , # [doc = \" Public controller edition identifier; evaluation belongs to the schedules bite.\"] pub controller_edition : String , # [doc = \" Original constant definitions; names are unique within this edition.\"] pub constants : Vec < ConstantDefinition > , # [doc = \" Names of explicitly permitted future overrides; the structural floor is excluded.\"] pub permitted_overrides : Vec < String > , # [doc = \" Public domain profiles.\"] pub domain_profiles : Vec < String > , # [doc = \" Declared exact comparison/refinement procedure identity.\"] pub numerical_procedure : String , # [doc = \" Public authentication realization, not secret credentials.\"] pub authentication_realization : String , # [doc = \" Public publication profile identity.\"] pub publication_profile : String , }"
+    },
+    {
+      "item": "constants::ConstantsEdition",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [doc = \" Checked payload, retaining the declaration's definitions rather than a current-price lookup.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ConstantsEdition { input : EditionInput , floor_source : ConstantDefinition , }"
+    },
+    {
+      "item": "constants::ConstantsHistory",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [doc = \" Payload history attached to one immutable validated declaration snapshot.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Debug)] pub struct ConstantsHistory < 'a > { records : & 'a ValidatedRecords , editions : Vec < ConstantsEdition > , }"
+    },
+    {
+      "item": "constants::ConstantsError",
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
+      "syntax": "# [doc = \" Exhaustive unpublished declaration-content refusals.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ConstantsError { # [doc = \" Selection still follows the original validated announcement/effective contract.\"] # [error (\"declaration selection: {0}\")] Selection (# [from] ValidationError) , # [doc = \" Every validated identity has exactly one payload and no foreign payload.\"] # [error (\"missing, duplicate or foreign edition payload\")] EditionSet , # [doc = \" Required public identities and source definitions cannot be empty or duplicated.\"] # [error (\"empty or duplicate constant definition or profile\")] Definition , # [doc = \" The floor is a structural change, never a permitted epoch override.\"] # [error (\"invalid override permission\")] Override , }"
     },
     {
       "item": "ActId",

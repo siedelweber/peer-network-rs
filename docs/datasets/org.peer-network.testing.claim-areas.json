@@ -257,6 +257,27 @@
       "owner": "VERIFICATION",
       "register": "VERIFICATION::sec:verification:area-verification",
       "stake": "If the outer records witnesses fail, a downstream consumer can accept incomplete acts, miscount causal closure membership or mistake an invalid batch for validated history."
+    },
+    {
+      "area": "numerics",
+      "contract": "RECORDS::sec:numerics:area-numerics",
+      "owner": "RECORDS",
+      "register": "RECORDS::sec:numerics:area-numerics",
+      "stake": "Confusing units, market repricing and recoinage can certify the wrong cost or treat a rounded boundary as exact."
+    },
+    {
+      "area": "declarations",
+      "contract": "RECORDS::sec:declarations:area-declarations",
+      "owner": "RECORDS",
+      "register": "RECORDS::sec:declarations:area-declarations",
+      "stake": "Replacing historical definitions with current constants can change an old boundary answer without changing its identity."
+    },
+    {
+      "area": "ledger",
+      "contract": "RECORDS::sec:ledger:area-ledger",
+      "owner": "RECORDS",
+      "register": "RECORDS::sec:ledger:area-ledger",
+      "stake": "Revaluing a consummated charge at a later price erases its original debit vintage."
     }
   ]
 }

@@ -253,3 +253,24 @@ area = "verification"
 stake = "If the outer records witnesses fail, a downstream consumer can accept incomplete acts, miscount causal closure membership or mistake an invalid batch for validated history."
 register = "VERIFICATION::sec:verification:area-verification"
 contract = "VERIFICATION::sec:verification:area-verification"
+
+[[rows]]
+owner = "RECORDS"
+area = "numerics"
+stake = "Confusing units, market repricing and recoinage can certify the wrong cost or treat a rounded boundary as exact."
+register = "RECORDS::sec:numerics:area-numerics"
+contract = "RECORDS::sec:numerics:area-numerics"
+
+[[rows]]
+owner = "RECORDS"
+area = "declarations"
+stake = "Replacing historical definitions with current constants can change an old boundary answer without changing its identity."
+register = "RECORDS::sec:declarations:area-declarations"
+contract = "RECORDS::sec:declarations:area-declarations"
+
+[[rows]]
+owner = "RECORDS"
+area = "ledger"
+stake = "Revaluing a consummated charge at a later price erases its original debit vintage."
+register = "RECORDS::sec:ledger:area-ledger"
+contract = "RECORDS::sec:ledger:area-ledger"

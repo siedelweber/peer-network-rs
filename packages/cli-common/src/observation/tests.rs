@@ -1276,10 +1276,30 @@ fn metric_registry() {
             .increment(1);
         metrics::counter!("records__root__sig__design__records__started_operations", "operation" => "unregistered").increment(1);
     });
+    let observed = recorder.snapshot(false);
+    assert!(serde_json::to_vec(&observed).unwrap().len() < 65_536);
+    assert_eq!(observed["instruments"].as_array().unwrap().len(), 2);
     let snapshot = recorder.snapshot(true);
-    assert!(serde_json::to_vec(&snapshot).unwrap().len() < 65_536);
     let rows = snapshot["instruments"].as_array().unwrap();
-    assert_eq!(rows.len(), 162);
+    let records_series = 15 + 7 * crate::observation_metrics::RECORDS_OPERATIONS.len();
+    let raw_bytes = serde_json::to_vec(&snapshot).unwrap().len();
+    assert_eq!(rows.len(), (STEMS.len() - 1) * 14 + records_series);
+    assert_eq!(observed["declared_but_unobserved"], rows.len() - 2);
+    let directory = tempfile::tempdir().unwrap();
+    let mut encoded = snapshot.clone();
+    content::compact(&mut encoded, directory.path()).unwrap();
+    let compact_bytes = serde_json::to_vec(&encoded).unwrap().len();
+    let artifacts = std::fs::read_dir(directory.path().join("objects/sha256")).map_or(0, Iterator::count);
+    crate::emit(
+        &json!({"kind":"metric_roster_measurement","raw_bytes":raw_bytes,"compact_bytes":compact_bytes,"artifacts":artifacts}),
+    )
+    .unwrap();
+    assert!(serde_json::to_vec(&encoded).unwrap().len() < RECORD_LIMIT);
+    if let Some(path) = encoded["instruments"]["artifact"]["path"].as_str() {
+        let bytes = std::fs::read(path).unwrap();
+        encoded["instruments"] = serde_json::from_slice(&bytes).unwrap();
+    }
+    assert_eq!(encoded, snapshot);
     assert!(!rows.iter().any(|row| row["operation"] == "unregistered"));
     assert_eq!(
         rows.iter()
@@ -1296,7 +1316,7 @@ fn metric_registry() {
         assert_eq!(
             count,
             if stem == "records__root__sig__design__records" {
-                64
+                records_series
             } else {
                 14
             }

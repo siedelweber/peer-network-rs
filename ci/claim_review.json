@@ -1624,6 +1624,110 @@
       "before": "",
       "after": "Consumer qualification creates a distinct replayable observation and rejects a result carrying the inner seed as outer evidence.",
       "review": "Read the controlled source and consumer comparisons and the substituted inner seed: validation rejects the incorrectly attributed observation."
+    },
+    {
+      "operation": "pn-records::numerics::tests::literal_admission",
+      "path": "packages/records/src/numerics.rs",
+      "claim": "RECORDS::claim:numerics:literal-signs-and-resources-refuse-explicitly",
+      "before": "",
+      "after": "Claim: Exact decimal import retains its source and canonical rational, negative quantities and zero costs refuse, and an exhausted arithmetic budget returns a typed backend refusal instead of an approximate value.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::conformance::numeric_cases",
+      "path": "packages/records/tests/conformance.rs",
+      "claim": "RECORDS::claim:numerics:shared-numeric-cases-preserve-exact-contracts",
+      "before": "",
+      "after": "Claim: The six shared numeric cases retain separate consumer observations of exact coordinate laws, charged values and typed sign, unit and floor refusals through the records public surface.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::properties::numeric_coordinates",
+      "path": "packages/records/tests/properties.rs",
+      "claim": "RECORDS::claim:numerics:generated-numeric-coordinates-retain-their-laws",
+      "before": "",
+      "after": "Claim: Over bounded shared integer inputs, the inner exact-value checks establishes co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values and exact sign, unit and floor refusals; no fence evaluation is asserted.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::public::numerics::unit_laws",
+      "path": "packages/records/tests/public/numerics.rs",
+      "claim": "RECORDS::claim:numerics:recoinage-and-repricing-have-distinct-laws",
+      "before": "",
+      "after": "Claim: Recoinage multiplies burn and numeraire together and preserves the reduced coordinate, while repricing the same unit divides burn by the market factor at fixed purchasing power and changes the reduced coordinate when the numeraire stays fixed.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::public::numerics::unit_costs",
+      "path": "packages/records/tests/public/numerics.rs",
+      "claim": "RECORDS::claim:numerics:external-cost-projects-burn-units-only",
+      "before": "",
+      "after": "Claim: A positive sub-unit external cost multiplies only burn quantities, including theta plus numeraire times reduced standing; recording-event charges retain their own evidence and mismatched burn units refuse.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::public::numerics::floor_decisions",
+      "path": "packages/records/tests/public/numerics.rs",
+      "claim": "RECORDS::claim:numerics:boundary-comparisons-remain-sound-or-indecisive",
+      "before": "",
+      "after": "Claim: Rational walls immediately below, equal to and above three thirty-sevenths compare exactly despite identical rounded displays; unresolved ridge comparisons and exhausted attempt budgets remain indecisive and cannot produce a charged price.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::public::numerics::charged_vintages",
+      "path": "packages/records/tests/public/numerics.rs",
+      "claim": "RECORDS::claim:ledger:later-prices-preserve-charged-vintages",
+      "before": "",
+      "after": "Claim: A charged price is derived from one exact wall-numeraire pair, and a consummated vintage retains that pair and total when a later price changes; no independently supplied price can disagree with its wall.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::public::numerics::historical_constants",
+      "path": "packages/records/tests/public/numerics.rs",
+      "claim": "RECORDS::claim:declarations:effective-editions-preserve-historical-constants",
+      "before": "",
+      "after": "Claim: Binding every payload once to validated announcement/effective identities returns the old controller, numeraire and exact floor definitions at an old boundary; a later structural floor choice cannot reinterpret the earlier edition.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::public::numerics::constant_correspondence",
+      "path": "packages/records/tests/public/numerics.rs",
+      "claim": "RECORDS::claim:declarations:floor-sources-match-declared-constants",
+      "before": "",
+      "after": "Claim: The typed rational floor source agrees with the committed constant definition, while the ridge declaration remains its named defining real rather than either displayed enclosure endpoint.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::public::numerics::family_width_premise",
+      "path": "packages/records/tests/public/numerics.rs",
+      "claim": "RECORDS::claim:numerics:width-verdicts-require-the-family-law",
+      "before": "",
+      "after": "Claim: With a declared compensation-family width law W/c, market repricing preserves the reduced-amount versus width verdict; a fixed-width family can lose it, so quantity covariance alone supplies no width or fence theorem.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-verification::conformance::numeric_cases",
+      "path": "packages/verification/tests/conformance.rs",
+      "claim": "VERIFICATION::claim:verification:shared-numeric-cases-preserve-exact-contracts",
+      "before": "",
+      "after": "Claim: The six shared numeric cases retain separate consumer observations of exact coordinate laws, charged values and typed sign, unit and floor refusals through the records public surface.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-verification::properties::numeric_coordinates",
+      "path": "packages/verification/tests/properties.rs",
+      "claim": "VERIFICATION::claim:verification:generated-numeric-coordinates-retain-their-laws",
+      "before": "",
+      "after": "Claim: Over bounded shared integer inputs, the outer cross-product oracle establishes co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values and exact sign, unit and floor refusals; no fence evaluation is asserted.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_numeric_entry",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
+      "before": "",
+      "after": "Claim: Exact numeric charge and three typed refusals retain identical stdout and exit across disabled, default and trace observation; default and trace count the same numeric outcomes, trace retains public coordinate content, and immutable value reads introduce no operations.",
+      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
     }
   ]
 }

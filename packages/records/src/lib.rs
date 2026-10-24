@@ -1,6 +1,14 @@
 //! Internal carriers; no codec, host admission or graph algorithm.
 //! (´[ROOT-amend:design:bite-one-internal-envelopes]´)
 
+/// Exact numeric carriers and explicit unit operations.
+/// (´def:numerics:exact-carriers´)
+pub mod numerics;
+
+/// Exact declaration payloads attached to validated effective editions.
+/// (´def:declarations:constants-edition´)
+pub mod constants;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 

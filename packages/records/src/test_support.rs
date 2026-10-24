@@ -279,3 +279,40 @@ fn corrupt_dependency(case: &mut Scenario, mutation: &str) -> Option<crate::Vali
         _ => None,
     }
 }
+
+/// Shared bounded numeric inputs, with expectations owned separately by each consumer.
+/// (´def:numerics:shared-inputs´)
+#[derive(Clone, Copy, Debug)]
+pub struct NumericInput {
+    /// Nonnegative burn amount below sixty-four.
+    pub burn: u64,
+    /// Positive numeraire amount at most thirty-one.
+    pub numeraire: u64,
+    /// Positive market or recoinage factor at most seven.
+    pub factor: u64,
+    /// Nonnegative action count below sixteen.
+    pub actions: u64,
+}
+
+/// Map shrinking word vectors to finite exact cases, without providing an oracle.
+/// (´def:numerics:shared-inputs´)
+#[must_use]
+pub fn numeric_input(words: &[u64]) -> NumericInput {
+    NumericInput {
+        burn: words.first().copied().unwrap_or(0) % 64,
+        numeraire: words.get(1).copied().unwrap_or(0) % 31 + 1,
+        factor: words.get(2).copied().unwrap_or(0) % 7 + 1,
+        actions: words.get(3).copied().unwrap_or(0) % 16,
+    }
+}
+
+/// Versioned numeric roster; each input exercises coordinates, charges and exact refusals.
+/// (´def:numerics:shared-inputs´)
+pub const NUMERIC_CASES: [(&str, [u64; 4]); 6] = [
+    ("zero-amount", [0, 0, 0, 0]),
+    ("coexpressed-units", [12, 1, 3, 5]),
+    ("market-repricing", [24, 2, 5, 7]),
+    ("fractional-reduction", [1, 30, 6, 15]),
+    ("charged-vintage", [63, 29, 4, 13]),
+    ("subunit-cost", [7, 4, 2, 3]),
+];

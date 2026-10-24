@@ -142,3 +142,61 @@ pub fn refusal(words: &[u64], mutation: &str) {
     permute(&mut case.proposals, seed);
     assert_eq!(outcome(&case), Err(expected), "permuted {mutation}");
 }
+
+pub fn numeric(words: &[u64]) {
+    use pn_records::numerics::{
+        ActionCount, ComparisonLimits, ExactLimits, Floor, FloorComparison, NumericContext, NumericError,
+    };
+    let input = pn_records::test_support::numeric_input(words);
+    let mut context = NumericContext::new(ExactLimits::default(), ComparisonLimits::new(100, 100)).unwrap();
+    let burn_literal = context.literal(&input.burn.to_string()).unwrap();
+    let numeraire_literal = context.literal(&input.numeraire.to_string()).unwrap();
+    let factor_literal = context.literal(&input.factor.to_string()).unwrap();
+    let amount = context.burn(&burn_literal, "burn").unwrap();
+    let nu_amount = context.burn(&numeraire_literal, "burn").unwrap();
+    let nu = context.numeraire("nu", &nu_amount).unwrap();
+    let full = context.standing(&burn_literal, "burn").unwrap();
+    let reduced = context.reduce(&full, &nu).unwrap();
+    let (new_amount, new_nu) = context.recoin(&amount, &nu, &factor_literal, "new-unit").unwrap();
+    let new_literal = context.literal(new_amount.exact()).unwrap();
+    let new_full = context.standing(&new_literal, "new-unit").unwrap();
+    assert_eq!(context.reduce(&new_full, &new_nu).unwrap().exact(), reduced.exact());
+    let repriced = context.reprice(&amount, &factor_literal).unwrap();
+    let expected = context.literal(&format!("{}/{}", input.burn, input.factor)).unwrap();
+    assert_eq!(repriced.exact(), expected.exact());
+    let repriced_literal = context.literal(repriced.exact()).unwrap();
+    let repriced_full = context.standing(&repriced_literal, "burn").unwrap();
+    let after = context.reduce(&repriced_full, &nu).unwrap();
+    let expected = context
+        .literal(&format!("{}/{}", input.burn, input.numeraire * input.factor))
+        .unwrap();
+    assert_eq!(after.exact(), expected.exact());
+    if input.burn > 0 && input.factor > 1 {
+        assert_ne!(after.exact(), reduced.exact());
+    }
+    let two = context.literal("2").unwrap();
+    let wall = context.computed(&two).unwrap();
+    let price = context.charged_price(&wall, &nu, Floor::RationalThreeThirtySevenths).unwrap();
+    let vintage = context.consummate(&price, ActionCount(input.actions), 7).unwrap();
+    assert_eq!(vintage.charged().exact(), (2 * input.numeraire * input.actions).to_string());
+    let zero = context.literal("0").unwrap();
+    let quarter = context.literal("1/4").unwrap();
+    let unit_cost = context.unit_cost(&quarter, "USD", "burn", "shared-terms").unwrap();
+    let expected_cost = context.literal(&format!("{}/4", input.burn)).unwrap();
+    assert_eq!(
+        context.apply_cost(&unit_cost, &amount).unwrap().exact(),
+        expected_cost.exact()
+    );
+    assert_eq!(context.unit_cost(&zero, "USD", "burn", "terms"), Err(NumericError::Sign));
+    let cost = context.unit_cost(&two, "USD", "other", "terms").unwrap();
+    assert_eq!(context.apply_cost(&cost, &amount), Err(NumericError::Units));
+    assert_eq!(
+        context.compare_floor(&wall, Floor::RidgeImage),
+        Ok(FloorComparison::Indecisive)
+    );
+    let low = context.computed(&zero).unwrap();
+    assert_eq!(
+        context.charged_price(&low, &nu, Floor::RationalThreeThirtySevenths),
+        Err(NumericError::BelowFloor)
+    );
+}

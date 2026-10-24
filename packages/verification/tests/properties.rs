@@ -35,3 +35,12 @@ proptest! {
         }
     }
 }
+
+proptest! {
+    #![proptest_config(configuration())]
+    /// Claim: Over bounded shared integer inputs, the outer cross-product oracle establishes co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values and exact sign, unit and floor refusals; no fence evaluation is asserted.
+    /// ´claim:verification:generated-numeric-coordinates-retain-their-laws´
+    /// ´test:integration:numeric-coordinates´
+    #[test]
+    fn numeric_coordinates(words in proptest::collection::vec(any::<u64>(),0..9)) { checks::numeric(&words); }
+}

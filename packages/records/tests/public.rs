@@ -1,4 +1,6 @@
 mod common;
+#[path = "public/numerics.rs"]
+mod numerics;
 
 /// Claim: Public validation and boundary assembly preserve two distinct paired act identities as two complete acts with four owned legs, preventing public consumers from counting a co-leg as an act.
 /// (´claim:acts:complete-acts-are-counted-once´)

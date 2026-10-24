@@ -299,3 +299,26 @@ edition = "records-dag-1"
 dependency = "proptest 1.12.0"
 regressions = "packages/verification/proptest-regressions"
 case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-records::properties::numeric_coordinates"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support.rs"
+edition = "records-numerics-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/records/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-verification::properties::numeric_coordinates"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support.rs"
+edition = "records-numerics-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/verification/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+consumer = "pn-verification"

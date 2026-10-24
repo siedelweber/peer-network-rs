@@ -846,6 +846,19 @@
     "cli-common::observation::tests::cutoff_before_publication": "",
     "cli-common::observation::tests::shared_transport_cutoff": "Claim: With records and final status sharing a transport lock, a write already in flight at an injected cutoff precedes the status and reconciles exactly as one in-flight record, while the queued summary remains undelivered.",
     "pn-testkit::tests::property_configuration": "",
-    "ci::test_testkit.PropertyDeclarations.test_consumer_seed": ""
+    "ci::test_testkit.PropertyDeclarations.test_consumer_seed": "",
+    "pn-records::numerics::tests::literal_admission": "",
+    "pn-records::conformance::numeric_cases": "",
+    "pn-records::properties::numeric_coordinates": "",
+    "pn-records::public::numerics::unit_laws": "",
+    "pn-records::public::numerics::unit_costs": "",
+    "pn-records::public::numerics::floor_decisions": "",
+    "pn-records::public::numerics::charged_vintages": "",
+    "pn-records::public::numerics::historical_constants": "",
+    "pn-records::public::numerics::constant_correspondence": "",
+    "pn-records::public::numerics::family_width_premise": "",
+    "pn-verification::conformance::numeric_cases": "",
+    "pn-verification::properties::numeric_coordinates": "",
+    "ci::test_observe_runtime.Processes.test_numeric_entry": ""
   }
 }

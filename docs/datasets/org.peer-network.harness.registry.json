@@ -3009,6 +3009,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_observe_runtime.Processes.test_numeric_entry",
         "ci::test_observe_runtime.Processes.test_generated_records_refusals",
         "ci::test_observe_runtime.Processes.test_interchange_refusal",
         "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -3074,6 +3075,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::numerics::tests::literal_admission",
         "pn-records::tests::whole_act_carrier",
         "pn-records::tests::history_storage_is_shared",
         "pn-records::tests::identity_components"
@@ -3089,6 +3091,13 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::public::numerics::family_width_premise",
+        "pn-records::public::numerics::constant_correspondence",
+        "pn-records::public::numerics::historical_constants",
+        "pn-records::public::numerics::charged_vintages",
+        "pn-records::public::numerics::floor_decisions",
+        "pn-records::public::numerics::unit_costs",
+        "pn-records::public::numerics::unit_laws",
         "pn-records::public::whole_act_boundary",
         "pn-records::public::structural_duplicates",
         "pn-records::public::missing_co_legs",
@@ -3130,6 +3139,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::properties::numeric_coordinates",
         "pn-records::properties::closure_model",
         "pn-records::properties::typed_corruptions"
       ],
@@ -3145,6 +3155,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::conformance::numeric_cases",
         "pn-records::conformance::shared_cases"
       ],
       "implementation": "pn-records-rust",
@@ -3194,6 +3205,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-verification::properties::numeric_coordinates",
         "pn-verification::properties::closure_model",
         "pn-verification::properties::typed_corruptions"
       ],
@@ -3209,6 +3221,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-verification::conformance::numeric_cases",
         "pn-verification::conformance::shared_cases"
       ],
       "implementation": "pn-records-rust",
@@ -3253,6 +3266,64 @@
       "observation": "Outer conformance observation: shared inputs, verification-owned oracle and expected causes; not a second implementation.",
       "parent_case": "pn-verification::conformance::shared_cases",
       "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::records-numerics-1::numerics-records::zero-amount",
+        "contract::records-numerics-1::numerics-records::coexpressed-units",
+        "contract::records-numerics-1::numerics-records::market-repricing",
+        "contract::records-numerics-1::numerics-records::fractional-reduction",
+        "contract::records-numerics-1::numerics-records::charged-vintage",
+        "contract::records-numerics-1::numerics-records::subunit-cost"
+      ],
+      "claim": "claim:numerics:shared-numeric-cases-preserve-exact-contracts",
+      "claim_owner": "RECORDS",
+      "contract_edition": "records-numerics-1",
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "numerics-records",
+      "parent_case": "pn-records::conformance::numeric_cases",
+      "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::records-numerics-1::numerics-verification::zero-amount",
+        "contract::records-numerics-1::numerics-verification::coexpressed-units",
+        "contract::records-numerics-1::numerics-verification::market-repricing",
+        "contract::records-numerics-1::numerics-verification::fractional-reduction",
+        "contract::records-numerics-1::numerics-verification::charged-vintage",
+        "contract::records-numerics-1::numerics-verification::subunit-cost"
+      ],
+      "claim": "claim:verification:shared-numeric-cases-preserve-exact-contracts",
+      "claim_owner": "VERIFICATION",
+      "contract_edition": "records-numerics-1",
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "numerics-verification",
+      "parent_case": "pn-verification::conformance::numeric_cases",
+      "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "doctest::packages/records/src/numerics.rs - numerics::NumericContext::apply_cost [example 1]",
+        "doctest::packages/records/src/numerics.rs - numerics::NumericContext::charged_price [example 1]"
+      ],
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "doctest",
+      "name": "pn-records-doctests",
+      "runner": "doctest",
       "status": "active",
       "tier": "fast"
     }

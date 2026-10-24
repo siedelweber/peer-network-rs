@@ -304,6 +304,29 @@
       "name": "pn-verification::properties::typed_corruptions",
       "regressions": "packages/verification/proptest-regressions",
       "seed_policy": "source-v1"
+    },
+    {
+      "algorithm": "cc",
+      "case_count_kind": "configured-successful-cases; persisted regressions run additionally",
+      "cases": 256,
+      "dependency": "proptest 1.12.0",
+      "edition": "records-numerics-1",
+      "generator": "packages/records/src/test_support.rs",
+      "name": "pn-records::properties::numeric_coordinates",
+      "regressions": "packages/records/proptest-regressions",
+      "seed_policy": "source-v1"
+    },
+    {
+      "algorithm": "cc",
+      "case_count_kind": "configured-successful-cases; persisted regressions run additionally",
+      "cases": 256,
+      "consumer": "pn-verification",
+      "dependency": "proptest 1.12.0",
+      "edition": "records-numerics-1",
+      "generator": "packages/records/src/test_support.rs",
+      "name": "pn-verification::properties::numeric_coordinates",
+      "regressions": "packages/verification/proptest-regressions",
+      "seed_policy": "source-v1"
     }
   ]
 }
