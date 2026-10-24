@@ -128,6 +128,26 @@ pub struct RecordingEventCost {
     terms: String,
 }
 
+impl UnitCost {
+    /// Borrow the exact amount, denomination, burn unit and terms for durable public evidence.
+    /// (´def:numerics:dimensioned-values´)
+    /// Justified: Immutable field access inherits the enclosing encoding operation.
+    #[must_use]
+    pub fn disclosure(&self) -> (&str, &str, &str, &str) {
+        (&self.exact.canonical, &self.denomination, &self.burn_unit, &self.terms)
+    }
+}
+
+impl RecordingEventCost {
+    /// Borrow the separate exact event cost, denomination and terms.
+    /// (´def:numerics:dimensioned-values´)
+    /// Justified: Immutable field access inherits the enclosing encoding operation.
+    #[must_use]
+    pub fn disclosure(&self) -> (&str, &str, &str) {
+        (&self.exact.canonical, &self.denomination, &self.terms)
+    }
+}
+
 /// Explicit floor alternatives; neither implements Default.
 /// (´def:declarations:constants-edition´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

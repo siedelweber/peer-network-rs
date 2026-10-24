@@ -292,6 +292,20 @@
       "owner": "HOST",
       "register": "HOST::sec:host:area-host",
       "stake": "If the transport boundary fails, service reachability or credentials can enter public driver state, or an unauthenticated service can supply storage results."
+    },
+    {
+      "area": "history",
+      "contract": "HOST::sec:history:area-history",
+      "owner": "HOST",
+      "register": "HOST::sec:history:area-history",
+      "stake": "A partial succession, rewritten edition or mixed boundary snapshot can change an earlier verdict or erase the evidence needed to reconstruct it."
+    },
+    {
+      "area": "declarations",
+      "contract": "HOST::sec:declarations:area-declarations",
+      "owner": "HOST",
+      "register": "HOST::sec:declarations:area-declarations",
+      "stake": "Persisting a later edition must not replace the exact constants selected at an earlier boundary."
     }
   ]
 }

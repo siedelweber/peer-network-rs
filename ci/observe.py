@@ -82,6 +82,7 @@ def validate(census, registry, labels, claims):
         expected={stem+'__'+measure:(kind,unit,{'outcome':constants['OUTCOMES']} if measure=='completed_operations' else {})
                   for stem in constants['STEMS'] for measure,kind,unit in constants['MEASURES']}
         expected.update({'records__root__sig__design__records__'+measure:(kind,unit,{}) for measure,kind,unit in constants.get('RECORDS_MEASURES',[])})
+        expected.update({'host__root__sig__design__storage__'+measure:(kind,unit,{}) for measure,kind,unit in constants.get('HOST_MEASURES',[])})
         for measure in ('started_operations','completed_operations'):
             name='records__root__sig__design__records__'+measure
             if name in expected:

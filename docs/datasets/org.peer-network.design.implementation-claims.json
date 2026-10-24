@@ -436,7 +436,7 @@
         "publication",
         "public-inputs"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in storage-carrier scope at bite 2 (pn-host); ledger and admitted epoch result held for bites 5 and 8; integrated corpus held for bite 11",
       "suite": "storage"
     },
     {

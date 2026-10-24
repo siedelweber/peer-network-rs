@@ -11,6 +11,14 @@
       "may_cite": [
         {
           "owner": "HOST",
+          "target": "INTERCHANGE"
+        },
+        {
+          "owner": "HOST",
+          "target": "RECORDS"
+        },
+        {
+          "owner": "HOST",
           "target": "ROOT"
         },
         {

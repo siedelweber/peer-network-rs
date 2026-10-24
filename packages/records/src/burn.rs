@@ -191,6 +191,26 @@ pub struct ValidatedMarkerHistory {
     openings: Vec<Result<BTreeSet<String>, BurnError>>,
 }
 
+impl ValidatedMarkerHistory {
+    /// Borrow the complete public input used by validation, including refused candidates.
+    /// (´def:burn:verification-boundary´)
+    /// Justified: Immutable carrier access inherits the enclosing storage or recognition operation.
+    #[must_use]
+    pub fn disclosure(&self) -> (&HistoryInput, &PolicyInput, &BurnInput) {
+        (&self.input, &self.policy.input, &self.policy.burn.0)
+    }
+}
+
+impl ValidatedPolicy {
+    /// Borrow the bound public policy and the publication against which it was checked.
+    /// (´def:burn:marker-policy´)
+    /// Justified: Immutable carrier access inherits the enclosing storage operation.
+    #[must_use]
+    pub fn disclosure(&self) -> (&PolicyInput, &BurnInput) {
+        (&self.input, &self.burn.0)
+    }
+}
+
 /// Inputs identifying an unsettled recognition, not host finality evidence.
 /// (´def:burn:recognition´)
 #[derive(Clone, Debug, PartialEq, Eq)]

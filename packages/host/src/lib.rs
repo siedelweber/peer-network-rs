@@ -4,6 +4,8 @@
 mod config;
 mod scram;
 mod secret;
+pub mod storage;
+mod storage_payload;
 mod wire;
 
 pub use config::Configuration;
@@ -113,7 +115,7 @@ impl fmt::Debug for PrivateDiagnostic {
     }
 }
 
-/// A transport-only connection; this package defines no persistence operation.
+/// A secret-terminating connection owned by the closed storage vocabulary.
 /// (´def:host:session´)
 /// Only the storage module may select statements; no public method yields a raw client.
 /// ```compile_fail

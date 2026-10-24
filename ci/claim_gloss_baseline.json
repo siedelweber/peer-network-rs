@@ -916,6 +916,19 @@
     "ci::test_discipline.HashCitations.test_artifact_vector": "",
     "pn-host::postgresql::outbound_refusal": "",
     "pn-host::scram::tests::derivation_cost": "",
-    "ci::test_host_runtime.HostRuntime.test_sensitive_result_control": ""
+    "ci::test_host_runtime.HostRuntime.test_sensitive_result_control": "",
+    "cli-common::observation::tests::storage_instrument_accounting": "",
+    "ci::test_host_runtime.HostRuntime.test_independent_instances": "",
+    "pn-host::storage::tests::storage_contract": "",
+    "pn-host::storage::tests::storage_competing_writers": "",
+    "pn-host::storage::tests::storage_rebuild": "",
+    "pn-host::storage::tests::storage_recognition_disclosure": "",
+    "pn-host::storage::tests::storage_schema_identity": "",
+    "pn-host::storage::tests::storage_historical_constants": "",
+    "pn-host::storage::tests::storage_digest_vectors": "",
+    "pn-host::storage::tests::storage_runtime": "",
+    "pn-host::storage::tests::storage_restart": "",
+    "ci::test_host_runtime.HostRuntime.test_storage_statements": "",
+    "ci::test_host_runtime.HostRuntime.test_storage_restart": ""
   }
 }

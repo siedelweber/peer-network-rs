@@ -9,6 +9,7 @@ import unittest
 import tomllib
 import copy
 import re
+import base64
 
 from test_observe_runtime import expanded, distribution, witness
 
@@ -17,8 +18,98 @@ def private_occurs(value, text):
     # A port token must not mistake an unrelated clock fraction for reachability.
     return bool(re.search(r'(?<![\d.])'+re.escape(value)+r'(?![\d.])',text)) if value.isdecimal() else value in text
 
+def decoded_content(value):
+    """Include binary protocol payloads in leakage scans, after artifact expansion."""
+    if isinstance(value,dict):
+        if value.get('encoding')=='base64':
+            return base64.b64decode(value['data'],validate=True).decode('utf-8',errors='replace')
+        return '\n'.join(decoded_content(v) for v in value.values())
+    if isinstance(value,list):
+        return '\n'.join(decoded_content(v) for v in value)
+    return str(value)
+
 
 class HostRuntime(unittest.TestCase):
+    def test_storage_statements(self):
+        """Claim: Every closed storage statement is exercised under trace and its decoded DataRows contain only public fixture content; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.
+        ´claim:discipline:storage-results-preserve-the-secret-boundary´
+        ´test:integration:test-storage-statements´
+        """
+        target=Path('.lane/host-test-binary.txt').read_text().strip()
+        root=Path(os.environ['PN_HOST_TEST_ROOT'])
+        outputs=[]
+        for level in ('default','trace'):
+            env=dict(os.environ,PN_OBSERVE_LEVEL=level,PN_HOST_STORAGE_FIXTURE=f'storage-trace-{level}.json')
+            started=time.monotonic()
+            result=subprocess.run([target,'storage::tests::storage_runtime','--exact','--nocapture'],env=env,capture_output=True,timeout=60,check=False)
+            wall=time.monotonic()-started
+            Path(f'.lane/storage-{level}.stderr.jsonl').write_bytes(result.stderr)
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+            rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
+            text=decoded_content(rows)
+            config=json.loads((root/f'storage-trace-{level}.json').read_text())
+            for key,value in config.items():
+                if key!='transport':self.assertFalse(private_occurs(value,text))
+            status=next(row for row in rows if row.get('kind')=='observation_status')
+            self.assertEqual(status['lost_records'],0)
+            self.assertEqual(status['delivered_records'],len(rows)-1)
+            outputs.append([line for line in result.stdout.splitlines() if line.startswith(b'{')])
+            if level=='trace':
+                self.assertIn('public_storage_payload_731',text)
+                source=Path('packages/host/src/storage.rs').read_text()
+                statements=re.findall(r'const (?:BOOTSTRAP_LOCK|HAS_TABLES|HAS_IDENTITY|CREATE|SET_IDENTITY|GET_IDENTITY|LOCK_HISTORY|READ_HISTORY|CLOSE|INSERT):\s*&str\s*=\s*"([^"]+)";',source)
+                self.assertEqual(len(statements),10)
+                for statement in statements:self.assertIn(statement,text)
+            print(f'STORAGE-RUNTIME level={level} wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]}')
+        self.assertEqual(outputs[0],outputs[1])
+        self.assertEqual(len(outputs[0]),1)
+        env.update(PN_HOST_STORAGE_PRIVATE_CONTROL='1')
+        result=subprocess.run([target,'storage::tests::storage_runtime','--exact','--nocapture'],env=env,capture_output=True,timeout=60,check=False)
+        self.assertEqual(result.returncode,0)
+        text=decoded_content([expanded(json.loads(line)) for line in result.stderr.splitlines()])
+        self.assertTrue(private_occurs(config['user'],text))
+        print('STORAGE-SENSITIVE-CONTROL status=detected path=DataRow')
+
+    def test_storage_restart(self):
+        """Claim: A real PostgreSQL restart preserves the committed public version byte for byte; the second probe reads without appending, so successful replay cannot hide lost durability by recreating the row.
+        ´claim:discipline:storage-restart-preserves-committed-bytes´
+        ´test:integration:test-storage-restart´
+        """
+        from host_postgresql import binary_directory
+        root=Path(os.environ['PN_HOST_TEST_ROOT'])
+        target=Path('.lane/host-test-binary.txt').read_text().strip()
+        result=subprocess.run([target,'storage::tests::storage_restart','--exact'],capture_output=True,check=False,timeout=60)
+        self.assertEqual(result.returncode,0)
+        with (root/'fixture.log').open('ab') as log:
+            result=subprocess.run([str(binary_directory()/'pg_ctl'),'-D',str(root/'data'),'-m','fast','-w','restart'],stdout=log,stderr=log,check=False,timeout=60)
+        self.assertEqual(result.returncode,0)
+        env=dict(os.environ,PN_HOST_STORAGE_READ_ONLY_PROBE='1')
+        result=subprocess.run([target,'storage::tests::storage_restart','--exact'],env=env,capture_output=True,check=False,timeout=60)
+        self.assertEqual(result.returncode,0)
+        print('STORAGE-RESTART real_service=True read_without_append=True')
+
+    def test_independent_instances(self):
+        """Claim: Two gate-owned PostgreSQL instances coexist on distinct reserved ports and answer independently while a third gate may already be running, so fixture allocation does not depend on gate serialization.
+        ´claim:discipline:postgresql-instances-own-distinct-ports´
+        ´test:integration:test-independent-instances´
+        """
+        from host_postgresql import start, stop, binary_directory
+        roots=[Path('.lane/host-side-a').resolve(),Path('.lane/host-side-b').resolve()]
+        try:
+            for root in roots:
+                start(root)
+            configs=[json.loads((root/'tcp.json').read_text()) for root in roots]
+            self.assertNotEqual(configs[0]['port'],configs[1]['port'])
+            for config in configs:
+                env=dict(os.environ,PGPASSWORD=config['password'])
+                result=subprocess.run([str(binary_directory()/'psql'),'-h',config['endpoint'],'-p',config['port'],'-U',config['user'],'-d',config['database'],'-Atc','SELECT 731'],env=env,capture_output=True,check=False)
+                self.assertEqual(result.returncode,0)
+                self.assertEqual(result.stdout,b'731\n')
+            print('HOST-INSTANCE-ISOLATION instances=2 distinct_ports=True queries=2')
+        finally:
+            for root in reversed(roots):
+                stop(root)
+
     def test_required_postgresql_directory(self):
         """Claim: An absent or empty PostgreSQL binary-directory declaration refuses by name before the gate runs any step, without exposing an endpoint or substituting a node path.
         ´claim:discipline:postgresql-directory-is-caller-declared´

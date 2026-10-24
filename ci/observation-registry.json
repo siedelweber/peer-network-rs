@@ -5670,6 +5670,270 @@
       "claim": "ROOT::sig:design:storage",
       "shape": "shape-host",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::UnitCost::disclosure",
+      "owner": "RECORDS",
+      "signature": "fn disclosure (& self) -> (& str , & str , & str , & str)",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable field access inherits the enclosing encoding operation.",
+        "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+        "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+        "class_decision": "host-storage"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::RecordingEventCost::disclosure",
+      "owner": "RECORDS",
+      "signature": "fn disclosure (& self) -> (& str , & str , & str)",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable field access inherits the enclosing encoding operation.",
+        "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+        "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+        "class_decision": "host-storage"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::ValidatedMarkerHistory::disclosure",
+      "owner": "RECORDS",
+      "signature": "fn disclosure (& self) -> (& HistoryInput , & PolicyInput , & BurnInput)",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable carrier access inherits the enclosing storage or recognition operation.",
+        "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+        "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+        "class_decision": "host-storage"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::ValidatedPolicy::disclosure",
+      "owner": "RECORDS",
+      "signature": "fn disclosure (& self) -> (& PolicyInput , & BurnInput)",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable carrier access inherits the enclosing storage operation.",
+        "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+        "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+        "class_decision": "host-storage"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::<TransactionMeter as Drop>::drop",
+      "owner": "HOST",
+      "signature": "fn drop (& mut self)",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Meter cleanup inherits the storage transaction and emits no recursive span; rollback counts abandoned transaction handles, not a claim that a lost acknowledgement rolled back.",
+        "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+        "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+        "class_decision": "host-storage"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::<QueueMeter as Drop>::drop",
+      "owner": "HOST",
+      "signature": "fn drop (& mut self)",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Queue accounting inherits the pending storage lock operation, including cancellation.",
+        "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+        "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+        "class_decision": "host-storage"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::Payload::constants",
+      "owner": "HOST",
+      "signature": "fn constants (value : & pn_records :: constants :: ConstantsEdition) -> Result < Self , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::Payload::rule",
+      "owner": "HOST",
+      "signature": "fn rule (value : & Value) -> Result < Self , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::Payload::marker_policy",
+      "owner": "HOST",
+      "signature": "fn marker_policy (value : & pn_records :: burn :: ValidatedPolicy) -> Result < Self , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::Payload::lineage",
+      "owner": "HOST",
+      "signature": "fn lineage (value : & pn_records :: burn :: ValidatedMarkerHistory) -> Result < Self , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::Payload::burn_publication",
+      "owner": "HOST",
+      "signature": "fn burn_publication (value : & pn_records :: burn :: ValidatedBurn) -> Result < Self , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::Payload::recognition",
+      "owner": "HOST",
+      "signature": "fn recognition (value : & pn_records :: burn :: ValidatedMarkerHistory) -> Result < Self , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::Payload::bytes",
+      "owner": "HOST",
+      "signature": "fn bytes (& self) -> & [u8]",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable carrier access inherits its producing storage operation.",
+        "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+        "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+        "class_decision": "host-storage"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::Payload::commitments",
+      "owner": "HOST",
+      "signature": "fn commitments (& self) -> (& [u8 ; 32] , Option < & [u8 ; 32] >)",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable carrier access inherits its producing storage operation.",
+        "witness": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+        "boundary": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+        "class_decision": "host-storage"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::MemoryStore::append_effective_successor",
+      "owner": "HOST",
+      "signature": "fn append_effective_successor (& mut self , version : Version , predecessor : Option < & Predecessor > ,) -> Result < bool , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::MemoryStore::load_boundary",
+      "owner": "HOST",
+      "signature": "fn load_boundary (& self , at : u64 , required : & [(Family , String)]) -> Result < Boundary , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::PostgresStore::commit_admitted_epoch",
+      "owner": "HOST",
+      "signature": "async fn commit_admitted_epoch (& mut self , input : & AdmittedEpoch) -> Result < () , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::PostgresStore::open_store",
+      "owner": "HOST",
+      "signature": "async fn open_store (mut session : Session) -> Result < Self , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::PostgresStore::load_boundary",
+      "owner": "HOST",
+      "signature": "async fn load_boundary (& mut self , at : u64 , required : & [(Family , String)]) -> Result < Boundary , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::PostgresStore::append_effective_successor",
+      "owner": "HOST",
+      "signature": "async fn append_effective_successor (& mut self , version : Version , predecessor : Option < & Predecessor > ,) -> Result < bool , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -6365,6 +6629,84 @@
       "name": "host__root__sig__design__storage__workload_operations",
       "kind": "histogram",
       "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__encoded_bytes",
+      "kind": "counter",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__decoded_bytes",
+      "kind": "counter",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__queries",
+      "kind": "counter",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__successor_attempts",
+      "kind": "counter",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__commits",
+      "kind": "counter",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__rollbacks",
+      "kind": "counter",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__retries",
+      "kind": "counter",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__refusals",
+      "kind": "counter",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__active_transactions",
+      "kind": "gauge",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__queue_depth",
+      "kind": "gauge",
+      "unit": "count",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__package_bytes",
+      "kind": "histogram",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__query_elapsed_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "attributes": {}
+    },
+    {
+      "name": "host__root__sig__design__storage__transaction_elapsed_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
       "attributes": {}
     }
   ],
@@ -10867,6 +11209,226 @@
         "exposure_consumers": "host-exposure_consumers"
       },
       "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::UnitCost::disclosure",
+      "body": "{ (& self . exact . canonical , & self . denomination , & self . burn_unit , & self . terms) }",
+      "class_decision": "public-records",
+      "item_premise": "Borrowed immutable public disclosure fields are read by the canonical storage projection. No additional acquisition, secret, transformation, or span is introduced.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::RecordingEventCost::disclosure",
+      "body": "{ (& self . exact . canonical , & self . denomination , & self . terms) }",
+      "class_decision": "public-records",
+      "item_premise": "Borrowed immutable public disclosure fields are read by the canonical storage projection. No additional acquisition, secret, transformation, or span is introduced.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::ValidatedMarkerHistory::disclosure",
+      "body": "{ (& self . input , & self . policy . input , & self . policy . burn . 0) }",
+      "class_decision": "public-records",
+      "item_premise": "Borrowed immutable public disclosure fields are read by the canonical storage projection. No additional acquisition, secret, transformation, or span is introduced.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::ValidatedPolicy::disclosure",
+      "body": "{ (& self . input , & self . burn . 0) }",
+      "class_decision": "public-records",
+      "item_premise": "Borrowed immutable public disclosure fields are read by the canonical storage projection. No additional acquisition, secret, transformation, or span is introduced.",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::<TransactionMeter as Drop>::drop",
+      "body": "{ metrics :: gauge ! (\"host__root__sig__design__storage__active_transactions\") . decrement (1.0) ; metrics :: histogram ! (\"host__root__sig__design__storage__transaction_elapsed_seconds\") . record (self . started . elapsed () . as_secs_f64 ()) ; if ! self . finished { metrics :: counter ! (\"host__root__sig__design__storage__rollbacks\") . increment (1) ; } }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::<QueueMeter as Drop>::drop",
+      "body": "{ metrics :: gauge ! (\"host__root__sig__design__storage__queue_depth\") . decrement (1.0) ; }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::Payload::constants",
+      "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::Payload::constants\" , value) ; let result = Self :: encoded (Family :: Constants , encoding :: constants (value) , None) ; span . finish (& result) ; result }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::Payload::rule",
+      "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::Payload::rule\" , value) ; let result = Self :: encoded (Family :: Rule , value . clone () , None) ; span . finish (& result) ; result }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::Payload::marker_policy",
+      "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::Payload::marker_policy\" , value) ; let (policy , burn) = value . disclosure () ; let result = Self :: encoded (Family :: MarkerPolicy , encoding :: array ([encoding :: policy (policy) , encoding :: publication (burn)]) , None ,) ; span . finish (& result) ; result }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::Payload::lineage",
+      "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::Payload::lineage\" , value) ; let result = Self :: encoded (Family :: Lineage , encoding :: disclosure (value) , None) ; span . finish (& result) ; result }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::Payload::burn_publication",
+      "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::Payload::burn_publication\" , value) ; let result = Self :: encoded (Family :: BurnPublication , encoding :: publication (value . publication ()) , None) ; span . finish (& result) ; result }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+      "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::Payload::recognition\" , value) ; let input = encoding :: disclosure (value) ; let commitment = digest (DISCLOSURE_RECIPE , & input . to_canonical_bytes ()) ; let output = pn_records :: burn :: recognize_markers (value) ; let result = Self :: encoded (Family :: UnsettledRecognition , encoding :: array ([encoding :: text (DISCLOSURE_RECIPE) , Value :: Bytes (commitment . to_vec () . into ()) , input , encoding :: recognition (& output) ,]) , Some (commitment) ,) ; span . finish (& result) ; result }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::Payload::bytes",
+      "body": "{ & self . bytes }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::Payload::commitments",
+      "body": "{ (& self . digest , self . disclosure . as_ref ()) }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::MemoryStore::append_effective_successor",
+      "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::MemoryStore::append_effective_successor\" , & (& version , predecessor) ,) ; let mut next = self . history . clone () ; let result = classified (append (& mut next , version , predecessor)) ; if result . is_ok () { self . history = next ; } span . finish (& result) ; result }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::MemoryStore::load_boundary",
+      "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::MemoryStore::load_boundary\" , & (at , required) ,) ; let result = classified (boundary (& self . history , at , required)) ; span . finish (& result) ; result }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::PostgresStore::commit_admitted_epoch",
+      "body": "{ let _ = input ; classified (Err (StorageError :: EpochResultHeld)) }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::PostgresStore::open_store",
+      "body": "{ classified (Self :: open_inner (& mut session) . await) ? ; Ok (Self { session }) }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::PostgresStore::load_boundary",
+      "body": "{ classified (self . load_inner (at , required) . await) }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::PostgresStore::append_effective_successor",
+      "body": "{ classified (self . append_inner (version , predecessor , 0) . await) }",
+      "class_decision": "host-storage",
+      "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -12914,6 +13476,96 @@
       "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
     },
     {
+      "item": "storage::Family",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
+      "item": "storage::StorageError",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
+      "item": "storage::Payload",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
+      "item": "storage::Version",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
+      "item": "storage::Predecessor",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
+      "item": "storage::EffectiveRow",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
+      "item": "storage::Boundary",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
+      "item": "storage::AdmittedEpoch",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
+      "item": "storage::MemoryStore",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Debug , Default)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
+      "item": "storage::PostgresStore",
+      "kind": "derive",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "host-storage",
+      "expansion_review": "Derived public storage carriers only implement structural Clone, Debug and equality; no acquisition, secret material or independent operation is generated. Storage boundary traces own the complete values."
+    },
+    {
       "item": "Refusal",
       "kind": "derive",
       "package": "pn-host",
@@ -14479,6 +15131,78 @@
       "syntax": "pub (crate) struct Buffer { bytes : SecretBox < [u8] > , length : usize , }"
     },
     {
+      "item": "storage::Family",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" The closed set of families this storage slice can carry.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum Family { Constants , Rule , MarkerPolicy , Lineage , BurnPublication , UnsettledRecognition , }"
+    },
+    {
+      "item": "storage::StorageError",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" Bounded storage failure, never a mathematical verdict or a driver diagnostic.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum StorageError { Representation , SchemaIdentity , Transport , CorruptHistory , EditionConflict , Predecessor , Gap , Overlap , Retroactive , MissingRequired , Injected , CommitUnknown , EpochResultHeld , }"
+    },
+    {
+      "item": "storage::TransactionMeter",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "struct TransactionMeter { started : std :: time :: Instant , finished : bool , }"
+    },
+    {
+      "item": "storage::QueueMeter",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "struct QueueMeter ;"
+    },
+    {
+      "item": "storage::Payload",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" Canonical public bytes produced only from this slice's validated carriers.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Payload { family : Family , bytes : Vec < u8 > , digest : [u8 ; 32] , disclosure : Option < [u8 ; 32] > , }"
+    },
+    {
+      "item": "storage::Version",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" One immutable public version. Absence is an explicit withdrawal payload.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Version { pub family : Family , pub key : String , pub edition : String , pub announced_at : u64 , pub opens_at : u64 , pub payload : Option < Payload > , }"
+    },
+    {
+      "item": "storage::Predecessor",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" The predecessor and its proposed exclusive closing boundary.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Predecessor { pub edition : String , pub closes_at : u64 , }"
+    },
+    {
+      "item": "storage::EffectiveRow",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" A resolved version with its appended closure fact, never a mutable stored end field.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EffectiveRow { pub version : Version , pub closes_at : Option < u64 > , }"
+    },
+    {
+      "item": "storage::Boundary",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" A single consistent boundary input retaining the selected identities and bytes.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Boundary { pub at : u64 , pub rows : Vec < EffectiveRow > , }"
+    },
+    {
+      "item": "storage::AdmittedEpoch",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" No epoch result is admitted by bite 2; bite 5 supplies the ledger/result carrier.\"] # [doc = \" The eventual transaction exposes input references, debit evidence and result\"] # [doc = \" together or none, with structural-event idempotence before retrying debits.\"] # [doc = \" (´open:host:admitted-epoch-result´)\"] # [derive (Debug)] pub enum AdmittedEpoch { }"
+    },
+    {
+      "item": "storage::MemoryStore",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" Functional fast substitute for the same append-only storage contract.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Debug , Default)] pub struct MemoryStore { history : History , }"
+    },
+    {
+      "item": "storage::PostgresStore",
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "syntax": "# [doc = \" PostgreSQL adapter; the raw session and statement vocabulary stay private.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Debug)] pub struct PostgresStore { session : Session , }"
+    },
+    {
       "item": "wire::Transport",
       "package": "pn-host",
       "path": "packages/host/src/wire.rs",
@@ -14518,7 +15242,7 @@
       "item": "Session",
       "package": "pn-host",
       "path": "packages/host/src/lib.rs",
-      "syntax": "# [doc = \" A transport-only connection; this package defines no persistence operation.\"] # [doc = \" (´def:host:session´)\"] # [doc = \" Only the storage module may select statements; no public method yields a raw client.\"] # [doc = \" ```compile_fail\"] # [doc = \" fn raw(session: &pn_host::Session) { let _ = session.client(); }\"] # [doc = \" ```\"] # [doc = \" Unclassified server diagnostics stay secret-typed and close this stream.\"] pub struct Session { client : tokio_postgres :: Client , config : Arc < Configuration > , backend_key : Arc < Mutex < Option < Buffer > > > , diagnostics : Arc < Mutex < Vec < PrivateDiagnostic > > > , last_refusal : Arc < Mutex < Option < Refusal > > > , tasks : Vec < tokio :: task :: JoinHandle < () > > , }"
+      "syntax": "# [doc = \" A secret-terminating connection owned by the closed storage vocabulary.\"] # [doc = \" (´def:host:session´)\"] # [doc = \" Only the storage module may select statements; no public method yields a raw client.\"] # [doc = \" ```compile_fail\"] # [doc = \" fn raw(session: &pn_host::Session) { let _ = session.client(); }\"] # [doc = \" ```\"] # [doc = \" Unclassified server diagnostics stay secret-typed and close this stream.\"] pub struct Session { client : tokio_postgres :: Client , config : Arc < Configuration > , backend_key : Arc < Mutex < Option < Buffer > > > , diagnostics : Arc < Mutex < Vec < PrivateDiagnostic > > > , last_refusal : Arc < Mutex < Option < Refusal > > > , tasks : Vec < tokio :: task :: JoinHandle < () > > , }"
     },
     {
       "item": "Relay",
@@ -14607,7 +15331,37 @@
       "status": "reviewer-confirmed",
       "premises": "The host transport is a secret-terminating boundary, not persistence. Acquisition, sockets, startup, authentication and cancellation borrow secret-owned buffers; only bounded public placeholders and structurally admitted public frames cross into the upstream driver. Fixed diagnostics preserve their bytes; other whole messages stay secret-owned. This source review is bounded to the declared fixture and protocol profile; independent integration admission remains held.",
       "membership": {
-        "labelled_package": "pn-host"
+        "explicit": [
+          "pn-host::packages/host/src/config.rs::config::Configuration::acquire",
+          "pn-host::packages/host/src/lib.rs::Session::connect",
+          "pn-host::packages/host/src/lib.rs::Session::cancel",
+          "pn-host::packages/host/src/lib.rs::Session::private_diagnostics",
+          "pn-host::packages/host/src/lib.rs::Session::last_refusal",
+          "pn-host::packages/host/src/lib.rs::relay",
+          "pn-host::packages/host/src/lib.rs::relay_outbound",
+          "pn-host::packages/host/src/lib.rs::observe_public_frame"
+        ]
+      }
+    },
+    {
+      "name": "host-storage",
+      "status": "reviewer-confirmed",
+      "premises": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "membership": {
+        "explicit": [
+          "pn-host::packages/host/src/storage.rs::storage::Payload::constants",
+          "pn-host::packages/host/src/storage.rs::storage::Payload::rule",
+          "pn-host::packages/host/src/storage.rs::storage::Payload::marker_policy",
+          "pn-host::packages/host/src/storage.rs::storage::Payload::lineage",
+          "pn-host::packages/host/src/storage.rs::storage::Payload::burn_publication",
+          "pn-host::packages/host/src/storage.rs::storage::Payload::recognition",
+          "pn-host::packages/host/src/storage.rs::storage::MemoryStore::append_effective_successor",
+          "pn-host::packages/host/src/storage.rs::storage::MemoryStore::load_boundary",
+          "pn-host::packages/host/src/storage.rs::storage::PostgresStore::commit_admitted_epoch",
+          "pn-host::packages/host/src/storage.rs::storage::PostgresStore::open_store",
+          "pn-host::packages/host/src/storage.rs::storage::PostgresStore::load_boundary",
+          "pn-host::packages/host/src/storage.rs::storage::PostgresStore::append_effective_successor"
+        ]
       }
     }
   ],
@@ -14736,13 +15490,26 @@
         "qualified resource totals"
       ],
       "metrics": [
-        "host__root__sig__design__storage__started_operations",
+        "host__root__sig__design__storage__active_operations",
+        "host__root__sig__design__storage__active_transactions",
+        "host__root__sig__design__storage__commits",
         "host__root__sig__design__storage__completed_operations",
+        "host__root__sig__design__storage__decoded_bytes",
+        "host__root__sig__design__storage__elapsed_seconds",
+        "host__root__sig__design__storage__encoded_bytes",
+        "host__root__sig__design__storage__package_bytes",
+        "host__root__sig__design__storage__queries",
+        "host__root__sig__design__storage__query_elapsed_seconds",
+        "host__root__sig__design__storage__queue_depth",
+        "host__root__sig__design__storage__refusals",
+        "host__root__sig__design__storage__resource_current_bytes",
+        "host__root__sig__design__storage__retries",
+        "host__root__sig__design__storage__rollbacks",
+        "host__root__sig__design__storage__started_operations",
+        "host__root__sig__design__storage__successor_attempts",
+        "host__root__sig__design__storage__transaction_elapsed_seconds",
         "host__root__sig__design__storage__work_bytes",
         "host__root__sig__design__storage__work_operations",
-        "host__root__sig__design__storage__active_operations",
-        "host__root__sig__design__storage__resource_current_bytes",
-        "host__root__sig__design__storage__elapsed_seconds",
         "host__root__sig__design__storage__workload_bytes",
         "host__root__sig__design__storage__workload_operations"
       ]
@@ -16263,6 +17030,21 @@
       "status": "reviewer-confirmed",
       "premises": "The host transport is a secret-terminating boundary, not persistence. Acquisition, sockets, startup, authentication and cancellation borrow secret-owned buffers; only bounded public placeholders and structurally admitted public frames cross into the upstream driver. Fixed diagnostics preserve their bytes; other whole messages stay secret-owned. This source review is bounded to the declared fixture and protocol profile; independent integration admission remains held.",
       "negative_probe": "HOST::claim:host:configuration-never-formats-private-input"
+    },
+    "storage-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "negative_probe": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary"
+    },
+    "storage-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "negative_probe": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary"
+    },
+    "storage-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "negative_probe": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary"
     }
   }
 }

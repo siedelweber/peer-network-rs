@@ -58,7 +58,9 @@
 
 | Package | Licence | Resolved features | MSRV | Build-time role | Archive checksum |
 |---|---|---|---|---|---|
+| ahash 0.8.12 | MIT OR Apache-2.0 | default, getrandom, runtime-rng, std | 1.60.0 | build script: build-script-build | 5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75 |
 | aho-corasick 1.1.5 | Unlicense OR MIT | default, perf-literal, std | 1.60.0 | none | c982642fa9e8606056828ee9a8505737230110bb1099153c79efe865c59d12ba |
+| anes 0.1.6 | MIT OR Apache-2.0 | default | not declared | none | 4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299 |
 | anstream 1.0.0 | MIT OR Apache-2.0 | auto, default, wincon | 1.66.0 | none | 824a212faf96e9acacdbd09febd34438f8f711fb84e09a8916013cd7815ca28d |
 | anstyle 1.0.14 | MIT OR Apache-2.0 | default, std | 1.66.0 | none | 940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000 |
 | anstyle-parse 1.0.0 | MIT OR Apache-2.0 | default, utf8 | 1.66.0 | none | 52ce7f38b242319f7cabaa6813055467063ecdc9d355bbb4ce0c68908cd8130e |
@@ -66,30 +68,53 @@
 | anstyle-wincon 3.0.11 | MIT OR Apache-2.0 |  | 1.66.0 | none | 291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d |
 | anyhow 1.0.104 | MIT OR Apache-2.0 | default, std | 1.68 | build script: build-script-build | 330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470 |
 | async-trait 0.1.92 | MIT OR Apache-2.0 |  | 1.71 | none; procedural macro async_trait | 82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667 |
+| autocfg 1.5.1 | Apache-2.0 OR MIT |  | 1.0 | none | f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53 |
 | base64 0.22.1 | MIT OR Apache-2.0 | alloc, default, std | 1.48.0 | none | 72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6 |
 | base64 0.23.1 | MIT OR Apache-2.0 |  | 1.71.0 | none | ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5 |
+| bit-set 0.11.1 | Apache-2.0 OR MIT | default, std | 1.85.0 | none | 56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c |
+| bit-vec 0.10.1 | Apache-2.0 OR MIT | default, std | 1.85.0 | none | 5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269 |
 | bitflags 2.13.2 | MIT OR Apache-2.0 | std | 1.56.0 | none | 3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06 |
 | block-buffer 0.12.1 | MIT OR Apache-2.0 | zeroize | 1.85 | none | d2f6c7dbe95a6ed67ad9f18e57daf93a2f034c524b99fd2b76d18fdfeb6660aa |
+| borsh 1.8.1 | MIT OR Apache-2.0 | borsh-derive, derive, std | 1.77.0 | build script: build-script-build | 553c5d846a6ba5150c65e3b1b8ec073bcf1abc20f9b7220de384a4443ea4e20a |
+| borsh-derive 1.8.1 | Apache-2.0 | default | 1.77.0 | none; procedural macro borsh_derive | 12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56 |
+| bstr 1.13.1 | MIT OR Apache-2.0 | alloc, std | 1.65 | none | 6bb31b46c14244e20ee9984b11bf5c992b91fb6939fea616e3512c8baecdbe5f |
 | bumpalo 3.20.3 | MIT OR Apache-2.0 | default | 1.71.1 | none | 72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649 |
 | byteorder 1.5.0 | Unlicense OR MIT | default, std | 1.60 | none | 1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b |
 | bytes 1.12.1 | MIT | default, std | 1.57 | none | fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04 |
+| cast 0.3.0 | MIT OR Apache-2.0 |  | not declared | none | 37b2a672a2cb129a2e41c10b1224bb368f9f37a2b16b612598138befd7b37eb5 |
 | cfg-if 1.0.5 | MIT OR Apache-2.0 |  | 1.32 | none | 4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600 |
+| cfg_aliases 0.2.2 | MIT |  | not declared | none | f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527 |
 | chacha20 0.10.2 | MIT OR Apache-2.0 | rng | 1.85 | none | 65c35e4b699c7e15ccbe7ee35c005e4fc0a278d22238a2857e6ce2dadeda1b06 |
+| ciborium 0.2.2 | Apache-2.0 | default, std | 1.58 | none | 42e69ffd6f0917f5c029256a24d0161db17cea3997d185db0d35926308770f0e |
+| ciborium-io 0.2.2 | Apache-2.0 | alloc, std | 1.58 | none | 05afea1e0a06c9be33d539b876f1ce3692f4afea2cb41f740e7743225ed1c757 |
+| ciborium-ll 0.2.2 | Apache-2.0 |  | 1.58 | none | 57663b653d948a338bfb3eeba9bb2fd5fcfaecb9e199e87e1eda4d9e8b240fd9 |
 | clap 4.6.7 | MIT OR Apache-2.0 | color, default, derive, error-context, help, std, suggestions, usage | 1.85 | none | aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946 |
 | clap_builder 4.6.7 | MIT OR Apache-2.0 | color, error-context, help, std, suggestions, usage | 1.85 | none | ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d |
 | clap_derive 4.6.7 | MIT OR Apache-2.0 | default | 1.85 | none; procedural macro clap_derive | f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0 |
 | clap_lex 1.1.1 | MIT OR Apache-2.0 |  | 1.85 | none | 1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486 |
 | cmov 0.5.4 | Apache-2.0 OR MIT |  | 1.85 | none | 0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a |
 | colorchoice 1.0.5 | MIT OR Apache-2.0 |  | 1.66.0 | none | 1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570 |
+| console 0.16.6 | MIT | alloc, std | 1.71 | none | e96a4956774c13c126a8b5af4daa79384f4d826534c95a02d76afb39e2ab64e3 |
 | const-oid 0.10.2 | Apache-2.0 OR MIT |  | 1.85 | none | a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c |
+| core_detect 1.0.0 | MIT/Apache-2.0 | default | not declared | none | 7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48 |
 | cpufeatures 0.3.1 | MIT OR Apache-2.0 |  | 1.85 | none | 5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566 |
+| criterion 0.7.0 | Apache-2.0 OR MIT |  | 1.80 | none | e1c047a62b0cc3e145fa84415a3191f628e980b194c2755aa12300a4e6cbd928 |
+| criterion-plot 0.6.0 | MIT OR Apache-2.0 |  | not declared | none | 9b1bcc0dc7dfae599d84ad0b1a55f80cde8af3725da8313b528da95ef783e338 |
+| crunchy 0.2.4 | MIT | default, limit_128 | not declared | build script: build-script-build | 460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5 |
 | crypto-common 0.2.2 | MIT OR Apache-2.0 |  | 1.85 | none | ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453 |
 | ctutils 0.4.5 | Apache-2.0 OR MIT |  | 1.87 | none | 38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0 |
 | digest 0.11.3 | MIT OR Apache-2.0 | alloc, block-api, default, mac, oid, zeroize | 1.85 | none | f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2 |
+| displaydoc 0.2.7 | MIT OR Apache-2.0 |  | 1.71.0 | none; procedural macro displaydoc | c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8 |
 | either 1.19.0 | MIT OR Apache-2.0 | std, use_std | 1.63.0 | none | 0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be |
+| encode_unicode 1.0.0 | Apache-2.0 OR MIT | default, std | not declared | none | 34aa73646ffb006b8f5147f3dc182bd4bcb190227ce861fc4a4844bf8e3cb2c0 |
+| enum_dispatch 0.3.13 | MIT OR Apache-2.0 |  | not declared | none; procedural macro enum_dispatch | aa18ce2bc66555b3218614519ac839ddb759a7d6720732f979ef8d13be147ecd |
+| equivalent 1.0.3 | Apache-2.0 OR MIT |  | 1.6 | none | 00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826 |
 | errno 0.3.14 | MIT OR Apache-2.0 | std | 1.56 | none | 39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb |
 | fallible-iterator 0.2.0 | MIT/Apache-2.0 | default, std | not declared | none | 4443176a9f2c162692bd3d352d745ef9413eec5782a80d8fd6f8a1ac692a07f7 |
 | fastrand 2.5.0 | Apache-2.0 OR MIT | alloc, default, std | 1.63 | none | da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223 |
+| fixedbitset 0.5.7 | MIT OR Apache-2.0 |  | 1.56 | none | 1d674e81391d1e1ab681a28d99df07927c6d4aa5b027d7da16ba32d1d21ecd99 |
+| fnv 1.0.7 | Apache-2.0 / MIT | default, std | not declared | none | 3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1 |
+| foldhash 0.1.5 | Zlib |  | 1.60 | none | d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2 |
 | futures-channel 0.3.34 | MIT OR Apache-2.0 | alloc, default, futures-sink, sink, std | 1.71 | none | b1f9e3d69d39e4862ffed03ed071a76f9a13ba1d9109d355b0f0aa6b15e393c4 |
 | futures-core 0.3.34 | MIT OR Apache-2.0 | alloc, default, std | 1.36 | none | 92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e |
 | futures-executor 0.3.34 | MIT OR Apache-2.0 | default, std | 1.71 | none | 031b47cf1a3c6cc8bc2fc76cd437f521619387907d469316e7c0bc278f1f5432 |
@@ -99,11 +124,27 @@
 | futures-util 0.3.34 | MIT OR Apache-2.0 | alloc, async-await, async-await-macro, futures-macro, futures-sink, sink, slab, std | 1.71 | none | 0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc |
 | getrandom 0.3.4 | MIT OR Apache-2.0 | std | 1.63 | build script: build-script-build | 899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd |
 | getrandom 0.4.3 | MIT OR Apache-2.0 | std, sys_rng | 1.85 | build script: build-script-build | 300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099 |
+| globset 0.4.20 | Unlicense OR MIT | default, log | 1.88 | none | 07c34a9410465b45bd9787443bc7370f37735bad04b0f0cd57ff1a3186c98988 |
+| half 2.7.1 | MIT OR Apache-2.0 |  | 1.81 | none | 6ea2d84b969582b4b1864a92dc5d27cd2b77b622a8d79306834f1be5ba20d84b |
+| hashbrown 0.15.5 | MIT OR Apache-2.0 | default-hasher, inline-more | 1.65.0 | none | 9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1 |
+| hashbrown 0.17.1 | MIT OR Apache-2.0 |  | 1.85.0 | none | ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a |
 | heck 0.5.0 | MIT OR Apache-2.0 |  | 1.56 | none | 2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea |
 | hmac 0.13.0 | MIT OR Apache-2.0 | zeroize | 1.85 | none | 6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f |
 | http 1.5.0 | MIT OR Apache-2.0 | default, std | 1.57.0 | none | 918d3568bebf352712bc2ef3d46a8bcf1a75b373be6539de198e9105cbbf9ce0 |
 | httpdate 1.0.3 | MIT OR Apache-2.0 |  | 1.56 | none | df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9 |
 | hybrid-array 0.4.15 | MIT OR Apache-2.0 |  | 1.85 | none | 27f864f10dfb56725ce5ce5472bc52252c8f93a4ab86327122cebf62c5f59a17 |
+| icu_casemap 1.5.1 | Unicode-3.0 | compiled_data, default | 1.67 | none | 9ff0c8ae9f8d31b12e27fc385ff9ab1f3cd9b17417c665c49e4ec958c37da75f |
+| icu_casemap_data 1.5.1 | Unicode-3.0 |  | 1.67 | build script: build-script-build | 02bd9f6276270c85a5cd54611adbbf94e993ec464a2a86a452a6c565b7ded5d9 |
+| icu_collections 1.5.0 | Unicode-3.0 |  | 1.67 | none | db2fa452206ebee18c4b5c2274dbf1de17008e874b4dc4f0aea9d01ca79e4526 |
+| icu_locid 1.5.0 | Unicode-3.0 | zerovec | 1.67 | none | 13acbb8371917fc971be86fc8057c41a64b521c184808a698c02acc242dbf637 |
+| icu_locid_transform 1.5.0 | Unicode-3.0 | compiled_data | 1.67 | none | 01d11ac35de8e40fdeda00d9e1e9d92525f3f9d887cdd7aa81d727596788b54e |
+| icu_locid_transform_data 1.5.1 | Unicode-3.0 |  | 1.67 | build script: build-script-build | 7515e6d781098bf9f7205ab3fc7e9709d34554ae0b21ddbcb5febfa4bc7df11d |
+| icu_properties 1.5.1 | Unicode-3.0 | compiled_data, default | 1.67 | none | 93d6020766cfc6302c15dbbc9c8778c37e62c14427cb7f6e601d849e092aeef5 |
+| icu_properties_data 1.5.1 | Unicode-3.0 |  | 1.67 | build script: build-script-build | 85fb8799753b75aee8d2a21d7c14d9f38921b54b3dbda10f5a3c7a7b82dba5e2 |
+| icu_provider 1.5.0 | Unicode-3.0 | macros | 1.67 | none | 6ed421c8a8ef78d3e2dbc98a973be2f3770cb42b606e3ab18d6237c4dfde68d9 |
+| icu_provider_macros 1.5.0 | Unicode-3.0 |  | 1.67 | none; procedural macro icu_provider_macros | 1ec89e9337638ecdc08744df490b221a7399bf8d164eb52a665454e60e075ad6 |
+| indexmap 2.14.2 | Apache-2.0 OR MIT | default, std | 1.85 | none | cc4e190f5d26ca7051642629da2c52fc03bde85a03197c99408dcd291734c855 |
+| insta 1.49.0 | Apache-2.0 | colors, console, default, glob, globset, serde, walkdir, yaml | 1.66.0 | none | b67d3d2e287e4b86c10b3f3b641033d1f89b74bdb39d05f34952e2b9a6fe21cd |
 | is_terminal_polyfill 1.70.2 | MIT OR Apache-2.0 | default | 1.70.0 | none | a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695 |
 | itertools 0.13.0 | MIT OR Apache-2.0 | default, use_alloc, use_std | 1.43.1 | none | 413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186 |
 | itoa 1.0.18 | MIT OR Apache-2.0 |  | 1.68 | none | 8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682 |
@@ -112,6 +153,7 @@
 | libc 0.2.191 | MIT OR Apache-2.0 | default, std | 1.65 | build script: build-script-build | 65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a |
 | libredox 0.1.25 | MIT | base, call, libc | not declared | none | 61ff90caf6077a803a240f62fdbe88645a890bbca49ef8174c3cb0404362171d |
 | linux-raw-sys 0.12.1 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT | auxvec, elf, errno, general, ioctl, no_std | 1.63 | none | 32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53 |
+| litemap 0.7.5 | Unicode-3.0 | alloc | 1.81 | none | 23fb14cb19457329c82206317a5663005a4d404783dc74f4252769b0d5f42856 |
 | lock_api 0.4.14 | MIT OR Apache-2.0 | atomic_usize, default | 1.71.0 | none | 224399e74b87b5f3557511d98dff8b14089b3dadafcab6bb93eab67d3aace965 |
 | log 0.4.34 | MIT OR Apache-2.0 | alloc, std | 1.71.0 | none | f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6 |
 | matchers 0.2.0 | MIT |  | not declared | none | d1525a2a28c7f4fa0fc98bb91ae755d1e2d1505079e05539e35bc876b5d65ae9 |
@@ -120,10 +162,16 @@
 | metrics 0.24.6 | MIT |  | 1.71.1 | none | 89550ee9f79e88fef3119de263694973a8adb26c21d75322164fb8c493039fe2 |
 | mio 1.2.4 | MIT | net, os-ext, os-poll | 1.71 | none | 1788edb87fdc09c7e26304471e2f5be8cdefb1b6930d6e3985fc02ff53bf86ee |
 | nu-ansi-term 0.50.3 | MIT | default, std | 1.62.1 | none | 7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5 |
+| num-bigint 0.4.8 | MIT OR Apache-2.0 |  | 1.60 | none | c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367 |
+| num-complex 0.4.6 | MIT OR Apache-2.0 |  | 1.60 | none | 73f88a1307638156682bada9d7604135552957b7818057dcef22705b4d509495 |
+| num-integer 0.1.47 | MIT OR Apache-2.0 | i128 | 1.31 | none | 7ce2d95d4b3734dc35aa2f45e1aa22cd416814592a4f9d9205e11affd5b8e10b |
+| num-rational 0.4.2 | MIT OR Apache-2.0 |  | 1.60 | none | f83d14da390562dca69fc84082e73e548e1ad308d24accdedd2720017cb37824 |
+| num-traits 0.2.19 | MIT OR Apache-2.0 | i128, std | 1.60 | build script: build-script-build | 071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841 |
 | objc2-core-foundation 0.3.2 | Zlib OR Apache-2.0 OR MIT | CFArray, CFDictionary, CFError, CFRunLoop, CFString, bitflags | 1.71 | none | 2a180dd8642fa45cdb7dd721cd4c11b1cadd4929ce112ebd8b9f5803cc79d536 |
 | objc2-system-configuration 0.3.2 | Zlib OR Apache-2.0 OR MIT | SCDynamicStore, SCDynamicStoreCopySpecific | 1.71 | none | 7216bd11cbda54ccabcab84d523dc93b858ec75ecfb3a7d89513fa22464da396 |
 | once_cell 1.21.4 | MIT OR Apache-2.0 | alloc, default, race, std | 1.65 | none | 9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50 |
 | once_cell_polyfill 1.70.2 | MIT OR Apache-2.0 | default | 1.70.0 | none | 384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe |
+| oorandom 11.1.5 | MIT |  | not declared | none | d6790f58c7ff633d8771f42965289203411a5e5c68388703c06e14f24770b41e |
 | opentelemetry 0.33.1 | Apache-2.0 | futures, futures-core, futures-sink, metrics, pin-project-lite, thiserror, trace | 1.75.0 | none | 8c1f1a6ac9c875a4941e4c7c085b61e8f4daa326de03b4701768c3491a6ad9ee |
 | opentelemetry-http 0.33.1 | Apache-2.0 |  | 1.75.0 | none | 302249bd8ee804789faaa7b5b2cbf79bc61cb864714079c644e3828af5b7e811 |
 | opentelemetry-otlp 0.33.1 | Apache-2.0 | http, http-proto, httpdate, metrics, opentelemetry-http, prost, trace | 1.75.0 | none | 0756af24841e367128ef31c831999937b8b5c5197d47914590d8f4e2e88c2e1a |
@@ -133,6 +181,7 @@
 | parking_lot_core 0.9.12 | MIT OR Apache-2.0 |  | 1.71.0 | build script: build-script-build | 2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1 |
 | pbkdf2 0.13.0 | MIT OR Apache-2.0 | hmac | 1.85 | none | 112d82ceb8c5bf524d9af484d4e4970c9fd5a0cc15ba14ad93dccd28873b0629 |
 | percent-encoding 2.3.2 | MIT OR Apache-2.0 | alloc, default, std | 1.51 | none | 9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220 |
+| petgraph 0.8.3 | MIT OR Apache-2.0 | default, graphmap, matrix_graph, stable_graph, std | 1.64 | none | 8701b58ea97060d5e5b155d383a69952a60943f0e6dfe30b04c287beb0b27455 |
 | phf 0.13.1 | MIT | default, std | 1.66 | none | c1562dc717473dbaa4c1f85a36410e03c047b2e7df7f45ee938fbef64ae7fadf |
 | phf_shared 0.13.1 | MIT | std | 1.66 | none | e57fef6bc5981e38c2ce2d63bfa546861309f875b8a75f092d1d54ae2d64f266 |
 | pin-project-lite 0.2.17 | Apache-2.0 OR MIT |  | 1.37 | none | a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd |
@@ -140,9 +189,12 @@
 | postgres-protocol 0.6.12 | MIT OR Apache-2.0 | default | 1.85 | none | 08808e3c483c46e999108051c78334f473d5adb59d78bb80a1268c7e6aa6c514 |
 | postgres-types 0.2.14 | MIT OR Apache-2.0 |  | 1.85 | none | 851ca9db4932932d69f3ea811b1abe63087a0f740a47692619dd40d4899b68be |
 | ppv-lite86 0.2.21 | MIT OR Apache-2.0 | simd, std | 1.61 | none | 85eae3c4ed2f50dcfe72643da4befc30deadb458a9b590d720cde2f2b1e97da9 |
+| proc-macro-crate 3.5.0 | MIT OR Apache-2.0 |  | 1.82.0 | none | e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f |
 | proc-macro2 1.0.107 | MIT OR Apache-2.0 | default, proc-macro, span-locations | 1.71 | build script: build-script-build | 985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9 |
+| proptest 1.12.0 | MIT OR Apache-2.0 | bit-set, default, fork, regex-syntax, rusty-fork, std, tempfile, timeout | 1.88 | none | b8530004ccb15eae51c7e40009fbe317f341f804db54dc033eec1c50be28cfa0 |
 | prost 0.14.4 | Apache-2.0 | default, derive, std | 1.85 | none | 528ac67416ff8646872a3c02cad9cc4ee5dc9f9540c9b10771855c95cb2e5ae1 |
 | prost-derive 0.14.4 | Apache-2.0 |  | 1.85 | none; procedural macro prost_derive | b570b25f7617e43d59005d0990ccb79e950a423952cea19671b7a876da390adf |
+| quick-error 1.2.3 | MIT/Apache-2.0 |  | not declared | none | a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0 |
 | quote 1.0.47 | MIT OR Apache-2.0 | default, proc-macro | 1.71 | build script: build-script-build | 1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001 |
 | r-efi 5.3.0 | MIT OR Apache-2.0 OR LGPL-2.1-or-later |  | 1.68 | none | 69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f |
 | r-efi 6.0.0 | MIT OR Apache-2.0 OR LGPL-2.1-or-later |  | 1.68 | none | f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf |
@@ -151,12 +203,16 @@
 | rand_chacha 0.9.0 | MIT OR Apache-2.0 | std | 1.63 | none | d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb |
 | rand_core 0.10.1 | MIT OR Apache-2.0 |  | 1.85 | none | 63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69 |
 | rand_core 0.9.5 | MIT OR Apache-2.0 | os_rng, std | 1.63 | none | 76afc826de14238e6e8c374ddcc1fa19e374fd8dd986b0d2af0d02377261d83c |
+| rand_xorshift 0.5.0 | MIT OR Apache-2.0 |  | 1.85 | none | 60aa6af80be32871323012e02e6e65f8a7cc7890931ae421d217ad8fe0df2ccf |
 | rapidhash 4.5.1 | MIT OR Apache-2.0 |  | 1.71.0 | none | 5da7e78a036ce858e8d55b7e7dc8ba3a88b78350fd2155d3591bbd966b58589e |
 | redox_syscall 0.5.18 | MIT | default, userspace | not declared | none | ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d |
+| regex 1.13.1 | MIT OR Apache-2.0 | std | 1.65 | none | f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d |
 | regex-automata 0.4.18 | MIT OR Apache-2.0 | alloc, dfa-build, dfa-search, hybrid, meta, nfa, nfa-backtrack, nfa-pikevm, nfa-thompson, perf, perf-inline, perf-literal, perf-literal-multisubstring, perf-literal-substring, std, syntax | 1.65 | none | ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2 |
 | regex-syntax 0.8.11 | MIT OR Apache-2.0 | default, std, unicode, unicode-age, unicode-bool, unicode-case, unicode-gencat, unicode-perl, unicode-script, unicode-segment | 1.65 | none | d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4 |
 | rustix 1.1.5 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT | alloc, default, fs, std | 1.65 | build script: build-script-build | 891efababe418670775f199f0d233d84843c227a0949a883ce15b37c78d6629d |
 | rustversion 1.0.23 | MIT OR Apache-2.0 |  | 1.31 | build script: build-script-build; procedural macro rustversion | cf54715a573b99ac80df0bc206da022bcd442c974952c7b9720069370852e21f |
+| rusty-fork 0.3.1 | MIT/Apache-2.0 | timeout, wait-timeout | not declared | none | cc6bf79ff24e648f6da1f8d1f011e9cac26491b619e6b9280f2b47f1774e6ee2 |
+| same-file 1.0.6 | Unlicense/MIT |  | not declared | none | 93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502 |
 | scopeguard 1.2.0 | MIT OR Apache-2.0 |  | not declared | none | 94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49 |
 | secrecy 0.10.3 | Apache-2.0 OR MIT |  | 1.60 | none | e891af845473308773346dc847b2c23ee78fe442e0472ac50e22a18a93d3ae5a |
 | serde 1.0.229 | MIT OR Apache-2.0 | alloc, default, derive, serde_derive, std | 1.56 | build script: build-script-build | 4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba |
@@ -165,22 +221,31 @@
 | serde_json 1.0.154 | MIT OR Apache-2.0 | default, raw_value, std | 1.71 | build script: build-script-build | e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6 |
 | sha2 0.11.1 | MIT OR Apache-2.0 | alloc, default, oid, zeroize | 1.88 | none | 47d7069beb7d6ac7b9acd1039986e73443f24234f41074da099d6f994ac9ad19 |
 | sharded-slab 0.1.7 | MIT |  | 1.42.0 | none | f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6 |
+| similar 2.7.0 | Apache-2.0 | default, inline, text | 1.60 | none | bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa |
 | siphasher 1.0.4 | MIT OR Apache-2.0 | default, std | not declared | none | 33f4fe9184a62d842c9ef383018f3306d8ba224fd9d836f56d7288308847c256 |
 | slab 0.4.12 | MIT | std | 1.51 | none | 0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5 |
 | smallvec 1.16.3 | MIT OR Apache-2.0 |  | not declared | none | 5b3dc8af474f516a851ff4bd12db780f948b9250ad37211e4eec0bccea54e01b |
 | socket2 0.6.5 | MIT OR Apache-2.0 | all | 1.70 | none | c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4 |
+| stable_deref_trait 1.2.1 | MIT OR Apache-2.0 | alloc | not declared | none | 6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596 |
 | stringprep 0.1.5 | MIT/Apache-2.0 |  | not declared | none | 7b4df3d392d81bd458a8a621b8bffbd2302a12ffe288a9d931670948749463b1 |
 | strsim 0.11.1 | MIT |  | 1.56 | none | 7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f |
 | syn 2.0.119 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | 1.71 | none | 872831b642d1a07999a962a351ed35b955ea2cfc8f3862091e2a240a84f17297 |
 | syn 3.0.9 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | 1.71 | none | d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b |
+| synstructure 0.13.2 | MIT | default, proc-macro | not declared | none | 728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2 |
+| synstructure 0.14.0 | MIT | default, proc-macro | 1.71 | none | 901704edd0dfe137f1987838ee4f259e4e063c31371bdb423f7ae38ec6f77f02 |
 | tempfile 3.27.0 | MIT OR Apache-2.0 | default, getrandom | 1.63 | none | 32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd |
 | thiserror 2.0.21 | MIT OR Apache-2.0 | default, std | 1.77 | build script: build-script-build | 09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e |
 | thiserror-impl 2.0.21 | MIT OR Apache-2.0 |  | 1.77 | none; procedural macro thiserror_impl | fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524 |
 | thread_local 1.1.10 | MIT OR Apache-2.0 |  | 1.63 | none | 1ad99c4c6d32803332c548b1af0540b357b3f5fc0be8f6c6bfe8b2e6ae784070 |
+| tinystr 0.7.6 | Unicode-3.0 | alloc, zerovec | 1.67 | none | 9117f5d4db391c1cf6927e7bea3db74b9a1c1add8f7eda9ffd5364f40f57b82f |
+| tinytemplate 1.2.1 | Apache-2.0 OR MIT |  | not declared | none | be4d6b5f19ff7664e8c98d03e2139cb510db9b0a60b55f8e8709b689d939b6bc |
 | tinyvec 1.13.3 | Zlib OR Apache-2.0 OR MIT | alloc, default | not declared | none | fd3ca314f692efd6c868f8408f53fe444634a845f96c028b97d35f6a1f79f0ee |
 | tokio 1.54.1 | MIT | bytes, default, io-util, libc, mio, net, rt, socket2, sync, time, windows-sys | 1.85 | none | b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3 |
 | tokio-postgres 0.7.18 | MIT OR Apache-2.0 |  | 1.85 | none | a528f7d280f6d5b9cd149635c8705b0dd049754bc67d81d31fa25169a93809d3 |
 | tokio-util 0.7.20 | MIT | codec, default, libc | 1.85 | none | e464cf451ba96ebfc6f9b6542f17ee8b8956e33f1e40d9690624e59d7a7f8a4b |
+| toml_datetime 1.1.2+spec-1.1.0 | MIT OR Apache-2.0 | alloc, default, std | 1.85 | none | 2b86d767906c6c42421dcba507eb9d203e779497710a47782a224bb871653053 |
+| toml_edit 0.25.17+spec-1.1.0 | MIT OR Apache-2.0 | parse | 1.85 | none | e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c |
+| toml_parser 1.1.5+spec-1.1.0 | MIT OR Apache-2.0 | alloc, default, std | 1.85 | none | baa693a8032d7e1cada7d0041e96126df243179ff061456783ac7f12bda4744c |
 | tracing 0.1.44 | MIT | attributes, default, std, tracing-attributes | 1.65.0 | none | 63e71662fa4b2a2c3a26f570f037eb95bb1f85397f3cd8076caed2f026a6d100 |
 | tracing-attributes 0.1.31 | MIT |  | 1.65.0 | none; procedural macro tracing_attributes | 7490cfa5ec963746568740651ac6781f701c9c5ea257c58e057f3ba8cf69e8da |
 | tracing-core 0.1.36 | MIT | default, once_cell, std | 1.65.0 | none | db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a |
@@ -189,12 +254,16 @@
 | tracing-serde 0.2.0 | MIT |  | 1.63.0 | none | 704b1aeb7be0d0a84fc9828cae51dab5970fee5088f83d1dd7ee6f6246fc6ff1 |
 | tracing-subscriber 0.3.23 | MIT | alloc, ansi, default, env-filter, fmt, json, matchers, nu-ansi-term, once_cell, registry, serde, serde_json, sharded-slab, smallvec, std, thread_local, tracing, tracing-log, tracing-serde | 1.65.0 | none | cb7f578e5945fb242538965c2d0b04418d38ec25c79d160cd279bf0731c8d319 |
 | typenum 1.20.1 | MIT OR Apache-2.0 | const-generics | 1.41.0 | none | b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20 |
+| unarray 0.1.4 | MIT OR Apache-2.0 |  | not declared | none | eaea85b334db583fe3274d12b4cd1880032beab409c0d774be044d4480ab9a94 |
 | unicode-bidi 0.3.18 | MIT OR Apache-2.0 | default, hardcoded-data, std | 1.47.0 | none | 5c1cb5db39152898a79168971543b1cb5020dff7fe43c8dc468b0885f5e29df5 |
 | unicode-ident 1.0.27 | (MIT OR Apache-2.0) AND Unicode-3.0 |  | 1.71 | none | a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563 |
 | unicode-normalization 0.1.26 | (MIT OR Apache-2.0) AND Unicode-3.0 | default, std | 1.36 | none | 75cd3fb03d5288b3ba9a1ee103ac7e9cbb59f0b03d64f8ddfcc04dd42758a85d |
 | unicode-properties 0.1.4 | MIT/Apache-2.0 | default, emoji, general-category | not declared | none | 7df058c713841ad818f1dc5d3fd88063241cc61f49f5fbea4b951e8cf5a8d71d |
 | utf8parse 0.2.2 | Apache-2.0 OR MIT | default | not declared | none | 06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821 |
 | valuable 0.1.1 | MIT | alloc, std | 1.56 | build script: build-script-build | ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65 |
+| version_check 0.9.5 | MIT/Apache-2.0 |  | not declared | none | 0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a |
+| wait-timeout 0.2.1 | MIT/Apache-2.0 |  | not declared | none | 09ac3b126d3914f9849036f826e054cbabdc8519970b8998ddaf3b5bd3c65f11 |
+| walkdir 2.5.0 | Unlicense/MIT |  | not declared | none | 29790946404f91d9c5d06f9874efddea1dc06c5efe94541a7d6863108e3a5e4b |
 | wasi 0.11.1+wasi-snapshot-preview1 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT | default, std | not declared | none | ccf3ec651a847eb01de73ccad15eb7d99f80485de043efb2f370cd654f4ea44b |
 | wasi 0.14.7+wasi-0.2.4 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT |  | 1.82.0 | none | 883478de20367e224c0090af9cf5f9fa85bed63a95c1abf3afc5c083ebc06e8c |
 | wasip2 1.0.4+wasi-0.2.12 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT |  | 1.87.0 | none | b67efb37e106e55ce722a510d6b5f9c17f083e5fc79afc2badeb12cc313d9487 |
@@ -206,12 +275,21 @@
 | web-sys 0.3.106 | MIT OR Apache-2.0 | Document, EventTarget, Location, Navigator, Node, Window, std | 1.81 | none | 88261b9deccee56594c11a3460c462c41f58d148598fe70ad77070126a68aba4 |
 | web-time 1.1.0 | MIT OR Apache-2.0 |  | 1.60 | none | 5a6580f308b1fad9207618087a65c04e7a10bc77e02c8e84e9b00dd4b12fa0bb |
 | whoami 2.1.3 | Apache-2.0 OR BSL-1.0 OR MIT | default, std, wasi-wasite, wasm-web | 1.75 | none | 626c4bac6755d76ffc12cb01b2eac751db1996b9e0041de9aa02c8c211ddc82c |
+| winapi-util 0.1.11 | Unlicense OR MIT |  | not declared | none | c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22 |
 | windows-link 0.2.1 | MIT OR Apache-2.0 |  | 1.71 | none | f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5 |
 | windows-sys 0.61.2 | MIT OR Apache-2.0 | Wdk, Wdk_Foundation, Wdk_Storage, Wdk_Storage_FileSystem, Wdk_System, Wdk_System_IO, Win32, Win32_Foundation, Win32_Networking, Win32_Networking_WinSock, Win32_Security, Win32_Storage, Win32_Storage_FileSystem, Win32_System, Win32_System_Console, Win32_System_Diagnostics, Win32_System_Diagnostics_Debug, Win32_System_IO, Win32_System_Pipes, Win32_System_SystemInformation, Win32_System_SystemServices, Win32_System_Threading, Win32_System_WindowsProgramming, Win32_UI, Win32_UI_Input, Win32_UI_Input_KeyboardAndMouse, default | 1.71 | none | ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc |
+| winnow 1.0.4 | MIT | alloc, ascii, binary, default, parser, std | 1.65.0 | none | 23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81 |
 | wit-bindgen 0.57.1 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT |  | 1.85.0 | build script: build-script-build | 1ebf944e87a7c253233ad6766e082e3cd714b5d03812acc24c318f549614536e |
+| writeable 0.5.5 | Unicode-3.0 |  | 1.67 | none | 1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51 |
+| yoke 0.7.5 | Unicode-3.0 | alloc, default, derive, zerofrom | 1.71.1 | none | 120e6aef9aa629e3d4f52dc8cc43a015c7724194c97dfaf45180d2daf2b77f40 |
+| yoke-derive 0.7.5 | Unicode-3.0 |  | not declared | none; procedural macro yoke_derive | 2380878cad4ac9aac1e2435f3eb4020e8374b5f13c296cb75b4620ff8e229154 |
 | zerocopy 0.8.63 | BSD-2-Clause OR Apache-2.0 OR MIT | derive, simd, zerocopy-derive | 1.56.0 | build script: build-script-build | e5fe1f8f1b06191a00962174c61aa5005e0bb391a6d80d07e24d115c01a92ed8 |
 | zerocopy-derive 0.8.63 | BSD-2-Clause OR Apache-2.0 OR MIT |  | not declared | none; procedural macro zerocopy_derive | 863ad3ac83293fb4d740aedbfdc9240dd8d1a50c1099acd76ce80ce7c7230c7f |
+| zerofrom 0.1.8 | Unicode-3.0 | alloc, derive | 1.71.1 | none | 0ec05a11813ea801ff6d75110ad09cd0824ddba17dfe17128ea0d5f68e6c5272 |
+| zerofrom-derive 0.1.8 | Unicode-3.0 |  | 1.71.1 | none; procedural macro zerofrom_derive | f75b4683f6c7f45248d4d64056a24298c6281e0993356d7d1b4a1a962ef10d4a |
 | zeroize 1.9.1 | Apache-2.0 OR MIT | alloc | 1.85 | none | e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879 |
+| zerovec 0.10.4 | Unicode-3.0 | derive, yoke | 1.67 | none | aa2b893d79df23bfb12d5461018d408ea19dfafe76c2c7ef6d4eba614f8ff079 |
+| zerovec-derive 0.10.4 | Unicode-3.0 |  | not declared | none; procedural macro zerovec_derive | 3e3c6377872d72510393f688a555d7097b0f741995c7a00f0407f786dd486b2d |
 | zmij 1.0.23 | MIT |  | 1.71 | build script: build-script-build | 29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b |
 
 
@@ -230,3 +308,17 @@
 **Amendment (Relay termination and work bound)** · `amend:storage:relay-termination` Under (`amend:storage:declared-session`), either relay direction ending closes both halves of the in-process driver stream and releases the server session, including an open transaction. No synthetic server diagnostic is invented: Session::last_refusal exposes only the last fieldless shim cause, while the driver sees end of stream. Relay spans declare asynchronous lifetime; cancellation is distinguished from a missing synchronous completion. The in-crate PostgreSQL and transport-evidence suites are unit-level service evidence. A server-computed public DataRow control and a test-only private metadata control exercise the result-path trace scan separately from diagnostic filtering.
 
 **Amendment (Measured SCRAM ceiling)** · `amend:storage:measured-scram-ceiling` (`amend:storage:transport-evidence-boundary`) supersedes its 100,000-iteration ceiling with the accepted range 4,096 through 600,000, inclusive, also required by (`amend:storage:declared-session`). The floor retains PostgreSQL's default; the ceiling admits OWASP's published PBKDF2-HMAC-SHA-256 guidance while bounding untrusted server work. One node campaign measured a derivation at 0.84 ms, 19.74 ms and 118.76 ms for 4,096, 100,000 and 600,000 iterations, respectively, at 2.85 shared-node cores and 0.13 percent CPU pressure. These are cost observations, not comparative performance claims or authentication deadlines. Counts outside the range refuse before derivation; other password profiles remain held. The guidance source is the OWASP Password Storage Cheat Sheet; advancing the ceiling requires a measured work review.
+
+
+**Amendment (Closed effective-history implementation)** · `amend:storage:effective-library` Under (`model:storage:scd2`) and (`amend:storage:closed-statements`), pn-host's storage module owns a closed SQL vocabulary beside its schema. No caller supplies a statement. Open-store serializes bootstrap with a transaction-scoped advisory lock, creates the schema only in an empty database and requires the exact recorded pn-host/effective-history/v1 identity on reuse. A mismatched identity refuses; no migration is attempted. Version payloads and openings are immutable. A closure has one predecessor key; closure and successor commit together. Writers acquire a SHARE ROW EXCLUSIVE table lock before reading history at READ COMMITTED, including first insert, so competing predecessor claims serialize without a phantom first row. Boundary reads use one read-only REPEATABLE READ snapshot. This deliberately conservative first adapter serializes all succession writes; finer-grained locking requires its own conformance evidence.
+
+**Amendment (Storage values and failure scope)** · `amend:storage:canonical-values` (`amend:storage:effective-library`) uses the existing pn-interchange canonical value encoder and strict decoder. The storage-v1 projection is an array carrying recipe, family and complete public content; it introduces no alternative byte codec. Exact rationals retain their canonical exact spelling, original constant literals retain their source spelling, and floors retain their exact source definitions. Payloads are bounded at 262,144 bytes, with key and edition at 1,024 UTF-8 bytes each, so text-mode bytea results remain below the shim's one-MiB frame bound. These are provisional representation limits, not universal mathematical limits. A lost commit acknowledgement is CommitUnknown, never evidence of rollback; retry checks complete immutable version equality. Failure carries no mathematical verdict. The storage library is tested against real PostgreSQL, but no executable opens it pending independent integration review.
+
+**Amendment (Recognition disclosure identity)** · `amend:storage:disclosure-key` Under (`amend:storage:unsettled-recognition`), each recognition package retains the complete validated history, all candidate positions and evidence, policy and burn publication, plus the recomputed prefix, refusal and explicit unsettled marker. Its validated-disclosure digest is a stored lookup key alongside its family/key/edition identity and is recomputed from that package's own input. Record presentation is normalized by record identity and candidate presentation by disclosed history position; a refused candidate is never dropped. Public verification profile, policy edition and publication edition are included. A later profile or disclosure cannot reuse the old commitment. These identities follow (`amend:identity:storage-admission`); matching bytes or digests prove neither finality nor independent verification. Host finality remains held for bite 8.
+
+**Amendment (Storage evidence scope)** · `amend:storage:library-conformance` The six-family shared roster runs through the functional memory implementation and PostgreSQL with implementation identity in each result. It checks exact boundaries, explicit withdrawal, missing required inputs, edition conflict, gap, overlap, predecessor and retroactive refusals, rollback after closure and before commit, and unchanged earlier selected bytes and identities. Real-service cases additionally exercise competing writers and reconstruction from public packages. ``[HOST-claim:history:atomic-effective-rows-preserve-earlier-verdicts]`` is scoped to these carriers and intervals; admitted ledger results, duplicate debit prevention and atomic snapshot/result binding stay held for their owning bites. The constant-retention witness cites the existing RECORDS mint. Canonical input bytes remain retained rather than replaced by recomputation; no observation record enters those bytes. The deployment's numerical enclosure, attempted-rung and refinement duties apply when the later numeric result carriers exist; this slice supplies no substitute for them.
+
+**Amendment (Independent gate instances)** · `amend:storage:gate-port-ownership` Every gate selects a free port in its reserved twenty-port range under a kernel-owned allocation mutex, held until its PostgreSQL instance owns the listening port. The selected port is retained in that gate's private fixture configuration. Impostors bind ephemeral ports before client fixtures read them. Two live instances must answer independently. The transport refusal fixtures use distinct loopback addresses on the instance's own port; gate servers bind only their declared loopback interface. No fixed port makes one gate depend on another gate's serialization.
+
+
+**Amendment (Existing storage dependency edges)** · `amend:storage:existing-edges` The library adds already-locked pn-records and pn-interchange edges for validated carriers and the single canonical codec, and metrics for the declared storage instruments. Test support enables pn-records' existing test-support feature. No new dependency resolution is admitted. The reachable archive table now contains 233 existing registry packages; the three nrz git packages retain the reviewed revision under (`sig:design:numeric-kernel`). Archive checksums remain checked under (`rule:storage:dependency-pins`), and the numeric provenance register checks the git source identity separately. This expands reachability, not the set of reviewed implementations.

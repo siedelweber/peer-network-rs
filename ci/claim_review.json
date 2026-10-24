@@ -2216,6 +2216,110 @@
       "claim": "ROOT::claim:discipline:coverage-recognition-comes-from-rust-syntax",
       "after": "Claim: The Rust parser follows cfg and distinguishes an uninstrumented body, a retained scoped guard, an abandoned guard and an argument-skipping attribute from actual syntax; a generator remains visible for separate admission.",
       "review": "Read the parser subprocess fixtures: asynchronous true remains a JSON boolean; another boolean field, a call expression, duplicate fields and skipped arguments each refuse."
+    },
+    {
+      "operation": "cli-common::observation::tests::storage_instrument_accounting",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:storage-instruments-retain-bounded-owner-accounting",
+      "before": "",
+      "after": "Claim: Storage commit, rollback and query measurements use only HOST's finite declared series; unrelated owners and an undeclared storage name cannot acquire a series.",
+      "review": "Read exact HOST counter/gauge/histogram updates, unchanged other-owner rosters and two rejected names; the declared instruments are admitted without widening name acceptance."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_independent_instances",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:postgresql-instances-own-distinct-ports",
+      "before": "",
+      "after": "Claim: Two gate-owned PostgreSQL instances coexist on distinct reserved ports and answer independently while a third gate may already be running, so fixture allocation does not depend on gate serialization.",
+      "review": "Read two simultaneously live real servers, distinct recorded ports and successful independent SELECT queries before either is stopped."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_contract",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
+      "after": "Claim: The same six-family succession roster preserves earlier selected bytes and identities in memory and PostgreSQL, with exact boundaries, explicit withdrawal, immutable editions and rollback at both interrupted write phases.",
+      "review": "Read both Adapter executions and each six-family iteration: exact selected Version equality, idempotence, conflict, each interval refusal, two injected rollback phases and explicit withdrawal are asserted. No ledger result exists."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_competing_writers",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:competing-successors-serialize",
+      "after": "Claim: Two PostgreSQL successor writers holding the same predecessor serialize to one winner and one typed predecessor refusal; a fresh connection sees one complete history rather than two terminal versions.",
+      "review": "Read two spawned PostgreSQL appends with one predecessor: exactly one successful write and one Predecessor refusal, followed by a fresh connection observing one row."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_rebuild",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:public-input-rebuild-preserves-boundaries",
+      "after": "Claim: Replaying the same public version packages into a fresh database reproduces all logical as-of values and identities; no physical row order, observer state or private configuration is needed in the comparison.",
+      "review": "Read the same public version sequence replayed into independent memory and PostgreSQL stores, followed by eight exact logical boundary comparisons."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_recognition_disclosure",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:recognition-retains-its-own-disclosure",
+      "after": "Claim: A recognition package retains its full validated disclosure and unsettled output; changing an unaccepted candidate's evidence changes its commitment even when the recognized prefix is unchanged, and a substituted disclosure-column digest refuses on read.",
+      "review": "Read the validated fixture, presentation reversal, changed refused candidate, equal recognized prefix, unequal full-input commitments and substituted digest refusal."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_schema_identity",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:foreign-schema-refuses-without-migration",
+      "after": "Claim: A recorded foreign schema identity refuses before storage writes, while reopening the same admitted identity preserves the stored bytes without migration.",
+      "review": "Read the test-only identity corruption followed by a new connection: SchemaIdentity must refuse before write."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_historical_constants",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:declarations:canonical-storage-preserves-selected-constants",
+      "after": "Claim: Canonical storage retains the old bound controller and exact floor source at its old boundary after a later constants edition is appended, in both implementations.",
+      "review": "Read the actual bound rational and ridge constants, canonical production constructors and both adapters; the selected old bytes remain exactly the old edition."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_digest_vectors",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:storage-digest-domains-are-permanent",
+      "after": "Claim: Both permanent storage digest domains match independent SHA-256 vectors over the canonical empty-array bytes; changing a separator or recipe spelling fails the literal correspondence.",
+      "review": "Read the independent literal domain vectors over canonical empty-array bytes; the producer must match without deriving its expectation from its own output."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_runtime",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:closed-storage-statements-return-public-values",
+      "after": "Claim: The closed storage statement set returns retained public values through `DataRows` under observation, with deterministic bytes and exact transaction results; its private service configuration remains behind Session.",
+      "review": "Read the ten closed SQL statements reached by fresh bootstrap, two versions and boundary reads; the only metadata query is opt-in test code for the negative scan."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_restart",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:committed-bytes-survive-service-restart",
+      "after": "Claim: A fresh process reads the identical committed version after service restart; an existing edition remains idempotent without replacing its canonical payload.",
+      "review": "Read the persisted input and read-only environment arm: the service runner invokes it after a real restart without append, making loss observable."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_storage_statements",
+      "before": "",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary",
+      "after": "Claim: Every closed storage statement is exercised under trace and its decoded DataRows contain only public fixture content; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.",
+      "review": "Read fresh per-level databases, decoded binary trace scanning for every configuration value, all ten statement strings, identical public output and the private DataRow control."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_storage_restart",
+      "before": "",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:storage-restart-preserves-committed-bytes",
+      "after": "Claim: A real PostgreSQL restart preserves the committed public version byte for byte; the second probe reads without appending, so successful replay cannot hide lost durability by recreating the row.",
+      "review": "Read pg_ctl restart between separate binary invocations; the second sets the read-only probe flag and must find the existing version."
     }
   ]
 }

@@ -1331,7 +1331,7 @@ fn metric_registry() {
     let rows = snapshot["instruments"].as_array().unwrap();
     let records_series = 15 + 7 * crate::observation_metrics::RECORDS_OPERATIONS.len();
     let raw_bytes = serde_json::to_vec(&snapshot).unwrap().len();
-    assert_eq!(rows.len(), (STEMS.len() - 1) * 14 + records_series);
+    assert_eq!(rows.len(), (STEMS.len() - 1) * 14 + records_series + 13);
     assert_eq!(observed["declared_but_unobserved"], rows.len() - 2);
     let directory = tempfile::tempdir().unwrap();
     let mut encoded = snapshot.clone();
@@ -1365,6 +1365,8 @@ fn metric_registry() {
             count,
             if stem == "records__root__sig__design__records" {
                 records_series
+            } else if stem == "host__root__sig__design__storage" {
+                27
             } else {
                 14
             }
@@ -1670,6 +1672,39 @@ fn host_owner_accounting() {
                 .all(|row| row["counter"] == 0)
         );
     }
+}
+
+/// Claim: Storage commit, rollback and query measurements use only HOST's finite declared series; unrelated owners and an undeclared storage name cannot acquire a series.
+/// ´claim:cli:storage-instruments-retain-bounded-owner-accounting´
+/// ´test:unit:storage-instrument-accounting´
+#[test]
+fn storage_instrument_accounting() {
+    let (observation, _, _) = fixture();
+    metrics::with_local_recorder(&observation.recorder, || {
+        metrics::counter!("host__root__sig__design__storage__queries").increment(3);
+        metrics::counter!("host__root__sig__design__storage__commits").increment(1);
+        metrics::counter!("host__root__sig__design__storage__rollbacks").increment(2);
+        metrics::gauge!("host__root__sig__design__storage__active_transactions").set(0.0);
+        metrics::histogram!("host__root__sig__design__storage__query_elapsed_seconds").record(0.25);
+    });
+    let summary = observation.recorder.snapshot(true);
+    let rows = summary["instruments"].as_array().unwrap();
+    for (name, expected) in [("queries", 3), ("commits", 1), ("rollbacks", 2)] {
+        let suffix = format!("__{name}");
+        let matches: Vec<_> = rows
+            .iter()
+            .filter(|r| r["name"].as_str().unwrap().ends_with(&suffix))
+            .collect();
+        assert_eq!(matches.len(), 1);
+        assert_eq!(matches[0]["name"], format!("host__root__sig__design__storage{suffix}"));
+        assert_eq!(matches[0]["counter"], expected);
+    }
+    assert_eq!(summary["lost_updates"], 0);
+    metrics::with_local_recorder(&observation.recorder, || {
+        metrics::counter!("host__root__sig__design__storage__unregistered").increment(1);
+        metrics::counter!("execwrap__root__rule__observe__privacy__commits").increment(1);
+    });
+    assert_eq!(observation.recorder.snapshot(true)["lost_updates"], 2);
 }
 
 fn digest_hex(bytes: &[u8]) -> String {

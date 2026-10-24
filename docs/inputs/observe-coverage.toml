@@ -27,11 +27,11 @@ generators = 11
 
 [[rows]]
 name = "pn-host"
-operations = 22
-instrumented = 8
-exceptions = 14
+operations = 38
+instrumented = 20
+exceptions = 18
 helpers = 0
-generators = 1
+generators = 11
 
 [[rows]]
 name = "pn-interchange"
@@ -43,8 +43,8 @@ generators = 89
 
 [[rows]]
 name = "pn-records"
-operations = 91
+operations = 95
 instrumented = 38
-exceptions = 53
+exceptions = 57
 helpers = 0
 generators = 75

@@ -83,6 +83,10 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == "storage-vectors" and standing == "recomputable":
+        from storage_vectors import check
+        values = check(relative_file(root, rule["source"]))
+        return lambda value, _line: value in values
     if kind == "policy-vectors" and standing == "recomputable":
         from policy_vectors import check
         values = check(relative_file(root, rule["source"]))

@@ -74,9 +74,10 @@ fn impostor_authentication() {
             (0, Refusal::PrematureAuthenticationOk),
             (99, Refusal::UnsupportedAuthentication),
         ] {
-            let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 42101))
+            let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0))
                 .await
                 .unwrap();
+            let port = listener.local_addr().unwrap().port();
             let server = tokio::spawn(async move {
                 let (mut stream, _) = listener.accept().await.unwrap();
                 let length = stream.read_u32().await.unwrap();
@@ -91,7 +92,7 @@ fn impostor_authentication() {
                     "forbidden authentication received a response"
                 );
             });
-            let bytes = fixture(42101);
+            let bytes = fixture(port);
             let config = Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
             assert_eq!(
                 tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
@@ -111,14 +112,15 @@ fn impostor_authentication() {
 #[test]
 fn authentication_disconnect() {
     runtime().block_on(async {
-        let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 42102))
+        let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0))
             .await
             .unwrap();
+        let port = listener.local_addr().unwrap().port();
         let server = tokio::spawn(async move {
             let (socket, _) = listener.accept().await.unwrap();
             drop(socket);
         });
-        let bytes = fixture(42102);
+        let bytes = fixture(port);
         let config = Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
         let result = tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
             .await
@@ -156,9 +158,10 @@ fn impostor_server_proof() {
         stream.write_all(data).await.unwrap();
     }
     runtime().block_on(async {
-        let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 42103))
+        let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0))
             .await
             .unwrap();
+        let port = listener.local_addr().unwrap().port();
         let server = tokio::spawn(async move {
             let (mut stream, _) = listener.accept().await.unwrap();
             let length = stream.read_u32().await.unwrap();
@@ -185,7 +188,7 @@ fn impostor_server_proof() {
             let mut response = [0];
             assert_eq!(stream.read(&mut response).await.unwrap(), 0);
         });
-        let bytes = fixture(42103);
+        let bytes = fixture(port);
         let config = Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
         assert_eq!(
             tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
@@ -213,9 +216,10 @@ fn scram_bound_refusals() {
             ("offer", Refusal::UnsupportedAuthentication),
             ("error", Refusal::ServerAuthentication),
         ] {
-            let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 42105))
+            let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0))
                 .await
                 .unwrap();
+            let port = listener.local_addr().unwrap().port();
             let server = tokio::spawn(async move {
                 let (mut stream, _) = listener.accept().await.unwrap();
                 let length = stream.read_u32().await.unwrap();
@@ -255,7 +259,7 @@ fn scram_bound_refusals() {
                 let mut response = [0];
                 assert_eq!(stream.read(&mut response).await.unwrap(), 0, "refusal must precede proof");
             });
-            let config = Configuration::acquire(Some("host-secured"), &mut fixture(42105).as_slice()).unwrap();
+            let config = Configuration::acquire(Some("host-secured"), &mut fixture(port).as_slice()).unwrap();
             let result = tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
                 .await
                 .unwrap();

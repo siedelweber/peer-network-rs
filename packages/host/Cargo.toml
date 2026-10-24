@@ -11,6 +11,9 @@ version.workspace = true
 [dependencies]
 cli-common.workspace = true
 tracing.workspace = true
+metrics.workspace = true
+pn-records = { path = "../records" }
+pn-interchange = { path = "../interchange" }
 secrecy.workspace = true
 tokio-postgres = { version = "=0.7.18", default-features = false }
 tokio = { version = "=1.54.1", default-features = false, features = ["rt", "net", "io-util", "sync", "time"] }
@@ -22,6 +25,7 @@ base64 = { version = "=0.23.1", default-features = false }
 
 [dev-dependencies]
 serde_json.workspace = true
+pn-records = { path = "../records", features = ["test-support"] }
 
 [lints]
 workspace = true

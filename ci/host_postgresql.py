@@ -7,6 +7,39 @@ import shutil
 import subprocess
 import sys
 import tomllib
+import socket
+import time
+from contextlib import contextmanager
+
+@contextmanager
+def port_selection():
+    """Serialize allocation until PostgreSQL owns its reserved TCP port.
+
+    The Linux abstract socket is common to this user's gate processes, without
+    relying on their checkout or TMPDIR. The kernel releases it on process exit.
+    """
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as lock:
+        deadline = time.monotonic() + 60
+        while True:
+            try:
+                lock.bind('\0pn-host-postgresql-ports-' + str(os.getuid()))
+                break
+            except OSError as error:
+                if error.errno != 98 or time.monotonic() >= deadline:
+                    raise RuntimeError('PostgreSQL port allocation unavailable') from None
+                time.sleep(0.05)
+        for port in range(42100, 42120):
+            with socket.socket() as reservation:
+                try:
+                    reservation.bind(('127.0.0.1', port))
+                except OSError:
+                    continue
+                # Keep the allocation mutex through server startup. All gate
+                # allocators use this mutex; the server then owns the port.
+                reservation.close()
+                yield port
+                return
+        raise RuntimeError('PostgreSQL reserved port range exhausted')
 
 def binary_directory():
     value = os.environ.get('PN_POSTGRESQL_BIN')
@@ -37,7 +70,12 @@ def dependency_pins(packages, reviewed):
             if len(choices)!=1:
                 raise ValueError('ambiguous host lock edge')
             pending.extend(choices)
-    actual={name+' '+version:package['checksum'] for (name,version),package in seen.items() if 'source' in package}
+    numeric=tomllib.loads(Path('docs/inputs/numeric-dependencies.toml').read_text())['rows']
+    admitted_git={(row['name'],row['version']):row['source'] for row in numeric if row.get('source','').startswith('git+')}
+    for (name,version),package in seen.items():
+        if package.get('source','').startswith('git+') and admitted_git.get((name,version))!=package['source']:
+            raise ValueError('host dependency closure differs from reviewed git pins')
+    actual={name+' '+version:package['checksum'] for (name,version),package in seen.items() if package.get('source','').startswith('registry+')}
     expected={row['name']:row['checksum'] for row in reviewed}
     if len(expected)!=len(reviewed) or actual!=expected:
         raise ValueError('host dependency closure differs from reviewed archive pins')
@@ -69,12 +107,15 @@ def start(root):
     (root/'password').chmod(0o600)
     with (root/'fixture.log').open('wb') as log:
         command([binary_directory()/'initdb','-D',root/'data','--locale-provider=libc','--locale=C','--encoding=UTF8','-U','private_role_fixture_731','--auth=scram-sha-256','--pwfile',root/'password'],log)
-        with (root/'data'/'postgresql.conf').open('a') as config:
-            config.write("\nlisten_addresses='127.0.0.1'\nport=42100\nunix_socket_directories='"+str(root/'socket')+"'\nmax_connections=20\nshared_buffers='16MB'\nlog_line_prefix=''\ntimezone='Pacific/Honolulu'\ndatestyle='SQL, DMY'\n")
-        command([binary_directory()/'pg_ctl','-D',root/'data','-l',root/'server.log','-w','start'],log)
+        with port_selection() as port:
+            with (root/'data'/'postgresql.conf').open('a') as config:
+                config.write("\nlisten_addresses='127.0.0.1'\nport="+str(port)+"\nunix_socket_directories='"+str(root/'socket')+"'\nmax_connections=64\nshared_buffers='16MB'\nlog_line_prefix=''\ntimezone='Pacific/Honolulu'\ndatestyle='SQL, DMY'\n")
+            command([binary_directory()/'pg_ctl','-D',root/'data','-l',root/'server.log','-w','start'],log)
         env = dict(os.environ, PGPASSWORD=password)
-        command([binary_directory()/'createdb','-h',root/'socket','-p','42100','-U','private_role_fixture_731','private_database_fixture_731'],log,env)
-    base = dict(transport='unix',endpoint=str(root/'socket'/'.s.PGSQL.42100'),port='42100',user='private_role_fixture_731',password=password,database='private_database_fixture_731')
+        command([binary_directory()/'createdb','-h',root/'socket','-p',port,'-U','private_role_fixture_731','private_database_fixture_731'],log,env)
+        for suffix in ('storage','storage-race','storage-rebuild','storage-schema','storage-restart','storage-constants','storage-trace-initial','storage-trace-default','storage-trace-trace'):
+            command([binary_directory()/'createdb','-h',root/'socket','-p',port,'-U','private_role_fixture_731','private_'+suffix.replace('-','_')+'_731'],log,env)
+    base = dict(transport='unix',endpoint=str(root/'socket'/('.s.PGSQL.'+str(port))),port=str(port),user='private_role_fixture_731',password=password,database='private_database_fixture_731')
     configurations = {
         'unix':base,
         'tcp':dict(base,transport='tcp',endpoint='127.0.0.1'),
@@ -82,9 +123,12 @@ def start(root):
         'unknown-role':dict(base,user='private_unknown_role_fixture_731'),
         'unknown-database':dict(base,database='private_unknown_database_fixture_731'),
         'absent-socket':dict(base,endpoint=str(root/'absent_private_socket')),
-        'refused-port':dict(base,transport='tcp',endpoint='127.0.0.1',port='42104'),
-        'unreachable-host':dict(base,transport='tcp',endpoint='127.0.0.2',port='42104'),
+        # Gate servers bind only 127.0.0.1. Their own reserved port is never
+        # another gate's endpoint on these distinct loopback addresses.
+        'refused-port':dict(base,transport='tcp',endpoint='127.0.0.2'),
+        'unreachable-host':dict(base,transport='tcp',endpoint='127.0.0.3'),
     }
+    configurations.update({suffix:dict(base,database='private_'+suffix.replace('-','_')+'_731') for suffix in ('storage','storage-race','storage-rebuild','storage-schema','storage-restart','storage-constants','storage-trace-initial','storage-trace-default','storage-trace-trace')})
     for name, data in configurations.items():
         path = root/(name+'.json')
         path.write_text(json.dumps(data))

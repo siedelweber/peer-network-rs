@@ -52,6 +52,23 @@ const RECORDS_MEASURES: [(&str, &str, &str); 8] = [
     ("input_bytes", "histogram", "bytes"),
 ];
 
+// Storage accounting is distinct from generic operation invocation totals.
+const HOST_MEASURES: [(&str, &str, &str); 13] = [
+    ("encoded_bytes", "counter", "bytes"),
+    ("decoded_bytes", "counter", "bytes"),
+    ("queries", "counter", "count"),
+    ("successor_attempts", "counter", "count"),
+    ("commits", "counter", "count"),
+    ("rollbacks", "counter", "count"),
+    ("retries", "counter", "count"),
+    ("refusals", "counter", "count"),
+    ("active_transactions", "gauge", "count"),
+    ("queue_depth", "gauge", "count"),
+    ("package_bytes", "histogram", "bytes"),
+    ("query_elapsed_seconds", "histogram", "seconds"),
+    ("transaction_elapsed_seconds", "histogram", "seconds"),
+];
+
 #[derive(Clone, Default)]
 struct Totals {
     observed: bool,
@@ -189,6 +206,8 @@ impl JsonRecorder {
         for stem in STEMS {
             let extra: &[(&str, &str, &str)] = if stem == "records__root__sig__design__records" {
                 &RECORDS_MEASURES
+            } else if stem == "host__root__sig__design__storage" {
+                &HOST_MEASURES
             } else {
                 &[]
             };

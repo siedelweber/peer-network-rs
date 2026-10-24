@@ -267,3 +267,15 @@ establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer and escape literals denote protocol bytes, ASCII ranges and Unicode scalar boundaries; no bare identity-shaped value is admitted."
 paths = ["packages/host/**/*.rs"]
+
+
+[[rows]]
+family = "storage-recipe-vectors"
+group = "storage identity correspondence"
+measures = "Permanent SHA-256 domain framing over canonical public values"
+producer = "ci/storage_vectors.py"
+establishment = "recomputable"
+reader = "storage-vectors"
+source = "packages/host/src/storage/vectors.json"
+definition = "Independent hashlib framing checks each recipe identifier, zero separator and canonical empty-array bytes before accepting the literal digest."
+paths = ["packages/host/src/storage/vectors.json"]

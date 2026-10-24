@@ -77,7 +77,7 @@
     {
       "kind": "tier",
       "name": "service",
-      "reason": "The gate owns PostgreSQL 19 RC 1 for transport evidence only; storage persistence and other service suites remain held.",
+      "reason": "The gate owns PostgreSQL 19 RC 1 for transport and library storage evidence; executable activation, admitted epoch transactions and other service integrations remain held.",
       "status": "active"
     },
     {
@@ -190,7 +190,8 @@
         "cli-common::tests::publication::report::an_absent_report_is_published_publicly_readable",
         "cli-common::tests::publication::report::a_current_report_with_a_correct_mode_is_untouched",
         "cli-common::tests::publication::report::a_stale_report_is_rewritten",
-        "cli-common::tests::publication::report::an_owner_only_current_report_is_mode_repaired_without_rewriting"
+        "cli-common::tests::publication::report::an_owner_only_current_report_is_mode_repaired_without_rewriting",
+        "cli-common::observation::tests::storage_instrument_accounting"
       ],
       "implementation": "cli-common-rust",
       "kind": "suite",
@@ -2623,11 +2624,11 @@
     },
     {
       "cases": [],
-      "contract": "SCD2 as-of reads, intervals and atomic succession",
+      "contract": "Admitted epoch atomicity and integrated storage corpus beyond the executed carrier contract",
       "implementation": "",
       "kind": "suite",
       "name": "planned-storage",
-      "reason": "contract not implemented; first contributing domain bite 2",
+      "reason": "The carrier SCD2 contract runs in pn-host::storage. The epoch implementer supplies admitted results in bite 5; the host implementer integrates commit-admitted-epoch in bite 8; the verification implementer supplies integrated property/corpus reach in bite 11.",
       "status": "held",
       "tier": "service"
     },
@@ -3528,8 +3529,11 @@
       "tier": "service"
     },
     {
-      "budget": "pure-suite",
+      "budget": "postgresql-suite",
       "cases": [
+        "ci::test_host_runtime.HostRuntime.test_storage_statements",
+        "ci::test_host_runtime.HostRuntime.test_storage_restart",
+        "ci::test_host_runtime.HostRuntime.test_independent_instances",
         "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory",
         "ci::test_host_runtime.HostRuntime.test_dependency_pins",
         "ci::test_host_runtime.HostRuntime.test_public_transport",
@@ -3586,6 +3590,34 @@
       "runner": "nextest",
       "status": "active",
       "tier": "service"
+    },
+    {
+      "budget": "postgresql-suite",
+      "cases": [
+        "pn-host::storage::tests::storage_contract",
+        "pn-host::storage::tests::storage_competing_writers",
+        "pn-host::storage::tests::storage_rebuild",
+        "pn-host::storage::tests::storage_recognition_disclosure",
+        "pn-host::storage::tests::storage_schema_identity",
+        "pn-host::storage::tests::storage_historical_constants",
+        "pn-host::storage::tests::storage_digest_vectors",
+        "pn-host::storage::tests::storage_runtime",
+        "pn-host::storage::tests::storage_restart"
+      ],
+      "implementation": "pn-host-memory-and-postgresql",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-host::storage",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "service"
+    },
+    {
+      "contract": "Both adapters execute the same carrier succession roster; service-only cases identify PostgreSQL explicitly.",
+      "edition": "storage-v1",
+      "evidence": "real",
+      "kind": "implementation",
+      "name": "pn-host-memory-and-postgresql"
     }
   ]
 }

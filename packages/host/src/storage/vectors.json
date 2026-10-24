@@ -1,0 +1,16 @@
+[
+  {
+    "recipe": "pn-host/storage-payload/v1",
+    "canonical_bytes": [
+      128
+    ],
+    "digest": "aea02136686f0b152797afe8fde9a92ca42baa94ea261a80a5540d64fc2cd197"
+  },
+  {
+    "recipe": "pn-host/recognition-disclosure/v1",
+    "canonical_bytes": [
+      128
+    ],
+    "digest": "7d7c931ec2b0bc62b5d0782df916eee19f4dc9af4f8def20bd0d4f1f87655d00"
+  }
+]

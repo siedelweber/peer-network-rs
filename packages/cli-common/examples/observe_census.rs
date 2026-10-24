@@ -372,7 +372,7 @@ impl Census {
                     if module == "observation_metrics::"
                         && matches!(
                             value.ident.to_string().as_str(),
-                            "STEMS" | "MEASURES" | "OUTCOMES" | "RECORDS_MEASURES"
+                            "STEMS" | "MEASURES" | "OUTCOMES" | "RECORDS_MEASURES" | "HOST_MEASURES"
                         ) =>
                 {
                     self.constants.push(json!({"name":value.ident.to_string(),"value":literal_data(&value.expr).ok_or("nonliteral metric declaration")?}));
