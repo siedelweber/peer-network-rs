@@ -37,8 +37,8 @@ impl Configuration {
             &"secret connection input",
         );
         let result = Self::read(case, reader);
-        if result.is_err() {
-            tracing::info!(outcome = "refusal");
+        if let Err(cause) = &result {
+            tracing::warn!(outcome = "refusal", cause = ?cause, "store configuration refused");
         } else {
             tracing::info!(store_link_case = "host-secured");
         }

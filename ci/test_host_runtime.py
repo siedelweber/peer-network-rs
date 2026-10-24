@@ -7,8 +7,14 @@ import time
 import unittest
 import tomllib
 import copy
+import re
 
 from test_observe_runtime import expanded, distribution, witness
+
+
+def private_occurs(value, text):
+    # A port token must not mistake an unrelated clock fraction for reachability.
+    return bool(re.search(r'(?<![\d.])'+re.escape(value)+r'(?![\d.])',text)) if value.isdecimal() else value in text
 
 
 class HostRuntime(unittest.TestCase):
@@ -27,15 +33,18 @@ class HostRuntime(unittest.TestCase):
                 dependency_pins(packages,bad)
 
     def test_public_transport(self):
-        """Claim: Default and trace runs against the real host-secured service retain identical public results and lossless host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials.
+        """Claim: After a successful-query drain barrier, default and trace runs against the real host-secured service retain identical public results and lossless host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials.
         ´claim:discipline:host-transport-observation-retains-the-secret-boundary´
         ´test:integration:test-public-transport´
         """
+        print(flush=True)
         target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'/'examples'/'transport_evidence'
         root=Path(os.environ['PN_HOST_TEST_ROOT'])
         configurations=[json.loads(path.read_text()) for path in root.glob('*.json')]
         private={str(value) for config in configurations for key,value in config.items() if key!='transport'}
         outputs=[];counts=[]
+        self.assertTrue(private_occurs('42100','{"port":42100}'))
+        self.assertFalse(private_occurs('42100','{"duration":0.42100}'))
         for level in ('default','trace'):
             started=time.monotonic()
             env=dict(os.environ,PN_OBSERVE_LEVEL=level)
@@ -45,10 +54,17 @@ class HostRuntime(unittest.TestCase):
             witness([str(target)],result.returncode,wall,result.stderr)
             self.assertEqual(result.returncode,0,result.stderr.decode())
             rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
+            warnings=[line for line in result.stderr.splitlines() if json.loads(line).get('level') in ('WARN','ERROR')]
+            self.assertEqual(len(warnings),9)
+            for line in warnings:
+                print(line.decode(),flush=True)
             text=json.dumps(rows,ensure_ascii=False)
+            for cause in ('MissingCase','HeldCase','UnknownCase'):
+                self.assertIn(cause,text)
+            self.assertNotIn('private_unread_input',text)
             for value in private:
-                self.assertNotIn(value,text)
-                self.assertNotIn(value,result.stdout.decode())
+                self.assertFalse(private_occurs(value,text))
+                self.assertFalse(private_occurs(value,result.stdout.decode()))
             status=next(row for row in rows if row['kind']=='observation_status')
             self.assertEqual(status['lost_records'],0)
             self.assertEqual(status['undelivered_records'],0)
@@ -66,3 +82,4 @@ class HostRuntime(unittest.TestCase):
             print(f'HOST-RUNTIME level={level} status=0 wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]} host_counts='+json.dumps({str(k):v for k,v in host.items()},sort_keys=True))
         self.assertEqual(outputs[0],outputs[1])
         self.assertEqual(counts[0],counts[1])
+        print(flush=True)

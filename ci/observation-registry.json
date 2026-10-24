@@ -10573,13 +10573,13 @@
     {
       "operation": "pn-host::packages/host/src/config.rs::config::Configuration::acquire",
       "class_decision": "host-transport",
-      "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"config::Configuration::acquire\" , & \"secret connection input\" ,) ; let result = Self :: read (case , reader) ; if result . is_err () { tracing :: info ! (outcome = \"refusal\") ; } else { tracing :: info ! (store_link_case = \"host-secured\") ; } operation . finish (& result) ; result }",
+      "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"config::Configuration::acquire\" , & \"secret connection input\" ,) ; let result = Self :: read (case , reader) ; if let Err (cause) = & result { tracing :: warn ! (outcome = \"refusal\" , cause = ? cause , \"store configuration refused\") ; } else { tracing :: info ! (store_link_case = \"host-secured\") ; } operation . finish (& result) ; result }",
       "assessments": {
         "full_recording": "host-full_recording",
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. The public case is checked before the reader is touched, and field decoding allocates only secret-owned buffers."
+      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. The public case is checked before the reader is touched, and field decoding allocates only secret-owned buffers. Default WARN delivery contains only the fieldless bounded refusal cause; no private input is formatted."
     },
     {
       "operation": "pn-host::packages/host/src/config.rs::config::<Configuration as fmt :: Debug>::fmt",
@@ -10716,13 +10716,13 @@
     {
       "operation": "pn-host::packages/host/src/lib.rs::Session::connect",
       "class_decision": "host-transport",
-      "body": "{ let result = Self :: connect_inner (config) . await ; if let Err (cause) = & result { tracing :: info ! (outcome = if matches ! (cause , Refusal :: Transport | Refusal :: Entropy) { \"error\" } else { \"refusal\" }) ; } result }",
+      "body": "{ let result = Self :: connect_inner (config) . await ; if let Err (cause) = & result { tracing :: warn ! (cause = ? cause , outcome = if matches ! (cause , Refusal :: Transport | Refusal :: Entropy) { \"error\" } else { \"refusal\" }) ; } result }",
       "assessments": {
         "full_recording": "host-full_recording",
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. Future-aware instrumentation enters only while polled; forwarding tasks retain the span and are aborted with their owner."
+      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. Future-aware instrumentation enters only while polled; forwarding tasks retain the span and are aborted with their owner. Default WARN delivery contains only the fieldless bounded refusal cause; no private input is formatted."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::Session::client",
@@ -10738,13 +10738,13 @@
     {
       "operation": "pn-host::packages/host/src/lib.rs::Session::cancel",
       "class_decision": "host-transport",
-      "body": "{ let result = self . cancel_inner () . await ; if result . is_err () { tracing :: info ! (outcome = \"error\") ; } result }",
+      "body": "{ let result = self . cancel_inner () . await ; if let Err (cause) = & result { tracing :: warn ! (outcome = \"error\" , cause = ? cause , \"store cancellation failed\") ; } result }",
       "assessments": {
         "full_recording": "host-full_recording",
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. Future-aware instrumentation enters only while polled; forwarding tasks retain the span and are aborted with their owner."
+      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. Future-aware instrumentation enters only while polled; forwarding tasks retain the span and are aborted with their owner. Default WARN delivery contains only the fieldless bounded refusal cause; no private input is formatted."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::Session::private_diagnostics",

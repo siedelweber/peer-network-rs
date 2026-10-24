@@ -157,7 +157,8 @@ impl Session {
     pub async fn connect(config: Configuration) -> Result<Self, Refusal> {
         let result = Self::connect_inner(config).await;
         if let Err(cause) = &result {
-            tracing::info!(
+            tracing::warn!(
+                cause = ?cause,
                 outcome = if matches!(cause, Refusal::Transport | Refusal::Entropy) {
                     "error"
                 } else {
@@ -246,8 +247,8 @@ impl Session {
     )]
     pub async fn cancel(&self) -> Result<(), Refusal> {
         let result = self.cancel_inner().await;
-        if result.is_err() {
-            tracing::info!(outcome = "error");
+        if let Err(cause) = &result {
+            tracing::warn!(outcome = "error", cause = ?cause, "store cancellation failed");
         }
         result
     }

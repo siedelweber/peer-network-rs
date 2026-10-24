@@ -18,10 +18,6 @@
           "target": "CLICOMMON"
         },
         {
-          "owner": "ROOT",
-          "target": "HOST"
-        },
-        {
           "owner": "VERIFICATION",
           "target": "TESTKIT"
         },

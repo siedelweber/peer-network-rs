@@ -15,6 +15,16 @@ fn main() {
 }
 
 async fn exercise() -> Result<(), Refusal> {
+    for (case, expected) in [
+        (None, Refusal::MissingCase),
+        (Some("guarded"), Refusal::HeldCase),
+        (Some("unknown"), Refusal::UnknownCase),
+    ] {
+        assert_eq!(
+            Configuration::acquire(case, &mut b"private_unread_input".as_slice()).unwrap_err(),
+            expected
+        );
+    }
     let root = std::env::var_os("PN_HOST_TEST_ROOT").ok_or(Refusal::ConfigurationIo)?;
     let mut file = std::fs::File::open(std::path::Path::new(&root).join("unix.json")).map_err(|_| Refusal::ConfigurationIo)?;
     let config = Configuration::acquire(Some("host-secured"), &mut file)?;
@@ -27,6 +37,17 @@ async fn exercise() -> Result<(), Refusal> {
     assert_eq!(row.get::<_, String>(0), "public_result_sentinel_731");
     let error = session.client().query_one("SELECT 1 / 0", &[]).await.unwrap_err();
     assert_eq!(error.as_db_error().unwrap().message(), "division by zero");
+    // An error is returned before its ReadyForQuery may be consumed. Complete a
+    // public query before teardown so both observation modes count the same work.
+    assert_eq!(
+        session
+            .client()
+            .query_one("SELECT 1::int4", &[])
+            .await
+            .unwrap()
+            .get::<_, i32>(0),
+        1
+    );
     drop(session);
     tokio::task::yield_now().await;
     for name in [
