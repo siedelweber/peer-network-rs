@@ -196,7 +196,7 @@
       "topic": "Closed-cluster units"
     },
     {
-      "ambiguity": "The inverse-gain interim rule, one-boundary width dominance, step bound and hysteresis do not fully specify a single replayable update for every case. (def:epoch:safety-threshold) (frontier:floor-calibration) (frontier:leverage-timing)",
+      "ambiguity": "The inverse-gain interim rule, one-boundary width dominance, step bound and hysteresis do not fully specify a single replayable update for every case. (def:epoch:safety-threshold) (frontier:floor-calibration) (rem:epoch:shared-burn-snapshot-rationale)",
       "class": "DEFECT",
       "id": "Q20",
       "instruction": "Certify ``cond:epoch:safety-declared-floor`` against the declared floor's exact defining object: enclosure refinement or rejection for the exact ridge, exact comparison with $3/37$ where the representation permits it. The wall remains computed, subject to the host contract's enclosure discipline. Publish the representation and comparison procedure, preserve one consummated debit vintage per epoch, and keep the declaration fixed; a change is public and structural with regenerated evidence, never a host-policy choice.",

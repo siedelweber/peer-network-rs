@@ -38,7 +38,7 @@
     },
     {
       "category": "chapter",
-      "count": 205,
+      "count": 207,
       "name": "6 Epoch"
     },
     {
@@ -48,7 +48,7 @@
     },
     {
       "category": "chapter",
-      "count": 21,
+      "count": 30,
       "name": "8 Transport"
     },
     {
@@ -78,7 +78,7 @@
     },
     {
       "category": "chapter",
-      "count": 101,
+      "count": 98,
       "name": "D Dynamics"
     },
     {
@@ -93,7 +93,7 @@
     },
     {
       "category": "chapter",
-      "count": 71,
+      "count": 59,
       "name": "G Frontiers"
     },
     {
@@ -144,7 +144,7 @@
     },
     {
       "category": "totals",
-      "count": 1634,
+      "count": 1630,
       "name": "inventory"
     },
     {
@@ -154,12 +154,12 @@
     },
     {
       "category": "labels",
-      "count": 1543,
+      "count": 1549,
       "name": "explicit"
     },
     {
       "category": "labels",
-      "count": 91,
+      "count": 81,
       "name": "environment"
     },
     {
