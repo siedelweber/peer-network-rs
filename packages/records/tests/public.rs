@@ -223,6 +223,7 @@ fn declaration(edition: u64, announced_at: u64, effective_at: u64) -> Declaratio
         },
         announced_at,
         effective_at,
+        content: pn_records::DeclarationContent::Opaque,
     }
 }
 

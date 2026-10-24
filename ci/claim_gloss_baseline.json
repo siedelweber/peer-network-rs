@@ -877,6 +877,7 @@
     "pn-records::public::burn::policy_declaration_binding": "",
     "ci::test_observe_runtime.Processes.test_cutoff_capture_interval": "",
     "pn-records::public::burn::recognition_basis": "",
-    "cli-common::observation::tests::counter_contention": ""
+    "cli-common::observation::tests::counter_contention": "",
+    "pn-records::public::burn::policy_content_binding": ""
   }
 }

@@ -1794,20 +1794,12 @@
       "review": "Read four index-zero mutations: initial name, predecessor, acceptance and snapshot. Each refuses as Initial; changing a valid successor acceptance changes its structural identity without changing its lookup name. The zero-index check itself is covered by isolated_recognition_premises."
     },
     {
-      "operation": "pn-records::public::burn::policy_declaration_binding",
-      "path": "packages/records/tests/public/burn.rs",
-      "claim": "RECORDS::claim:burn:genesis-policy-requires-effective-declaration",
-      "before": "",
-      "after": "Claim: Only the marker/policy edition effective at genesis binds; a later announcement,",
-      "review": "Read the declaration binding assertions and runtime path: the fixed family must resolve at genesis, identity and edition must agree, and missing or late declarations refuse. Runtime accounting includes declaration validation and selection; the verifier remains a fixture."
-    },
-    {
       "operation": "ci::test_observe_runtime.Processes.test_burn_entry",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
       "before": "",
-      "after": "Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all twenty-four carrier and declaration boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.",
-      "review": "Read the declaration binding assertions and runtime path: the fixed family must resolve at genesis, identity and edition must agree, and missing or late declarations refuse. Runtime accounting includes declaration validation and selection; the verifier remains a fixture."
+      "after": "Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all thirty carrier, declaration and content-digest boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.",
+      "review": "Read the three fixture recognition calls: each now computes a declaration digest and checks it at binding, adding six successful digest operations. The witness asserts those six by operation name, twenty-eight successes and two refusals overall, and identical default/trace distributions and command output."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_cutoff_capture_interval",
@@ -1896,6 +1888,22 @@
       "before": "",
       "after": "Claim: Holding every totals mutex cannot lose or hide started and completed counter updates from eight concurrent writers; gauge and histogram contention remains reported separately, without blocking the writers.",
       "review": "Read the held-lock threaded increments and snapshot assertions, and the repeated snapshot SDK delta assertions. Counter totals remain exact under deliberately unavailable lossy totals locks; repeated collection does not duplicate SDK deltas."
+    },
+    {
+      "operation": "pn-records::public::burn::policy_declaration_binding",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:genesis-policy-requires-effective-declaration",
+      "before": "",
+      "after": "Claim: Only the marker/policy edition effective at genesis binds; a later announcement,",
+      "review": "Read the fixed validated deployment and policy declarations: moving the payload genesis refuses independently of edition selection; changing each of eight remaining policy fields preserves edition and publication but refuses its digest. The existing selection witness retains absent, late and wrong-edition refusals, with moved publication/genesis now classified as deployment binding."
+    },
+    {
+      "operation": "pn-records::public::burn::policy_content_binding",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:policy-binding-fixes-genesis-and-content",
+      "before": "",
+      "after": "Claim: A policy cannot move the deployment genesis or substitute any complete payload at an unchanged edition and publication; only the structural declaration and its fixed digest authorize binding.",
+      "review": "Read the fixed validated deployment and policy declarations: moving the payload genesis refuses independently of edition selection; changing each of eight remaining policy fields preserves edition and publication but refuses its digest. The existing selection witness retains absent, late and wrong-edition refusals, with moved publication/genesis now classified as deployment binding."
     }
   ]
 }

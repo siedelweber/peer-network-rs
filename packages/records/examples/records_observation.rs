@@ -31,6 +31,7 @@ fn main() -> ExitCode {
         },
         announced_at: 1,
         effective_at: 2,
+        content: pn_records::DeclarationContent::Opaque,
     }];
     let history = common::resolved();
     let accepted = validate_record(&records, &history, &declarations).expect("complete fixture");

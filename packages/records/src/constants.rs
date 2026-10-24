@@ -1,7 +1,9 @@
 //! Declaration payloads joined to the already validated opaque edition history.
 //! (´def:declarations:constants-edition´)
+use crate::DeclarationContent;
 use crate::numerics::{Floor, Literal, Numeraire};
 use crate::{DeclarationId, ValidatedRecords, ValidationError, select_effective_declaration};
+use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 
 /// Bind the marker/policy payload to the declaration effective at its genesis.
@@ -9,7 +11,7 @@ use std::collections::BTreeSet;
 /// (´def:burn:marker-policy´)
 /// # Errors
 /// Refuses invalid policy content, absent effective declarations, and mismatched identity,
-/// edition or publication time. Other declaration families need no marker payload.
+/// edition, publication time or complete content digest. Other declaration families need no marker payload.
 #[tracing::instrument(
     name = "sig:design:records",
     fields(
@@ -28,12 +30,34 @@ pub fn bind_marker_policy(
 ) -> Result<crate::burn::ValidatedPolicy, crate::burn::BurnError> {
     let result = (|| {
         let validated = crate::burn::validate_policy(input.clone(), burn)?;
-        let declaration = select_effective_declaration(records, "marker", "policy", input.genesis_at)?;
+        let mut deployments = records
+            .declarations
+            .iter()
+            .filter(|d| d.id.namespace == "deployment" && d.id.name == "genesis");
+        let deployment = deployments.next().ok_or(crate::burn::BurnError::DeploymentBinding)?;
+        let DeclarationContent::Deployment { genesis_at } = deployment.content else {
+            return Err(crate::burn::BurnError::DeploymentBinding);
+        };
+        if deployments.next().is_some()
+            || deployment.announced_at > genesis_at
+            || deployment.effective_at > genesis_at
+            || input.genesis_at != genesis_at
+        {
+            return Err(crate::burn::BurnError::DeploymentBinding);
+        }
+        let declaration = select_effective_declaration(records, "marker", "policy", genesis_at)?;
         if input.identity != declaration.id.name
             || input.edition != declaration.id.edition.to_string()
             || input.published_at != declaration.announced_at
         {
             return Err(crate::burn::BurnError::PolicyBinding);
+        }
+        if declaration.content
+            != (DeclarationContent::MarkerPolicy {
+                digest: marker_policy_digest(&input),
+            })
+        {
+            return Err(crate::burn::BurnError::PolicyDigest);
         }
         Ok(validated)
     })();
@@ -41,6 +65,54 @@ pub fn bind_marker_policy(
         super::refused();
     }
     result
+}
+
+/// Compute the internal, versioned SHA-256 commitment to every policy field.
+/// (´def:burn:marker-policy´)
+/// This is not a protocol document encoding. Fixed field order, u64 big-endian lengths,
+/// UTF-8 strings and explicit enum tags make the framing unambiguous.
+#[must_use]
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "digest-marker-policy",
+        source_item = "constants::marker_policy_digest"
+    ),
+    ret
+)]
+pub fn marker_policy_digest(input: &crate::burn::PolicyInput) -> [u8; 32] {
+    use crate::burn::{CandidateRule, Encoding};
+    let mut digest = Sha256::new();
+    digest.update(b"pn-records/marker-policy/v1\0");
+    for text in [
+        &input.identity,
+        &input.edition,
+        &input.sequence,
+        &input.initial_marker,
+        &input.placement_procedure,
+        &input.cadence,
+        &input.verification_profile,
+    ] {
+        digest.update((text.len() as u64).to_be_bytes());
+        digest.update(text.as_bytes());
+    }
+    for value in [input.published_at, input.genesis_at, input.stability_buffer] {
+        digest.update(value.to_be_bytes());
+    }
+    digest.update([u8::from(input.open_placement)]);
+    digest.update([match input.encoding {
+        Encoding::CompleteList => 0,
+        Encoding::PublicCommitment => 1,
+        Encoding::WholePrefixAcceptAll => 2,
+    }]);
+    digest.update([match input.candidate_rule {
+        CandidateRule::FirstValidInHistoryOrder => 0,
+        CandidateRule::UniquePerIndex => 1,
+    }]);
+    digest.finalize().into()
 }
 
 /// A retained source definition, distinct from computed values and rounded displays.

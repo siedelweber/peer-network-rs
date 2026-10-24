@@ -14,6 +14,7 @@ nrz-cas.workspace = true
 tracing.workspace = true
 thiserror.workspace = true
 metrics.workspace = true
+sha2.workspace = true
 
 [dev-dependencies]
 cli-common.workspace = true

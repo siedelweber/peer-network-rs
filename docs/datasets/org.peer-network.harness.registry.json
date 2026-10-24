@@ -3094,6 +3094,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::public::burn::policy_content_binding",
         "pn-records::public::burn::recognition_basis",
         "pn-records::public::burn::policy_declaration_binding",
         "pn-records::public::burn::isolated_recognition_premises",

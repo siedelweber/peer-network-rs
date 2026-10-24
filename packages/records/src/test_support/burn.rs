@@ -155,15 +155,30 @@ pub fn generate(words: &[u64]) -> BurnCase {
 pub fn recognize(case: BurnCase) -> Result<RecognizedMarkers, BurnError> {
     let burn = validate_burn(case.burn)?;
     let history = crate::validate_history(&[], &[])?;
-    let declarations = [crate::Declaration {
-        id: crate::DeclarationId {
-            namespace: "marker".into(),
-            name: "policy".into(),
-            edition: 1,
+    let declarations = [
+        crate::Declaration {
+            id: crate::DeclarationId {
+                namespace: "marker".into(),
+                name: "policy".into(),
+                edition: 1,
+            },
+            announced_at: 0,
+            effective_at: 0,
+            content: crate::DeclarationContent::MarkerPolicy {
+                digest: crate::constants::marker_policy_digest(&case.policy),
+            },
         },
-        announced_at: 0,
-        effective_at: 0,
-    }];
+        crate::Declaration {
+            id: crate::DeclarationId {
+                namespace: "deployment".into(),
+                name: "genesis".into(),
+                edition: 1,
+            },
+            announced_at: 0,
+            effective_at: 0,
+            content: crate::DeclarationContent::Deployment { genesis_at: 1 },
+        },
+    ];
     let records = crate::validate_record(&[], &history, &declarations)?;
     let policy = crate::constants::bind_marker_policy(&records, case.policy, &burn)?;
     let history = validate_marker_history(case.history, &policy, &FixtureVerifier)?;

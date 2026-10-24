@@ -1217,6 +1217,7 @@ dependencies = [
  "nrz-scalar",
  "pn-testkit",
  "serde_json",
+ "sha2",
  "thiserror",
  "tracing",
 ]

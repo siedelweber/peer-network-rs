@@ -1,10 +1,11 @@
 // Generated from ci/observation-registry.json by ci/observe.py --write-operation-vocabulary.
-pub(super) const RECORDS_OPERATIONS: [&str; 36] = [
+pub(super) const RECORDS_OPERATIONS: [&str; 37] = [
     "assemble-boundary-inputs",
     "bind-constants",
     "bind-marker-policy",
     "complete-act-access",
     "dependency-status",
+    "digest-marker-policy",
     "numeric-apply-cost",
     "numeric-burn",
     "numeric-burn-per-action",

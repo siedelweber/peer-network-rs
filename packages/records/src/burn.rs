@@ -88,6 +88,7 @@ pub struct PolicyInput {
     pub edition: String,
     pub sequence: String,
     pub published_at: u64,
+    /// Asserted copy only; binding requires the deployment structural declaration to agree.
     pub genesis_at: u64,
     pub initial_marker: String,
     pub open_placement: bool,
@@ -256,6 +257,10 @@ pub enum BurnError {
     PolicySelection(#[from] crate::ValidationError),
     #[error("policy identity, edition or publication differs from the declaration effective at genesis")]
     PolicyBinding,
+    #[error("missing, ambiguous or mismatched structural deployment genesis")]
+    DeploymentBinding,
+    #[error("marker policy content differs from its declared digest")]
+    PolicyDigest,
     #[error("missing required publication: {0:?}")]
     Publication(Disclosure),
     #[error("audit evidence belongs to another edition or sample convention")]

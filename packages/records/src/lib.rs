@@ -407,16 +407,30 @@ pub struct DeclarationId {
     pub edition: u64,
 }
 
+/// Family-specific structural content; opaque families bind their payload separately.
+/// (´def:acts:declarations´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum DeclarationContent {
+    /// A family whose content is bound separately.
+    Opaque,
+    /// Immutable deployment genesis, not selected by a marker policy payload.
+    Deployment { genesis_at: u64 },
+    /// SHA-256 of the complete marker policy under the internal policy digest framing.
+    MarkerPolicy { digest: [u8; 32] },
+}
+
 /// Announcement and effective boundaries for an opaque declaration identity.
 /// (´def:acts:declarations´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Declaration {
-    /// Immutable edition identity; contents belong to bite 2.
+    /// Immutable edition identity; content is keyed by declaration family.
     pub id: DeclarationId,
     /// Boundary at which this edition was publicly announced.
     pub announced_at: u64,
     /// First boundary where the edition is in force, not before announcement.
     pub effective_at: u64,
+    /// Structural deployment or policy content, otherwise an opaque family.
+    pub content: DeclarationContent,
 }
 
 /// Which immutable validated source resolves a public identity.

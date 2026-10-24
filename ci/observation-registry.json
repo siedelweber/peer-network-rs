@@ -5074,6 +5074,17 @@
     {
       "package": "pn-records",
       "path": "packages/records/src/constants.rs",
+      "item": "constants::marker_policy_digest",
+      "owner": "RECORDS",
+      "signature": "fn marker_policy_digest (input : & crate :: burn :: PolicyInput) -> [u8 ; 32]",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "digest-marker-policy"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
       "item": "constants::bind_constants",
       "owner": "RECORDS",
       "signature": "fn bind_constants (records : & ValidatedRecords , inputs : Vec < EditionInput >) -> Result < ConstantsHistory < '_ > , ConstantsError >",
@@ -5194,6 +5205,24 @@
     {
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarkers::basis",
+      "owner": "RECORDS",
+      "signature": "fn basis (& self) -> & RecognitionBasis",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
       "item": "burn::RecognizedMarkers::first_refusal",
       "owner": "RECORDS",
       "signature": "fn first_refusal (& self) -> Option < & CandidateRefusal >",
@@ -5287,24 +5316,6 @@
       "item": "burn::RecognizedMarker::destructions",
       "owner": "RECORDS",
       "signature": "fn destructions (& self) -> & BTreeMap < String , BurnRecord >",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "exception",
-      "exception": {
-        "rule": "ROOT::rule:observe:spans",
-        "kind": "inherited",
-        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
-        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
-        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
-        "class_decision": "public-records"
-      }
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::RecognizedMarkers::basis",
-      "owner": "RECORDS",
-      "signature": "fn basis (& self) -> & RecognitionBasis",
       "claim": "ROOT::sig:design:records",
       "shape": "shape-records",
       "mode": "exception",
@@ -5771,6 +5782,7 @@
           "bind-marker-policy",
           "complete-act-access",
           "dependency-status",
+          "digest-marker-policy",
           "numeric-apply-cost",
           "numeric-burn",
           "numeric-burn-per-action",
@@ -5824,6 +5836,7 @@
           "bind-marker-policy",
           "complete-act-access",
           "dependency-status",
+          "digest-marker-policy",
           "numeric-apply-cost",
           "numeric-burn",
           "numeric-burn-per-action",
@@ -10001,13 +10014,24 @@
     {
       "operation": "pn-records::packages/records/src/constants.rs::constants::bind_marker_policy",
       "class_decision": "public-records",
-      "body": "{ let result = (| | { let validated = crate :: burn :: validate_policy (input . clone () , burn) ? ; let declaration = select_effective_declaration (records , \"marker\" , \"policy\" , input . genesis_at) ? ; if input . identity != declaration . id . name || input . edition != declaration . id . edition . to_string () || input . published_at != declaration . announced_at { return Err (crate :: burn :: BurnError :: PolicyBinding) ; } Ok (validated) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "body": "{ let result = (| | { let validated = crate :: burn :: validate_policy (input . clone () , burn) ? ; let mut deployments = records . declarations . iter () . filter (| d | d . id . namespace == \"deployment\" && d . id . name == \"genesis\") ; let deployment = deployments . next () . ok_or (crate :: burn :: BurnError :: DeploymentBinding) ? ; let DeclarationContent :: Deployment { genesis_at } = deployment . content else { return Err (crate :: burn :: BurnError :: DeploymentBinding) ; } ; if deployments . next () . is_some () || deployment . announced_at > genesis_at || deployment . effective_at > genesis_at || input . genesis_at != genesis_at { return Err (crate :: burn :: BurnError :: DeploymentBinding) ; } let declaration = select_effective_declaration (records , \"marker\" , \"policy\" , genesis_at) ? ; if input . identity != declaration . id . name || input . edition != declaration . id . edition . to_string () || input . published_at != declaration . announced_at { return Err (crate :: burn :: BurnError :: PolicyBinding) ; } if declaration . content != (DeclarationContent :: MarkerPolicy { digest : marker_policy_digest (& input) , }) { return Err (crate :: burn :: BurnError :: PolicyDigest) ; } Ok (validated) }) () ; if result . is_err () { super :: refused () ; } result }",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "This body binds public policy identity, edition and publication to the fixed marker/policy declaration selected at genesis. Trace records the validated declaration history, candidate policy, disclosed burn evidence and typed result. Explicit refusal remains distinct from failure. No secret, verifier implementation or exporter handle enters this body; accounting supplies no binding value."
+      "item_premise": "This body binds public policy to the unique validated deployment genesis and the effective marker declaration, including its complete content digest. Trace records arguments and the typed refusal or validated policy. No private credential enters the body."
+    },
+    {
+      "operation": "pn-records::packages/records/src/constants.rs::constants::marker_policy_digest",
+      "class_decision": "public-records",
+      "body": "{ use crate :: burn :: { CandidateRule , Encoding } ; let mut digest = Sha256 :: new () ; digest . update (b\"pn-records/marker-policy/v1\\0\") ; for text in [& input . identity , & input . edition , & input . sequence , & input . initial_marker , & input . placement_procedure , & input . cadence , & input . verification_profile ,] { digest . update ((text . len () as u64) . to_be_bytes ()) ; digest . update (text . as_bytes ()) ; } for value in [input . published_at , input . genesis_at , input . stability_buffer] { digest . update (value . to_be_bytes ()) ; } digest . update ([u8 :: from (input . open_placement)]) ; digest . update ([match input . encoding { Encoding :: CompleteList => 0 , Encoding :: PublicCommitment => 1 , Encoding :: WholePrefixAcceptAll => 2 , }]) ; digest . update ([match input . candidate_rule { CandidateRule :: FirstValidInHistoryOrder => 0 , CandidateRule :: UniquePerIndex => 1 , }]) ; digest . finalize () . into () }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body hashes every public policy field with explicit versioned framing. Its digest is an internal content commitment, not a protocol serialization or secret. Trace records the public input and computed bytes."
     },
     {
       "operation": "pn-records::packages/records/src/constants.rs::constants::bind_constants",
@@ -10109,6 +10133,17 @@
       "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
     },
     {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::basis",
+      "class_decision": "public-records",
+      "body": "{ & self . basis }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This accessor borrows the public recognition basis without deriving finality; the enclosing recognition operation records the complete basis at trace."
+    },
+    {
       "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::first_refusal",
       "class_decision": "public-records",
       "body": "{ self . first_refusal . as_ref () }",
@@ -10173,17 +10208,6 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::basis",
-      "class_decision": "public-records",
-      "body": "{ & self . basis }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "This accessor borrows the public recognition basis without deriving finality; the enclosing recognition operation records the complete basis at trace."
     }
   ],
   "generators": [
@@ -12177,6 +12201,15 @@
       "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
     },
     {
+      "item": "DeclarationContent",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
+    },
+    {
       "item": "Declaration",
       "kind": "derive",
       "package": "pn-records",
@@ -13511,7 +13544,7 @@
       "item": "burn::PolicyInput",
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
-      "syntax": "# [doc = \" Immutable policy identity includes its edition and sequence, not merely its display name.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PolicyInput { pub identity : String , pub edition : String , pub sequence : String , pub published_at : u64 , pub genesis_at : u64 , pub initial_marker : String , pub open_placement : bool , pub placement_procedure : String , pub cadence : String , pub encoding : Encoding , pub candidate_rule : CandidateRule , pub verification_profile : String , pub stability_buffer : u64 , }"
+      "syntax": "# [doc = \" Immutable policy identity includes its edition and sequence, not merely its display name.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PolicyInput { pub identity : String , pub edition : String , pub sequence : String , pub published_at : u64 , # [doc = \" Asserted copy only; binding requires the deployment structural declaration to agree.\"] pub genesis_at : u64 , pub initial_marker : String , pub open_placement : bool , pub placement_procedure : String , pub cadence : String , pub encoding : Encoding , pub candidate_rule : CandidateRule , pub verification_profile : String , pub stability_buffer : u64 , }"
     },
     {
       "item": "burn::ValidatedPolicy",
@@ -13589,7 +13622,7 @@
       "item": "burn::BurnError",
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
-      "syntax": "# [doc = \" Exhaustive local refusals while unpublished; no refusal repairs candidate contents.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum BurnError { # [error (\"marker policy declaration selection: {0}\")] PolicySelection (# [from] crate :: ValidationError) , # [error (\"policy identity, edition or publication differs from the declaration effective at genesis\")] PolicyBinding , # [error (\"missing required publication: {0:?}\")] Publication (Disclosure) , # [error (\"audit evidence belongs to another edition or sample convention\")] EvidenceBinding , # [error (\"sampled address map differs from required reads\")] SampleCoverage , # [error (\"burn unit mismatch\")] Units , # [error (\"empty bootstrap interval requires a published zero and explanation\")] Bootstrap , # [error (\"invalid fixed pre-genesis open-placement policy\")] Policy , # [error (\"stability buffer does not exceed settlement depth\")] Buffer , # [error (\"wrong verification profile\")] Verifier , # [error (\"empty or duplicate record identity\")] RecordIdentity , # [error (\"marker belongs to another history or policy\")] HistoryPolicy , # [error (\"duplicate disclosed marker history position\")] HistoryPosition , # [error (\"invalid initial marker\")] Initial , # [error (\"duplicate or skipped marker index, name or predecessor\")] Succession , # [error (\"lineage member is absent from this history\")] MissingLineage , # [error (\"successor lineage regressed\")] RegressedLineage , # [error (\"accepted set uses an undeclared encoding\")] Encoding , # [error (\"missing public commitment opening\")] MissingOpening , # [error (\"ambiguous public commitment opening\")] AmbiguousOpening , # [error (\"invalid public commitment opening\")] InvalidOpening , # [error (\"accepted set regressed\")] RegressedAcceptance , # [error (\"accepted record outside lineage\")] OutOfLineage , # [error (\"accepted member fails destruction verification\")] InvalidMember , # [error (\"aliases disagree on destruction amount or original address\")] InconsistentAlias , }"
+      "syntax": "# [doc = \" Exhaustive local refusals while unpublished; no refusal repairs candidate contents.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum BurnError { # [error (\"marker policy declaration selection: {0}\")] PolicySelection (# [from] crate :: ValidationError) , # [error (\"policy identity, edition or publication differs from the declaration effective at genesis\")] PolicyBinding , # [error (\"missing, ambiguous or mismatched structural deployment genesis\")] DeploymentBinding , # [error (\"marker policy content differs from its declared digest\")] PolicyDigest , # [error (\"missing required publication: {0:?}\")] Publication (Disclosure) , # [error (\"audit evidence belongs to another edition or sample convention\")] EvidenceBinding , # [error (\"sampled address map differs from required reads\")] SampleCoverage , # [error (\"burn unit mismatch\")] Units , # [error (\"empty bootstrap interval requires a published zero and explanation\")] Bootstrap , # [error (\"invalid fixed pre-genesis open-placement policy\")] Policy , # [error (\"stability buffer does not exceed settlement depth\")] Buffer , # [error (\"wrong verification profile\")] Verifier , # [error (\"empty or duplicate record identity\")] RecordIdentity , # [error (\"marker belongs to another history or policy\")] HistoryPolicy , # [error (\"duplicate disclosed marker history position\")] HistoryPosition , # [error (\"invalid initial marker\")] Initial , # [error (\"duplicate or skipped marker index, name or predecessor\")] Succession , # [error (\"lineage member is absent from this history\")] MissingLineage , # [error (\"successor lineage regressed\")] RegressedLineage , # [error (\"accepted set uses an undeclared encoding\")] Encoding , # [error (\"missing public commitment opening\")] MissingOpening , # [error (\"ambiguous public commitment opening\")] AmbiguousOpening , # [error (\"invalid public commitment opening\")] InvalidOpening , # [error (\"accepted set regressed\")] RegressedAcceptance , # [error (\"accepted record outside lineage\")] OutOfLineage , # [error (\"accepted member fails destruction verification\")] InvalidMember , # [error (\"aliases disagree on destruction amount or original address\")] InconsistentAlias , }"
     },
     {
       "item": "ActId",
@@ -13724,10 +13757,16 @@
       "syntax": "# [doc = \" Typed edition identity without a declaration payload or byte encoding.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct DeclarationId { # [doc = \" Nonempty structural namespace.\"] pub namespace : String , # [doc = \" Nonempty declaration key within that namespace.\"] pub name : String , # [doc = \" Structural edition identity, not a sort priority.\"] pub edition : u64 , }"
     },
     {
+      "item": "DeclarationContent",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Family-specific structural content; opaque families bind their payload separately.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum DeclarationContent { # [doc = \" A family whose content is bound separately.\"] Opaque , # [doc = \" Immutable deployment genesis, not selected by a marker policy payload.\"] Deployment { genesis_at : u64 } , # [doc = \" SHA-256 of the complete marker policy under the internal policy digest framing.\"] MarkerPolicy { digest : [u8 ; 32] } , }"
+    },
+    {
       "item": "Declaration",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Announcement and effective boundaries for an opaque declaration identity.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Declaration { # [doc = \" Immutable edition identity; contents belong to bite 2.\"] pub id : DeclarationId , # [doc = \" Boundary at which this edition was publicly announced.\"] pub announced_at : u64 , # [doc = \" First boundary where the edition is in force, not before announcement.\"] pub effective_at : u64 , }"
+      "syntax": "# [doc = \" Announcement and effective boundaries for an opaque declaration identity.\"] # [doc = \" (´def:acts:declarations´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Declaration { # [doc = \" Immutable edition identity; content is keyed by declaration family.\"] pub id : DeclarationId , # [doc = \" Boundary at which this edition was publicly announced.\"] pub announced_at : u64 , # [doc = \" First boundary where the edition is in force, not before announcement.\"] pub effective_at : u64 , # [doc = \" Structural deployment or policy content, otherwise an opaque family.\"] pub content : DeclarationContent , }"
     },
     {
       "item": "ReferenceOrigin",

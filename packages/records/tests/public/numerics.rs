@@ -132,6 +132,7 @@ fn header(edition: u64, at: u64) -> Declaration {
         },
         announced_at: at - 1,
         effective_at: at,
+        content: pn_records::DeclarationContent::Opaque,
     }
 }
 fn payload(c: &mut NumericContext, id: DeclarationId, controller: &str, floor: Floor) -> EditionInput {

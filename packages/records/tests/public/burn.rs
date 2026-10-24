@@ -8,7 +8,7 @@ use std::collections::BTreeSet;
 /// ´test:integration:policy-declaration-binding´
 #[test]
 fn policy_declaration_binding() {
-    use pn_records::constants::bind_marker_policy;
+    use pn_records::constants::{bind_marker_policy, marker_policy_digest};
     use pn_records::{Declaration, DeclarationId, ValidationError, validate_history, validate_record};
     let fixture = fixtures::generate(&[3]);
     let burn = validate_burn(fixture.burn).unwrap();
@@ -21,8 +21,21 @@ fn policy_declaration_binding() {
         },
         announced_at: 0,
         effective_at: 0,
+        content: pn_records::DeclarationContent::MarkerPolicy {
+            digest: marker_policy_digest(&fixture.policy),
+        },
     };
-    let records = validate_record(&[], &history, std::slice::from_ref(&declaration)).unwrap();
+    let deployment = Declaration {
+        id: DeclarationId {
+            namespace: "deployment".into(),
+            name: "genesis".into(),
+            edition: 1,
+        },
+        announced_at: 0,
+        effective_at: 0,
+        content: pn_records::DeclarationContent::Deployment { genesis_at: 1 },
+    };
+    let records = validate_record(&[], &history, &[declaration.clone(), deployment.clone()]).unwrap();
     assert!(bind_marker_policy(&records, fixture.policy.clone(), &burn).is_ok());
     for field in ["identity", "edition", "publication"] {
         let mut policy = fixture.policy.clone();
@@ -34,12 +47,17 @@ fn policy_declaration_binding() {
                 policy.genesis_at = 2;
             }
         }
-        assert_eq!(bind_marker_policy(&records, policy, &burn), Err(BurnError::PolicyBinding));
+        let expected = if field == "publication" {
+            BurnError::DeploymentBinding
+        } else {
+            BurnError::PolicyBinding
+        };
+        assert_eq!(bind_marker_policy(&records, policy, &burn), Err(expected));
     }
     let mut late = declaration;
     late.announced_at = fixture.policy.genesis_at + 1;
     late.effective_at = late.announced_at;
-    for declarations in [vec![], vec![late]] {
+    for declarations in [vec![deployment.clone()], vec![late, deployment]] {
         let records = validate_record(&[], &history, &declarations).unwrap();
         assert_eq!(
             bind_marker_policy(&records, fixture.policy.clone(), &burn),
@@ -50,6 +68,87 @@ fn policy_declaration_binding() {
             }))
         );
     }
+}
+
+/// Claim: A policy cannot move the deployment genesis or substitute any complete payload at an unchanged edition and publication; only the structural declaration and its fixed digest authorize binding.
+/// ´claim:burn:policy-binding-fixes-genesis-and-content´
+/// ´test:integration:policy-content-binding´
+#[test]
+fn policy_content_binding() {
+    use pn_records::constants::{bind_marker_policy, marker_policy_digest};
+    use pn_records::{Declaration, DeclarationContent, DeclarationId, validate_history, validate_record};
+    let fixture = fixtures::generate(&[3]);
+    let burn = validate_burn(fixture.burn).unwrap();
+    let history = validate_history(&[], &[]).unwrap();
+    let policy = fixture.policy;
+    let declarations = [
+        Declaration {
+            id: DeclarationId {
+                namespace: "deployment".into(),
+                name: "genesis".into(),
+                edition: 1,
+            },
+            announced_at: 0,
+            effective_at: 0,
+            content: DeclarationContent::Deployment { genesis_at: 1 },
+        },
+        Declaration {
+            id: DeclarationId {
+                namespace: "marker".into(),
+                name: "policy".into(),
+                edition: 1,
+            },
+            announced_at: 0,
+            effective_at: 0,
+            content: DeclarationContent::MarkerPolicy {
+                digest: marker_policy_digest(&policy),
+            },
+        },
+    ];
+    let records = validate_record(&[], &history, &declarations).unwrap();
+    assert!(bind_marker_policy(&records, policy.clone(), &burn).is_ok());
+    let mut moved = policy.clone();
+    moved.genesis_at = 2;
+    assert_eq!(bind_marker_policy(&records, moved, &burn), Err(BurnError::DeploymentBinding));
+    for field in [
+        "sequence",
+        "initial",
+        "placement",
+        "cadence",
+        "encoding",
+        "rule",
+        "profile",
+        "buffer",
+    ] {
+        let mut changed = policy.clone();
+        match field {
+            "sequence" => changed.sequence.push('x'),
+            "initial" => changed.initial_marker.push('x'),
+            "placement" => changed.placement_procedure.push('x'),
+            "cadence" => changed.cadence.push('x'),
+            "encoding" => changed.encoding = Encoding::PublicCommitment,
+            "rule" => changed.candidate_rule = pn_records::burn::CandidateRule::FirstValidInHistoryOrder,
+            "profile" => changed.verification_profile.push('x'),
+            _ => changed.stability_buffer += 1,
+        }
+        assert_ne!(marker_policy_digest(&changed), marker_policy_digest(&policy), "{field}");
+        assert_eq!(
+            bind_marker_policy(&records, changed, &burn),
+            Err(BurnError::PolicyDigest),
+            "{field}"
+        );
+    }
+    let mut missing = declarations.clone();
+    missing[1].content = DeclarationContent::Opaque;
+    assert_eq!(
+        bind_marker_policy(&validate_record(&[], &history, &missing).unwrap(), policy.clone(), &burn),
+        Err(BurnError::PolicyDigest)
+    );
+    missing[0].content = DeclarationContent::Opaque;
+    assert_eq!(
+        bind_marker_policy(&validate_record(&[], &history, &missing).unwrap(), policy, &burn),
+        Err(BurnError::DeploymentBinding)
+    );
 }
 
 /// Claim: Removing each required disclosure prevents readiness even when arithmetic does not read it; explicit empty event costs and explained operator absence remain valid publications.
