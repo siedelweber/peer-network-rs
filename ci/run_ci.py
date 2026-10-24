@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import sys
 import time
+import tomllib
 import unittest
 
 from devperf import StructuralError, budgets, report
@@ -74,7 +75,8 @@ def main(module):
                                        'passed' if result.wasSuccessful() else 'failed', source))
     Path('.lane').mkdir(exist_ok=True)
     Path(f'.lane/harness-ci-{module}.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in records))
-    report(records, budgets('docs/inputs/devperf-budgets.toml'), '.lane/performance-findings.jsonl')
+    admissions = tomllib.loads(Path('docs/inputs/devperf-registry.toml').read_text())['rows']
+    report(records, budgets('docs/inputs/devperf-budgets.toml'), '.lane/performance-findings.jsonl', registry=admissions)
     if any(r['outcome'] in {'ignored', 'incomplete'} for r in records):
         raise StructuralError('ignored or incomplete required CI test')
     return int(not result.wasSuccessful())

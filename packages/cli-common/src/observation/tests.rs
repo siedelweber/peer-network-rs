@@ -1403,7 +1403,7 @@ fn bounded_loss() {
     );
 }
 
-/// Claim: A shallow 256-branch payload below the inline limit remains inline; adding a common thirty-level wrapper requires at most two nesting chunks rather than one object per leaf, and compaction preserves parseable envelopes without a timing verdict.
+/// Claim: A 256-branch payload below the declared size and nesting limits stays inline; reaching the nesting limit creates exactly one shared subtree object, and both that object and its envelope parse with the default JSON reader without a timing verdict.
 /// ´claim:cli:compaction-chunks-only-required-nesting´
 /// ´test:unit:compaction-branching´
 #[test]
@@ -1415,9 +1415,14 @@ fn compaction_branching() {
     assert_eq!(shallow["payload"], payload);
     assert!(!directory.path().join("objects").exists());
     let mut deep = payload;
-    for _ in 0..30 {
+    for _ in 0..content::INLINE_NESTING - 3 {
         deep = Value::Array(vec![deep]);
     }
+    let mut below = json!({"kind":"trace","payload":deep.clone()});
+    content::compact(&mut below, directory.path()).unwrap();
+    assert_eq!(below["payload"], deep);
+    assert!(!directory.path().join("objects").exists());
+    deep = Value::Array(vec![deep]);
     let mut record = json!({"kind":"trace","payload":deep});
     let started = std::time::Instant::now();
     content::compact(&mut record, directory.path()).unwrap();
@@ -1428,7 +1433,9 @@ fn compaction_branching() {
         &json!({"kind":"compaction_witness","shape":"branches-256","wall_seconds":elapsed,"artifacts":artifacts}),
     )
     .unwrap();
-    assert!(artifacts <= 2);
+    assert_eq!(artifacts, 1);
+    let object = record["payload"]["artifact"]["path"].as_str().unwrap();
+    let _object: Value = serde_json::from_slice(&std::fs::read(object).unwrap()).unwrap();
     let encoded = serde_json::to_vec(&record).unwrap();
     assert_eq!(serde_json::from_slice::<Value>(&encoded).unwrap(), record);
 }

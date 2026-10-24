@@ -1864,6 +1864,14 @@
       "before": "",
       "after": "Claim: With one reserved write at cutoff, either capture endpoint reconciles while missing completed records, excess captures, multiple reservations and inconsistent attempted totals refuse; without a reservation the interval collapses to equality.",
       "review": "Read each injected status and capture count: both endpoints pass for one reservation, counts outside the interval fail, and no reservation requires equality. Attempted totals still reconcile independently. This checks the reporter contract, not transport completion."
+    },
+    {
+      "operation": "cli-common::observation::tests::compaction_branching",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:compaction-chunks-only-required-nesting",
+      "before": "Claim: A shallow 256-branch payload below the inline limit remains inline; adding a common thirty-level wrapper requires at most two nesting chunks rather than one object per leaf, and compaction preserves parseable envelopes without a timing verdict.",
+      "after": "Claim: A 256-branch payload below the declared size and nesting limits stays inline; reaching the nesting limit creates exactly one shared subtree object, and both that object and its envelope parse with the default JSON reader without a timing verdict.",
+      "review": "Read the below-bound and at-bound 256-branch constructions: below 96 nested levels stays byte-equivalent inline; the next level makes exactly one subtree object. The default serde_json reader parses the envelope and object separately. The deep-160 witness reconstructs every leaf and level. Elapsed time is reported, never an assertion."
     }
   ]
 }

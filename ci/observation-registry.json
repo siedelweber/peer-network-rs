@@ -9989,7 +9989,7 @@
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
+      "item_premise": "This body binds public policy identity, edition and publication to the fixed marker/policy declaration selected at genesis. Trace records the validated declaration history, candidate policy, disclosed burn evidence and typed result. Explicit refusal remains distinct from failure. No secret, verifier implementation or exporter handle enters this body; accounting supplies no binding value."
     },
     {
       "operation": "pn-records::packages/records/src/constants.rs::constants::bind_constants",
@@ -10000,7 +10000,7 @@
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
+      "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
     },
     {
       "operation": "pn-records::packages/records/src/constants.rs::constants::ConstantsHistory < '_ >::resolve",
@@ -10011,7 +10011,7 @@
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
+      "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
     },
     {
       "operation": "pn-records::packages/records/src/constants.rs::constants::ConstantsEdition::content",

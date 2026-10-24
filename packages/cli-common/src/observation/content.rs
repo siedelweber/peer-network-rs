@@ -7,6 +7,8 @@ use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
 const INLINE_BYTES: usize = 65_536;
+// Leave envelope and reference headroom below serde_json's default 128 levels.
+pub(super) const INLINE_NESTING: usize = 96;
 
 /// Convert the available Debug value grammar into tagged JSON structure.
 /// Justified: Representation runs inside the labelled observation delivery operation and must not recursively observe itself.
@@ -265,7 +267,7 @@ fn nesting(value: &Value) -> usize {
 
 fn compact_value(value: &mut Value, root: &Path) -> io::Result<()> {
     let encoded = serde_json::to_vec(value)?;
-    if encoded.len() <= INLINE_BYTES && nesting(value) < 32 {
+    if encoded.len() <= INLINE_BYTES && nesting(value) < INLINE_NESTING {
         return Ok(());
     }
     compact_tree(value, root)?;
@@ -298,7 +300,7 @@ fn compact_tree(value: &mut Value, root: &Path) -> io::Result<(usize, usize)> {
         }
         _ => (serde_json::to_vec(value)?.len(), 0),
     };
-    if size > INLINE_BYTES || depth >= 32 {
+    if size > INLINE_BYTES || depth >= INLINE_NESTING {
         *value = artifact(&serde_json::to_vec(value)?, root)?;
         return Ok((serde_json::to_vec(value)?.len(), nesting(value)));
     }

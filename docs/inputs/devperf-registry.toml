@@ -30,3 +30,33 @@ reason = "The approximately 2.1-fold increase is the accepted cost of counted-se
 placement = "required fast-tier unit case"
 owner = "interchange implementer and contract reviewer"
 settlement = "Accepted correctness cost; revisit on matcher or fixture changes without weakening membership evidence"
+
+[[rows]]
+name = "observation-runtime"
+label_name = "observation-runtime-step"
+label = "expt:devperf:observation-runtime-step"
+operation = "observation runtime gate step"
+measured_ms = 8512
+budget_ms = 11000
+ordinary_budget = "pure-suite"
+status = "admitted"
+measurement = "Warm compiled-target runs with fresh four-package artifact directories at 96 inline levels: 8.274, 7.748 and 8.511 seconds; 11.920, 10.576 and 12.259 own CPU seconds; shared CPU pressure 0.514, 0.930 and 0.262 percent. The third sample retained a metric-contention comparison failure; all stream records were delivered. This timing is not a passing verdict."
+reason = "Twenty-five percent above the largest measured wall, rounded up to a whole second. The former five-second allowance was never a measured baseline for this traced workload; the general pure-suite allowance remains unchanged."
+placement = "required fast-tier observation runtime workload; suite and enclosing gate step report independently, without adding their overlapping durations"
+owner = "observation implementer and repository reviewer"
+settlement = "Re-measure on workload or representation changes; timing excess never changes verdicts, retries, skips or termination. Retain metric-contention comparison failures independently."
+
+[[rows]]
+name = "suite::ci::test_observe_runtime"
+label_name = "observation-runtime-suite"
+label = "expt:devperf:observation-runtime-suite"
+operation = "observation runtime process suite"
+measured_ms = 8512
+budget_ms = 11000
+ordinary_budget = "pure-suite"
+status = "admitted"
+measurement = "Warm compiled-target runs with fresh four-package artifact directories at 96 inline levels: 8.274, 7.748 and 8.511 seconds; 11.920, 10.576 and 12.259 own CPU seconds; shared CPU pressure 0.514, 0.930 and 0.262 percent. The third sample retained a metric-contention comparison failure; all stream records were delivered. This timing is not a passing verdict."
+reason = "Twenty-five percent above the largest measured wall, rounded up to a whole second. The former five-second allowance was never a measured baseline for this traced workload; the general pure-suite allowance remains unchanged."
+placement = "required fast-tier observation runtime workload; suite and enclosing gate step report independently, without adding their overlapping durations"
+owner = "observation implementer and repository reviewer"
+settlement = "Re-measure on workload or representation changes; timing excess never changes verdicts, retries, skips or termination. Retain metric-contention comparison failures independently."
