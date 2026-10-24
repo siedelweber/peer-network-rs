@@ -4,7 +4,12 @@ pub fn expected(name: &str) -> BurnError {
     match name {
         "history-mix" | "policy-mix" | "policy-identity" | "policy-sequence" => BurnError::HistoryPolicy,
         "alias-address" | "alias-amount" => BurnError::InconsistentAlias,
-        "empty-name" | "selected-name" | "skipped-index" | "duplicate-index" | "lost-predecessor" | "predecessor-name"
+        "empty-name"
+        | "self-predecessor"
+        | "skipped-index"
+        | "duplicate-index"
+        | "lost-predecessor"
+        | "predecessor-position"
         | "successor-snapshot" => BurnError::Succession,
         "late-policy" | "closed-placement" => BurnError::Policy,
         "missing-provenance" => BurnError::Publication(Disclosure::Provenance),
@@ -63,12 +68,12 @@ pub fn case(words: &[u64], name: &str) {
             | "missing-opening"
             | "ambiguous-opening"
             | "invalid-opening"
-            | "predecessor-name"
+            | "predecessor-position"
             | "successor-snapshot"
             | "policy-identity"
             | "policy-sequence"
             | "empty-name"
-            | "selected-name" => Some(2),
+            | "self-predecessor" => Some(2),
             _ => None,
         };
         for reverse in [false, true] {

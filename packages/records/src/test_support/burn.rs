@@ -131,7 +131,7 @@ pub fn generate(words: &[u64]) -> BurnCase {
             sequence: policy.sequence.clone(),
             index,
             history_position: index * 10,
-            predecessor: if index == 0 { None } else { Some(format!("m{}", index - 1)) },
+            predecessor: if index == 0 { None } else { Some((index - 1) * 10) },
             lineage,
             accepted: AcceptedSet::CompleteList(accepted),
             initial_snapshot: if index == 0 { Some(BTreeMap::new()) } else { None },
@@ -217,14 +217,14 @@ pub const CORRUPTIONS: &[&str] = &[
     "ambiguous-opening",
     "invalid-opening",
     "initial-index",
-    "predecessor-name",
+    "predecessor-position",
     "successor-snapshot",
     "policy-identity",
     "policy-sequence",
     "burn-unit",
     "unexplained-operator",
     "empty-name",
-    "selected-name",
+    "self-predecessor",
     "cost-unit",
     "operator-unit",
 ];
@@ -272,7 +272,7 @@ pub fn corrupt(case: &mut BurnCase, name: &str) {
                 marker.index += 1;
             }
         }
-        "predecessor-name" => case.history.markers[2].predecessor = Some("foreign".into()),
+        "predecessor-position" => case.history.markers[2].predecessor = Some(999),
         "successor-snapshot" => case.history.markers[2].initial_snapshot = Some(BTreeMap::new()),
         "policy-identity" => case.history.markers[2].policy_identity = "foreign".into(),
         "policy-sequence" => case.history.markers[2].sequence = "foreign".into(),
@@ -285,7 +285,7 @@ pub fn corrupt(case: &mut BurnCase, name: &str) {
             }
         }
         "empty-name" => case.history.markers[2].name.clear(),
-        "selected-name" => case.history.markers[2].name = "m1".into(),
+        "self-predecessor" => case.history.markers[2].predecessor = Some(case.history.markers[2].history_position),
         "cost-unit" | "operator-unit" => {
             let mut context = NumericContext::new(ExactLimits::default(), ComparisonLimits::new(100, 100)).unwrap();
             let literal = context.literal("1/4").unwrap();

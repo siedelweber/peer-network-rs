@@ -218,7 +218,7 @@ fn initial_and_identity() {
         let mut case = base.clone();
         let first = &mut case.history.markers[0];
         match variant {
-            0 => first.predecessor = Some("foreign".into()),
+            0 => first.predecessor = Some(999),
             1 => first.accepted = AcceptedSet::CompleteList(BTreeSet::from(["r0".into()])),
             2 => first.initial_snapshot = Some(case.burn.amounts.clone()),
             _ => first.name = "other".into(),
@@ -335,7 +335,7 @@ fn invalid_candidate_prefix() {
         successor.name = "m3".into();
         successor.index = 3;
         successor.history_position = 30;
-        successor.predecessor = Some("m2".into());
+        successor.predecessor = Some(20);
         case.history.markers.push(successor);
         let result = fixtures::recognize(case).unwrap();
         assert_eq!(result.markers(), prefix);
@@ -345,7 +345,7 @@ fn invalid_candidate_prefix() {
     }
 }
 
-/// Claim: Disclosed positions select the same competing marker and refusal after reversal or shuffle; duplicate positions refuse validation, and same-named competitors cannot give a predecessor two meanings.
+/// Claim: Disclosed positions select the same competing marker and refusal after reversal or shuffle; duplicate positions refuse validation, while lookup names do not choose a predecessor.
 /// ´claim:burn:declared-policy-selects-competing-candidates´
 /// ´test:integration:competing-candidates´
 #[test]
@@ -379,11 +379,6 @@ fn competing_candidates() {
             shuffled.history.markers = order.iter().map(|&i| competing.history.markers[i].clone()).collect();
             assert_eq!(fixtures::recognize(shuffled).unwrap(), expected);
         }
-        let mut ambiguous = competing.clone();
-        ambiguous.history.markers[3].name = "m2".into();
-        let result = fixtures::recognize(ambiguous).unwrap();
-        assert_eq!(result.markers(), prefix);
-        assert_eq!(result.first_refusal().unwrap().cause, BurnError::Succession);
     }
     let mut duplicate = competing.clone();
     duplicate.history.markers[3].history_position = duplicate.history.markers[2].history_position;
@@ -397,14 +392,14 @@ fn competing_candidates() {
     assert_eq!(fixtures::recognize(competing).unwrap(), fallback);
 }
 
-/// Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor name, successor snapshot, policy identity and sequence, sample and cost units, operator-bound units, explained operator absence, and empty or reused marker names.
+/// Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor position, successor snapshot, policy identity and sequence, sample and cost units, operator-bound units, explained operator absence, and an empty marker name or self-predecessor.
 /// ´claim:burn:isolated-premises-have-exact-refusals´
 /// ´test:integration:isolated-recognition-premises´
 #[test]
 fn isolated_recognition_premises() {
     for (name, expected) in [
         ("initial-index", BurnError::Initial),
-        ("predecessor-name", BurnError::Succession),
+        ("predecessor-position", BurnError::Succession),
         ("successor-snapshot", BurnError::Succession),
         ("policy-identity", BurnError::HistoryPolicy),
         ("policy-sequence", BurnError::HistoryPolicy),
@@ -412,7 +407,7 @@ fn isolated_recognition_premises() {
         ("cost-unit", BurnError::Units),
         ("operator-unit", BurnError::Units),
         ("empty-name", BurnError::Succession),
-        ("selected-name", BurnError::Succession),
+        ("self-predecessor", BurnError::Succession),
         ("unexplained-operator", BurnError::Publication(Disclosure::Operator)),
     ] {
         let mut input = fixtures::generate(&[5]);
@@ -448,4 +443,53 @@ fn recognition_basis() {
     assert_eq!(recognized.markers(), changed.markers());
     assert_ne!(recognized.basis(), changed.basis());
     assert_eq!(changed.basis().burn_publication_edition, "edition-2");
+}
+
+/// Claim: A later copied lookup name cannot stall first-valid recognition or redirect a position-bound successor; unique-index still refuses competitors by index, and repeated names across indices are valid under either rule in either presentation.
+/// ´claim:burn:copied-names-do-not-control-succession´
+/// ´test:integration:copied-marker-names´
+#[test]
+fn copied_marker_names() {
+    use pn_records::burn::CandidateRule;
+    for rule in [CandidateRule::FirstValidInHistoryOrder, CandidateRule::UniquePerIndex] {
+        let mut base = fixtures::generate(&[]);
+        base.policy.candidate_rule = rule;
+        // Reusing a selected lookup label does not change the position reference.
+        base.history.markers[2].name = base.history.markers[1].name.clone();
+        let expected = fixtures::recognize(base.clone()).unwrap();
+        assert_eq!(expected.markers().len(), 3);
+        assert!(expected.first_refusal().is_none());
+        let mut copy = base.history.markers[2].clone();
+        copy.history_position = 21;
+        let mut successor = base.history.markers[2].clone();
+        successor.index = 3;
+        successor.history_position = 30;
+        successor.predecessor = Some(20);
+        base.history.markers.push(copy);
+        base.history.markers.push(successor);
+        let recognized = fixtures::recognize(base.clone()).unwrap();
+        if rule == CandidateRule::FirstValidInHistoryOrder {
+            assert_eq!(recognized.markers().len(), 4);
+            assert_eq!(&recognized.markers()[..3], expected.markers());
+            assert!(recognized.first_refusal().is_none());
+            let mut redirected = base.clone();
+            redirected.history.markers[4].predecessor = Some(21);
+            let refused = fixtures::recognize(redirected).unwrap();
+            assert_eq!(refused.markers(), expected.markers());
+            assert_eq!(refused.first_refusal().unwrap().cause, BurnError::Succession);
+        } else {
+            assert_eq!(recognized.markers(), &expected.markers()[..2]);
+            let refusal = recognized.first_refusal().unwrap();
+            assert_eq!(refusal.cause, BurnError::Succession);
+            assert_eq!(
+                refusal.competitors.iter().map(|m| m.history_position).collect::<Vec<_>>(),
+                [20, 21]
+            );
+        }
+        for order in [[4, 3, 2, 1, 0], [2, 0, 4, 1, 3]] {
+            let mut shuffled = base.clone();
+            shuffled.history.markers = order.iter().map(|&i| base.history.markers[i].clone()).collect();
+            assert_eq!(fixtures::recognize(shuffled).unwrap(), recognized);
+        }
+    }
 }

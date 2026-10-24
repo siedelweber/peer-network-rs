@@ -149,7 +149,8 @@ pub struct Marker {
     pub index: u64,
     /// Unique position fixed by this history disclosure, not by vector presentation.
     pub history_position: u64,
-    pub predecessor: Option<String>,
+    /// Unique disclosed history position of the selected predecessor; names are lookup labels.
+    pub predecessor: Option<u64>,
     pub lineage: BTreeSet<String>,
     pub accepted: AcceptedSet,
     /// Only the initial marker carries this explicit empty snapshot declaration.
@@ -574,11 +575,8 @@ fn recognize(history: &ValidatedMarkerHistory) -> RecognizedMarkers {
             competitors: Vec::new(),
         });
     }
-    let mut selected_names = BTreeSet::new();
     for group in candidates.chunk_by(|(_, left), (_, right)| left.index == right.index) {
-        let mut names = BTreeSet::new();
-        let ambiguous_names = group.iter().any(|(_, marker)| !names.insert(&marker.name));
-        if ambiguous_names || (history.policy.input.candidate_rule == CandidateRule::UniquePerIndex && group.len() != 1) {
+        if history.policy.input.candidate_rule == CandidateRule::UniquePerIndex && group.len() != 1 {
             result.first_refusal.get_or_insert_with(|| CandidateRefusal {
                 candidate: Some(group[0].1.clone()),
                 cause: BurnError::Succession,
@@ -588,7 +586,7 @@ fn recognize(history: &ValidatedMarkerHistory) -> RecognizedMarkers {
         }
         let mut selected = None;
         for &(position, marker) in group {
-            let candidate = if marker.name.is_empty() || selected_names.contains(&marker.name) {
+            let candidate = if marker.name.is_empty() {
                 Err(BurnError::Succession)
             } else {
                 recognize_candidate(history, position, marker, result.markers.last(), &records)
@@ -608,7 +606,6 @@ fn recognize(history: &ValidatedMarkerHistory) -> RecognizedMarkers {
             }
         }
         if let Some(marker) = selected {
-            selected_names.insert(marker.identity.name.clone());
             result.markers.push(marker);
         } else {
             break;
@@ -644,7 +641,7 @@ fn recognize_candidate(
     let accepted = history.openings[position].clone()?;
     if let Some(previous) = previous {
         if previous.identity.index.checked_add(1) != Some(marker.index)
-            || marker.predecessor.as_ref() != Some(&previous.identity.name)
+            || marker.predecessor != Some(previous.identity.history_position)
             || marker.initial_snapshot.is_some()
         {
             return Err(BurnError::Succession);

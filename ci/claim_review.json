@@ -1822,8 +1822,8 @@
       "path": "packages/records/tests/public/burn.rs",
       "claim": "RECORDS::claim:burn:declared-policy-selects-competing-candidates",
       "before": "",
-      "after": "Claim: Disclosed positions select the same competing marker and refusal after reversal or shuffle; duplicate positions refuse validation, and same-named competitors cannot give a predecessor two meanings.",
-      "review": "Read each comparison: disclosed positions 19 and 20 fix the winner under first-valid, while unique-index retains two predecessors and names both competitors in position order. Reversal and two shuffles compare the whole result; duplicate positions refuse validation, same-named competitors refuse, and a rejected earlier-position competitor leaves the later valid choice unchanged by reversal."
+      "after": "Claim: Disclosed positions select the same competing marker and refusal after reversal or shuffle; duplicate positions refuse validation, while lookup names do not choose a predecessor.",
+      "review": "Read the assertions after replacing predecessor names with disclosed positions: position-order selection and shuffled equality remain exact; only empty names refuse, while self-predecessors and unknown positions refuse succession."
     },
     {
       "operation": "pn-records::conformance::burn_cases",
@@ -1846,8 +1846,8 @@
       "path": "packages/records/tests/public/burn.rs",
       "claim": "RECORDS::claim:burn:isolated-premises-have-exact-refusals",
       "before": "",
-      "after": "Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor name, successor snapshot, policy identity and sequence, sample and cost units, operator-bound units, explained operator absence, and empty or reused marker names.",
-      "review": "Read all eleven otherwise-valid corruptions and their exact causes, including empty and reused selected names, sampled and unit-cost units, and a public operator bound in a different unit. Deleting each individual clause is tested separately."
+      "after": "Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor position, successor snapshot, policy identity and sequence, sample and cost units, operator-bound units, explained operator absence, and an empty marker name or self-predecessor.",
+      "review": "Read the assertions after replacing predecessor names with disclosed positions: position-order selection and shuffled equality remain exact; only empty names refuse, while self-predecessors and unknown positions refuse succession."
     },
     {
       "operation": "pn-records::public::burn::recognition_basis",
@@ -1904,6 +1904,14 @@
       "before": "",
       "after": "Claim: A policy cannot move the deployment genesis or substitute any complete payload at an unchanged edition and publication; only the structural declaration and its fixed digest authorize binding.",
       "review": "Read the fixed validated deployment and policy declarations: moving the payload genesis refuses independently of edition selection; changing each of eight remaining policy fields preserves edition and publication but refuses its digest. The existing selection witness retains absent, late and wrong-edition refusals, with moved publication/genesis now classified as deployment binding."
+    },
+    {
+      "operation": "pn-records::public::burn::copied_marker_names",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:copied-names-do-not-control-succession",
+      "before": "",
+      "after": "Claim: A later copied lookup name cannot stall first-valid recognition or redirect a position-bound successor; unique-index still refuses competitors by index, and repeated names across indices are valid under either rule in either presentation.",
+      "review": "Read both candidate rules: repeated labels across indices recognize; first-valid ignores a later same-name competitor and accepts only a successor referencing selected position 20; unique-index stops on positions 20 and 21, independently of names. Reversal and shuffle preserve each entire result."
     }
   ]
 }
