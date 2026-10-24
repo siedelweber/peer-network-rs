@@ -190,6 +190,11 @@ pub fn numeric(words: &[u64]) {
     let (p, q) = rational(original.exact());
     assert_eq!(p * numeraire, burn * q);
     let factor_literal = context.literal(&input.factor.to_string()).unwrap();
+    let theta = context.burn_per_action(&source, "burn").unwrap();
+    let rho = context.computed(&factor_literal).unwrap();
+    let door = context.door_amount(ActionCount(input.actions), &theta, &rho, &nu).unwrap();
+    let (p, q) = rational(door.exact());
+    assert_eq!(p, u128::from(input.actions) * (burn + numeraire * factor) * q);
     let (co_amount, co_nu) = context.recoin(&amount, &nu, &factor_literal, "new").unwrap();
     let (p, q) = rational(co_amount.exact());
     assert_eq!(p, burn * factor * q);

@@ -25,7 +25,7 @@ proptest! {
 
 proptest! {
     #![proptest_config(pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/properties.txt")))]
-    /// Claim: Over bounded shared integer inputs, the inner exact-value checks establishes co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values and exact sign, unit and floor refusals; no fence evaluation is asserted.
+    /// Claim: Over bounded shared integer inputs, the inner exact-value checks establish co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values, action-count door outlays with independently varying per-action coordinates, and exact sign, unit and floor refusals; no fence evaluation is asserted.
     /// ´claim:numerics:generated-numeric-coordinates-retain-their-laws´
     /// ´test:integration:numeric-coordinates´
     #[test]

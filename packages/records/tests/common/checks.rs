@@ -155,6 +155,13 @@ pub fn numeric(words: &[u64]) {
     let amount = context.burn(&burn_literal, "burn").unwrap();
     let nu_amount = context.burn_per_action(&numeraire_literal, "burn").unwrap();
     let nu = context.numeraire("nu", &nu_amount).unwrap();
+    let theta = context.burn_per_action(&burn_literal, "burn").unwrap();
+    let rho = context.computed(&factor_literal).unwrap();
+    let door = context.door_amount(ActionCount(input.actions), &theta, &rho, &nu).unwrap();
+    assert_eq!(
+        door.exact(),
+        (input.actions * (input.burn + input.numeraire * input.factor)).to_string()
+    );
     let full = context.standing(&burn_literal, "burn").unwrap();
     let reduced = context.reduce(&full, &nu).unwrap();
     let (new_amount, new_nu) = context.recoin(&amount, &nu, &factor_literal, "new-unit").unwrap();

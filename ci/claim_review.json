@@ -1638,16 +1638,16 @@
       "path": "packages/records/tests/conformance.rs",
       "claim": "RECORDS::claim:numerics:shared-numeric-cases-preserve-exact-contracts",
       "before": "",
-      "after": "Claim: The six shared numeric cases retain separate consumer observations of exact coordinate laws, charged values and typed sign, unit and floor refusals through the records public surface.",
-      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+      "after": "Claim: The six shared numeric cases retain separate consumer observations of exact coordinate laws, charged values, action-count door outlays and typed sign, unit and floor refusals through the records public surface.",
+      "review": "Read both numeric helpers: generated burn, numeraire, factor and action count independently supply theta, nu, rho and m. The inner oracle computes m*(theta+nu*rho); the outer oracle cross-multiplies the exact rational result using u128. The public fixed case separates theta=3 from nu=2 and rho=5, so interchanging theta and nu produces 85 rather than 65."
     },
     {
       "operation": "pn-records::properties::numeric_coordinates",
       "path": "packages/records/tests/properties.rs",
       "claim": "RECORDS::claim:numerics:generated-numeric-coordinates-retain-their-laws",
       "before": "",
-      "after": "Claim: Over bounded shared integer inputs, the inner exact-value checks establishes co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values and exact sign, unit and floor refusals; no fence evaluation is asserted.",
-      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+      "after": "Claim: Over bounded shared integer inputs, the inner exact-value checks establish co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values, action-count door outlays with independently varying per-action coordinates, and exact sign, unit and floor refusals; no fence evaluation is asserted.",
+      "review": "Read both numeric helpers: generated burn, numeraire, factor and action count independently supply theta, nu, rho and m. The inner oracle computes m*(theta+nu*rho); the outer oracle cross-multiplies the exact rational result using u128. The public fixed case separates theta=3 from nu=2 and rho=5, so interchanging theta and nu produces 85 rather than 65."
     },
     {
       "operation": "pn-records::public::numerics::unit_laws",
@@ -1710,16 +1710,16 @@
       "path": "packages/verification/tests/conformance.rs",
       "claim": "VERIFICATION::claim:verification:shared-numeric-cases-preserve-exact-contracts",
       "before": "",
-      "after": "Claim: The six shared numeric cases retain separate consumer observations of exact coordinate laws, charged values and typed sign, unit and floor refusals through the records public surface.",
-      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+      "after": "Claim: The six shared numeric cases retain separate consumer observations of exact coordinate laws, charged values, action-count door outlays and typed sign, unit and floor refusals through the records public surface.",
+      "review": "Read both numeric helpers: generated burn, numeraire, factor and action count independently supply theta, nu, rho and m. The inner oracle computes m*(theta+nu*rho); the outer oracle cross-multiplies the exact rational result using u128. The public fixed case separates theta=3 from nu=2 and rho=5, so interchanging theta and nu produces 85 rather than 65."
     },
     {
       "operation": "pn-verification::properties::numeric_coordinates",
       "path": "packages/verification/tests/properties.rs",
       "claim": "VERIFICATION::claim:verification:generated-numeric-coordinates-retain-their-laws",
       "before": "",
-      "after": "Claim: Over bounded shared integer inputs, the outer cross-product oracle establishes co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values and exact sign, unit and floor refusals; no fence evaluation is asserted.",
-      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+      "after": "Claim: Over bounded shared integer inputs, the outer cross-product oracle establishes co-expressed recoinage, inverse market repricing with a fixed numeraire, coupled charged values, action-count door outlays with independently varying per-action coordinates, and exact sign, unit and floor refusals; no fence evaluation is asserted.",
+      "review": "Read both numeric helpers: generated burn, numeraire, factor and action count independently supply theta, nu, rho and m. The inner oracle computes m*(theta+nu*rho); the outer oracle cross-multiplies the exact rational result using u128. The public fixed case separates theta=3 from nu=2 and rho=5, so interchanging theta and nu produces 85 rather than 65."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_numeric_entry",

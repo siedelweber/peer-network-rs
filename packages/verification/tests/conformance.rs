@@ -68,7 +68,7 @@ fn shared_cases() {
     assert_eq!(results.len(), cases.len());
 }
 
-/// Claim: The six shared numeric cases retain separate consumer observations of exact coordinate laws, charged values and typed sign, unit and floor refusals through the records public surface.
+/// Claim: The six shared numeric cases retain separate consumer observations of exact coordinate laws, charged values, action-count door outlays and typed sign, unit and floor refusals through the records public surface.
 /// ´claim:verification:shared-numeric-cases-preserve-exact-contracts´
 /// ´test:integration:numeric-cases´
 #[test]

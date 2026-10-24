@@ -73,7 +73,7 @@
       "requirements": [
         "complete-acts"
       ],
-      "status": "minted with local unit, public-surface and integration witnesses, shared conformance and recorded inner and outer properties; full bite review pending; partition and downstream ledger evidence held",
+      "status": "admitted in carrier scope at bite 1 (pn-records) under (`amend:decomposition:bite-one-admission`); membership partition held for pn-graph, bite 3; downstream ledger evidence held for pn-epoch, bite 5",
       "suite": "records"
     },
     {
