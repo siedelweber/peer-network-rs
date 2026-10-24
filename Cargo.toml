@@ -12,6 +12,10 @@ version = "0.1.0"
 license = "AGPL-3.0-only"
 
 [workspace.dependencies]
+# Reviewed exact carriers and explicit numeric bounds; Cargo.lock pins public main.
+nrz-scalar = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", branch = "main" }
+nrz-accuracy = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", branch = "main" }
+nrz-cas = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", branch = "main" }
 # Public anchored-plus-budget fork (Paligo/regexml#15), scalar aliases and local XSD count-preserving endpoint search; see README.
 # Retire when upstream releases the anchored matcher, budget and count-preserving endpoint search.
 regexml = { path = "vendor/regexml" }

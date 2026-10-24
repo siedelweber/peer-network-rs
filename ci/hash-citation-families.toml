@@ -212,3 +212,15 @@ reader = "ancestor-commit"
 commit = "23e44257c54ff3cf927379d42363f242a9769dee"
 definition = "The declared full commit must occur in git rev-list HEAD in this repository. This checks commit identity and reachability from the current history without private review refs or title matching; admission scope is stated by the citing amendment."
 paths = ["docs/templates/adr/007-crate-decomposition.md.j2", "adr/007-crate-decomposition.md", "ci/hash-citation-families.toml"]
+
+[[rows]]
+family = "numeric-backend-provenance"
+group = "numeric dependencies"
+measures = "Public Git commit resolved by Cargo for the numeric backend"
+producer = "Cargo lock resolution"
+establishment = "resolvable"
+reader = "public-git"
+locator = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum/commit/b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+commit = "b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+definition = "The public main commit supplies nrz-scalar, nrz-accuracy and nrz-cas. Cargo.lock fixes the source revision; the accepting record and numeric dependency dataset retain the licence, resolved features and representation limits reviewed before numeric carriers."
+paths = ["Cargo.lock", "ci/hash-citation-families.toml", "docs/inputs/numeric-dependencies.toml", "docs/datasets/org.peer-network.numeric.dependencies.json", "docs/templates/adr/007-crate-decomposition.md.j2", "adr/007-crate-decomposition.md", "packages/records/NOTICE-NUMERIC"]

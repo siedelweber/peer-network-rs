@@ -8,6 +8,9 @@ publish = false
 version.workspace = true
 
 [dependencies]
+nrz-scalar.workspace = true
+nrz-accuracy.workspace = true
+nrz-cas.workspace = true
 tracing.workspace = true
 thiserror.workspace = true
 metrics.workspace = true

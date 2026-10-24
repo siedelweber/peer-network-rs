@@ -1,0 +1,227 @@
+namespace = "org.peer-network.numeric.dependencies"
+version = [1, 0, 0]
+
+[[rows]]
+name = "nrz-accuracy"
+version = "0.1.0"
+license = "AGPL-3.0-only"
+features = "none"
+role = "Explicit cumulative comparison attempt/work limits"
+resolution = "new"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+
+[[rows]]
+name = "nrz-cas"
+version = "0.1.0"
+license = "AGPL-3.0-only"
+features = "none"
+role = "Budgeted exact rational arithmetic and closed constant expressions"
+resolution = "new"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+
+[[rows]]
+name = "nrz-scalar"
+version = "0.1.0"
+license = "AGPL-3.0-only"
+features = "none"
+role = "Finite binary arithmetic and outward literal enclosures; not an exact-value substitute"
+resolution = "new"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+
+[[rows]]
+name = "autocfg"
+version = "1.5.1"
+license = "Apache-2.0 OR MIT"
+features = "none"
+role = "Numeric build-time capability detection"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "equivalent"
+version = "1.0.3"
+license = "Apache-2.0 OR MIT"
+features = "none"
+role = "Heterogeneous indexmap lookup"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "fixedbitset"
+version = "0.5.7"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "CAS graph bit sets"
+resolution = "new"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "foldhash"
+version = "0.1.5"
+license = "Zlib"
+features = "none"
+role = "CAS graph hash-table hashing"
+resolution = "new"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "hashbrown"
+version = "0.15.5"
+license = "MIT OR Apache-2.0"
+features = "default-hasher, inline-more"
+role = "Hash storage directly and through indexmap"
+resolution = "new"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "hashbrown"
+version = "0.17.1"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "Hash storage directly and through indexmap"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "indexmap"
+version = "2.14.2"
+license = "Apache-2.0 OR MIT"
+features = "default, std"
+role = "Indexed graph mapping"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "num-bigint"
+version = "0.4.8"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "Arbitrary-precision rational components"
+resolution = "new"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "num-complex"
+version = "0.4.6"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "CAS complex syntax support, outside records scalar admission"
+resolution = "new"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "num-integer"
+version = "0.1.47"
+license = "MIT OR Apache-2.0"
+features = "i128"
+role = "Exact integer division and gcd"
+resolution = "new"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "num-rational"
+version = "0.4.2"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "Reduced ratio backing"
+resolution = "new"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "num-traits"
+version = "0.2.19"
+license = "MIT OR Apache-2.0"
+features = "i128, std"
+role = "Integer and numeric trait support"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "petgraph"
+version = "0.8.3"
+license = "MIT OR Apache-2.0"
+features = "default, graphmap, matrix_graph, stable_graph, std"
+role = "CAS-owned graph storage; no records partition algorithm"
+resolution = "new"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "proc-macro2"
+version = "1.0.107"
+license = "MIT OR Apache-2.0"
+features = "default, proc-macro, span-locations"
+role = "Derive token representation"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "quote"
+version = "1.0.47"
+license = "MIT OR Apache-2.0"
+features = "default, proc-macro"
+role = "Derive token generation"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "serde"
+version = "1.0.229"
+license = "MIT OR Apache-2.0"
+features = "alloc, default, derive, serde_derive, std"
+role = "Existing workspace serialization edge in metadata; CAS graph serialization is not enabled"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "serde_core"
+version = "1.0.229"
+license = "MIT OR Apache-2.0"
+features = "alloc, result, std"
+role = "Existing serialization core"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "serde_derive"
+version = "1.0.229"
+license = "MIT OR Apache-2.0"
+features = "default"
+role = "Existing serialization derive"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "syn"
+version = "3.0.9"
+license = "MIT OR Apache-2.0"
+features = "clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut"
+role = "Derive syntax parsing"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "thiserror-impl"
+version = "2.0.21"
+license = "MIT OR Apache-2.0"
+features = "none"
+role = "Error derive expansion"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "thiserror"
+version = "2.0.21"
+license = "MIT OR Apache-2.0"
+features = "default, std"
+role = "Typed scalar errors"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[rows]]
+name = "unicode-ident"
+version = "1.0.27"
+license = "(MIT OR Apache-2.0) AND Unicode-3.0"
+features = "none"
+role = "Derive identifier tables"
+resolution = "retained"
+source = "registry+https://github.com/rust-lang/crates.io-index"
