@@ -1566,8 +1566,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:large-content-is-addressed-once",
       "before": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt existing content is refused rather than trusted.",
-      "after": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from a fresh flushed file rather than trusted, with directory synchronization once per record.",
-      "review": "The unchanged assertions verify digest bytes, stable payload identity through changing duration envelopes, one stored object, atomic repair and small inline values. The representation policy now flushes object files and syncs the directory once per record; the test makes no crash-durability claim."
+      "after": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from fresh written bytes rather than trusted, without file or directory synchronization or a durability promise.",
+      "review": "Read the exact assertions: digest reuse and corrupt-object replacement remain the predicates; the witness promises no artifact durability."
     }
   ]
 }

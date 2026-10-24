@@ -301,7 +301,7 @@ fn public_content_encoding() {
     assert_eq!(content::structured(&largest), json!({"atom":largest}));
 }
 
-/// Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from a fresh flushed file rather than trusted, with directory synchronization once per record.
+/// Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from fresh written bytes rather than trusted, without file or directory synchronization or a durability promise.
 /// ´claim:cli:large-content-is-addressed-once´
 /// ´test:unit:content-artifact-publication´
 #[test]
@@ -337,6 +337,17 @@ fn content_artifact_publication() {
     let mut small = json!({"payload":"small"});
     content::compact(&mut small, directory.path()).unwrap();
     assert_eq!(small, json!({"payload":"small"}));
+    let mixed = json!({"payload": [
+        {"quoted\"key": "\n\\\"é".repeat(12_000), "empty": {}, "number": -17.25},
+        [true, false, null, [], 42]
+    ]});
+    let mut compacted = mixed.clone();
+    content::compact(&mut compacted, directory.path()).unwrap();
+    let reference = &compacted["payload"][0]["quoted\"key"]["artifact"];
+    let stored = std::fs::read(reference["path"].as_str().unwrap()).unwrap();
+    assert_eq!(reference["length_bytes"], stored.len());
+    compacted["payload"][0]["quoted\"key"] = serde_json::from_slice(&stored).unwrap();
+    assert_eq!(compacted, mixed);
 }
 
 /// Claim: A relative artifact root is fixed at observer initialization, so changing the command's working directory before delivery cannot redirect a large public payload into the new directory.
