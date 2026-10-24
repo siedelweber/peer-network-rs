@@ -524,17 +524,7 @@ fn validate(
     history: &ValidatedHistory,
     declarations: &[Declaration],
 ) -> Result<ValidatedRecords, ValidationError> {
-    let mut identities = BTreeSet::new();
-    let mut references = history.references.as_ref().clone();
-    for act in acts {
-        if history.references.contains(&PublicReference::Act(act.id.clone())) || !identities.insert(&act.id) {
-            return Err(ValidationError::DuplicateAct(act.id.clone()));
-        }
-        references.insert(PublicReference::Act(act.id.clone()));
-        for leg in &act.legs {
-            references.insert(PublicReference::Edge(leg.id.clone()));
-        }
-    }
+    let references = local_references(acts, history)?;
     let available: BTreeMap<_, _> = history
         .acts
         .iter()
@@ -542,7 +532,7 @@ fn validate(
         .chain(acts.iter().map(|act| (&act.id, act.authoritative_position)))
         .collect();
     for act in acts {
-        validate_act(act, &references)?;
+        validate_act(act, &references, &history.references)?;
         validate_dependencies(act, &available)?;
         validate_parents(act, &available)?;
     }
@@ -554,7 +544,26 @@ fn validate(
     })
 }
 
-fn validate_act(act: &CandidateAct, references: &BTreeSet<PublicReference>) -> Result<(), ValidationError> {
+fn local_references(acts: &[CandidateAct], history: &ValidatedHistory) -> Result<BTreeSet<PublicReference>, ValidationError> {
+    let mut identities = BTreeSet::new();
+    let mut references = BTreeSet::new();
+    for act in acts {
+        if history.references.contains(&PublicReference::Act(act.id.clone())) || !identities.insert(&act.id) {
+            return Err(ValidationError::DuplicateAct(act.id.clone()));
+        }
+        references.insert(PublicReference::Act(act.id.clone()));
+        for leg in &act.legs {
+            references.insert(PublicReference::Edge(leg.id.clone()));
+        }
+    }
+    Ok(references)
+}
+
+fn validate_act(
+    act: &CandidateAct,
+    references: &BTreeSet<PublicReference>,
+    history_references: &BTreeSet<PublicReference>,
+) -> Result<(), ValidationError> {
     let invalid = |cause| ValidationError::InvalidRepresentation {
         act: act.id.clone(),
         cause,
@@ -602,7 +611,7 @@ fn validate_act(act: &CandidateAct, references: &BTreeSet<PublicReference>) -> R
             if !valid_reference(reference) {
                 return Err(invalid(InvalidCause::ReferenceComponent));
             }
-            if !references.contains(reference) {
+            if !references.contains(reference) && !history_references.contains(reference) {
                 return Err(ValidationError::UnresolvedReference(reference.clone()));
             }
         }
@@ -628,7 +637,7 @@ fn validate_act(act: &CandidateAct, references: &BTreeSet<PublicReference>) -> R
         if !valid_reference(reference) {
             return Err(invalid(InvalidCause::ReferenceComponent));
         }
-        if !references.contains(reference) {
+        if !references.contains(reference) && !history_references.contains(reference) {
             return Err(ValidationError::UnresolvedReference(reference.clone()));
         }
     }
@@ -874,7 +883,7 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
         }
     }
     for act in acts {
-        validate_act(act, &references)?;
+        validate_act(act, &references, &BTreeSet::new())?;
     }
     let available: BTreeMap<_, _> = acts.iter().map(|act| (&act.id, act.authoritative_position)).collect();
     for act in acts {
@@ -1207,6 +1216,14 @@ mod tests {
             }],
         )
         .unwrap();
+        assert!(super::local_references(&[], &history).unwrap().is_empty());
+        let case = super::test_support::generate(&[u64::MAX]);
+        let local = super::local_references(&case.proposals, &history).unwrap();
+        assert_eq!(
+            local.len(),
+            case.proposals.iter().map(|act| 1 + act.legs.len()).sum::<usize>()
+        );
+        assert!(local.is_disjoint(&history.references));
         let records = super::validate_record(&[], &history, &[]).unwrap();
         assert!(super::Arc::ptr_eq(&history.acts, &records.history.acts));
         assert!(super::Arc::ptr_eq(&history.references, &records.history.references));
