@@ -741,7 +741,7 @@ fn export_fixture(fail: bool) -> (Arc<crate::observation_export::Bridge>, Arc<Lo
     (Arc::new(crate::observation_export::Bridge::new(config).unwrap()), transport)
 }
 
-/// Claim: The JSON recorder forwards the same admitted byte increments into the SDK counter; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.
+/// Claim: Snapshot collection forwards each admitted atomic counter delta to the SDK exactly once, including across repeated collections; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.
 /// ´claim:cli:provider-bridge-preserves-counts-and-secret-boundary´
 /// ´test:unit:provider-bridge´
 #[test]
@@ -752,6 +752,8 @@ fn provider_bridge() {
     metrics::with_local_recorder(&recorder, || {
         metrics::counter!(format!("{}__work_bytes", STEMS[0])).increment(7);
     });
+    let snapshot = recorder.snapshot(true);
+    recorder.snapshot(true);
     let measured = bridge.collected();
     let metric = measured
         .scope_metrics()
@@ -767,7 +769,6 @@ fn provider_bridge() {
             .collect::<Vec<_>>(),
         [7]
     );
-    let snapshot = recorder.snapshot(true);
     assert_eq!(
         snapshot["instruments"]
             .as_array()
@@ -797,6 +798,7 @@ fn provider_bridge() {
     metrics::with_local_recorder(&recorder, || {
         metrics::counter!(format!("{}__work_bytes", STEMS[0])).increment(11);
     });
+    recorder.snapshot(true);
     failed.flush();
     assert_eq!(failed.lost.load(Ordering::Relaxed), 1);
     assert!(
@@ -1549,4 +1551,32 @@ fn shared_transport_cutoff() {
     assert_eq!(status["undelivered_records"], 1);
     assert_eq!(status["attempted_records"], 2);
     assert_eq!(rows.len() - 1, 1);
+}
+
+/// Claim: Holding every totals mutex cannot lose or hide started and completed counter updates from eight concurrent writers; gauge and histogram contention remains reported separately, without blocking the writers.
+/// ´claim:cli:operation-counters-survive-contention´
+/// ´test:unit:counter-contention´
+#[test]
+fn counter_contention() {
+    let recorder = JsonRecorder::new();
+    recorder.with_locked_totals(|| {
+        std::thread::scope(|scope| {
+            for _ in 0..8 {
+                let recorder = &recorder;
+                scope.spawn(move || metrics::with_local_recorder(recorder, || {
+                    let started = metrics::counter!(format!("{}__started_operations", STEMS[0]));
+                    let completed = metrics::counter!(format!("{}__completed_operations", STEMS[0]), "outcome" => "success");
+                    for _ in 0..1000 { started.increment(1); completed.increment(1); }
+                }));
+            }
+        });
+        let summary = recorder.snapshot(true);
+        let count = |suffix: &str| summary["instruments"].as_array().unwrap().iter().filter(|r| r["name"] == format!("{}__{suffix}",STEMS[0])).filter_map(|r|r["counter"].as_u64()).sum::<u64>();
+        crate::emit(&json!({"kind":"counter_contention","expected_each":8000,"started":count("started_operations"),"completed":count("completed_operations"),"lost_counter_updates":summary["lost_counter_updates"],"other_loss":summary["lost_updates"]})).unwrap();
+        assert_eq!(count("started_operations"),8000);
+        assert_eq!(count("completed_operations"),8000);
+        assert_eq!(summary["counter_accuracy"],"exact");
+        assert_eq!(summary["lost_counter_updates"],0);
+        assert!(summary["lost_updates"].as_u64().unwrap()>0);
+    });
 }

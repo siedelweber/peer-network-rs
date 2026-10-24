@@ -8383,7 +8383,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<Instrument as CounterFn>::increment",
-      "body": "{ self . update (| t | { if let Some (total) = t . counter . checked_add (value) { t . counter = total ; if let Some (SdkInstrument :: Counter (counter)) = & self . sdk { counter . add (value , & []) ; } } else { t . counter = u64 :: MAX ; self . lost . fetch_add (1 , Ordering :: Relaxed) ; } }) ; }",
+      "body": "{ let previous = self . counter . try_update (Ordering :: Relaxed , Ordering :: Relaxed , | old | Some (old . saturating_add (value))) . unwrap_or_else (| old | old) ; self . counter_observed . store (true , Ordering :: Release) ; if previous . checked_add (value) . is_none () { self . counter_lost . fetch_add (1 , Ordering :: Relaxed) ; self . lost . fetch_add (1 , Ordering :: Relaxed) ; } }",
       "class_decision": "delivery",
       "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::increment. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
       "assessments": {
@@ -8394,7 +8394,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation_metrics.rs::observation_metrics::<Instrument as CounterFn>::absolute",
-      "body": "{ self . update (| t | { let delta = value . saturating_sub (t . counter) ; t . counter = t . counter . max (value) ; if let Some (SdkInstrument :: Counter (counter)) = & self . sdk { counter . add (delta , & []) ; } }) ; }",
+      "body": "{ self . counter . fetch_max (value , Ordering :: Relaxed) ; self . counter_observed . store (true , Ordering :: Release) ; }",
       "class_decision": "delivery",
       "item_premise": "This body inherits the delivery decision for observation_metrics::<Instrument as CounterFn>::absolute. This body is admitted with default-versus-trace emission: absence of default payload emission does not imply missing instrumentation.",
       "assessments": {
@@ -11263,7 +11263,7 @@
       "kind": "derive",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation_metrics.rs",
-      "syntax": "# [derive (Default)]",
+      "syntax": "# [derive (Clone , Default)]",
       "expansion_review": "The explicit generator syntax and complete containing type declaration are bound to this admission. Standard derives supply structural value or formatting traits; serde and clap derives supply adapters under their caller boundaries. The private thread-local declaration is nonrecursive recorder state. Unknown or changed generator syntax requires renewed admission.",
       "class_decision": "public-cli"
     },
@@ -13055,13 +13055,13 @@
       "item": "observation_metrics::Totals",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation_metrics.rs",
-      "syntax": "# [derive (Default)] struct Totals { observed : bool , counter : u64 , gauge : f64 , count : u64 , sum : f64 , buckets : [u64 ; 5] , }"
+      "syntax": "# [derive (Clone , Default)] struct Totals { observed : bool , counter : u64 , gauge : f64 , count : u64 , sum : f64 , buckets : [u64 ; 5] , }"
     },
     {
       "item": "observation_metrics::Instrument",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation_metrics.rs",
-      "syntax": "struct Instrument { kind : & 'static str , unit : & 'static str , bounds : [f64 ; 4] , totals : Mutex < Totals > , lost : Arc < AtomicU64 > , sdk : Option < SdkInstrument > , }"
+      "syntax": "struct Instrument { kind : & 'static str , unit : & 'static str , bounds : [f64 ; 4] , totals : Mutex < Totals > , counter : AtomicU64 , counter_exported : AtomicU64 , counter_observed : AtomicBool , counter_lost : Arc < AtomicU64 > , lost : Arc < AtomicU64 > , sdk : Option < SdkInstrument > , }"
     },
     {
       "item": "observation_metrics::SdkInstrument",
@@ -13073,7 +13073,7 @@
       "item": "observation_metrics::JsonRecorder",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation_metrics.rs",
-      "syntax": "# [doc = \" One local recorder shared by metrics API handles and JSON snapshots.\"] # [derive (Clone)] pub (super) struct JsonRecorder { instruments : Arc < BTreeMap < (String , String , String) , Arc < Instrument > > > , pub (super) lost : Arc < AtomicU64 > , }"
+      "syntax": "# [doc = \" One local recorder shared by metrics API handles and JSON snapshots.\"] # [derive (Clone)] pub (super) struct JsonRecorder { instruments : Arc < BTreeMap < (String , String , String) , Arc < Instrument > > > , pub (super) lost : Arc < AtomicU64 > , counter_lost : Arc < AtomicU64 > , }"
     },
     {
       "item": "publication::PublicationMode",

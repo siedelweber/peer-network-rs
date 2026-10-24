@@ -1880,6 +1880,22 @@
       "before": "",
       "after": "Claim: Under its consumer-qualified seed, the outer tier derives per-marker accepted sets and destruction keys from bounded generated inputs and the refusal cause and retained prefix from each altered premise, with no prefix for validation refusals; both unique-index presentations agree under fixture verification, without claiming an independent implementation.",
       "review": "Read the outer helper: the changed premise supplies a cause and first affected index, and the base input supplies ordered retained names, accepted identities and destruction keys. Every corruption checks the original and reversed presentation; validation errors require no prefix. No inner expectation table is consulted."
+    },
+    {
+      "operation": "cli-common::observation::tests::provider_bridge",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:provider-bridge-preserves-counts-and-secret-boundary",
+      "before": "Claim: The JSON recorder forwards the same admitted byte increments into the SDK counter; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.",
+      "after": "Claim: Snapshot collection forwards each admitted atomic counter delta to the SDK exactly once, including across repeated collections; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.",
+      "review": "Read the held-lock threaded increments and snapshot assertions, and the repeated snapshot SDK delta assertions. Counter totals remain exact under deliberately unavailable lossy totals locks; repeated collection does not duplicate SDK deltas."
+    },
+    {
+      "operation": "cli-common::observation::tests::counter_contention",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:operation-counters-survive-contention",
+      "before": "",
+      "after": "Claim: Holding every totals mutex cannot lose or hide started and completed counter updates from eight concurrent writers; gauge and histogram contention remains reported separately, without blocking the writers.",
+      "review": "Read the held-lock threaded increments and snapshot assertions, and the repeated snapshot SDK delta assertions. Counter totals remain exact under deliberately unavailable lossy totals locks; repeated collection does not duplicate SDK deltas."
     }
   ]
 }

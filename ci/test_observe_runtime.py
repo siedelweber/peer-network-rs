@@ -108,6 +108,8 @@ def expanded(value):
 
 
 def distribution(summary):
+    assert summary["counter_accuracy"] == "exact"
+    assert summary["lost_counter_updates"] == 0
     result={}
     for row in summary['instruments']:
         if row['name'].endswith(('started_operations','completed_operations')) and row['counter']>0:
@@ -265,7 +267,7 @@ class Processes(unittest.TestCase):
             self.assertEqual(instruments[stem+'records_per_boundary']['sum'],2)
             self.assertEqual(instruments[stem+'work_operations']['counter'],11)
             self.assertEqual(instruments[stem+'assembly_steps']['counter'],4)
-            self.assertEqual(summary['lost_updates'],0)
+            self.assertEqual(summary['lost_counter_updates'],0)
             status=next(row for row in rows if row.get('kind')=='observation_status')
             reconcile_publication(status,len(rows)-1)
             self.assertEqual(status['attempted_records'],status['delivered_records']+status['in_flight_records']+status['lost_records']+status['undelivered_records'])

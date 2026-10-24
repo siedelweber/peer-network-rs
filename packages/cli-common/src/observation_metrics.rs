@@ -2,7 +2,7 @@
 //! Only the declared instruments and finite outcomes can allocate a series.
 
 use std::collections::BTreeMap;
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
 use metrics::{Counter, CounterFn, Gauge, GaugeFn, Histogram, HistogramFn, Key, KeyName, Metadata, Recorder, SharedString, Unit};
@@ -51,7 +51,7 @@ const RECORDS_MEASURES: [(&str, &str, &str); 8] = [
     ("input_bytes", "histogram", "bytes"),
 ];
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 struct Totals {
     observed: bool,
     counter: u64,
@@ -67,6 +67,10 @@ struct Instrument {
     unit: &'static str,
     bounds: [f64; 4],
     totals: Mutex<Totals>,
+    counter: AtomicU64,
+    counter_exported: AtomicU64,
+    counter_observed: AtomicBool,
+    counter_lost: Arc<AtomicU64>,
     lost: Arc<AtomicU64>,
     sdk: Option<SdkInstrument>,
 }
@@ -92,28 +96,21 @@ impl CounterFn for Instrument {
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn increment(&self, value: u64) {
-        self.update(|t| {
-            if let Some(total) = t.counter.checked_add(value) {
-                t.counter = total;
-                if let Some(SdkInstrument::Counter(counter)) = &self.sdk {
-                    counter.add(value, &[]);
-                }
-            } else {
-                t.counter = u64::MAX;
-                self.lost.fetch_add(1, Ordering::Relaxed);
-            }
-        });
+        let previous = self
+            .counter
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |old| Some(old.saturating_add(value)))
+            .unwrap_or_else(|old| old);
+        self.counter_observed.store(true, Ordering::Release);
+        if previous.checked_add(value).is_none() {
+            self.counter_lost.fetch_add(1, Ordering::Relaxed);
+            self.lost.fetch_add(1, Ordering::Relaxed);
+        }
     }
     /// Justified: This observation or protected-carrier primitive executes inside the explicit operation and delivery machinery; instrumenting it recursively would make observation observe itself.
     /// Coverage exception for (´[ROOT-rule:observe:spans]´); the checked operation registry binds this item to its enclosing boundary and executed witness.
     fn absolute(&self, value: u64) {
-        self.update(|t| {
-            let delta = value.saturating_sub(t.counter);
-            t.counter = t.counter.max(value);
-            if let Some(SdkInstrument::Counter(counter)) = &self.sdk {
-                counter.add(delta, &[]);
-            }
-        });
+        self.counter.fetch_max(value, Ordering::Relaxed);
+        self.counter_observed.store(true, Ordering::Release);
     }
 }
 
@@ -178,6 +175,7 @@ impl HistogramFn for Instrument {
 pub(super) struct JsonRecorder {
     instruments: Arc<BTreeMap<(String, String, String), Arc<Instrument>>>,
     pub(super) lost: Arc<AtomicU64>,
+    counter_lost: Arc<AtomicU64>,
 }
 
 impl JsonRecorder {
@@ -187,6 +185,7 @@ impl JsonRecorder {
 
     pub(super) fn with_meter(meter: Option<&opentelemetry::metrics::Meter>) -> Self {
         let lost = Arc::new(AtomicU64::new(0));
+        let counter_lost = Arc::new(AtomicU64::new(0));
         let mut instruments = BTreeMap::new();
         for stem in STEMS {
             let extra: &[(&str, &str, &str)] = if stem == "records__root__sig__design__records" {
@@ -237,6 +236,10 @@ impl JsonRecorder {
                                 unit,
                                 bounds,
                                 totals: Mutex::new(Totals::default()),
+                                counter: AtomicU64::new(0),
+                                counter_exported: AtomicU64::new(0),
+                                counter_observed: AtomicBool::new(false),
+                                counter_lost: counter_lost.clone(),
                                 lost: lost.clone(),
                                 sdk,
                             }),
@@ -248,6 +251,7 @@ impl JsonRecorder {
         Self {
             instruments: Arc::new(instruments),
             lost,
+            counter_lost,
         }
     }
 
@@ -293,11 +297,37 @@ impl JsonRecorder {
         }
     }
 
+    #[cfg(test)]
+    pub(super) fn with_locked_totals(&self, action: impl FnOnce()) {
+        let _guards: Vec<_> = self
+            .instruments
+            .values()
+            .map(|instrument| instrument.totals.lock().unwrap())
+            .collect();
+        action();
+    }
+
     pub(super) fn snapshot(&self, full_trace: bool) -> Value {
         let mut rows = Vec::new();
         let mut unobserved = 0;
         for ((name, outcome, operation), instrument) in self.instruments.iter() {
-            if let Ok(t) = instrument.totals.try_lock() {
+            let totals = if instrument.kind == "counter" {
+                Some(Totals {
+                    observed: instrument.counter_observed.load(Ordering::Acquire),
+                    counter: instrument.counter.load(Ordering::Relaxed),
+                    ..Totals::default()
+                })
+            } else {
+                instrument.totals.try_lock().ok().map(|t| t.clone())
+            };
+            if let Some(t) = totals {
+                // SDK publication belongs to collection, never the binding caller's increment.
+                if let Some(SdkInstrument::Counter(counter)) = &instrument.sdk {
+                    let published = instrument.counter_exported.fetch_max(t.counter, Ordering::Relaxed);
+                    if t.counter > published {
+                        counter.add(t.counter - published, &[]);
+                    }
+                }
                 if !t.observed {
                     unobserved += 1;
                     if !full_trace {
@@ -321,7 +351,7 @@ impl JsonRecorder {
                 self.lost.fetch_add(1, Ordering::Relaxed);
             }
         }
-        json!({"instruments":rows,"declared_series":self.instruments.len(),"declared_but_unobserved":unobserved,"roster":if full_trace {"full"} else {"observed"},"lost_updates":self.lost.load(Ordering::Relaxed),"counter_accuracy":"exact_if_no_loss","floating_point_accuracy":"estimated"})
+        json!({"instruments":rows,"declared_series":self.instruments.len(),"declared_but_unobserved":unobserved,"roster":if full_trace {"full"} else {"observed"},"lost_updates":self.lost.load(Ordering::Relaxed),"lost_counter_updates":self.counter_lost.load(Ordering::Relaxed),"counter_accuracy":if self.counter_lost.load(Ordering::Relaxed)==0 {"exact"}else{"inexact_overflow"},"floating_point_accuracy":"estimated"})
     }
 }
 
