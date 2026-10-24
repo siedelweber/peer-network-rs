@@ -1770,14 +1770,6 @@
       "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
     },
     {
-      "operation": "ci::test_observe_runtime.Processes.test_burn_entry",
-      "path": "ci/test_observe_runtime.py",
-      "claim": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
-      "before": "",
-      "after": "Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all twelve carrier boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.",
-      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
-    },
-    {
       "operation": "pn-records::public::numerics::declaration_families",
       "path": "packages/records/tests/public/numerics.rs",
       "claim": "RECORDS::claim:declarations:payloads-bind-only-their-declaration-family",
@@ -1848,6 +1840,22 @@
       "before": "",
       "after": "Claim: For an index-zero candidate, changing the initial name, predecessor, empty acceptance or empty snapshot refuses it; changing a valid successor's acceptance changes structural identity while its lookup name remains the same.",
       "review": "Read four index-zero mutations: initial name, predecessor, acceptance and snapshot. Each refuses as Initial; changing a valid successor acceptance changes its structural identity without changing its lookup name. The zero-index check itself is covered by isolated_recognition_premises."
+    },
+    {
+      "operation": "pn-records::public::burn::policy_declaration_binding",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:genesis-policy-requires-effective-declaration",
+      "before": "",
+      "after": "Claim: Only the marker/policy edition effective at genesis binds; a later announcement,",
+      "review": "Read the declaration binding assertions and runtime path: the fixed family must resolve at genesis, identity and edition must agree, and missing or late declarations refuse. Runtime accounting includes declaration validation and selection; the verifier remains a fixture."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_burn_entry",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+      "before": "",
+      "after": "Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all twenty-four carrier and declaration boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.",
+      "review": "Read the declaration binding assertions and runtime path: the fixed family must resolve at genesis, identity and edition must agree, and missing or late declarations refuse. Runtime accounting includes declaration validation and selection; the verifier remains a fixture."
     }
   ]
 }

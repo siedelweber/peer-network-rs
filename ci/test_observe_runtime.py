@@ -136,7 +136,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(outcomes['default'],outcomes['trace'])
 
     def test_burn_entry(self):
-        """Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all twelve carrier boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.
+        """Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all twenty-four carrier and declaration boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.
         ´claim:discipline:burn-recognition-retains-observed-outcomes´
         ´test:integration:test-burn-entry´
         """
@@ -153,7 +153,7 @@ class Processes(unittest.TestCase):
             stem='records__root__sig__design__records__'
             outcomes[mode]={k:v for k,v in distribution(summary).items() if k[0].startswith(stem)}
             self.assertEqual(outcomes[mode][stem+'completed_operations','refusal'],2)
-            self.assertEqual(outcomes[mode][stem+'completed_operations','success'],10)
+            self.assertEqual(outcomes[mode][stem+'completed_operations','success'],22)
             self.assertNotIn((stem+'completed_operations','error'),outcomes[mode])
             if mode=='trace':self.assertIn('fixture assumption, not chain evidence',json.dumps(expanded(rows)))
             print('RECORDS-BURN level='+mode+' distribution='+json.dumps({str(k):v for k,v in outcomes[mode].items()},sort_keys=True))

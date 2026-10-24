@@ -2,6 +2,56 @@ use pn_records::burn::{AcceptedSet, BurnError, Disclosure, Encoding, OperatorEvi
 use pn_records::test_support::burn as fixtures;
 use std::collections::BTreeSet;
 
+/// Claim: Only the marker/policy edition effective at genesis binds; a later announcement,
+/// absent family, wrong identity, edition or publication cannot authorize recognition.
+/// ´claim:burn:genesis-policy-requires-effective-declaration´
+/// ´test:integration:policy-declaration-binding´
+#[test]
+fn policy_declaration_binding() {
+    use pn_records::constants::bind_marker_policy;
+    use pn_records::{Declaration, DeclarationId, ValidationError, validate_history, validate_record};
+    let fixture = fixtures::generate(&[3]);
+    let burn = validate_burn(fixture.burn).unwrap();
+    let history = validate_history(&[], &[]).unwrap();
+    let declaration = Declaration {
+        id: DeclarationId {
+            namespace: "marker".into(),
+            name: "policy".into(),
+            edition: 1,
+        },
+        announced_at: 0,
+        effective_at: 0,
+    };
+    let records = validate_record(&[], &history, std::slice::from_ref(&declaration)).unwrap();
+    assert!(bind_marker_policy(&records, fixture.policy.clone(), &burn).is_ok());
+    for field in ["identity", "edition", "publication"] {
+        let mut policy = fixture.policy.clone();
+        match field {
+            "identity" => policy.identity = "other".into(),
+            "edition" => policy.edition = "2".into(),
+            _ => {
+                policy.published_at = 1;
+                policy.genesis_at = 2;
+            }
+        }
+        assert_eq!(bind_marker_policy(&records, policy, &burn), Err(BurnError::PolicyBinding));
+    }
+    let mut late = declaration;
+    late.announced_at = fixture.policy.genesis_at + 1;
+    late.effective_at = late.announced_at;
+    for declarations in [vec![], vec![late]] {
+        let records = validate_record(&[], &history, &declarations).unwrap();
+        assert_eq!(
+            bind_marker_policy(&records, fixture.policy.clone(), &burn),
+            Err(BurnError::PolicySelection(ValidationError::MissingDeclaration {
+                namespace: "marker".into(),
+                name: "policy".into(),
+                boundary: fixture.policy.genesis_at,
+            }))
+        );
+    }
+}
+
 /// Claim: Removing each required disclosure prevents readiness even when arithmetic does not read it; explicit empty event costs and explained operator absence remain valid publications.
 /// ´claim:burn:missing-required-burn-disclosures-prevent-readiness´
 /// ´test:integration:required-disclosures´

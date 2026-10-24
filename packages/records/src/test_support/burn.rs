@@ -3,7 +3,7 @@
 use crate::burn::{
     AcceptedSet, Address, Bootstrap, BurnError, BurnEvidence, BurnInput, BurnRecord, CandidateRule, Encoding, HistoryInput,
     Marker, Opening, OperatorEvidence, PolicyInput, PublicVerifier, RecognizedMarkers, recognize_markers, validate_burn,
-    validate_marker_history, validate_policy,
+    validate_marker_history,
 };
 use crate::numerics::{ComparisonLimits, ExactLimits, NumericContext};
 use std::collections::{BTreeMap, BTreeSet};
@@ -153,7 +153,18 @@ pub fn generate(words: &[u64]) -> BurnCase {
 /// Returns publication or evidence validation errors; successful validation returns the recognized prefix and its first candidate refusal without repair.
 pub fn recognize(case: BurnCase) -> Result<RecognizedMarkers, BurnError> {
     let burn = validate_burn(case.burn)?;
-    let policy = validate_policy(case.policy, &burn)?;
+    let history = crate::validate_history(&[], &[])?;
+    let declarations = [crate::Declaration {
+        id: crate::DeclarationId {
+            namespace: "marker".into(),
+            name: "policy".into(),
+            edition: 1,
+        },
+        announced_at: 0,
+        effective_at: 0,
+    }];
+    let records = crate::validate_record(&[], &history, &declarations)?;
+    let policy = crate::constants::bind_marker_policy(&records, case.policy, &burn)?;
     let history = validate_marker_history(case.history, &policy, &FixtureVerifier)?;
     Ok(recognize_markers(&history))
 }

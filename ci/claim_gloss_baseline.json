@@ -873,6 +873,7 @@
     "pn-records::public::numerics::declaration_families": "",
     "pn-records::public::burn::invalid_candidate_prefix": "",
     "pn-records::public::burn::competing_candidates": "",
-    "pn-records::public::burn::isolated_recognition_premises": ""
+    "pn-records::public::burn::isolated_recognition_premises": "",
+    "pn-records::public::burn::policy_declaration_binding": ""
   }
 }

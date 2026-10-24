@@ -4,6 +4,45 @@ use crate::numerics::{Floor, Literal, Numeraire};
 use crate::{DeclarationId, ValidatedRecords, ValidationError, select_effective_declaration};
 use std::collections::BTreeSet;
 
+/// Bind the marker/policy payload to the declaration effective at its genesis.
+/// The identity is the name within this fixed namespace; editions use canonical decimal spelling.
+/// (´def:burn:marker-policy´)
+/// # Errors
+/// Refuses invalid policy content, absent effective declarations, and mismatched identity,
+/// edition or publication time. Other declaration families need no marker payload.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "bind-marker-policy",
+        source_item = "constants::bind_marker_policy"
+    ),
+    ret
+)]
+pub fn bind_marker_policy(
+    records: &ValidatedRecords,
+    input: crate::burn::PolicyInput,
+    burn: &crate::burn::ValidatedBurn,
+) -> Result<crate::burn::ValidatedPolicy, crate::burn::BurnError> {
+    let result = (|| {
+        let validated = crate::burn::validate_policy(input.clone(), burn)?;
+        let declaration = select_effective_declaration(records, "marker", "policy", input.genesis_at)?;
+        if input.identity != declaration.id.name
+            || input.edition != declaration.id.edition.to_string()
+            || input.published_at != declaration.announced_at
+        {
+            return Err(crate::burn::BurnError::PolicyBinding);
+        }
+        Ok(validated)
+    })();
+    if result.is_err() {
+        super::refused();
+    }
+    result
+}
+
 /// A retained source definition, distinct from computed values and rounded displays.
 /// (´def:declarations:constants-edition´)
 #[derive(Clone, Debug, PartialEq, Eq)]

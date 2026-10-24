@@ -5063,6 +5063,17 @@
     {
       "package": "pn-records",
       "path": "packages/records/src/constants.rs",
+      "item": "constants::bind_marker_policy",
+      "owner": "RECORDS",
+      "signature": "fn bind_marker_policy (records : & ValidatedRecords , input : crate :: burn :: PolicyInput , burn : & crate :: burn :: ValidatedBurn ,) -> Result < crate :: burn :: ValidatedPolicy , crate :: burn :: BurnError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "bind-marker-policy"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/constants.rs",
       "item": "constants::bind_constants",
       "owner": "RECORDS",
       "signature": "fn bind_constants (records : & ValidatedRecords , inputs : Vec < EditionInput >) -> Result < ConstantsHistory < '_ > , ConstantsError >",
@@ -5739,6 +5750,7 @@
         "operation": [
           "assemble-boundary-inputs",
           "bind-constants",
+          "bind-marker-policy",
           "complete-act-access",
           "dependency-status",
           "numeric-apply-cost",
@@ -5791,6 +5803,7 @@
         "operation": [
           "assemble-boundary-inputs",
           "bind-constants",
+          "bind-marker-policy",
           "complete-act-access",
           "dependency-status",
           "numeric-apply-cost",
@@ -9968,6 +9981,17 @@
       "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
     },
     {
+      "operation": "pn-records::packages/records/src/constants.rs::constants::bind_marker_policy",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { let validated = crate :: burn :: validate_policy (input . clone () , burn) ? ; let declaration = select_effective_declaration (records , \"marker\" , \"policy\" , input . genesis_at) ? ; if input . identity != declaration . id . name || input . edition != declaration . id . edition . to_string () || input . published_at != declaration . announced_at { return Err (crate :: burn :: BurnError :: PolicyBinding) ; } Ok (validated) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
+    },
+    {
       "operation": "pn-records::packages/records/src/constants.rs::constants::bind_constants",
       "class_decision": "public-records",
       "body": "{ let result = bind (records , inputs) ; if result . is_err () { super :: refused () ; } result }",
@@ -9976,7 +10000,7 @@
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
     },
     {
       "operation": "pn-records::packages/records/src/constants.rs::constants::ConstantsHistory < '_ >::resolve",
@@ -9987,7 +10011,7 @@
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "This body uses only public exact rational values, unit names, limits and declaration data. Trace records its arguments and result; accounting never supplies a binding value. Full values retain canonical text beside backend summaries. No secret or exporter handle enters this body."
+      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
     },
     {
       "operation": "pn-records::packages/records/src/constants.rs::constants::ConstantsEdition::content",
@@ -13521,7 +13545,7 @@
       "item": "burn::BurnError",
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
-      "syntax": "# [doc = \" Exhaustive local refusals while unpublished; no refusal repairs candidate contents.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum BurnError { # [error (\"missing required publication: {0:?}\")] Publication (Disclosure) , # [error (\"audit evidence belongs to another edition or sample convention\")] EvidenceBinding , # [error (\"sampled address map differs from required reads\")] SampleCoverage , # [error (\"burn unit mismatch\")] Units , # [error (\"empty bootstrap interval requires a published zero and explanation\")] Bootstrap , # [error (\"invalid fixed pre-genesis open-placement policy\")] Policy , # [error (\"stability buffer does not exceed settlement depth\")] Buffer , # [error (\"wrong verification profile\")] Verifier , # [error (\"empty or duplicate record identity\")] RecordIdentity , # [error (\"marker belongs to another history or policy\")] HistoryPolicy , # [error (\"invalid initial marker\")] Initial , # [error (\"duplicate or skipped marker index, name or predecessor\")] Succession , # [error (\"lineage member is absent from this history\")] MissingLineage , # [error (\"successor lineage regressed\")] RegressedLineage , # [error (\"accepted set uses an undeclared encoding\")] Encoding , # [error (\"missing public commitment opening\")] MissingOpening , # [error (\"ambiguous public commitment opening\")] AmbiguousOpening , # [error (\"invalid public commitment opening\")] InvalidOpening , # [error (\"accepted set regressed\")] RegressedAcceptance , # [error (\"accepted record outside lineage\")] OutOfLineage , # [error (\"accepted member fails destruction verification\")] InvalidMember , # [error (\"aliases disagree on destruction amount or original address\")] InconsistentAlias , }"
+      "syntax": "# [doc = \" Exhaustive local refusals while unpublished; no refusal repairs candidate contents.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum BurnError { # [error (\"marker policy declaration selection: {0}\")] PolicySelection (# [from] crate :: ValidationError) , # [error (\"policy identity, edition or publication differs from the declaration effective at genesis\")] PolicyBinding , # [error (\"missing required publication: {0:?}\")] Publication (Disclosure) , # [error (\"audit evidence belongs to another edition or sample convention\")] EvidenceBinding , # [error (\"sampled address map differs from required reads\")] SampleCoverage , # [error (\"burn unit mismatch\")] Units , # [error (\"empty bootstrap interval requires a published zero and explanation\")] Bootstrap , # [error (\"invalid fixed pre-genesis open-placement policy\")] Policy , # [error (\"stability buffer does not exceed settlement depth\")] Buffer , # [error (\"wrong verification profile\")] Verifier , # [error (\"empty or duplicate record identity\")] RecordIdentity , # [error (\"marker belongs to another history or policy\")] HistoryPolicy , # [error (\"invalid initial marker\")] Initial , # [error (\"duplicate or skipped marker index, name or predecessor\")] Succession , # [error (\"lineage member is absent from this history\")] MissingLineage , # [error (\"successor lineage regressed\")] RegressedLineage , # [error (\"accepted set uses an undeclared encoding\")] Encoding , # [error (\"missing public commitment opening\")] MissingOpening , # [error (\"ambiguous public commitment opening\")] AmbiguousOpening , # [error (\"invalid public commitment opening\")] InvalidOpening , # [error (\"accepted set regressed\")] RegressedAcceptance , # [error (\"accepted record outside lineage\")] OutOfLineage , # [error (\"accepted member fails destruction verification\")] InvalidMember , # [error (\"aliases disagree on destruction amount or original address\")] InconsistentAlias , }"
     },
     {
       "item": "ActId",

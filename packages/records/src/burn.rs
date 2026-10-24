@@ -235,6 +235,10 @@ pub enum Disclosure {
 /// (´def:burn:recognition´)
 #[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum BurnError {
+    #[error("marker policy declaration selection: {0}")]
+    PolicySelection(#[from] crate::ValidationError),
+    #[error("policy identity, edition or publication differs from the declaration effective at genesis")]
+    PolicyBinding,
     #[error("missing required publication: {0:?}")]
     Publication(Disclosure),
     #[error("audit evidence belongs to another edition or sample convention")]
@@ -382,7 +386,7 @@ fn validate_disclosures(input: BurnInput) -> Result<ValidatedBurn, BurnError> {
     ),
     ret
 )]
-pub fn validate_policy(input: PolicyInput, burn: &ValidatedBurn) -> Result<ValidatedPolicy, BurnError> {
+pub(crate) fn validate_policy(input: PolicyInput, burn: &ValidatedBurn) -> Result<ValidatedPolicy, BurnError> {
     let result = (|| {
         if [
             &input.identity,
