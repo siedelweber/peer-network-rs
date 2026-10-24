@@ -55,6 +55,8 @@
 
 **Section (intranet)** · `sec:foundation:area-intranet` If host-intranet boundaries fail, private reachability leaks or an operator-provided path is mistaken for implementation-provided transport security. (`rec:intranet:decision`) separates those duties and requires an explicit public case while keeping all connection material secret-owned.
 
+**Section (crypto)** · `sec:foundation:area-crypto` If the cryptographic base fails, shared curve assumptions can hide incompatible implementations or secret-bearing types can bypass the observation boundary. (`rec:crypto:decision`) chooses the base while holding each dependency, recipe and secret-owning integration to its evidence.
+
 ## CI claim areas · `sec:foundation:claim-areas`
 
 

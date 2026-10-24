@@ -198,3 +198,12 @@ title = "Host intranet"
 scope = "Private service reachability, explicit transport cases and responsibility for the host intranet."
 depends_on = ["rec:storage:decision", "rec:observe:decision", "rec:devnet:decision"]
 does_not_establish = "No secure path, driver integration or guarded transport is implemented or admitted by this record."
+
+[[rows]]
+label = "rec:crypto:decision"
+path = "adr/023-cryptographic-base.md"
+status = "accepted"
+title = "Cryptographic base"
+scope = "The asymmetric implementation base, complementary primitives and dependency admission."
+depends_on = ["rec:identity:decision", "rec:observe:decision", "rec:intranet:decision"]
+does_not_establish = "No dependency integration, signed-object recipe, key-management protocol or transport is admitted."

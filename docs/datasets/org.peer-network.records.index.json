@@ -274,6 +274,19 @@
       "scope": "Private service reachability, explicit transport cases and responsibility for the host intranet.",
       "status": "accepted",
       "title": "Host intranet"
+    },
+    {
+      "depends_on": [
+        "rec:identity:decision",
+        "rec:observe:decision",
+        "rec:intranet:decision"
+      ],
+      "does_not_establish": "No dependency integration, signed-object recipe, key-management protocol or transport is admitted.",
+      "label": "rec:crypto:decision",
+      "path": "adr/023-cryptographic-base.md",
+      "scope": "The asymmetric implementation base, complementary primitives and dependency admission.",
+      "status": "accepted",
+      "title": "Cryptographic base"
     }
   ]
 }

@@ -2627,6 +2627,18 @@
       "path": "adr/022-host-intranet.md",
       "realizers": [],
       "status": "held"
+    },
+    {
+      "claims": [],
+      "closing_condition": "Pass open:crypto:dependency-admission for the first operation before enabling signing or verification.",
+      "closing_step": "First signing or verifying slice, before operation enablement",
+      "hold": "ROOT::open:crypto:dependency-admission",
+      "missing": "Exact dependency and C-source admission, required-operation vectors, secret ownership and entropy/nonce evidence; no signature recipe is admitted by the library choice.",
+      "name": "ROOT::dec:crypto:base-library",
+      "owner": "First signing or verifying slice implementer and independent cryptographic integration reviewer",
+      "path": "adr/023-cryptographic-base.md",
+      "realizers": [],
+      "status": "held"
     }
   ]
 }

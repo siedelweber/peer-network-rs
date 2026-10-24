@@ -26,3 +26,4 @@
 | Testing harness | accepted | (`rec:harness:decision`) |
 | Development performance | accepted | (`rec:devperf:decision`) |
 | Host intranet | accepted | (`rec:intranet:decision`) |
+| Cryptographic base | accepted | (`rec:crypto:decision`) |
