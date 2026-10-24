@@ -2104,3 +2104,15 @@ owner = "First signing or verifying slice implementer and independent cryptograp
 missing = "Exact dependency and C-source admission, required-operation vectors, secret ownership and entropy/nonce evidence; no signature recipe is admitted by the library choice."
 closing_condition = "Pass open:crypto:dependency-admission for the first operation before enabling signing or verification."
 closing_step = "First signing or verifying slice, before operation enablement"
+
+[[rows]]
+name = "ROOT::dec:intranet:signed-tokens"
+path = "adr/022-host-intranet.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:design:secret-integrations"
+owner = "Telemetry and host-intranet integration implementers with independent review"
+missing = "Named receiver verification of ES256K and secret-owned token integration, or an evidenced per-link protocol exception."
+closing_condition = "Admit the concrete token recipe and demonstrate pinned algorithm, claim validation and credential custody before enabling the link."
+closing_step = "First token-authenticated service integration before enablement"
