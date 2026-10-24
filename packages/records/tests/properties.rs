@@ -4,7 +4,7 @@ use pn_testkit::proptest::{self, prelude::*};
 
 proptest! {
     #![proptest_config(pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/properties.txt")))]
-    /// Claim: For generated finite causal DAGs, naive transitive search agrees with every closure, their union counts whole proposals once, both input orders preserve the exact work count, and adding a proposal increases work.
+    /// Claim: For generated finite causal DAGs, naive transitive search agrees with every closure and its exact proposal identity set; original, reversed and shuffled presentations preserve the work count, and adding a proposal increases work.
     /// ´claim:acts:generated-closures-match-independent-search´
     /// ´test:integration:closure-model´
     #[test]
@@ -12,7 +12,7 @@ proptest! {
         checks::closures(&words);
     }
 
-    /// Claim: Every declared single corruption of a valid generated batch returns its exact typed refusal in both input orders, keeping rejection distinct from accidental invalid fixtures.
+    /// Claim: Every declared mutation of a valid generated batch returns its exact typed refusal in original, reversed and shuffled presentations; over-bound mutations test count-check precedence over duplicate and missing identities.
     /// ´claim:acts:single-corruptions-retain-typed-causes´
     /// ´test:integration:typed-corruptions´
     #[test]

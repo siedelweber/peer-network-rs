@@ -278,6 +278,7 @@ case_count_kind = "configured-successful-cases; persisted regressions run additi
 
 [[rows]]
 name = "pn-verification::properties::closure_model"
+consumer = "pn-verification"
 seed_policy = "source-v1"
 cases = 256
 algorithm = "cc"
@@ -289,6 +290,7 @@ case_count_kind = "configured-successful-cases; persisted regressions run additi
 
 [[rows]]
 name = "pn-verification::properties::typed_corruptions"
+consumer = "pn-verification"
 seed_policy = "source-v1"
 cases = 256
 algorithm = "cc"

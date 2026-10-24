@@ -1,7 +1,7 @@
-#[path = "../../records/tests/common/checks.rs"]
+#[path = "common/checks.rs"]
 mod checks;
 
-/// Claim: The declared conformance roster executes whole-act overlap and every typed corruption through the public surface, retaining a result per case and implementation rather than counting legs as acts.
+/// Claim: The shared inputs satisfy the outer consumer's fixed-point closure oracle and independently owned exact-cause table, retaining one observation per case through the records public surface without treating this consumer as another implementation.
 /// ´claim:verification:shared-conformance-preserves-whole-acts´
 /// ´test:integration:shared-cases´
 #[test]

@@ -148,6 +148,10 @@ class Registry:
         for suite in self.suites.values():
             row = dict(source=source, configuration=CONFIGURATION, suite=suite['name'],
                        implementation=suite.get('implementation') or None, tier=suite['tier'])
+            if 'observation' in suite:
+                row['observation'] = suite['observation']
+                row['property_observations'] = [dict(operation=r['operation'], seed=r['seed'], consumer=r.get('seed_consumer'))
+                                                for r in joined if r['suite']==suite['name'] and 'seed' in r]
             if suite['status'] == 'held':
                 result.append({**row, 'status': 'held', 'reason': suite['reason'], 'expected': 0, 'observed': 0})
             else:

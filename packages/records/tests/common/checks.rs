@@ -1,4 +1,4 @@
-//! Shared public-surface predicates; included by both test consumers.
+//! Inner public-surface predicates; the outer consumer owns its own oracle.
 use pn_records::test_support::{Scenario, corrupt, generate};
 use pn_records::{ActId, Layout, ValidationError, assemble_boundary_inputs, validate_history, validate_record};
 use std::collections::{BTreeMap, BTreeSet};
@@ -64,7 +64,10 @@ pub fn closures(words: &[u64]) {
             .collect();
         assert_eq!(actual, expected);
         assert_eq!(boundary.work(), Some(expected_work));
-        assert_eq!(boundary.acts().len(), union.len());
+        assert_eq!(
+            boundary.acts().iter().map(|act| act.id().clone()).collect::<BTreeSet<_>>(),
+            union
+        );
         for act in boundary.acts() {
             assert_eq!(act.legs().len(), if act.body().layout == Layout::Paired { 2 } else { 1 });
             assert!(act.legs().iter().all(|leg| &leg.id().act == act.id()));

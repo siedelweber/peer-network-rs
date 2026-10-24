@@ -142,6 +142,27 @@ class PropertyDeclarations(unittest.TestCase):
         self.assertNotEqual(properties.seed('source-one'), properties.seed('source-two'))
         self.assertLess(int(properties.seed('source-one')), 2**64)
 
+    def test_consumer_seed(self):
+        """Consumer qualification creates a distinct replayable observation and rejects a result carrying the inner seed as outer evidence.
+        ´claim:harness:consumer-seeds-separate-observations´
+        ´test:integration:test-consumer-seed´
+        """
+        rows = properties.declarations()
+        inner = rows['pn-records::properties::closure_model']
+        outer = rows['pn-verification::properties::closure_model']
+        source = 'controlled-source'
+        env = properties.environment(rows, source)
+        self.assertEqual(env['PROPTEST_RNG_SEED'], properties.seed(source))
+        self.assertEqual(env['PN_PROPERTY_SEED_PN_VERIFICATION'], properties.seed(source, 'pn-verification'))
+        self.assertNotEqual(env['PROPTEST_RNG_SEED'], env['PN_PROPERTY_SEED_PN_VERIFICATION'])
+        self.assertEqual(properties.seed(source, 'pn-verification'), properties.seed(source, 'pn-verification'))
+        self.assertNotEqual(properties.seed(source, 'pn-verification'), properties.seed(source, 'pn-records'))
+        record = dict(operation=outer['name'], source=source, outcome='passed', **properties.evidence(outer, 'passed', source))
+        properties.validate(record, rows)
+        record['seed'] = properties.evidence(inner, 'passed', source)['seed']
+        with self.assertRaisesRegex(StructuralError, 'mismatch: seed'):
+            properties.validate(record, rows)
+
 
 if __name__ == '__main__':
     unittest.main()

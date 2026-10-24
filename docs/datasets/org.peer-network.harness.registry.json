@@ -2789,6 +2789,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_testkit.PropertyDeclarations.test_consumer_seed",
         "ci::test_testkit.PropertyDeclarations.test_source_seed",
         "ci::test_testkit.PropertyDeclarations.test_undeclared_property",
         "ci::test_testkit.SupportGuard.test_benchmark_correctness",
@@ -3136,6 +3137,7 @@
       "kind": "suite",
       "level": "public-surface",
       "name": "pn-records::properties",
+      "observation": "Inner observation: source-v1 seed and records-owned transitive-search predicates.",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
@@ -3199,6 +3201,7 @@
       "kind": "suite",
       "level": "integration",
       "name": "pn-verification::properties",
+      "observation": "Outer observation: consumer-qualified source-v1 seed, verification-owned fixed-point oracle and exact-cause table; same implementation and shared generator.",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
@@ -3247,6 +3250,7 @@
       "kind": "suite",
       "level": "integration",
       "name": "records-verification",
+      "observation": "Outer conformance observation: shared inputs, verification-owned oracle and expected causes; not a second implementation.",
       "parent_case": "pn-verification::conformance::shared_cases",
       "runner": "contract",
       "status": "active",

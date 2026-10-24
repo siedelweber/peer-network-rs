@@ -1576,6 +1576,54 @@
       "before": "",
       "after": "Claim: A fresh process reads an alternate declared case count, seed, algorithm and shrink limits, and executes exactly that many successful cases, so recorded configuration cannot silently diverge from the runner.",
       "review": "Read the exact assertions: fresh-process alternate configuration and 321 successful cases distinguish the hard-coded former defaults."
+    },
+    {
+      "operation": "pn-records::properties::closure_model",
+      "path": "packages/records/tests/properties.rs",
+      "claim": "RECORDS::claim:acts:generated-closures-match-independent-search",
+      "before": "Claim: For generated finite causal DAGs, naive transitive search agrees with every closure, their union counts whole proposals once, both input orders preserve the exact work count, and adding a proposal increases work.",
+      "after": "Claim: For generated finite causal DAGs, naive transitive search agrees with every closure and its exact proposal identity set; original, reversed and shuffled presentations preserve the work count, and adding a proposal increases work.",
+      "review": "Read the boundary accessor assertion: it now compares ActId sets, and the loop executes original, reversed and seeded-shuffle presentations, retaining the exact work checks."
+    },
+    {
+      "operation": "pn-records::properties::typed_corruptions",
+      "path": "packages/records/tests/properties.rs",
+      "claim": "RECORDS::claim:acts:single-corruptions-retain-typed-causes",
+      "before": "Claim: Every declared single corruption of a valid generated batch returns its exact typed refusal in both input orders, keeping rejection distinct from accidental invalid fixtures.",
+      "after": "Claim: Every declared mutation of a valid generated batch returns its exact typed refusal in original, reversed and shuffled presentations; over-bound mutations test count-check precedence over duplicate and missing identities.",
+      "review": "Read all mutation constructors: the two over-bound lists also repeat an unresolved identity, so the stated premise is precedence rather than isolated invalidity."
+    },
+    {
+      "operation": "pn-verification::conformance::shared_cases",
+      "path": "packages/verification/tests/conformance.rs",
+      "claim": "VERIFICATION::claim:verification:shared-conformance-preserves-whole-acts",
+      "before": "Claim: The declared conformance roster executes whole-act overlap and every typed corruption through the public surface, retaining a result per case and implementation rather than counting legs as acts.",
+      "after": "Claim: The shared inputs satisfy the outer consumer's fixed-point closure oracle and independently owned exact-cause table, retaining one observation per case through the records public surface without treating this consumer as another implementation.",
+      "review": "Read the local checks module and retained contract output: the twenty shared inputs use verification-owned expectations but still execute the same records implementation."
+    },
+    {
+      "operation": "pn-verification::properties::closure_model",
+      "path": "packages/verification/tests/properties.rs",
+      "claim": "VERIFICATION::claim:verification:generated-closures-match-independent-search",
+      "before": "Claim: For generated finite causal DAGs, naive transitive search agrees with every closure, their union counts whole proposals once, both input orders preserve the exact work count, and adding a proposal increases work.",
+      "after": "Claim: With a consumer-qualified seed over the shared finite-DAG generator, the outer fixed-point oracle agrees with every closure and the exact proposal identity set in original, reversed and shuffled presentations, with whole co-legs attached to their parent acts.",
+      "review": "Read the independently owned fixed-point relation and whole-leg role assertions; this consumer checks exact identity sets under three presentations and a distinct declared seed."
+    },
+    {
+      "operation": "pn-verification::properties::typed_corruptions",
+      "path": "packages/verification/tests/properties.rs",
+      "claim": "VERIFICATION::claim:verification:single-corruptions-retain-typed-causes",
+      "before": "Claim: Every declared single corruption of a valid generated batch returns its exact typed refusal in both input orders, keeping rejection distinct from accidental invalid fixtures.",
+      "after": "Claim: With a consumer-qualified seed, every declared mutation of a valid generated batch matches the outer-owned cause table in original, reversed and shuffled presentations; over-bound mutations specifically test count-check precedence over duplicate and missing identities.",
+      "review": "Read the outer expected-cause match before mutation: it ignores the generator-returned error and compares every ordered run with its own typed expectation."
+    },
+    {
+      "operation": "ci::test_testkit.PropertyDeclarations.test_consumer_seed",
+      "path": "ci/test_testkit.py",
+      "claim": "ROOT::claim:harness:consumer-seeds-separate-observations",
+      "before": "",
+      "after": "Consumer qualification creates a distinct replayable observation and rejects a result carrying the inner seed as outer evidence.",
+      "review": "Read the controlled source and consumer comparisons and the substituted inner seed: validation rejects the incorrectly attributed observation."
     }
   ]
 }

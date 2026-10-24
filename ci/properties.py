@@ -17,6 +17,8 @@ def declarations():
     for row in rows:
         if row['name'] in result or row.get('seed_policy') != 'source-v1' or type(row.get('cases')) is not int or row['cases'] < 256:
             raise StructuralError('malformed property seed/case declaration')
+        if 'consumer' in row and (not row['consumer'] or row['consumer'] != row['name'].split('::')[0]):
+            raise StructuralError('property seed consumer differs from package')
         if row.get('algorithm') != 'cc' or any(not row.get(key) for key in ('generator', 'edition', 'dependency', 'regressions', 'case_count_kind')):
             raise StructuralError('missing property replay declaration')
         result[row['name']] = row
@@ -28,10 +30,11 @@ def declarations():
     return result
 
 
-def seed(source):
+def seed(source, consumer=None):
     if not isinstance(source, str) or not source:
         raise StructuralError('property seed requires source identity')
-    return str(int.from_bytes(hashlib.sha256(('pn-property-seed-v1:'+source).encode()).digest()[:8], 'big'))
+    identity = source if consumer is None else source+':'+consumer
+    return str(int.from_bytes(hashlib.sha256(('pn-property-seed-v1:'+identity).encode()).digest()[:8], 'big'))
 
 
 def environment(rows, source):
@@ -41,13 +44,15 @@ def environment(rows, source):
     if len(configurations) != 1:
         raise StructuralError('runner requires one declared bounded seed configuration')
     _, cases, algorithm = configurations.pop()
-    return {'PROPTEST_RNG_SEED': seed(source), 'PROPTEST_CASES': str(cases), 'PROPTEST_RNG_ALGORITHM': algorithm,
+    qualified = {'PN_PROPERTY_SEED_'+row['consumer'].upper().replace('-', '_'): seed(source, row['consumer'])
+                 for row in rows.values() if 'consumer' in row}
+    return {**qualified, 'PROPTEST_RNG_SEED': seed(source), 'PROPTEST_CASES': str(cases), 'PROPTEST_RNG_ALGORITHM': algorithm,
             'PROPTEST_FORK': 'false', 'PROPTEST_TIMEOUT': '0', 'PROPTEST_MAX_SHRINK_TIME': '0',
             'PROPTEST_MAX_SHRINK_ITERS': '4294967295'}
 
 
 def evidence(row, outcome, source):
-    return dict(seed=seed(source), seed_policy=row['seed_policy'], case_count=row['cases'], case_count_kind=row['case_count_kind'],
+    return dict(seed=seed(source, row.get('consumer')), seed_consumer=row.get('consumer'), seed_policy=row['seed_policy'], case_count=row['cases'], case_count_kind=row['case_count_kind'],
                 completed_generated_cases=row['cases'] if outcome == 'passed' else None,
                 generator=row['generator'], generator_edition=row['edition'], shrinker_edition=row['dependency'],
                 rng_algorithm=row['algorithm'], regression_corpus=row['regressions'],

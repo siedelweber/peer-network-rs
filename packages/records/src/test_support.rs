@@ -99,7 +99,9 @@ pub fn generate(words: &[u64]) -> Scenario {
     }
 }
 
-/// Stable single-fault names shared by local and outer conformance tiers.
+/// Stable mutation names shared by local and outer conformance tiers.
+/// The two over-bound lists also contain repeated unresolved identities: their
+/// expected refusal establishes count-check precedence, not fault isolation.
 /// (´def:acts:test-support´)
 pub const CORRUPTIONS: &[&str] = &[
     "duplicate",

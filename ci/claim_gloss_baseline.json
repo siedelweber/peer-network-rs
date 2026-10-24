@@ -845,6 +845,7 @@
     "cli-common::observation::tests::compaction_branching": "Claim: A shallow 256-branch payload below the inline limit remains inline; adding a common thirty-level wrapper requires at most two nesting chunks rather than one object per leaf, and compaction preserves parseable envelopes without a timing verdict.",
     "cli-common::observation::tests::cutoff_before_publication": "",
     "cli-common::observation::tests::shared_transport_cutoff": "Claim: With records and final status sharing a transport lock, a write already in flight at an injected cutoff precedes the status and reconciles exactly as one in-flight record, while the queued summary remains undelivered.",
-    "pn-testkit::tests::property_configuration": ""
+    "pn-testkit::tests::property_configuration": "",
+    "ci::test_testkit.PropertyDeclarations.test_consumer_seed": ""
   }
 }
