@@ -526,6 +526,31 @@
       ],
       "status": "held; no test-site mint or execution yet",
       "suite": "client"
+    },
+    {
+      "bites": [
+        5,
+        6,
+        11
+      ],
+      "claim": "claim:standing:split-and-tilt-witnesses-preserve-open-claims",
+      "hold": "open:design:core-standing-properties",
+      "levels": [
+        "unit",
+        "crate",
+        "integration",
+        "conformance",
+        "property"
+      ],
+      "name": "core-standing-properties",
+      "owner": "pn-epoch",
+      "requirements": [
+        "final-state",
+        "conservation",
+        "certificate"
+      ],
+      "status": "held; no test-site mint or execution yet",
+      "suite": "numeric"
     }
   ]
 }

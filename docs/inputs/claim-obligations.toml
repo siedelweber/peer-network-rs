@@ -1874,6 +1874,18 @@ closing_condition = "Attach test-site evidence with reviewed premises and passin
 closing_step = "Assigned domain bite, with evidence review in bite 11"
 
 [[rows]]
+name = "ROOT::verif:design:core-standing-properties"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:design:core-standing-properties"
+owner = "pn-epoch implementer and repository reviewer"
+missing = "Executed split and positive-tilt perturbation witnesses, reviewed fixture predicates and test-site claim text, and negative review probes."
+closing_condition = "Attach passing source/configuration-matched test-site evidence and reviewed premises that preserve the open split-invariance and positive-tilt monotonicity questions; claim no equality or response sign."
+closing_step = "Bites 5 and 6 scoped witnesses, with integrated evidence review in bite 11"
+
+[[rows]]
 name = "ROOT::verif:design:devnet-conformance"
 path = "docs/design/implementation.md"
 status = "held"

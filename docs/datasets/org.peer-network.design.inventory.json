@@ -12758,13 +12758,13 @@
     {
       "chapter": "F Verification",
       "citable": true,
-      "crate": "pn-verification",
+      "crate": "none",
       "current_at": "network-v0.29.0",
       "environment": "verification",
-      "kind": "fixture",
+      "kind": "none",
       "label": "ver:can:depth-two-overlap",
       "label_source": "explicit",
-      "statement": "Check declared depth-two disjoint and overlapping leaf compositions against their saturation and depth-decay inequalities; this is a terminal CAN fixture, not standing evidence."
+      "statement": "Check declared depth-two disjoint and overlapping leaf compositions against their saturation and depth-decay inequalities; this is a terminal CAN fixture, not standing evidence. Held outside the implementation under (`open:inventory:deployment-terminal-evidence`)."
     },
     {
       "chapter": "F Verification",

@@ -305,7 +305,7 @@
       "topic": "Raw Self reference data"
     },
     {
-      "ambiguity": "A calibration frontier allows inverse-temperature changes despite the locked beta constant and beta-dependent tensor formulas. (cond:deployment:parameter-comparisons) (cond:deployment:parameter-comparisons) (def:graph:sentiment-slice) (ax:epoch:thermodynamic-boundary)",
+      "ambiguity": "A calibration frontier allows inverse-temperature changes despite the locked beta constant and beta-dependent tensor formulas. (cond:deployment:parameter-comparisons) (def:graph:sentiment-slice) (ax:epoch:thermodynamic-boundary)",
       "class": "DEFECT",
       "id": "Q31",
       "instruction": "Your locked-beta reading is safe. Do not expose the proposed sweep as a deployment override or assert beta-independent tensors.",
