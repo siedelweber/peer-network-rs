@@ -4,16 +4,15 @@ pub fn expected(name: &str) -> BurnError {
     match name {
         "history-mix" | "policy-mix" | "policy-identity" | "policy-sequence" => BurnError::HistoryPolicy,
         "alias-address" | "alias-amount" => BurnError::InconsistentAlias,
-        "skipped-index" | "duplicate-index" | "lost-predecessor" | "predecessor-name" | "successor-snapshot" => {
-            BurnError::Succession
-        }
+        "empty-name" | "selected-name" | "skipped-index" | "duplicate-index" | "lost-predecessor" | "predecessor-name"
+        | "successor-snapshot" => BurnError::Succession,
         "late-policy" | "closed-placement" => BurnError::Policy,
         "missing-provenance" => BurnError::Publication(Disclosure::Provenance),
         "missing-finality" => BurnError::Publication(Disclosure::Finality),
         "missing-costs" => BurnError::Publication(Disclosure::RecordingCosts),
         "missing-operator" | "unexplained-operator" => BurnError::Publication(Disclosure::Operator),
         "empty-bootstrap" => BurnError::Bootstrap,
-        "burn-unit" => BurnError::Units,
+        "burn-unit" | "cost-unit" | "operator-unit" => BurnError::Units,
         "sample-gap" => BurnError::SampleCoverage,
         "buffer" => BurnError::Buffer,
         "wrong-profile" => BurnError::Verifier,
@@ -49,17 +48,54 @@ pub fn case(words: &[u64], name: &str) {
         assert_eq!(burn::recognize(input).unwrap(), valid);
     } else {
         burn::corrupt(&mut input, name);
-        assert_eq!(
-            burn::recognize(input.clone()).map_or_else(Some, |r| r.first_refusal().map(|f| f.cause.clone())),
-            Some(expected(name)),
-            "{name}"
-        );
-        input.history.records.reverse();
-        input.history.markers.reverse();
-        assert_eq!(
-            burn::recognize(input).map_or_else(Some, |r| r.first_refusal().map(|f| f.cause.clone())),
-            Some(expected(name)),
-            "reversed {name}"
-        );
+        let retained = match name {
+            "initial" | "initial-index" => Some(0),
+            "duplicate-index" | "lost-predecessor" | "lost-lineage" | "out-of-lineage" | "invalid-member" | "wrong-encoding" => {
+                Some(1)
+            }
+            "skipped-index"
+            | "regressed-lineage"
+            | "regressed-acceptance"
+            | "alias-address"
+            | "alias-amount"
+            | "history-mix"
+            | "policy-mix"
+            | "missing-opening"
+            | "ambiguous-opening"
+            | "invalid-opening"
+            | "predecessor-name"
+            | "successor-snapshot"
+            | "policy-identity"
+            | "policy-sequence"
+            | "empty-name"
+            | "selected-name" => Some(2),
+            _ => None,
+        };
+        for reverse in [false, true] {
+            if reverse {
+                input.history.records.reverse();
+                input.history.markers.reverse();
+            }
+            match (burn::recognize(input.clone()), retained) {
+                (Ok(result), Some(count)) => {
+                    assert_eq!(result.first_refusal().map(|f| &f.cause), Some(&expected(name)), "{name}");
+                    assert_eq!(
+                        result
+                            .markers()
+                            .iter()
+                            .map(|m| m.identity().name.as_str())
+                            .collect::<Vec<_>>(),
+                        ["m0", "m1", "m2"][..count],
+                        "prefix {name}"
+                    );
+                    for (actual, original) in result.markers().iter().zip(valid.markers()) {
+                        assert_eq!(actual.accepted(), original.accepted(), "accepted {name}");
+                        assert_eq!(actual.destructions(), original.destructions(), "destructions {name}");
+                    }
+                }
+                (Err(cause), None) => assert_eq!(cause, expected(name), "validation {name}"),
+                (result, count) => panic!("wrong prefix class {name}: {result:?} expected {count:?}"),
+            }
+        }
     }
 }

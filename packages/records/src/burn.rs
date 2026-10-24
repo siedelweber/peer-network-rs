@@ -189,12 +189,25 @@ pub struct ValidatedMarkerHistory {
     openings: Vec<Result<BTreeSet<String>, BurnError>>,
 }
 
+/// Inputs identifying an unsettled recognition, not host finality evidence.
+/// (´def:burn:recognition´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RecognitionBasis {
+    pub history: String,
+    pub policy_identity: String,
+    pub policy_edition: String,
+    pub verifier_profile: String,
+    pub burn_publication_edition: String,
+    pub sample_convention: String,
+}
+
 /// Recognized sequence, retaining complete marker identities and deduplicated destructions.
+/// Recognition is not finality: settlement requires the host's evidence at the published depth.
 /// No first-accepted increment or amount snapshot is computed here.
 /// (´def:burn:recognition´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct RecognizedMarkers {
-    history: String,
+    basis: RecognitionBasis,
     markers: Vec<RecognizedMarker>,
     first_refusal: Option<CandidateRefusal>,
 }
@@ -538,7 +551,14 @@ fn recognize(history: &ValidatedMarkerHistory) -> RecognizedMarkers {
     candidates.sort_by_key(|(_, marker)| (marker.index, marker.history_position));
     let records: BTreeMap<_, _> = history.input.records.iter().map(|r| (&r.identity, r)).collect();
     let mut result = RecognizedMarkers {
-        history: history.input.identity.clone(),
+        basis: RecognitionBasis {
+            history: history.input.identity.clone(),
+            policy_identity: history.policy.input.identity.clone(),
+            policy_edition: history.policy.input.edition.clone(),
+            verifier_profile: history.policy.input.verification_profile.clone(),
+            burn_publication_edition: history.policy.burn.0.edition.clone(),
+            sample_convention: history.policy.burn.0.sample_convention.clone(),
+        },
         markers: Vec::new(),
         first_refusal: None,
     };
@@ -679,6 +699,14 @@ impl ValidatedBurn {
     }
 }
 impl RecognizedMarkers {
+    /// Borrow the fixed computation keys; these identify recognition, not settled evidence.
+    /// (´def:burn:recognition´)
+    /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
+    #[must_use]
+    pub fn basis(&self) -> &RecognitionBasis {
+        &self.basis
+    }
+
     /// Borrow the first rejected candidate and cause; a valid competitor can still extend the prefix.
     /// (´def:burn:recognition´)
     /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
@@ -692,7 +720,7 @@ impl RecognizedMarkers {
     /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
     #[must_use]
     pub fn history(&self) -> &str {
-        &self.history
+        &self.basis.history
     }
     /// Borrow the complete recognized sequence in immediate predecessor order.
     /// (´def:burn:recognition´)

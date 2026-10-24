@@ -37,7 +37,7 @@ mod burn_checks;
 
 proptest! {
     #![proptest_config(pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/properties.txt")))]
-    /// Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause in original and reversed presentation order under fixture proof verification.
+    /// Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause and expected retained prefix, or no prefix at validation, in original and reversed presentation order under fixture proof verification.
     /// ´claim:burn:generated-marker-corruptions-retain-typed-causes´
     /// ´test:integration:marker-recognition´
     #[test]

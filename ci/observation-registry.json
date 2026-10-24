@@ -5298,6 +5298,24 @@
         "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
         "class_decision": "public-records"
       }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarkers::basis",
+      "owner": "RECORDS",
+      "signature": "fn basis (& self) -> & RecognitionBasis",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
     }
   ],
   "metrics": [
@@ -10104,7 +10122,7 @@
     {
       "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::history",
       "class_decision": "public-records",
-      "body": "{ & self . history }",
+      "body": "{ & self . basis . history }",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
@@ -10155,6 +10173,17 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::basis",
+      "class_decision": "public-records",
+      "body": "{ & self . basis }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This accessor borrows the public recognition basis without deriving finality; the enclosing recognition operation records the complete basis at trace."
     }
   ],
   "generators": [
@@ -11896,6 +11925,15 @@
       "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
     },
     {
+      "item": "burn::RecognitionBasis",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
+    },
+    {
       "item": "burn::RecognizedMarkers",
       "kind": "derive",
       "package": "pn-records",
@@ -13518,10 +13556,16 @@
       "syntax": "# [doc = \" Local evidence checks retained for pure recognition; fields cannot be forged by consumers.\"] # [doc = \" (´def:burn:verification-boundary´)\"] # [derive (Clone , Debug)] pub struct ValidatedMarkerHistory { input : HistoryInput , policy : ValidatedPolicy , verified : BTreeSet < String > , openings : Vec < Result < BTreeSet < String > , BurnError > > , }"
     },
     {
+      "item": "burn::RecognitionBasis",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Inputs identifying an unsettled recognition, not host finality evidence.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognitionBasis { pub history : String , pub policy_identity : String , pub policy_edition : String , pub verifier_profile : String , pub burn_publication_edition : String , pub sample_convention : String , }"
+    },
+    {
       "item": "burn::RecognizedMarkers",
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
-      "syntax": "# [doc = \" Recognized sequence, retaining complete marker identities and deduplicated destructions.\"] # [doc = \" No first-accepted increment or amount snapshot is computed here.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognizedMarkers { history : String , markers : Vec < RecognizedMarker > , first_refusal : Option < CandidateRefusal > , }"
+      "syntax": "# [doc = \" Recognized sequence, retaining complete marker identities and deduplicated destructions.\"] # [doc = \" Recognition is not finality: settlement requires the host's evidence at the published depth.\"] # [doc = \" No first-accepted increment or amount snapshot is computed here.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognizedMarkers { basis : RecognitionBasis , markers : Vec < RecognizedMarker > , first_refusal : Option < CandidateRefusal > , }"
     },
     {
       "item": "burn::CandidateRefusal",

@@ -170,7 +170,7 @@ pub fn recognize(case: BurnCase) -> Result<RecognizedMarkers, BurnError> {
     Ok(recognize_markers(&history))
 }
 
-/// Shared corruption names; consumers own their expected-cause tables.
+/// Shared corruption names; the inner consumer owns a cause table and the outer derives causes from changed premises.
 /// (´def:burn:test-support´)
 pub const CORRUPTIONS: &[&str] = &[
     "missing-provenance",
@@ -208,6 +208,10 @@ pub const CORRUPTIONS: &[&str] = &[
     "policy-sequence",
     "burn-unit",
     "unexplained-operator",
+    "empty-name",
+    "selected-name",
+    "cost-unit",
+    "operator-unit",
 ];
 
 /// Switch the complete set to the fixture's public identity-commitment encoding.
@@ -263,6 +267,24 @@ pub fn corrupt(case: &mut BurnCase, name: &str) {
             let literal = context.literal("1").unwrap();
             for amount in case.burn.amounts.values_mut() {
                 *amount = context.burn(&literal, "other-unit").unwrap();
+            }
+        }
+        "empty-name" => case.history.markers[2].name.clear(),
+        "selected-name" => case.history.markers[2].name = "m1".into(),
+        "cost-unit" | "operator-unit" => {
+            let mut context = NumericContext::new(ExactLimits::default(), ComparisonLimits::new(100, 100)).unwrap();
+            let literal = context.literal("1/4").unwrap();
+            if name == "cost-unit" {
+                case.burn.unit_cost = Some(
+                    context
+                        .unit_cost(&literal, "fixture-unit", "other-unit", "fixture-terms")
+                        .unwrap(),
+                );
+            } else {
+                case.burn.evidence.operator = Some(OperatorEvidence::Bound {
+                    amount: context.burn(&literal, "other-unit").unwrap(),
+                    proof: "public fixture derivation".into(),
+                });
             }
         }
         "initial" => case.history.markers[0].initial_snapshot = None,

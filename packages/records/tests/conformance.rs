@@ -124,7 +124,7 @@ fn numeric_cases() {
 #[path = "common/burn_checks.rs"]
 mod burn_checks;
 
-/// Claim: A valid three-marker history and every named single-premise corruption have their declared exact typed outcomes, preserving complete acceptance and one representative per consistent destruction alias through the public surface; fixture proofs do not establish chain validity.
+/// Claim: A valid three-marker history and every named single-premise corruption have their declared exact typed causes and retained prefixes (none for validation refusals), preserving complete acceptance and one representative per consistent destruction alias through the public surface; fixture proofs do not establish chain validity.
 /// ´claim:burn:shared-marker-cases-preserve-recognition-contracts´
 /// ´test:integration:burn-cases´
 #[test]

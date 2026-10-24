@@ -875,6 +875,7 @@
     "pn-records::public::burn::competing_candidates": "",
     "pn-records::public::burn::isolated_recognition_premises": "",
     "pn-records::public::burn::policy_declaration_binding": "",
-    "ci::test_observe_runtime.Processes.test_cutoff_capture_interval": ""
+    "ci::test_observe_runtime.Processes.test_cutoff_capture_interval": "",
+    "pn-records::public::burn::recognition_basis": ""
   }
 }

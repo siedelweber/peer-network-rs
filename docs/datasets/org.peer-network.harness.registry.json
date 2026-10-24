@@ -3093,6 +3093,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::public::burn::recognition_basis",
         "pn-records::public::burn::policy_declaration_binding",
         "pn-records::public::burn::isolated_recognition_premises",
         "pn-records::public::burn::competing_candidates",
@@ -3383,6 +3384,10 @@
         "contract::records-burn-1::burn-records::policy-sequence",
         "contract::records-burn-1::burn-records::burn-unit",
         "contract::records-burn-1::burn-records::unexplained-operator",
+        "contract::records-burn-1::burn-records::empty-name",
+        "contract::records-burn-1::burn-records::selected-name",
+        "contract::records-burn-1::burn-records::cost-unit",
+        "contract::records-burn-1::burn-records::operator-unit",
         "contract::records-burn-1::burn-records::valid"
       ],
       "claim": "claim:burn:shared-marker-cases-preserve-recognition-contracts",
@@ -3435,6 +3440,10 @@
         "contract::records-burn-1::burn-verification::policy-sequence",
         "contract::records-burn-1::burn-verification::burn-unit",
         "contract::records-burn-1::burn-verification::unexplained-operator",
+        "contract::records-burn-1::burn-verification::empty-name",
+        "contract::records-burn-1::burn-verification::selected-name",
+        "contract::records-burn-1::burn-verification::cost-unit",
+        "contract::records-burn-1::burn-verification::operator-unit",
         "contract::records-burn-1::burn-verification::valid"
       ],
       "claim": "claim:verification:shared-marker-cases-preserve-recognition-contracts",

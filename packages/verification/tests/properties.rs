@@ -50,7 +50,7 @@ mod burn_checks;
 
 proptest! {
     #![proptest_config(configuration())]
-    /// Claim: Under its consumer-qualified seed, the outer tier derives per-marker accepted sets and destruction keys from bounded generated inputs and the refusal cause from each altered premise; both unique-index presentations agree under fixture verification, without claiming an independent implementation.
+    /// Claim: Under its consumer-qualified seed, the outer tier derives per-marker accepted sets and destruction keys from bounded generated inputs and the refusal cause and retained prefix from each altered premise, with no prefix for validation refusals; both unique-index presentations agree under fixture verification, without claiming an independent implementation.
     /// ´claim:verification:generated-marker-corruptions-retain-typed-causes´
     /// ´test:integration:marker-recognition´
     #[test]

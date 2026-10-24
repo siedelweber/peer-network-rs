@@ -1730,22 +1730,6 @@
       "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
     },
     {
-      "operation": "pn-records::conformance::burn_cases",
-      "path": "packages/records/tests/conformance.rs",
-      "claim": "RECORDS::claim:burn:shared-marker-cases-preserve-recognition-contracts",
-      "before": "",
-      "after": "Claim: A valid three-marker history and every named single-premise corruption have their declared exact typed outcomes, preserving complete acceptance and one representative per consistent destruction alias through the public surface; fixture proofs do not establish chain validity.",
-      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
-    },
-    {
-      "operation": "pn-records::properties::marker_recognition",
-      "path": "packages/records/tests/properties.rs",
-      "claim": "RECORDS::claim:burn:generated-marker-corruptions-retain-typed-causes",
-      "before": "",
-      "after": "Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause in original and reversed presentation order under fixture proof verification.",
-      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
-    },
-    {
       "operation": "pn-records::public::burn::required_disclosures",
       "path": "packages/records/tests/public/burn.rs",
       "claim": "RECORDS::claim:burn:missing-required-burn-disclosures-prevent-readiness",
@@ -1802,30 +1786,6 @@
       "review": "Read the candidate-prefix assertions and exact causes: earlier markers remain equal to the valid fixture; candidate selection is policy-declared and history-order-sensitive only for competing candidates. The fixture verifier is not chain evidence."
     },
     {
-      "operation": "pn-records::public::burn::isolated_recognition_premises",
-      "path": "packages/records/tests/public/burn.rs",
-      "claim": "RECORDS::claim:burn:isolated-premises-have-exact-refusals",
-      "before": "",
-      "after": "Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor name, successor snapshot, policy identity and sequence, burn unit, and explained operator absence.",
-      "review": "Read all seven exact-cause pairs and their valid starting fixture. Shifting every index preserves consecutive spacing while breaking only zero origin; the other mutations isolate predecessor, successor snapshot, policy identity, sequence, sampled burn unit and blank operator absence. Each clause-deletion run made this witness fail."
-    },
-    {
-      "operation": "pn-verification::conformance::burn_cases",
-      "path": "packages/verification/tests/conformance.rs",
-      "claim": "VERIFICATION::claim:verification:shared-marker-cases-preserve-recognition-contracts",
-      "before": "",
-      "after": "Claim: The outer consumer derives each marker's accepted identities and destruction keys from the generated input, and its exact refusal from the changed premise rather than a shared cause table; original and reversed unique-index fixtures preserve those observations without asserting chain validity.",
-      "review": "Read burn_checks: accepted sets and destruction keys are derived for every marker from input carriers. The outer cause reader inspects the changed premise without a corruption-name lookup; the shared runner records a separate consumer result, not an independent implementation."
-    },
-    {
-      "operation": "pn-verification::properties::marker_recognition",
-      "path": "packages/verification/tests/properties.rs",
-      "claim": "VERIFICATION::claim:verification:generated-marker-corruptions-retain-typed-causes",
-      "before": "",
-      "after": "Claim: Under its consumer-qualified seed, the outer tier derives per-marker accepted sets and destruction keys from bounded generated inputs and the refusal cause from each altered premise; both unique-index presentations agree under fixture verification, without claiming an independent implementation.",
-      "review": "Read consumer-qualified configuration, inherited property limits and the outer input/premise oracle invoked for every generated valid and corrupted fixture. Reversal is checked under the unique-index premise; amounts and addresses vary but topology remains the declared three-marker fixture."
-    },
-    {
       "operation": "pn-records::public::burn::initial_and_identity",
       "path": "packages/records/tests/public/burn.rs",
       "claim": "RECORDS::claim:burn:markers-fix-initial-state-and-succession",
@@ -1872,6 +1832,54 @@
       "before": "",
       "after": "Claim: Disclosed positions select the same competing marker and refusal after reversal or shuffle; duplicate positions refuse validation, and same-named competitors cannot give a predecessor two meanings.",
       "review": "Read each comparison: disclosed positions 19 and 20 fix the winner under first-valid, while unique-index retains two predecessors and names both competitors in position order. Reversal and two shuffles compare the whole result; duplicate positions refuse validation, same-named competitors refuse, and a rejected earlier-position competitor leaves the later valid choice unchanged by reversal."
+    },
+    {
+      "operation": "pn-records::conformance::burn_cases",
+      "path": "packages/records/tests/conformance.rs",
+      "claim": "RECORDS::claim:burn:shared-marker-cases-preserve-recognition-contracts",
+      "before": "",
+      "after": "Claim: A valid three-marker history and every named single-premise corruption have their declared exact typed causes and retained prefixes (none for validation refusals), preserving complete acceptance and one representative per consistent destruction alias through the public surface; fixture proofs do not establish chain validity.",
+      "review": "Read the inner helper: its independently owned table supplies a cause and retained prefix length for all corruptions, including validation errors without a prefix. It compares retained identities, accepted sets and destruction representatives in original and reversed presentations; the property invokes the same checks on seeded amounts and addresses."
+    },
+    {
+      "operation": "pn-records::properties::marker_recognition",
+      "path": "packages/records/tests/properties.rs",
+      "claim": "RECORDS::claim:burn:generated-marker-corruptions-retain-typed-causes",
+      "before": "",
+      "after": "Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause and expected retained prefix, or no prefix at validation, in original and reversed presentation order under fixture proof verification.",
+      "review": "Read the inner helper: its independently owned table supplies a cause and retained prefix length for all corruptions, including validation errors without a prefix. It compares retained identities, accepted sets and destruction representatives in original and reversed presentations; the property invokes the same checks on seeded amounts and addresses."
+    },
+    {
+      "operation": "pn-records::public::burn::isolated_recognition_premises",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:isolated-premises-have-exact-refusals",
+      "before": "",
+      "after": "Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor name, successor snapshot, policy identity and sequence, sample and cost units, operator-bound units, explained operator absence, and empty or reused marker names.",
+      "review": "Read all eleven otherwise-valid corruptions and their exact causes, including empty and reused selected names, sampled and unit-cost units, and a public operator bound in a different unit. Deleting each individual clause is tested separately."
+    },
+    {
+      "operation": "pn-records::public::burn::recognition_basis",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:recognition-retains-unsettled-computation-keys",
+      "before": "",
+      "after": "Claim: Recognition retains history, policy, verifier and publication keys without certifying finality; a new publication edition changes those keys even when its recognized marker prefix is identical.",
+      "review": "Read the equality against all six input keys and the separately changed publication edition: the prefix stays equal while the basis differs. No finality evidence is asserted."
+    },
+    {
+      "operation": "pn-verification::conformance::burn_cases",
+      "path": "packages/verification/tests/conformance.rs",
+      "claim": "VERIFICATION::claim:verification:shared-marker-cases-preserve-recognition-contracts",
+      "before": "",
+      "after": "Claim: The outer consumer derives each marker's accepted identities and destruction keys from the generated input, and its exact refusal and retained-prefix cutoff from the changed premise rather than a shared cause table; original and reversed unique-index fixtures preserve those observations without asserting chain validity.",
+      "review": "Read the outer helper: the changed premise supplies a cause and first affected index, and the base input supplies ordered retained names, accepted identities and destruction keys. Every corruption checks the original and reversed presentation; validation errors require no prefix. No inner expectation table is consulted."
+    },
+    {
+      "operation": "pn-verification::properties::marker_recognition",
+      "path": "packages/verification/tests/properties.rs",
+      "claim": "VERIFICATION::claim:verification:generated-marker-corruptions-retain-typed-causes",
+      "before": "",
+      "after": "Claim: Under its consumer-qualified seed, the outer tier derives per-marker accepted sets and destruction keys from bounded generated inputs and the refusal cause and retained prefix from each altered premise, with no prefix for validation refusals; both unique-index presentations agree under fixture verification, without claiming an independent implementation.",
+      "review": "Read the outer helper: the changed premise supplies a cause and first affected index, and the base input supplies ordered retained names, accepted identities and destruction keys. Every corruption checks the original and reversed presentation; validation errors require no prefix. No inner expectation table is consulted."
     }
   ]
 }

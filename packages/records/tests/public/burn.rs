@@ -298,7 +298,7 @@ fn competing_candidates() {
     assert_eq!(fixtures::recognize(competing).unwrap(), fallback);
 }
 
-/// Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor name, successor snapshot, policy identity and sequence, burn unit, and explained operator absence.
+/// Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor name, successor snapshot, policy identity and sequence, sample and cost units, operator-bound units, explained operator absence, and empty or reused marker names.
 /// ´claim:burn:isolated-premises-have-exact-refusals´
 /// ´test:integration:isolated-recognition-premises´
 #[test]
@@ -310,6 +310,10 @@ fn isolated_recognition_premises() {
         ("policy-identity", BurnError::HistoryPolicy),
         ("policy-sequence", BurnError::HistoryPolicy),
         ("burn-unit", BurnError::Units),
+        ("cost-unit", BurnError::Units),
+        ("operator-unit", BurnError::Units),
+        ("empty-name", BurnError::Succession),
+        ("selected-name", BurnError::Succession),
         ("unexplained-operator", BurnError::Publication(Disclosure::Operator)),
     ] {
         let mut input = fixtures::generate(&[5]);
@@ -318,4 +322,31 @@ fn isolated_recognition_premises() {
         let cause = fixtures::recognize(input).map_or_else(Some, |r| r.first_refusal().map(|f| f.cause.clone()));
         assert_eq!(cause, Some(expected), "{name}");
     }
+}
+
+/// Claim: Recognition retains history, policy, verifier and publication keys without certifying finality; a new publication edition changes those keys even when its recognized marker prefix is identical.
+/// ´claim:burn:recognition-retains-unsettled-computation-keys´
+/// ´test:integration:recognition-basis´
+#[test]
+fn recognition_basis() {
+    use pn_records::burn::RecognitionBasis;
+    let mut input = fixtures::generate(&[]);
+    let recognized = fixtures::recognize(input.clone()).unwrap();
+    assert_eq!(
+        recognized.basis(),
+        &RecognitionBasis {
+            history: input.history.identity.clone(),
+            policy_identity: input.policy.identity.clone(),
+            policy_edition: input.policy.edition.clone(),
+            verifier_profile: input.policy.verification_profile.clone(),
+            burn_publication_edition: input.burn.edition.clone(),
+            sample_convention: input.burn.sample_convention.clone(),
+        }
+    );
+    input.burn.edition = "edition-2".into();
+    input.burn.evidence.edition = input.burn.edition.clone();
+    let changed = fixtures::recognize(input).unwrap();
+    assert_eq!(recognized.markers(), changed.markers());
+    assert_ne!(recognized.basis(), changed.basis());
+    assert_eq!(changed.basis().burn_publication_edition, "edition-2");
 }
