@@ -9,6 +9,10 @@ if [ -z "${LINTER_BIN:-}" ] || [ ! -x "$LINTER_BIN" ]; then
     echo "GATE-STRUCTURAL-ERROR: LINTER_BIN must name an executable caller-provided linter" >&2
     exit 2
 fi
+if [ -z "${PN_POSTGRESQL_BIN:-}" ]; then
+    echo "GATE-STRUCTURAL-ERROR: PN_POSTGRESQL_BIN must name the PostgreSQL binary directory" >&2
+    exit 2
+fi
 failed=0
 statuses=()
 mkdir -p .lane
@@ -91,7 +95,7 @@ run_step design-tests python3 -B ci/run_ci.py test_design
 run_step benchmarks python3 -B ci/benchmarks.py
 run_step observation-build cargo build --offline --locked --profile gate -p execwrap -p pn-records --features pn-records/test-support --examples
 run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
-run_step host-observation-build cargo build --offline --locked --profile gate -p pn-host --example transport_evidence
+run_step host-observation-build python3 -B ci/host_evidence_build.py
 run_step host-observation-runtime python3 -B ci/run_ci.py test_host_runtime
 run_step host-postgresql-stop python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"
 run_step observation-parser python3 -B ci/run_ci.py test_observe_syntax

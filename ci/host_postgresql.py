@@ -8,7 +8,13 @@ import subprocess
 import sys
 import tomllib
 
-BIN = Path('/workspace/toolchains/postgresql/19rc1/bin')
+def binary_directory():
+    value = os.environ.get('PN_POSTGRESQL_BIN')
+    if not value:
+        raise RuntimeError('PN_POSTGRESQL_BIN must name the PostgreSQL binary directory')
+    return Path(value)
+
+TARGET = Path('packages/host/postgresql-target.txt').read_text().strip()
 
 def dependency_pins(packages, reviewed):
     """Require every reachable registry archive to retain its reviewed pin."""
@@ -45,13 +51,13 @@ def command(args, log, env=None):
 def stop(root):
     if (root/'data'/'postmaster.pid').exists():
         with (root/'fixture.log').open('ab') as log:
-            command([BIN/'pg_ctl', '-D', root/'data', '-m', 'immediate', '-w', 'stop'], log)
+            command([binary_directory()/'pg_ctl', '-D', root/'data', '-m', 'immediate', '-w', 'stop'], log)
 
 def start(root):
     count=dependency_pins(tomllib.loads(Path('Cargo.lock').read_text())['package'],tomllib.loads(Path('docs/inputs/host-dependencies.toml').read_text())['rows'])
-    version = subprocess.run([str(BIN/'postgres'), '--version'], capture_output=True, text=True, check=True).stdout.strip()
-    if version != 'postgres (PostgreSQL) 19rc1':
-        raise RuntimeError('unsupported PostgreSQL version; required 19 RC 1')
+    version = subprocess.run([str(binary_directory()/'postgres'), '--version'], capture_output=True, text=True, check=True).stdout.strip()
+    if version != 'postgres (PostgreSQL) '+TARGET:
+        raise RuntimeError('unsupported PostgreSQL version; required declared prerelease')
     if (root/'data'/'postmaster.pid').exists():
         raise RuntimeError('fixture already running; do not replace an active instance')
     if root.exists():
@@ -62,12 +68,12 @@ def start(root):
     (root/'password').write_text(password+'\n')
     (root/'password').chmod(0o600)
     with (root/'fixture.log').open('wb') as log:
-        command([BIN/'initdb','-D',root/'data','--locale-provider=libc','--locale=C','--encoding=UTF8','-U','private_role_fixture_731','--auth=scram-sha-256','--pwfile',root/'password'],log)
+        command([binary_directory()/'initdb','-D',root/'data','--locale-provider=libc','--locale=C','--encoding=UTF8','-U','private_role_fixture_731','--auth=scram-sha-256','--pwfile',root/'password'],log)
         with (root/'data'/'postgresql.conf').open('a') as config:
-            config.write("\nlisten_addresses='127.0.0.1'\nport=42100\nunix_socket_directories='"+str(root/'socket')+"'\nmax_connections=20\nshared_buffers='16MB'\nlog_line_prefix=''\n")
-        command([BIN/'pg_ctl','-D',root/'data','-l',root/'server.log','-w','start'],log)
+            config.write("\nlisten_addresses='127.0.0.1'\nport=42100\nunix_socket_directories='"+str(root/'socket')+"'\nmax_connections=20\nshared_buffers='16MB'\nlog_line_prefix=''\ntimezone='Pacific/Honolulu'\ndatestyle='SQL, DMY'\n")
+        command([binary_directory()/'pg_ctl','-D',root/'data','-l',root/'server.log','-w','start'],log)
         env = dict(os.environ, PGPASSWORD=password)
-        command([BIN/'createdb','-h',root/'socket','-p','42100','-U','private_role_fixture_731','private_database_fixture_731'],log,env)
+        command([binary_directory()/'createdb','-h',root/'socket','-p','42100','-U','private_role_fixture_731','private_database_fixture_731'],log,env)
     base = dict(transport='unix',endpoint=str(root/'socket'/'.s.PGSQL.42100'),port='42100',user='private_role_fixture_731',password=password,database='private_database_fixture_731')
     configurations = {
         'unix':base,
@@ -83,7 +89,7 @@ def start(root):
         path = root/(name+'.json')
         path.write_text(json.dumps(data))
         path.chmod(0o600)
-    print(f'HOST-POSTGRES version=19rc1 transport=unix,tcp persistence=disabled pinned_archives={count}')
+    print(f'HOST-POSTGRES version={TARGET} transport=unix,tcp persistence=disabled pinned_archives={count}')
 
 def main():
     parser=argparse.ArgumentParser()

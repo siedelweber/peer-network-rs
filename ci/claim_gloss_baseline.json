@@ -904,6 +904,12 @@
     "ci::test_host_runtime.HostRuntime.test_public_transport": "",
     "pn-host::config::tests::secret_json_grammar": "",
     "pn-host::tests::wire_filter_boundary": "",
-    "ci::test_host_runtime.HostRuntime.test_dependency_pins": ""
+    "ci::test_host_runtime.HostRuntime.test_dependency_pins": "",
+    "pn-host::tests::relay_refusals": "",
+    "pn-host::postgresql::relay_throughput": "",
+    "pn-host::transport_evidence::public_transport": "",
+    "pn-host::public::scram_bound_refusals": "",
+    "pn-host::public::acquisition_bound_refusals": "",
+    "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory": ""
   }
 }

@@ -14,10 +14,9 @@ use std::{
     sync::{Arc, Mutex},
 };
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tracing::Instrument;
 
 // A bridge owns its forwarding task even when the bridge future is cancelled.
-struct ForwardingTask(tokio::task::JoinHandle<()>);
+struct ForwardingTask(tokio::task::JoinHandle<Result<(), Refusal>>);
 impl Drop for ForwardingTask {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
     fn drop(&mut self) {
@@ -65,7 +64,7 @@ pub enum Refusal {
     UnsupportedAuthentication,
     /// Invalid SCRAM attribute encoding.
     ScramFormat,
-    /// The declared iteration count exceeds the reviewed work bound.
+    /// The declared iteration count is outside the reviewed security and work bounds.
     ScramIterations,
     /// The server did not extend the client nonce.
     ServerNonce,
@@ -77,6 +76,8 @@ pub enum Refusal {
     DriverHandoff,
     /// A server diagnostic remains private and terminates the driver stream.
     PrivateDiagnostic,
+    /// A server parameter is outside the declared public configuration.
+    UnclassifiedParameter,
     /// Cancellation lacks an authenticated backend capability.
     Cancellation,
 }
@@ -114,7 +115,10 @@ impl fmt::Debug for PrivateDiagnostic {
 
 /// A transport-only connection; this package defines no persistence operation.
 /// (´def:host:session´)
-/// Queries must concern public data. Service metadata is not public query data.
+/// Only the storage module may select statements; no public method yields a raw client.
+/// ```compile_fail
+/// fn raw(session: &pn_host::Session) { let _ = session.client(); }
+/// ```
 /// Unclassified server diagnostics stay secret-typed and close this stream.
 pub struct Session {
     client: tokio_postgres::Client,
@@ -126,7 +130,12 @@ pub struct Session {
 impl fmt::Debug for Session {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str("Session { store_link_case: host-secured, private_state: [REDACTED], persistence: disabled }")
+        f.debug_struct("Session")
+            .field("store_link_case", &"host-secured")
+            .field("connected", &!self.client.is_closed())
+            .field("private_state", &"[REDACTED]")
+            .field("persistence", &"disabled")
+            .finish_non_exhaustive()
     }
 }
 impl Drop for Session {
@@ -192,12 +201,16 @@ impl Session {
         let (driver, shim) = tokio::io::duplex(65_536);
         let bridge_key = Arc::clone(&key);
         let bridge_diagnostics = Arc::clone(&diagnostics);
-        let bridge = tokio::spawn(
-            async move {
-                let _result = forward(shim, socket, startup, bridge_key, bridge_diagnostics).await;
-            }
-            .instrument(tracing::Span::current()),
-        );
+        let bridge = tokio::spawn(async move {
+            let _result = relay(Relay {
+                shim,
+                socket,
+                startup,
+                key: bridge_key,
+                diagnostics: bridge_diagnostics,
+            })
+            .await;
+        });
         let mut placeholder = tokio_postgres::Config::new();
         placeholder
             .user("pn_public_placeholder")
@@ -208,12 +221,9 @@ impl Session {
             bridge.abort();
             return Err(Refusal::DriverHandoff);
         };
-        let connection = tokio::spawn(
-            async move {
-                let _result = connection.await;
-            }
-            .instrument(tracing::Span::current()),
-        );
+        let connection = tokio::spawn(async move {
+            let _result = connection.await;
+        });
         Ok(Self {
             client,
             config: Arc::new(config),
@@ -225,7 +235,8 @@ impl Session {
     /// Borrow the placeholder-only upstream client for public statement evidence.
     /// (´sig:host:public-client´)
     #[must_use]
-    pub fn client(&self) -> &tokio_postgres::Client {
+    #[cfg(test)]
+    pub(crate) fn client(&self) -> &tokio_postgres::Client {
         let operation = cli_common::observation::scope("HOST", "sig:design:storage", "Session::client", &self);
         let result = &self.client;
         operation.finish(&"public placeholder client");
@@ -306,46 +317,106 @@ async fn forward(
         wire::send(&mut shim, frame.kind, frame.payload.bytes()).await?;
     }
     wire::send(&mut shim, b'Z', b"I").await?;
-    let (mut client_read, mut client_write) = tokio::io::split(shim);
-    let (mut server_read, mut server_write) = tokio::io::split(socket);
-    let outbound = ForwardingTask(tokio::spawn(
-        async move {
-            loop {
-                let Ok(frame) = wire::read(&mut client_read).await else {
-                    break;
-                };
+    let (client_read, mut client_write) = tokio::io::split(shim);
+    let (mut server_read, server_write) = tokio::io::split(socket);
+    let outbound = ForwardingTask(tokio::spawn(relay_outbound(Outbound {
+        client: client_read,
+        server: server_write,
+    })));
+    let result = async {
+        loop {
+            let frame = wire::read(&mut server_read).await?;
+            if let Some(frame) = filter(frame, &bridge_key, &bridge_diagnostics)? {
                 observe_public_frame(&frame);
-                if wire::send(&mut server_write, frame.kind, frame.payload.bytes())
-                    .await
-                    .is_err()
-                    || frame.kind == b'X'
-                {
-                    break;
-                }
+                wire::send(&mut client_write, frame.kind, frame.payload.bytes()).await?;
             }
-        }
-        .instrument(tracing::Span::current()),
-    ));
-    loop {
-        let Ok(frame) = wire::read(&mut server_read).await else {
-            break;
-        };
-        match filter(frame, &bridge_key, &bridge_diagnostics) {
-            Ok(Some(frame)) => {
-                observe_public_frame(&frame);
-                if wire::send(&mut client_write, frame.kind, frame.payload.bytes())
-                    .await
-                    .is_err()
-                {
-                    break;
-                }
-            }
-            Ok(None) => (),
-            Err(_) => break,
         }
     }
+    .await;
     drop(outbound);
-    Ok::<(), Refusal>(())
+    result
+}
+
+// Each task creates its own span when first polled, outside the connect future.
+// Public frames are recorded at their checked boundary; task state is private.
+struct Relay {
+    shim: tokio::io::DuplexStream,
+    socket: wire::Socket,
+    startup: Vec<wire::Frame>,
+    key: Arc<Mutex<Option<Buffer>>>,
+    diagnostics: Arc<Mutex<Vec<PrivateDiagnostic>>>,
+}
+impl fmt::Debug for Relay {
+    /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("Relay { role: store-session, value: [REDACTED] }")
+    }
+}
+struct Outbound {
+    client: tokio::io::ReadHalf<tokio::io::DuplexStream>,
+    server: tokio::io::WriteHalf<wire::Socket>,
+}
+impl fmt::Debug for Outbound {
+    /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("Outbound { role: store-session, value: [REDACTED] }")
+    }
+}
+
+#[tracing::instrument(
+    name = "sig:design:storage",
+    fields(
+        execution_owner = "HOST",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:storage",
+        source_item = "relay",
+        operation = "relay"
+    ),
+    ret
+)]
+async fn relay(state: Relay) -> Result<(), Refusal> {
+    let Relay {
+        shim,
+        socket,
+        startup,
+        key,
+        diagnostics,
+    } = state;
+    let result = forward(shim, socket, startup, key, diagnostics).await;
+    if let Err(cause) = &result {
+        tracing::warn!(cause = ?cause, outcome = if matches!(cause, Refusal::Transport) { "error" } else { "refusal" }, "store relay refused");
+    }
+    result
+}
+
+#[tracing::instrument(
+    name = "sig:design:storage",
+    fields(
+        execution_owner = "HOST",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:storage",
+        source_item = "relay_outbound",
+        operation = "relay-outbound"
+    ),
+    ret
+)]
+async fn relay_outbound(state: Outbound) -> Result<(), Refusal> {
+    let Outbound { mut client, mut server } = state;
+    let result = async {
+        loop {
+            let frame = wire::read(&mut client).await?;
+            observe_public_frame(&frame);
+            wire::send(&mut server, frame.kind, frame.payload.bytes()).await?;
+            if frame.kind == b'X' {
+                return Ok(());
+            }
+        }
+    }
+    .await;
+    if let Err(cause) = &result {
+        tracing::warn!(cause = ?cause, outcome = if matches!(cause, Refusal::Transport) { "error" } else { "refusal" }, "store outbound relay refused");
+    }
+    result
 }
 
 fn observe_public_frame(frame: &wire::Frame) {
@@ -382,7 +453,7 @@ fn filter(
                 .lock()
                 .map_err(|_| Refusal::PrivateDiagnostic)?
                 .push(PrivateDiagnostic(frame.payload));
-            return Err(Refusal::PrivateDiagnostic);
+            return Err(Refusal::UnclassifiedParameter);
         }
         b'E' | b'N' if !public_diagnostic(frame.payload.bytes()) => {
             diagnostics
@@ -406,7 +477,7 @@ fn public_parameter(bytes: &[u8]) -> bool {
         return false;
     };
     match &bytes[..split] {
-        b"server_version" => value == b"19rc1",
+        b"server_version" => value == include_str!("../postgresql-target.txt").trim().as_bytes(),
         b"client_encoding" | b"server_encoding" => value == b"UTF8",
         b"application_name" => value.is_empty(),
         b"TimeZone" => matches!(value, b"UTC" | b"Etc/UTC" | b"GMT"),
@@ -483,14 +554,15 @@ mod tests {
                 .unwrap()
                 .is_none()
         );
-        for (kind, bytes) in [
-            (b'S', b"application_name\0private_application\0".as_slice()),
-            (b'E', b"Mprivate_error\0\0"),
+        for (kind, bytes, expected) in [
+            (
+                b'S',
+                b"application_name\0private_application\0".as_slice(),
+                Refusal::UnclassifiedParameter,
+            ),
+            (b'E', b"Mprivate_error\0\0", Refusal::PrivateDiagnostic),
         ] {
-            assert!(matches!(
-                filter(frame(kind, bytes), &key, &diagnostics),
-                Err(Refusal::PrivateDiagnostic)
-            ));
+            assert_eq!(filter(frame(kind, bytes), &key, &diagnostics).err(), Some(expected));
         }
         let retained = diagnostics.lock().unwrap();
         assert_eq!(retained[0].0.bytes(), b"application_name\0private_application\0");
@@ -508,4 +580,62 @@ mod tests {
             public
         );
     }
+
+    pub(super) async fn relay_refusal_fixtures() {
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+        for cause in [
+            Refusal::RepresentationLimit,
+            Refusal::Transport,
+            Refusal::Protocol,
+            Refusal::PrivateDiagnostic,
+        ] {
+            let (socket, mut server) = crate::wire::fixture_pair();
+            let (mut driver, shim) = tokio::io::duplex(1024);
+            let key = std::sync::Arc::new(Mutex::new(None));
+            let diagnostics = std::sync::Arc::new(Mutex::new(Vec::new()));
+            let task = tokio::spawn(super::relay(super::Relay {
+                shim,
+                socket,
+                startup: Vec::new(),
+                key,
+                diagnostics,
+            }));
+            let startup = b"\0\x03\0\0client_encoding\0UTF8\0user\0pn_public_placeholder\0database\0pn_public_placeholder\0\0";
+            driver.write_u32(u32::try_from(startup.len()).unwrap() + 4).await.unwrap();
+            driver.write_all(startup).await.unwrap();
+            assert_eq!(crate::wire::read(&mut driver).await.unwrap().kind, b'R');
+            assert_eq!(crate::wire::read(&mut driver).await.unwrap().kind, b'Z');
+            match cause {
+                Refusal::RepresentationLimit => server.write_all(&[b'D', 0, 16, 0, 5]).await.unwrap(),
+                Refusal::Protocol => crate::wire::send(&mut server, b'K', b"bad").await.unwrap(),
+                Refusal::PrivateDiagnostic => crate::wire::send(&mut server, b'E', b"Mprivate_relay_fixture\0\0")
+                    .await
+                    .unwrap(),
+                Refusal::Transport => server.shutdown().await.unwrap(),
+                _ => unreachable!(),
+            }
+            assert_eq!(task.await.unwrap(), Err(cause));
+            let mut byte = [0];
+            assert_eq!(driver.read(&mut byte).await.unwrap(), 0);
+        }
+    }
+
+    /// Claim: Every relay-time framing, transport and private-diagnostic refusal closes the driver with its exact bounded cause, rather than discarding the forwarding result.
+    /// ´claim:host:relay-refusals-retain-their-bounded-cause´
+    /// ´test:unit:relay-refusals´
+    #[test]
+    fn relay_refusals() {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(relay_refusal_fixtures());
+    }
 }
+
+#[cfg(test)]
+#[path = "../tests/postgresql.rs"]
+mod postgresql;
+#[cfg(test)]
+#[path = "../tests/transport_evidence.rs"]
+mod transport_evidence;

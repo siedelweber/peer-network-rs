@@ -2609,7 +2609,7 @@
       "closing_condition": "Pass rule:storage:first-commit-evidence with reviewed source/configuration-matched results before enabling persistence.",
       "closing_step": "Bite 2 storage integration admission before persistence",
       "hold": "ROOT::open:design:secret-integrations",
-      "missing": "All first-route items of amend:storage:host-secured-evidence: secret-preserving SCRAM, retained-state review, real PostgreSQL negative leakage and protocol witnesses; TLS counterparts remain in open:intranet:guarded-transport.",
+      "missing": "The host-secured store transport is established within its fixture profile; independent review of the closed statement and result surface, SCRAM iteration floor and relay throughput remains due before persistence. TLS counterparts remain in open:intranet:guarded-transport.",
       "name": "ROOT::dec:storage:secret-shim",
       "owner": "Storage implementer and independent integration reviewer",
       "path": "adr/015-durable-storage.md",

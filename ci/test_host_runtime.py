@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import time
 import unittest
 import tomllib
@@ -18,6 +19,21 @@ def private_occurs(value, text):
 
 
 class HostRuntime(unittest.TestCase):
+    def test_required_postgresql_directory(self):
+        """Claim: An absent or empty PostgreSQL binary-directory declaration refuses by name before the gate runs any step, without exposing an endpoint or substituting a node path.
+        ´claim:discipline:postgresql-directory-is-caller-declared´
+        ´test:integration:test-required-postgresql-directory´
+        """
+        for value in (None, ''):
+            env=dict(os.environ,LINTER_BIN=sys.executable)
+            env.pop('PN_POSTGRESQL_BIN',None)
+            if value is not None:
+                env['PN_POSTGRESQL_BIN']=value
+            result=subprocess.run(['bash','ci/gate.sh'],env=env,capture_output=True,check=False)
+            self.assertEqual(result.returncode,2)
+            self.assertIn(b'PN_POSTGRESQL_BIN',result.stderr)
+            self.assertNotIn(b'STEP=',result.stdout)
+
     def test_dependency_pins(self):
         """Claim: The host's complete reachable lock closure must match its reviewed archive pins; a changed checksum, an omitted package or a duplicate review row refuses before the service starts.
         ´claim:discipline:host-archive-pins-cover-the-reachable-closure´
@@ -38,7 +54,7 @@ class HostRuntime(unittest.TestCase):
         ´test:integration:test-public-transport´
         """
         print(flush=True)
-        target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'/'examples'/'transport_evidence'
+        target=Path('.lane/host-test-binary.txt').read_text().strip()
         root=Path(os.environ['PN_HOST_TEST_ROOT'])
         configurations=[json.loads(path.read_text()) for path in root.glob('*.json')]
         private={str(value) for config in configurations for key,value in config.items() if key!='transport'}
@@ -48,18 +64,18 @@ class HostRuntime(unittest.TestCase):
         for level in ('default','trace'):
             started=time.monotonic()
             env=dict(os.environ,PN_OBSERVE_LEVEL=level)
-            result=subprocess.run([str(target)],env=env,capture_output=True,timeout=60,check=False)
+            result=subprocess.run([str(target), "transport_evidence::public_transport", "--exact", "--nocapture"],env=env,capture_output=True,timeout=60,check=False)
             wall=time.monotonic()-started
             Path(f'.lane/host-{level}.stderr.jsonl').write_bytes(result.stderr)
-            witness([str(target)],result.returncode,wall,result.stderr)
+            witness([str(target), "transport_evidence::public_transport", "--exact", "--nocapture"],result.returncode,wall,result.stderr)
             self.assertEqual(result.returncode,0,result.stderr.decode())
             rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
             warnings=[line for line in result.stderr.splitlines() if json.loads(line).get('level') in ('WARN','ERROR')]
-            self.assertEqual(len(warnings),9)
+            self.assertEqual(len(warnings),13)
             for line in warnings:
                 print(line.decode(),flush=True)
             text=json.dumps(rows,ensure_ascii=False)
-            for cause in ('MissingCase','HeldCase','UnknownCase'):
+            for cause in ('MissingCase','HeldCase','UnknownCase','RepresentationLimit','Transport','Protocol','PrivateDiagnostic'):
                 self.assertIn(cause,text)
             self.assertNotIn('private_unread_input',text)
             for value in private:
@@ -72,8 +88,11 @@ class HostRuntime(unittest.TestCase):
             summary=next(row['metrics'] for row in rows if row['kind']=='metric_summary')
             host={key:value for key,value in distribution(summary).items() if key[0].startswith('host__')}
             self.assertGreater(sum(value for key,value in host.items() if key[0].endswith('started_operations')),0)
-            counts.append(host);outputs.append(result.stdout)
-            record=json.loads(result.stdout)
+            counts.append(host)
+            public=[line for line in result.stdout.splitlines() if line.startswith(b'{')]
+            self.assertEqual(len(public),1)
+            outputs.append(public[0])
+            record=json.loads(public[0])
             self.assertEqual(record['store_link_case'],'host-secured')
             self.assertEqual(record['persistence'],'disabled')
             if level=='trace':

@@ -41,8 +41,14 @@ fn mac(key: &[u8], bytes: &[u8]) -> Result<SecretBox<[u8; 32]>, Refusal> {
     let mut state = Hmac::<Sha256>::new_from_slice(key).map_err(|_| Refusal::ScramFormat)?;
     state.update(bytes);
     let mut output = SecretBox::new(Box::new([0; 32]));
-    // The primitive's return buffer is the bounded residue admitted in ADR 015.
-    output.expose_secret_mut().copy_from_slice(&state.finalize().into_bytes());
+    sha2::digest::FixedOutput::finalize_into(
+        state,
+        output
+            .expose_secret_mut()
+            .as_mut_slice()
+            .try_into()
+            .map_err(|_| Refusal::ScramFormat)?,
+    );
     Ok(output)
 }
 fn authentication(frame: &wire::Frame, expected: u32) -> Result<&[u8], Refusal> {
@@ -91,16 +97,21 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
     let iterations = std::str::from_utf8(attribute(server_first, b'i')?)
         .ok()
         .and_then(|v| v.parse::<u32>().ok())
-        .filter(|v| (1..=100_000).contains(v))
+        .filter(|v| (4096..=100_000).contains(v))
         .ok_or(Refusal::ScramIterations)?;
     let mut salted = SecretBox::new(Box::new([0; 32]));
     pbkdf2::pbkdf2::<Hmac<Sha256>>(config.field(4), salt.bytes(), iterations, salted.expose_secret_mut())
         .map_err(|_| Refusal::ScramFormat)?;
     let client_key = mac(salted.expose_secret(), b"Client Key")?;
     let mut stored = SecretBox::new(Box::new([0; 32]));
-    stored
-        .expose_secret_mut()
-        .copy_from_slice(&Sha256::digest(client_key.expose_secret()));
+    Digest::finalize_into(
+        Sha256::new_with_prefix(client_key.expose_secret()),
+        stored
+            .expose_secret_mut()
+            .as_mut_slice()
+            .try_into()
+            .map_err(|_| Refusal::ScramFormat)?,
+    );
     let server_key = mac(salted.expose_secret(), b"Server Key")?;
     let mut final_without_proof = Buffer::from_bytes(b"c=biws,r=")?;
     final_without_proof.append(server_nonce)?;

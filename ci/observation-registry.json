@@ -5578,16 +5578,6 @@
     {
       "package": "pn-host",
       "path": "packages/host/src/lib.rs",
-      "item": "Session::client",
-      "owner": "HOST",
-      "signature": "fn client (& self) -> & tokio_postgres :: Client",
-      "claim": "ROOT::sig:design:storage",
-      "shape": "shape-host",
-      "mode": "instrumented"
-    },
-    {
-      "package": "pn-host",
-      "path": "packages/host/src/lib.rs",
       "item": "Session::cancel",
       "owner": "HOST",
       "signature": "async fn cancel (& self) -> Result < () , Refusal >",
@@ -5601,6 +5591,62 @@
       "item": "Session::private_diagnostics",
       "owner": "HOST",
       "signature": "fn private_diagnostics (& self) -> Result < Vec < PrivateDiagnostic > , Refusal >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "<Relay as fmt :: Debug>::fmt",
+      "owner": "HOST",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "<Outbound as fmt :: Debug>::fmt",
+      "owner": "HOST",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.",
+        "witness": "HOST::claim:host:wire-filter-precedes-ordinary-driver-storage",
+        "boundary": "pn-host::packages/host/src/lib.rs::Session::connect",
+        "class_decision": "host-transport"
+      }
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "relay",
+      "owner": "HOST",
+      "signature": "async fn relay (state : Relay) -> Result < () , Refusal >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "item": "relay_outbound",
+      "owner": "HOST",
+      "signature": "async fn relay_outbound (state : Outbound) -> Result < () , Refusal >",
       "claim": "ROOT::sig:design:storage",
       "shape": "shape-host",
       "mode": "instrumented"
@@ -10579,7 +10625,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. The public case is checked before the reader is touched, and field decoding allocates only secret-owned buffers. Default WARN delivery contains only the fieldless bounded refusal cause; no private input is formatted."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/config.rs::config::<Configuration as fmt :: Debug>::fmt",
@@ -10590,7 +10636,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/secret.rs::secret::<Buffer as fmt :: Debug>::fmt",
@@ -10601,7 +10647,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as fmt :: Debug>::fmt",
@@ -10612,7 +10658,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as AsyncRead>::poll_read",
@@ -10623,7 +10669,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as AsyncWrite>::poll_write",
@@ -10634,7 +10680,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as AsyncWrite>::poll_flush",
@@ -10645,7 +10691,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/wire.rs::wire::<Socket as AsyncWrite>::poll_shutdown",
@@ -10656,7 +10702,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::<ForwardingTask as Drop>::drop",
@@ -10667,7 +10713,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::<Refusal as fmt :: Display>::fmt",
@@ -10678,7 +10724,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::<PrivateDiagnostic as fmt :: Debug>::fmt",
@@ -10689,18 +10735,18 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::<Session as fmt :: Debug>::fmt",
       "class_decision": "host-transport",
-      "body": "{ f . write_str (\"Session { store_link_case: host-secured, private_state: [REDACTED], persistence: disabled }\") }",
+      "body": "{ f . debug_struct (\"Session\") . field (\"store_link_case\" , & \"host-secured\") . field (\"connected\" , & ! self . client . is_closed ()) . field (\"private_state\" , & \"[REDACTED]\") . field (\"persistence\" , & \"disabled\") . finish_non_exhaustive () }",
       "assessments": {
         "full_recording": "host-full_recording",
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::<Session as Drop>::drop",
@@ -10711,7 +10757,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "Explicit role-only formatting, stream delegation or ownership teardown; no private bytes are formatted, cloned into public state or observed twice."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::Session::connect",
@@ -10722,18 +10768,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. Future-aware instrumentation enters only while polled; forwarding tasks retain the span and are aborted with their owner. Default WARN delivery contains only the fieldless bounded refusal cause; no private input is formatted."
-    },
-    {
-      "operation": "pn-host::packages/host/src/lib.rs::Session::client",
-      "class_decision": "host-transport",
-      "body": "{ let operation = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"Session::client\" , & self) ; let result = & self . client ; operation . finish (& \"public placeholder client\") ; result }",
-      "assessments": {
-        "full_recording": "host-full_recording",
-        "secret_flow": "host-secret_flow",
-        "exposure_consumers": "host-exposure_consumers"
-      },
-      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence. Future-aware spans enter only when polled. Independent relay tasks report bounded terminal causes under their own operation; the connect span ends at handoff rather than measuring the session."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::Session::cancel",
@@ -10744,7 +10779,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes. Future-aware instrumentation enters only while polled; forwarding tasks retain the span and are aborted with their owner. Default WARN delivery contains only the fieldless bounded refusal cause; no private input is formatted."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence. Future-aware spans enter only when polled. Independent relay tasks report bounded terminal causes under their own operation; the connect span ends at handoff rather than measuring the session."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::Session::private_diagnostics",
@@ -10755,7 +10790,51 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::<Relay as fmt :: Debug>::fmt",
+      "class_decision": "host-transport",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "body": "{ f . write_str (\"Relay { role: store-session, value: [REDACTED] }\") }",
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::<Outbound as fmt :: Debug>::fmt",
+      "class_decision": "host-transport",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "body": "{ f . write_str (\"Outbound { role: store-session, value: [REDACTED] }\") }",
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::relay",
+      "class_decision": "host-transport",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "body": "{ let Relay { shim , socket , startup , key , diagnostics , } = state ; let result = forward (shim , socket , startup , key , diagnostics) . await ; if let Err (cause) = & result { tracing :: warn ! (cause = ? cause , outcome = if matches ! (cause , Refusal :: Transport) { \"error\" } else { \"refusal\" } , \"store relay refused\") ; } result }",
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence. Future-aware spans enter only when polled. Independent relay tasks report bounded terminal causes under their own operation; the connect span ends at handoff rather than measuring the session."
+    },
+    {
+      "operation": "pn-host::packages/host/src/lib.rs::relay_outbound",
+      "class_decision": "host-transport",
+      "assessments": {
+        "full_recording": "host-full_recording",
+        "secret_flow": "host-secret_flow",
+        "exposure_consumers": "host-exposure_consumers"
+      },
+      "body": "{ let Outbound { mut client , mut server } = state ; let result = async { loop { let frame = wire :: read (& mut client) . await ? ; observe_public_frame (& frame) ; wire :: send (& mut server , frame . kind , frame . payload . bytes ()) . await ? ; if frame . kind == b'X' { return Ok (()) ; } } } . await ; if let Err (cause) = & result { tracing :: warn ! (cause = ? cause , outcome = if matches ! (cause , Refusal :: Transport) { \"error\" } else { \"refusal\" } , \"store outbound relay refused\") ; } result }",
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence. Future-aware spans enter only when polled. Independent relay tasks report bounded terminal causes under their own operation; the connect span ends at handoff rather than measuring the session."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::observe_public_frame",
@@ -10766,7 +10845,7 @@
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "The labelled boundary records invocation and terminal result; private carriers have only role-marked Debug. Public wire payload capture is gated on trace and does not rewrite the relayed bytes."
+      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence."
     }
   ],
   "generators": [
@@ -14400,13 +14479,13 @@
       "item": "ForwardingTask",
       "package": "pn-host",
       "path": "packages/host/src/lib.rs",
-      "syntax": "struct ForwardingTask (tokio :: task :: JoinHandle < () >) ;"
+      "syntax": "struct ForwardingTask (tokio :: task :: JoinHandle < Result < () , Refusal > >) ;"
     },
     {
       "item": "Refusal",
       "package": "pn-host",
       "path": "packages/host/src/lib.rs",
-      "syntax": "# [doc = \" Bounded refusal causes contain no service-supplied strings or source errors.\"] # [doc = \" (´def:host:refusal´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum Refusal { # [doc = \" No public store-link case was declared.\"] MissingCase , # [doc = \" The public case vocabulary does not contain this declaration.\"] UnknownCase , # [doc = \" Guarded transport remains held.\"] HeldCase , # [doc = \" Private acquisition failed.\"] ConfigurationIo , # [doc = \" The connection-only JSON did not satisfy its schema.\"] ConfigurationSyntax , # [doc = \" A fixed protocol representation bound was exceeded.\"] RepresentationLimit , # [doc = \" This route avoids ordinary hostname storage in a resolver.\"] NumericEndpointRequired , # [doc = \" Transport failure; the operating-system error is not retained.\"] Transport , # [doc = \" Invalid framing or message order.\"] Protocol , # [doc = \" Password authentication failed inside the secret boundary.\"] ServerAuthentication , # [doc = \" Cleartext password requests are forbidden.\"] Cleartext , # [doc = \" MD5 authentication is forbidden.\"] Md5 , # [doc = \" GSS authentication is forbidden.\"] Gss , # [doc = \" SSPI authentication is forbidden.\"] Sspi , # [doc = \" Kerberos authentication is forbidden.\"] Kerberos , # [doc = \" `AuthenticationOk` preceded a verified SCRAM server signature.\"] PrematureAuthenticationOk , # [doc = \" No supported authentication mechanism was offered.\"] UnsupportedAuthentication , # [doc = \" Invalid SCRAM attribute encoding.\"] ScramFormat , # [doc = \" The declared iteration count exceeds the reviewed work bound.\"] ScramIterations , # [doc = \" The server did not extend the client nonce.\"] ServerNonce , # [doc = \" The server proof does not authenticate the transcript.\"] ServerSignature , # [doc = \" The operating system could not supply a fresh nonce.\"] Entropy , # [doc = \" The public placeholder driver handoff failed.\"] DriverHandoff , # [doc = \" A server diagnostic remains private and terminates the driver stream.\"] PrivateDiagnostic , # [doc = \" Cancellation lacks an authenticated backend capability.\"] Cancellation , }"
+      "syntax": "# [doc = \" Bounded refusal causes contain no service-supplied strings or source errors.\"] # [doc = \" (´def:host:refusal´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum Refusal { # [doc = \" No public store-link case was declared.\"] MissingCase , # [doc = \" The public case vocabulary does not contain this declaration.\"] UnknownCase , # [doc = \" Guarded transport remains held.\"] HeldCase , # [doc = \" Private acquisition failed.\"] ConfigurationIo , # [doc = \" The connection-only JSON did not satisfy its schema.\"] ConfigurationSyntax , # [doc = \" A fixed protocol representation bound was exceeded.\"] RepresentationLimit , # [doc = \" This route avoids ordinary hostname storage in a resolver.\"] NumericEndpointRequired , # [doc = \" Transport failure; the operating-system error is not retained.\"] Transport , # [doc = \" Invalid framing or message order.\"] Protocol , # [doc = \" Password authentication failed inside the secret boundary.\"] ServerAuthentication , # [doc = \" Cleartext password requests are forbidden.\"] Cleartext , # [doc = \" MD5 authentication is forbidden.\"] Md5 , # [doc = \" GSS authentication is forbidden.\"] Gss , # [doc = \" SSPI authentication is forbidden.\"] Sspi , # [doc = \" Kerberos authentication is forbidden.\"] Kerberos , # [doc = \" `AuthenticationOk` preceded a verified SCRAM server signature.\"] PrematureAuthenticationOk , # [doc = \" No supported authentication mechanism was offered.\"] UnsupportedAuthentication , # [doc = \" Invalid SCRAM attribute encoding.\"] ScramFormat , # [doc = \" The declared iteration count is outside the reviewed security and work bounds.\"] ScramIterations , # [doc = \" The server did not extend the client nonce.\"] ServerNonce , # [doc = \" The server proof does not authenticate the transcript.\"] ServerSignature , # [doc = \" The operating system could not supply a fresh nonce.\"] Entropy , # [doc = \" The public placeholder driver handoff failed.\"] DriverHandoff , # [doc = \" A server diagnostic remains private and terminates the driver stream.\"] PrivateDiagnostic , # [doc = \" A server parameter is outside the declared public configuration.\"] UnclassifiedParameter , # [doc = \" Cancellation lacks an authenticated backend capability.\"] Cancellation , }"
     },
     {
       "item": "PrivateDiagnostic",
@@ -14418,7 +14497,19 @@
       "item": "Session",
       "package": "pn-host",
       "path": "packages/host/src/lib.rs",
-      "syntax": "# [doc = \" A transport-only connection; this package defines no persistence operation.\"] # [doc = \" (´def:host:session´)\"] # [doc = \" Queries must concern public data. Service metadata is not public query data.\"] # [doc = \" Unclassified server diagnostics stay secret-typed and close this stream.\"] pub struct Session { client : tokio_postgres :: Client , config : Arc < Configuration > , backend_key : Arc < Mutex < Option < Buffer > > > , diagnostics : Arc < Mutex < Vec < PrivateDiagnostic > > > , tasks : Vec < tokio :: task :: JoinHandle < () > > , }"
+      "syntax": "# [doc = \" A transport-only connection; this package defines no persistence operation.\"] # [doc = \" (´def:host:session´)\"] # [doc = \" Only the storage module may select statements; no public method yields a raw client.\"] # [doc = \" ```compile_fail\"] # [doc = \" fn raw(session: &pn_host::Session) { let _ = session.client(); }\"] # [doc = \" ```\"] # [doc = \" Unclassified server diagnostics stay secret-typed and close this stream.\"] pub struct Session { client : tokio_postgres :: Client , config : Arc < Configuration > , backend_key : Arc < Mutex < Option < Buffer > > > , diagnostics : Arc < Mutex < Vec < PrivateDiagnostic > > > , tasks : Vec < tokio :: task :: JoinHandle < () > > , }"
+    },
+    {
+      "item": "Relay",
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "syntax": "struct Relay { shim : tokio :: io :: DuplexStream , socket : wire :: Socket , startup : Vec < wire :: Frame > , key : Arc < Mutex < Option < Buffer > > > , diagnostics : Arc < Mutex < Vec < PrivateDiagnostic > > > , }"
+    },
+    {
+      "item": "Outbound",
+      "package": "pn-host",
+      "path": "packages/host/src/lib.rs",
+      "syntax": "struct Outbound { client : tokio :: io :: ReadHalf < tokio :: io :: DuplexStream > , server : tokio :: io :: WriteHalf < wire :: Socket > , }"
     }
   ],
   "class_decisions": [

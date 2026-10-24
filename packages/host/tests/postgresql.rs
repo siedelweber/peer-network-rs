@@ -1,5 +1,5 @@
 //! Real PostgreSQL transport evidence; the gate owns the isolated instance.
-use pn_host::{Configuration, Session};
+use crate::{Configuration, Session};
 
 fn runtime() -> tokio::runtime::Runtime {
     tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap()
@@ -29,6 +29,8 @@ fn real_transports() {
             assert_eq!(cancellation, [0,0,0,16,4,210,22,46,0,0,0,1,0,0,0,2]);
             let version: String = session.client().query_one("SELECT version()", &[]).await.unwrap().get(0);
             assert!(version.starts_with("PostgreSQL 19rc1"), "unsupported test server");
+            assert_eq!(session.client().query_one("SHOW TimeZone", &[]).await.unwrap().get::<_, String>(0), "UTC");
+            assert_eq!(session.client().query_one("SHOW DateStyle", &[]).await.unwrap().get::<_, String>(0), "ISO, MDY");
             let row = session.client().query_one("SELECT $1::text, $2::int4", &[&"public_parameter_sentinel", &73_i32]).await.unwrap();
             assert_eq!(row.get::<_, String>(0), "public_parameter_sentinel");
             assert_eq!(row.get::<_, i32>(1), 73);
@@ -169,5 +171,33 @@ fn connection_loss_and_drop() {
         drop(query);
         drop(session);
         tokio::task::yield_now().await;
+    });
+}
+
+/// Claim: Both host-secured transports preserve every ordered row in a 4,096-row public result; elapsed time is reported as performance evidence and never changes the correctness verdict.
+/// ´claim:host:multirow-relay-preserves-public-results´
+/// ´test:integration:relay-throughput´
+#[test]
+fn relay_throughput() {
+    runtime().block_on(async {
+        for transport in ["unix.json", "tcp.json"] {
+            let session = Session::connect(configuration(transport)).await.unwrap();
+            let started = std::time::Instant::now();
+            let rows = session
+                .client()
+                .query(
+                    "SELECT value::int4, repeat('public-row-', 8) FROM generate_series(1, 4096) AS value ORDER BY value",
+                    &[],
+                )
+                .await
+                .unwrap();
+            let elapsed = started.elapsed().as_secs_f64();
+            assert_eq!(rows.len(), 4096);
+            for (index, row) in rows.iter().enumerate() {
+                assert_eq!(row.get::<_, i32>(0), i32::try_from(index + 1).unwrap());
+                assert_eq!(row.get::<_, String>(1), "public-row-".repeat(8));
+            }
+            cli_common::emit(&serde_json::json!({"kind":"host_throughput", "transport":transport, "rows":4096, "wall_seconds":elapsed, "rows_per_second":4096.0/elapsed})).unwrap();
+        }
     });
 }

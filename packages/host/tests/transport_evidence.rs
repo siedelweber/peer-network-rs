@@ -1,20 +1,23 @@
 //! Public fixture command for the secret transport's observation evidence.
-use pn_host::{Configuration, Refusal, Session};
+use crate::{Configuration, Refusal, Session};
 use serde_json::json;
 
-fn main() {
+/// Claim: The closed fixture statement set returns only declared public values while private service metadata remains unreachable through the production API; its observation mode cannot change its result.
+/// ´claim:host:fixture-statements-preserve-the-public-result-boundary´
+/// ´test:integration:public-transport´
+#[test]
+fn public_transport() {
     let guard = cli_common::observation::bootstrap(true, false, tracing::Level::WARN).unwrap();
     let runtime = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
     let result = runtime.block_on(exercise());
     drop(runtime);
     drop(guard);
     cli_common::emit(&json!({"kind":"startup_status","store_link_case":"host-secured","path_security":"operator responsibility","result":format!("{result:?}"),"persistence":"disabled"})).unwrap();
-    if result.is_err() {
-        cli_common::exit_with(cli_common::CommandExit::Failure);
-    }
+    assert!(result.is_ok());
 }
 
 async fn exercise() -> Result<(), Refusal> {
+    crate::tests::relay_refusal_fixtures().await;
     for (case, expected) in [
         (None, Refusal::MissingCase),
         (Some("guarded"), Refusal::HeldCase),

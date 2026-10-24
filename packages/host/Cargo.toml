@@ -1,4 +1,5 @@
 [package]
+autotests = false
 name = "pn-host"
 description = "Secret-terminating host-intranet PostgreSQL transport; persistence disabled"
 authors.workspace = true
@@ -25,3 +26,7 @@ serde_json.workspace = true
 
 [lints]
 workspace = true
+
+[[test]]
+name = "public"
+path = "tests/public.rs"

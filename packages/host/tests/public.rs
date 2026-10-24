@@ -197,3 +197,95 @@ fn impostor_server_proof() {
         server.await.unwrap();
     });
 }
+
+/// Claim: Each hostile SCRAM premise refuses with its own bounded cause before a client proof is sent: missing mechanism, server error, excessive frame, weak or excessive work, wrong nonce and malformed attributes.
+/// ´claim:host:scram-bounds-precede-proof-disclosure´
+/// ´test:integration:scram-bound-refusals´
+#[test]
+fn scram_bound_refusals() {
+    runtime().block_on(async {
+        for (case, expected) in [
+            ("low", Refusal::ScramIterations),
+            ("high", Refusal::ScramIterations),
+            ("frame", Refusal::RepresentationLimit),
+            ("nonce", Refusal::ServerNonce),
+            ("format", Refusal::ScramFormat),
+            ("offer", Refusal::UnsupportedAuthentication),
+            ("error", Refusal::ServerAuthentication),
+        ] {
+            let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 42104))
+                .await
+                .unwrap();
+            let server = tokio::spawn(async move {
+                let (mut stream, _) = listener.accept().await.unwrap();
+                let length = stream.read_u32().await.unwrap();
+                let mut startup = vec![0; usize::try_from(length).unwrap() - 4];
+                stream.read_exact(&mut startup).await.unwrap();
+                if case == "frame" {
+                    stream.write_all(&[b'R', 0, 16, 0, 5]).await.unwrap();
+                } else if case == "error" {
+                    send_fixture_frame(&mut stream, b'E', b"private_authentication_error").await;
+                } else if case == "offer" {
+                    send_fixture_frame(&mut stream, b'R', b"\0\0\0\x0aSCRAM-SHA-256-PLUS\0\0").await;
+                } else {
+                    send_fixture_frame(&mut stream, b'R', b"\0\0\0\x0aSCRAM-SHA-256\0\0").await;
+                    assert_eq!(stream.read_u8().await.unwrap(), b'p');
+                    let length = stream.read_u32().await.unwrap();
+                    let mut initial = vec![0; usize::try_from(length).unwrap() - 4];
+                    stream.read_exact(&mut initial).await.unwrap();
+                    let offset = initial.windows(2).position(|v| v == b"r=").unwrap() + 2;
+                    let mut continuation = b"\0\0\0\x0br=".to_vec();
+                    if case == "nonce" {
+                        continuation.extend_from_slice(b"wrong");
+                    } else {
+                        continuation.extend_from_slice(&initial[offset..]);
+                        continuation.extend_from_slice(b"server");
+                    }
+                    continuation.extend_from_slice(b",s=cHVibGlj,i=");
+                    continuation.extend_from_slice(match case {
+                        "low" => b"4095",
+                        "high" => b"100001",
+                        _ => b"4096",
+                    });
+                    if case == "format" {
+                        continuation.extend_from_slice(b",r=duplicate");
+                    }
+                    send_fixture_frame(&mut stream, b'R', &continuation).await;
+                }
+                let mut response = [0];
+                assert_eq!(stream.read(&mut response).await.unwrap(), 0, "refusal must precede proof");
+            });
+            let config = Configuration::acquire(Some("host-secured"), &mut fixture(42104).as_slice()).unwrap();
+            let result = tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
+                .await
+                .unwrap();
+            assert_eq!(result.unwrap_err(), expected, "{case}");
+            server.await.unwrap();
+        }
+    });
+}
+
+async fn send_fixture_frame(stream: &mut tokio::net::TcpStream, kind: u8, bytes: &[u8]) {
+    let mut frame = vec![kind];
+    frame.extend_from_slice(&(u32::try_from(bytes.len()).unwrap() + 4).to_be_bytes());
+    frame.extend_from_slice(bytes);
+    stream.write_all(&frame).await.unwrap();
+}
+
+/// Claim: Oversized acquisition and a non-printable password refuse before connection, preserving the declared representation and password profiles without truncation.
+/// ´claim:host:acquisition-bounds-refuse-before-connection´
+/// ´test:integration:acquisition-bound-refusals´
+#[test]
+fn acquisition_bound_refusals() {
+    assert_eq!(
+        Configuration::acquire(Some("host-secured"), &mut vec![b' '; 1_048_576].as_slice()).unwrap_err(),
+        Refusal::RepresentationLimit
+    );
+    let text = String::from_utf8(fixture(42104))
+        .unwrap()
+        .replace("private_password_fixture", "private\\u0001password");
+    assert_eq!(
+        Configuration::acquire(Some("host-secured"), &mut text.as_bytes()).unwrap_err(),
+        Refusal::ConfigurationSyntax
+    );
+}

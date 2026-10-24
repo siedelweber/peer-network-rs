@@ -13,8 +13,11 @@ pub(crate) struct Buffer {
 
 impl Buffer {
     pub(crate) fn new() -> Self {
+        Self::with_capacity(LIMIT)
+    }
+    pub(crate) fn with_capacity(capacity: usize) -> Self {
         Self {
-            bytes: SecretBox::new(vec![0; LIMIT].into_boxed_slice()),
+            bytes: SecretBox::new(vec![0; capacity].into_boxed_slice()),
             length: 0,
         }
     }
@@ -25,7 +28,7 @@ impl Buffer {
         self.bytes.expose_secret_mut()
     }
     pub(crate) fn set_length(&mut self, length: usize) -> Result<(), Refusal> {
-        if length > LIMIT {
+        if length > self.bytes.expose_secret().len() {
             return Err(Refusal::RepresentationLimit);
         }
         self.length = length;
@@ -33,7 +36,7 @@ impl Buffer {
     }
     pub(crate) fn append(&mut self, bytes: &[u8]) -> Result<(), Refusal> {
         let end = self.length.checked_add(bytes.len()).ok_or(Refusal::RepresentationLimit)?;
-        if end > LIMIT {
+        if end > self.bytes.expose_secret().len() {
             return Err(Refusal::RepresentationLimit);
         }
         self.bytes.expose_secret_mut()[self.length..end].copy_from_slice(bytes);

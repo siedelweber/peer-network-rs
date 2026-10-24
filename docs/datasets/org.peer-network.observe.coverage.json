@@ -31,12 +31,12 @@
       "operations": 12
     },
     {
-      "exceptions": 12,
+      "exceptions": 14,
       "generators": 1,
       "helpers": 0,
-      "instrumented": 6,
+      "instrumented": 7,
       "name": "pn-host",
-      "operations": 18
+      "operations": 21
     },
     {
       "exceptions": 34,

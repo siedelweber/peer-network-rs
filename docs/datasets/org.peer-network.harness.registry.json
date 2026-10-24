@@ -3492,7 +3492,9 @@
         "pn-host::public::impostor_authentication",
         "pn-host::public::authentication_disconnect",
         "pn-host::public::stock_configuration_control",
-        "pn-host::public::impostor_server_proof"
+        "pn-host::public::impostor_server_proof",
+        "pn-host::public::scram_bound_refusals",
+        "pn-host::public::acquisition_bound_refusals"
       ],
       "implementation": "pn-host-rust",
       "kind": "suite",
@@ -3510,7 +3512,8 @@
         "pn-host::postgresql::real_cancellation",
         "pn-host::postgresql::private_server_echo",
         "pn-host::postgresql::serialization_conflict",
-        "pn-host::postgresql::connection_loss_and_drop"
+        "pn-host::postgresql::connection_loss_and_drop",
+        "pn-host::postgresql::relay_throughput"
       ],
       "implementation": "pn-host-postgresql",
       "kind": "suite",
@@ -3523,6 +3526,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory",
         "ci::test_host_runtime.HostRuntime.test_dependency_pins",
         "ci::test_host_runtime.HostRuntime.test_public_transport"
       ],
@@ -3537,6 +3541,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "doctest::packages/host/src/lib.rs - Session [example 1]",
         "doctest::packages/host/src/config.rs - config::Configuration [example 1]",
         "doctest::packages/host/src/config.rs - config::Configuration [example 2]"
       ],
@@ -3552,7 +3557,8 @@
       "budget": "pure-suite",
       "cases": [
         "pn-host::config::tests::secret_json_grammar",
-        "pn-host::tests::wire_filter_boundary"
+        "pn-host::tests::wire_filter_boundary",
+        "pn-host::tests::relay_refusals"
       ],
       "implementation": "pn-host-rust",
       "kind": "suite",
@@ -3561,6 +3567,19 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-host::transport_evidence::public_transport"
+      ],
+      "implementation": "pn-host-postgresql",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-host::transport-evidence",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "service"
     }
   ]
 }

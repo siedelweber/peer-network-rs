@@ -19,6 +19,11 @@ enum Transport {
     Tcp(TcpStream),
 }
 pub(crate) struct Socket(Transport);
+#[cfg(test)]
+pub(crate) fn fixture_pair() -> (Socket, UnixStream) {
+    let (socket, peer) = UnixStream::pair().unwrap();
+    (Socket(Transport::Unix(socket)), peer)
+}
 impl fmt::Debug for Socket {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -39,10 +44,11 @@ impl Socket {
                     .text(1)?
                     .parse::<IpAddr>()
                     .map_err(|_| Refusal::NumericEndpointRequired)?;
-                TcpStream::connect((address, config.port()?))
+                let socket = TcpStream::connect((address, config.port()?))
                     .await
-                    .map(|s| Self(Transport::Tcp(s)))
-                    .map_err(|_| Refusal::Transport)
+                    .map_err(|_| Refusal::Transport)?;
+                socket.set_nodelay(true).map_err(|_| Refusal::Transport)?;
+                Ok(Self(Transport::Tcp(socket)))
             }
             _ => Err(Refusal::ConfigurationSyntax),
         }
@@ -92,7 +98,7 @@ pub(crate) async fn read(stream: &mut (impl AsyncRead + Unpin)) -> Result<Frame,
     if !(4..=LIMIT + 4).contains(&length) {
         return Err(Refusal::RepresentationLimit);
     }
-    let mut payload = Buffer::new();
+    let mut payload = Buffer::with_capacity(length - 4);
     stream
         .read_exact(&mut payload.storage()[..length - 4])
         .await
@@ -101,10 +107,15 @@ pub(crate) async fn read(stream: &mut (impl AsyncRead + Unpin)) -> Result<Frame,
     Ok(Frame { kind, payload })
 }
 pub(crate) async fn send(stream: &mut (impl AsyncWrite + Unpin), kind: u8, payload: &[u8]) -> Result<(), Refusal> {
+    if payload.len() > LIMIT {
+        return Err(Refusal::RepresentationLimit);
+    }
     let length = u32::try_from(payload.len() + 4).map_err(|_| Refusal::RepresentationLimit)?;
-    stream.write_u8(kind).await.map_err(|_| Refusal::Transport)?;
-    stream.write_u32(length).await.map_err(|_| Refusal::Transport)?;
-    stream.write_all(payload).await.map_err(|_| Refusal::Transport)?;
+    let mut frame = Buffer::with_capacity(payload.len() + 5);
+    frame.append(&[kind])?;
+    frame.append(&length.to_be_bytes())?;
+    frame.append(payload)?;
+    stream.write_all(frame.bytes()).await.map_err(|_| Refusal::Transport)?;
     stream.flush().await.map_err(|_| Refusal::Transport)
 }
 pub(crate) async fn startup(stream: &mut Socket, config: &Configuration) -> Result<(), Refusal> {
@@ -114,6 +125,11 @@ pub(crate) async fn startup(stream: &mut Socket, config: &Configuration) -> Resu
         (b"user".as_slice(), config.field(3)),
         (b"database", config.field(5)),
         (b"client_encoding", b"UTF8"),
+        (b"TimeZone", b"UTC"),
+        (b"DateStyle", b"ISO, MDY"),
+        (b"IntervalStyle", b"postgres"),
+        (b"application_name", b""),
+        (b"search_path", b"\"$user\", public"),
     ] {
         payload.append(name)?;
         payload.append(&[0])?;
