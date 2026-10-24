@@ -189,3 +189,12 @@ title = "Development performance"
 scope = "Wall-time budgets, nonverdict findings, measured build choices and registered expensive work."
 depends_on = ["rec:toolchain:decision", "rec:observe:decision", "rec:testing:decision", "rec:harness:decision", "rec:compatibility:decision"]
 does_not_establish = "The policy establishes no profile change, controlled baseline, admitted expensive exception or implemented timing collector."
+
+[[rows]]
+label = "rec:intranet:decision"
+path = "adr/022-host-intranet.md"
+status = "accepted"
+title = "Host intranet"
+scope = "Private service reachability, explicit transport cases and responsibility for the host intranet."
+depends_on = ["rec:storage:decision", "rec:observe:decision", "rec:devnet:decision"]
+does_not_establish = "No secure path, driver integration or guarded transport is implemented or admitted by this record."

@@ -53,6 +53,8 @@
 **Section (devperf)** · `sec:foundation:area-devperf` If development performance fails, slow feedback hides defects or noisy timings make correct evidence appear unreliable. (`rec:devperf:decision`) requires measured budgets, owned findings and registered expensive work while keeping timing outside test and gate verdicts.
 
 
+**Section (intranet)** · `sec:foundation:area-intranet` If host-intranet boundaries fail, private reachability leaks or an operator-provided path is mistaken for implementation-provided transport security. (`rec:intranet:decision`) separates those duties and requires an explicit public case while keeping all connection material secret-owned.
+
 ## CI claim areas · `sec:foundation:claim-areas`
 {% for area in rows('org.peer-network.testing.claim-areas') if area.owner == 'ROOT' %}
 

@@ -261,6 +261,19 @@
       "scope": "Wall-time budgets, nonverdict findings, measured build choices and registered expensive work.",
       "status": "accepted",
       "title": "Development performance"
+    },
+    {
+      "depends_on": [
+        "rec:storage:decision",
+        "rec:observe:decision",
+        "rec:devnet:decision"
+      ],
+      "does_not_establish": "No secure path, driver integration or guarded transport is implemented or admitted by this record.",
+      "label": "rec:intranet:decision",
+      "path": "adr/022-host-intranet.md",
+      "scope": "Private service reachability, explicit transport cases and responsibility for the host intranet.",
+      "status": "accepted",
+      "title": "Host intranet"
     }
   ]
 }

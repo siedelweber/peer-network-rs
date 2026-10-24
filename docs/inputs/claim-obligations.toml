@@ -2077,6 +2077,18 @@ claims = []
 realizers = []
 hold = "ROOT::open:design:secret-integrations"
 owner = "Storage implementer and independent integration reviewer"
-missing = "All eight first-commit evidence items, including secret-preserving TLS and SCRAM, retained-state review, real PostgreSQL negative leakage and protocol witnesses."
+missing = "All first-route items of amend:storage:host-secured-evidence: secret-preserving SCRAM, retained-state review, real PostgreSQL negative leakage and protocol witnesses; TLS counterparts remain in open:intranet:guarded-transport."
 closing_condition = "Pass rule:storage:first-commit-evidence with reviewed source/configuration-matched results before enabling persistence."
 closing_step = "Bite 2 storage integration admission before persistence"
+
+[[rows]]
+name = "ROOT::dec:intranet:host-secured-first"
+path = "adr/022-host-intranet.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:design:secret-integrations"
+owner = "Storage, wallet and telemetry integration implementers"
+missing = "Explicit-case acquisition refusals and secret-preserving service integrations under the host-secured non-claim; the guarded transport remains separately held."
+closing_condition = "Each integration demonstrates inv:intranet:explicit-case and rule:intranet:secret-reachability with reviewed source-matched execution evidence before enabling its service path."
+closing_step = "Bite 2 storage integration, wallet integration and telemetry service transport admission, each before use"
