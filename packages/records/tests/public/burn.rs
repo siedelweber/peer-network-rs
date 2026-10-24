@@ -235,6 +235,7 @@ fn invalid_candidate_prefix() {
         let mut successor = case.history.markers[2].clone();
         successor.name = "m3".into();
         successor.index = 3;
+        successor.history_position = 30;
         successor.predecessor = Some("m2".into());
         case.history.markers.push(successor);
         let result = fixtures::recognize(case).unwrap();
@@ -245,7 +246,7 @@ fn invalid_candidate_prefix() {
     }
 }
 
-/// Claim: Competing candidates preserve earlier markers; the unique-index assumption stops before that index, while first-valid selection chooses in history order and retains the first rejection when a later competitor passes.
+/// Claim: Disclosed positions select the same competing marker and refusal after reversal or shuffle; duplicate positions refuse validation, and same-named competitors cannot give a predecessor two meanings.
 /// ´claim:burn:declared-policy-selects-competing-candidates´
 /// ´test:integration:competing-candidates´
 #[test]
@@ -253,28 +254,48 @@ fn competing_candidates() {
     use pn_records::burn::CandidateRule;
     let base = fixtures::generate(&[]);
     let prefix = fixtures::recognize(base.clone()).unwrap().markers()[..2].to_vec();
-    let mut competing = base.clone();
+    let mut competing = base;
     let mut other = competing.history.markers[2].clone();
     other.name = "other-m2".into();
-    competing.history.markers.insert(2, other);
-    let unique = fixtures::recognize(competing.clone()).unwrap();
-    assert_eq!(unique.markers(), prefix);
-    assert_eq!(unique.first_refusal().unwrap().cause, BurnError::Succession);
+    other.history_position = 19;
+    competing.history.markers.push(other);
+    for rule in [CandidateRule::UniquePerIndex, CandidateRule::FirstValidInHistoryOrder] {
+        competing.policy.candidate_rule = rule;
+        let expected = fixtures::recognize(competing.clone()).unwrap();
+        assert_eq!(&expected.markers()[..2], prefix);
+        if rule == CandidateRule::UniquePerIndex {
+            assert_eq!(expected.markers(), prefix);
+            let refusal = expected.first_refusal().unwrap();
+            assert_eq!(refusal.cause, BurnError::Succession);
+            assert_eq!(
+                refusal.competitors.iter().map(|m| m.name.as_str()).collect::<Vec<_>>(),
+                ["other-m2", "m2"]
+            );
+        } else {
+            assert_eq!(expected.markers()[2].identity().name, "other-m2");
+            assert!(expected.first_refusal().is_none());
+        }
+        for order in [[3, 2, 1, 0], [2, 0, 3, 1], [1, 3, 0, 2]] {
+            let mut shuffled = competing.clone();
+            shuffled.history.markers = order.iter().map(|&i| competing.history.markers[i].clone()).collect();
+            assert_eq!(fixtures::recognize(shuffled).unwrap(), expected);
+        }
+        let mut ambiguous = competing.clone();
+        ambiguous.history.markers[3].name = "m2".into();
+        let result = fixtures::recognize(ambiguous).unwrap();
+        assert_eq!(result.markers(), prefix);
+        assert_eq!(result.first_refusal().unwrap().cause, BurnError::Succession);
+    }
+    let mut duplicate = competing.clone();
+    duplicate.history.markers[3].history_position = duplicate.history.markers[2].history_position;
+    assert_eq!(fixtures::recognize(duplicate), Err(BurnError::HistoryPosition));
     competing.policy.candidate_rule = CandidateRule::FirstValidInHistoryOrder;
-    let first = fixtures::recognize(competing.clone()).unwrap();
-    assert_eq!(&first.markers()[..2], prefix);
-    assert_eq!(first.markers()[2].identity().name, "other-m2");
-    assert!(first.first_refusal().is_none());
-    competing.history.markers.swap(2, 3);
-    assert_eq!(
-        fixtures::recognize(competing.clone()).unwrap().markers()[2].identity().name,
-        "m2"
-    );
-    competing.history.markers[2].accepted = AcceptedSet::CompleteList(BTreeSet::from(["r1".into()]));
-    let fallback = fixtures::recognize(competing).unwrap();
-    assert_eq!(&fallback.markers()[..2], prefix);
-    assert_eq!(fallback.markers()[2].identity().name, "other-m2");
+    competing.history.markers[3].accepted = AcceptedSet::CompleteList(BTreeSet::from(["r1".into()]));
+    let fallback = fixtures::recognize(competing.clone()).unwrap();
+    assert_eq!(fallback.markers()[2].identity().name, "m2");
     assert_eq!(fallback.first_refusal().unwrap().cause, BurnError::RegressedAcceptance);
+    competing.history.markers.reverse();
+    assert_eq!(fixtures::recognize(competing).unwrap(), fallback);
 }
 
 /// Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor name, successor snapshot, policy identity and sequence, burn unit, and explained operator absence.

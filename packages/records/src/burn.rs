@@ -146,6 +146,8 @@ pub struct Marker {
     pub policy_edition: String,
     pub sequence: String,
     pub index: u64,
+    /// Unique position fixed by this history disclosure, not by vector presentation.
+    pub history_position: u64,
     pub predecessor: Option<String>,
     pub lineage: BTreeSet<String>,
     pub accepted: AcceptedSet,
@@ -204,6 +206,8 @@ pub struct RecognizedMarkers {
 pub struct CandidateRefusal {
     pub candidate: Option<Marker>,
     pub cause: BurnError,
+    /// All refused competitors in disclosed position order; empty for a single-candidate refusal.
+    pub competitors: Vec<Marker>,
 }
 
 /// A complete accepted record set and one representative per destruction.
@@ -259,6 +263,8 @@ pub enum BurnError {
     RecordIdentity,
     #[error("marker belongs to another history or policy")]
     HistoryPolicy,
+    #[error("duplicate disclosed marker history position")]
+    HistoryPosition,
     #[error("invalid initial marker")]
     Initial,
     #[error("duplicate or skipped marker index, name or predecessor")]
@@ -467,6 +473,10 @@ pub fn validate_marker_history(
         if input.identity.is_empty() {
             return Err(BurnError::HistoryPolicy);
         }
+        let mut positions = BTreeSet::new();
+        if input.markers.iter().any(|marker| !positions.insert(marker.history_position)) {
+            return Err(BurnError::HistoryPosition);
+        }
         let mut names = BTreeSet::new();
         let mut proofs = BTreeSet::new();
         for record in &input.records {
@@ -524,8 +534,8 @@ pub fn recognize_markers(history: &ValidatedMarkerHistory) -> RecognizedMarkers 
 
 fn recognize(history: &ValidatedMarkerHistory) -> RecognizedMarkers {
     let mut candidates: Vec<_> = history.input.markers.iter().enumerate().collect();
-    // Stable sorting preserves the declared history order among competing candidates.
-    candidates.sort_by_key(|(_, marker)| marker.index);
+    // Disclosure fixes tie order even when a caller reverses or shuffles presentation.
+    candidates.sort_by_key(|(_, marker)| (marker.index, marker.history_position));
     let records: BTreeMap<_, _> = history.input.records.iter().map(|r| (&r.identity, r)).collect();
     let mut result = RecognizedMarkers {
         history: history.input.identity.clone(),
@@ -536,14 +546,18 @@ fn recognize(history: &ValidatedMarkerHistory) -> RecognizedMarkers {
         result.first_refusal = Some(CandidateRefusal {
             candidate: None,
             cause: BurnError::Initial,
+            competitors: Vec::new(),
         });
     }
     let mut selected_names = BTreeSet::new();
     for group in candidates.chunk_by(|(_, left), (_, right)| left.index == right.index) {
-        if history.policy.input.candidate_rule == CandidateRule::UniquePerIndex && group.len() != 1 {
+        let mut names = BTreeSet::new();
+        let ambiguous_names = group.iter().any(|(_, marker)| !names.insert(&marker.name));
+        if ambiguous_names || (history.policy.input.candidate_rule == CandidateRule::UniquePerIndex && group.len() != 1) {
             result.first_refusal.get_or_insert_with(|| CandidateRefusal {
                 candidate: Some(group[0].1.clone()),
                 cause: BurnError::Succession,
+                competitors: group.iter().map(|(_, marker)| (*marker).clone()).collect(),
             });
             break;
         }
@@ -563,6 +577,7 @@ fn recognize(history: &ValidatedMarkerHistory) -> RecognizedMarkers {
                     result.first_refusal.get_or_insert_with(|| CandidateRefusal {
                         candidate: Some(marker.clone()),
                         cause,
+                        competitors: Vec::new(),
                     });
                 }
             }

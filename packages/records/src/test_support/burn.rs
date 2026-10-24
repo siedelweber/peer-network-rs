@@ -130,6 +130,7 @@ pub fn generate(words: &[u64]) -> BurnCase {
             policy_edition: policy.edition.clone(),
             sequence: policy.sequence.clone(),
             index,
+            history_position: index * 10,
             predecessor: if index == 0 { None } else { Some(format!("m{}", index - 1)) },
             lineage,
             accepted: AcceptedSet::CompleteList(accepted),
