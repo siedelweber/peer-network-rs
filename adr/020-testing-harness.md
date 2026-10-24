@@ -119,7 +119,7 @@
 | records-verification | active | integration | pn-records-rust | fast | 20 |
 | numerics-records | active | integration | pn-records-rust | fast | 6 |
 | numerics-verification | active | integration | pn-records-rust | fast | 6 |
-| pn-records-doctests | active | doctest | pn-records-rust | fast | 2 |
+| pn-records-doctests | active | doctest | pn-records-rust | fast | 4 |
 | burn-records | active | integration | pn-records-rust | fast | 29 |
 | burn-verification | active | integration | pn-records-rust | fast | 29 |
 

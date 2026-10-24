@@ -84,12 +84,12 @@ pub struct RoundedDisplay {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ActionCount(pub u64);
 
-/// An explicit positive burn quantity defining a named reduced coordinate system.
+/// A positive burn-per-action numeraire; action and action-credit are the same unit.
 /// (´def:numerics:dimensioned-values´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Numeraire {
     identity: String,
-    amount: BurnAmount,
+    amount: BurnPerAction,
 }
 
 /// Full standing divided by the retained, explicitly named numeraire.
@@ -422,6 +422,13 @@ impl NumericContext {
 
 impl NumericContext {
     /// Declare a strictly positive named numeraire, without an external market price.
+    ///
+    /// ```compile_fail,E0308
+    /// use pn_records::numerics::{BurnAmount, NumericContext};
+    /// fn wrong(c: &mut NumericContext, amount: &BurnAmount) {
+    ///     let _ = c.numeraire("nu", amount);
+    /// }
+    /// ```
     /// (´def:numerics:exact-carriers´)
     ///
     /// # Errors
@@ -437,7 +444,7 @@ impl NumericContext {
         ),
         ret
     )]
-    pub fn numeraire(&mut self, identity: &str, amount: &BurnAmount) -> Result<Numeraire, NumericError> {
+    pub fn numeraire(&mut self, identity: &str, amount: &BurnPerAction) -> Result<Numeraire, NumericError> {
         let result = (|| {
             nonempty(identity)?;
             sign(&amount.exact, true)?;
@@ -571,46 +578,6 @@ impl NumericContext {
 }
 
 impl NumericContext {
-    /// Project the burn-denominated sum theta plus numeraire times reduced standing into external cost.
-    /// (´def:numerics:exact-carriers´)
-    ///
-    /// # Errors
-    /// Refuses invalid signs, units, syntax or exhausted explicit resource limits as applicable.
-    #[tracing::instrument(
-        name = "sig:design:records",
-        fields(
-            execution_owner = "RECORDS",
-            claim_owner = "ROOT",
-            claim_label = "sig:design:records",
-            operation = "numeric-combined-cost",
-            source_item = "numerics::NumericContext::combined_cost"
-        ),
-        ret
-    )]
-    pub fn combined_cost(
-        &mut self,
-        cost: &UnitCost,
-        theta: &BurnAmount,
-        rho: &ReducedStanding,
-    ) -> Result<ExternalCost, NumericError> {
-        let result = (|| {
-            units(&theta.unit, &rho.numeraire.amount.unit)?;
-            let full = rho.exact.value.mul(&rho.numeraire.amount.exact.value, &mut self.budget)?;
-            let value = theta.exact.value.add(&full, &mut self.budget)?;
-            let amount = BurnAmount {
-                exact: Exact::new(value, &mut self.budget)?,
-                unit: theta.unit.clone(),
-            };
-            self.apply_cost(cost, &amount)
-        })();
-        if result.is_err() {
-            super::refused();
-        }
-        result
-    }
-}
-
-impl NumericContext {
     /// Retain recording-event cost as separate audit evidence, with no unit-cost conversion.
     /// (´def:numerics:exact-carriers´)
     ///
@@ -687,7 +654,7 @@ impl NumericContext {
                 },
                 Numeraire {
                     identity: numeraire.identity.clone(),
-                    amount: BurnAmount {
+                    amount: BurnPerAction {
                         exact: Exact::new(n, &mut self.budget)?,
                         unit: new_unit.into(),
                     },
@@ -808,15 +775,12 @@ impl NumericContext {
                 FloorComparison::Indecisive => return Err(NumericError::Indecisive),
                 FloorComparison::Equal | FloorComparison::Above => {}
             }
-            let value = wall.exact.value.mul(&numeraire.amount.exact.value, &mut self.budget)?;
+            let price = self.per_action(wall, numeraire)?;
             Ok(ChargedPrice {
                 wall: wall.clone(),
                 numeraire: numeraire.clone(),
                 floor,
-                price: BurnPerAction {
-                    exact: Exact::new(value, &mut self.budget)?,
-                    unit: numeraire.amount.unit.clone(),
-                },
+                price,
             })
         })();
         if result.is_err() {
@@ -1048,11 +1012,11 @@ impl Numeraire {
 }
 
 impl Numeraire {
-    /// Borrow the positive burn amount defining this numeraire.
+    /// Borrow the positive burn-per-action coordinate defining this numeraire.
     /// (´def:numerics:exact-carriers´)
     /// Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.
     #[must_use]
-    pub fn amount(&self) -> &BurnAmount {
+    pub fn amount(&self) -> &BurnPerAction {
         &self.amount
     }
 }
@@ -1134,6 +1098,231 @@ impl ChargedVintage {
     #[must_use]
     pub fn boundary(&self) -> u64 {
         self.boundary
+    }
+}
+
+/// Burn divided by its named numeraire, in action credits; distinct from full burn and standing.
+/// (´def:numerics:dimensioned-values´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ReducedBurn {
+    exact: Exact,
+    numeraire: Numeraire,
+}
+
+impl NumericContext {
+    /// Form a nonnegative reduced per-action coordinate times nu exactly once, in burn per action.
+    /// (´def:numerics:exact-carriers´)
+    ///
+    /// # Errors
+    /// Refuses mismatched units, invalid signs or exhausted explicit arithmetic limits.
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "numeric-per-action",
+            source_item = "numerics::NumericContext::per_action"
+        ),
+        ret
+    )]
+    pub fn per_action(&mut self, rho: &Computed, numeraire: &Numeraire) -> Result<BurnPerAction, NumericError> {
+        let result = (|| {
+            sign(&rho.exact, false)?;
+            let value = rho.exact.value.mul(&numeraire.amount.exact.value, &mut self.budget)?;
+            Ok(BurnPerAction {
+                exact: Exact::new(value, &mut self.budget)?,
+                unit: numeraire.amount.unit.clone(),
+            })
+        })();
+        if result.is_err() {
+            super::refused();
+        }
+        result
+    }
+}
+
+impl NumericContext {
+    /// Form m times the per-action sum theta plus nu times rho, before any external cost projection.
+    ///
+    /// ```compile_fail,E0308
+    /// use pn_records::numerics::{ActionCount, BurnAmount, Computed, NumericContext, Numeraire};
+    /// fn wrong(c: &mut NumericContext, theta: &BurnAmount, rho: &Computed, nu: &Numeraire) {
+    ///     let _ = c.door_amount(ActionCount(3), theta, rho, nu);
+    /// }
+    /// ```
+    /// (´def:numerics:exact-carriers´)
+    ///
+    /// # Errors
+    /// Refuses mismatched units, invalid signs or exhausted explicit arithmetic limits.
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "numeric-door-amount",
+            source_item = "numerics::NumericContext::door_amount"
+        ),
+        ret
+    )]
+    pub fn door_amount(
+        &mut self,
+        actions: ActionCount,
+        theta: &BurnPerAction,
+        rho: &Computed,
+        numeraire: &Numeraire,
+    ) -> Result<BurnAmount, NumericError> {
+        let result = (|| {
+            let additional = self.per_action(rho, numeraire)?;
+            units(&theta.unit, &additional.unit)?;
+            let sum = theta.exact.value.add(&additional.exact.value, &mut self.budget)?;
+            let count = Rational::parse(&actions.0.to_string(), &mut self.budget)?;
+            let value = sum.mul(&count, &mut self.budget)?;
+            Ok(BurnAmount {
+                exact: Exact::new(value, &mut self.budget)?,
+                unit: theta.unit.clone(),
+            })
+        })();
+        if result.is_err() {
+            super::refused();
+        }
+        result
+    }
+}
+
+impl NumericContext {
+    /// Divide a burn amount by the explicitly retained per-action numeraire, yielding action credits.
+    /// (´def:numerics:exact-carriers´)
+    ///
+    /// # Errors
+    /// Refuses mismatched units, invalid signs or exhausted explicit arithmetic limits.
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "numeric-reduce-burn",
+            source_item = "numerics::NumericContext::reduce_burn"
+        ),
+        ret
+    )]
+    pub fn reduce_burn(&mut self, amount: &BurnAmount, numeraire: &Numeraire) -> Result<ReducedBurn, NumericError> {
+        let result = (|| {
+            units(&amount.unit, &numeraire.amount.unit)?;
+            let value = amount.exact.value.div(&numeraire.amount.exact.value, &mut self.budget)?;
+            Ok(ReducedBurn {
+                exact: Exact::new(value, &mut self.budget)?,
+                numeraire: numeraire.clone(),
+            })
+        })();
+        if result.is_err() {
+            super::refused();
+        }
+        result
+    }
+}
+impl NumericContext {
+    /// Co-scale full standing and numeraire into the new unit; reduced coordinates then agree.
+    /// (´def:numerics:exact-carriers´)
+    ///
+    /// # Errors
+    /// Refuses invalid signs, units, syntax or exhausted explicit resource limits as applicable.
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "numeric-recoin-standing",
+            source_item = "numerics::NumericContext::recoin_standing"
+        ),
+        ret
+    )]
+    pub fn recoin_standing(
+        &mut self,
+        amount: &FullStanding,
+        numeraire: &Numeraire,
+        factor: &Literal,
+        new_unit: &str,
+    ) -> Result<(FullStanding, Numeraire), NumericError> {
+        let result = (|| {
+            sign(&factor.exact, true)?;
+            nonempty(new_unit)?;
+            units(&amount.unit, &numeraire.amount.unit)?;
+            let a = amount.exact.value.mul(&factor.exact.value, &mut self.budget)?;
+            let n = numeraire.amount.exact.value.mul(&factor.exact.value, &mut self.budget)?;
+            Ok((
+                FullStanding {
+                    exact: Exact::new(a, &mut self.budget)?,
+                    unit: new_unit.into(),
+                },
+                Numeraire {
+                    identity: numeraire.identity.clone(),
+                    amount: BurnPerAction {
+                        exact: Exact::new(n, &mut self.budget)?,
+                        unit: new_unit.into(),
+                    },
+                },
+            ))
+        })();
+        if result.is_err() {
+            super::refused();
+        }
+        result
+    }
+}
+impl NumericContext {
+    /// At fixed purchasing power divide the numeric standing by the market factor; the unit and numeraire do not change.
+    /// (´def:numerics:exact-carriers´)
+    ///
+    /// # Errors
+    /// Refuses invalid signs, units, syntax or exhausted explicit resource limits as applicable.
+    #[tracing::instrument(
+        name = "sig:design:records",
+        fields(
+            execution_owner = "RECORDS",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:records",
+            operation = "numeric-reprice-standing",
+            source_item = "numerics::NumericContext::reprice_standing"
+        ),
+        ret
+    )]
+    pub fn reprice_standing(&mut self, amount: &FullStanding, market_factor: &Literal) -> Result<FullStanding, NumericError> {
+        let result = (|| {
+            sign(&market_factor.exact, true)?;
+            let value = amount.exact.value.div(&market_factor.exact.value, &mut self.budget)?;
+            Ok(FullStanding {
+                exact: Exact::new(value, &mut self.budget)?,
+                unit: amount.unit.clone(),
+            })
+        })();
+        if result.is_err() {
+            super::refused();
+        }
+        result
+    }
+}
+
+impl ReducedBurn {
+    /// Borrow the exact reduced rational spelling.
+    /// (´def:numerics:exact-carriers´)
+    /// Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.
+    #[must_use]
+    pub fn exact(&self) -> &str {
+        &self.exact.canonical
+    }
+}
+
+impl ReducedBurn {
+    /// Borrow the named per-action coordinate system.
+    /// (´def:numerics:exact-carriers´)
+    /// Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.
+    #[must_use]
+    pub fn numeraire(&self) -> &Numeraire {
+        &self.numeraire
     }
 }
 

@@ -127,7 +127,7 @@ class Processes(unittest.TestCase):
             stem='records__root__sig__design__records__'
             outcomes[mode]={k:v for k,v in distribution(summary).items() if k[0].startswith(stem)}
             self.assertEqual(outcomes[mode][stem+'completed_operations','refusal'],3)
-            self.assertEqual(outcomes[mode][stem+'completed_operations','success'],12)
+            self.assertEqual(outcomes[mode][stem+'completed_operations','success'],13)
             self.assertNotIn((stem+'completed_operations','error'),outcomes[mode])
             if mode=='trace':self.assertIn('public-numeraire',json.dumps(expanded(rows)))
             print('RECORDS-NUMERIC level='+mode+' distribution='+json.dumps({str(k):v for k,v in outcomes[mode].items()},sort_keys=True))

@@ -20,7 +20,7 @@ fn main() -> ExitCode {
     let three = c.literal("3").unwrap();
     let zero = c.literal("0").unwrap();
     let negative = c.literal("-1").unwrap();
-    let amount = c.burn(&three, "burn").unwrap();
+    let amount = c.burn_per_action(&three, "burn").unwrap();
     let nu = c.numeraire("public-numeraire", &amount).unwrap();
     let wall = c.computed(&two).unwrap();
     let price = c.charged_price(&wall, &nu, Floor::RationalThreeThirtySevenths).unwrap();

@@ -1013,7 +1013,7 @@ level = "doctest"
 implementation = "pn-records-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["doctest::packages/records/src/numerics.rs - numerics::NumericContext::apply_cost [example 1]", "doctest::packages/records/src/numerics.rs - numerics::NumericContext::charged_price [example 1]"]
+cases = ["doctest::packages/records/src/numerics.rs - numerics::NumericContext::apply_cost [example 1]", "doctest::packages/records/src/numerics.rs - numerics::NumericContext::charged_price [example 1]", "doctest::packages/records/src/numerics.rs - numerics::NumericContext::numeraire [example 1]", "doctest::packages/records/src/numerics.rs - numerics::NumericContext::door_amount [example 1]"]
 
 [[rows]]
 kind = "suite"

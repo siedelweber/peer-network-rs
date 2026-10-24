@@ -16,28 +16,29 @@ fn unit_laws() {
     let two = c.literal("2").unwrap();
     let four = c.literal("4").unwrap();
     let amount = c.burn(&twelve, "old-unit").unwrap();
-    let nu_amount = c.burn(&two, "old-unit").unwrap();
+    let nu_amount = c.burn_per_action(&two, "old-unit").unwrap();
     let nu = c.numeraire("declared-nu", &nu_amount).unwrap();
     let full = c.standing(&twelve, "old-unit").unwrap();
     let original = c.reduce(&full, &nu).unwrap();
     assert_eq!(original.exact(), "6");
     let (coined, co_nu) = c.recoin(&amount, &nu, &four, "new-unit").unwrap();
     assert_eq!((coined.exact(), co_nu.amount().exact()), ("48", "8"));
-    let coined_literal = c.literal(coined.exact()).unwrap();
-    let coined_full = c.standing(&coined_literal, "new-unit").unwrap();
+    let (coined_full, standing_nu) = c.recoin_standing(&full, &nu, &four, "new-unit").unwrap();
+    assert_eq!(standing_nu, co_nu);
+    assert_eq!(c.reduce_burn(&coined, &co_nu).unwrap().exact(), "6");
     assert_eq!(c.reduce(&coined_full, &co_nu).unwrap().exact(), original.exact());
     assert_eq!(co_nu.identity(), nu.identity());
     let repriced = c.reprice(&amount, &four).unwrap();
     assert_eq!((repriced.exact(), repriced.unit()), ("3", "old-unit"));
-    let repriced_literal = c.literal(repriced.exact()).unwrap();
-    let repriced_full = c.standing(&repriced_literal, "old-unit").unwrap();
+    let repriced_full = c.reprice_standing(&full, &four).unwrap();
+    assert_eq!(c.reduce_burn(&repriced, &nu).unwrap().exact(), "3/2");
     let reduced = c.reduce(&repriced_full, &nu).unwrap();
     assert_eq!(reduced.exact(), "3/2");
     assert_ne!(reduced.exact(), original.exact());
     assert_eq!(reduced.numeraire(), &nu);
 }
 
-/// Claim: A positive sub-unit external cost multiplies only burn quantities, including theta plus numeraire times reduced standing; recording-event charges retain their own evidence and mismatched burn units refuse.
+/// Claim: A positive sub-unit external cost multiplies only burn quantities, including an action count times the per-action sum theta plus numeraire times a reduced coordinate; recording-event charges retain their own evidence and mismatched burn units refuse.
 /// ´claim:numerics:external-cost-projects-burn-units-only´
 /// ´test:integration:unit-costs´
 #[test]
@@ -47,12 +48,16 @@ fn unit_costs() {
     let two = c.literal("2").unwrap();
     let twelve = c.literal("12").unwrap();
     let cost = c.unit_cost(&quarter, "USD", "burn", "market-window").unwrap();
-    let theta = c.burn(&two, "burn").unwrap();
+    let theta = c.burn_per_action(&two, "burn").unwrap();
     let nu = c.numeraire("nu", &theta).unwrap();
-    let standing = c.standing(&twelve, "burn").unwrap();
-    let rho = c.reduce(&standing, &nu).unwrap();
-    assert_eq!(c.apply_cost(&cost, &theta).unwrap().exact(), "1/2");
-    assert_eq!(c.combined_cost(&cost, &theta, &rho).unwrap().exact(), "7/2");
+    let three = c.literal("3").unwrap();
+    let rho = c.computed(&three).unwrap();
+    let additional = c.per_action(&rho, &nu).unwrap();
+    assert_eq!(additional.exact(), "6");
+    let door = c.door_amount(ActionCount(5), &theta, &rho, &nu).unwrap();
+    assert_eq!(door.exact(), "40");
+    assert_eq!(c.apply_cost(&cost, &door).unwrap().exact(), "10");
+    assert_eq!(c.door_amount(ActionCount(0), &theta, &rho, &nu).unwrap().exact(), "0");
     assert_eq!(c.recording_cost(&twelve, "USD", "receipt-7").unwrap().exact(), "12");
     let other = c.burn(&two, "other").unwrap();
     assert_eq!(c.apply_cost(&cost, &other), Err(NumericError::Units));
@@ -75,7 +80,7 @@ fn floor_decisions() {
         assert_eq!(c.display(&wall, 2).unwrap().text(), "0.08");
         assert_eq!(c.compare_floor(&wall, Floor::RidgeImage), Ok(FloorComparison::Indecisive));
         let one = c.literal("1").unwrap();
-        let unit = c.burn(&one, "burn").unwrap();
+        let unit = c.burn_per_action(&one, "burn").unwrap();
         let nu = c.numeraire("nu", &unit).unwrap();
         assert_eq!(c.charged_price(&wall, &nu, Floor::RidgeImage), Err(NumericError::Indecisive));
         if expected == FloorComparison::Below {
@@ -101,7 +106,7 @@ fn charged_vintages() {
     let two = c.literal("2").unwrap();
     let three = c.literal("3").unwrap();
     let four = c.literal("4").unwrap();
-    let amount = c.burn(&three, "burn").unwrap();
+    let amount = c.burn_per_action(&three, "burn").unwrap();
     let nu = c.numeraire("nu", &amount).unwrap();
     let wall = c.computed(&two).unwrap();
     let price = c.charged_price(&wall, &nu, Floor::RationalThreeThirtySevenths).unwrap();
@@ -129,7 +134,7 @@ fn header(edition: u64, at: u64) -> Declaration {
 }
 fn payload(c: &mut NumericContext, id: DeclarationId, controller: &str, floor: Floor) -> EditionInput {
     let two = c.literal("2").unwrap();
-    let amount = c.burn(&two, "burn").unwrap();
+    let amount = c.burn_per_action(&two, "burn").unwrap();
     EditionInput {
         id,
         floor,
@@ -225,13 +230,13 @@ fn family_width_premise() {
     let two = numeric.literal("2").unwrap();
     let four = numeric.literal("4").unwrap();
     let amount = numeric.burn(&twelve, "burn").unwrap();
-    let numeraire_amount = numeric.burn(&two, "burn").unwrap();
+    let numeraire_amount = numeric.burn_per_action(&two, "burn").unwrap();
     let nu = numeric.numeraire("nu", &numeraire_amount).unwrap();
     let repriced = numeric.reprice(&amount, &four).unwrap();
-    let repriced_literal = numeric.literal(repriced.exact()).unwrap();
-    let full = numeric.standing(&repriced_literal, "burn").unwrap();
-    let repriced_reduced = numeric.reduce(&full, &nu).unwrap();
     let old_full = numeric.standing(&twelve, "burn").unwrap();
+    let full = numeric.reprice_standing(&old_full, &four).unwrap();
+    assert_eq!(full.exact(), repriced.exact());
+    let repriced_reduced = numeric.reduce(&full, &nu).unwrap();
     let old_reduced = numeric.reduce(&old_full, &nu).unwrap();
     let pair = |text: &str| {
         let (numerator, denominator) = text.split_once('/').unwrap_or((text, "1"));

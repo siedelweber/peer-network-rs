@@ -1662,8 +1662,8 @@
       "path": "packages/records/tests/public/numerics.rs",
       "claim": "RECORDS::claim:numerics:external-cost-projects-burn-units-only",
       "before": "",
-      "after": "Claim: A positive sub-unit external cost multiplies only burn quantities, including theta plus numeraire times reduced standing; recording-event charges retain their own evidence and mismatched burn units refuse.",
-      "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+      "after": "Claim: A positive sub-unit external cost multiplies only burn quantities, including an action count times the per-action sum theta plus numeraire times a reduced coordinate; recording-event charges retain their own evidence and mismatched burn units refuse.",
+      "review": "Read the typed door calculation: theta=2 burn/action, nu=2 burn/action, rho=3, five actions produce 40 burn and cost 10 at one quarter per burn. The old action-less combined sum cannot satisfy this premise. Recording costs and mismatch refusal remain checked."
     },
     {
       "operation": "pn-records::public::numerics::floor_decisions",

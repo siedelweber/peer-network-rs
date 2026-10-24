@@ -153,19 +153,19 @@ pub fn numeric(words: &[u64]) {
     let numeraire_literal = context.literal(&input.numeraire.to_string()).unwrap();
     let factor_literal = context.literal(&input.factor.to_string()).unwrap();
     let amount = context.burn(&burn_literal, "burn").unwrap();
-    let nu_amount = context.burn(&numeraire_literal, "burn").unwrap();
+    let nu_amount = context.burn_per_action(&numeraire_literal, "burn").unwrap();
     let nu = context.numeraire("nu", &nu_amount).unwrap();
     let full = context.standing(&burn_literal, "burn").unwrap();
     let reduced = context.reduce(&full, &nu).unwrap();
     let (new_amount, new_nu) = context.recoin(&amount, &nu, &factor_literal, "new-unit").unwrap();
-    let new_literal = context.literal(new_amount.exact()).unwrap();
-    let new_full = context.standing(&new_literal, "new-unit").unwrap();
+    let (new_full, standing_nu) = context.recoin_standing(&full, &nu, &factor_literal, "new-unit").unwrap();
+    assert_eq!(standing_nu, new_nu);
+    assert_eq!(context.reduce_burn(&new_amount, &new_nu).unwrap().exact(), reduced.exact());
     assert_eq!(context.reduce(&new_full, &new_nu).unwrap().exact(), reduced.exact());
     let repriced = context.reprice(&amount, &factor_literal).unwrap();
     let expected = context.literal(&format!("{}/{}", input.burn, input.factor)).unwrap();
     assert_eq!(repriced.exact(), expected.exact());
-    let repriced_literal = context.literal(repriced.exact()).unwrap();
-    let repriced_full = context.standing(&repriced_literal, "burn").unwrap();
+    let repriced_full = context.reprice_standing(&full, &factor_literal).unwrap();
     let after = context.reduce(&repriced_full, &nu).unwrap();
     let expected = context
         .literal(&format!("{}/{}", input.burn, input.numeraire * input.factor))
