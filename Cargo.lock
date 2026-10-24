@@ -1001,7 +1001,7 @@ dependencies = [
 [[package]]
 name = "nrz-accuracy"
 version = "0.1.0"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
 dependencies = [
  "nrz-scalar",
 ]
@@ -1009,7 +1009,7 @@ dependencies = [
 [[package]]
 name = "nrz-cas"
 version = "0.1.0"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
 dependencies = [
  "num-bigint",
  "num-complex",
@@ -1022,7 +1022,7 @@ dependencies = [
 [[package]]
 name = "nrz-scalar"
 version = "0.1.0"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
 dependencies = [
  "thiserror",
 ]

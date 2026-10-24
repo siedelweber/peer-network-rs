@@ -7,33 +7,37 @@
   ],
   "rows": [
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "AGPL-3.0-only",
       "name": "nrz-accuracy",
       "resolution": "new",
       "role": "Explicit cumulative comparison attempt/work limits",
-      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526",
+      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526",
       "version": "0.1.0"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "AGPL-3.0-only",
       "name": "nrz-cas",
       "resolution": "new",
       "role": "Budgeted exact rational arithmetic and closed constant expressions",
-      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526",
+      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526",
       "version": "0.1.0"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "AGPL-3.0-only",
       "name": "nrz-scalar",
       "resolution": "new",
       "role": "Finite binary arithmetic and outward literal enclosures; not an exact-value substitute",
-      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526",
+      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526",
       "version": "0.1.0"
     },
     {
+      "build_time": "build-time library invoked by num-traits; no own script or procedural macro",
       "features": "none",
       "license": "Apache-2.0 OR MIT",
       "name": "autocfg",
@@ -43,6 +47,7 @@
       "version": "1.5.1"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "Apache-2.0 OR MIT",
       "name": "equivalent",
@@ -52,6 +57,7 @@
       "version": "1.0.3"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "fixedbitset",
@@ -61,6 +67,7 @@
       "version": "0.5.7"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "Zlib",
       "name": "foldhash",
@@ -70,24 +77,27 @@
       "version": "0.1.5"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "default-hasher, inline-more",
       "license": "MIT OR Apache-2.0",
       "name": "hashbrown",
       "resolution": "new",
-      "role": "Hash storage directly and through indexmap",
+      "role": "Petgraph direct hash storage, using foldhash",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.15.5"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "hashbrown",
       "resolution": "retained",
-      "role": "Hash storage directly and through indexmap",
+      "role": "Indexmap hash storage",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.17.1"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "default, std",
       "license": "Apache-2.0 OR MIT",
       "name": "indexmap",
@@ -97,6 +107,7 @@
       "version": "2.14.2"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "num-bigint",
@@ -106,6 +117,7 @@
       "version": "0.4.8"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "num-complex",
@@ -115,6 +127,7 @@
       "version": "0.4.6"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "i128",
       "license": "MIT OR Apache-2.0",
       "name": "num-integer",
@@ -124,6 +137,7 @@
       "version": "0.1.47"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "num-rational",
@@ -133,6 +147,7 @@
       "version": "0.4.2"
     },
     {
+      "build_time": "build.rs probes numeric compiler capabilities through autocfg",
       "features": "i128, std",
       "license": "MIT OR Apache-2.0",
       "name": "num-traits",
@@ -142,6 +157,7 @@
       "version": "0.2.19"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "default, graphmap, matrix_graph, stable_graph, std",
       "license": "MIT OR Apache-2.0",
       "name": "petgraph",
@@ -151,6 +167,7 @@
       "version": "0.8.3"
     },
     {
+      "build_time": "build.rs probes compiler and span capabilities; macro support library",
       "features": "default, proc-macro, span-locations",
       "license": "MIT OR Apache-2.0",
       "name": "proc-macro2",
@@ -160,6 +177,7 @@
       "version": "1.0.107"
     },
     {
+      "build_time": "build.rs checks compiler diagnostic support; macro token library",
       "features": "default, proc-macro",
       "license": "MIT OR Apache-2.0",
       "name": "quote",
@@ -169,6 +187,7 @@
       "version": "1.0.47"
     },
     {
+      "build_time": "build.rs writes private bindings and checks compiler capabilities; derive delegates to serde_derive",
       "features": "alloc, default, derive, serde_derive, std",
       "license": "MIT OR Apache-2.0",
       "name": "serde",
@@ -178,6 +197,7 @@
       "version": "1.0.229"
     },
     {
+      "build_time": "build.rs writes private bindings and checks compiler/target capabilities",
       "features": "alloc, result, std",
       "license": "MIT OR Apache-2.0",
       "name": "serde_core",
@@ -187,6 +207,7 @@
       "version": "1.0.229"
     },
     {
+      "build_time": "procedural macro expands serialization derives; no build script",
       "features": "default",
       "license": "MIT OR Apache-2.0",
       "name": "serde_derive",
@@ -196,6 +217,7 @@
       "version": "1.0.229"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut",
       "license": "MIT OR Apache-2.0",
       "name": "syn",
@@ -205,6 +227,7 @@
       "version": "3.0.9"
     },
     {
+      "build_time": "procedural macro expands typed errors; no build script",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "thiserror-impl",
@@ -214,6 +237,7 @@
       "version": "2.0.21"
     },
     {
+      "build_time": "build.rs writes private bindings and probes error/backtrace support; derive delegates to thiserror-impl",
       "features": "default, std",
       "license": "MIT OR Apache-2.0",
       "name": "thiserror",
@@ -223,6 +247,7 @@
       "version": "2.0.21"
     },
     {
+      "build_time": "No build script or procedural macro",
       "features": "none",
       "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
       "name": "unicode-ident",

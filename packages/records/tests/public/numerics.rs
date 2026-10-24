@@ -254,3 +254,34 @@ fn family_width_premise() {
     assert!(meets(repriced_reduced.exact(), covariant_width_after));
     assert!(!meets(repriced_reduced.exact(), fixed_width_after));
 }
+
+/// Claim: Constants payloads bind only the numeric/constants namespace-name pair; other declaration families need no numeric payload and cannot be resolved or injected through the constants history.
+/// ´claim:declarations:payloads-bind-only-their-declaration-family´
+/// ´test:integration:declaration-families´
+#[test]
+fn declaration_families() {
+    let mut c = context();
+    let numeric = header(1, 10);
+    let mut policy = numeric.clone();
+    policy.id.name = "marker-policy".into();
+    let mut foreign = numeric.clone();
+    foreign.id.namespace = "marker".into();
+    let history = validate_history(&[], &[]).unwrap();
+    let records = validate_record(&[], &history, &[numeric.clone(), policy.clone(), foreign.clone()]).unwrap();
+    let edition = payload(&mut c, numeric.id, "controller", Floor::RationalThreeThirtySevenths);
+    let bound = bind_constants(&records, vec![edition.clone()]).unwrap();
+    assert_eq!(bound.resolve("numeric", "constants", 10).unwrap().content(), &edition);
+    assert_eq!(bound.resolve("numeric", "marker-policy", 10), Err(ConstantsError::EditionSet));
+    assert_eq!(bound.resolve("marker", "constants", 10), Err(ConstantsError::EditionSet));
+    assert_eq!(bind_constants(&records, vec![]).unwrap_err(), ConstantsError::EditionSet);
+    for id in [policy.id.clone(), foreign.id.clone()] {
+        let mut wrong = edition.clone();
+        wrong.id = id;
+        assert_eq!(
+            bind_constants(&records, vec![edition.clone(), wrong]).unwrap_err(),
+            ConstantsError::EditionSet
+        );
+    }
+    let only_policy = validate_record(&[], &history, &[policy, foreign]).unwrap();
+    assert!(bind_constants(&only_policy, vec![]).is_ok());
+}

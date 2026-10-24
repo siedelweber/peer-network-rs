@@ -8,7 +8,8 @@ license = "AGPL-3.0-only"
 features = "none"
 role = "Explicit cumulative comparison attempt/work limits"
 resolution = "new"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "nrz-cas"
@@ -17,7 +18,8 @@ license = "AGPL-3.0-only"
 features = "none"
 role = "Budgeted exact rational arithmetic and closed constant expressions"
 resolution = "new"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "nrz-scalar"
@@ -26,7 +28,8 @@ license = "AGPL-3.0-only"
 features = "none"
 role = "Finite binary arithmetic and outward literal enclosures; not an exact-value substitute"
 resolution = "new"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?branch=main#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "autocfg"
@@ -36,6 +39,7 @@ features = "none"
 role = "Numeric build-time capability detection"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "build-time library invoked by num-traits; no own script or procedural macro"
 
 [[rows]]
 name = "equivalent"
@@ -45,6 +49,7 @@ features = "none"
 role = "Heterogeneous indexmap lookup"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "fixedbitset"
@@ -54,6 +59,7 @@ features = "none"
 role = "CAS graph bit sets"
 resolution = "new"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "foldhash"
@@ -63,24 +69,27 @@ features = "none"
 role = "CAS graph hash-table hashing"
 resolution = "new"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "hashbrown"
 version = "0.15.5"
 license = "MIT OR Apache-2.0"
 features = "default-hasher, inline-more"
-role = "Hash storage directly and through indexmap"
+role = "Petgraph direct hash storage, using foldhash"
 resolution = "new"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "hashbrown"
 version = "0.17.1"
 license = "MIT OR Apache-2.0"
 features = "none"
-role = "Hash storage directly and through indexmap"
+role = "Indexmap hash storage"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "indexmap"
@@ -90,6 +99,7 @@ features = "default, std"
 role = "Indexed graph mapping"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "num-bigint"
@@ -99,6 +109,7 @@ features = "none"
 role = "Arbitrary-precision rational components"
 resolution = "new"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "num-complex"
@@ -108,6 +119,7 @@ features = "none"
 role = "CAS complex syntax support, outside records scalar admission"
 resolution = "new"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "num-integer"
@@ -117,6 +129,7 @@ features = "i128"
 role = "Exact integer division and gcd"
 resolution = "new"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "num-rational"
@@ -126,6 +139,7 @@ features = "none"
 role = "Reduced ratio backing"
 resolution = "new"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "num-traits"
@@ -135,6 +149,7 @@ features = "i128, std"
 role = "Integer and numeric trait support"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "build.rs probes numeric compiler capabilities through autocfg"
 
 [[rows]]
 name = "petgraph"
@@ -144,6 +159,7 @@ features = "default, graphmap, matrix_graph, stable_graph, std"
 role = "CAS-owned graph storage; no records partition algorithm"
 resolution = "new"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "proc-macro2"
@@ -153,6 +169,7 @@ features = "default, proc-macro, span-locations"
 role = "Derive token representation"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "build.rs probes compiler and span capabilities; macro support library"
 
 [[rows]]
 name = "quote"
@@ -162,6 +179,7 @@ features = "default, proc-macro"
 role = "Derive token generation"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "build.rs checks compiler diagnostic support; macro token library"
 
 [[rows]]
 name = "serde"
@@ -171,6 +189,7 @@ features = "alloc, default, derive, serde_derive, std"
 role = "Existing workspace serialization edge in metadata; CAS graph serialization is not enabled"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "build.rs writes private bindings and checks compiler capabilities; derive delegates to serde_derive"
 
 [[rows]]
 name = "serde_core"
@@ -180,6 +199,7 @@ features = "alloc, result, std"
 role = "Existing serialization core"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "build.rs writes private bindings and checks compiler/target capabilities"
 
 [[rows]]
 name = "serde_derive"
@@ -189,6 +209,7 @@ features = "default"
 role = "Existing serialization derive"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "procedural macro expands serialization derives; no build script"
 
 [[rows]]
 name = "syn"
@@ -198,6 +219,7 @@ features = "clone-impls, default, derive, extra-traits, fold, full, parsing, pri
 role = "Derive syntax parsing"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"
 
 [[rows]]
 name = "thiserror-impl"
@@ -207,6 +229,7 @@ features = "none"
 role = "Error derive expansion"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "procedural macro expands typed errors; no build script"
 
 [[rows]]
 name = "thiserror"
@@ -216,6 +239,7 @@ features = "default, std"
 role = "Typed scalar errors"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "build.rs writes private bindings and probes error/backtrace support; derive delegates to thiserror-impl"
 
 [[rows]]
 name = "unicode-ident"
@@ -225,3 +249,4 @@ features = "none"
 role = "Derive identifier tables"
 resolution = "retained"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+build_time = "No build script or procedural macro"

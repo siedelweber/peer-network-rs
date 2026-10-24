@@ -1808,6 +1808,14 @@
       "before": "",
       "after": "Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all twelve carrier boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.",
       "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "pn-records::public::numerics::declaration_families",
+      "path": "packages/records/tests/public/numerics.rs",
+      "claim": "RECORDS::claim:declarations:payloads-bind-only-their-declaration-family",
+      "before": "",
+      "after": "Claim: Constants payloads bind only the numeric/constants namespace-name pair; other declaration families need no numeric payload and cannot be resolved or injected through the constants history.",
+      "review": "Read the mixed three-family fixture: only numeric/constants needs a numeric payload, empty numeric content refuses, either foreign namespace or foreign name rejects injection and resolution, and a nonnumeric-only snapshot binds no constants. The prior all-declaration set fails the mixed fixture."
     }
   ]
 }

@@ -18,7 +18,7 @@ pub enum ConstantDefinition {
     },
 }
 
-/// Proposed public content for one opaque edition; binding validates its complete key set.
+/// Public content for the numeric/constants declaration family; binding validates that family's complete edition set.
 /// (´def:declarations:constants-edition´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct EditionInput {
@@ -69,7 +69,7 @@ pub enum ConstantsError {
     /// Selection still follows the original validated announcement/effective contract.
     #[error("declaration selection: {0}")]
     Selection(#[from] ValidationError),
-    /// Every validated identity has exactly one payload and no foreign payload.
+    /// Every validated numeric/constants identity has exactly one payload and no foreign payload.
     #[error("missing, duplicate or foreign edition payload")]
     EditionSet,
     /// Required public identities and source definitions cannot be empty or duplicated.
@@ -80,7 +80,7 @@ pub enum ConstantsError {
     Override,
 }
 
-/// Bind each payload exactly once to the immutable validated edition set.
+/// Bind each numeric/constants payload exactly once to that family's immutable validated edition set.
 /// (´def:declarations:constants-edition´)
 ///
 /// # Errors
@@ -105,7 +105,12 @@ pub fn bind_constants(records: &ValidatedRecords, inputs: Vec<EditionInput>) -> 
 }
 
 fn bind(records: &ValidatedRecords, inputs: Vec<EditionInput>) -> Result<ConstantsHistory<'_>, ConstantsError> {
-    let expected: BTreeSet<_> = records.declarations.iter().map(|d| &d.id).collect();
+    let expected: BTreeSet<_> = records
+        .declarations
+        .iter()
+        .filter(|d| d.id.namespace == "numeric" && d.id.name == "constants")
+        .map(|d| &d.id)
+        .collect();
     let actual: BTreeSet<_> = inputs.iter().map(|d| &d.id).collect();
     if expected != actual || inputs.len() != actual.len() {
         return Err(ConstantsError::EditionSet);
@@ -186,6 +191,9 @@ impl ConstantsHistory<'_> {
     )]
     pub fn resolve(&self, namespace: &str, name: &str, boundary: u64) -> Result<&ConstantsEdition, ConstantsError> {
         let result = (|| {
+            if namespace != "numeric" || name != "constants" {
+                return Err(ConstantsError::EditionSet);
+            }
             let declaration = select_effective_declaration(self.records, namespace, name, boundary)?;
             self.editions
                 .iter()

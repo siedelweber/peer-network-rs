@@ -3100,6 +3100,7 @@
         "pn-records::public::numerics::family_width_premise",
         "pn-records::public::numerics::constant_correspondence",
         "pn-records::public::numerics::historical_constants",
+        "pn-records::public::numerics::declaration_families",
         "pn-records::public::numerics::charged_vintages",
         "pn-records::public::numerics::floor_decisions",
         "pn-records::public::numerics::unit_costs",

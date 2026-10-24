@@ -145,64 +145,41 @@
 
 **Amendment (Bite 1 admission)** · `amend:decomposition:bite-one-admission` As adoption data, the independent repository reviewer admitted the gate in review round 44. (`gate:design:bite-1`) is admitted for pn-records at the signed import commit `23e44257c54ff3cf927379d42363f242a9769dee`. Admitted surface: structural act and edge identities; complete projection validation with act-owned removal; whole validated history, with protocol references that survive tombstones and resolve against shared history without copying it; canonical dependency and asserted-parent relations; opaque effective-declaration selection; and outside-history principal-closure inputs whose union is the proposed set. Evidence: local unit, public-surface and integration witnesses; the records-dag-1 shared roster of 20 exact-cause cases, executed by pn-records and by pn-verification as its outer consumer; recorded source-v1 properties at 256 cases with committed regression corpora; and default and trace runtime outcomes. ``claim:acts:complete-acts-are-counted-once`` is established for the records carrier. The outer consumer re-executes the inner tier's predicates under the same seed; it is neither an independent implementation nor independent evidence. Held, with owners: the membership partition and ``claim:membership:dependency-closures-partition-the-final-act-set`` (pn-graph, bite 3); declared count and identifier byte bounds, and declaration payloads (declarations implementer, bite 2); host admission, ledger and the bite-11 corpus (their bites); the harness matrix's 13 planned contract suites (their first contributing bites) and its service and performance tiers (provisioning and reviewed baselines). Retained findings, riding with bite 2 in order: F-269, exit ordering at a drain cutoff; F-265, the `observation-runtime` budget excess, 11.4 s against 5 s; F-270, artifact synchronization; F-267, property configuration; F-264, the outer consumer's evidence and seed; F-268, witness strength.
 
-**Amendment (Numeric backend admission)** · `amend:decomposition:numeric-backend` Settles the dependency condition of (`dec:decomposition:numbers`) and (`sig:design:numeric-kernel`) for the pure records slice: nrz-scalar, nrz-accuracy and nrz-cas 0.1.0 are Git dependencies on the public Naturrhythmuszentrum repository, branch main, resolved at [commit b90b8025a2c0fdc70e1a5a8e8fa83403c8634526](https://github.com/naturrhythmuszentrum/naturrhythmuszentrum/commit/b90b8025a2c0fdc70e1a5a8e8fa83403c8634526). Their manifests and LICENSE-CODE state AGPL-3.0-only, matching this work. The lockfile, fetched package manifests and resolved feature graph were reviewed before admitting any numeric carrier. The table records every reachable non-development dependency, including retained workspace feature unification; serde is an already locked optional graph edge, not an enabled CAS serialization feature. MIT OR Apache-2.0 dependencies are taken under MIT; retain their permission notices when distributing them, the Zlib notice for foldhash, and Unicode-3.0 terms for unicode-ident in addition to MIT. Git sources and registry archives retain their original notices; no dependency source is vendored or altered. No new registry resolution outside the three requested crates' requirements is admitted. Petgraph is transitive CAS storage here, not a pn-records graph dependency or an implementation of the bite-3 partition.
+**Amendment (Numeric backend admission)** · `amend:decomposition:numeric-backend` Settles the dependency condition of (`dec:decomposition:numbers`) and (`sig:design:numeric-kernel`) for the pure records slice: nrz-scalar, nrz-accuracy and nrz-cas 0.1.0 are Git dependencies on the public Naturrhythmuszentrum repository, pinned by manifest rev and lockfile to the reviewed revision of main at [commit b90b8025a2c0fdc70e1a5a8e8fa83403c8634526](https://github.com/naturrhythmuszentrum/naturrhythmuszentrum/commit/b90b8025a2c0fdc70e1a5a8e8fa83403c8634526). Their manifests and LICENSE-CODE state AGPL-3.0-only, matching this work. The lockfile, fetched package manifests and resolved feature graph were reviewed before admitting any numeric carrier. The table records every reachable non-development dependency, including retained workspace feature unification; serde is an already locked optional graph edge, not an enabled CAS serialization feature. MIT OR Apache-2.0 dependencies are taken under MIT; retain their permission notices when distributing them, the Zlib notice for foldhash, and Unicode-3.0 terms for unicode-ident in addition to MIT. Git sources and registry archives retain their original notices; no dependency source is vendored or altered. No new registry resolution outside the three requested crates' requirements is admitted. Petgraph is transitive CAS storage here, not a pn-records graph dependency or an implementation of the bite-3 partition.
 
 **Table (Numeric dependency review)** · `tab:decomposition:numeric-dependencies` These are Cargo's resolved versions and features under (`amend:decomposition:numeric-backend`); a later resolution requires a new review.
 
-| Crate | Version | Licence | Resolved features | Resolution | Role |
-|---|---|---|---|---|---|
-
-| nrz-accuracy | 0.1.0 | AGPL-3.0-only | none | new | Explicit cumulative comparison attempt/work limits |
-
-| nrz-cas | 0.1.0 | AGPL-3.0-only | none | new | Budgeted exact rational arithmetic and closed constant expressions |
-
-| nrz-scalar | 0.1.0 | AGPL-3.0-only | none | new | Finite binary arithmetic and outward literal enclosures; not an exact-value substitute |
-
-| autocfg | 1.5.1 | Apache-2.0 OR MIT | none | retained | Numeric build-time capability detection |
-
-| equivalent | 1.0.3 | Apache-2.0 OR MIT | none | retained | Heterogeneous indexmap lookup |
-
-| fixedbitset | 0.5.7 | MIT OR Apache-2.0 | none | new | CAS graph bit sets |
-
-| foldhash | 0.1.5 | Zlib | none | new | CAS graph hash-table hashing |
-
-| hashbrown | 0.15.5 | MIT OR Apache-2.0 | default-hasher, inline-more | new | Hash storage directly and through indexmap |
-
-| hashbrown | 0.17.1 | MIT OR Apache-2.0 | none | retained | Hash storage directly and through indexmap |
-
-| indexmap | 2.14.2 | Apache-2.0 OR MIT | default, std | retained | Indexed graph mapping |
-
-| num-bigint | 0.4.8 | MIT OR Apache-2.0 | none | new | Arbitrary-precision rational components |
-
-| num-complex | 0.4.6 | MIT OR Apache-2.0 | none | new | CAS complex syntax support, outside records scalar admission |
-
-| num-integer | 0.1.47 | MIT OR Apache-2.0 | i128 | new | Exact integer division and gcd |
-
-| num-rational | 0.4.2 | MIT OR Apache-2.0 | none | new | Reduced ratio backing |
-
-| num-traits | 0.2.19 | MIT OR Apache-2.0 | i128, std | retained | Integer and numeric trait support |
-
-| petgraph | 0.8.3 | MIT OR Apache-2.0 | default, graphmap, matrix_graph, stable_graph, std | new | CAS-owned graph storage; no records partition algorithm |
-
-| proc-macro2 | 1.0.107 | MIT OR Apache-2.0 | default, proc-macro, span-locations | retained | Derive token representation |
-
-| quote | 1.0.47 | MIT OR Apache-2.0 | default, proc-macro | retained | Derive token generation |
-
-| serde | 1.0.229 | MIT OR Apache-2.0 | alloc, default, derive, serde_derive, std | retained | Existing workspace serialization edge in metadata; CAS graph serialization is not enabled |
-
-| serde_core | 1.0.229 | MIT OR Apache-2.0 | alloc, result, std | retained | Existing serialization core |
-
-| serde_derive | 1.0.229 | MIT OR Apache-2.0 | default | retained | Existing serialization derive |
-
-| syn | 3.0.9 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | retained | Derive syntax parsing |
-
-| thiserror-impl | 2.0.21 | MIT OR Apache-2.0 | none | retained | Error derive expansion |
-
-| thiserror | 2.0.21 | MIT OR Apache-2.0 | default, std | retained | Typed scalar errors |
-
-| unicode-ident | 1.0.27 | (MIT OR Apache-2.0) AND Unicode-3.0 | none | retained | Derive identifier tables |
+| Crate | Version | Licence | Resolved features | Resolution | Role | Build-time code |
+|---|---|---|---|---|---|---|
+| nrz-accuracy | 0.1.0 | AGPL-3.0-only | none | new | Explicit cumulative comparison attempt/work limits | No build script or procedural macro |
+| nrz-cas | 0.1.0 | AGPL-3.0-only | none | new | Budgeted exact rational arithmetic and closed constant expressions | No build script or procedural macro |
+| nrz-scalar | 0.1.0 | AGPL-3.0-only | none | new | Finite binary arithmetic and outward literal enclosures; not an exact-value substitute | No build script or procedural macro |
+| autocfg | 1.5.1 | Apache-2.0 OR MIT | none | retained | Numeric build-time capability detection | build-time library invoked by num-traits; no own script or procedural macro |
+| equivalent | 1.0.3 | Apache-2.0 OR MIT | none | retained | Heterogeneous indexmap lookup | No build script or procedural macro |
+| fixedbitset | 0.5.7 | MIT OR Apache-2.0 | none | new | CAS graph bit sets | No build script or procedural macro |
+| foldhash | 0.1.5 | Zlib | none | new | CAS graph hash-table hashing | No build script or procedural macro |
+| hashbrown | 0.15.5 | MIT OR Apache-2.0 | default-hasher, inline-more | new | Petgraph direct hash storage, using foldhash | No build script or procedural macro |
+| hashbrown | 0.17.1 | MIT OR Apache-2.0 | none | retained | Indexmap hash storage | No build script or procedural macro |
+| indexmap | 2.14.2 | Apache-2.0 OR MIT | default, std | retained | Indexed graph mapping | No build script or procedural macro |
+| num-bigint | 0.4.8 | MIT OR Apache-2.0 | none | new | Arbitrary-precision rational components | No build script or procedural macro |
+| num-complex | 0.4.6 | MIT OR Apache-2.0 | none | new | CAS complex syntax support, outside records scalar admission | No build script or procedural macro |
+| num-integer | 0.1.47 | MIT OR Apache-2.0 | i128 | new | Exact integer division and gcd | No build script or procedural macro |
+| num-rational | 0.4.2 | MIT OR Apache-2.0 | none | new | Reduced ratio backing | No build script or procedural macro |
+| num-traits | 0.2.19 | MIT OR Apache-2.0 | i128, std | retained | Integer and numeric trait support | build.rs probes numeric compiler capabilities through autocfg |
+| petgraph | 0.8.3 | MIT OR Apache-2.0 | default, graphmap, matrix_graph, stable_graph, std | new | CAS-owned graph storage; no records partition algorithm | No build script or procedural macro |
+| proc-macro2 | 1.0.107 | MIT OR Apache-2.0 | default, proc-macro, span-locations | retained | Derive token representation | build.rs probes compiler and span capabilities; macro support library |
+| quote | 1.0.47 | MIT OR Apache-2.0 | default, proc-macro | retained | Derive token generation | build.rs checks compiler diagnostic support; macro token library |
+| serde | 1.0.229 | MIT OR Apache-2.0 | alloc, default, derive, serde_derive, std | retained | Existing workspace serialization edge in metadata; CAS graph serialization is not enabled | build.rs writes private bindings and checks compiler capabilities; derive delegates to serde_derive |
+| serde_core | 1.0.229 | MIT OR Apache-2.0 | alloc, result, std | retained | Existing serialization core | build.rs writes private bindings and checks compiler/target capabilities |
+| serde_derive | 1.0.229 | MIT OR Apache-2.0 | default | retained | Existing serialization derive | procedural macro expands serialization derives; no build script |
+| syn | 3.0.9 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | retained | Derive syntax parsing | No build script or procedural macro |
+| thiserror-impl | 2.0.21 | MIT OR Apache-2.0 | none | retained | Error derive expansion | procedural macro expands typed errors; no build script |
+| thiserror | 2.0.21 | MIT OR Apache-2.0 | default, std | retained | Typed scalar errors | build.rs writes private bindings and probes error/backtrace support; derive delegates to thiserror-impl |
+| unicode-ident | 1.0.27 | (MIT OR Apache-2.0) AND Unicode-3.0 | none | retained | Derive identifier tables | No build script or procedural macro |
 
 
 **Amendment (Numeric representation limits)** · `amend:decomposition:numeric-representation` Refines (`dec:decomposition:numbers`): CAS rationals preserve reduced exact values under explicit bit, literal and work budgets; exhaustion is not a rounded answer. The scalar library's floating candidate and outward enclosure are separate from exact literals, and its environment contract currently admits x86_64 GNU/Linux with round-to-nearest and gradual underflow probes; use as a certifying backend still requires its compiler/profile boundary evidence. The accuracy layer supplies explicit finite cumulative attempt/work allowances with zero as refusal, not unlimited. This admission does not claim a general real comparison procedure, a conserved solve or a byte encoding for records. A ridge image remains its defining real, never an endpoint or displayed root; unsupported refinement is INDECISIVE. No independent CAS correctness proof follows merely from admitting the dependency.
 
 **Amendment (Pure marker recognition placement)** · `amend:decomposition:records-marker-recognition` Under (`gate:design:bite-2`) and (`rule:design:marker-recognition`), pn-records validates burn publications and fixed policy/lineage/accepted-set carriers, then recognizes the disclosed marker sequence as a pure function over validated evidence. pn-host will call that function before deriving burn. The external verifier is a named realization boundary, not a boolean assertion that local arithmetic establishes destruction or finality. Snapshot and first-accepted increment derivation remain with pn-epoch in bite 5; host storage and real signed-chain verification remain held for their owning slices.
+
+**Amendment (Numeric revision and build-time review)** · `amend:decomposition:numeric-revision-review` Refines (`amend:decomposition:numeric-backend`) and (`sig:design:numeric-kernel`): the workspace manifest and lockfile pin the same reviewed public revision of main, and moving that revision requires a dependency review. The build-time column of (`tab:decomposition:numeric-dependencies`) was checked against every locked package manifest and build script, including the nrz checkout at the admitted revision. The three nrz crates and all eight newly resolved registry crates have no build script or procedural macro; the reachable retained crates do include compiler probes and serde/error derives. num-traits invokes autocfg; proc-macro2, quote, serde, serde_core and thiserror also run build scripts. serde_derive and thiserror-impl expand procedural macros. These execute on the build host, not as records runtime operations; their source and licence obligations remain those of the dependency admission.

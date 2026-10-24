@@ -119,7 +119,7 @@
       "requirements": [
         "ledger-vintages"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in carrier scope at bite 2 (pn-records); ledger persistence held for pn-epoch, bite 5",
       "suite": "ledger"
     },
     {
@@ -340,7 +340,7 @@
       "requirements": [
         "constants"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in carrier scope at bite 2 (pn-records); durable storage history held for pn-host",
       "suite": "records"
     },
     {
@@ -408,7 +408,7 @@
         "certificate",
         "rung-verdicts"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in carrier scope at bite 2 (pn-records); graph comparisons held for pn-graph, bite 3; fence comparisons held for pn-epoch, bite 6",
       "suite": "numeric"
     },
     {

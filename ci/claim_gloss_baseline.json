@@ -869,6 +869,7 @@
     "pn-records::public::burn::alias_deduplication": "",
     "pn-verification::conformance::burn_cases": "",
     "pn-verification::properties::marker_recognition": "",
-    "ci::test_observe_runtime.Processes.test_burn_entry": ""
+    "ci::test_observe_runtime.Processes.test_burn_entry": "",
+    "pn-records::public::numerics::declaration_families": ""
   }
 }
