@@ -10031,7 +10031,7 @@
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "This body hashes every public policy field with explicit versioned framing. Its digest is an internal content commitment, not a protocol serialization or secret. Trace records the public input and computed bytes. The policy declaration carries its recipe identifier and digest; binding compares both after validation, and the digest exhaustively destructures all policy fields without changing v1 framing. The policy declaration carries its recipe identifier and digest; binding compares both after validation, and the digest exhaustively destructures all policy fields without changing v1 framing."
+      "item_premise": "This body hashes every public policy field with explicit versioned framing. Its digest is an internal content commitment, not a protocol serialization or secret. Trace records the public input and computed bytes. The policy declaration carries its recipe identifier and digest; binding compares both after validation, and the digest exhaustively destructures all policy fields without changing v1 framing."
     },
     {
       "operation": "pn-records::packages/records/src/constants.rs::constants::bind_constants",
