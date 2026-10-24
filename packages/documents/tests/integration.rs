@@ -166,7 +166,7 @@ fn release_premises() -> Result<()> {
         documents::run(root, Operation::Generate { check: false })?;
         documents::run(root, Operation::Write)?;
         for (dataset, field, message) in [
-            ("inventory", "added_at", "inventory added_at must match publication tag"),
+            ("inventory", "current_at", "inventory current_at must match publication tag"),
             (
                 "constants",
                 "refreshed_at",

@@ -84,7 +84,7 @@ class Correspondence(unittest.TestCase):
         ´claim:design:release-fields-cannot-drift´
         ´test:integration:test-release-projections´
         """
-        for name, marker, field in [('inventory', 'added_at', 'label'), ('constants', 'refreshed_at', 'cites'), ('constants', 'refreshed_at', 'class'), ('constants', 'refreshed_at', 'home'), ('questions', 'status', 'status'), ('questions', 'status', 'section'), ('questions', 'status', 'ambiguity')]:
+        for name, marker, field in [('inventory', 'current_at', 'label'), ('constants', 'refreshed_at', 'cites'), ('constants', 'refreshed_at', 'class'), ('constants', 'refreshed_at', 'home'), ('questions', 'status', 'status'), ('questions', 'status', 'section'), ('questions', 'status', 'ambiguity')]:
             with self.subTest(name=name, field=field):
                 path = self.root / f'docs/datasets/org.peer-network.design.{name}.json'
                 original = path.read_text()

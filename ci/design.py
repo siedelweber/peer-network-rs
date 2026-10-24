@@ -20,7 +20,7 @@ def data(name):
 
 def release_projection(name, rows):
     if name == 'inventory':
-        return [row for row in rows if 'added_at' in row]
+        return [row for row in rows if 'current_at' in row]
     if name == 'constants':
         return [row for row in rows if 'refreshed_at' in row]
     if name == 'questions':
@@ -114,7 +114,7 @@ def validate():
         rows = [row for row in publications if row['name'] == name]
         if len(rows) != 1 or rows[0].get('tag') != PAPER_TAG:
             raise ValueError(f'{name}: paper release tag changed')
-    for rows, field in ((inventory, 'added_at'), (constants, 'refreshed_at')):
+    for rows, field in ((inventory, 'current_at'), (constants, 'refreshed_at')):
         if any(row[field] != PAPER_TAG for row in rows if field in row):
             raise ValueError(f'{field}: paper release tag changed')
     questions = data('questions')
@@ -161,7 +161,7 @@ def validate():
 
 
 PAPER_TAG = 'network-v0.28.0'
-ADDED_INVENTORY_PIN = 'a07ff2d8bd27de6c6127716397e585e7f5d1d7e5106d5a4c670d5acec1da4597'
+ADDED_INVENTORY_PIN = '10a059f41c999573c3106b7b3a2a3c63f8d6cd94be128ddeffc0d805e3f7f32c'
 REFRESHED_CONSTANTS_PIN = '5d7d3a91e9cb9d3d689232a0b4e2436404ed16e2ea39ebcfc5f6e6b02d0c5213'
 RELEASE_QUESTIONS_PIN = '4eb895aa88847c3daba16f3677f36a786f7b0f42531ca8f4e87004b32b1eb940'
 
