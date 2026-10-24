@@ -245,6 +245,16 @@ impl NumericContext {
     }
 }
 
+impl UnitCost {
+    /// Borrow the burn denomination of this dimensioned external cost.
+    /// (´def:numerics:dimensioned-values´)
+    /// Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.
+    #[must_use]
+    pub fn burn_unit(&self) -> &str {
+        &self.burn_unit
+    }
+}
+
 impl NumericContext {
     /// Parse the original exact rational spelling without evaluating a floating candidate.
     /// (´def:numerics:exact-carriers´)

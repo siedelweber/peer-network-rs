@@ -316,3 +316,6 @@ pub const NUMERIC_CASES: [(&str, [u64; 4]); 6] = [
     ("charged-vintage", [63, 29, 4, 13]),
     ("subunit-cost", [7, 4, 2, 3]),
 ];
+/// Shared burn candidates and controlled corruptions; public proof fixtures are not chain evidence.
+/// (´def:burn:test-support´)
+pub mod burn;

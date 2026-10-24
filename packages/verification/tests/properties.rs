@@ -44,3 +44,15 @@ proptest! {
     #[test]
     fn numeric_coordinates(words in proptest::collection::vec(any::<u64>(),0..9)) { checks::numeric(&words); }
 }
+
+#[path = "common/burn_checks.rs"]
+mod burn_checks;
+
+proptest! {
+    #![proptest_config(configuration())]
+    /// Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause in original and reversed presentation order under fixture proof verification.
+    /// ´claim:verification:generated-marker-corruptions-retain-typed-causes´
+    /// ´test:integration:marker-recognition´
+    #[test]
+    fn marker_recognition(words in proptest::collection::vec(any::<u64>(),0..9)) {burn_checks::case(&words,"valid"); for name in pn_records::test_support::burn::CORRUPTIONS {burn_checks::case(&words,name);}}
+}

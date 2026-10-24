@@ -5019,6 +5019,176 @@
         "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
         "class_decision": "public-records"
       }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/numerics.rs",
+      "item": "numerics::UnitCost::burn_unit",
+      "owner": "RECORDS",
+      "signature": "fn burn_unit (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::validate_burn",
+      "owner": "RECORDS",
+      "signature": "fn validate_burn (input : BurnInput) -> Result < ValidatedBurn , BurnError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "validate-burn"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::validate_policy",
+      "owner": "RECORDS",
+      "signature": "fn validate_policy (input : PolicyInput , burn : & ValidatedBurn) -> Result < ValidatedPolicy , BurnError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "validate-marker-policy"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::validate_marker_history",
+      "owner": "RECORDS",
+      "signature": "fn validate_marker_history (input : HistoryInput , policy : & ValidatedPolicy , verifier : & impl PublicVerifier ,) -> Result < ValidatedMarkerHistory , BurnError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "validate-marker-history"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::recognize_markers",
+      "owner": "RECORDS",
+      "signature": "fn recognize_markers (history : & ValidatedMarkerHistory) -> Result < RecognizedMarkers , BurnError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "recognize-markers"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::ValidatedBurn::publication",
+      "owner": "RECORDS",
+      "signature": "fn publication (& self) -> & BurnInput",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarkers::history",
+      "owner": "RECORDS",
+      "signature": "fn history (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarkers::markers",
+      "owner": "RECORDS",
+      "signature": "fn markers (& self) -> & [RecognizedMarker]",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarker::identity",
+      "owner": "RECORDS",
+      "signature": "fn identity (& self) -> & Marker",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarker::accepted",
+      "owner": "RECORDS",
+      "signature": "fn accepted (& self) -> & BTreeSet < String >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarker::destructions",
+      "owner": "RECORDS",
+      "signature": "fn destructions (& self) -> & BTreeMap < String , BurnRecord >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
     }
   ],
   "metrics": [
@@ -5491,10 +5661,14 @@
           "numeric-reprice",
           "numeric-standing",
           "numeric-unit-cost",
+          "recognize-markers",
           "resolve-constants",
           "resolve-public-reference",
           "select-effective-declaration",
+          "validate-burn",
           "validate-history",
+          "validate-marker-history",
+          "validate-marker-policy",
           "validate-record"
         ]
       }
@@ -5535,10 +5709,14 @@
           "numeric-reprice",
           "numeric-standing",
           "numeric-unit-cost",
+          "recognize-markers",
           "resolve-constants",
           "resolve-public-reference",
           "select-effective-declaration",
+          "validate-burn",
           "validate-history",
+          "validate-marker-history",
+          "validate-marker-policy",
           "validate-record"
         ]
       }
@@ -9649,6 +9827,127 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "The accessor borrows or copies immutable public numeric content without computing or emitting a second operation. Declaration payloads retain public definitions and opaque realization identifiers; they contain no signing material."
+    },
+    {
+      "operation": "pn-records::packages/records/src/numerics.rs::numerics::UnitCost::burn_unit",
+      "class_decision": "public-records",
+      "body": "{ & self . burn_unit }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_burn",
+      "class_decision": "public-records",
+      "body": "{ let result = validate_disclosures (input) ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The boundary records complete public burn disclosure, policy, lineage, fixed interpretation and proof bytes at trace and counts outcomes at every level. Verifier configuration is public; no secret or transport handle is admitted. The verdict depends on local carrier checks, not clocks or observation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_policy",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { if [& input . identity , & input . edition , & input . sequence , & input . initial_marker , & input . placement_procedure , & input . cadence , & input . verification_profile ,] . iter () . any (| s | s . trim () . is_empty ()) || ! input . open_placement || input . published_at >= input . genesis_at { return Err (BurnError :: Policy) ; } if input . stability_buffer <= burn . 0 . evidence . settlement_depth . unwrap_or (u64 :: MAX) { return Err (BurnError :: Buffer) ; } Ok (ValidatedPolicy { input , burn : burn . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The boundary records complete public burn disclosure, policy, lineage, fixed interpretation and proof bytes at trace and counts outcomes at every level. Verifier configuration is public; no secret or transport handle is admitted. The verdict depends on local carrier checks, not clocks or observation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_marker_history",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { if verifier . profile () != policy . input . verification_profile { return Err (BurnError :: Verifier) ; } if input . identity . is_empty () { return Err (BurnError :: HistoryPolicy) ; } let mut names = BTreeSet :: new () ; let mut proofs = BTreeSet :: new () ; for record in & input . records { if record . identity . is_empty () || ! names . insert (record . identity . clone ()) { return Err (BurnError :: RecordIdentity) ; } if ! record . destruction . is_empty () && ! record . address . 0 . is_empty () && ! record . evidence . is_empty () && verifier . destruction (record) { proofs . insert (record . identity . clone ()) ; } } let mut openings = BTreeMap :: new () ; for marker in & input . markers { if marker . name . is_empty () || openings . insert (marker . name . clone () , recover (marker , & policy . input , verifier)) . is_some () { return Err (BurnError :: Succession) ; } } Ok (ValidatedMarkerHistory { input , policy : policy . clone () , verified : proofs , openings , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The boundary records complete public burn disclosure, policy, lineage, fixed interpretation and proof bytes at trace and counts outcomes at every level. Verifier configuration is public; no secret or transport handle is admitted. The verdict depends on local carrier checks, not clocks or observation. The named verifier is a realization trust boundary: these records preserve its public inputs and outcomes, but local syntax checks cannot certify external destruction, finality or cryptographic binding."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+      "class_decision": "public-records",
+      "body": "{ let result = recognize (history) ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The boundary records complete public burn disclosure, policy, lineage, fixed interpretation and proof bytes at trace and counts outcomes at every level. Verifier configuration is public; no secret or transport handle is admitted. The verdict depends on local carrier checks, not clocks or observation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::ValidatedBurn::publication",
+      "class_decision": "public-records",
+      "body": "{ & self . 0 }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::history",
+      "class_decision": "public-records",
+      "body": "{ & self . history }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::markers",
+      "class_decision": "public-records",
+      "body": "{ & self . markers }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarker::identity",
+      "class_decision": "public-records",
+      "body": "{ & self . identity }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarker::accepted",
+      "class_decision": "public-records",
+      "body": "{ & self . accepted }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarker::destructions",
+      "class_decision": "public-records",
+      "body": "{ & self . destructions }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
     }
   ],
   "generators": [
@@ -11027,7 +11326,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::Exact",
@@ -11036,7 +11335,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::Literal",
@@ -11045,7 +11344,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::Computed",
@@ -11054,7 +11353,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::RoundedDisplay",
@@ -11063,7 +11362,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::ActionCount",
@@ -11072,7 +11371,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::Numeraire",
@@ -11081,7 +11380,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::ReducedStanding",
@@ -11090,7 +11389,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::UnitCost",
@@ -11099,7 +11398,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::ExternalCost",
@@ -11108,7 +11407,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::RecordingEventCost",
@@ -11117,7 +11416,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::Floor",
@@ -11126,7 +11425,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::FloorComparison",
@@ -11135,7 +11434,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::ChargedPrice",
@@ -11144,7 +11443,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::ChargedVintage",
@@ -11153,7 +11452,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::NumericContext",
@@ -11162,7 +11461,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::BurnAmount",
@@ -11171,7 +11470,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::BurnPerAction",
@@ -11180,7 +11479,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "numerics::FullStanding",
@@ -11189,7 +11488,7 @@
       "path": "packages/records/src/numerics.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "constants::ConstantDefinition",
@@ -11198,7 +11497,7 @@
       "path": "packages/records/src/constants.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "constants::EditionInput",
@@ -11207,7 +11506,7 @@
       "path": "packages/records/src/constants.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "constants::ConstantsEdition",
@@ -11216,7 +11515,7 @@
       "path": "packages/records/src/constants.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "constants::ConstantsHistory",
@@ -11225,7 +11524,7 @@
       "path": "packages/records/src/constants.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "constants::ConstantsError",
@@ -11234,7 +11533,178 @@
       "path": "packages/records/src/constants.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::Address",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::OperatorEvidence",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::Bootstrap",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::BurnInput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::BurnEvidence",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::ValidatedBurn",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::Encoding",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::PolicyInput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::ValidatedPolicy",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::BurnRecord",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::Opening",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::AcceptedSet",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::Marker",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::HistoryInput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::ValidatedMarkerHistory",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::RecognizedMarkers",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::RecognizedMarker",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::Disclosure",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
+    },
+    {
+      "item": "burn::BurnError",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "ActId",
@@ -11243,7 +11713,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "Role",
@@ -11252,7 +11722,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "EdgeId",
@@ -11261,7 +11731,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "PublicReference",
@@ -11270,7 +11740,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "Layout",
@@ -11279,7 +11749,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "Removal",
@@ -11288,7 +11758,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "CandidateLeg",
@@ -11297,7 +11767,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "Quantity",
@@ -11306,7 +11776,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "StructuralBody",
@@ -11315,7 +11785,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "CandidateAct",
@@ -11324,7 +11794,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "RemovableProjections",
@@ -11333,7 +11803,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "DependencyProjection",
@@ -11342,7 +11812,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "DependencyStatus",
@@ -11351,7 +11821,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "ValidatedLeg",
@@ -11360,7 +11830,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "ValidatedAct",
@@ -11369,7 +11839,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "ValidatedHistory",
@@ -11378,7 +11848,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "DeclarationCause",
@@ -11387,7 +11857,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "DependencyCause",
@@ -11396,7 +11866,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "InvalidCause",
@@ -11405,7 +11875,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "ParentCause",
@@ -11414,7 +11884,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "ValidationError",
@@ -11423,7 +11893,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "DeclarationId",
@@ -11432,7 +11902,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "Declaration",
@@ -11441,7 +11911,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "ReferenceOrigin",
@@ -11450,7 +11920,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "ValidatedRecords",
@@ -11459,7 +11929,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "PrincipalClosure",
@@ -11468,7 +11938,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     },
     {
       "item": "BoundaryInputs",
@@ -11477,7 +11947,7 @@
       "path": "packages/records/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "public-records",
-      "expansion_review": "Structural derives and typed-error display/source inspect only declared public fields; exact values retain canonical text and no secret or exporter handle is present. Generated traits inherit the complete records operation class."
+      "expansion_review": "Structural derives and typed-error formatting inspect public evidence and exact values only. Generated equality preserves fixed marker identity fields and trait methods inherit the records operation class; no secret or exporter handle is present."
     }
   ],
   "reviewed_types": [
@@ -12710,6 +13180,120 @@
       "package": "pn-records",
       "path": "packages/records/src/constants.rs",
       "syntax": "# [doc = \" Exhaustive unpublished declaration-content refusals.\"] # [doc = \" (´def:declarations:constants-edition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ConstantsError { # [doc = \" Selection still follows the original validated announcement/effective contract.\"] # [error (\"declaration selection: {0}\")] Selection (# [from] ValidationError) , # [doc = \" Every validated identity has exactly one payload and no foreign payload.\"] # [error (\"missing, duplicate or foreign edition payload\")] EditionSet , # [doc = \" Required public identities and source definitions cannot be empty or duplicated.\"] # [error (\"empty or duplicate constant definition or profile\")] Definition , # [doc = \" The floor is a structural change, never a permitted epoch override.\"] # [error (\"invalid override permission\")] Override , }"
+    },
+    {
+      "item": "burn::Address",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" A name in a declared opaque address space, with no identity or ownership inference.\"] # [doc = \" (´def:burn:carriers´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub struct Address (pub String) ;"
+    },
+    {
+      "item": "burn::OperatorEvidence",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Required operator evidence; absence is explained rather than represented as a zero proof.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum OperatorEvidence { # [doc = \" Public bound and proof, whose external validity remains a realization obligation.\"] Bound { amount : BurnAmount , proof : String } , # [doc = \" Why no operational role accrues burn.\"] Absent { explanation : String } , }"
+    },
+    {
+      "item": "burn::Bootstrap",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Public bootstrap disclosure; the bound applies only to this acquisition interval.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Bootstrap { pub bound : BurnAmount , pub empty_interval : bool , pub explanation : String , }"
+    },
+    {
+      "item": "burn::BurnInput",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Publication candidate; missing disclosures remain distinguishable from explicit empty costs.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnInput { pub address_space : String , pub edition : String , pub sample_convention : String , pub boundary : u64 , pub read_addresses : BTreeSet < Address > , pub amounts : BTreeMap < Address , BurnAmount > , pub bootstrap : Option < Bootstrap > , pub unit_cost : Option < UnitCost > , pub evidence : BurnEvidence , }"
+    },
+    {
+      "item": "burn::BurnEvidence",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Companion public audit record bound to the same effective edition and sample convention.\"] # [doc = \" These disclosures are not additional arithmetic inputs.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnEvidence { pub edition : String , pub sample_convention : String , pub settlement_depth : Option < u64 > , pub finality_assumptions : Option < String > , pub provenance : Option < String > , pub recording_costs : Option < Vec < RecordingEventCost > > , pub operator : Option < OperatorEvidence > , }"
+    },
+    {
+      "item": "burn::ValidatedBurn",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Complete disclosures; amounts are carried, not certified as a marker-derived snapshot.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedBurn (BurnInput) ;"
+    },
+    {
+      "item": "burn::Encoding",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Declared policy encoding; order is sufficient only in the explicit whole-prefix case.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Encoding { CompleteList , PublicCommitment , WholePrefixAcceptAll , }"
+    },
+    {
+      "item": "burn::PolicyInput",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Immutable policy identity includes its edition and sequence, not merely its display name.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PolicyInput { pub identity : String , pub edition : String , pub sequence : String , pub published_at : u64 , pub genesis_at : u64 , pub initial_marker : String , pub open_placement : bool , pub placement_procedure : String , pub cadence : String , pub encoding : Encoding , pub verification_profile : String , pub stability_buffer : u64 , }"
+    },
+    {
+      "item": "burn::ValidatedPolicy",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Policy checked against the disclosed settlement depth before any recognition.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedPolicy { input : PolicyInput , burn : ValidatedBurn , }"
+    },
+    {
+      "item": "burn::BurnRecord",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" One referring record; aliases retain a single destruction identity, amount and attribution.\"] # [doc = \" (´def:burn:lineage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnRecord { pub identity : String , pub destruction : String , pub address : Address , pub amount : BurnAmount , pub evidence : Vec < u8 > , }"
+    },
+    {
+      "item": "burn::Opening",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Complete public opening, including its proof bytes; private choices are not accepted.\"] # [doc = \" (´def:burn:accepted-set´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Opening { pub members : BTreeSet < String > , pub proof : Vec < u8 > , }"
+    },
+    {
+      "item": "burn::AcceptedSet",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Fixed interpretation data read only under the matching declared policy encoding.\"] # [doc = \" (´def:burn:accepted-set´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum AcceptedSet { CompleteList (BTreeSet < String >) , Commitment { commitment : Vec < u8 > , openings : Vec < Opening > } , WholePrefix , }"
+    },
+    {
+      "item": "burn::Marker",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Structural marker identity includes every fixed interpretation and lineage field.\"] # [doc = \" The external name is only a lookup key; equality compares the whole carrier.\"] # [doc = \" (´def:burn:lineage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Marker { pub name : String , pub history : String , pub policy_identity : String , pub policy_edition : String , pub sequence : String , pub index : u64 , pub predecessor : Option < String > , pub lineage : BTreeSet < String > , pub accepted : AcceptedSet , # [doc = \" Only the initial marker carries this explicit empty snapshot declaration.\"] pub initial_snapshot : Option < BTreeMap < Address , BurnAmount > > , }"
+    },
+    {
+      "item": "burn::HistoryInput",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" One complete disclosed history, never a union of competing histories.\"] # [doc = \" (´def:burn:lineage´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct HistoryInput { pub identity : String , pub records : Vec < BurnRecord > , pub markers : Vec < Marker > , }"
+    },
+    {
+      "item": "burn::ValidatedMarkerHistory",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Local evidence checks retained for pure recognition; fields cannot be forged by consumers.\"] # [doc = \" (´def:burn:verification-boundary´)\"] # [derive (Clone , Debug)] pub struct ValidatedMarkerHistory { input : HistoryInput , policy : ValidatedPolicy , verified : BTreeSet < String > , openings : BTreeMap < String , Result < BTreeSet < String > , BurnError > > , }"
+    },
+    {
+      "item": "burn::RecognizedMarkers",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Recognized sequence, retaining complete marker identities and deduplicated destructions.\"] # [doc = \" No first-accepted increment or amount snapshot is computed here.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognizedMarkers { history : String , markers : Vec < RecognizedMarker > , }"
+    },
+    {
+      "item": "burn::RecognizedMarker",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" A complete accepted record set and one representative per destruction.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognizedMarker { identity : Marker , accepted : BTreeSet < String > , destructions : BTreeMap < String , BurnRecord > , }"
+    },
+    {
+      "item": "burn::Disclosure",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Named required publications, including evidence that no numeric formula consumes.\"] # [doc = \" (´def:burn:disclosures´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Disclosure { AddressSpace , Edition , SampleConvention , Bootstrap , UnitCost , SettlementDepth , Finality , Provenance , RecordingCosts , Operator , }"
+    },
+    {
+      "item": "burn::BurnError",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Exhaustive local refusals while unpublished; no refusal repairs candidate contents.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum BurnError { # [error (\"missing required publication: {0:?}\")] Publication (Disclosure) , # [error (\"audit evidence belongs to another edition or sample convention\")] EvidenceBinding , # [error (\"sampled address map differs from required reads\")] SampleCoverage , # [error (\"burn unit mismatch\")] Units , # [error (\"empty bootstrap interval requires a published zero and explanation\")] Bootstrap , # [error (\"invalid fixed pre-genesis open-placement policy\")] Policy , # [error (\"stability buffer does not exceed settlement depth\")] Buffer , # [error (\"wrong verification profile\")] Verifier , # [error (\"empty or duplicate record identity\")] RecordIdentity , # [error (\"marker belongs to another history or policy\")] HistoryPolicy , # [error (\"invalid initial marker\")] Initial , # [error (\"duplicate or skipped marker index, name or predecessor\")] Succession , # [error (\"lineage member is absent from this history\")] MissingLineage , # [error (\"successor lineage regressed\")] RegressedLineage , # [error (\"accepted set uses an undeclared encoding\")] Encoding , # [error (\"missing public commitment opening\")] MissingOpening , # [error (\"ambiguous public commitment opening\")] AmbiguousOpening , # [error (\"invalid public commitment opening\")] InvalidOpening , # [error (\"accepted set regressed\")] RegressedAcceptance , # [error (\"accepted record outside lineage\")] OutOfLineage , # [error (\"accepted member fails destruction verification\")] InvalidMember , # [error (\"aliases disagree on destruction amount or original address\")] InconsistentAlias , }"
     },
     {
       "item": "ActId",

@@ -322,3 +322,26 @@ dependency = "proptest 1.12.0"
 regressions = "packages/verification/proptest-regressions"
 case_count_kind = "configured-successful-cases; persisted regressions run additionally"
 consumer = "pn-verification"
+
+[[rows]]
+name = "pn-records::properties::marker_recognition"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support/burn.rs"
+edition = "records-burn-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/records/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-verification::properties::marker_recognition"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support/burn.rs"
+edition = "records-burn-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/verification/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+consumer = "pn-verification"

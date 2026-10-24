@@ -2529,11 +2529,11 @@
     },
     {
       "cases": [],
-      "contract": "four-object disclosures and permanent target provenance",
+      "contract": "real-service burn disclosures and permanent target provenance",
       "implementation": "",
       "kind": "suite",
       "name": "planned-burn",
-      "reason": "contract not implemented; first contributing domain bite 2",
+      "reason": "pure publications and marker recognition run in records-burn-1; real destruction, permanent target provenance and settled-chain verification remain with wallet and host service slices of bite 2",
       "status": "held",
       "tier": "service"
     },
@@ -3009,6 +3009,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_observe_runtime.Processes.test_burn_entry",
         "ci::test_observe_runtime.Processes.test_numeric_entry",
         "ci::test_observe_runtime.Processes.test_generated_records_refusals",
         "ci::test_observe_runtime.Processes.test_interchange_refusal",
@@ -3091,6 +3092,11 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::public::burn::alias_deduplication",
+        "pn-records::public::burn::history_dependence",
+        "pn-records::public::burn::policy_encodings",
+        "pn-records::public::burn::initial_and_identity",
+        "pn-records::public::burn::required_disclosures",
         "pn-records::public::numerics::family_width_premise",
         "pn-records::public::numerics::constant_correspondence",
         "pn-records::public::numerics::historical_constants",
@@ -3139,6 +3145,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::properties::marker_recognition",
         "pn-records::properties::numeric_coordinates",
         "pn-records::properties::closure_model",
         "pn-records::properties::typed_corruptions"
@@ -3155,6 +3162,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::conformance::burn_cases",
         "pn-records::conformance::numeric_cases",
         "pn-records::conformance::shared_cases"
       ],
@@ -3205,6 +3213,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-verification::properties::marker_recognition",
         "pn-verification::properties::numeric_coordinates",
         "pn-verification::properties::closure_model",
         "pn-verification::properties::typed_corruptions"
@@ -3221,6 +3230,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-verification::conformance::burn_cases",
         "pn-verification::conformance::numeric_cases",
         "pn-verification::conformance::shared_cases"
       ],
@@ -3324,6 +3334,96 @@
       "level": "doctest",
       "name": "pn-records-doctests",
       "runner": "doctest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::records-burn-1::burn-records::missing-provenance",
+        "contract::records-burn-1::burn-records::missing-finality",
+        "contract::records-burn-1::burn-records::missing-costs",
+        "contract::records-burn-1::burn-records::missing-operator",
+        "contract::records-burn-1::burn-records::empty-bootstrap",
+        "contract::records-burn-1::burn-records::sample-gap",
+        "contract::records-burn-1::burn-records::late-policy",
+        "contract::records-burn-1::burn-records::closed-placement",
+        "contract::records-burn-1::burn-records::buffer",
+        "contract::records-burn-1::burn-records::wrong-profile",
+        "contract::records-burn-1::burn-records::duplicate-record",
+        "contract::records-burn-1::burn-records::initial",
+        "contract::records-burn-1::burn-records::skipped-index",
+        "contract::records-burn-1::burn-records::duplicate-index",
+        "contract::records-burn-1::burn-records::lost-predecessor",
+        "contract::records-burn-1::burn-records::lost-lineage",
+        "contract::records-burn-1::burn-records::regressed-lineage",
+        "contract::records-burn-1::burn-records::regressed-acceptance",
+        "contract::records-burn-1::burn-records::out-of-lineage",
+        "contract::records-burn-1::burn-records::invalid-member",
+        "contract::records-burn-1::burn-records::alias-address",
+        "contract::records-burn-1::burn-records::alias-amount",
+        "contract::records-burn-1::burn-records::history-mix",
+        "contract::records-burn-1::burn-records::policy-mix",
+        "contract::records-burn-1::burn-records::wrong-encoding",
+        "contract::records-burn-1::burn-records::missing-opening",
+        "contract::records-burn-1::burn-records::ambiguous-opening",
+        "contract::records-burn-1::burn-records::invalid-opening",
+        "contract::records-burn-1::burn-records::valid"
+      ],
+      "claim": "claim:burn:shared-marker-cases-preserve-recognition-contracts",
+      "claim_owner": "RECORDS",
+      "contract_edition": "records-burn-1",
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "burn-records",
+      "parent_case": "pn-records::conformance::burn_cases",
+      "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::records-burn-1::burn-verification::missing-provenance",
+        "contract::records-burn-1::burn-verification::missing-finality",
+        "contract::records-burn-1::burn-verification::missing-costs",
+        "contract::records-burn-1::burn-verification::missing-operator",
+        "contract::records-burn-1::burn-verification::empty-bootstrap",
+        "contract::records-burn-1::burn-verification::sample-gap",
+        "contract::records-burn-1::burn-verification::late-policy",
+        "contract::records-burn-1::burn-verification::closed-placement",
+        "contract::records-burn-1::burn-verification::buffer",
+        "contract::records-burn-1::burn-verification::wrong-profile",
+        "contract::records-burn-1::burn-verification::duplicate-record",
+        "contract::records-burn-1::burn-verification::initial",
+        "contract::records-burn-1::burn-verification::skipped-index",
+        "contract::records-burn-1::burn-verification::duplicate-index",
+        "contract::records-burn-1::burn-verification::lost-predecessor",
+        "contract::records-burn-1::burn-verification::lost-lineage",
+        "contract::records-burn-1::burn-verification::regressed-lineage",
+        "contract::records-burn-1::burn-verification::regressed-acceptance",
+        "contract::records-burn-1::burn-verification::out-of-lineage",
+        "contract::records-burn-1::burn-verification::invalid-member",
+        "contract::records-burn-1::burn-verification::alias-address",
+        "contract::records-burn-1::burn-verification::alias-amount",
+        "contract::records-burn-1::burn-verification::history-mix",
+        "contract::records-burn-1::burn-verification::policy-mix",
+        "contract::records-burn-1::burn-verification::wrong-encoding",
+        "contract::records-burn-1::burn-verification::missing-opening",
+        "contract::records-burn-1::burn-verification::ambiguous-opening",
+        "contract::records-burn-1::burn-verification::invalid-opening",
+        "contract::records-burn-1::burn-verification::valid"
+      ],
+      "claim": "claim:verification:shared-marker-cases-preserve-recognition-contracts",
+      "claim_owner": "VERIFICATION",
+      "contract_edition": "records-burn-1",
+      "implementation": "pn-records-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "burn-verification",
+      "parent_case": "pn-verification::conformance::burn_cases",
+      "runner": "contract",
       "status": "active",
       "tier": "fast"
     }

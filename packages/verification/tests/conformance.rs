@@ -126,3 +126,67 @@ fn numeric_cases() {
     assert!(failures.is_empty(), "{failures:?}");
     assert_eq!(results.len(), cases.len());
 }
+
+#[path = "common/burn_checks.rs"]
+mod burn_checks;
+
+/// Claim: A valid three-marker history and every named single-premise corruption have their declared exact typed outcomes, preserving complete acceptance and one representative per consistent destruction alias through the public surface; fixture proofs do not establish chain validity.
+/// ´claim:verification:shared-marker-cases-preserve-recognition-contracts´
+/// ´test:integration:burn-cases´
+#[test]
+fn burn_cases() {
+    let cases: Vec<_> = pn_records::test_support::burn::CORRUPTIONS
+        .iter()
+        .copied()
+        .chain(std::iter::once("valid"))
+        .map(|id| pn_testkit::Case {
+            id: id.into(),
+            input: id,
+        })
+        .collect();
+    let results = pn_testkit::run(
+        "burn-verification",
+        "records-burn-1",
+        &cases,
+        &["pn-records-rust"],
+        |_, name| {
+            std::panic::catch_unwind(|| {
+                burn_checks::case(&[7], name);
+            })
+            .map_err(|payload| {
+                payload
+                    .downcast_ref::<String>()
+                    .cloned()
+                    .or_else(|| payload.downcast_ref::<&str>().map(|s| (*s).to_owned()))
+                    .unwrap_or_else(|| "non-text predicate panic".into())
+            })
+        },
+    )
+    .unwrap();
+    if let Ok(directory) = std::env::var("PN_CONTRACT_RESULTS") {
+        let source = std::env::var("PN_HARNESS_SOURCE").unwrap();
+        let configuration = std::env::var("PN_HARNESS_CONFIGURATION").unwrap();
+        let utc = std::env::var("PN_HARNESS_UTC").unwrap();
+        let rows: Vec<_> = results
+            .iter()
+            .map(|r| {
+                serde_json::json!({
+                    "operation": format!("contract::records-burn-1::burn-verification::{}", r.case),
+                    "implementation": r.implementation, "contract_edition": r.edition,
+                    "outcome": if r.outcome.is_ok() { "passed" } else { "failed" },
+                    "duration_ms": r.elapsed.as_secs_f64()*1000.0,
+                    "source": source, "configuration": configuration, "utc": utc,
+                    "owner": "records conformance implementer"
+                })
+            })
+            .collect();
+        std::fs::write(
+            std::path::Path::new(&directory).join("burn-verification.json"),
+            serde_json::to_vec(&rows).unwrap(),
+        )
+        .unwrap();
+    }
+    let failures: Vec<_> = results.iter().filter(|r| r.outcome.is_err()).collect();
+    assert!(failures.is_empty(), "{failures:?}");
+    assert_eq!(results.len(), cases.len());
+}

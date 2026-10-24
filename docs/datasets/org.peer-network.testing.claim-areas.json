@@ -278,6 +278,13 @@
       "owner": "RECORDS",
       "register": "RECORDS::sec:ledger:area-ledger",
       "stake": "Revaluing a consummated charge at a later price erases its original debit vintage."
+    },
+    {
+      "area": "burn",
+      "contract": "RECORDS::sec:burn:area-burn",
+      "owner": "RECORDS",
+      "register": "RECORDS::sec:burn:area-burn",
+      "stake": "Omitted disclosures or repaired marker sets can fabricate readiness, move destruction between addresses, or count one destruction more than once."
     }
   ]
 }

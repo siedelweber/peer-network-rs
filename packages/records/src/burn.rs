@@ -1,0 +1,636 @@
+//! Internal burn evidence and marker recognition; no chain adapter or snapshot summation.
+//! (´def:burn:carriers´)
+use crate::numerics::{BurnAmount, RecordingEventCost, UnitCost};
+use std::collections::{BTreeMap, BTreeSet};
+
+/// A name in a declared opaque address space, with no identity or ownership inference.
+/// (´def:burn:carriers´)
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Address(pub String);
+
+/// Required operator evidence; absence is explained rather than represented as a zero proof.
+/// (´def:burn:disclosures´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum OperatorEvidence {
+    /// Public bound and proof, whose external validity remains a realization obligation.
+    Bound { amount: BurnAmount, proof: String },
+    /// Why no operational role accrues burn.
+    Absent { explanation: String },
+}
+
+/// Public bootstrap disclosure; the bound applies only to this acquisition interval.
+/// (´def:burn:disclosures´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Bootstrap {
+    pub bound: BurnAmount,
+    pub empty_interval: bool,
+    pub explanation: String,
+}
+
+/// Publication candidate; missing disclosures remain distinguishable from explicit empty costs.
+/// (´def:burn:disclosures´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct BurnInput {
+    pub address_space: String,
+    pub edition: String,
+    pub sample_convention: String,
+    pub boundary: u64,
+    pub read_addresses: BTreeSet<Address>,
+    pub amounts: BTreeMap<Address, BurnAmount>,
+    pub bootstrap: Option<Bootstrap>,
+    pub unit_cost: Option<UnitCost>,
+    pub evidence: BurnEvidence,
+}
+
+/// Companion public audit record bound to the same effective edition and sample convention.
+/// These disclosures are not additional arithmetic inputs.
+/// (´def:burn:disclosures´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct BurnEvidence {
+    pub edition: String,
+    pub sample_convention: String,
+    pub settlement_depth: Option<u64>,
+    pub finality_assumptions: Option<String>,
+    pub provenance: Option<String>,
+    pub recording_costs: Option<Vec<RecordingEventCost>>,
+    pub operator: Option<OperatorEvidence>,
+}
+
+/// Complete disclosures; amounts are carried, not certified as a marker-derived snapshot.
+/// (´def:burn:disclosures´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ValidatedBurn(BurnInput);
+
+/// Declared policy encoding; order is sufficient only in the explicit whole-prefix case.
+/// (´def:burn:marker-policy´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Encoding {
+    CompleteList,
+    PublicCommitment,
+    WholePrefixAcceptAll,
+}
+
+/// Immutable policy identity includes its edition and sequence, not merely its display name.
+/// (´def:burn:marker-policy´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PolicyInput {
+    pub identity: String,
+    pub edition: String,
+    pub sequence: String,
+    pub published_at: u64,
+    pub genesis_at: u64,
+    pub initial_marker: String,
+    pub open_placement: bool,
+    pub placement_procedure: String,
+    pub cadence: String,
+    pub encoding: Encoding,
+    pub verification_profile: String,
+    pub stability_buffer: u64,
+}
+
+/// Policy checked against the disclosed settlement depth before any recognition.
+/// (´def:burn:marker-policy´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ValidatedPolicy {
+    input: PolicyInput,
+    burn: ValidatedBurn,
+}
+
+/// One referring record; aliases retain a single destruction identity, amount and attribution.
+/// (´def:burn:lineage´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct BurnRecord {
+    pub identity: String,
+    pub destruction: String,
+    pub address: Address,
+    pub amount: BurnAmount,
+    pub evidence: Vec<u8>,
+}
+
+/// Complete public opening, including its proof bytes; private choices are not accepted.
+/// (´def:burn:accepted-set´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Opening {
+    pub members: BTreeSet<String>,
+    pub proof: Vec<u8>,
+}
+
+/// Fixed interpretation data read only under the matching declared policy encoding.
+/// (´def:burn:accepted-set´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum AcceptedSet {
+    CompleteList(BTreeSet<String>),
+    Commitment { commitment: Vec<u8>, openings: Vec<Opening> },
+    WholePrefix,
+}
+
+/// Structural marker identity includes every fixed interpretation and lineage field.
+/// The external name is only a lookup key; equality compares the whole carrier.
+/// (´def:burn:lineage´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Marker {
+    pub name: String,
+    pub history: String,
+    pub policy_identity: String,
+    pub policy_edition: String,
+    pub sequence: String,
+    pub index: u64,
+    pub predecessor: Option<String>,
+    pub lineage: BTreeSet<String>,
+    pub accepted: AcceptedSet,
+    /// Only the initial marker carries this explicit empty snapshot declaration.
+    pub initial_snapshot: Option<BTreeMap<Address, BurnAmount>>,
+}
+
+/// One complete disclosed history, never a union of competing histories.
+/// (´def:burn:lineage´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct HistoryInput {
+    pub identity: String,
+    pub records: Vec<BurnRecord>,
+    pub markers: Vec<Marker>,
+}
+
+/// External verification boundary. Implementations must be deterministic public checks of
+/// the named profile, with sound destruction proofs and binding complete-set openings.
+/// This trait does not turn a mock into evidence of cryptographic or chain validity.
+/// (´def:burn:verification-boundary´)
+pub trait PublicVerifier: std::fmt::Debug {
+    /// Exact profile this implementation checks.
+    fn profile(&self) -> &str;
+    /// Verify genuine destruction, exact amount and original address from retained evidence.
+    fn destruction(&self, record: &BurnRecord) -> bool;
+    /// Verify a binding public opening of the complete member set, not just inclusion proofs.
+    fn opening(&self, commitment: &[u8], opening: &Opening) -> bool;
+}
+
+/// Local evidence checks retained for pure recognition; fields cannot be forged by consumers.
+/// (´def:burn:verification-boundary´)
+#[derive(Clone, Debug)]
+pub struct ValidatedMarkerHistory {
+    input: HistoryInput,
+    policy: ValidatedPolicy,
+    verified: BTreeSet<String>,
+    openings: BTreeMap<String, Result<BTreeSet<String>, BurnError>>,
+}
+
+/// Recognized sequence, retaining complete marker identities and deduplicated destructions.
+/// No first-accepted increment or amount snapshot is computed here.
+/// (´def:burn:recognition´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RecognizedMarkers {
+    history: String,
+    markers: Vec<RecognizedMarker>,
+}
+
+/// A complete accepted record set and one representative per destruction.
+/// (´def:burn:recognition´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RecognizedMarker {
+    identity: Marker,
+    accepted: BTreeSet<String>,
+    destructions: BTreeMap<String, BurnRecord>,
+}
+
+/// Named required publications, including evidence that no numeric formula consumes.
+/// (´def:burn:disclosures´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Disclosure {
+    AddressSpace,
+    Edition,
+    SampleConvention,
+    Bootstrap,
+    UnitCost,
+    SettlementDepth,
+    Finality,
+    Provenance,
+    RecordingCosts,
+    Operator,
+}
+
+/// Exhaustive local refusals while unpublished; no refusal repairs candidate contents.
+/// (´def:burn:recognition´)
+#[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
+pub enum BurnError {
+    #[error("missing required publication: {0:?}")]
+    Publication(Disclosure),
+    #[error("audit evidence belongs to another edition or sample convention")]
+    EvidenceBinding,
+    #[error("sampled address map differs from required reads")]
+    SampleCoverage,
+    #[error("burn unit mismatch")]
+    Units,
+    #[error("empty bootstrap interval requires a published zero and explanation")]
+    Bootstrap,
+    #[error("invalid fixed pre-genesis open-placement policy")]
+    Policy,
+    #[error("stability buffer does not exceed settlement depth")]
+    Buffer,
+    #[error("wrong verification profile")]
+    Verifier,
+    #[error("empty or duplicate record identity")]
+    RecordIdentity,
+    #[error("marker belongs to another history or policy")]
+    HistoryPolicy,
+    #[error("invalid initial marker")]
+    Initial,
+    #[error("duplicate or skipped marker index, name or predecessor")]
+    Succession,
+    #[error("lineage member is absent from this history")]
+    MissingLineage,
+    #[error("successor lineage regressed")]
+    RegressedLineage,
+    #[error("accepted set uses an undeclared encoding")]
+    Encoding,
+    #[error("missing public commitment opening")]
+    MissingOpening,
+    #[error("ambiguous public commitment opening")]
+    AmbiguousOpening,
+    #[error("invalid public commitment opening")]
+    InvalidOpening,
+    #[error("accepted set regressed")]
+    RegressedAcceptance,
+    #[error("accepted record outside lineage")]
+    OutOfLineage,
+    #[error("accepted member fails destruction verification")]
+    InvalidMember,
+    #[error("aliases disagree on destruction amount or original address")]
+    InconsistentAlias,
+}
+
+fn required(text: &str, field: Disclosure) -> Result<(), BurnError> {
+    if text.trim().is_empty() {
+        Err(BurnError::Publication(field))
+    } else {
+        Ok(())
+    }
+}
+
+/// Check complete publication, typed units and explicit empty-bootstrap evidence.
+/// (´def:burn:disclosures´)
+/// # Errors
+/// Returns the missing publication or malformed coverage/unit/bootstrap cause.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "validate-burn",
+        source_item = "burn::validate_burn"
+    ),
+    ret
+)]
+pub fn validate_burn(input: BurnInput) -> Result<ValidatedBurn, BurnError> {
+    let result = validate_disclosures(input);
+    if result.is_err() {
+        super::refused();
+    }
+    result
+}
+
+fn validate_disclosures(input: BurnInput) -> Result<ValidatedBurn, BurnError> {
+    required(&input.address_space, Disclosure::AddressSpace)?;
+    required(&input.edition, Disclosure::Edition)?;
+    required(&input.sample_convention, Disclosure::SampleConvention)?;
+    required(&input.evidence.edition, Disclosure::Edition)?;
+    required(&input.evidence.sample_convention, Disclosure::SampleConvention)?;
+    if input.edition != input.evidence.edition || input.sample_convention != input.evidence.sample_convention {
+        return Err(BurnError::EvidenceBinding);
+    }
+    let bootstrap = input
+        .bootstrap
+        .as_ref()
+        .ok_or(BurnError::Publication(Disclosure::Bootstrap))?;
+    let cost = input.unit_cost.as_ref().ok_or(BurnError::Publication(Disclosure::UnitCost))?;
+    input
+        .evidence
+        .settlement_depth
+        .ok_or(BurnError::Publication(Disclosure::SettlementDepth))?;
+    required(
+        input.evidence.finality_assumptions.as_deref().unwrap_or(""),
+        Disclosure::Finality,
+    )?;
+    required(input.evidence.provenance.as_deref().unwrap_or(""), Disclosure::Provenance)?;
+    input
+        .evidence
+        .recording_costs
+        .as_ref()
+        .ok_or(BurnError::Publication(Disclosure::RecordingCosts))?;
+    let operator = input
+        .evidence
+        .operator
+        .as_ref()
+        .ok_or(BurnError::Publication(Disclosure::Operator))?;
+    match operator {
+        OperatorEvidence::Bound { amount, proof } => {
+            required(proof, Disclosure::Operator)?;
+            if amount.unit() != bootstrap.bound.unit() {
+                return Err(BurnError::Units);
+            }
+        }
+        OperatorEvidence::Absent { explanation } => required(explanation, Disclosure::Operator)?,
+    }
+    required(&bootstrap.explanation, Disclosure::Bootstrap)?;
+    if bootstrap.empty_interval && bootstrap.bound.exact() != "0" {
+        return Err(BurnError::Bootstrap);
+    }
+    if input.read_addresses.iter().any(|a| a.0.is_empty()) || input.read_addresses != input.amounts.keys().cloned().collect() {
+        return Err(BurnError::SampleCoverage);
+    }
+    if cost.burn_unit() != bootstrap.bound.unit() || input.amounts.values().any(|a| a.unit() != bootstrap.bound.unit()) {
+        return Err(BurnError::Units);
+    }
+    Ok(ValidatedBurn(input))
+}
+
+/// Freeze policy content and require publication before genesis and a sufficient buffer.
+/// (´def:burn:marker-policy´)
+/// # Errors
+/// Refuses incomplete, late, privileged-placement or insufficient-buffer policy declarations.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "validate-marker-policy",
+        source_item = "burn::validate_policy"
+    ),
+    ret
+)]
+pub fn validate_policy(input: PolicyInput, burn: &ValidatedBurn) -> Result<ValidatedPolicy, BurnError> {
+    let result = (|| {
+        if [
+            &input.identity,
+            &input.edition,
+            &input.sequence,
+            &input.initial_marker,
+            &input.placement_procedure,
+            &input.cadence,
+            &input.verification_profile,
+        ]
+        .iter()
+        .any(|s| s.trim().is_empty())
+            || !input.open_placement
+            || input.published_at >= input.genesis_at
+        {
+            return Err(BurnError::Policy);
+        }
+        if input.stability_buffer <= burn.0.evidence.settlement_depth.unwrap_or(u64::MAX) {
+            return Err(BurnError::Buffer);
+        }
+        Ok(ValidatedPolicy {
+            input,
+            burn: burn.clone(),
+        })
+    })();
+    if result.is_err() {
+        super::refused();
+    }
+    result
+}
+
+fn recover(marker: &Marker, policy: &PolicyInput, verifier: &impl PublicVerifier) -> Result<BTreeSet<String>, BurnError> {
+    match (&marker.accepted, policy.encoding) {
+        (AcceptedSet::CompleteList(members), Encoding::CompleteList) => Ok(members.clone()),
+        (AcceptedSet::WholePrefix, Encoding::WholePrefixAcceptAll) => Ok(marker.lineage.clone()),
+        (AcceptedSet::Commitment { commitment, openings }, Encoding::PublicCommitment) => {
+            if openings.is_empty() {
+                return Err(BurnError::MissingOpening);
+            }
+            if openings.len() != 1 {
+                return Err(BurnError::AmbiguousOpening);
+            }
+            let opening = &openings[0];
+            if commitment.is_empty() || opening.proof.is_empty() || !verifier.opening(commitment, opening) {
+                return Err(BurnError::InvalidOpening);
+            }
+            Ok(opening.members.clone())
+        }
+        _ => Err(BurnError::Encoding),
+    }
+}
+
+/// Check public realization proofs under the policy's explicit verifier profile.
+/// Rejected unaccepted records remain in lineage; recognition refuses only their acceptance.
+/// (´def:burn:verification-boundary´)
+/// # Errors
+/// Refuses a mismatched verifier or ambiguous record/marker identity; proof failures are retained.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "validate-marker-history",
+        source_item = "burn::validate_marker_history"
+    ),
+    ret
+)]
+pub fn validate_marker_history(
+    input: HistoryInput,
+    policy: &ValidatedPolicy,
+    verifier: &impl PublicVerifier,
+) -> Result<ValidatedMarkerHistory, BurnError> {
+    let result = (|| {
+        if verifier.profile() != policy.input.verification_profile {
+            return Err(BurnError::Verifier);
+        }
+        if input.identity.is_empty() {
+            return Err(BurnError::HistoryPolicy);
+        }
+        let mut names = BTreeSet::new();
+        let mut proofs = BTreeSet::new();
+        for record in &input.records {
+            if record.identity.is_empty() || !names.insert(record.identity.clone()) {
+                return Err(BurnError::RecordIdentity);
+            }
+            if !record.destruction.is_empty()
+                && !record.address.0.is_empty()
+                && !record.evidence.is_empty()
+                && verifier.destruction(record)
+            {
+                proofs.insert(record.identity.clone());
+            }
+        }
+        let mut openings = BTreeMap::new();
+        for marker in &input.markers {
+            if marker.name.is_empty()
+                || openings
+                    .insert(marker.name.clone(), recover(marker, &policy.input, verifier))
+                    .is_some()
+            {
+                return Err(BurnError::Succession);
+            }
+        }
+        Ok(ValidatedMarkerHistory {
+            input,
+            policy: policy.clone(),
+            verified: proofs,
+            openings,
+        })
+    })();
+    if result.is_err() {
+        super::refused();
+    }
+    result
+}
+
+/// Recognize M1–M3 and deduplicate consistent destruction aliases for M4, within one history.
+/// Never computes the first-accepted increment or repairs an invalid complete accepted set.
+/// (´def:burn:recognition´)
+/// # Errors
+/// Refuses invalid succession, missing lineage, bad acceptance/openings and inconsistent members.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "recognize-markers",
+        source_item = "burn::recognize_markers"
+    ),
+    ret
+)]
+pub fn recognize_markers(history: &ValidatedMarkerHistory) -> Result<RecognizedMarkers, BurnError> {
+    let result = recognize(history);
+    if result.is_err() {
+        super::refused();
+    }
+    result
+}
+
+fn recognize(history: &ValidatedMarkerHistory) -> Result<RecognizedMarkers, BurnError> {
+    let policy = &history.policy.input;
+    let mut candidates: Vec<_> = history.input.markers.iter().collect();
+    candidates.sort_by_key(|m| m.index);
+    if candidates.is_empty() {
+        return Err(BurnError::Initial);
+    }
+    let records: BTreeMap<_, _> = history.input.records.iter().map(|r| (&r.identity, r)).collect();
+    let mut markers: Vec<RecognizedMarker> = Vec::new();
+    let mut aliases: BTreeMap<String, BurnRecord> = BTreeMap::new();
+    let unit = history
+        .policy
+        .burn
+        .0
+        .bootstrap
+        .as_ref()
+        .ok_or(BurnError::Publication(Disclosure::Bootstrap))?
+        .bound
+        .unit();
+    for marker in candidates {
+        if marker.history != history.input.identity
+            || marker.policy_identity != policy.identity
+            || marker.policy_edition != policy.edition
+            || marker.sequence != policy.sequence
+        {
+            return Err(BurnError::HistoryPolicy);
+        }
+        let accepted = history.openings[&marker.name].clone()?;
+        if let Some(previous) = markers.last() {
+            if previous.identity.index.checked_add(1) != Some(marker.index)
+                || marker.predecessor.as_ref() != Some(&previous.identity.name)
+                || marker.initial_snapshot.is_some()
+            {
+                return Err(BurnError::Succession);
+            }
+            if !previous.identity.lineage.is_subset(&marker.lineage) {
+                return Err(BurnError::RegressedLineage);
+            }
+            if !previous.accepted.is_subset(&accepted) {
+                return Err(BurnError::RegressedAcceptance);
+            }
+        } else if marker.index != 0
+            || marker.name != policy.initial_marker
+            || marker.predecessor.is_some()
+            || !accepted.is_empty()
+            || !marker.initial_snapshot.as_ref().is_some_and(BTreeMap::is_empty)
+        {
+            return Err(BurnError::Initial);
+        }
+        if marker.lineage.iter().any(|id| !records.contains_key(id)) {
+            return Err(BurnError::MissingLineage);
+        }
+        if !accepted.is_subset(&marker.lineage) {
+            return Err(BurnError::OutOfLineage);
+        }
+        let mut destructions = BTreeMap::new();
+        for id in &accepted {
+            let record = records[id];
+            if !history.verified.contains(id) || record.amount.unit() != unit {
+                return Err(BurnError::InvalidMember);
+            }
+            if let Some(previous) = aliases.get(&record.destruction) {
+                if previous.address != record.address || previous.amount != record.amount {
+                    return Err(BurnError::InconsistentAlias);
+                }
+            } else {
+                aliases.insert(record.destruction.clone(), record.clone());
+            }
+            destructions
+                .entry(record.destruction.clone())
+                .or_insert_with(|| record.clone());
+        }
+        markers.push(RecognizedMarker {
+            identity: marker.clone(),
+            accepted,
+            destructions,
+        });
+    }
+    Ok(RecognizedMarkers {
+        history: history.input.identity.clone(),
+        markers,
+    })
+}
+
+impl ValidatedBurn {
+    /// Borrow the complete publication, including noncomputational audit evidence.
+    /// (´def:burn:disclosures´)
+    /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
+    #[must_use]
+    pub fn publication(&self) -> &BurnInput {
+        &self.0
+    }
+}
+impl RecognizedMarkers {
+    /// Borrow the fixed history identity; alternative histories are separate recognitions.
+    /// (´def:burn:recognition´)
+    /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
+    #[must_use]
+    pub fn history(&self) -> &str {
+        &self.history
+    }
+    /// Borrow the complete recognized sequence in immediate predecessor order.
+    /// (´def:burn:recognition´)
+    /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
+    #[must_use]
+    pub fn markers(&self) -> &[RecognizedMarker] {
+        &self.markers
+    }
+}
+impl RecognizedMarker {
+    /// Borrow the entire structural marker identity, including interpretation data.
+    /// (´def:burn:recognition´)
+    /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
+    #[must_use]
+    pub fn identity(&self) -> &Marker {
+        &self.identity
+    }
+    /// Borrow the complete accepted record set without clipping or enlargement.
+    /// (´def:burn:recognition´)
+    /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
+    #[must_use]
+    pub fn accepted(&self) -> &BTreeSet<String> {
+        &self.accepted
+    }
+    /// Borrow one representative per destruction, retaining its original amount and address.
+    /// This is not a first-accepted increment or summed snapshot.
+    /// (´def:burn:recognition´)
+    /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
+    #[must_use]
+    pub fn destructions(&self) -> &BTreeMap<String, BurnRecord> {
+        &self.destructions
+    }
+}

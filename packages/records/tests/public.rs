@@ -564,3 +564,7 @@ fn asserted_parents() {
     parent.authoritative_position = 10;
     assert!(validate_record(&[root, parent], &resolved(), &[]).is_ok());
 }
+
+#[cfg(feature = "test-support")]
+#[path = "public/burn.rs"]
+mod burn;

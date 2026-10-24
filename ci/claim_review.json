@@ -1728,6 +1728,86 @@
       "before": "",
       "after": "Claim: Exact numeric charge and three typed refusals retain identical stdout and exit across disabled, default and trace observation; default and trace count the same numeric outcomes, trace retains public coordinate content, and immutable value reads introduce no operations.",
       "review": "Read this new witness against its exact rational assertions, typed refusals and declared input premises; the gloss describes those assertions without claiming the later fence or service tiers."
+    },
+    {
+      "operation": "pn-records::conformance::burn_cases",
+      "path": "packages/records/tests/conformance.rs",
+      "claim": "RECORDS::claim:burn:shared-marker-cases-preserve-recognition-contracts",
+      "before": "",
+      "after": "Claim: A valid three-marker history and every named single-premise corruption have their declared exact typed outcomes, preserving complete acceptance and one representative per consistent destruction alias through the public surface; fixture proofs do not establish chain validity.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "pn-records::properties::marker_recognition",
+      "path": "packages/records/tests/properties.rs",
+      "claim": "RECORDS::claim:burn:generated-marker-corruptions-retain-typed-causes",
+      "before": "",
+      "after": "Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause in original and reversed presentation order under fixture proof verification.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "pn-records::public::burn::required_disclosures",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:missing-required-burn-disclosures-prevent-readiness",
+      "before": "",
+      "after": "Claim: Removing each required disclosure prevents readiness even when arithmetic does not read it; explicit empty event costs and explained operator absence remain valid publications.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "pn-records::public::burn::initial_and_identity",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:markers-fix-initial-state-and-succession",
+      "before": "",
+      "after": "Claim: Zero-index recognition requires the policy's initial name, no predecessor and empty acceptance and snapshot; immediate unique successors retain fixed policy and interpretation content rather than treating the name alone as identity.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "pn-records::public::burn::policy_encodings",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:public-openings-recover-complete-policy-sets",
+      "before": "",
+      "after": "Claim: Complete lists and unique binding public openings recover the same finite sets under their declared policies; whole-prefix acceptance uses all lineage only when explicitly selected, and invalid unaccepted records need not become burns.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "pn-records::public::burn::history_dependence",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:recognition-requires-one-complete-history",
+      "before": "",
+      "after": "Claim: Copied marker contents lose recognition when this history omits a lineage member or predecessor; a separately identified alternative history is checked against its own predecessors without cross-history acceptance bounds.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "pn-records::public::burn::alias_deduplication",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:destruction-aliases-retain-one-contribution-identity",
+      "before": "",
+      "after": "Claim: Consistent aliases accepted together or later retain one destruction representative with its original amount and address; changed alias attribution or amount refuses rather than contributing twice, without deriving an increment or snapshot.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "pn-verification::conformance::burn_cases",
+      "path": "packages/verification/tests/conformance.rs",
+      "claim": "VERIFICATION::claim:verification:shared-marker-cases-preserve-recognition-contracts",
+      "before": "",
+      "after": "Claim: A valid three-marker history and every named single-premise corruption have their declared exact typed outcomes, preserving complete acceptance and one representative per consistent destruction alias through the public surface; fixture proofs do not establish chain validity.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "pn-verification::properties::marker_recognition",
+      "path": "packages/verification/tests/properties.rs",
+      "claim": "VERIFICATION::claim:verification:generated-marker-corruptions-retain-typed-causes",
+      "before": "",
+      "after": "Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause in original and reversed presentation order under fixture proof verification.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_burn_entry",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+      "before": "",
+      "after": "Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all twelve carrier boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.",
+      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
     }
   ]
 }

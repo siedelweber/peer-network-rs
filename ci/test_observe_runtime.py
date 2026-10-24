@@ -135,6 +135,32 @@ class Processes(unittest.TestCase):
         self.assertEqual(outputs['default'],outputs['trace'])
         self.assertEqual(outcomes['default'],outcomes['trace'])
 
+    def test_burn_entry(self):
+        """Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all twelve carrier boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.
+        ´claim:discipline:burn-recognition-retains-observed-outcomes´
+        ´test:integration:test-burn-entry´
+        """
+        outputs={};outcomes={}
+        for mode in ('disabled','default','trace'):
+            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/burn_observation'),mode],mode,
+                           os.environ|{'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'})
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+            outputs[mode]=result.stdout
+            self.assertEqual(json.loads(result.stdout),{'markers':3,'destructions':2,'refused':[True,True]})
+            if mode=='disabled':continue
+            rows=[json.loads(line) for line in result.stderr.splitlines()]
+            summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
+            stem='records__root__sig__design__records__'
+            outcomes[mode]={k:v for k,v in distribution(summary).items() if k[0].startswith(stem)}
+            self.assertEqual(outcomes[mode][stem+'completed_operations','refusal'],2)
+            self.assertEqual(outcomes[mode][stem+'completed_operations','success'],10)
+            self.assertNotIn((stem+'completed_operations','error'),outcomes[mode])
+            if mode=='trace':self.assertIn('fixture assumption, not chain evidence',json.dumps(expanded(rows)))
+            print('RECORDS-BURN level='+mode+' distribution='+json.dumps({str(k):v for k,v in outcomes[mode].items()},sort_keys=True))
+        self.assertEqual(outputs['disabled'],outputs['default'])
+        self.assertEqual(outputs['default'],outputs['trace'])
+        self.assertEqual(outcomes['default'],outcomes['trace'])
+
     def test_generated_records_refusals(self):
         """Claim: Each single corruption of the same seeded records DAG retains its exact typed refusal at default and trace, and both metric distributions contain nineteen refusals and no errors.
         ´claim:discipline:generated-records-refusals-retain-outcomes´

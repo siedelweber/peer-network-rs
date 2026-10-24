@@ -37,3 +37,7 @@ required-features = ["test-support"]
 
 [lints]
 workspace = true
+
+[[example]]
+name = "burn_observation"
+required-features = ["test-support"]

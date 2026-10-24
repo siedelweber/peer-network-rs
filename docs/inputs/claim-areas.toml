@@ -274,3 +274,10 @@ area = "ledger"
 stake = "Revaluing a consummated charge at a later price erases its original debit vintage."
 register = "RECORDS::sec:ledger:area-ledger"
 contract = "RECORDS::sec:ledger:area-ledger"
+
+[[rows]]
+owner = "RECORDS"
+area = "burn"
+stake = "Omitted disclosures or repaired marker sets can fabricate readiness, move destruction between addresses, or count one destruction more than once."
+register = "RECORDS::sec:burn:area-burn"
+contract = "RECORDS::sec:burn:area-burn"

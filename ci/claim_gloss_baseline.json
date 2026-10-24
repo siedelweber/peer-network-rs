@@ -859,6 +859,16 @@
     "pn-records::public::numerics::family_width_premise": "",
     "pn-verification::conformance::numeric_cases": "",
     "pn-verification::properties::numeric_coordinates": "",
-    "ci::test_observe_runtime.Processes.test_numeric_entry": ""
+    "ci::test_observe_runtime.Processes.test_numeric_entry": "",
+    "pn-records::conformance::burn_cases": "",
+    "pn-records::properties::marker_recognition": "",
+    "pn-records::public::burn::required_disclosures": "",
+    "pn-records::public::burn::initial_and_identity": "",
+    "pn-records::public::burn::policy_encodings": "",
+    "pn-records::public::burn::history_dependence": "",
+    "pn-records::public::burn::alias_deduplication": "",
+    "pn-verification::conformance::burn_cases": "",
+    "pn-verification::properties::marker_recognition": "",
+    "ci::test_observe_runtime.Processes.test_burn_entry": ""
   }
 }

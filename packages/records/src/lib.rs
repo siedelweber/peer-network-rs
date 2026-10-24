@@ -9,6 +9,10 @@ pub mod numerics;
 /// (´def:declarations:constants-edition´)
 pub mod constants;
 
+/// Public burn disclosures and pure marker recognition, without snapshot derivation.
+/// (´def:burn:carriers´)
+pub mod burn;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
