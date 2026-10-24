@@ -10,6 +10,16 @@ import threading
 import unittest
 
 
+def reconcile_publication(status, captured):
+    """The one reserved write may finish around the synchronous cutoff status."""
+    if status['in_flight_records'] not in (0,1):
+        raise AssertionError('invalid in-flight count')
+    if not status['delivered_records'] <= captured <= status['delivered_records']+status['in_flight_records']:
+        raise AssertionError('captured records outside cutoff interval')
+    if status['attempted_records'] != sum(status[k] for k in ('delivered_records','in_flight_records','lost_records','undelivered_records')):
+        raise AssertionError('attempted records do not reconcile')
+
+
 def witness(argv, status, wall, stderr, injected=False):
     rows=[];records=[]
     for line in stderr.splitlines():
@@ -24,9 +34,7 @@ def witness(argv, status, wall, stderr, injected=False):
         print(prefix+f" delivered={row.get('delivered_records','unavailable')} lost={row.get('lost_records','unavailable')} observation_status="+json.dumps(row,sort_keys=True))
         if not injected and row.get('level')=='trace':
             delivered=sum(item.get('process_id')==row['process_id'] for item in records)-1
-            if row['in_flight_records'] not in (0,1):raise AssertionError('invalid in-flight count')
-            if row['delivered_records']+row['in_flight_records']!=delivered:raise AssertionError('trace publication count differs from captured records')
-            if row['attempted_records']!=row['delivered_records']+row['in_flight_records']+row['lost_records']+row['undelivered_records']:raise AssertionError('attempted records do not reconcile')
+            reconcile_publication(row,delivered)
         if not injected and row.get('level')=='trace' and row.get('lost_records',0)+row.get('undelivered_records',0)>0:
             from devperf import report_loss
             from harness import source_id
@@ -109,6 +117,21 @@ def distribution(summary):
 
 
 class Processes(unittest.TestCase):
+    def test_cutoff_capture_interval(self):
+        """Claim: With one reserved write at cutoff, either capture endpoint reconciles while missing completed records, excess captures, multiple reservations and inconsistent attempted totals refuse; without a reservation the interval collapses to equality.
+        ´claim:discipline:cutoff-capture-respects-single-reservation´
+        ´test:integration:test-cutoff-capture-interval´
+        """
+        status=dict(delivered_records=4,in_flight_records=1,lost_records=2,undelivered_records=3,attempted_records=10)
+        for captured in (4,5):reconcile_publication(status,captured)
+        for captured in (3,6):
+            with self.assertRaises(AssertionError):reconcile_publication(status,captured)
+        for changed in (status|{'in_flight_records':2},status|{'attempted_records':9}):
+            with self.assertRaises(AssertionError):reconcile_publication(changed,4)
+        complete=status|{'in_flight_records':0,'attempted_records':9}
+        reconcile_publication(complete,4)
+        with self.assertRaises(AssertionError):reconcile_publication(complete,5)
+
     def test_numeric_entry(self):
         """Claim: Exact numeric charge and three typed refusals retain identical stdout and exit across disabled, default and trace observation; default and trace count the same numeric outcomes, trace retains public coordinate content, and immutable value reads introduce no operations.
         ´claim:discipline:numeric-carriers-are-observed-without-changing-values´
@@ -244,7 +267,7 @@ class Processes(unittest.TestCase):
             self.assertEqual(instruments[stem+'assembly_steps']['counter'],4)
             self.assertEqual(summary['lost_updates'],0)
             status=next(row for row in rows if row.get('kind')=='observation_status')
-            self.assertEqual(status['delivered_records']+status['in_flight_records'],len(rows)-1)
+            reconcile_publication(status,len(rows)-1)
             self.assertEqual(status['attempted_records'],status['delivered_records']+status['in_flight_records']+status['lost_records']+status['undelivered_records'])
             self.assertEqual(status['lost_records'],0)
             if mode=='default':self.assertFalse(any(row.get('kind')=='span_envelope' for row in rows))
@@ -328,13 +351,13 @@ class Processes(unittest.TestCase):
                     self.assertFalse(any(row.get('kind') in ('trace','span_envelope') for row in rows))
                     status=next(row for row in rows if row.get('kind')=='observation_status')
                     self.assertEqual(status['lost_records'],0)
-                    self.assertEqual(status['delivered_records']+status['in_flight_records'],len(rows)-1)
+                    reconcile_publication(status,len(rows)-1)
                     self.assertEqual(status['attempted_records'],status['delivered_records']+status['in_flight_records']+status['lost_records']+status['undelivered_records'])
                     self.assertFalse(objects.exists())
                 else:
                     self.assertTrue(any(row.get('kind')=='span_envelope' for row in rows))
                     status=next(row for row in rows if row.get('kind')=='observation_status')
-                    self.assertEqual(status['delivered_records']+status['in_flight_records'],len(rows)-1)
+                    reconcile_publication(status,len(rows)-1)
                     self.assertEqual(status['attempted_records'],status['delivered_records']+status['in_flight_records']+status['lost_records']+status['undelivered_records'])
                     self.assertEqual(status['lost_records'],0)
                     self.assertTrue(all(value==0 for value in status['loss_causes'].values()))

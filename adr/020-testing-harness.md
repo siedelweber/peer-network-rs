@@ -105,7 +105,7 @@
 | foundation-benchmarks | active | integration | pn-interchange-rust | fast | 2 |
 | ci::test_claims | active | unit | ci-python | fast | 23 |
 | ci::test_observe | active | unit | ci-python | fast | 13 |
-| ci::test_observe_runtime | active | integration | ci-python | fast | 7 |
+| ci::test_observe_runtime | active | integration | ci-python | fast | 8 |
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
 | ci::test_linter_entry | active | integration | ci-python | fast | 16 |
 | pn-records | active | unit | pn-records-rust | fast | 4 |

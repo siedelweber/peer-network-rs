@@ -1856,6 +1856,14 @@
       "before": "",
       "after": "Claim: A valid burn history and two invalid histories retain identical outputs at disabled, default and trace levels; all twenty-four carrier and declaration boundaries are counted, two recognition refusals remain refusals, and trace preserves the public evidence.",
       "review": "Read the declaration binding assertions and runtime path: the fixed family must resolve at genesis, identity and edition must agree, and missing or late declarations refuse. Runtime accounting includes declaration validation and selection; the verifier remains a fixture."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_cutoff_capture_interval",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:cutoff-capture-respects-single-reservation",
+      "before": "",
+      "after": "Claim: With one reserved write at cutoff, either capture endpoint reconciles while missing completed records, excess captures, multiple reservations and inconsistent attempted totals refuse; without a reservation the interval collapses to equality.",
+      "review": "Read each injected status and capture count: both endpoints pass for one reservation, counts outside the interval fail, and no reservation requires equality. Attempted totals still reconcile independently. This checks the reporter contract, not transport completion."
     }
   ]
 }

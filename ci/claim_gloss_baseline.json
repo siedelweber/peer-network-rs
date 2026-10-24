@@ -874,6 +874,7 @@
     "pn-records::public::burn::invalid_candidate_prefix": "",
     "pn-records::public::burn::competing_candidates": "",
     "pn-records::public::burn::isolated_recognition_premises": "",
-    "pn-records::public::burn::policy_declaration_binding": ""
+    "pn-records::public::burn::policy_declaration_binding": "",
+    "ci::test_observe_runtime.Processes.test_cutoff_capture_interval": ""
   }
 }

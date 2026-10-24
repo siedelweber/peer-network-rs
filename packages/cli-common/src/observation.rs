@@ -573,7 +573,9 @@ impl Observation {
         // declared 64 MiB queue: one second plus one second per charged MiB.
         // The deadline bounds waiting for queued and in-flight publication.
         // Completion accounting never holds its lock across transport I/O;
-        // one reserved publication at cutoff is reported as in-flight, separately
+        // A reservation can acquire the transport after status; capture lies between
+        // completed deliveries and completed deliveries plus that reservation.
+        // One reserved publication at cutoff is reported as in-flight, separately
         // from queued undelivered records. Shipped records and final status
         // share stderr and its write lock; the final write can block there.
         let charged = self.queued_bytes.load(Ordering::Relaxed);

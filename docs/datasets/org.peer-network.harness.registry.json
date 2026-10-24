@@ -3009,6 +3009,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_observe_runtime.Processes.test_cutoff_capture_interval",
         "ci::test_observe_runtime.Processes.test_burn_entry",
         "ci::test_observe_runtime.Processes.test_numeric_entry",
         "ci::test_observe_runtime.Processes.test_generated_records_refusals",
