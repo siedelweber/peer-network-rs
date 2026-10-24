@@ -2603,6 +2603,18 @@
       "premises": "The current adopted register and shared interchange implementation, under each requirement row's narrower recorded premises.",
       "realizers": [],
       "status": "scoped-supported"
+    },
+    {
+      "claims": [],
+      "closing_condition": "Pass rule:storage:first-commit-evidence with reviewed source/configuration-matched results before enabling persistence.",
+      "closing_step": "Bite 2 storage integration admission before persistence",
+      "hold": "ROOT::open:design:secret-integrations",
+      "missing": "All eight first-commit evidence items, including secret-preserving TLS and SCRAM, retained-state review, real PostgreSQL negative leakage and protocol witnesses.",
+      "name": "ROOT::dec:storage:secret-shim",
+      "owner": "Storage implementer and independent integration reviewer",
+      "path": "adr/015-durable-storage.md",
+      "realizers": [],
+      "status": "held"
     }
   ]
 }

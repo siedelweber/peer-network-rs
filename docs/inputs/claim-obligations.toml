@@ -2068,3 +2068,15 @@ closing_step = "Foundation close, current declared configuration"
 closing_condition = "Passing current-source requirement witnesses."
 premises = "The current adopted register and shared interchange implementation, under each requirement row's narrower recorded premises."
 evidence_paragraph = "EXECWRAP::amend:foundation:requirement-admissions"
+
+[[rows]]
+name = "ROOT::dec:storage:secret-shim"
+path = "adr/015-durable-storage.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:design:secret-integrations"
+owner = "Storage implementer and independent integration reviewer"
+missing = "All eight first-commit evidence items, including secret-preserving TLS and SCRAM, retained-state review, real PostgreSQL negative leakage and protocol witnesses."
+closing_condition = "Pass rule:storage:first-commit-evidence with reviewed source/configuration-matched results before enabling persistence."
+closing_step = "Bite 2 storage integration admission before persistence"
