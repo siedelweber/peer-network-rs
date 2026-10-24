@@ -2667,6 +2667,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-testkit::tests::property_configuration",
         "pn-testkit::tests::replay_and_shrink",
         "pn-testkit::tests::duplicate_roster",
         "pn-testkit::tests::generator_vector"

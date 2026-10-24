@@ -660,7 +660,7 @@ level = "unit"
 implementation = "pn-testkit-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-testkit::tests::replay_and_shrink", "pn-testkit::tests::duplicate_roster", "pn-testkit::tests::generator_vector"]
+cases = ["pn-testkit::tests::property_configuration", "pn-testkit::tests::replay_and_shrink", "pn-testkit::tests::duplicate_roster", "pn-testkit::tests::generator_vector"]
 
 [[rows]]
 kind = "suite"

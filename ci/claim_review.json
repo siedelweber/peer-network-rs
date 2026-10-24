@@ -1568,6 +1568,14 @@
       "before": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt existing content is refused rather than trusted.",
       "after": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from fresh written bytes rather than trusted, without file or directory synchronization or a durability promise.",
       "review": "Read the exact assertions: digest reuse and corrupt-object replacement remain the predicates; the witness promises no artifact durability."
+    },
+    {
+      "operation": "pn-testkit::tests::property_configuration",
+      "path": "packages/testkit/src/lib.rs",
+      "claim": "TESTKIT::claim:testkit:property-configuration-follows-environment",
+      "before": "",
+      "after": "Claim: A fresh process reads an alternate declared case count, seed, algorithm and shrink limits, and executes exactly that many successful cases, so recorded configuration cannot silently diverge from the runner.",
+      "review": "Read the exact assertions: fresh-process alternate configuration and 321 successful cases distinguish the hard-coded former defaults."
     }
   ]
 }

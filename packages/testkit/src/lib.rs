@@ -10,18 +10,14 @@ use std::time::{Duration, Instant};
 /// (´def:testkit:property-config´)
 pub use proptest;
 
-/// Bounded replayable properties with proptest's value-tree shrinking.
-/// The gate supplies source-derived `PROPTEST_RNG_SEED`, cases and algorithm;
-/// local callers inherit the same environment interface. There is no clock timeout.
+/// Replayable properties using proptest's environment-reading default.
+///
+/// The gate supplies the seed, cases, algorithm, fork, timeout and shrink limits;
+/// local callers use that same environment interface. Only the corpus is replaced.
 /// (´def:testkit:property-config´)
 #[must_use]
 pub fn property_config(corpus: &'static str) -> proptest::test_runner::Config {
     proptest::test_runner::Config {
-        cases: 256,
-        fork: false,
-        timeout: 0,
-        max_shrink_time: 0,
-        max_shrink_iters: u32::MAX,
         failure_persistence: Some(Box::new(proptest::test_runner::FileFailurePersistence::Direct(corpus))),
         ..proptest::test_runner::Config::default()
     }
@@ -152,6 +148,53 @@ impl FaultPlan {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Claim: A fresh process reads an alternate declared case count, seed, algorithm and shrink limits, and executes exactly that many successful cases, so recorded configuration cannot silently diverge from the runner.
+    /// ´claim:testkit:property-configuration-follows-environment´
+    /// ´test:unit:property-configuration´
+    #[test]
+    fn property_configuration() {
+        if std::env::var_os("PN_TEST_PROPERTY_CONFIGURATION").is_none() {
+            let mut command = std::process::Command::new(std::env::current_exe().unwrap());
+            command.args(["--exact", "tests::property_configuration", "--nocapture"]);
+            for (key, _) in std::env::vars_os() {
+                if key.to_string_lossy().starts_with("PROPTEST_") {
+                    command.env_remove(key);
+                }
+            }
+            command.env("PN_TEST_PROPERTY_CONFIGURATION", "child");
+            for (key, value) in [
+                ("PROPTEST_CASES", "321"),
+                ("PROPTEST_RNG_SEED", "17"),
+                ("PROPTEST_RNG_ALGORITHM", "xs"),
+                ("PROPTEST_FORK", "false"),
+                ("PROPTEST_TIMEOUT", "0"),
+                ("PROPTEST_MAX_SHRINK_TIME", "0"),
+                ("PROPTEST_MAX_SHRINK_ITERS", "17"),
+            ] {
+                command.env(key, value);
+            }
+            assert!(command.status().unwrap().success());
+            return;
+        }
+        let mut config = property_config("unused-property-corpus.txt");
+        assert_eq!(config.cases, 321);
+        assert_eq!(config.rng_seed, proptest::test_runner::RngSeed::Fixed(17));
+        assert_eq!(config.rng_algorithm, proptest::test_runner::RngAlgorithm::XorShift);
+        assert!(!config.fork);
+        assert_eq!(config.timeout, 0);
+        assert_eq!(config.max_shrink_time, 0);
+        assert_eq!(config.max_shrink_iters, 17);
+        config.failure_persistence = None;
+        let count = std::cell::Cell::new(0);
+        proptest::test_runner::TestRunner::new(config)
+            .run(&(0_u8..10), |_| {
+                count.set(count.get() + 1);
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(count.get(), 321);
+    }
 
     /// Claim: Repeating a fixed seed returns the same deliberately failing integer shrunk to seven, proving replay and minimization without a timed oracle.
     /// ´claim:testkit:recorded-seed-replays-a-shrunk-failure´
