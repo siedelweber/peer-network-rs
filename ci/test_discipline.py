@@ -108,6 +108,35 @@ class HashCitations(unittest.TestCase):
         with self.assertRaises(ValueError):
             establish(Path.cwd(), rule)
 
+        # The repository-history family uses real commits, including a present
+        # object outside HEAD ancestry; no private review reference is needed.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            def git(*arguments):
+                started = time.monotonic()
+                result = subprocess.run(["git", "-c", "commit.gpgsign=false", *arguments], cwd=root,
+                                        check=True, capture_output=True, text=True)
+                print(f"hash fixture git {arguments[0]} wall={time.monotonic()-started:.6f}s")
+                return result.stdout.strip()
+            git("init")
+            git("config", "user.name", "Fixture")
+            git("config", "user.email", "fixture@example.invalid")
+            git("commit", "--allow-empty", "-m", "Initial fixture")
+            ancestor = git("rev-parse", "HEAD")
+            git("commit", "--allow-empty", "-m", "Detached admission witness")
+            unreachable = git("rev-parse", "HEAD")
+            git("reset", "--hard", ancestor)
+            rule = {"reader": "ancestor-commit", "establishment": "resolvable", "commit": ancestor}
+            check = establish(root, rule)
+            self.assertTrue(check(ancestor, ancestor))
+            self.assertFalse(check(unreachable, unreachable))
+            rule["commit"] = unreachable
+            with self.assertRaisesRegex(ValueError, "not reachable from HEAD"):
+                establish(root, rule)
+            rule["commit"] = ancestor[:7]
+            with self.assertRaisesRegex(ValueError, "full commit identity"):
+                establish(root, rule)
+
     def table(self):
         return {
             "namespace": "org.peer-network.ci.hash-citations",

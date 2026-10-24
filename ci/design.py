@@ -54,7 +54,7 @@ def validate():
         raise ValueError('inventory label census')
     if not (len(constants) == 542 and len({row['id'] for row in constants}) == 542):
         raise ValueError('constants id census')
-    for name, pin in [('inventory', ADDED_INVENTORY_PIN), ('constants', REFRESHED_CONSTANTS_PIN), ('questions', RELEASE_QUESTIONS_PIN)]:
+    for name, pin in [('inventory', CURRENT_INVENTORY_PIN), ('constants', REFRESHED_CONSTANTS_PIN), ('questions', RELEASE_QUESTIONS_PIN)]:
         selection = release_projection(name, data(name))
         if not selection:
             raise ValueError(f'{name}: empty pin selection')
@@ -161,7 +161,7 @@ def validate():
 
 
 PAPER_TAG = 'network-v0.28.0'
-ADDED_INVENTORY_PIN = '10a059f41c999573c3106b7b3a2a3c63f8d6cd94be128ddeffc0d805e3f7f32c'
+CURRENT_INVENTORY_PIN = '10a059f41c999573c3106b7b3a2a3c63f8d6cd94be128ddeffc0d805e3f7f32c'
 REFRESHED_CONSTANTS_PIN = '5d7d3a91e9cb9d3d689232a0b4e2436404ed16e2ea39ebcfc5f6e6b02d0c5213'
 RELEASE_QUESTIONS_PIN = '4eb895aa88847c3daba16f3677f36a786f7b0f42531ca8f4e87004b32b1eb940'
 

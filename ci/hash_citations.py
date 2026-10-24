@@ -5,6 +5,8 @@ import fnmatch
 import pathlib
 import re
 import tomllib
+import subprocess
+import time
 
 
 # Short bare words need digits or an identity context; explicit literals and full
@@ -79,6 +81,16 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == "ancestor-commit" and standing == "resolvable":
+        commit = rule["commit"]
+        if not re.fullmatch(r"[0-9a-f]{40}", commit):
+            raise ValueError("hash citations: admitted import requires a full commit identity")
+        started = time.monotonic()
+        history = subprocess.run(["git", "rev-list", "HEAD"], cwd=root, capture_output=True, text=True)
+        print(f"hash citations git rev-list wall={time.monotonic()-started:.6f}s status={history.returncode}")
+        if history.returncode or commit not in history.stdout.splitlines():
+            raise ValueError("hash citations: admitted import is not reachable from HEAD")
+        return lambda value, _line: value == commit
     if kind == "public-git" and standing == "resolvable":
         locator = rule["locator"]
         commit = rule["commit"]
