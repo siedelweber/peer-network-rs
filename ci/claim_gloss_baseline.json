@@ -885,6 +885,7 @@
     "pn-records::public::burn::late_deployment_announcement": "",
     "pn-records::public::burn::late_deployment_effect": "",
     "pn-records::public::burn::policy_publication_binding": "",
-    "pn-records::public::burn::policy_open_placement_binding": ""
+    "pn-records::public::burn::policy_open_placement_binding": "",
+    "pn-records::public::burn::successor_position": ""
   }
 }

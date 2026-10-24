@@ -612,3 +612,24 @@ fn copied_marker_names() {
         }
     }
 }
+
+/// Claim: With an otherwise valid disclosure under either candidate rule, a successor placed before its named predecessor refuses Succession and retains exactly the preceding prefix; presentation order cannot repair it.
+/// ´claim:burn:successors-follow-predecessor-positions´
+/// ´test:integration:successor-position´
+#[test]
+fn successor_position() {
+    use pn_records::burn::CandidateRule;
+    for rule in [CandidateRule::UniquePerIndex, CandidateRule::FirstValidInHistoryOrder] {
+        let mut case = fixtures::generate(&[]);
+        case.policy.candidate_rule = rule;
+        let valid = fixtures::recognize(case.clone()).unwrap();
+        assert!(valid.first_refusal().is_none());
+        let prefix = valid.markers()[..2].to_vec();
+        case.history.markers[2].history_position = 5;
+        let refused = fixtures::recognize(case.clone()).unwrap();
+        assert_eq!(refused.markers(), prefix);
+        assert_eq!(refused.first_refusal().unwrap().cause, BurnError::Succession);
+        case.history.markers.reverse();
+        assert_eq!(fixtures::recognize(case).unwrap(), refused);
+    }
+}

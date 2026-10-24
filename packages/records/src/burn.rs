@@ -642,6 +642,7 @@ fn recognize_candidate(
     if let Some(previous) = previous {
         if previous.identity.index.checked_add(1) != Some(marker.index)
             || marker.predecessor != Some(previous.identity.history_position)
+            || marker.history_position <= previous.identity.history_position
             || marker.initial_snapshot.is_some()
         {
             return Err(BurnError::Succession);
