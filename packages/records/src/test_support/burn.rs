@@ -150,7 +150,7 @@ pub fn generate(words: &[u64]) -> BurnCase {
 /// Execute the same public validation/recognition path used by a future host.
 /// (´def:burn:test-support´)
 /// # Errors
-/// Returns the exact publication, evidence or recognition refusal without repair.
+/// Returns publication or evidence validation errors; successful validation returns the recognized prefix and its first candidate refusal without repair.
 pub fn recognize(case: BurnCase) -> Result<RecognizedMarkers, BurnError> {
     let burn = validate_burn(case.burn)?;
     let policy = validate_policy(case.policy, &burn)?;
@@ -189,6 +189,13 @@ pub const CORRUPTIONS: &[&str] = &[
     "missing-opening",
     "ambiguous-opening",
     "invalid-opening",
+    "initial-index",
+    "predecessor-name",
+    "successor-snapshot",
+    "policy-identity",
+    "policy-sequence",
+    "burn-unit",
+    "unexplained-operator",
 ];
 
 /// Switch the complete set to the fixture's public identity-commitment encoding.
@@ -229,6 +236,23 @@ pub fn corrupt(case: &mut BurnCase, name: &str) {
         "buffer" => case.policy.stability_buffer = 6,
         "wrong-profile" => case.policy.verification_profile = "foreign".into(),
         "duplicate-record" => case.history.records.push(case.history.records[0].clone()),
+        "initial-index" => {
+            for marker in &mut case.history.markers {
+                marker.index += 1;
+            }
+        }
+        "predecessor-name" => case.history.markers[2].predecessor = Some("foreign".into()),
+        "successor-snapshot" => case.history.markers[2].initial_snapshot = Some(BTreeMap::new()),
+        "policy-identity" => case.history.markers[2].policy_identity = "foreign".into(),
+        "policy-sequence" => case.history.markers[2].sequence = "foreign".into(),
+        "unexplained-operator" => case.burn.evidence.operator = Some(OperatorEvidence::Absent { explanation: " ".into() }),
+        "burn-unit" => {
+            let mut context = NumericContext::new(ExactLimits::default(), ComparisonLimits::new(100, 100)).unwrap();
+            let literal = context.literal("1").unwrap();
+            for amount in case.burn.amounts.values_mut() {
+                *amount = context.burn(&literal, "other-unit").unwrap();
+            }
+        }
         "initial" => case.history.markers[0].initial_snapshot = None,
         "skipped-index" => case.history.markers[2].index = 3,
         "duplicate-index" => case.history.markers[2].index = 1,

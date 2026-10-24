@@ -59,7 +59,7 @@ fn required_disclosures() {
     assert_eq!(validate_burn(bounded), Err(BurnError::Publication(Disclosure::Operator)));
 }
 
-/// Claim: Zero-index recognition requires the policy's initial name, no predecessor and empty acceptance and snapshot; immediate unique successors retain fixed policy and interpretation content rather than treating the name alone as identity.
+/// Claim: For an index-zero candidate, changing the initial name, predecessor, empty acceptance or empty snapshot refuses it; changing a valid successor's acceptance changes structural identity while its lookup name remains the same.
 /// ´claim:burn:markers-fix-initial-state-and-succession´
 /// ´test:integration:initial-and-identity´
 #[test]
@@ -125,10 +125,10 @@ fn history_dependence() {
     ] {
         let mut case = fixtures::generate(&[]);
         fixtures::corrupt(&mut case, name);
-        assert_eq!(
-            fixtures::recognize(case).unwrap().first_refusal().map(|f| &f.cause),
-            Some(&cause)
-        );
+        let result = fixtures::recognize(case).unwrap();
+        assert_eq!(result.first_refusal().map(|f| &f.cause), Some(&cause));
+        assert_eq!(result.markers().len(), 1);
+        assert_eq!(result.markers()[0].identity().name, "m0");
     }
     let base = fixtures::generate(&[]);
     let first = fixtures::recognize(base.clone()).unwrap();
@@ -225,4 +225,26 @@ fn competing_candidates() {
     assert_eq!(&fallback.markers()[..2], prefix);
     assert_eq!(fallback.markers()[2].identity().name, "other-m2");
     assert_eq!(fallback.first_refusal().unwrap().cause, BurnError::RegressedAcceptance);
+}
+
+/// Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor name, successor snapshot, policy identity and sequence, burn unit, and explained operator absence.
+/// ´claim:burn:isolated-premises-have-exact-refusals´
+/// ´test:integration:isolated-recognition-premises´
+#[test]
+fn isolated_recognition_premises() {
+    for (name, expected) in [
+        ("initial-index", BurnError::Initial),
+        ("predecessor-name", BurnError::Succession),
+        ("successor-snapshot", BurnError::Succession),
+        ("policy-identity", BurnError::HistoryPolicy),
+        ("policy-sequence", BurnError::HistoryPolicy),
+        ("burn-unit", BurnError::Units),
+        ("unexplained-operator", BurnError::Publication(Disclosure::Operator)),
+    ] {
+        let mut input = fixtures::generate(&[5]);
+        assert!(fixtures::recognize(input.clone()).unwrap().first_refusal().is_none());
+        fixtures::corrupt(&mut input, name);
+        let cause = fixtures::recognize(input).map_or_else(Some, |r| r.first_refusal().map(|f| f.cause.clone()));
+        assert_eq!(cause, Some(expected), "{name}");
+    }
 }

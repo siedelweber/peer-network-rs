@@ -1754,14 +1754,6 @@
       "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
     },
     {
-      "operation": "pn-records::public::burn::initial_and_identity",
-      "path": "packages/records/tests/public/burn.rs",
-      "claim": "RECORDS::claim:burn:markers-fix-initial-state-and-succession",
-      "before": "",
-      "after": "Claim: Zero-index recognition requires the policy's initial name, no predecessor and empty acceptance and snapshot; immediate unique successors retain fixed policy and interpretation content rather than treating the name alone as identity.",
-      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
-    },
-    {
       "operation": "pn-records::public::burn::policy_encodings",
       "path": "packages/records/tests/public/burn.rs",
       "claim": "RECORDS::claim:burn:public-openings-recover-complete-policy-sets",
@@ -1775,22 +1767,6 @@
       "claim": "RECORDS::claim:burn:destruction-aliases-retain-one-contribution-identity",
       "before": "",
       "after": "Claim: Consistent aliases accepted together or later retain one destruction representative with its original amount and address; changed alias attribution or amount refuses rather than contributing twice, without deriving an increment or snapshot.",
-      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
-    },
-    {
-      "operation": "pn-verification::conformance::burn_cases",
-      "path": "packages/verification/tests/conformance.rs",
-      "claim": "VERIFICATION::claim:verification:shared-marker-cases-preserve-recognition-contracts",
-      "before": "",
-      "after": "Claim: A valid three-marker history and every named single-premise corruption have their declared exact typed outcomes, preserving complete acceptance and one representative per consistent destruction alias through the public surface; fixture proofs do not establish chain validity.",
-      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
-    },
-    {
-      "operation": "pn-verification::properties::marker_recognition",
-      "path": "packages/verification/tests/properties.rs",
-      "claim": "VERIFICATION::claim:verification:generated-marker-corruptions-retain-typed-causes",
-      "before": "",
-      "after": "Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause in original and reversed presentation order under fixture proof verification.",
       "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
     },
     {
@@ -1815,7 +1791,7 @@
       "claim": "RECORDS::claim:burn:recognition-requires-one-complete-history",
       "before": "",
       "after": "Claim: A missing lineage member or predecessor stops recognition at the affected candidate, retaining earlier markers; a separately identified alternative history is checked against its own predecessors without cross-history acceptance bounds.",
-      "review": "Read the candidate-prefix assertions and exact causes: earlier markers remain equal to the valid fixture; candidate selection is policy-declared and history-order-sensitive only for competing candidates. The fixture verifier is not chain evidence."
+      "review": "Read both missing-lineage and missing-predecessor fixtures: each returns its exact cause and only m0, while the separate alternative history returns its own accepted sets. No cross-history containment or chain finality is asserted."
     },
     {
       "operation": "pn-records::public::burn::invalid_candidate_prefix",
@@ -1823,7 +1799,7 @@
       "claim": "RECORDS::claim:burn:invalid-candidates-preserve-recognized-predecessors",
       "before": "",
       "after": "Claim: Under either declared selection rule, an invalid last candidate preserves the two valid predecessors and reports its exact refusal; no dependent successor crosses the gap.",
-      "review": "Read the candidate-prefix assertions and exact causes: earlier markers remain equal to the valid fixture; candidate selection is policy-declared and history-order-sensitive only for competing candidates. The fixture verifier is not chain evidence."
+      "review": "Read the two policy iterations: an invalid alias accepted only at m2 leaves exactly the original m0/m1 objects and reports InvalidMember on m2; a dependent m3 is not returned."
     },
     {
       "operation": "pn-records::public::burn::competing_candidates",
@@ -1831,7 +1807,47 @@
       "claim": "RECORDS::claim:burn:declared-policy-selects-competing-candidates",
       "before": "",
       "after": "Claim: Competing candidates preserve earlier markers; the unique-index assumption stops before that index, while first-valid selection chooses in history order and retains the first rejection when a later competitor passes.",
+      "review": "Read unique-index refusal before m2, then first-valid selection in both competing history orders and fallback after RegressedAcceptance. Both retained predecessors are compared structurally; this is selection within one history, not cross-history ordering."
+    },
+    {
+      "operation": "pn-interchange::cddl::parse::tests::refuses_a_cut_marker_without_an_arrow",
+      "path": "packages/interchange/src/cddl/parse.rs",
+      "claim": "INTERCHANGE::claim:parse:a-cut-marker-needs-its-arrow",
+      "before": "Claim: A cut marker with no arrow behind it is refused.",
+      "after": "Claim: A cut marker with no arrow behind it is refused.",
       "review": "Read the candidate-prefix assertions and exact causes: earlier markers remain equal to the valid fixture; candidate selection is policy-declared and history-order-sensitive only for competing candidates. The fixture verifier is not chain evidence."
+    },
+    {
+      "operation": "pn-records::public::burn::isolated_recognition_premises",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:isolated-premises-have-exact-refusals",
+      "before": "",
+      "after": "Claim: Each newly isolated premise refuses with its own cause from an otherwise valid fixture: index origin, predecessor name, successor snapshot, policy identity and sequence, burn unit, and explained operator absence.",
+      "review": "Read all seven exact-cause pairs and their valid starting fixture. Shifting every index preserves consecutive spacing while breaking only zero origin; the other mutations isolate predecessor, successor snapshot, policy identity, sequence, sampled burn unit and blank operator absence. Each clause-deletion run made this witness fail."
+    },
+    {
+      "operation": "pn-verification::conformance::burn_cases",
+      "path": "packages/verification/tests/conformance.rs",
+      "claim": "VERIFICATION::claim:verification:shared-marker-cases-preserve-recognition-contracts",
+      "before": "",
+      "after": "Claim: The outer consumer derives each marker's accepted identities and destruction keys from the generated input, and its exact refusal from the changed premise rather than a shared cause table; original and reversed unique-index fixtures preserve those observations without asserting chain validity.",
+      "review": "Read burn_checks: accepted sets and destruction keys are derived for every marker from input carriers. The outer cause reader inspects the changed premise without a corruption-name lookup; the shared runner records a separate consumer result, not an independent implementation."
+    },
+    {
+      "operation": "pn-verification::properties::marker_recognition",
+      "path": "packages/verification/tests/properties.rs",
+      "claim": "VERIFICATION::claim:verification:generated-marker-corruptions-retain-typed-causes",
+      "before": "",
+      "after": "Claim: Under its consumer-qualified seed, the outer tier derives per-marker accepted sets and destruction keys from bounded generated inputs and the refusal cause from each altered premise; both unique-index presentations agree under fixture verification, without claiming an independent implementation.",
+      "review": "Read consumer-qualified configuration, inherited property limits and the outer input/premise oracle invoked for every generated valid and corrupted fixture. Reversal is checked under the unique-index premise; amounts and addresses vary but topology remains the declared three-marker fixture."
+    },
+    {
+      "operation": "pn-records::public::burn::initial_and_identity",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:markers-fix-initial-state-and-succession",
+      "before": "",
+      "after": "Claim: For an index-zero candidate, changing the initial name, predecessor, empty acceptance or empty snapshot refuses it; changing a valid successor's acceptance changes structural identity while its lookup name remains the same.",
+      "review": "Read four index-zero mutations: initial name, predecessor, acceptance and snapshot. Each refuses as Initial; changing a valid successor acceptance changes its structural identity without changing its lookup name. The zero-index check itself is covered by isolated_recognition_premises."
     }
   ]
 }

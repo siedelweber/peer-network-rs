@@ -50,7 +50,7 @@
         "burn-boundary",
         "final-state"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in carrier scope at bite 2 (pn-records); host recognition held for pn-host, replay reach held for pn-replay, corpus reach held for the bite-11 implementer",
       "suite": "burn"
     },
     {

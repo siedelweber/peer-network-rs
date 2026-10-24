@@ -170,6 +170,8 @@ pub trait PublicVerifier: std::fmt::Debug {
     /// Exact profile this implementation checks.
     fn profile(&self) -> &str;
     /// Verify genuine destruction, exact amount and original address from retained evidence.
+    /// Bind `destruction` to the destroyed object's unique canonical identity under this profile;
+    /// aliases of one destruction must never verify under distinct destruction identities.
     fn destruction(&self, record: &BurnRecord) -> bool;
     /// Verify a binding public opening of the complete member set, not just inclusion proofs.
     fn opening(&self, commitment: &[u8], opening: &Opening) -> bool;

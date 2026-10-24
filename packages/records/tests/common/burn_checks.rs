@@ -2,20 +2,23 @@ use pn_records::burn::{BurnError, Disclosure};
 use pn_records::test_support::burn;
 pub fn expected(name: &str) -> BurnError {
     match name {
-        "history-mix" | "policy-mix" => BurnError::HistoryPolicy,
+        "history-mix" | "policy-mix" | "policy-identity" | "policy-sequence" => BurnError::HistoryPolicy,
         "alias-address" | "alias-amount" => BurnError::InconsistentAlias,
-        "skipped-index" | "duplicate-index" | "lost-predecessor" => BurnError::Succession,
+        "skipped-index" | "duplicate-index" | "lost-predecessor" | "predecessor-name" | "successor-snapshot" => {
+            BurnError::Succession
+        }
         "late-policy" | "closed-placement" => BurnError::Policy,
         "missing-provenance" => BurnError::Publication(Disclosure::Provenance),
         "missing-finality" => BurnError::Publication(Disclosure::Finality),
         "missing-costs" => BurnError::Publication(Disclosure::RecordingCosts),
-        "missing-operator" => BurnError::Publication(Disclosure::Operator),
+        "missing-operator" | "unexplained-operator" => BurnError::Publication(Disclosure::Operator),
         "empty-bootstrap" => BurnError::Bootstrap,
+        "burn-unit" => BurnError::Units,
         "sample-gap" => BurnError::SampleCoverage,
         "buffer" => BurnError::Buffer,
         "wrong-profile" => BurnError::Verifier,
         "duplicate-record" => BurnError::RecordIdentity,
-        "initial" => BurnError::Initial,
+        "initial" | "initial-index" => BurnError::Initial,
         "lost-lineage" => BurnError::MissingLineage,
         "regressed-lineage" => BurnError::RegressedLineage,
         "regressed-acceptance" => BurnError::RegressedAcceptance,

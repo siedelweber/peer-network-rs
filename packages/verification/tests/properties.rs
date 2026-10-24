@@ -50,7 +50,7 @@ mod burn_checks;
 
 proptest! {
     #![proptest_config(configuration())]
-    /// Claim: Generated bounded amounts and opaque addresses preserve complete marker recognition and alias deduplication; each corruption starts from a valid case and refuses with the consumer's exact cause in original and reversed presentation order under fixture proof verification.
+    /// Claim: Under its consumer-qualified seed, the outer tier derives per-marker accepted sets and destruction keys from bounded generated inputs and the refusal cause from each altered premise; both unique-index presentations agree under fixture verification, without claiming an independent implementation.
     /// ´claim:verification:generated-marker-corruptions-retain-typed-causes´
     /// ´test:integration:marker-recognition´
     #[test]

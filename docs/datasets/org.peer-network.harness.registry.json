@@ -3092,6 +3092,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::public::burn::isolated_recognition_premises",
         "pn-records::public::burn::competing_candidates",
         "pn-records::public::burn::invalid_candidate_prefix",
         "pn-records::public::burn::alias_deduplication",
@@ -3373,6 +3374,13 @@
         "contract::records-burn-1::burn-records::missing-opening",
         "contract::records-burn-1::burn-records::ambiguous-opening",
         "contract::records-burn-1::burn-records::invalid-opening",
+        "contract::records-burn-1::burn-records::initial-index",
+        "contract::records-burn-1::burn-records::predecessor-name",
+        "contract::records-burn-1::burn-records::successor-snapshot",
+        "contract::records-burn-1::burn-records::policy-identity",
+        "contract::records-burn-1::burn-records::policy-sequence",
+        "contract::records-burn-1::burn-records::burn-unit",
+        "contract::records-burn-1::burn-records::unexplained-operator",
         "contract::records-burn-1::burn-records::valid"
       ],
       "claim": "claim:burn:shared-marker-cases-preserve-recognition-contracts",
@@ -3418,6 +3426,13 @@
         "contract::records-burn-1::burn-verification::missing-opening",
         "contract::records-burn-1::burn-verification::ambiguous-opening",
         "contract::records-burn-1::burn-verification::invalid-opening",
+        "contract::records-burn-1::burn-verification::initial-index",
+        "contract::records-burn-1::burn-verification::predecessor-name",
+        "contract::records-burn-1::burn-verification::successor-snapshot",
+        "contract::records-burn-1::burn-verification::policy-identity",
+        "contract::records-burn-1::burn-verification::policy-sequence",
+        "contract::records-burn-1::burn-verification::burn-unit",
+        "contract::records-burn-1::burn-verification::unexplained-operator",
         "contract::records-burn-1::burn-verification::valid"
       ],
       "claim": "claim:verification:shared-marker-cases-preserve-recognition-contracts",
