@@ -37,7 +37,7 @@
       "topic": "Exact ledger values"
     },
     {
-      "ambiguity": "Canonical numeric encoding, actor/support order, exact equality handling and a deterministic refinement policy are deployment obligations not yet concretely specified. (subsec:deployment:canonical-standing-encoding) (post:deployment:canonical-standing-publication) (frontier:canonical-standing-replay)",
+      "ambiguity": "Canonical numeric encoding, actor/support order, exact equality handling and a deterministic refinement policy are deployment obligations not yet concretely specified. (subsec:deployment:canonical-standing-encoding) (post:deployment:canonical-standing-publication) (cond:deployment:canonical-replay)",
       "class": "OWNER-CALL",
       "id": "Q04",
       "instruction": "JSON and rational endpoints are safe as explicitly provisional study choices only. Do not advertise them as the paper's canonical encoding or treat an equality-straddling interval as a passing comparison.",
@@ -196,7 +196,7 @@
       "topic": "Closed-cluster units"
     },
     {
-      "ambiguity": "The inverse-gain interim rule, one-boundary width dominance, step bound and hysteresis do not fully specify a single replayable update for every case. (def:epoch:safety-threshold) (frontier:floor-calibration) (rem:epoch:shared-burn-snapshot-rationale)",
+      "ambiguity": "The inverse-gain interim rule, one-boundary width dominance, step bound and hysteresis do not fully specify a single replayable update for every case. (def:epoch:safety-threshold) (cond:deployment:wall-calibration) (rem:epoch:shared-burn-snapshot-rationale)",
       "class": "DEFECT",
       "id": "Q20",
       "instruction": "Certify ``cond:epoch:safety-declared-floor`` against the declared floor's exact defining object: enclosure refinement or rejection for the exact ridge, exact comparison with $3/37$ where the representation permits it. The wall remains computed, subject to the host contract's enclosure discipline. Publish the representation and comparison procedure, preserve one consummated debit vintage per epoch, and keep the declaration fixed; a change is public and structural with regenerated evidence, never a host-policy choice.",
@@ -275,7 +275,7 @@
       "topic": "Emission aggregate fixture"
     },
     {
-      "ambiguity": "A fixture asserts that changing self-retention cannot improve own standing while the corresponding frontier treats manipulation as an open quantitative witness. (ver:standing:self-retention-manipulation) (frontier:self-retention-manipulation)",
+      "ambiguity": "A fixture asserts that changing self-retention cannot improve own standing while the corresponding frontier treats manipulation as an open quantitative witness. (ver:standing:self-retention-manipulation) (rem:epoch:artifact-activity-crowds-out-export)",
       "class": "DEFECT",
       "id": "Q28",
       "instruction": "Your bounded-case reading is safe once its inputs and allowed strategies are specified. Do not expose universal self-retention immunity as a proven protocol invariant.",
@@ -285,7 +285,7 @@
       "topic": "Self-retention guarantee"
     },
     {
-      "ambiguity": "The shared standing recipe retains stages and the depth-coverage target subtracts the same standing vector from itself. (subsec:verification:shared-fixture) (frontier:shared-standing-fixture) (frontier:depth-coverage)",
+      "ambiguity": "The shared standing recipe retains stages and the depth-coverage target subtracts the same standing vector from itself. (subsec:verification:shared-fixture) (ver:standing:conserved-equilibrium-enclosure) (ver:standing:depth-support-comparison)",
       "class": "DEFECT",
       "id": "Q29",
       "instruction": "Your end-to-end verification hold is safe. A current conserved fixture must compare independent implementations of the same declared inputs, not pass a tautological depth comparison.",
@@ -305,7 +305,7 @@
       "topic": "Raw Self reference data"
     },
     {
-      "ambiguity": "A calibration frontier allows inverse-temperature changes despite the locked beta constant and beta-dependent tensor formulas. (frontier:inverse-temperature-optimisation) (frontier:beta-sweep) (def:graph:sentiment-slice) (ax:epoch:thermodynamic-boundary)",
+      "ambiguity": "A calibration frontier allows inverse-temperature changes despite the locked beta constant and beta-dependent tensor formulas. (cond:deployment:parameter-comparisons) (cond:deployment:parameter-comparisons) (def:graph:sentiment-slice) (ax:epoch:thermodynamic-boundary)",
       "class": "DEFECT",
       "id": "Q31",
       "instruction": "Your locked-beta reading is safe. Do not expose the proposed sweep as a deployment override or assert beta-independent tensors.",
