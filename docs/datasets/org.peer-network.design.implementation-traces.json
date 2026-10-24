@@ -24,7 +24,7 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Exercise missing samples, depth, finality, provenance, denomination and terms, separate event costs, applicable operator proof or explained absence, and empty pre-opening capacity. Accept positive unit costs below one. Challenge nonempty genesis acceptance and opening credit from lineage alone, skipped or duplicate successors, changed policy, copied markers without lineage, unavailable openings, invalid or out-of-lineage acceptance, dropped predecessors, duplicate destruction aliases and changed addresses; include delayed acceptance and an empty accepted increment.",
+      "cases": "Exercise missing samples, history finality under the published settlement depth and assumptions, equality to pinned amounts at or below that depth, provenance, denomination and terms, separate event costs, applicable operator proof or explained absence, and empty pre-opening capacity. Accept positive unit costs below one. Challenge nonempty genesis acceptance and opening credit from lineage alone, skipped or duplicate successors, changed policy, copied markers without lineage, unavailable openings, invalid or out-of-lineage acceptance, dropped predecessors, duplicate destruction aliases and changed addresses; include delayed acceptance and an empty accepted increment.",
       "decision": "dec:design:burn-boundary",
       "fixture": "burn-disclosures",
       "hold": "External destruction and settlement assurance remain deployment obligations.",
@@ -256,7 +256,7 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references. Require marker policy identity and edition, lineage and interpretation, complete accepted sets and their verification evidence; reject an asserted total in their place.",
+      "cases": "Round-trip the complete package; reject duplicate keys, noncanonical bytes, missing sections and incomplete references. Require marker policy identity and edition, lineage and interpretation, accepted sets encoded as policy-selected lists or commitments with uniquely verifiable public openings; recover the entire set and verify every member against the policy and both acceptance bounds. Reject an asserted total or unavailable, ambiguous or invalid opening in their place.",
       "decision": "dec:design:publication",
       "fixture": "canonical-package-cases",
       "hold": "The encoding and infrastructure dependency are accepted; namespace assignment, complete CDDL theory and independent byte vectors remain required for canonical compatibility.",
@@ -274,7 +274,7 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "Mutate each package section, omit an act and alter a charged vintage, rung verdict or rounding disclosure. Mutate marker policy, predecessor, lineage, accepted sets or openings; independently derive first-acceptance increments and reject missing evidence rather than silently dropping records.",
+      "cases": "Mutate each package section, omit an act and alter a charged vintage, rung verdict or rounding disclosure. Recover equal accepted sets from list and commitment encodings under their declared policies. Mutate marker policy, predecessor, lineage, accepted sets or openings; independently derive first-acceptance increments and reject missing evidence rather than silently dropping records.",
       "decision": "dec:design:replay",
       "fixture": "reconstruction-mutations",
       "hold": "Cross-implementation agreement is held until an independent implementation runs the declared profile.",

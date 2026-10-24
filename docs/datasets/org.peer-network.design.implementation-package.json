@@ -37,7 +37,7 @@
       "name": "closure-policy"
     },
     {
-      "contents": "Formula and constant editions, deployment declaration, fixed pre-genesis marker policy identity and edition, recognized final marker and predecessors, settled lineage and fixed interpretation, complete accepted sets and public verification evidence, numerical procedure, interval and residual witnesses, rounding disclosures and required burn audit evidence including dimensioned unit cost and separate event costs.",
+      "contents": "Formula and constant editions, deployment declaration, fixed pre-genesis marker policy identity and edition, recognized final marker and predecessors, settled lineage and fixed interpretation, accepted sets in the marker policy-selected encoding (lists or commitments with uniquely verifiable public openings), with complete recovery and member verification against the policy and both acceptance bounds, numerical procedure, interval and residual witnesses, rounding disclosures and required burn audit evidence including dimensioned unit cost and separate event costs.",
       "key": 8,
       "name": "reproduction"
     }

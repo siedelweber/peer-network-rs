@@ -160,9 +160,9 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.27.0'
-ADDED_INVENTORY_PIN = '2d2c81f7fbd9795aac9f0bb4d1d88358e1572b6533f775aee7426857690c79e3'
-REFRESHED_CONSTANTS_PIN = '3d8fa9cfad18760fef98a21638f6b175c9f500917f6830b9457b2f0902b08899'
+PAPER_TAG = 'network-v0.27.1'
+ADDED_INVENTORY_PIN = '803478381070193042d559ff27f8f8c5828f2c082c0a20dc9ec691b6a7942b32'
+REFRESHED_CONSTANTS_PIN = '464f8d2d185c69d165aff0ade74dfcb61feee1f5d0dcca4a60ab36d7393615d4'
 RELEASE_QUESTIONS_PIN = 'f723ee5e56844b1d8e4fa6425a3152594034556bc3e5e6fb8f253ca852055f5c'
 
 
