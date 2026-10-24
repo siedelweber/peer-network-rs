@@ -88,6 +88,7 @@ class HostRuntime(unittest.TestCase):
             summary=next(row['metrics'] for row in rows if row['kind']=='metric_summary')
             host={key:value for key,value in distribution(summary).items() if key[0].startswith('host__')}
             self.assertGreater(sum(value for key,value in host.items() if key[0].endswith('started_operations')),0)
+            self.assertEqual(sum(value for key,value in host.items() if key[1]=='incomplete'),0)
             counts.append(host)
             public=[line for line in result.stdout.splitlines() if line.startswith(b'{')]
             self.assertEqual(len(public),1)
@@ -96,9 +97,27 @@ class HostRuntime(unittest.TestCase):
             self.assertEqual(record['store_link_case'],'host-secured')
             self.assertEqual(record['persistence'],'disabled')
             if level=='trace':
-                for public in ('public_result_sentinel_731','SELECT','division by zero'):
+                for public in ('public_result_sentinel_731','public_row_'*3,'SELECT','division by zero'):
                     self.assertIn(public,text)
             print(f'HOST-RUNTIME level={level} status=0 wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]} host_counts='+json.dumps({str(k):v for k,v in host.items()},sort_keys=True))
         self.assertEqual(outputs[0],outputs[1])
         self.assertEqual(counts[0],counts[1])
         print(flush=True)
+
+    def test_sensitive_result_control(self):
+        """Claim: A test-only metadata query reaches the expanded DataRow scan and is rejected at the private role sentinel, so an outbound bind value cannot satisfy the result-path leakage control.
+        ´claim:discipline:result-row-control-detects-private-metadata´
+        ´test:integration:test-sensitive-result-control´
+        """
+        target=Path('.lane/host-test-binary.txt').read_text().strip()
+        env=dict(os.environ,PN_OBSERVE_LEVEL='trace',PN_HOST_SENSITIVE_ROW_CONTROL='1')
+        started=time.monotonic()
+        result=subprocess.run([target,'transport_evidence::public_transport','--exact','--nocapture'],env=env,capture_output=True,timeout=60,check=False)
+        wall=time.monotonic()-started
+        self.assertEqual(result.returncode,0)
+        rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
+        text=json.dumps(rows,ensure_ascii=False)
+        config=json.loads((Path(os.environ['PN_HOST_TEST_ROOT'])/'unix.json').read_text())
+        role=config['user']
+        self.assertTrue(private_occurs(role,text))
+        print(f'HOST-SENSITIVE-CONTROL status=detected path=DataRow wall_seconds={wall:.6f}')

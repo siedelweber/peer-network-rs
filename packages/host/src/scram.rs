@@ -9,6 +9,8 @@ use hmac::{Hmac, KeyInit, Mac};
 use secrecy::{ExposeSecret, ExposeSecretMut, SecretBox};
 use sha2::{Digest, Sha256};
 
+pub(crate) const ITERATIONS: std::ops::RangeInclusive<u32> = 4096..=600_000;
+
 fn encode(bytes: &[u8]) -> Result<Buffer, Refusal> {
     let mut result = Buffer::new();
     let length = STANDARD
@@ -97,7 +99,7 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
     let iterations = std::str::from_utf8(attribute(server_first, b'i')?)
         .ok()
         .and_then(|v| v.parse::<u32>().ok())
-        .filter(|v| (4096..=100_000).contains(v))
+        .filter(|v| ITERATIONS.contains(v))
         .ok_or(Refusal::ScramIterations)?;
     let mut salted = SecretBox::new(Box::new([0; 32]));
     pbkdf2::pbkdf2::<Hmac<Sha256>>(config.field(4), salt.bytes(), iterations, salted.expose_secret_mut())
@@ -148,4 +150,37 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
         return Err(Refusal::Protocol);
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    /// Claim: The SCRAM cost campaign derives the same public fixture key twice at each declared work factor; timing is reported without changing authentication or a test verdict.
+    /// ´claim:host:scram-work-factor-cost-is-nonbinding´
+    /// ´test:unit:derivation-cost´
+    #[test]
+    fn derivation_cost() {
+        use secrecy::{ExposeSecret as _, ExposeSecretMut as _, SecretBox};
+        for iterations in [4096, 100_000, 600_000] {
+            let mut first = SecretBox::new(Box::new([0_u8; 32]));
+            let mut second = SecretBox::new(Box::new([0_u8; 32]));
+            let started = std::time::Instant::now();
+            pbkdf2::pbkdf2::<hmac::Hmac<sha2::Sha256>>(
+                b"public-fixture-password",
+                b"public-fixture-salt",
+                iterations,
+                first.expose_secret_mut(),
+            )
+            .unwrap();
+            let elapsed = started.elapsed().as_secs_f64();
+            pbkdf2::pbkdf2::<hmac::Hmac<sha2::Sha256>>(
+                b"public-fixture-password",
+                b"public-fixture-salt",
+                iterations,
+                second.expose_secret_mut(),
+            )
+            .unwrap();
+            assert_eq!(first.expose_secret(), second.expose_secret());
+            cli_common::emit(&serde_json::json!({"kind":"scram_cost", "iterations":iterations, "wall_seconds":elapsed})).unwrap();
+        }
+    }
 }

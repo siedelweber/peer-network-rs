@@ -213,7 +213,7 @@ fn scram_bound_refusals() {
             ("offer", Refusal::UnsupportedAuthentication),
             ("error", Refusal::ServerAuthentication),
         ] {
-            let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 42104))
+            let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 42105))
                 .await
                 .unwrap();
             let server = tokio::spawn(async move {
@@ -244,7 +244,7 @@ fn scram_bound_refusals() {
                     continuation.extend_from_slice(b",s=cHVibGlj,i=");
                     continuation.extend_from_slice(match case {
                         "low" => b"4095",
-                        "high" => b"100001",
+                        "high" => b"600001",
                         _ => b"4096",
                     });
                     if case == "format" {
@@ -255,7 +255,7 @@ fn scram_bound_refusals() {
                 let mut response = [0];
                 assert_eq!(stream.read(&mut response).await.unwrap(), 0, "refusal must precede proof");
             });
-            let config = Configuration::acquire(Some("host-secured"), &mut fixture(42104).as_slice()).unwrap();
+            let config = Configuration::acquire(Some("host-secured"), &mut fixture(42105).as_slice()).unwrap();
             let result = tokio::time::timeout(std::time::Duration::from_secs(10), Session::connect(config))
                 .await
                 .unwrap();
@@ -281,7 +281,7 @@ fn acquisition_bound_refusals() {
         Configuration::acquire(Some("host-secured"), &mut vec![b' '; 1_048_576].as_slice()).unwrap_err(),
         Refusal::RepresentationLimit
     );
-    let text = String::from_utf8(fixture(42104))
+    let text = String::from_utf8(fixture(42105))
         .unwrap()
         .replace("private_password_fixture", "private\\u0001password");
     assert_eq!(

@@ -194,9 +194,13 @@ fn instrumentation(attrs: &[Attribute], body: &Block) -> Result<Option<Value>, E
                     if let Meta::NameValue(value) = field
                         && let Some(name) = value.path.get_ident()
                         && let Expr::Lit(literal) = value.value
-                        && let syn::Lit::Str(text) = literal.lit
                     {
-                        if fields.insert(name.to_string(), json!(text.value())).is_some() {
+                        let field_value = match literal.lit {
+                            syn::Lit::Str(text) => json!(text.value()),
+                            syn::Lit::Bool(value) if name == "asynchronous" => json!(value.value),
+                            _ => return Err("unreviewed span field expression".into()),
+                        };
+                        if fields.insert(name.to_string(), field_value).is_some() {
                             return Err("duplicate span field".into());
                         }
                     } else {

@@ -2,6 +2,17 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 [[rows]]
+family = "policy-recipe-vectors"
+group = "first-party identities"
+measures = "SHA-256 of the permanent marker-policy/v1 framed fixtures"
+producer = "ci/policy_vectors.py"
+establishment = "recomputable"
+reader = "policy-vectors"
+source = "packages/records/tests/public/policy-digest-v1.json"
+definition = "The tracked independent reader frames seven UTF-8 strings with unsigned big-endian 64-bit byte lengths, three unsigned big-endian 64-bit values, the placement byte and both discriminants after the permanent domain separator; all six rows must match."
+paths = ["packages/records/tests/public/policy-digest-v1.json"]
+
+[[rows]]
 family = "artifact-address-vector"
 group = "first-party observation"
 measures = "SHA-256 of the fixed UTF-8 JSON string payload"

@@ -763,7 +763,7 @@
     "ci::test_observe.Admission.test_semantic_review": "Claim: Full-recording, secret-flow and exposure assessments remain separately reviewer-confirmed and bound to the inspected body; absent negative evidence or a changed body refuses mechanical admission.",
     "ci::test_observe.Admission.test_generated_mapping": "Claim: A newly generated entry point cannot disappear from the census join or be admitted by copying its syntax without an expansion review and enclosing boundaries.",
     "ci::test_observe_runtime.Processes.test_four_mode_results": "Claim: Disabled, enabled, selected-out and locally failing-export executions preserve the four-package workload's exact JSON stdout and exit, including canonical bytes, acceptance, document checks and raw child NUL and invalid UTF-8 bytes.",
-    "ci::test_observe_syntax.Syntax.test_parsed_boundaries": "Claim: The Rust parser follows cfg and distinguishes an uninstrumented body, a retained scoped guard, an abandoned guard and an argument-skipping attribute from actual syntax; a generator remains visible for separate admission.",
+    "ci::test_observe_syntax.Syntax.test_parsed_boundaries": "",
     "cli-common::observation::tests::private_configuration": "Claim: A private connection aggregate stays secret-owned during acquisition and a failed parse, including its host and numeric port; diagnostics retain only its marker, and SecretBox zeroizes the entire aggregate before its destructor observes it.",
     "cli-common::observation::tests::async_cancellation": "Claim: Dropping a polled but unfinished asynchronous operation closes its metering as cancelled, while no completion result is fabricated from the clock.",
     "cli-common::observation::tests::public_content_encoding": "Claim: Public byte representations preserve UTF-8, NUL and invalid UTF-8 exactly, and structural values retain constructors, field keys and escaped string contents rather than nesting Debug text.",
@@ -913,6 +913,9 @@
     "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory": "",
     "pn-records::public::burn::policy_digest_vectors": "",
     "cli-common::observation::tests::artifact_digest_vector": "",
-    "ci::test_discipline.HashCitations.test_artifact_vector": ""
+    "ci::test_discipline.HashCitations.test_artifact_vector": "",
+    "pn-host::postgresql::outbound_refusal": "",
+    "pn-host::scram::tests::derivation_cost": "",
+    "ci::test_host_runtime.HostRuntime.test_sensitive_result_control": ""
   }
 }

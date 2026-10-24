@@ -43,6 +43,14 @@ class Syntax(unittest.TestCase):
             self.assertEqual(result.returncode,1)
             self.assertEqual(result.stdout,b'')
             self.assertIn(b'argument skip',result.stderr)
+            result=parse('#[tracing::instrument(fields(asynchronous = true), ret)] pub async fn run() {}')
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+            self.assertIs(json.loads(result.stdout)['functions'][0]['boundary']['asynchronous'],True)
+            for fields in ('operation = true', 'asynchronous = setting()', 'asynchronous = true, asynchronous = false'):
+                result=parse('#[tracing::instrument(fields('+fields+'), ret)] pub async fn run() {}')
+                self.assertEqual(result.returncode,1)
+                self.assertEqual(result.stdout,b'')
+                self.assertIn(b'duplicate span field' if fields.count('asynchronous') == 2 else b'unreviewed span field expression',result.stderr)
 
 
 if __name__=='__main__':unittest.main()

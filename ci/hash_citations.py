@@ -83,6 +83,10 @@ def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == "policy-vectors" and standing == "recomputable":
+        from policy_vectors import check
+        values = check(relative_file(root, rule["source"]))
+        return lambda value, _line: value in values
     if kind == "artifact-vector" and standing == "recomputable":
         vector = json.loads(relative_file(root, rule["source"]).read_text())
         if (vector.get("recipe") != "json-string-utf8" or not isinstance(vector.get("payload"), str)

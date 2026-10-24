@@ -12,7 +12,7 @@ fn configuration(name: &str) -> Configuration {
 
 /// Claim: PostgreSQL 19 RC 1 authenticates through SCRAM over both host-secured transports, while the driver sees public placeholders and preserves public extended-protocol values and SQL errors.
 /// ´claim:host:real-service-preserves-public-statements´
-/// ´test:integration:real-transports´
+/// ´test:unit:real-transports´
 #[test]
 fn real_transports() {
     runtime().block_on(async {
@@ -28,7 +28,7 @@ fn real_transports() {
             tokio::io::AsyncReadExt::read_to_end(&mut capture, &mut cancellation).await.unwrap();
             assert_eq!(cancellation, [0,0,0,16,4,210,22,46,0,0,0,1,0,0,0,2]);
             let version: String = session.client().query_one("SELECT version()", &[]).await.unwrap().get(0);
-            assert!(version.starts_with("PostgreSQL 19rc1"), "unsupported test server");
+            assert!(version.starts_with(&format!("PostgreSQL {}", include_str!("../postgresql-target.txt").trim())), "unsupported test server");
             assert_eq!(session.client().query_one("SHOW TimeZone", &[]).await.unwrap().get::<_, String>(0), "UTC");
             assert_eq!(session.client().query_one("SHOW DateStyle", &[]).await.unwrap().get::<_, String>(0), "ISO, MDY");
             let row = session.client().query_one("SELECT $1::text, $2::int4", &[&"public_parameter_sentinel", &73_i32]).await.unwrap();
@@ -46,7 +46,7 @@ fn real_transports() {
 
 /// Claim: Wrong passwords, absent roles and absent databases fail inside the secret-owning authentication boundary, with no server echo in Debug, Display or source chains.
 /// ´claim:host:real-authentication-errors-stay-bounded´
-/// ´test:integration:real-authentication-refusals´
+/// ´test:unit:real-authentication-refusals´
 #[test]
 fn real_authentication_refusals() {
     runtime().block_on(async {
@@ -71,7 +71,7 @@ fn real_authentication_refusals() {
 
 /// Claim: The real backend capability cancels a running query while the driver's cancellation token remains a public placeholder and the same connection can recover.
 /// ´claim:host:cancellation-keeps-the-backend-capability-private´
-/// ´test:integration:real-cancellation´
+/// ´test:unit:real-cancellation´
 #[test]
 fn real_cancellation() {
     runtime().block_on(async {
@@ -104,7 +104,7 @@ fn real_cancellation() {
 
 /// Claim: Post-authentication errors and notices echoing the authenticated private role are retained whole as typed private data before the upstream driver can construct a printable database diagnostic.
 /// ´claim:host:server-echo-is-private-before-driver-errors´
-/// ´test:integration:private-server-echo´
+/// ´test:unit:private-server-echo´
 #[test]
 fn private_server_echo() {
     runtime().block_on(async {
@@ -125,7 +125,7 @@ fn private_server_echo() {
 
 /// Claim: Two real repeatable-read transactions preserve the public serialization-failure cause through the shim and permit rollback, rather than hiding transaction conflicts as connection loss.
 /// ´claim:host:serialization-conflicts-retain-the-public-cause´
-/// ´test:integration:serialization-conflict´
+/// ´test:unit:serialization-conflict´
 #[test]
 fn serialization_conflict() {
     runtime().block_on(async {
@@ -148,7 +148,7 @@ fn serialization_conflict() {
 
 /// Claim: Losing the real backend closes the driver without a retained private diagnostic string, and dropping a session aborts the forwarding tasks while a query is pending.
 /// ´claim:host:connection-loss-and-drop-retain-no-private-errors´
-/// ´test:integration:connection-loss-and-drop´
+/// ´test:unit:connection-loss-and-drop´
 #[test]
 fn connection_loss_and_drop() {
     runtime().block_on(async {
@@ -176,7 +176,7 @@ fn connection_loss_and_drop() {
 
 /// Claim: Both host-secured transports preserve every ordered row in a 4,096-row public result; elapsed time is reported as performance evidence and never changes the correctness verdict.
 /// ´claim:host:multirow-relay-preserves-public-results´
-/// ´test:integration:relay-throughput´
+/// ´test:unit:relay-throughput´
 #[test]
 fn relay_throughput() {
     runtime().block_on(async {
@@ -199,5 +199,46 @@ fn relay_throughput() {
             }
             cli_common::emit(&serde_json::json!({"kind":"host_throughput", "transport":transport, "rows":4096, "wall_seconds":elapsed, "rows_per_second":4096.0/elapsed})).unwrap();
         }
+    });
+}
+
+/// Claim: An oversized outbound driver frame closes the connection promptly, retains its bounded refusal and releases the real backend with its open transaction, so an idle inbound relay cannot wedge storage.
+/// ´claim:host:outbound-refusal-releases-the-session´
+/// ´test:unit:outbound-refusal´
+#[test]
+fn outbound_refusal() {
+    runtime().block_on(async {
+        let session = Session::connect(configuration("unix.json")).await.unwrap();
+        let checker = Session::connect(configuration("tcp.json")).await.unwrap();
+        let pid: i32 = session
+            .client()
+            .query_one("SELECT pg_backend_pid()", &[])
+            .await
+            .unwrap()
+            .get(0);
+        session.client().batch_execute("BEGIN").await.unwrap();
+        let statement = " ".repeat(1_048_576);
+        let error = tokio::time::timeout(std::time::Duration::from_secs(3), session.client().batch_execute(&statement))
+            .await
+            .expect("outbound refusal must close the driver")
+            .unwrap_err();
+        assert!(error.is_closed());
+        assert_eq!(session.last_refusal(), Some(crate::Refusal::RepresentationLimit));
+        tokio::time::timeout(std::time::Duration::from_secs(3), async {
+            loop {
+                let present: bool = checker
+                    .client()
+                    .query_one("SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid=$1)", &[&pid])
+                    .await
+                    .unwrap()
+                    .get(0);
+                if !present {
+                    break;
+                }
+                tokio::task::yield_now().await;
+            }
+        })
+        .await
+        .expect("refused connection must release its server session");
     });
 }

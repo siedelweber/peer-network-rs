@@ -669,8 +669,16 @@ fn policy_publication_recipe() {
 #[test]
 fn policy_digest_vectors() {
     use pn_records::burn::{CandidateRule, PolicyInput};
-    let rows: Vec<(usize, usize, [u8; 32])> = serde_json::from_str(include_str!("policy-digest-v1.json")).unwrap();
+    let rows: Vec<(usize, usize, String)> = serde_json::from_str(include_str!("policy-digest-v1.json")).unwrap();
     for (encoding, candidate_rule, expected) in rows {
+        assert_eq!(expected.len(), 64);
+        let expected: Vec<u8> = expected
+            .as_bytes()
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|pair| u8::from_str_radix(std::str::from_utf8(pair).unwrap(), 16).unwrap())
+            .collect();
         let policy = PolicyInput {
             identity: "marker/policy".into(),
             edition: "edition-7".into(),
@@ -691,8 +699,8 @@ fn policy_digest_vectors() {
             candidate_rule: [CandidateRule::FirstValidInHistoryOrder, CandidateRule::UniquePerIndex][candidate_rule],
         };
         assert_eq!(
-            pn_records::constants::marker_policy_digest(&policy),
-            expected,
+            pn_records::constants::marker_policy_digest(&policy).as_slice(),
+            expected.as_slice(),
             "{encoding}/{candidate_rule}"
         );
     }

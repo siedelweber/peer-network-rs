@@ -1987,7 +1987,7 @@
     },
     {
       "operation": "pn-host::postgresql::real_transports",
-      "path": "packages/host/tests/postgresql.rs",
+      "path": "packages/host/src/postgresql.rs",
       "claim": "HOST::claim:host:real-service-preserves-public-statements",
       "before": "",
       "after": "Claim: PostgreSQL 19 RC 1 authenticates through SCRAM over both host-secured transports, while the driver sees public placeholders and preserves public extended-protocol values and SQL errors.",
@@ -1995,7 +1995,7 @@
     },
     {
       "operation": "pn-host::postgresql::real_authentication_refusals",
-      "path": "packages/host/tests/postgresql.rs",
+      "path": "packages/host/src/postgresql.rs",
       "claim": "HOST::claim:host:real-authentication-errors-stay-bounded",
       "before": "",
       "after": "Claim: Wrong passwords, absent roles and absent databases fail inside the secret-owning authentication boundary, with no server echo in Debug, Display or source chains.",
@@ -2003,7 +2003,7 @@
     },
     {
       "operation": "pn-host::postgresql::real_cancellation",
-      "path": "packages/host/tests/postgresql.rs",
+      "path": "packages/host/src/postgresql.rs",
       "claim": "HOST::claim:host:cancellation-keeps-the-backend-capability-private",
       "before": "",
       "after": "Claim: The real backend capability cancels a running query while the driver's cancellation token remains a public placeholder and the same connection can recover.",
@@ -2011,7 +2011,7 @@
     },
     {
       "operation": "pn-host::postgresql::private_server_echo",
-      "path": "packages/host/tests/postgresql.rs",
+      "path": "packages/host/src/postgresql.rs",
       "claim": "HOST::claim:host:server-echo-is-private-before-driver-errors",
       "before": "",
       "after": "Claim: Post-authentication errors and notices echoing the authenticated private role are retained whole as typed private data before the upstream driver can construct a printable database diagnostic.",
@@ -2019,7 +2019,7 @@
     },
     {
       "operation": "pn-host::postgresql::serialization_conflict",
-      "path": "packages/host/tests/postgresql.rs",
+      "path": "packages/host/src/postgresql.rs",
       "claim": "HOST::claim:host:serialization-conflicts-retain-the-public-cause",
       "before": "",
       "after": "Claim: Two real repeatable-read transactions preserve the public serialization-failure cause through the shim and permit rollback, rather than hiding transaction conflicts as connection loss.",
@@ -2027,7 +2027,7 @@
     },
     {
       "operation": "pn-host::postgresql::connection_loss_and_drop",
-      "path": "packages/host/tests/postgresql.rs",
+      "path": "packages/host/src/postgresql.rs",
       "claim": "HOST::claim:host:connection-loss-and-drop-retain-no-private-errors",
       "before": "",
       "after": "Claim: Losing the real backend closes the driver without a retained private diagnostic string, and dropping a session aborts the forwarding tasks while a query is pending.",
@@ -2123,7 +2123,7 @@
     },
     {
       "operation": "pn-host::postgresql::relay_throughput",
-      "path": "packages/host/tests/postgresql.rs",
+      "path": "packages/host/src/postgresql.rs",
       "claim": "HOST::claim:host:multirow-relay-preserves-public-results",
       "before": "",
       "after": "Claim: Both host-secured transports preserve every ordered row in a 4,096-row public result; elapsed time is reported as performance evidence and never changes the correctness verdict.",
@@ -2131,7 +2131,7 @@
     },
     {
       "operation": "pn-host::transport_evidence::public_transport",
-      "path": "packages/host/tests/transport_evidence.rs",
+      "path": "packages/host/src/transport_evidence.rs",
       "claim": "HOST::claim:host:fixture-statements-preserve-the-public-result-boundary",
       "before": "",
       "after": "Claim: The closed fixture statement set returns only declared public values while private service metadata remains unreachable through the production API; its observation mode cannot change its result.",
@@ -2184,6 +2184,38 @@
       "before": "",
       "after": "The artifact address family recomputes its declared payload, refusing a substituted digest, changed payload or unknown recipe rather than accepting any identity-shaped literal.",
       "review": "Read the positive digest resolution and the three independently mutated digest, payload and recipe cases. Each must be refused by the family reader; no library-formatted expected digest is used by the Rust witness."
+    },
+    {
+      "operation": "pn-host::postgresql::outbound_refusal",
+      "path": "packages/host/src/postgresql.rs",
+      "claim": "HOST::claim:host:outbound-refusal-releases-the-session",
+      "before": "",
+      "after": "Claim: An oversized outbound driver frame closes the connection promptly, retains its bounded refusal and releases the real backend with its open transaction, so an idle inbound relay cannot wedge storage.",
+      "review": "Read the oversized SimpleQuery and open transaction arrangement: the exact closed error, stored RepresentationLimit and absence of the backend PID jointly witness both stream and session release."
+    },
+    {
+      "operation": "pn-host::scram::tests::derivation_cost",
+      "path": "packages/host/src/scram.rs",
+      "claim": "HOST::claim:host:scram-work-factor-cost-is-nonbinding",
+      "before": "",
+      "after": "Claim: The SCRAM cost campaign derives the same public fixture key twice at each declared work factor; timing is reported without changing authentication or a test verdict.",
+      "review": "Read both derivations for each fixed public work factor: equal output is asserted; wall time is emitted and never compared to a correctness threshold."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_sensitive_result_control",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:result-row-control-detects-private-metadata",
+      "before": "",
+      "after": "Claim: A test-only metadata query reaches the expanded DataRow scan and is rejected at the private role sentinel, so an outbound bind value cannot satisfy the result-path leakage control.",
+      "review": "Read the opt-in current_user query and expanded trace scan: the private role must actually be found, proving sensitivity to a DataRow-only value."
+    },
+    {
+      "operation": "ci::test_observe_syntax.Syntax.test_parsed_boundaries",
+      "before": "",
+      "path": "ci/test_observe_syntax.py",
+      "claim": "ROOT::claim:discipline:coverage-recognition-comes-from-rust-syntax",
+      "after": "Claim: The Rust parser follows cfg and distinguishes an uninstrumented body, a retained scoped guard, an abandoned guard and an argument-skipping attribute from actual syntax; a generator remains visible for separate admission.",
+      "review": "Read the parser subprocess fixtures: asynchronous true remains a JSON boolean; another boolean field, a call expression, duplicate fields and skipped arguments each refuse."
     }
   ]
 }

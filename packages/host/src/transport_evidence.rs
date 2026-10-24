@@ -4,7 +4,7 @@ use serde_json::json;
 
 /// Claim: The closed fixture statement set returns only declared public values while private service metadata remains unreachable through the production API; its observation mode cannot change its result.
 /// ´claim:host:fixture-statements-preserve-the-public-result-boundary´
-/// ´test:integration:public-transport´
+/// ´test:unit:public-transport´
 #[test]
 fn public_transport() {
     let guard = cli_common::observation::bootstrap(true, false, tracing::Level::WARN).unwrap();
@@ -38,6 +38,17 @@ async fn exercise() -> Result<(), Refusal> {
         .await
         .map_err(|_| Refusal::Protocol)?;
     assert_eq!(row.get::<_, String>(0), "public_result_sentinel_731");
+    let computed: String = session
+        .client()
+        .query_one("SELECT repeat('public_row_',3)", &[])
+        .await
+        .unwrap()
+        .get(0);
+    assert_eq!(computed, "public_row_".repeat(3));
+    if std::env::var_os("PN_HOST_SENSITIVE_ROW_CONTROL").is_some() {
+        let private: String = session.client().query_one("SELECT current_user", &[]).await.unwrap().get(0);
+        assert_ne!(private.len(), 0);
+    }
     let error = session.client().query_one("SELECT 1 / 0", &[]).await.unwrap_err();
     assert_eq!(error.as_db_error().unwrap().message(), "division by zero");
     // An error is returned before its ReadyForQuery may be consumed. Complete a

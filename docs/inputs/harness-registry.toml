@@ -1075,11 +1075,11 @@ kind = "suite"
 name = "pn-host::postgresql"
 status = "active"
 runner = "nextest"
-level = "integration"
+level = "unit"
 implementation = "pn-host-postgresql"
 tier = "service"
 budget = "pure-suite"
-cases = ["pn-host::postgresql::real_transports", "pn-host::postgresql::real_authentication_refusals", "pn-host::postgresql::real_cancellation", "pn-host::postgresql::private_server_echo", "pn-host::postgresql::serialization_conflict", "pn-host::postgresql::connection_loss_and_drop", "pn-host::postgresql::relay_throughput"]
+cases = ["pn-host::postgresql::real_transports", "pn-host::postgresql::real_authentication_refusals", "pn-host::postgresql::real_cancellation", "pn-host::postgresql::private_server_echo", "pn-host::postgresql::serialization_conflict", "pn-host::postgresql::connection_loss_and_drop", "pn-host::postgresql::relay_throughput", "pn-host::postgresql::outbound_refusal"]
 
 [[rows]]
 kind = "suite"
@@ -1090,7 +1090,7 @@ level = "integration"
 implementation = "pn-host-postgresql"
 tier = "service"
 budget = "pure-suite"
-cases = ["ci::test_host_runtime.HostRuntime.test_required_postgresql_directory", "ci::test_host_runtime.HostRuntime.test_dependency_pins", "ci::test_host_runtime.HostRuntime.test_public_transport"]
+cases = ["ci::test_host_runtime.HostRuntime.test_required_postgresql_directory", "ci::test_host_runtime.HostRuntime.test_dependency_pins", "ci::test_host_runtime.HostRuntime.test_public_transport", "ci::test_host_runtime.HostRuntime.test_sensitive_result_control"]
 
 [[rows]]
 kind = "suite"
@@ -1112,14 +1112,14 @@ level = "unit"
 implementation = "pn-host-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-host::config::tests::secret_json_grammar", "pn-host::tests::wire_filter_boundary", "pn-host::tests::relay_refusals"]
+cases = ["pn-host::config::tests::secret_json_grammar", "pn-host::tests::wire_filter_boundary", "pn-host::tests::relay_refusals", "pn-host::scram::tests::derivation_cost"]
 
 [[rows]]
 kind = "suite"
 name = "pn-host::transport-evidence"
 status = "active"
 runner = "nextest"
-level = "integration"
+level = "unit"
 implementation = "pn-host-postgresql"
 tier = "service"
 budget = "pure-suite"

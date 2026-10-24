@@ -23,3 +23,7 @@
 **Signature (Cancel)** · `sig:host:cancel` Cancel through the real secret-owned capability on a new shim transport.
 
 **Signature (Private diagnostics)** · `sig:host:private-diagnostics` Take quarantined whole diagnostics without exposing their private bytes.
+
+**Signature (Last relay refusal)** · `sig:host:last-refusal` Read the last fieldless relay cause. Either relay direction ending closes both driver-stream halves and releases the server session; storage observes end of stream and may inspect this bounded cause without retaining a driver diagnostic.
+
+**Amendment (Measured authentication work)** · `amend:host:scram-ceiling` The iteration range in (`impl:host:evidence-limits`) is superseded by 4,096 through 600,000 inclusive, under (`[ROOT-amend:storage:measured-scram-ceiling]`).

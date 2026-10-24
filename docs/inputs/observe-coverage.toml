@@ -27,8 +27,8 @@ generators = 11
 
 [[rows]]
 name = "pn-host"
-operations = 21
-instrumented = 7
+operations = 22
+instrumented = 8
 exceptions = 14
 helpers = 0
 generators = 1

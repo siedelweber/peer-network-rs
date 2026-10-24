@@ -125,6 +125,7 @@ pub struct Session {
     config: Arc<Configuration>,
     backend_key: Arc<Mutex<Option<Buffer>>>,
     diagnostics: Arc<Mutex<Vec<PrivateDiagnostic>>>,
+    last_refusal: Arc<Mutex<Option<Refusal>>>,
     tasks: Vec<tokio::task::JoinHandle<()>>,
 }
 impl fmt::Debug for Session {
@@ -159,7 +160,8 @@ impl Session {
             execution_owner = "HOST",
             claim_owner = "ROOT",
             claim_label = "sig:design:storage",
-            source_item = "Session::connect"
+            source_item = "Session::connect",
+            asynchronous = true
         ),
         ret
     )]
@@ -182,6 +184,7 @@ impl Session {
         scram::login(&mut socket, &config).await?;
         let key = Arc::new(Mutex::new(None));
         let diagnostics = Arc::new(Mutex::new(Vec::new()));
+        let last_refusal = Arc::new(Mutex::new(None));
         let mut startup = Vec::new();
         loop {
             let frame = wire::read(&mut socket).await?;
@@ -201,8 +204,9 @@ impl Session {
         let (driver, shim) = tokio::io::duplex(65_536);
         let bridge_key = Arc::clone(&key);
         let bridge_diagnostics = Arc::clone(&diagnostics);
+        let bridge_refusal = Arc::clone(&last_refusal);
         let bridge = tokio::spawn(async move {
-            let _result = relay(Relay {
+            let result = relay(Relay {
                 shim,
                 socket,
                 startup,
@@ -210,6 +214,9 @@ impl Session {
                 diagnostics: bridge_diagnostics,
             })
             .await;
+            if let Err(cause) = result {
+                *bridge_refusal.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = Some(cause);
+            }
         });
         let mut placeholder = tokio_postgres::Config::new();
         placeholder
@@ -229,6 +236,7 @@ impl Session {
             config: Arc::new(config),
             backend_key: key,
             diagnostics,
+            last_refusal,
             tasks: vec![bridge, connection],
         })
     }
@@ -252,7 +260,8 @@ impl Session {
             execution_owner = "HOST",
             claim_owner = "ROOT",
             claim_label = "sig:design:storage",
-            source_item = "Session::cancel"
+            source_item = "Session::cancel",
+            asynchronous = true
         ),
         ret
     )]
@@ -289,6 +298,16 @@ impl Session {
         operation.finish(&result);
         result
     }
+
+    /// Read the last bounded relay refusal without exposing a driver diagnostic.
+    /// (´sig:host:last-refusal´)
+    #[must_use]
+    pub fn last_refusal(&self) -> Option<Refusal> {
+        let operation = cli_common::observation::scope("HOST", "sig:design:storage", "Session::last_refusal", &self);
+        let result = *self.last_refusal.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        operation.finish(&result);
+        result
+    }
 }
 
 async fn forward(
@@ -319,11 +338,11 @@ async fn forward(
     wire::send(&mut shim, b'Z', b"I").await?;
     let (client_read, mut client_write) = tokio::io::split(shim);
     let (mut server_read, server_write) = tokio::io::split(socket);
-    let outbound = ForwardingTask(tokio::spawn(relay_outbound(Outbound {
+    let mut outbound = ForwardingTask(tokio::spawn(relay_outbound(Outbound {
         client: client_read,
         server: server_write,
     })));
-    let result = async {
+    let inbound = async {
         loop {
             let frame = wire::read(&mut server_read).await?;
             if let Some(frame) = filter(frame, &bridge_key, &bridge_diagnostics)? {
@@ -331,9 +350,24 @@ async fn forward(
                 wire::send(&mut client_write, frame.kind, frame.payload.bytes()).await?;
             }
         }
-    }
+    };
+    let mut inbound = std::pin::pin!(inbound);
+    let mut outbound_finished = false;
+    let result = std::future::poll_fn(|cx| {
+        use std::future::Future as _;
+        if let std::task::Poll::Ready(result) = std::pin::Pin::new(&mut outbound.0).poll(cx) {
+            outbound_finished = true;
+            return std::task::Poll::Ready(result.unwrap_or(Err(Refusal::Transport)));
+        }
+        inbound.as_mut().poll(cx)
+    })
     .await;
-    drop(outbound);
+    if !outbound_finished {
+        outbound.0.abort();
+        let _completion = (&mut outbound.0).await;
+    }
+    // Both stream halves are dropped before returning. An outbound refusal
+    // cannot leave the inbound half waiting on an idle server transaction.
     result
 }
 
@@ -370,7 +404,8 @@ impl fmt::Debug for Outbound {
         claim_owner = "ROOT",
         claim_label = "sig:design:storage",
         source_item = "relay",
-        operation = "relay"
+        operation = "relay",
+        asynchronous = true
     ),
     ret
 )]
@@ -396,7 +431,8 @@ async fn relay(state: Relay) -> Result<(), Refusal> {
         claim_owner = "ROOT",
         claim_label = "sig:design:storage",
         source_item = "relay_outbound",
-        operation = "relay-outbound"
+        operation = "relay-outbound",
+        asynchronous = true
     ),
     ret
 )]
@@ -487,7 +523,7 @@ fn public_parameter(bytes: &[u8]) -> bool {
         b"scram_iterations" => std::str::from_utf8(value)
             .ok()
             .and_then(|value| value.parse::<u32>().ok())
-            .is_some_and(|value| (1..=100_000).contains(&value)),
+            .is_some_and(|value| scram::ITERATIONS.contains(&value)),
         b"integer_datetimes"
         | b"standard_conforming_strings"
         | b"is_superuser"
@@ -634,8 +670,6 @@ mod tests {
 }
 
 #[cfg(test)]
-#[path = "../tests/postgresql.rs"]
 mod postgresql;
 #[cfg(test)]
-#[path = "../tests/transport_evidence.rs"]
 mod transport_evidence;
