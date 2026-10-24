@@ -74,7 +74,10 @@ fn initial_and_identity() {
             2 => first.initial_snapshot = Some(case.burn.amounts.clone()),
             _ => first.name = "other".into(),
         }
-        assert_eq!(fixtures::recognize(case), Err(BurnError::Initial));
+        assert_eq!(
+            fixtures::recognize(case).unwrap().first_refusal().map(|f| &f.cause),
+            Some(&BurnError::Initial)
+        );
     }
     let original = fixtures::recognize(base.clone()).unwrap();
     let mut changed = base;
@@ -108,10 +111,10 @@ fn policy_encodings() {
     let mut pending = base;
     pending.history.markers.truncate(2);
     pending.history.records[1].evidence.clear();
-    assert!(fixtures::recognize(pending).is_ok());
+    assert!(fixtures::recognize(pending).unwrap().first_refusal().is_none());
 }
 
-/// Claim: Copied marker contents lose recognition when this history omits a lineage member or predecessor; a separately identified alternative history is checked against its own predecessors without cross-history acceptance bounds.
+/// Claim: A missing lineage member or predecessor stops recognition at the affected candidate, retaining earlier markers; a separately identified alternative history is checked against its own predecessors without cross-history acceptance bounds.
 /// ´claim:burn:recognition-requires-one-complete-history´
 /// ´test:integration:history-dependence´
 #[test]
@@ -122,7 +125,10 @@ fn history_dependence() {
     ] {
         let mut case = fixtures::generate(&[]);
         fixtures::corrupt(&mut case, name);
-        assert_eq!(fixtures::recognize(case), Err(cause));
+        assert_eq!(
+            fixtures::recognize(case).unwrap().first_refusal().map(|f| &f.cause),
+            Some(&cause)
+        );
     }
     let base = fixtures::generate(&[]);
     let first = fixtures::recognize(base.clone()).unwrap();
@@ -154,10 +160,69 @@ fn alias_deduplication() {
     for name in ["alias-address", "alias-amount"] {
         let mut bad = case.clone();
         fixtures::corrupt(&mut bad, name);
-        assert_eq!(fixtures::recognize(bad), Err(BurnError::InconsistentAlias));
+        assert_eq!(
+            fixtures::recognize(bad).unwrap().first_refusal().map(|f| &f.cause),
+            Some(&BurnError::InconsistentAlias)
+        );
     }
     let mut same = case;
     same.history.markers[1].lineage.insert("alias".into());
     same.history.markers[1].accepted = AcceptedSet::CompleteList(BTreeSet::from(["r0".into(), "alias".into()]));
     assert_eq!(fixtures::recognize(same).unwrap().markers()[1].destructions().len(), 1);
+}
+
+/// Claim: Under either declared selection rule, an invalid last candidate preserves the two valid predecessors and reports its exact refusal; no dependent successor crosses the gap.
+/// ´claim:burn:invalid-candidates-preserve-recognized-predecessors´
+/// ´test:integration:invalid-candidate-prefix´
+#[test]
+fn invalid_candidate_prefix() {
+    use pn_records::burn::CandidateRule;
+    for rule in [CandidateRule::UniquePerIndex, CandidateRule::FirstValidInHistoryOrder] {
+        let mut case = fixtures::generate(&[]);
+        case.policy.candidate_rule = rule;
+        let prefix = fixtures::recognize(case.clone()).unwrap().markers()[..2].to_vec();
+        case.history.records[2].evidence.clear();
+        let mut successor = case.history.markers[2].clone();
+        successor.name = "m3".into();
+        successor.index = 3;
+        successor.predecessor = Some("m2".into());
+        case.history.markers.push(successor);
+        let result = fixtures::recognize(case).unwrap();
+        assert_eq!(result.markers(), prefix);
+        let refusal = result.first_refusal().unwrap();
+        assert_eq!(refusal.candidate.as_ref().unwrap().name, "m2");
+        assert_eq!(refusal.cause, BurnError::InvalidMember);
+    }
+}
+
+/// Claim: Competing candidates preserve earlier markers; the unique-index assumption stops before that index, while first-valid selection chooses in history order and retains the first rejection when a later competitor passes.
+/// ´claim:burn:declared-policy-selects-competing-candidates´
+/// ´test:integration:competing-candidates´
+#[test]
+fn competing_candidates() {
+    use pn_records::burn::CandidateRule;
+    let base = fixtures::generate(&[]);
+    let prefix = fixtures::recognize(base.clone()).unwrap().markers()[..2].to_vec();
+    let mut competing = base.clone();
+    let mut other = competing.history.markers[2].clone();
+    other.name = "other-m2".into();
+    competing.history.markers.insert(2, other);
+    let unique = fixtures::recognize(competing.clone()).unwrap();
+    assert_eq!(unique.markers(), prefix);
+    assert_eq!(unique.first_refusal().unwrap().cause, BurnError::Succession);
+    competing.policy.candidate_rule = CandidateRule::FirstValidInHistoryOrder;
+    let first = fixtures::recognize(competing.clone()).unwrap();
+    assert_eq!(&first.markers()[..2], prefix);
+    assert_eq!(first.markers()[2].identity().name, "other-m2");
+    assert!(first.first_refusal().is_none());
+    competing.history.markers.swap(2, 3);
+    assert_eq!(
+        fixtures::recognize(competing.clone()).unwrap().markers()[2].identity().name,
+        "m2"
+    );
+    competing.history.markers[2].accepted = AcceptedSet::CompleteList(BTreeSet::from(["r1".into()]));
+    let fallback = fixtures::recognize(competing).unwrap();
+    assert_eq!(&fallback.markers()[..2], prefix);
+    assert_eq!(fallback.markers()[2].identity().name, "other-m2");
+    assert_eq!(fallback.first_refusal().unwrap().cause, BurnError::RegressedAcceptance);
 }

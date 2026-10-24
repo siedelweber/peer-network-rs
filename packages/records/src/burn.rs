@@ -70,6 +70,16 @@ pub enum Encoding {
     WholePrefixAcceptAll,
 }
 
+/// Deterministic identification among candidates at the same index.
+/// (´def:burn:marker-policy´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CandidateRule {
+    /// Try candidates in their disclosed history order, retaining the first that passes.
+    FirstValidInHistoryOrder,
+    /// A deployment promises one candidate per index; a violation stops at that index.
+    UniquePerIndex,
+}
+
 /// Immutable policy identity includes its edition and sequence, not merely its display name.
 /// (´def:burn:marker-policy´)
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -84,6 +94,7 @@ pub struct PolicyInput {
     pub placement_procedure: String,
     pub cadence: String,
     pub encoding: Encoding,
+    pub candidate_rule: CandidateRule,
     pub verification_profile: String,
     pub stability_buffer: u64,
 }
@@ -171,7 +182,7 @@ pub struct ValidatedMarkerHistory {
     input: HistoryInput,
     policy: ValidatedPolicy,
     verified: BTreeSet<String>,
-    openings: BTreeMap<String, Result<BTreeSet<String>, BurnError>>,
+    openings: Vec<Result<BTreeSet<String>, BurnError>>,
 }
 
 /// Recognized sequence, retaining complete marker identities and deduplicated destructions.
@@ -181,6 +192,16 @@ pub struct ValidatedMarkerHistory {
 pub struct RecognizedMarkers {
     history: String,
     markers: Vec<RecognizedMarker>,
+    first_refusal: Option<CandidateRefusal>,
+}
+
+/// First rejected candidate in index order, with ties in disclosed history order.
+/// An empty history has no candidate. A later valid competitor may still extend the prefix.
+/// (´def:burn:recognition´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CandidateRefusal {
+    pub candidate: Option<Marker>,
+    pub cause: BurnError,
 }
 
 /// A complete accepted record set and one representative per destruction.
@@ -416,7 +437,7 @@ fn recover(marker: &Marker, policy: &PolicyInput, verifier: &impl PublicVerifier
 /// Rejected unaccepted records remain in lineage; recognition refuses only their acceptance.
 /// (´def:burn:verification-boundary´)
 /// # Errors
-/// Refuses a mismatched verifier or ambiguous record/marker identity; proof failures are retained.
+/// Refuses a mismatched verifier or ambiguous record identity; candidate and proof failures are retained.
 #[tracing::instrument(
     name = "sig:design:records",
     fields(
@@ -454,16 +475,11 @@ pub fn validate_marker_history(
                 proofs.insert(record.identity.clone());
             }
         }
-        let mut openings = BTreeMap::new();
-        for marker in &input.markers {
-            if marker.name.is_empty()
-                || openings
-                    .insert(marker.name.clone(), recover(marker, &policy.input, verifier))
-                    .is_some()
-            {
-                return Err(BurnError::Succession);
-            }
-        }
+        let openings = input
+            .markers
+            .iter()
+            .map(|marker| recover(marker, &policy.input, verifier))
+            .collect();
         Ok(ValidatedMarkerHistory {
             input,
             policy: policy.clone(),
@@ -480,8 +496,7 @@ pub fn validate_marker_history(
 /// Recognize M1–M3 and deduplicate consistent destruction aliases for M4, within one history.
 /// Never computes the first-accepted increment or repairs an invalid complete accepted set.
 /// (´def:burn:recognition´)
-/// # Errors
-/// Refuses invalid succession, missing lineage, bad acceptance/openings and inconsistent members.
+/// Returns the recognized prefix and its first candidate refusal, without discarding predecessors.
 #[tracing::instrument(
     name = "sig:design:records",
     fields(
@@ -493,24 +508,77 @@ pub fn validate_marker_history(
     ),
     ret
 )]
-pub fn recognize_markers(history: &ValidatedMarkerHistory) -> Result<RecognizedMarkers, BurnError> {
+pub fn recognize_markers(history: &ValidatedMarkerHistory) -> RecognizedMarkers {
     let result = recognize(history);
-    if result.is_err() {
+    if result.first_refusal.is_some() {
         super::refused();
     }
     result
 }
 
-fn recognize(history: &ValidatedMarkerHistory) -> Result<RecognizedMarkers, BurnError> {
-    let policy = &history.policy.input;
-    let mut candidates: Vec<_> = history.input.markers.iter().collect();
-    candidates.sort_by_key(|m| m.index);
-    if candidates.is_empty() {
-        return Err(BurnError::Initial);
-    }
+fn recognize(history: &ValidatedMarkerHistory) -> RecognizedMarkers {
+    let mut candidates: Vec<_> = history.input.markers.iter().enumerate().collect();
+    // Stable sorting preserves the declared history order among competing candidates.
+    candidates.sort_by_key(|(_, marker)| marker.index);
     let records: BTreeMap<_, _> = history.input.records.iter().map(|r| (&r.identity, r)).collect();
-    let mut markers: Vec<RecognizedMarker> = Vec::new();
-    let mut aliases: BTreeMap<String, BurnRecord> = BTreeMap::new();
+    let mut result = RecognizedMarkers {
+        history: history.input.identity.clone(),
+        markers: Vec::new(),
+        first_refusal: None,
+    };
+    if candidates.is_empty() {
+        result.first_refusal = Some(CandidateRefusal {
+            candidate: None,
+            cause: BurnError::Initial,
+        });
+    }
+    let mut selected_names = BTreeSet::new();
+    for group in candidates.chunk_by(|(_, left), (_, right)| left.index == right.index) {
+        if history.policy.input.candidate_rule == CandidateRule::UniquePerIndex && group.len() != 1 {
+            result.first_refusal.get_or_insert_with(|| CandidateRefusal {
+                candidate: Some(group[0].1.clone()),
+                cause: BurnError::Succession,
+            });
+            break;
+        }
+        let mut selected = None;
+        for &(position, marker) in group {
+            let candidate = if marker.name.is_empty() || selected_names.contains(&marker.name) {
+                Err(BurnError::Succession)
+            } else {
+                recognize_candidate(history, position, marker, result.markers.last(), &records)
+            };
+            match candidate {
+                Ok(marker) => {
+                    selected = Some(marker);
+                    break;
+                }
+                Err(cause) => {
+                    result.first_refusal.get_or_insert_with(|| CandidateRefusal {
+                        candidate: Some(marker.clone()),
+                        cause,
+                    });
+                }
+            }
+        }
+        if let Some(marker) = selected {
+            selected_names.insert(marker.identity.name.clone());
+            result.markers.push(marker);
+        } else {
+            break;
+        }
+    }
+    result
+}
+
+fn recognize_candidate(
+    history: &ValidatedMarkerHistory,
+    position: usize,
+    marker: &Marker,
+    previous: Option<&RecognizedMarker>,
+    records: &BTreeMap<&String, &BurnRecord>,
+) -> Result<RecognizedMarker, BurnError> {
+    let policy = &history.policy.input;
     let unit = history
         .policy
         .burn
@@ -520,68 +588,63 @@ fn recognize(history: &ValidatedMarkerHistory) -> Result<RecognizedMarkers, Burn
         .ok_or(BurnError::Publication(Disclosure::Bootstrap))?
         .bound
         .unit();
-    for marker in candidates {
-        if marker.history != history.input.identity
-            || marker.policy_identity != policy.identity
-            || marker.policy_edition != policy.edition
-            || marker.sequence != policy.sequence
-        {
-            return Err(BurnError::HistoryPolicy);
-        }
-        let accepted = history.openings[&marker.name].clone()?;
-        if let Some(previous) = markers.last() {
-            if previous.identity.index.checked_add(1) != Some(marker.index)
-                || marker.predecessor.as_ref() != Some(&previous.identity.name)
-                || marker.initial_snapshot.is_some()
-            {
-                return Err(BurnError::Succession);
-            }
-            if !previous.identity.lineage.is_subset(&marker.lineage) {
-                return Err(BurnError::RegressedLineage);
-            }
-            if !previous.accepted.is_subset(&accepted) {
-                return Err(BurnError::RegressedAcceptance);
-            }
-        } else if marker.index != 0
-            || marker.name != policy.initial_marker
-            || marker.predecessor.is_some()
-            || !accepted.is_empty()
-            || !marker.initial_snapshot.as_ref().is_some_and(BTreeMap::is_empty)
-        {
-            return Err(BurnError::Initial);
-        }
-        if marker.lineage.iter().any(|id| !records.contains_key(id)) {
-            return Err(BurnError::MissingLineage);
-        }
-        if !accepted.is_subset(&marker.lineage) {
-            return Err(BurnError::OutOfLineage);
-        }
-        let mut destructions = BTreeMap::new();
-        for id in &accepted {
-            let record = records[id];
-            if !history.verified.contains(id) || record.amount.unit() != unit {
-                return Err(BurnError::InvalidMember);
-            }
-            if let Some(previous) = aliases.get(&record.destruction) {
-                if previous.address != record.address || previous.amount != record.amount {
-                    return Err(BurnError::InconsistentAlias);
-                }
-            } else {
-                aliases.insert(record.destruction.clone(), record.clone());
-            }
-            destructions
-                .entry(record.destruction.clone())
-                .or_insert_with(|| record.clone());
-        }
-        markers.push(RecognizedMarker {
-            identity: marker.clone(),
-            accepted,
-            destructions,
-        });
+    if marker.history != history.input.identity
+        || marker.policy_identity != policy.identity
+        || marker.policy_edition != policy.edition
+        || marker.sequence != policy.sequence
+    {
+        return Err(BurnError::HistoryPolicy);
     }
-    Ok(RecognizedMarkers {
-        history: history.input.identity.clone(),
-        markers,
+    let accepted = history.openings[position].clone()?;
+    if let Some(previous) = previous {
+        if previous.identity.index.checked_add(1) != Some(marker.index)
+            || marker.predecessor.as_ref() != Some(&previous.identity.name)
+            || marker.initial_snapshot.is_some()
+        {
+            return Err(BurnError::Succession);
+        }
+        if !previous.identity.lineage.is_subset(&marker.lineage) {
+            return Err(BurnError::RegressedLineage);
+        }
+        if !previous.accepted.is_subset(&accepted) {
+            return Err(BurnError::RegressedAcceptance);
+        }
+    } else if marker.index != 0
+        || marker.name != policy.initial_marker
+        || marker.predecessor.is_some()
+        || !accepted.is_empty()
+        || !marker.initial_snapshot.as_ref().is_some_and(BTreeMap::is_empty)
+    {
+        return Err(BurnError::Initial);
+    }
+    if marker.lineage.iter().any(|id| !records.contains_key(id)) {
+        return Err(BurnError::MissingLineage);
+    }
+    if !accepted.is_subset(&marker.lineage) {
+        return Err(BurnError::OutOfLineage);
+    }
+    let mut aliases = previous.map_or_else(BTreeMap::new, |m| m.destructions.clone());
+    let mut destructions = BTreeMap::new();
+    for id in &accepted {
+        let record = records[id];
+        if !history.verified.contains(id) || record.amount.unit() != unit {
+            return Err(BurnError::InvalidMember);
+        }
+        if let Some(previous) = aliases.get(&record.destruction) {
+            if previous.address != record.address || previous.amount != record.amount {
+                return Err(BurnError::InconsistentAlias);
+            }
+        } else {
+            aliases.insert(record.destruction.clone(), record.clone());
+        }
+        destructions
+            .entry(record.destruction.clone())
+            .or_insert_with(|| record.clone());
+    }
+    Ok(RecognizedMarker {
+        identity: marker.clone(),
+        accepted,
+        destructions,
     })
 }
 
@@ -595,6 +658,14 @@ impl ValidatedBurn {
     }
 }
 impl RecognizedMarkers {
+    /// Borrow the first rejected candidate and cause; a valid competitor can still extend the prefix.
+    /// (´def:burn:recognition´)
+    /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.
+    #[must_use]
+    pub fn first_refusal(&self) -> Option<&CandidateRefusal> {
+        self.first_refusal.as_ref()
+    }
+
     /// Borrow the fixed history identity; alternative histories are separate recognitions.
     /// (´def:burn:recognition´)
     /// Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.

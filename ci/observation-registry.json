@@ -4352,158 +4352,6 @@
     },
     {
       "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::validate_burn",
-      "owner": "RECORDS",
-      "signature": "fn validate_burn (input : BurnInput) -> Result < ValidatedBurn , BurnError >",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "instrumented",
-      "operation": "validate-burn"
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::validate_policy",
-      "owner": "RECORDS",
-      "signature": "fn validate_policy (input : PolicyInput , burn : & ValidatedBurn) -> Result < ValidatedPolicy , BurnError >",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "instrumented",
-      "operation": "validate-marker-policy"
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::validate_marker_history",
-      "owner": "RECORDS",
-      "signature": "fn validate_marker_history (input : HistoryInput , policy : & ValidatedPolicy , verifier : & impl PublicVerifier ,) -> Result < ValidatedMarkerHistory , BurnError >",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "instrumented",
-      "operation": "validate-marker-history"
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::recognize_markers",
-      "owner": "RECORDS",
-      "signature": "fn recognize_markers (history : & ValidatedMarkerHistory) -> Result < RecognizedMarkers , BurnError >",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "instrumented",
-      "operation": "recognize-markers"
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::ValidatedBurn::publication",
-      "owner": "RECORDS",
-      "signature": "fn publication (& self) -> & BurnInput",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "exception",
-      "exception": {
-        "rule": "ROOT::rule:observe:spans",
-        "kind": "inherited",
-        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
-        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
-        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
-        "class_decision": "public-records"
-      }
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::RecognizedMarkers::history",
-      "owner": "RECORDS",
-      "signature": "fn history (& self) -> & str",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "exception",
-      "exception": {
-        "rule": "ROOT::rule:observe:spans",
-        "kind": "inherited",
-        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
-        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
-        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
-        "class_decision": "public-records"
-      }
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::RecognizedMarkers::markers",
-      "owner": "RECORDS",
-      "signature": "fn markers (& self) -> & [RecognizedMarker]",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "exception",
-      "exception": {
-        "rule": "ROOT::rule:observe:spans",
-        "kind": "inherited",
-        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
-        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
-        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
-        "class_decision": "public-records"
-      }
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::RecognizedMarker::identity",
-      "owner": "RECORDS",
-      "signature": "fn identity (& self) -> & Marker",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "exception",
-      "exception": {
-        "rule": "ROOT::rule:observe:spans",
-        "kind": "inherited",
-        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
-        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
-        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
-        "class_decision": "public-records"
-      }
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::RecognizedMarker::accepted",
-      "owner": "RECORDS",
-      "signature": "fn accepted (& self) -> & BTreeSet < String >",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "exception",
-      "exception": {
-        "rule": "ROOT::rule:observe:spans",
-        "kind": "inherited",
-        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
-        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
-        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
-        "class_decision": "public-records"
-      }
-    },
-    {
-      "package": "pn-records",
-      "path": "packages/records/src/burn.rs",
-      "item": "burn::RecognizedMarker::destructions",
-      "owner": "RECORDS",
-      "signature": "fn destructions (& self) -> & BTreeMap < String , BurnRecord >",
-      "claim": "ROOT::sig:design:records",
-      "shape": "shape-records",
-      "mode": "exception",
-      "exception": {
-        "rule": "ROOT::rule:observe:spans",
-        "kind": "inherited",
-        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
-        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
-        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
-        "class_decision": "public-records"
-      }
-    },
-    {
-      "package": "pn-records",
       "path": "packages/records/src/numerics.rs",
       "item": "numerics::NumericContext::new",
       "owner": "RECORDS",
@@ -5267,6 +5115,176 @@
         "justification": "Justified: Pure immutable field access inherits the labelled numeric operation that produced this carrier; it performs no numeric computation.",
         "witness": "ROOT::claim:discipline:numeric-carriers-are-observed-without-changing-values",
         "boundary": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::literal",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::validate_burn",
+      "owner": "RECORDS",
+      "signature": "fn validate_burn (input : BurnInput) -> Result < ValidatedBurn , BurnError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "validate-burn"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::validate_policy",
+      "owner": "RECORDS",
+      "signature": "fn validate_policy (input : PolicyInput , burn : & ValidatedBurn) -> Result < ValidatedPolicy , BurnError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "validate-marker-policy"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::validate_marker_history",
+      "owner": "RECORDS",
+      "signature": "fn validate_marker_history (input : HistoryInput , policy : & ValidatedPolicy , verifier : & impl PublicVerifier ,) -> Result < ValidatedMarkerHistory , BurnError >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "validate-marker-history"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::recognize_markers",
+      "owner": "RECORDS",
+      "signature": "fn recognize_markers (history : & ValidatedMarkerHistory) -> RecognizedMarkers",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "instrumented",
+      "operation": "recognize-markers"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::ValidatedBurn::publication",
+      "owner": "RECORDS",
+      "signature": "fn publication (& self) -> & BurnInput",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarkers::first_refusal",
+      "owner": "RECORDS",
+      "signature": "fn first_refusal (& self) -> Option < & CandidateRefusal >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarkers::history",
+      "owner": "RECORDS",
+      "signature": "fn history (& self) -> & str",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarkers::markers",
+      "owner": "RECORDS",
+      "signature": "fn markers (& self) -> & [RecognizedMarker]",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarker::identity",
+      "owner": "RECORDS",
+      "signature": "fn identity (& self) -> & Marker",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarker::accepted",
+      "owner": "RECORDS",
+      "signature": "fn accepted (& self) -> & BTreeSet < String >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "item": "burn::RecognizedMarker::destructions",
+      "owner": "RECORDS",
+      "signature": "fn destructions (& self) -> & BTreeMap < String , BurnRecord >",
+      "claim": "ROOT::sig:design:records",
+      "shape": "shape-records",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled burn operation that produced this carrier; it performs no recognition or computation.",
+        "witness": "ROOT::claim:discipline:burn-recognition-retains-observed-outcomes",
+        "boundary": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
         "class_decision": "public-records"
       }
     }
@@ -9422,116 +9440,6 @@
       "item_premise": "Borrows a private validated field or copies its scalar; no mutable reference or candidate conversion is returned. The bounded complete-act-access operation observes the full public view."
     },
     {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_burn",
-      "class_decision": "public-records",
-      "body": "{ let result = validate_disclosures (input) ; if result . is_err () { super :: refused () ; } result }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "The boundary records complete public burn disclosure, policy, lineage, fixed interpretation and proof bytes at trace and counts outcomes at every level. Verifier configuration is public; no secret or transport handle is admitted. The verdict depends on local carrier checks, not clocks or observation."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_policy",
-      "class_decision": "public-records",
-      "body": "{ let result = (| | { if [& input . identity , & input . edition , & input . sequence , & input . initial_marker , & input . placement_procedure , & input . cadence , & input . verification_profile ,] . iter () . any (| s | s . trim () . is_empty ()) || ! input . open_placement || input . published_at >= input . genesis_at { return Err (BurnError :: Policy) ; } if input . stability_buffer <= burn . 0 . evidence . settlement_depth . unwrap_or (u64 :: MAX) { return Err (BurnError :: Buffer) ; } Ok (ValidatedPolicy { input , burn : burn . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "The boundary records complete public burn disclosure, policy, lineage, fixed interpretation and proof bytes at trace and counts outcomes at every level. Verifier configuration is public; no secret or transport handle is admitted. The verdict depends on local carrier checks, not clocks or observation."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_marker_history",
-      "class_decision": "public-records",
-      "body": "{ let result = (| | { if verifier . profile () != policy . input . verification_profile { return Err (BurnError :: Verifier) ; } if input . identity . is_empty () { return Err (BurnError :: HistoryPolicy) ; } let mut names = BTreeSet :: new () ; let mut proofs = BTreeSet :: new () ; for record in & input . records { if record . identity . is_empty () || ! names . insert (record . identity . clone ()) { return Err (BurnError :: RecordIdentity) ; } if ! record . destruction . is_empty () && ! record . address . 0 . is_empty () && ! record . evidence . is_empty () && verifier . destruction (record) { proofs . insert (record . identity . clone ()) ; } } let mut openings = BTreeMap :: new () ; for marker in & input . markers { if marker . name . is_empty () || openings . insert (marker . name . clone () , recover (marker , & policy . input , verifier)) . is_some () { return Err (BurnError :: Succession) ; } } Ok (ValidatedMarkerHistory { input , policy : policy . clone () , verified : proofs , openings , }) }) () ; if result . is_err () { super :: refused () ; } result }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "The boundary records complete public burn disclosure, policy, lineage, fixed interpretation and proof bytes at trace and counts outcomes at every level. Verifier configuration is public; no secret or transport handle is admitted. The verdict depends on local carrier checks, not clocks or observation. The named verifier is a realization trust boundary: these records preserve its public inputs and outcomes, but local syntax checks cannot certify external destruction, finality or cryptographic binding."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
-      "class_decision": "public-records",
-      "body": "{ let result = recognize (history) ; if result . is_err () { super :: refused () ; } result }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "The boundary records complete public burn disclosure, policy, lineage, fixed interpretation and proof bytes at trace and counts outcomes at every level. Verifier configuration is public; no secret or transport handle is admitted. The verdict depends on local carrier checks, not clocks or observation."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::ValidatedBurn::publication",
-      "class_decision": "public-records",
-      "body": "{ & self . 0 }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::history",
-      "class_decision": "public-records",
-      "body": "{ & self . history }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::markers",
-      "class_decision": "public-records",
-      "body": "{ & self . markers }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarker::identity",
-      "class_decision": "public-records",
-      "body": "{ & self . identity }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarker::accepted",
-      "class_decision": "public-records",
-      "body": "{ & self . accepted }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
-    },
-    {
-      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarker::destructions",
-      "class_decision": "public-records",
-      "body": "{ & self . destructions }",
-      "assessments": {
-        "full_recording": "records-full_recording",
-        "secret_flow": "records-secret_flow",
-        "exposure_consumers": "records-exposure_consumers"
-      },
-      "item_premise": "Immutable field access retains the parent operation context without new work or content duplication."
-    },
-    {
       "operation": "pn-records::packages/records/src/numerics.rs::numerics::NumericContext::new",
       "class_decision": "public-records",
       "body": "{ let result = (| | { Ok (Self { budget : Budget :: new (limits) ? , comparisons : comparisons . start () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
@@ -10096,6 +10004,127 @@
       "operation": "pn-records::packages/records/src/constants.rs::constants::ConstantsEdition::floor_source",
       "class_decision": "public-records",
       "body": "{ & self . floor_source }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_burn",
+      "class_decision": "public-records",
+      "body": "{ let result = validate_disclosures (input) ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_policy",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { if [& input . identity , & input . edition , & input . sequence , & input . initial_marker , & input . placement_procedure , & input . cadence , & input . verification_profile ,] . iter () . any (| s | s . trim () . is_empty ()) || ! input . open_placement || input . published_at >= input . genesis_at { return Err (BurnError :: Policy) ; } if input . stability_buffer <= burn . 0 . evidence . settlement_depth . unwrap_or (u64 :: MAX) { return Err (BurnError :: Buffer) ; } Ok (ValidatedPolicy { input , burn : burn . clone () , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::validate_marker_history",
+      "class_decision": "public-records",
+      "body": "{ let result = (| | { if verifier . profile () != policy . input . verification_profile { return Err (BurnError :: Verifier) ; } if input . identity . is_empty () { return Err (BurnError :: HistoryPolicy) ; } let mut names = BTreeSet :: new () ; let mut proofs = BTreeSet :: new () ; for record in & input . records { if record . identity . is_empty () || ! names . insert (record . identity . clone ()) { return Err (BurnError :: RecordIdentity) ; } if ! record . destruction . is_empty () && ! record . address . 0 . is_empty () && ! record . evidence . is_empty () && verifier . destruction (record) { proofs . insert (record . identity . clone ()) ; } } let openings = input . markers . iter () . map (| marker | recover (marker , & policy . input , verifier)) . collect () ; Ok (ValidatedMarkerHistory { input , policy : policy . clone () , verified : proofs , openings , }) }) () ; if result . is_err () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::recognize_markers",
+      "class_decision": "public-records",
+      "body": "{ let result = recognize (history) ; if result . first_refusal . is_some () { super :: refused () ; } result }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body checks or returns public burn publication and candidate data. Trace records complete arguments and results, including the retained prefix and first refusal; explicit refusal wins over the successful report return. The declared verifier is trusted and local fixtures are not chain evidence. No secret or exporter handle enters this body."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::ValidatedBurn::publication",
+      "class_decision": "public-records",
+      "body": "{ & self . 0 }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::first_refusal",
+      "class_decision": "public-records",
+      "body": "{ self . first_refusal . as_ref () }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::history",
+      "class_decision": "public-records",
+      "body": "{ & self . history }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarkers::markers",
+      "class_decision": "public-records",
+      "body": "{ & self . markers }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarker::identity",
+      "class_decision": "public-records",
+      "body": "{ & self . identity }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarker::accepted",
+      "class_decision": "public-records",
+      "body": "{ & self . accepted }",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "This body only borrows immutable public carrier data; its parent operation owns content and work."
+    },
+    {
+      "operation": "pn-records::packages/records/src/burn.rs::burn::RecognizedMarker::destructions",
+      "class_decision": "public-records",
+      "body": "{ & self . destructions }",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
@@ -11762,6 +11791,15 @@
       "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
     },
     {
+      "item": "burn::CandidateRule",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
+    },
+    {
       "item": "burn::PolicyInput",
       "kind": "derive",
       "package": "pn-records",
@@ -11835,6 +11873,15 @@
     },
     {
       "item": "burn::RecognizedMarkers",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives and typed-error formatting inspect only public typed carriers and exact canonical values; generated traits inherit the records operation class."
+    },
+    {
+      "item": "burn::CandidateRefusal",
       "kind": "derive",
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
@@ -13393,10 +13440,16 @@
       "syntax": "# [doc = \" Declared policy encoding; order is sufficient only in the explicit whole-prefix case.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Encoding { CompleteList , PublicCommitment , WholePrefixAcceptAll , }"
     },
     {
+      "item": "burn::CandidateRule",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" Deterministic identification among candidates at the same index.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum CandidateRule { # [doc = \" Try candidates in their disclosed history order, retaining the first that passes.\"] FirstValidInHistoryOrder , # [doc = \" A deployment promises one candidate per index; a violation stops at that index.\"] UniquePerIndex , }"
+    },
+    {
       "item": "burn::PolicyInput",
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
-      "syntax": "# [doc = \" Immutable policy identity includes its edition and sequence, not merely its display name.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PolicyInput { pub identity : String , pub edition : String , pub sequence : String , pub published_at : u64 , pub genesis_at : u64 , pub initial_marker : String , pub open_placement : bool , pub placement_procedure : String , pub cadence : String , pub encoding : Encoding , pub verification_profile : String , pub stability_buffer : u64 , }"
+      "syntax": "# [doc = \" Immutable policy identity includes its edition and sequence, not merely its display name.\"] # [doc = \" (´def:burn:marker-policy´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PolicyInput { pub identity : String , pub edition : String , pub sequence : String , pub published_at : u64 , pub genesis_at : u64 , pub initial_marker : String , pub open_placement : bool , pub placement_procedure : String , pub cadence : String , pub encoding : Encoding , pub candidate_rule : CandidateRule , pub verification_profile : String , pub stability_buffer : u64 , }"
     },
     {
       "item": "burn::ValidatedPolicy",
@@ -13438,13 +13491,19 @@
       "item": "burn::ValidatedMarkerHistory",
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
-      "syntax": "# [doc = \" Local evidence checks retained for pure recognition; fields cannot be forged by consumers.\"] # [doc = \" (´def:burn:verification-boundary´)\"] # [derive (Clone , Debug)] pub struct ValidatedMarkerHistory { input : HistoryInput , policy : ValidatedPolicy , verified : BTreeSet < String > , openings : BTreeMap < String , Result < BTreeSet < String > , BurnError > > , }"
+      "syntax": "# [doc = \" Local evidence checks retained for pure recognition; fields cannot be forged by consumers.\"] # [doc = \" (´def:burn:verification-boundary´)\"] # [derive (Clone , Debug)] pub struct ValidatedMarkerHistory { input : HistoryInput , policy : ValidatedPolicy , verified : BTreeSet < String > , openings : Vec < Result < BTreeSet < String > , BurnError > > , }"
     },
     {
       "item": "burn::RecognizedMarkers",
       "package": "pn-records",
       "path": "packages/records/src/burn.rs",
-      "syntax": "# [doc = \" Recognized sequence, retaining complete marker identities and deduplicated destructions.\"] # [doc = \" No first-accepted increment or amount snapshot is computed here.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognizedMarkers { history : String , markers : Vec < RecognizedMarker > , }"
+      "syntax": "# [doc = \" Recognized sequence, retaining complete marker identities and deduplicated destructions.\"] # [doc = \" No first-accepted increment or amount snapshot is computed here.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct RecognizedMarkers { history : String , markers : Vec < RecognizedMarker > , first_refusal : Option < CandidateRefusal > , }"
+    },
+    {
+      "item": "burn::CandidateRefusal",
+      "package": "pn-records",
+      "path": "packages/records/src/burn.rs",
+      "syntax": "# [doc = \" First rejected candidate in index order, with ties in disclosed history order.\"] # [doc = \" An empty history has no candidate. A later valid competitor may still extend the prefix.\"] # [doc = \" (´def:burn:recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateRefusal { pub candidate : Option < Marker > , pub cause : BurnError , }"
     },
     {
       "item": "burn::RecognizedMarker",

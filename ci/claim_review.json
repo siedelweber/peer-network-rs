@@ -1770,14 +1770,6 @@
       "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
     },
     {
-      "operation": "pn-records::public::burn::history_dependence",
-      "path": "packages/records/tests/public/burn.rs",
-      "claim": "RECORDS::claim:burn:recognition-requires-one-complete-history",
-      "before": "",
-      "after": "Claim: Copied marker contents lose recognition when this history omits a lineage member or predecessor; a separately identified alternative history is checked against its own predecessors without cross-history acceptance bounds.",
-      "review": "Read this site against its exact publication/recognition outcomes, complete accepted identity sets, fixture verifier and original/reversed history premises. External finality, cryptographic verifier soundness and snapshot summation are outside these assertions."
-    },
-    {
       "operation": "pn-records::public::burn::alias_deduplication",
       "path": "packages/records/tests/public/burn.rs",
       "claim": "RECORDS::claim:burn:destruction-aliases-retain-one-contribution-identity",
@@ -1816,6 +1808,30 @@
       "before": "",
       "after": "Claim: Constants payloads bind only the numeric/constants namespace-name pair; other declaration families need no numeric payload and cannot be resolved or injected through the constants history.",
       "review": "Read the mixed three-family fixture: only numeric/constants needs a numeric payload, empty numeric content refuses, either foreign namespace or foreign name rejects injection and resolution, and a nonnumeric-only snapshot binds no constants. The prior all-declaration set fails the mixed fixture."
+    },
+    {
+      "operation": "pn-records::public::burn::history_dependence",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:recognition-requires-one-complete-history",
+      "before": "",
+      "after": "Claim: A missing lineage member or predecessor stops recognition at the affected candidate, retaining earlier markers; a separately identified alternative history is checked against its own predecessors without cross-history acceptance bounds.",
+      "review": "Read the candidate-prefix assertions and exact causes: earlier markers remain equal to the valid fixture; candidate selection is policy-declared and history-order-sensitive only for competing candidates. The fixture verifier is not chain evidence."
+    },
+    {
+      "operation": "pn-records::public::burn::invalid_candidate_prefix",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:invalid-candidates-preserve-recognized-predecessors",
+      "before": "",
+      "after": "Claim: Under either declared selection rule, an invalid last candidate preserves the two valid predecessors and reports its exact refusal; no dependent successor crosses the gap.",
+      "review": "Read the candidate-prefix assertions and exact causes: earlier markers remain equal to the valid fixture; candidate selection is policy-declared and history-order-sensitive only for competing candidates. The fixture verifier is not chain evidence."
+    },
+    {
+      "operation": "pn-records::public::burn::competing_candidates",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:declared-policy-selects-competing-candidates",
+      "before": "",
+      "after": "Claim: Competing candidates preserve earlier markers; the unique-index assumption stops before that index, while first-valid selection chooses in history order and retains the first rejection when a later competitor passes.",
+      "review": "Read the candidate-prefix assertions and exact causes: earlier markers remain equal to the valid fixture; candidate selection is policy-declared and history-order-sensitive only for competing candidates. The fixture verifier is not chain evidence."
     }
   ]
 }

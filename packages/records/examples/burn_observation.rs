@@ -21,7 +21,10 @@ fn main() -> ExitCode {
         }
     };
     let recognized = fixtures::recognize(valid).unwrap();
-    let refused = [fixtures::recognize(invalid).is_err(), fixtures::recognize(missing).is_err()];
+    let refused = [
+        fixtures::recognize(invalid).unwrap().first_refusal().is_some(),
+        fixtures::recognize(missing).unwrap().first_refusal().is_some(),
+    ];
     let exit=if cli_common::emit(&serde_json::json!({"markers":recognized.markers().len(),"destructions":recognized.markers().last().unwrap().destructions().len(),"refused":refused})).is_ok(){ExitCode::SUCCESS}else{ExitCode::FAILURE};
     drop(guard);
     if std::env::var_os("PN_TEST_OBSERVATION_RENDEZVOUS").is_some() {

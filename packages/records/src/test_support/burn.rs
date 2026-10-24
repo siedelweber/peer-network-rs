@@ -1,9 +1,9 @@
 //! Seeded pure carrier fixtures; no claim of external destruction or finality.
 //! (´def:burn:test-support´)
 use crate::burn::{
-    AcceptedSet, Address, Bootstrap, BurnError, BurnEvidence, BurnInput, BurnRecord, Encoding, HistoryInput, Marker, Opening,
-    OperatorEvidence, PolicyInput, PublicVerifier, RecognizedMarkers, recognize_markers, validate_burn, validate_marker_history,
-    validate_policy,
+    AcceptedSet, Address, Bootstrap, BurnError, BurnEvidence, BurnInput, BurnRecord, CandidateRule, Encoding, HistoryInput,
+    Marker, Opening, OperatorEvidence, PolicyInput, PublicVerifier, RecognizedMarkers, recognize_markers, validate_burn,
+    validate_marker_history, validate_policy,
 };
 use crate::numerics::{ComparisonLimits, ExactLimits, NumericContext};
 use std::collections::{BTreeMap, BTreeSet};
@@ -95,6 +95,7 @@ pub fn generate(words: &[u64]) -> BurnCase {
         placement_procedure: "any party submits public evidence".into(),
         cadence: "one candidate per index; no liveness guarantee".into(),
         encoding: Encoding::CompleteList,
+        candidate_rule: CandidateRule::UniquePerIndex,
         verification_profile: "fixture-public-v1".into(),
         stability_buffer: 7,
     };
@@ -154,7 +155,7 @@ pub fn recognize(case: BurnCase) -> Result<RecognizedMarkers, BurnError> {
     let burn = validate_burn(case.burn)?;
     let policy = validate_policy(case.policy, &burn)?;
     let history = validate_marker_history(case.history, &policy, &FixtureVerifier)?;
-    recognize_markers(&history)
+    Ok(recognize_markers(&history))
 }
 
 /// Shared corruption names; consumers own their expected-cause tables.

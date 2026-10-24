@@ -46,9 +46,17 @@ pub fn case(words: &[u64], name: &str) {
         assert_eq!(burn::recognize(input).unwrap(), valid);
     } else {
         burn::corrupt(&mut input, name);
-        assert_eq!(burn::recognize(input.clone()), Err(expected(name)), "{name}");
+        assert_eq!(
+            burn::recognize(input.clone()).map_or_else(Some, |r| r.first_refusal().map(|f| f.cause.clone())),
+            Some(expected(name)),
+            "{name}"
+        );
         input.history.records.reverse();
         input.history.markers.reverse();
-        assert_eq!(burn::recognize(input), Err(expected(name)), "reversed {name}");
+        assert_eq!(
+            burn::recognize(input).map_or_else(Some, |r| r.first_refusal().map(|f| f.cause.clone())),
+            Some(expected(name)),
+            "reversed {name}"
+        );
     }
 }

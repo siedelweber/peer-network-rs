@@ -3092,6 +3092,8 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-records::public::burn::competing_candidates",
+        "pn-records::public::burn::invalid_candidate_prefix",
         "pn-records::public::burn::alias_deduplication",
         "pn-records::public::burn::history_dependence",
         "pn-records::public::burn::policy_encodings",
