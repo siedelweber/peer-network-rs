@@ -162,6 +162,114 @@ fn policy_content_binding() {
     );
 }
 
+fn binding_fixture() -> (
+    pn_records::burn::PolicyInput,
+    pn_records::burn::ValidatedBurn,
+    Vec<pn_records::Declaration>,
+) {
+    use pn_records::{Declaration, DeclarationContent, DeclarationId};
+    let case = fixtures::generate(&[3]);
+    let mut policy = case.policy;
+    policy.genesis_at = 10;
+    let burn = validate_burn(case.burn).unwrap();
+    let declarations = vec![
+        Declaration {
+            id: DeclarationId {
+                namespace: "deployment".into(),
+                name: "genesis".into(),
+                edition: 1,
+            },
+            announced_at: 0,
+            effective_at: 0,
+            content: DeclarationContent::Deployment { genesis_at: 10 },
+        },
+        Declaration {
+            id: DeclarationId {
+                namespace: "marker".into(),
+                name: "policy".into(),
+                edition: 1,
+            },
+            announced_at: 0,
+            effective_at: 0,
+            content: DeclarationContent::MarkerPolicy {
+                recipe: "pn-records/marker-policy/v1".into(),
+                digest: pn_records::constants::marker_policy_digest(&policy),
+            },
+        },
+    ];
+    assert!(bind_fixture(&policy, &burn, &declarations).is_ok());
+    (policy, burn, declarations)
+}
+fn bind_fixture(
+    policy: &pn_records::burn::PolicyInput,
+    burn: &pn_records::burn::ValidatedBurn,
+    declarations: &[pn_records::Declaration],
+) -> Result<pn_records::burn::ValidatedPolicy, BurnError> {
+    let history = pn_records::validate_history(&[], &[]).unwrap();
+    let records = pn_records::validate_record(&[], &history, declarations).unwrap();
+    pn_records::constants::bind_marker_policy(&records, policy.clone(), burn)
+}
+
+/// Claim: A second structurally valid deployment edition makes genesis ambiguous even when both payloads agree, preventing a policy binder from silently selecting one.
+/// ´claim:burn:deployment-genesis-is-unambiguous´
+/// ´test:integration:duplicate-deployment´
+#[test]
+fn duplicate_deployment() {
+    let (policy, burn, mut declarations) = binding_fixture();
+    let mut second = declarations[0].clone();
+    second.id.edition = 2;
+    second.effective_at = 1;
+    declarations.push(second);
+    assert_eq!(bind_fixture(&policy, &burn, &declarations), Err(BurnError::DeploymentBinding));
+}
+
+/// Claim: A deployment whose announcement and effect follow its declared genesis cannot bind a policy, even though its declaration ordering is internally valid.
+/// ´claim:burn:deployment-must-be-announced-by-genesis´
+/// ´test:integration:late-deployment-announcement´
+#[test]
+fn late_deployment_announcement() {
+    let (policy, burn, mut declarations) = binding_fixture();
+    declarations[0].announced_at = 11;
+    declarations[0].effective_at = 11;
+    assert_eq!(bind_fixture(&policy, &burn, &declarations), Err(BurnError::DeploymentBinding));
+}
+
+/// Claim: An already announced deployment that becomes effective only after genesis refuses policy binding; publication alone cannot establish the genesis boundary.
+/// ´claim:burn:deployment-must-be-effective-by-genesis´
+/// ´test:integration:late-deployment-effect´
+#[test]
+fn late_deployment_effect() {
+    let (policy, burn, mut declarations) = binding_fixture();
+    declarations[0].effective_at = 11;
+    assert_eq!(bind_fixture(&policy, &burn, &declarations), Err(BurnError::DeploymentBinding));
+}
+
+/// Claim: A publication mismatch before the unchanged genesis refuses even with a matching content commitment, so content equality cannot replace announcement binding.
+/// ´claim:burn:policy-publication-matches-announcement´
+/// ´test:integration:policy-publication-binding´
+#[test]
+fn policy_publication_binding() {
+    let (mut policy, burn, mut declarations) = binding_fixture();
+    policy.published_at = 1;
+    declarations[1].content = pn_records::DeclarationContent::MarkerPolicy {
+        recipe: "pn-records/marker-policy/v1".into(),
+        digest: pn_records::constants::marker_policy_digest(&policy),
+    };
+    assert_eq!(bind_fixture(&policy, &burn, &declarations), Err(BurnError::PolicyBinding));
+}
+
+/// Claim: Changing only open placement changes the commitment and refuses policy validity; even an unpublished invalid candidate cannot alias the open policy's recipe input.
+/// ´claim:burn:policy-commitment-includes-open-placement´
+/// ´test:integration:policy-open-placement-binding´
+#[test]
+fn policy_open_placement_binding() {
+    let (mut policy, burn, declarations) = binding_fixture();
+    let original = pn_records::constants::marker_policy_digest(&policy);
+    policy.open_placement = false;
+    assert_ne!(pn_records::constants::marker_policy_digest(&policy), original);
+    assert_eq!(bind_fixture(&policy, &burn, &declarations), Err(BurnError::Policy));
+}
+
 /// Claim: Removing each required disclosure prevents readiness even when arithmetic does not read it; explicit empty event costs and explained operator absence remain valid publications.
 /// ´claim:burn:missing-required-burn-disclosures-prevent-readiness´
 /// ´test:integration:required-disclosures´

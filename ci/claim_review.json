@@ -1912,6 +1912,54 @@
       "before": "",
       "after": "Claim: A later copied lookup name cannot stall first-valid recognition or redirect a position-bound successor; unique-index still refuses competitors by index, and repeated names across indices are valid under either rule in either presentation.",
       "review": "Read both candidate rules: repeated labels across indices recognize; first-valid ignores a later same-name competitor and accepts only a successor referencing selected position 20; unique-index stops on positions 20 and 21, independently of names. Reversal and shuffle preserve each entire result."
+    },
+    {
+      "operation": "pn-records::tests::deployment_announcement_guard",
+      "path": "packages/records/src/lib.rs",
+      "claim": "RECORDS::claim:burn:binding-defends-genesis-announcement",
+      "before": "",
+      "after": "Claim: With an injected internal declaration whose announcement is after genesis but effect is before it, the binder's announcement guard refuses independently; public declaration validation already excludes this inconsistent ordering.",
+      "review": "A valid fixture binds before mutation. The unit test then injects an internally inconsistent announcement after genesis with effect unchanged, bypassing the public ordering validator solely to isolate the defensive announcement guard."
+    },
+    {
+      "operation": "pn-records::public::burn::duplicate_deployment",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:deployment-genesis-is-unambiguous",
+      "before": "",
+      "after": "Claim: A second structurally valid deployment edition makes genesis ambiguous even when both payloads agree, preventing a policy binder from silently selecting one.",
+      "review": "The base binds. A second deployment edition retains the same genesis but changes edition and effective boundary, so declaration validation succeeds while the binder refuses ambiguity."
+    },
+    {
+      "operation": "pn-records::public::burn::late_deployment_announcement",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:deployment-must-be-announced-by-genesis",
+      "before": "",
+      "after": "Claim: A deployment whose announcement and effect follow its declared genesis cannot bind a policy, even though its declaration ordering is internally valid.",
+      "review": "The base binds. Announcement and effect both move past genesis, retaining valid declaration ordering; the binder returns DeploymentBinding. This public test does not isolate the redundant announcement disjunct."
+    },
+    {
+      "operation": "pn-records::public::burn::late_deployment_effect",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:deployment-must-be-effective-by-genesis",
+      "before": "",
+      "after": "Claim: An already announced deployment that becomes effective only after genesis refuses policy binding; publication alone cannot establish the genesis boundary.",
+      "review": "The base binds. Only deployment effect moves past genesis while announcement remains zero, isolating the effective-boundary refusal."
+    },
+    {
+      "operation": "pn-records::public::burn::policy_publication_binding",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:policy-publication-matches-announcement",
+      "before": "",
+      "after": "Claim: A publication mismatch before the unchanged genesis refuses even with a matching content commitment, so content equality cannot replace announcement binding.",
+      "review": "The fixture leaves ten positions before genesis. Only policy publication moves to one; the declaration digest is recomputed to match, isolating PolicyBinding from digest and genesis refusals."
+    },
+    {
+      "operation": "pn-records::public::burn::policy_open_placement_binding",
+      "path": "packages/records/tests/public/burn.rs",
+      "claim": "RECORDS::claim:burn:policy-commitment-includes-open-placement",
+      "before": "",
+      "after": "Claim: Changing only open placement changes the commitment and refuses policy validity; even an unpublished invalid candidate cannot alias the open policy's recipe input.",
+      "review": "Only open_placement becomes false. Digest inequality detects omission from the recipe, while the binder separately refuses Policy validity before interpreting that candidate as an admitted identity."
     }
   ]
 }

@@ -3079,6 +3079,7 @@
       "budget": "pure-suite",
       "cases": [
         "pn-records::numerics::tests::literal_admission",
+        "pn-records::tests::deployment_announcement_guard",
         "pn-records::tests::whole_act_carrier",
         "pn-records::tests::history_storage_is_shared",
         "pn-records::tests::identity_components"
@@ -3095,6 +3096,11 @@
       "budget": "pure-suite",
       "cases": [
         "pn-records::public::burn::copied_marker_names",
+        "pn-records::public::burn::duplicate_deployment",
+        "pn-records::public::burn::late_deployment_announcement",
+        "pn-records::public::burn::late_deployment_effect",
+        "pn-records::public::burn::policy_publication_binding",
+        "pn-records::public::burn::policy_open_placement_binding",
         "pn-records::public::burn::policy_content_binding",
         "pn-records::public::burn::recognition_basis",
         "pn-records::public::burn::policy_declaration_binding",

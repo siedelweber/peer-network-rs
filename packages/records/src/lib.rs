@@ -1215,6 +1215,52 @@ impl<'a> BoundaryInputs<'a> {
 mod tests {
     use super::{ActId, EdgeId, Role};
 
+    /// Claim: With an injected internal declaration whose announcement is after genesis but effect is before it, the binder's announcement guard refuses independently; public declaration validation already excludes this inconsistent ordering.
+    /// ´claim:burn:binding-defends-genesis-announcement´
+    /// ´test:unit:deployment-announcement-guard´
+    #[test]
+    fn deployment_announcement_guard() {
+        use super::burn::{BurnError, validate_burn};
+        use super::constants::{bind_marker_policy, marker_policy_digest};
+        use super::{Declaration, DeclarationContent, DeclarationId, validate_history, validate_record};
+        let case = super::test_support::burn::generate(&[3]);
+        let policy = case.policy;
+        let burn = validate_burn(case.burn).unwrap();
+        let history = validate_history(&[], &[]).unwrap();
+        let declarations = [
+            Declaration {
+                id: DeclarationId {
+                    namespace: "deployment".into(),
+                    name: "genesis".into(),
+                    edition: 1,
+                },
+                announced_at: 0,
+                effective_at: 0,
+                content: DeclarationContent::Deployment {
+                    genesis_at: policy.genesis_at,
+                },
+            },
+            Declaration {
+                id: DeclarationId {
+                    namespace: "marker".into(),
+                    name: "policy".into(),
+                    edition: 1,
+                },
+                announced_at: 0,
+                effective_at: 0,
+                content: DeclarationContent::MarkerPolicy {
+                    recipe: "pn-records/marker-policy/v1".into(),
+                    digest: marker_policy_digest(&policy),
+                },
+            },
+        ];
+        let mut records = validate_record(&[], &history, &declarations).unwrap();
+        assert!(bind_marker_policy(&records, policy.clone(), &burn).is_ok());
+        // Defensive internal-state injection: this ordering cannot pass validate_record.
+        records.declarations[0].announced_at = policy.genesis_at + 1;
+        assert_eq!(bind_marker_policy(&records, policy, &burn), Err(BurnError::DeploymentBinding));
+    }
+
     /// Claim: A generated paired history and proposal snapshot contains one act entry per identity and two owned legs per paired act, so the internal validated carrier never promotes co-legs to accounting units.
     /// (´claim:acts:complete-acts-are-counted-once´)
     /// ´test:unit:whole-act-carrier´

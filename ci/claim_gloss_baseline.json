@@ -879,6 +879,12 @@
     "pn-records::public::burn::recognition_basis": "",
     "cli-common::observation::tests::counter_contention": "",
     "pn-records::public::burn::policy_content_binding": "",
-    "pn-records::public::burn::copied_marker_names": ""
+    "pn-records::public::burn::copied_marker_names": "",
+    "pn-records::tests::deployment_announcement_guard": "",
+    "pn-records::public::burn::duplicate_deployment": "",
+    "pn-records::public::burn::late_deployment_announcement": "",
+    "pn-records::public::burn::late_deployment_effect": "",
+    "pn-records::public::burn::policy_publication_binding": "",
+    "pn-records::public::burn::policy_open_placement_binding": ""
   }
 }
