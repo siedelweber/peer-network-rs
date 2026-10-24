@@ -261,8 +261,6 @@ pub struct Observation {
     closing: Arc<std::sync::atomic::AtomicBool>,
     final_writer: Arc<Mutex<Box<dyn Write + Send>>>,
     publication: Arc<Mutex<()>>,
-    #[cfg(test)]
-    paused_delivery: Arc<std::sync::atomic::AtomicBool>,
     drain_timeouts: Arc<AtomicU64>,
     drain_unavailable: Arc<AtomicU64>,
     #[cfg(test)]
@@ -285,8 +283,6 @@ struct Delivery {
     closing: Arc<std::sync::atomic::AtomicBool>,
     worker_bridge: Option<Arc<crate::observation_export::Bridge>>,
     worker_queued: Arc<AtomicU64>,
-    #[cfg(test)]
-    worker_paused: Arc<std::sync::atomic::AtomicBool>,
 }
 impl Delivery {
     fn run(
@@ -302,15 +298,9 @@ impl Delivery {
         let (receiver, diagnostic_receiver, summary_receiver, flush_receiver) = queues;
         let worker_closing = &self.closing;
         let worker_queued = &self.worker_queued;
-        #[cfg(test)]
-        let worker_paused = &self.worker_paused;
         let delivery = &self;
         while let Ok(first) = receiver.recv() {
             for message in std::iter::once(first).chain(receiver.try_iter().take(QUEUE_RECORDS)) {
-                #[cfg(test)]
-                while worker_paused.load(Ordering::Acquire) && !worker_closing.load(Ordering::Acquire) {
-                    std::thread::yield_now();
-                }
                 if worker_closing.load(Ordering::Acquire) {
                     return;
                 }
@@ -341,9 +331,11 @@ impl Delivery {
     }
 
     fn deliver(&self, writer: &mut impl Write, mut record: Value) {
-        let _publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
-        if self.closing.load(Ordering::Acquire) {
-            return;
+        {
+            let _publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+            if self.closing.load(Ordering::Acquire) {
+                return;
+            }
         }
         let Self {
             worker_delivered,
@@ -379,6 +371,11 @@ impl Delivery {
             writer.write_all(&compact)?;
             writer.flush()
         })();
+        // Only completion accounting holds this lock; transport I/O never does.
+        let _publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        if self.closing.load(Ordering::Acquire) {
+            return;
+        }
         if result.is_err() {
             worker_causes.note(worker_lost, cause);
         } else {
@@ -411,10 +408,6 @@ impl Observation {
         let worker_closing = closing.clone();
         let publication = Arc::new(Mutex::new(()));
         let worker_publication = publication.clone();
-        #[cfg(test)]
-        let paused_delivery = Arc::new(std::sync::atomic::AtomicBool::new(false));
-        #[cfg(test)]
-        let worker_paused = paused_delivery.clone();
         let drain_timeouts = Arc::new(AtomicU64::new(0));
         let worker_timeouts = drain_timeouts.clone();
         let drain_unavailable = Arc::new(AtomicU64::new(0));
@@ -435,8 +428,6 @@ impl Observation {
                 publication: worker_publication,
                 closing: worker_closing.clone(),
                 worker_queued,
-                #[cfg(test)]
-                worker_paused,
             };
             delivery.run(writer, (receiver, diagnostic_receiver, summary_receiver, flush_receiver));
         })?;
@@ -453,8 +444,6 @@ impl Observation {
             closing,
             final_writer: Arc::new(Mutex::new(Box::new(StderrSink))),
             publication,
-            #[cfg(test)]
-            paused_delivery,
             drain_timeouts,
             drain_unavailable,
             #[cfg(test)]
@@ -555,13 +544,15 @@ impl Observation {
     fn final_status(&self) {
         // Exit drainage scales with the outstanding byte charge, up to the
         // declared 64 MiB queue: one second plus one second per charged MiB.
-        // This permits full structured-content publication, including synced
-        // objects, while a stalled sink still has a finite 65-second deadline.
+        // The deadline bounds waiting for queued and in-flight publication.
+        // Completion accounting never holds its lock across transport I/O;
+        // unfinished writes at the cutoff are undelivered. The synchronous
+        // final status write itself can block on its transport.
         let charged = self.queued_bytes.load(Ordering::Relaxed);
         let millis = 1000 + charged.div_ceil(1024 * 1024).min(64) * 1000;
         self.flush_for(Duration::from_millis(millis));
+        let publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         self.closing.store(true, Ordering::Release);
-        let _publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         let delivered = self.delivered.load(Ordering::Acquire);
         let lost = self.lost.load(Ordering::Acquire);
         let attempted = self.attempted.load(Ordering::Acquire);
@@ -575,6 +566,7 @@ impl Observation {
             "drain_unavailable":self.drain_unavailable.load(Ordering::Relaxed),
             "drain_deadline_milliseconds":millis,"process_id":std::process::id(),"timestamp":self.clock.utc(),
             "claim_owner":"ROOT","claim_label":"dec:observe:sinks","execution_owner":"CLICOMMON"});
+        drop(publication);
         // A synchronous final status cannot be stranded behind the bounded queue.
         if let Ok(mut writer) = self.final_writer.lock() {
             let _reported = serde_json::to_writer(&mut *writer, &record)

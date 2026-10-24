@@ -1486,8 +1486,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:status-counts-are-stamped-after-preceding-delivery",
       "before": "Claim: With more than one delivery batch pending behind a stalled writer at guard drop, the final status counts every preceding captured record and only actual drops; delivered plus lost equals the attempted records excluding the status.",
-      "after": "Claim: With the writer stalled before a queued status and an injected drain timeout, the arranged backlog fits one worker iteration; after release the final status counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.",
-      "review": "A queued status follows the arranged backlog only after writer release; this fixture checks delivery-time stamping, while the separate exit fixture checks synchronous disclosure before release."
+      "after": "Claim: After a writer rendezvous releases a backlog of more than 65 records, real guard destruction counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.",
+      "review": "The writer is released before real guard destruction. Guard summary and synchronous status replace the synthetic queued status; the test compares captured predecessors, attempts and deliberate reserved-channel loss."
     },
     {
       "operation": "pn-records::public::missing_co_legs",
@@ -1558,8 +1558,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:exit-reports-the-undelivered-tail",
       "before": "Claim: When an injected exit deadline expires with a stalled writer, guard destruction synchronously reports every attempted record as delivered, lost or undelivered before any reader release, so process exit needs no status rendezvous and cannot hide its queued tail.",
-      "after": "Claim: When an injected exit deadline expires with a one-byte writer held at an injected delivery pause, guard destruction synchronously reports every attempted record as delivered, lost or undelivered without a reader release, so process exit needs no status rendezvous and cannot hide its queued tail.",
-      "review": "The one-byte writer is held at an injected delivery pause. Guard drop reports 242 attempted and undelivered records, zero delivered and zero lost before any reader acknowledgement; closing releases the worker. The deadline is injected, not measured."
+      "after": "Claim: With a writer blocked inside write and a zero injected drain deadline, guard destruction returns before that writer is released and reports the in-flight record and queued tail as undelivered, while the separately captured synchronous status remains readable.",
+      "review": "The writer signals from inside write before guard drop starts. A zero injected drain deadline must return before transport release; a watchdog releases the writer for cleanup if the old lock-held path wedges. The status pins the in-flight record in 242 undelivered attempts."
     }
   ]
 }

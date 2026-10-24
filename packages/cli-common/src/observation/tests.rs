@@ -468,7 +468,7 @@ fn summary_capacity() {
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
 }
 
-/// Claim: With the writer stalled before a queued status and an injected drain timeout, the arranged backlog fits one worker iteration; after release the final status counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.
+/// Claim: After a writer rendezvous releases a backlog of more than 65 records, real guard destruction counts every preceding captured record and one deliberate reserved-channel drop, with delivered plus lost equal to the 71 attempted records excluding status.
 /// ´claim:cli:status-counts-are-stamped-after-preceding-delivery´
 /// ´test:unit:status-after-stalled-delivery´
 #[test]
@@ -477,7 +477,6 @@ fn status_after_stalled_delivery() {
         capture: Capture,
         entered: mpsc::SyncSender<()>,
         release: mpsc::Receiver<()>,
-        status: mpsc::SyncSender<()>,
         first: bool,
     }
     impl Write for Stalled {
@@ -488,10 +487,6 @@ fn status_after_stalled_delivery() {
                 self.release.recv().unwrap();
             }
             let result = self.capture.write(bytes)?;
-            let row: Value = serde_json::from_slice(bytes).unwrap();
-            if row["kind"] == "observation_status" {
-                self.status.send(()).unwrap();
-            }
             Ok(result)
         }
         fn flush(&mut self) -> io::Result<()> {
@@ -501,20 +496,18 @@ fn status_after_stalled_delivery() {
     let capture = Capture::default();
     let (entered, entry) = mpsc::sync_channel(1);
     let (release, released) = mpsc::sync_channel(1);
-    let (status, seen) = mpsc::sync_channel(1);
     let mut observation = Observation::with_writer(
         Stalled {
             capture: capture.clone(),
             entered,
             release: released,
-            status,
             first: true,
         },
         Arc::new(ManualClock(AtomicU64::new(0))),
     )
     .unwrap();
     observation.full_trace = true;
-    observation.refuse_drain_wait = true;
+    observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     observation.emit(json!({"public":"first"}));
     entry.recv_timeout(Duration::from_secs(30)).unwrap();
     for index in 0..59 {
@@ -530,14 +523,11 @@ fn status_after_stalled_delivery() {
     }
     observation.emit(json!({"level":"WARN","public":"dropped"}));
     observation.summary_sender.try_send(json!({"kind":"export_summary"})).unwrap();
+    observation.attempted.fetch_add(9, Ordering::Relaxed);
     // 60 ordinary records, nine diagnostics (one dropped), export and metrics:
     // 71 attempts, with 69 records still queued behind the in-flight writer.
-    observation.summarize();
-    observation.flush();
-    observation.emit(json!({"kind":"observation_status"}));
-    observation.flush();
     release.send(()).unwrap();
-    seen.recv_timeout(Duration::from_secs(30)).unwrap();
+    drop(BootstrapGuard(Some(observation.clone())));
     let bytes = capture.0.lock().unwrap();
     let rows: Vec<Value> = bytes
         .split(|b| *b == b'\n')
@@ -553,8 +543,8 @@ fn status_after_stalled_delivery() {
         status["delivered_records"].as_u64().unwrap() + status["lost_records"].as_u64().unwrap(),
         71
     );
-    assert_eq!(status["drain_timeouts"], 1);
-    assert_eq!(status["drain_unavailable"], 1);
+    assert_eq!(status["drain_timeouts"], 0);
+    assert_eq!(status["drain_unavailable"], 0);
 }
 
 /// Claim: A 241-record trace burst including its reserved metric summary survives a completely stalled writer without blocking the producer or losing records; final delivery counts equal captured rows after a rendezvous releases the writer.
@@ -566,7 +556,6 @@ fn trace_burst_capacity() {
         capture: Capture,
         entered: mpsc::SyncSender<()>,
         release: mpsc::Receiver<()>,
-        status: mpsc::SyncSender<()>,
         first: bool,
     }
     impl Write for Stalled {
@@ -577,9 +566,6 @@ fn trace_burst_capacity() {
                 self.release.recv().unwrap();
             }
             let result = self.capture.write(bytes)?;
-            if serde_json::from_slice::<Value>(bytes).unwrap()["kind"] == "observation_status" {
-                self.status.send(()).unwrap();
-            }
             Ok(result)
         }
         fn flush(&mut self) -> io::Result<()> {
@@ -589,32 +575,26 @@ fn trace_burst_capacity() {
     let capture = Capture::default();
     let (entered, entry) = mpsc::sync_channel(1);
     let (release, released) = mpsc::sync_channel(1);
-    let (status, seen) = mpsc::sync_channel(1);
     let mut observation = Observation::with_writer(
         Stalled {
             capture: capture.clone(),
             entered,
             release: released,
-            status,
             first: true,
         },
         Arc::new(ManualClock(AtomicU64::new(0))),
     )
     .unwrap();
     observation.full_trace = true;
-    observation.refuse_drain_wait = true;
+    observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     observation.emit(json!({"kind":"trace","public":0}));
     entry.recv_timeout(Duration::from_secs(30)).unwrap();
     for index in 1..240 {
         observation.emit(json!({"kind":"trace","public":index}));
     }
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
-    observation.summarize();
-    observation.flush();
-    observation.emit(json!({"kind":"observation_status"}));
-    observation.flush();
     release.send(()).unwrap();
-    seen.recv_timeout(Duration::from_secs(30)).unwrap();
+    drop(BootstrapGuard(Some(observation.clone())));
     let bytes = capture.0.lock().unwrap();
     let rows: Vec<Value> = bytes
         .split(|byte| *byte == b'\n')
@@ -952,29 +932,55 @@ impl Write for Capture {
         Ok(())
     }
 }
-/// Claim: When an injected exit deadline expires with a one-byte writer held at an injected delivery pause, guard destruction synchronously reports every attempted record as delivered, lost or undelivered without a reader release, so process exit needs no status rendezvous and cannot hide its queued tail.
+/// Claim: With a writer blocked inside write and a zero injected drain deadline, guard destruction returns before that writer is released and reports the in-flight record and queued tail as undelivered, while the separately captured synchronous status remains readable.
 /// ´claim:cli:exit-reports-the-undelivered-tail´
 /// ´test:unit:exit-reports-pending-delivery´
 #[test]
 fn exit_reports_pending_delivery() {
-    struct Slow;
-    impl Write for Slow {
+    struct Blocked {
+        entered: mpsc::SyncSender<()>,
+        release: mpsc::Receiver<()>,
+    }
+    impl Write for Blocked {
         fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
-            Ok(bytes.len().min(1))
+            self.entered.send(()).unwrap();
+            self.release.recv().unwrap();
+            Ok(bytes.len())
         }
         fn flush(&mut self) -> io::Result<()> {
             Ok(())
         }
     }
+    let (entered, entry) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
     let status = Capture::default();
-    let mut observation = Observation::with_writer(Slow, Arc::new(ManualClock(AtomicU64::new(0)))).unwrap();
+    let mut observation = Observation::with_writer(
+        Blocked {
+            entered,
+            release: released,
+        },
+        Arc::new(ManualClock(AtomicU64::new(0))),
+    )
+    .unwrap();
     observation.final_writer = Arc::new(Mutex::new(Box::new(status.clone())));
     observation.refuse_drain_wait = true;
-    observation.paused_delivery.store(true, Ordering::Release);
-    for index in 0..241 {
+    observation.emit(json!({"kind":"trace","index":0}));
+    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    for index in 1..241 {
         observation.emit(json!({"kind":"trace","index":index}));
     }
-    drop(BootstrapGuard(Some(observation.clone())));
+    let (finished, completion) = mpsc::sync_channel(1);
+    let guard = BootstrapGuard(Some(observation.clone()));
+    let thread = std::thread::spawn(move || {
+        drop(guard);
+        finished.send(()).unwrap();
+    });
+    // The deadline is injected as zero. This watchdog only prevents a broken
+    // implementation from wedging the harness; release happens after the check.
+    let returned = completion.recv_timeout(Duration::from_secs(30));
+    release.send(()).unwrap();
+    thread.join().unwrap();
+    returned.expect("guard drop waited for the blocked transport after its injected deadline");
     let row: Value = serde_json::from_slice(&status.0.lock().unwrap()).unwrap();
     assert_eq!(row["attempted_records"], 242);
     assert_eq!(row["delivered_records"], 0);
@@ -982,8 +988,6 @@ fn exit_reports_pending_delivery() {
     assert_eq!(row["undelivered_records"], 242);
     assert_eq!(row["drain_timeouts"], 1);
     assert!(observation.closing.load(Ordering::Acquire));
-    // The logical delivery pause needs no reader acknowledgement or real sleep;
-    // closing lets the worker exit without publishing a post-status record.
 }
 
 /// Claim: Deep structured public values cross delivery without a JSON reparse limit; compact objects preserve every nested array and leaf while each inline envelope remains parseable by the ordinary JSON reader.
