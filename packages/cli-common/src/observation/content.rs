@@ -242,55 +242,97 @@ fn base64(value: &[u8]) -> String {
 /// Store large values on the delivery worker, replacing only their representation.
 /// Justified: Artifact publication is part of the labelled observation delivery operation and must not recursively observe itself.
 pub(super) fn compact(record: &mut Value, root: &Path) -> io::Result<()> {
-    // Address the payload before its envelope, so different timestamps and
-    // operation totals cannot cause another copy of identical public content.
+    let mut published = false;
+    // Address payloads before their changing timestamp/operation envelopes.
     if let Value::Object(fields) = record {
         for value in fields.values_mut() {
-            compact_value(value, root, 0)?;
+            compact_value(value, root, &mut published)?;
         }
     }
     let encoded = serde_json::to_vec(record)?;
     if encoded.len() >= super::RECORD_LIMIT {
-        *record = json!({"kind":"observation_artifact","payload":artifact(&encoded, root)?});
+        *record = json!({"kind":"observation_artifact","payload":artifact(&encoded, root, &mut published)?});
+    }
+    if published {
+        // Operational evidence is flushed and atomically published, with one
+        // directory sync per record; it is not binding durable storage.
+        std::fs::File::open(root.join("objects").join("sha256"))?.sync_all()?;
     }
     Ok(())
 }
 
-fn compact_value(value: &mut Value, root: &Path, depth: usize) -> io::Result<()> {
+fn nesting(value: &Value) -> usize {
     match value {
-        Value::Object(fields) => {
-            for child in fields.values_mut() {
-                compact_value(child, root, (depth + 1) % 32)?;
+        Value::Object(fields) => 1 + fields.values().map(nesting).max().unwrap_or(0),
+        Value::Array(values) => 1 + values.iter().map(nesting).max().unwrap_or(0),
+        _ => 0,
+    }
+}
+
+fn compact_value(value: &mut Value, root: &Path, published: &mut bool) -> io::Result<()> {
+    let encoded = serde_json::to_vec(value)?;
+    let depth = nesting(value);
+    if encoded.len() <= INLINE_BYTES && depth < 32 {
+        return Ok(());
+    }
+    if encoded.len() > INLINE_BYTES {
+        // Preserve payload identity through changing envelopes: address a
+        // large child before considering its enclosing object for publication.
+        match value {
+            Value::Object(fields) => {
+                for child in fields.values_mut() {
+                    compact_value(child, root, published)?;
+                }
             }
-        }
-        Value::Array(values) => {
-            for child in values {
-                compact_value(child, root, (depth + 1) % 32)?;
+            Value::Array(values) => {
+                for child in values {
+                    compact_value(child, root, published)?;
+                }
             }
+            _ => {}
         }
-        _ => {}
+    }
+    if nesting(value) >= 32 {
+        chunk_depth(value, root, published)?;
     }
     let encoded = serde_json::to_vec(value)?;
-    if encoded.len() > INLINE_BYTES || (depth == 31 && value.is_object()) || (depth == 31 && value.is_array()) {
-        *value = artifact(&encoded, root)?;
+    if encoded.len() > INLINE_BYTES {
+        *value = artifact(&encoded, root, published)?;
     }
     Ok(())
 }
 
-fn artifact(encoded: &[u8], root: &Path) -> io::Result<Value> {
+fn chunk_depth(value: &mut Value, root: &Path, published: &mut bool) -> io::Result<usize> {
+    let children: Box<dyn Iterator<Item = &mut Value> + '_> = match value {
+        Value::Object(fields) => Box::new(fields.values_mut()),
+        Value::Array(values) => Box::new(values.iter_mut()),
+        _ => return Ok(0),
+    };
+    let mut depth = 1;
+    for child in children {
+        depth = depth.max(1 + chunk_depth(child, root, published)?);
+    }
+    if depth >= 32 {
+        *value = artifact(&serde_json::to_vec(value)?, root, published)?;
+        return Ok(nesting(value));
+    }
+    Ok(depth)
+}
+
+fn artifact(encoded: &[u8], root: &Path, published: &mut bool) -> io::Result<Value> {
     let digest = format!("{:x}", Sha256::digest(encoded));
     let directory = root.join("objects").join("sha256");
     std::fs::create_dir_all(&directory)?;
     let path = directory.join(&digest);
-    // A fresh, synced object atomically replaces corrupt content. Concurrent
+    // A fresh, flushed object atomically replaces corrupt content. Concurrent
     // publishers of the same digest write identical verified bytes.
     if std::fs::read(&path).ok().as_deref() != Some(encoded) {
         let temporary = tempfile::NamedTempFile::new_in(&directory)?;
         let mut file = temporary.as_file();
         file.write_all(encoded)?;
-        file.sync_all()?;
+        file.flush()?;
         temporary.persist(&path).map_err(|error| error.error)?;
-        std::fs::File::open(&directory)?.sync_all()?;
+        *published = true;
     }
     // An existing object must be complete; never silently reuse corrupt bytes.
     if std::fs::read(&path)? != encoded {

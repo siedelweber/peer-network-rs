@@ -841,6 +841,7 @@
     "pn-verification::conformance::shared_cases": "Claim: The declared conformance roster executes whole-act overlap and every typed corruption through the public surface, retaining a result per case and implementation rather than counting legs as acts.",
     "pn-verification::properties::closure_model": "Claim: For generated finite causal DAGs, naive transitive search agrees with every closure, their union counts whole proposals once, both input orders preserve the exact work count, and adding a proposal increases work.",
     "pn-verification::properties::typed_corruptions": "Claim: Every declared single corruption of a valid generated batch returns its exact typed refusal in both input orders, keeping rejection distinct from accidental invalid fixtures.",
-    "ci::test_observe_runtime.Processes.test_generated_records_refusals": "Claim: Each single corruption of the same seeded records DAG retains its exact typed refusal at default and trace, and both metric distributions contain nineteen refusals and no errors."
+    "ci::test_observe_runtime.Processes.test_generated_records_refusals": "Claim: Each single corruption of the same seeded records DAG retains its exact typed refusal at default and trace, and both metric distributions contain nineteen refusals and no errors.",
+    "cli-common::observation::tests::compaction_branching": "Claim: A shallow 256-branch payload below the inline limit remains inline; adding a common thirty-level wrapper requires at most two nesting chunks rather than one object per leaf, and compaction preserves parseable envelopes without a timing verdict."
   }
 }

@@ -301,7 +301,7 @@ fn public_content_encoding() {
     assert_eq!(content::structured(&largest), json!({"atom":largest}));
 }
 
-/// Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from a fresh synced file rather than trusted.
+/// Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from a fresh flushed file rather than trusted, with directory synchronization once per record.
 /// ´claim:cli:large-content-is-addressed-once´
 /// ´test:unit:content-artifact-publication´
 #[test]
@@ -1007,6 +1007,17 @@ fn deep_payload_delivery() {
             .to_string()
             .contains("recursion limit exceeded")
     );
+    let directory = tempfile::tempdir().unwrap();
+    let mut compacted = json!({"kind":"trace","payload":value.clone()});
+    let started = std::time::Instant::now();
+    content::compact(&mut compacted, directory.path()).unwrap();
+    let elapsed = started.elapsed().as_secs_f64();
+    let artifacts = std::fs::read_dir(directory.path().join("objects/sha256")).unwrap().count();
+    crate::write_json_line(
+        &mut crate::LockedStderrWriter::locked_stderr(),
+        &json!({"kind":"compaction_witness","shape":"deep-160","wall_seconds":elapsed,"artifacts":artifacts}),
+    )
+    .unwrap();
     observation.emit(json!({"kind":"trace","payload":value}));
     let (done, drained) = mpsc::sync_channel(1);
     observation.flush_sender.send(done).unwrap();
@@ -1358,4 +1369,34 @@ fn bounded_loss() {
             .unwrap()["gauge"],
         0.0
     );
+}
+
+/// Claim: A shallow 256-branch payload below the inline limit remains inline; adding a common thirty-level wrapper requires at most two nesting chunks rather than one object per leaf, and compaction preserves parseable envelopes without a timing verdict.
+/// ´claim:cli:compaction-chunks-only-required-nesting´
+/// ´test:unit:compaction-branching´
+#[test]
+fn compaction_branching() {
+    let directory = tempfile::tempdir().unwrap();
+    let payload = Value::Array((0..256).map(|i| json!({"public":i})).collect());
+    let mut shallow = json!({"kind":"trace","payload":payload.clone()});
+    content::compact(&mut shallow, directory.path()).unwrap();
+    assert_eq!(shallow["payload"], payload);
+    assert!(!directory.path().join("objects").exists());
+    let mut deep = payload;
+    for _ in 0..30 {
+        deep = Value::Array(vec![deep]);
+    }
+    let mut record = json!({"kind":"trace","payload":deep});
+    let started = std::time::Instant::now();
+    content::compact(&mut record, directory.path()).unwrap();
+    let elapsed = started.elapsed().as_secs_f64();
+    let artifacts = std::fs::read_dir(directory.path().join("objects/sha256")).unwrap().count();
+    crate::write_json_line(
+        &mut crate::LockedStderrWriter::locked_stderr(),
+        &json!({"kind":"compaction_witness","shape":"branches-256","wall_seconds":elapsed,"artifacts":artifacts}),
+    )
+    .unwrap();
+    assert!(artifacts <= 2);
+    let encoded = serde_json::to_vec(&record).unwrap();
+    assert_eq!(serde_json::from_slice::<Value>(&encoded).unwrap(), record);
 }
