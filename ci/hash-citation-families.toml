@@ -380,6 +380,17 @@ definition = "A campaign names its exercised tree and, once imported, the public
 paths = ["ci/hash-citation-families.toml", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
 
 [[rows]]
+family = "wallet-large-input-source"
+group = "wallet decoder large-input campaign"
+measures = "Git tree exercised by the large-input campaign, printed by the campaign itself"
+producer = "bounded fuzz campaign source checkout"
+establishment = "resolvable"
+reader = "campaign-tree"
+tree = "88a3b4a1724641812c70fc10a2a72d7a8d85a6d8"
+definition = "A campaign names the tree it exercised. Before import the tree alone is cited and must be the tree of a commit in the checked-out history; signing at import changes commit identity, never the tree, and the public commit holding it is added then."
+paths = ["ci/hash-citation-families.toml", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
+
+[[rows]]
 family = "storage-library-admission"
 group = "storage library admission"
 measures = "Git tree admitted and the public commit holding it"
