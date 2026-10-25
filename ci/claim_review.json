@@ -2632,6 +2632,14 @@
       "before": "only undated nightly with both answering components satisfies the policy.",
       "after": "Only the pinned dated nightly with both declared, answering components satisfies the compiler policy.",
       "review": "Read the pinned-channel acceptance and undated, other-date, stable, missing-component and missing-response refusals. The assertions identify the declared compiler policy and require answering tools; they do not claim compatibility with an older compiler or cross-platform artifact identity."
+    },
+    {
+      "operation": "cli-common::observation::tests::graph_owner_accounting",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:graph-operations-retain-owner-accounting",
+      "before": "",
+      "after": "Claim: A GRAPH-labelled partition operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.",
+      "review": "Read the graph owner span and its own stem counters, independently of other owner totals."
     }
   ]
 }

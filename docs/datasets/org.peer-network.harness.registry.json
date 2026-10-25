@@ -131,6 +131,7 @@
         "cli-common::observation::tests::storage_instrument_accounting",
         "cli-common::observation::tests::artifact_digest_vector",
         "cli-common::observation::tests::wallet_owner_accounting",
+        "cli-common::observation::tests::graph_owner_accounting",
         "cli-common::tests::emit_writes_one_json_line",
         "cli-common::tests::emit_propagates_writer_error",
         "cli-common::tests::partial_stdout_write_during_emit_is_not_reverted",

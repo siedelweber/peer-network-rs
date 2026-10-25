@@ -7147,6 +7147,69 @@
       "kind": "histogram",
       "unit": "operations",
       "attributes": {}
+    },
+    {
+      "name": "graph__root__sig__design__graph__started_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "graph__root__sig__design__graph__completed_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {
+        "outcome": [
+          "success",
+          "refusal",
+          "error",
+          "cancelled",
+          "unwinding",
+          "incomplete"
+        ]
+      }
+    },
+    {
+      "name": "graph__root__sig__design__graph__work_bytes",
+      "kind": "counter",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "graph__root__sig__design__graph__work_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "graph__root__sig__design__graph__active_operations",
+      "kind": "gauge",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "graph__root__sig__design__graph__resource_current_bytes",
+      "kind": "gauge",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "graph__root__sig__design__graph__elapsed_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "attributes": {}
+    },
+    {
+      "name": "graph__root__sig__design__graph__workload_bytes",
+      "kind": "histogram",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "graph__root__sig__design__graph__workload_operations",
+      "kind": "histogram",
+      "unit": "operations",
+      "attributes": {}
     }
   ],
   "reviews": [
@@ -9374,7 +9437,7 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_new_span",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"HOST\") => Some (OperationKind :: Host) , Some (\"WALLET\") => Some (OperationKind :: Wallet) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"HOST\") => Some (OperationKind :: Host) , Some (\"WALLET\") => Some (OperationKind :: Wallet) , Some (\"GRAPH\") => Some (OperationKind :: Graph) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
       "class_decision": "delivery",
       "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure. The authorized HOST dispatch selects its own storage stem; host-owner-accounting checks it independently of the other owners. The authorized WALLET dispatch selects its own devnet stem; wallet-owner-accounting checks default and trace counters and duration independently of the other owners.",
       "assessments": {
@@ -15129,7 +15192,7 @@
       "item": "observation::OperationKind",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , # [doc = \" Host service transport and storage boundary operations.\"] Host , # [doc = \" Public Elements layout and evidence operations.\"] Wallet , }"
+      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , # [doc = \" Host service transport and storage boundary operations.\"] Host , # [doc = \" Public Elements layout and evidence operations.\"] Wallet , # [doc = \" Graph formation and dependency partition operations.\"] Graph , }"
     },
     {
       "item": "observation::Outcome",
