@@ -6,7 +6,7 @@
 
 **Implementation remark (Measured limits)** · `impl:wallet:reservation-bound` Caller limits cannot exceed 4,000,000 encoded bytes, 4,096 aggregate entries, 10,000 script bytes or 65,536 bytes per witness/proof. The preflight envelope charges sixteen times encoded bytes, 15,360 bytes per declared entry and 4,194,304 bytes of fixed headroom, capped at 134,217,728 bytes. This is a conservative reservation admission rule, not a replacement global allocator or an enforced process RSS limit. The heap witness records actual requested and peak bytes per fixture, excluding profiler metadata, under (`[ROOT-amend:devnet:wallet-decoder-evidence]`).
 
-**Implementation remark (Remaining integration)** · `impl:wallet:held-integration` Genesis RPC reads and parser witnesses are scoped below; signed-chain and settlement fixtures remain held. The 100-byte OP_RETURN fixture carries three literal 32-byte fields for run, target and request; it establishes local exact-match selection only. Its real-chain relay policy and transaction constructor are not admitted here. Global-context entropy-failure execution remains held; production decoder paths use the no-precomputation parsers and do not dereference the randomized global context. (`[ROOT-open:design:devnet-evidence]`) and (`[ROOT-open:crypto:dependency-admission]`) retain those integration duties.
+**Implementation remark (Remaining integration)** · `impl:wallet:held-integration` Genesis RPC reads, signed fixtures, the settlement carrier and parser witnesses are scoped below; marker recognition and the settlement cases that need it remain held. The 100-byte OP_RETURN fixture carries three literal 32-byte fields for run, target and request; it establishes local exact-match selection only. The real-chain fixture relays it under the profile's declared 100-byte data-carrier size and the external producer constructs it; no transaction constructor enters pn-wallet. Global-context entropy-failure execution remains held; production decoder paths use the no-precomputation parsers and do not dereference the randomized global context. (`[ROOT-open:design:devnet-evidence]`) and (`[ROOT-open:crypto:dependency-admission]`) retain those integration duties.
 
 **Definition (Decoder limits)** · `def:wallet:decoder-limits` Caller-supplied byte, aggregate item, script, witness and reservation limits are bounded by the implementation ceilings. Framing checks precede maintained decoding.
 
@@ -31,6 +31,22 @@
 **Signature (Codec verdict)** · `sig:wallet:codec-verdict` The hidden fuzzing-only entry bypasses preflight, returns the bare codec verdict and first-party projection, and checks resource eligibility from decoded fields. Campaign callers bound input bytes before invoking this unbounded comparison surface; it is excluded from production defaults and the production observation census.
 
 **Signature (Evidence amount)** · `sig:wallet:evidence-amount` Select a positive explicit integer amount in the requested asset, with no issuance or peg-in and an exact run, target and request script.
+
+**Definition (Pinning successors)** · `def:wallet:pinning-successors` Chain evidence pins after 6 successor blocks, the depth of (`[ROOT-rule:devnet:settlement]`); the carrier fixes it rather than accepting a caller depth.
+
+**Definition (Settlement evidence)** · `def:wallet:settlement-evidence` Located explicit evidence carries display-order transaction and block identifiers, its output index, the claimed height and the amount the evidence decoder selected.
+
+**Definition (Settlement observation)** · `def:wallet:settlement-observation` One observation carries the active-chain tip, the block hashes the caller read at named heights and the located evidence, possibly reported more than once.
+
+**Definition (Pending evidence)** · `def:wallet:pending-evidence` Evidence below the pinning depth carries its observed successor count; it is recomputed from every observation and never stored.
+
+**Definition (Settlement view)** · `def:wallet:settlement-view` An admitted observation returns pinned evidence once per outpoint, pending evidence, the checked pinned total and the floor height with its hash.
+
+**Definition (Settlement refusal)** · `def:wallet:settlement-refusal` Unavailable, stale, alias and overflow refusals leave the carrier unchanged; a fault names the conflicting floor height and the retained pinned total, and is returned for the rest of the run.
+
+**Definition (Settlement carrier)** · `def:wallet:settlement` One run's carrier keeps pinned evidence by outpoint and any fault; its floor is the highest pinned event's height and block, derived from that evidence. It holds no marker policy, accepted set or snapshot.
+
+**Signature (Settlement observation)** · `sig:wallet:settlement-observe` Check the floor, confirm each locator against the active-chain hash at its height, pin evidence at the declared depth and report the rest as pending, committing only a complete admitted observation.
 
 **Amendment (Layout evidence)** · `amend:wallet:layout-evidence` The seven fixture obligations of (`[ROOT-verif:devnet:wallet-layout]`) are supported by (`claim:wallet:decoder-reservations-have-measured-bounds`), (`claim:wallet:explicit-evidence-binds-target-run-and-request`), (`claim:wallet:full-layouts-preserve-nonevidence-transactions`), (`claim:wallet:hostile-prefixes-refuse-before-codec-allocation`). The independent byte reader compares exposed fields of full layouts; per-vector heap tests measure the declared finite fixtures. Real-chain acceptance, relay policy and settlement remain outside this layout scope.
 

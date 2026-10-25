@@ -129,11 +129,11 @@
 | pn-host | active | unit | pn-host-rust | fast | 6 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
-| pn-wallet | active | unit | pn-wallet-rust | fast | 10 |
+| pn-wallet | active | unit | pn-wallet-rust | fast | 13 |
 | pn-wallet::layout | active | integration | pn-wallet-rust | fast | 5 |
 | pn-wallet::allocation | active | integration | pn-wallet-rust | fast | 1 |
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | fast | 4 |
-| pn-wallet::rpc | active | integration | pn-wallet-elements | service | 8 |
+| pn-wallet::rpc | active | integration | pn-wallet-elements | service | 9 |
 | pn-graph | active | unit | pn-graph-rust | fast | 1 |
 | pn-graph::public | active | public-surface | pn-graph-rust | fast | 3 |
 | pn-graph::properties | active | public-surface | pn-graph-rust | fast | 1 |

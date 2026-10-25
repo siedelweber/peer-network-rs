@@ -2183,7 +2183,7 @@ claims = []
 realizers = []
 hold = "ROOT::open:design:devnet-evidence"
 owner = "Bite 2 wallet implementer with independent integration review"
-missing = "No executed claim for this case census: depth immediately below and at the declared threshold; shallow replacement and pinned-floor fault; duplicate outpoints and aliases cannot double count; wrong policy edition and lineage refused; missing or ambiguous opening and unavailable evidence refused; non-development adapter refusal; old evidence reads unchanged; epoch snapshot derivation remains bite 5."
+missing = "Depth, replacement and pinned-floor fault, duplicate outpoints and aliases, and unchanged old reads have scoped claims; wrong policy edition and lineage and missing or ambiguous openings need the marker policy carriers of pn-records and host recognition, and the non-development adapter refusal needs the pn-host guard, so the group stays held. Epoch snapshot derivation remains bite 5."
 closing_condition = "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: depth immediately below and at the declared threshold; shallow replacement and pinned-floor fault; duplicate outpoints and aliases cannot double count; wrong policy edition and lineage refused; missing or ambiguous opening and unavailable evidence refused; non-development adapter refusal; old evidence reads unchanged; epoch snapshot derivation remains bite 5."
 closing_step = "Bite 2 wallet integration, before enabling the adapter"
 

@@ -1154,7 +1154,7 @@ edition = "wallet-layout-1"
 kind = "implementation"
 name = "pn-wallet-elements"
 evidence = "real"
-contract = "Elements 29.4.1 RC 1 daemon reads: genesis provisioning, cookie rotation and node-signed fixture blocks; recognition and settlement held"
+contract = "Elements 29.4.1 RC 1 daemon reads: genesis provisioning, cookie rotation, node-signed fixture blocks and settlement forks; recognition held"
 edition = "29.4.1rc1"
 
 [[rows]]
@@ -1166,7 +1166,7 @@ level = "unit"
 implementation = "pn-wallet-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-wallet::decoder::tests::global_context_initialization", "pn-wallet::rpc::tests::attempts_and_holds", "pn-wallet::rpc::tests::projections", "pn-wallet::rpc::tests::secret_carriers", "pn-wallet::rpc_cookie::tests::grammar_cases", "pn-wallet::rpc_cookie::tests::descriptor_cases", "pn-wallet::rpc_http::tests::framing_cases", "pn-wallet::rpc_http::tests::acquisition_cases", "pn-wallet::rpc_json::tests::parser_cases", "pn-wallet::rpc_json::tests::envelope_cases"]
+cases = ["pn-wallet::decoder::tests::global_context_initialization", "pn-wallet::rpc::tests::attempts_and_holds", "pn-wallet::rpc::tests::projections", "pn-wallet::rpc::tests::secret_carriers", "pn-wallet::rpc_cookie::tests::grammar_cases", "pn-wallet::rpc_cookie::tests::descriptor_cases", "pn-wallet::rpc_http::tests::framing_cases", "pn-wallet::rpc_http::tests::acquisition_cases", "pn-wallet::rpc_json::tests::parser_cases", "pn-wallet::rpc_json::tests::envelope_cases", "pn-wallet::settlement::tests::pinning_depth", "pn-wallet::settlement::tests::replacement_floor", "pn-wallet::settlement::tests::outpoint_once"]
 
 [[rows]]
 kind = "suite"
@@ -1210,7 +1210,7 @@ level = "integration"
 implementation = "pn-wallet-elements"
 tier = "service"
 budget = "pure-suite"
-cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals", "pn-wallet::rpc::authentication_refusals", "pn-wallet::rpc::observations", "pn-wallet::rpc::generic_negative", "pn-wallet::rpc::rotation", "pn-wallet::rpc::signed_reads", "pn-wallet::rpc::reader_limit_hold"]
+cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals", "pn-wallet::rpc::authentication_refusals", "pn-wallet::rpc::observations", "pn-wallet::rpc::generic_negative", "pn-wallet::rpc::rotation", "pn-wallet::rpc::signed_reads", "pn-wallet::rpc::reader_limit_hold", "pn-wallet::rpc::settlement_forks"]
 
 [[rows]]
 kind = "implementation"

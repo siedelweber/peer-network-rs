@@ -310,12 +310,102 @@ def restart(root):
             raise RuntimeError('Elements restart failed')
 
 
+EXPLICIT = '0' * 64
+# Run, target and request bindings of the settlement fixture's evidence
+# outputs; each burn takes a distinct request.
+RUN, TARGET = bytes([0x11]) * 32, bytes([0x22]) * 32
+
+
+def producer(root):
+    config = json.loads((root/'producer.json').read_text())
+    return config, bytes(json.loads(PROFILE.read_text())['challenge']).hex()
+
+
+def sign_block(root, exclude):
+    # The producer signs a fresh block; distinct commitment data keeps a
+    # replacement from reproducing the block it replaces, and a minimum
+    # transaction age leaves mempool evidence out of the replacement.
+    config, challenge = producer(root)
+    counter = root/'block-counter'
+    number = int(counter.read_text()) + 1 if counter.exists() else 1
+    counter.write_text(str(number))
+    proposed = rpc(config, 'getnewblockhex', [86400 if exclude else 0, None, number.to_bytes(4, 'big').hex()])
+    signatures = rpc(config, 'signblock', [proposed, challenge])
+    combined = rpc(config, 'combineblocksigs', [proposed, signatures, challenge])
+    if not combined['complete'] or rpc(config, 'submitblock', [combined['hex']]) is not None:
+        raise RuntimeError('Elements settlement block refused')
+
+
+def settlement(root):
+    signed(root)
+    config, _ = producer(root)
+    evidence = json.loads((root/'signed.json').read_text())
+    # Wallet sends to unconfidential producer addresses leave explicit coins,
+    # so evidence transactions need no blinding.
+    for amount, asset in [(5, evidence['asset']), (1, evidence['fee_asset'])]:
+        address = rpc(config, 'getaddressinfo', [rpc(config, 'getnewaddress', ['explicit', 'bech32'])])['unconfidential']
+        rpc(config, 'sendtoaddress', dict(address=address, amount=amount, assetlabel=asset, fee_rate=1))
+    sign_block(root, False)
+    (root/'burns.json').write_text('[]')
+    print('WALLET-ELEMENTS scope=settlement blocks=6 credentials=separate')
+
+
+def burn(root, units):
+    config, _ = producer(root)
+    evidence = json.loads((root/'signed.json').read_text())
+    stock, fee_asset = evidence['asset'], evidence['fee_asset']
+    burns = json.loads((root/'burns.json').read_text())
+    request = bytes([0x30 + len(burns)]) * 32
+    def coin(asset):
+        coins = [c for c in rpc(config, 'listunspent', [0]) if c['asset'] == asset
+                 and c['amountblinder'] == EXPLICIT and c['assetblinder'] == EXPLICIT]
+        return max(coins, key=lambda c: Decimal(str(c['amount'])))
+    def address(label):
+        return rpc(config, 'getaddressinfo', [rpc(config, 'getnewaddress', [label, 'bech32'])])['unconfidential']
+    stock_coin, fee_coin = coin(stock), coin(fee_asset)
+    amount, fee = Decimal(units) / 100_000_000, Decimal('0.0001')
+    outputs = [{'burn': str(amount), 'asset': stock}]
+    if Decimal(str(stock_coin['amount'])) > amount:
+        outputs.append({address('stock-change'): str(Decimal(str(stock_coin['amount'])) - amount), 'asset': stock})
+    outputs += [{address('fee-change'): str(Decimal(str(fee_coin['amount'])) - fee)}, {'fee': str(fee)}]
+    raw = rpc(config, 'createrawtransaction', [[dict(txid=c['txid'], vout=c['vout']) for c in (stock_coin, fee_coin)], outputs])
+    # The node writes the explicit burn output with a bare OP_RETURN; before
+    # the node wallet signs, that script becomes the declared 100-byte
+    # run/target/request evidence script, the profile's relayed data size.
+    script = bytes([0x6a]) + b''.join(bytes([32]) + value for value in (RUN, TARGET, request))
+    prefix = '01' + bytes.fromhex(stock)[::-1].hex() + '01' + units.to_bytes(8, 'big').hex() + '00'
+    if raw.count(prefix + '016a') != 1:
+        raise RuntimeError('Elements burn output layout differs')
+    raw = raw.replace(prefix + '016a', prefix + bytes([len(script)]).hex() + script.hex())
+    if rpc(config, 'decoderawtransaction', [raw])['vout'][0]['scriptPubKey']['hex'] != script.hex():
+        raise RuntimeError('Elements evidence output differs')
+    signed_burn = rpc(config, 'signrawtransactionwithwallet', [raw])
+    if not signed_burn['complete']:
+        raise RuntimeError('Elements evidence transaction is not signed')
+    txid = rpc(config, 'sendrawtransaction', [signed_burn['hex'], 0.1, str(amount)])
+    burns.append(dict(transaction=txid, output=0, units=units, run=RUN.hex(), target=TARGET.hex(), request=request.hex()))
+    (root/'burns.json').write_text(json.dumps(burns))
+
+
+def advance(root, blocks, replace, exclude):
+    config, _ = producer(root)
+    if replace:
+        tip = rpc(config, 'getblockcount')
+        rpc(config, 'invalidateblock', [rpc(config, 'getblockhash', [tip - replace + 1])])
+    for _ in range(blocks):
+        sign_block(root, exclude)
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['start', 'signed', 'stop', 'stop-all', 'restart'])
+    parser.add_argument('action', choices=['start', 'signed', 'settlement', 'burn', 'advance', 'stop', 'stop-all', 'restart'])
     parser.add_argument('--root', required=True, type=Path)
+    parser.add_argument('--units', type=int, default=0)
+    parser.add_argument('--blocks', type=int, default=0)
+    parser.add_argument('--replace', type=int, default=0)
+    parser.add_argument('--exclude', action='store_true')
     args = parser.parse_args()
-    if args.action in ('start', 'signed', 'restart') and not os.environ.get('PN_ELEMENTS_BIN'):
+    if args.action in ('start', 'signed', 'settlement', 'restart') and not os.environ.get('PN_ELEMENTS_BIN'):
         print('PN_ELEMENTS_BIN must name the Elements binary directory', file=sys.stderr)
         sys.exit(2)
     root = args.root.resolve()
@@ -330,15 +420,19 @@ def main():
         if args.action == 'stop-all':
             stop(root)
             for child in root.parent.iterdir():
-                if child.is_dir() and child.name.startswith(('wallet-signed-', 'wallet-rotation-')):
+                if child.is_dir() and child.name.startswith(('wallet-signed-', 'wallet-rotation-', 'wallet-settlement-')):
                     stop(child)
+        elif args.action == 'burn':
+            burn(root, args.units)
+        elif args.action == 'advance':
+            advance(root, args.blocks, args.replace, args.exclude)
         else:
-            {'start':start,'signed':signed,'stop':stop,'restart':restart}[args.action](root)
+            {'start':start,'signed':signed,'settlement':settlement,'stop':stop,'restart':restart}[args.action](root)
     except BaseException:
         if root.is_dir():
             with (root/'harness-error.log').open('w') as log:
                 traceback.print_exc(file=log)
-        if args.action in ('start','signed','restart'):
+        if args.action in ('start','signed','settlement','restart'):
             stop(root)
         raise
 

@@ -258,9 +258,14 @@ fn generic_negative() {
 }
 
 fn harness(action: &str, directory: &std::path::Path) -> std::process::Output {
+    producer(action, directory, &[])
+}
+
+fn producer(action: &str, directory: &std::path::Path, arguments: &[&str]) -> std::process::Output {
     std::process::Command::new("python3")
         .args(["-B", "ci/wallet_elements.py", action, "--root"])
         .arg(directory)
+        .args(arguments)
         .current_dir(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../.."))
         .output()
         .unwrap()
@@ -582,4 +587,221 @@ fn reader_limit_hold() {
     assert_eq!(reader.read(Read::Block(declaration.genesis)).unwrap_err(), expected);
     assert_eq!(reader.read(Read::BlockCount).unwrap_err(), expected);
     assert_eq!(reader.read(Read::Block([42; 32])).unwrap_err(), expected);
+}
+
+fn advance(arguments: &[&str]) {
+    assert!(
+        producer("advance", &root(), arguments).status.success(),
+        "producer advance failed"
+    );
+}
+
+fn tip() -> u64 {
+    let ReadResult::Count(count) = client().read(Read::BlockCount).unwrap() else {
+        panic!("typed count required");
+    };
+    count
+}
+
+fn chain_hash(height: u64) -> [u8; 32] {
+    let ReadResult::Hash(hash) = client().read(Read::BlockHash(height)).unwrap() else {
+        panic!("typed hash required");
+    };
+    hash
+}
+
+struct Burn {
+    transaction: [u8; 32],
+    output: u32,
+    binding: [[u8; 32]; 3],
+}
+
+fn burns() -> Vec<Burn> {
+    let rows: serde_json::Value = serde_json::from_slice(&std::fs::read(root().join("burns.json")).unwrap()).unwrap();
+    rows.as_array()
+        .unwrap()
+        .iter()
+        .map(|row| Burn {
+            transaction: locator(&row["transaction"]),
+            output: u32::try_from(row["output"].as_u64().unwrap()).unwrap(),
+            binding: ["run", "target", "request"].map(|key| locator(&row[key])),
+        })
+        .collect()
+}
+
+fn read_transaction(burn: &Burn, block: [u8; 32]) -> pn_wallet::Transaction {
+    let ReadResult::Transaction(transaction) = client()
+        .read(Read::Transaction {
+            transaction: burn.transaction,
+            block,
+        })
+        .unwrap()
+    else {
+        panic!("typed transaction required");
+    };
+    transaction
+}
+
+fn read_block(block: [u8; 32]) -> pn_wallet::Block {
+    let ReadResult::Block(block) = client().read(Read::Block(block)).unwrap() else {
+        panic!("typed block required");
+    };
+    block
+}
+
+/// The cookie reader's transaction at the claimed block, with its explicit amount selected by the decoder.
+fn located(burn: &Burn, height: u64, block: [u8; 32], asset: &[u8; 32]) -> pn_wallet::Evidence {
+    let [run, target, request] = &burn.binding;
+    let output = usize::try_from(burn.output).unwrap();
+    let amount = pn_wallet::evidence_amount(&read_transaction(burn, block), output, asset, run, target, request).unwrap();
+    pn_wallet::Evidence {
+        transaction: burn.transaction,
+        output: burn.output,
+        block,
+        height,
+        amount,
+    }
+}
+
+/// Active-chain hashes at every height the decision needs: the located evidence and the last pinned floor.
+fn observation(evidence: Vec<pn_wallet::Evidence>, last: Option<&pn_wallet::View>) -> pn_wallet::Observation {
+    let tip = tip();
+    let mut heights: Vec<u64> = evidence.iter().map(|evidence| evidence.height).collect();
+    heights.extend(last.and_then(|view| view.floor).map(|(height, _)| height));
+    let hashes = heights
+        .into_iter()
+        .filter(|height| *height <= tip)
+        .map(|height| (height, chain_hash(height)))
+        .collect();
+    pn_wallet::Observation { tip, hashes, evidence }
+}
+
+/// Observe after a change that keeps the pinned block: the total, the floor and the pinned reads are unchanged.
+fn kept(
+    settlement: &mut pn_wallet::Settlement,
+    moved: &[pn_wallet::Evidence],
+    last: &pn_wallet::View,
+    reads: (&Burn, &pn_wallet::Transaction, &pn_wallet::Block),
+) -> pn_wallet::View {
+    let view = settlement.observe(&observation(moved.to_vec(), Some(last))).unwrap();
+    assert_eq!(
+        (view.pinned_total, view.pinned.len(), view.floor),
+        (300_000_000, 2, last.floor)
+    );
+    let (burn, transaction, block) = reads;
+    let (_, pinned) = view.floor.unwrap();
+    assert_eq!(&read_transaction(burn, pinned), transaction);
+    assert_eq!(&read_block(pinned), block);
+    view
+}
+
+/// Claim: On the real signed chain, two explicit burn outputs stay pending with four and five successors, set no floor, and pin at six with their block as the floor; a shallow replacement made with invalidateblock and freshly signed blocks changes only pending evidence and refuses the replaced locator, although the node still serves that transaction; the same outpoints re-mined in a new block and reported repeatedly count once; the pinned total, floor and pinned reads stay unchanged after later blocks, a replacement of the newest blocks and a replacement reaching below the tip-minus-six cutoff above the pinned block; and a replacement of the pinned block is a run fault that retains the pinned total. Epoch snapshot derivation is not performed here; it remains with bite 5.
+/// ´claim:wallet:rpc-settlement-forks-keep-the-pinned-floor´
+/// ´test:integration:settlement-forks´
+#[test]
+fn settlement_forks() {
+    use pn_wallet::SettlementRefusal;
+    if std::env::var_os("PN_WALLET_SETTLEMENT_CHILD").is_none() {
+        let directory = root().with_file_name(format!("wallet-settlement-{}", std::process::id()));
+        let running = Running(directory.clone());
+        assert!(
+            harness("settlement", &directory).status.success(),
+            "settlement fixture production failed"
+        );
+        let output = std::process::Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "settlement_forks", "--nocapture"])
+            .env("PN_WALLET_SETTLEMENT_CHILD", "1")
+            .env("PN_WALLET_TEST_ROOT", &directory)
+            .output()
+            .unwrap();
+        assert!(output.status.success(), "{}", String::from_utf8_lossy(&output.stderr));
+        drop(running);
+        return;
+    }
+    let signed: serde_json::Value = serde_json::from_slice(&std::fs::read(root().join("signed.json")).unwrap()).unwrap();
+    let mut asset = locator(&signed["asset"]);
+    asset.reverse();
+    assert_eq!(tip(), 6);
+    for units in ["100000000", "200000000"] {
+        assert!(
+            producer("burn", &root(), &["--units", units]).status.success(),
+            "producer burn failed"
+        );
+    }
+    advance(&["--blocks", "1"]);
+    let burns = burns();
+    let original = chain_hash(7);
+    let first: Vec<_> = burns.iter().map(|burn| located(burn, 7, original, &asset)).collect();
+    assert_eq!(
+        first.iter().map(|evidence| evidence.amount).collect::<Vec<_>>(),
+        [100_000_000, 200_000_000]
+    );
+    advance(&["--blocks", "4"]);
+    let mut settlement = pn_wallet::Settlement::default();
+    let view = settlement.observe(&observation(first.clone(), None)).unwrap();
+    assert_eq!(
+        view.pending.iter().map(|pending| pending.successors).collect::<Vec<_>>(),
+        [4, 4]
+    );
+    assert_eq!((view.pinned.len(), view.pinned_total, view.floor), (0, 0, None));
+    // Shallow replacement: the replacing branch leaves both burns in the mempool.
+    advance(&["--replace", "5", "--blocks", "5", "--exclude"]);
+    assert_eq!(tip(), 11);
+    assert_ne!(chain_hash(7), original);
+    assert_eq!(read_transaction(&burns[0], original).fields().outputs.len(), 4);
+    let stale = SettlementRefusal::Stale {
+        transaction: burns[0].transaction,
+        output: 0,
+    };
+    assert_eq!(settlement.observe(&observation(first.clone(), Some(&view))), Err(stale));
+    let view = settlement.observe(&observation(vec![], Some(&view))).unwrap();
+    assert_eq!((view.pinned.len(), view.pending.len(), view.pinned_total), (0, 0, 0));
+    // The same outpoints in a new block, reported repeatedly, count once each.
+    advance(&["--blocks", "1"]);
+    let moved_block = chain_hash(12);
+    let moved: Vec<_> = burns.iter().map(|burn| located(burn, 12, moved_block, &asset)).collect();
+    let repeated = vec![moved[0], moved[0], moved[1], moved[0]];
+    assert_eq!(
+        settlement.observe(&observation(vec![moved[0], first[0]], Some(&view))),
+        Err(stale)
+    );
+    let view = settlement.observe(&observation(repeated.clone(), Some(&view))).unwrap();
+    assert_eq!(view.pending.len(), 2);
+    advance(&["--blocks", "5"]);
+    let view = settlement.observe(&observation(repeated.clone(), Some(&view))).unwrap();
+    assert_eq!(
+        view.pending.iter().map(|pending| pending.successors).collect::<Vec<_>>(),
+        [5, 5]
+    );
+    assert_eq!(view.pinned_total, 0);
+    advance(&["--blocks", "1"]);
+    let view = settlement.observe(&observation(repeated, Some(&view))).unwrap();
+    assert_eq!(
+        (view.pinned.len(), view.pending.len(), view.pinned_total),
+        (2, 0, 300_000_000)
+    );
+    assert_eq!(view.floor, Some((12, moved_block)));
+    let (transaction, block) = (read_transaction(&burns[0], moved_block), read_block(moved_block));
+    let reads = (&burns[0], &transaction, &block);
+    // Later blocks, then replacements above the pinned block 12, keep the pinned evidence and its reads.
+    advance(&["--blocks", "3"]);
+    let view = kept(&mut settlement, &moved, &view, reads);
+    advance(&["--replace", "3", "--blocks", "4", "--exclude"]);
+    let view = kept(&mut settlement, &moved, &view, reads);
+    // At tip 22 the cutoff 22 - 6 is 16; heights 14 to 22 are replaced, yet block 12 stays.
+    let replaced = chain_hash(14);
+    advance(&["--replace", "9", "--blocks", "10", "--exclude"]);
+    assert_eq!(tip(), 23);
+    assert_ne!(chain_hash(14), replaced);
+    let view = kept(&mut settlement, &moved, &view, reads);
+    // A replacement of the pinned block itself is a realization fault for the run.
+    advance(&["--replace", "12", "--blocks", "13", "--exclude"]);
+    assert_eq!(tip(), 24);
+    assert_ne!(chain_hash(12), moved_block);
+    let fault = SettlementRefusal::Fault {
+        height: 12,
+        retained: 300_000_000,
+    };
+    assert_eq!(settlement.observe(&observation(moved.clone(), Some(&view))), Err(fault));
+    assert_eq!(settlement.observe(&observation(vec![], Some(&view))), Err(fault));
 }

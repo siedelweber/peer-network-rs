@@ -19,6 +19,7 @@
     "con_max_block_sig_size": "150",
     "deprecatedrpc": "create_bdb",
     "fallbackfee": "0.0001",
+    "datacarriersize": "100",
     "blindedaddresses": "0"
   },
   "challenge": [

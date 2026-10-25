@@ -64,11 +64,11 @@
     },
     {
       "exceptions": 17,
-      "generators": 14,
+      "generators": 20,
       "helpers": 0,
-      "instrumented": 5,
+      "instrumented": 6,
       "name": "pn-wallet",
-      "operations": 22
+      "operations": 23
     }
   ]
 }

@@ -976,6 +976,10 @@
     "pn-verification::graph::graph_shared_cases": "",
     "pn-verification::graph::generated_partitions": "",
     "ci::test_observe_runtime.Processes.test_graph_partition": "",
-    "ci::test_observe_runtime.Processes.test_graph_dependency": ""
+    "ci::test_observe_runtime.Processes.test_graph_dependency": "",
+    "pn-wallet::settlement::tests::pinning_depth": "",
+    "pn-wallet::settlement::tests::replacement_floor": "",
+    "pn-wallet::settlement::tests::outpoint_once": "",
+    "pn-wallet::rpc::settlement_forks": ""
   }
 }

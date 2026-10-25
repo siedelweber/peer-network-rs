@@ -6005,6 +6005,16 @@
     },
     {
       "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "item": "settlement::Settlement::observe",
+      "owner": "WALLET",
+      "signature": "fn observe (& mut self , observation : & Observation) -> Result < View , SettlementRefusal >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-wallet",
       "path": "packages/wallet/src/rpc.rs",
       "item": "rpc::<RpcLimits as Default>::default",
       "owner": "WALLET",
@@ -12009,6 +12019,17 @@
       "item_premise": "The selector checks explicit asset and positive integer amount, excludes issuance and peg-in inputs, and binds run, target and request without rewriting the transaction."
     },
     {
+      "operation": "pn-wallet::packages/wallet/src/settlement.rs::settlement::Settlement::observe",
+      "class_decision": "wallet-decoder",
+      "body": "{ if let Some (fault) = self . fault { return Err (fault) ; } let hash = | height : u64 | { observation . hashes . get (& height) . copied () . ok_or (SettlementRefusal :: Unavailable { height }) } ; if let Some ((height , block)) = floor (& self . pinned) && (observation . tip < height || hash (height) ? != block) { let retained = self . pinned . values () . fold (0u64 , | total , evidence | total . saturating_add (evidence . amount)) ; let fault = SettlementRefusal :: Fault { height , retained } ; self . fault = Some (fault) ; return Err (fault) ; } let mut located = BTreeMap :: new () ; for evidence in & observation . evidence { let key = (evidence . transaction , evidence . output) ; let alias = SettlementRefusal :: Alias { transaction : evidence . transaction , output : evidence . output , } ; if evidence . height > observation . tip || hash (evidence . height) ? != evidence . block { return Err (SettlementRefusal :: Stale { transaction : evidence . transaction , output : evidence . output , }) ; } if located . insert (key , * evidence) . is_some_and (| earlier | earlier != * evidence) || self . pinned . get (& key) . is_some_and (| pinned | pinned != evidence) { return Err (alias) ; } } let mut pinned = self . pinned . clone () ; let mut pending = Vec :: new () ; for (key , evidence) in located { let successors = observation . tip - evidence . height ; if successors >= PINNING_SUCCESSORS { pinned . entry (key) . or_insert (evidence) ; } else { pending . push (Pending { evidence , successors }) ; } } let pinned_total = pinned . values () . try_fold (0u64 , | total , evidence | total . checked_add (evidence . amount)) . ok_or (SettlementRefusal :: Overflow) ? ; self . pinned = pinned ; Ok (View { pinned : self . pinned . values () . copied () . collect () , pending , pinned_total , floor : floor (& self . pinned) , }) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body performs the declared public settlement observation over caller-read public chain positions, with complete public argument and return recording and no secret input."
+    },
+    {
       "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::<RpcLimits as Default>::default",
       "class_decision": "wallet-decoder",
       "body": "{ Self { request_bytes : 4096 , header_bytes : 8192 , header_count : 64 , response_bytes : 8_001_024 , json_depth : 16 , json_items : 4096 , chain_bytes : 4_000_000 , deadline : Duration :: from_secs (10) , } }",
@@ -14389,6 +14410,60 @@
       "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
     },
     {
+      "item": "settlement::Settlement",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [derive (Clone , Debug , Default , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "settlement::SettlementRefusal",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "settlement::View",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [derive (Clone , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "settlement::Pending",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "settlement::Observation",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [derive (Clone , Debug , Default , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "settlement::Evidence",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
       "item": "decoder::Refusal",
       "kind": "derive",
       "package": "pn-wallet",
@@ -16333,6 +16408,42 @@
       "package": "pn-wallet",
       "path": "packages/wallet/src/rpc_secret.rs",
       "syntax": "pub (crate) struct Buffer { bytes : SecretBox < [u8] > , length : usize , }"
+    },
+    {
+      "item": "settlement::Evidence",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [doc = \" One explicit evidence output located by public identifiers on one observed chain.\"] # [doc = \" (´def:wallet:settlement-evidence´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub struct Evidence { # [doc = \" Display-order transaction identifier.\"] pub transaction : [u8 ; 32] , # [doc = \" Output index of the evidence output.\"] pub output : u32 , # [doc = \" Display-order hash of the block claimed to include the transaction.\"] pub block : [u8 ; 32] , # [doc = \" Height claimed for that block.\"] pub height : u64 , # [doc = \" Explicit amount selected by the evidence decoder.\"] pub amount : u64 , }"
+    },
+    {
+      "item": "settlement::Observation",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [doc = \" Public chain positions read for one observation, and the evidence located on them.\"] # [doc = \" (´def:wallet:settlement-observation´)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Observation { # [doc = \" Height of the observed best block.\"] pub tip : u64 , # [doc = \" Active-chain block hashes read at the listed heights.\"] pub hashes : BTreeMap < u64 , [u8 ; 32] > , # [doc = \" Located evidence, possibly reported more than once.\"] pub evidence : Vec < Evidence > , }"
+    },
+    {
+      "item": "settlement::Pending",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [doc = \" Evidence that has not yet reached the pinning depth.\"] # [doc = \" (´def:wallet:pending-evidence´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub struct Pending { # [doc = \" The located evidence.\"] pub evidence : Evidence , # [doc = \" Successor blocks observed above its block.\"] pub successors : u64 , }"
+    },
+    {
+      "item": "settlement::View",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [doc = \" Result of an admitted observation.\"] # [doc = \" (´def:wallet:settlement-view´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct View { # [doc = \" Every pinned evidence output, once per outpoint, in outpoint order.\"] pub pinned : Vec < Evidence > , # [doc = \" Evidence below the pinning depth, once per outpoint; recomputed on every observation.\"] pub pending : Vec < Pending > , # [doc = \" Sum of pinned amounts.\"] pub pinned_total : u64 , # [doc = \" Highest pinned height and its block hash, which every later chain must retain.\"] pub floor : Option < (u64 , [u8 ; 32]) > , }"
+    },
+    {
+      "item": "settlement::SettlementRefusal",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [doc = \" Public settlement refusal; a fault is retained for the run.\"] # [doc = \" (´def:wallet:settlement-refusal´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum SettlementRefusal { # [doc = \" A chain position the decision needs was not read; nothing is guessed.\"] Unavailable { # [doc = \" Height whose active-chain hash is absent.\"] height : u64 , } , # [doc = \" Evidence is not on the observed chain at its claimed height.\"] Stale { # [doc = \" Display-order transaction identifier.\"] transaction : [u8 ; 32] , # [doc = \" Output index.\"] output : u32 , } , # [doc = \" One outpoint was reported with different locators or amounts.\"] Alias { # [doc = \" Display-order transaction identifier.\"] transaction : [u8 ; 32] , # [doc = \" Output index.\"] output : u32 , } , # [doc = \" The pinned total does not fit the amount type.\"] Overflow , # [doc = \" The observed chain no longer holds the pinned floor: a realization fault for the run.\"] # [doc = \" Pinned amounts are retained unchanged and every later observation returns this fault.\"] Fault { # [doc = \" Pinned floor height the observed chain conflicts with.\"] height : u64 , # [doc = \" Retained pinned total, never edited downward.\"] retained : u64 , } , }"
+    },
+    {
+      "item": "settlement::Settlement",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/settlement.rs",
+      "syntax": "# [doc = \" Pinned evidence and any fault for one run; pending evidence is never stored.\"] # [doc = \" (´def:wallet:settlement´)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Settlement { pinned : BTreeMap < ([u8 ; 32] , u32) , Evidence > , fault : Option < SettlementRefusal > , }"
     }
   ],
   "class_decisions": [

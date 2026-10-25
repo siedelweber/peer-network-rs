@@ -2720,6 +2720,38 @@
       "before": "",
       "after": "Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed 0.8.3 identity and exactly its default-plus-serde feature vocabulary, so manifest spelling alone cannot stand in for resolved dependency evidence.",
       "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-wallet::settlement::tests::pinning_depth",
+      "path": "packages/wallet/src/settlement.rs",
+      "claim": "WALLET::claim:wallet:settlement-pins-at-declared-depth",
+      "before": "",
+      "after": "Claim: Evidence with fewer than six successor blocks stays pending with its successor count, adds nothing to the pinned total and sets no floor; at exactly six successors it pins with its amount and its height and block become the floor; later empty blocks and an unread hash at a height unrelated to pinned evidence keep the pinned total and floor, while an unread floor height is refused rather than guessed.",
+      "review": "Read the pure carrier over synthetic active-chain hashes: the asserted successor counts, pinned totals, retained floor, stale, alias, unavailable and overflow refusals, and the sticky fault. No marker recognition, accepted set, snapshot or signature verdict is inferred."
+    },
+    {
+      "operation": "pn-wallet::settlement::tests::replacement_floor",
+      "path": "packages/wallet/src/settlement.rs",
+      "claim": "WALLET::claim:wallet:settlement-replacement-keeps-pinned-floor",
+      "before": "",
+      "after": "Claim: A replacement above the highest pinned event changes only pending evidence, even at or below the pinning cutoff, and evidence left on the replaced branch is refused as stale; a replacement of the floor block, or a chain shorter than its height, is a realization fault that retains the pinned total and is returned for every later observation.",
+      "review": "Read the pure carrier over synthetic active-chain hashes: the asserted successor counts, pinned totals, retained floor, stale, alias, unavailable and overflow refusals, and the sticky fault. No marker recognition, accepted set, snapshot or signature verdict is inferred."
+    },
+    {
+      "operation": "pn-wallet::settlement::tests::outpoint_once",
+      "path": "packages/wallet/src/settlement.rs",
+      "claim": "WALLET::claim:wallet:settlement-counts-each-outpoint-once",
+      "before": "",
+      "after": "Claim: The same outpoint reported repeatedly counts once in pending and pinned evidence, distinct outpoints add exactly, an outpoint reported with a different block, height or amount is refused as an alias without changing state, and an overflowing pinned total is refused.",
+      "review": "Read the pure carrier over synthetic active-chain hashes: the asserted successor counts, pinned totals, retained floor, stale, alias, unavailable and overflow refusals, and the sticky fault. No marker recognition, accepted set, snapshot or signature verdict is inferred."
+    },
+    {
+      "operation": "pn-wallet::rpc::settlement_forks",
+      "path": "packages/wallet/tests/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-settlement-forks-keep-the-pinned-floor",
+      "before": "",
+      "after": "Claim: On the real signed chain, two explicit burn outputs stay pending with four and five successors, set no floor, and pin at six with their block as the floor; a shallow replacement made with invalidateblock and freshly signed blocks changes only pending evidence and refuses the replaced locator, although the node still serves that transaction; the same outpoints re-mined in a new block and reported repeatedly count once; the pinned total, floor and pinned reads stay unchanged after later blocks, a replacement of the newest blocks and a replacement reaching below the tip-minus-six cutoff above the pinned block; and a replacement of the pinned block is a run fault that retains the pinned total. Epoch snapshot derivation is not performed here; it remains with bite 5.",
+      "review": "Read the real signed-chain stages: producer burns and invalidateblock replacements, cookie-reader locators confirmed against active-chain hashes, the asserted pending, pinned and fault outcomes and the identical later reads. These witnesses implement no marker recognition, accepted set, epoch snapshot or signature verification."
     }
   ]
 }

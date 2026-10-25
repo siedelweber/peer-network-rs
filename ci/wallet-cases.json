@@ -175,51 +175,62 @@
     {
       "group": "settlement",
       "case": "depth immediately below and at the declared threshold",
-      "status": "held",
-      "claims": [],
-      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:settlement-pins-at-declared-depth",
+        "WALLET::claim:wallet:rpc-settlement-forks-keep-the-pinned-floor"
+      ],
+      "missing": ""
     },
     {
       "group": "settlement",
       "case": "shallow replacement and pinned-floor fault",
-      "status": "held",
-      "claims": [],
-      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:settlement-replacement-keeps-pinned-floor",
+        "WALLET::claim:wallet:rpc-settlement-forks-keep-the-pinned-floor"
+      ],
+      "missing": ""
     },
     {
       "group": "settlement",
       "case": "duplicate outpoints and aliases cannot double count",
-      "status": "held",
-      "claims": [],
-      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:settlement-counts-each-outpoint-once",
+        "WALLET::claim:wallet:rpc-settlement-forks-keep-the-pinned-floor"
+      ],
+      "missing": ""
     },
     {
       "group": "settlement",
       "case": "wrong policy edition and lineage refused",
       "status": "held",
       "claims": [],
-      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
+      "missing": "The policy edition and lineage are the marker policy and its whole-prefix lineage, carried by pn-records and recognized by pn-host; pn-wallet has no domain prerequisite, so this case waits for the recognition slice that owns those carriers."
     },
     {
       "group": "settlement",
       "case": "missing or ambiguous opening and unavailable evidence refused",
       "status": "held",
       "claims": [],
-      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
+      "missing": "Openings are accepted-set openings of the marker policy carried by pn-records; pn-wallet refuses unread chain positions and stale locators, but an opening refusal waits for the recognition slice that owns the marker carriers."
     },
     {
       "group": "settlement",
       "case": "non-development adapter refusal",
       "status": "held",
       "claims": [],
-      "missing": "Real-chain recognition and its non-development adapter refusal remain in the next slice."
+      "missing": "The non-development refusal is the pn-host adapter guard on the development-network feature; it waits for the host adapter slice."
     },
     {
       "group": "settlement",
       "case": "old evidence reads unchanged; epoch snapshot derivation remains bite 5",
-      "status": "held",
-      "claims": [],
-      "missing": "Real-chain recognition remains in the next slice; epoch snapshot derivation remains bite 5."
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:rpc-settlement-forks-keep-the-pinned-floor"
+      ],
+      "missing": ""
     },
     {
       "group": "http",
