@@ -4,16 +4,21 @@
     {
       "group": "crypto",
       "case": "exact versions, checksums, unified features and C modules",
-      "status": "held",
-      "claims": [],
-      "missing": "Independent dependency admission and entropy-failure execution remain held."
+      "status": "scoped",
+      "claims": [
+        "ROOT::claim:discipline:wallet-codec-pins-match-review",
+        "ROOT::claim:discipline:wallet-development-edges-stay-out-of-production"
+      ],
+      "missing": ""
     },
     {
       "group": "crypto",
       "case": "pinned toolchain and both C provenance records",
-      "status": "held",
-      "claims": [],
-      "missing": "Independent dependency admission and entropy-failure execution remain held."
+      "status": "scoped",
+      "claims": [
+        "ROOT::claim:discipline:wallet-codec-provenance-matches-build"
+      ],
+      "missing": ""
     },
     {
       "group": "crypto",
@@ -38,7 +43,7 @@
       "case": "global-context first use, entropy failure, concurrency, lifetime and fork review",
       "status": "held",
       "claims": [],
-      "missing": "Independent dependency admission and entropy-failure execution remain held."
+      "missing": "Concurrent first use and pointer identity are witnessed by the global-context test, and the static process lifetime is a reviewed property of the binding. Entropy-failure execution needs a harness that denies a test process both the getrandom system call and its /dev/urandom fallback, and the fork review needs a reviewed statement over every production path before any key-bearing or global-context path is admitted; neither is supplied in this slice."
     },
     {
       "group": "crypto",
@@ -145,7 +150,7 @@
       "case": "reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed",
       "status": "held",
       "claims": [],
-      "missing": "Zero reissuance tokens in genesis and in the stock issuance, and the wallet reissuance refusal, are witnessed; a valid peg-in claim, which mints only the pegged fee asset while peg-in validation is disabled, and subsidy-producing blocks are not yet attempted against the node."
+      "missing": "Zero reissuance tokens in genesis and in the stock issuance, and the wallet reissuance refusal, are witnessed; a new issuance creates a distinct asset, never stock units. With validatepegin=0 the node accepts a peg-in whose parent transaction and merkle proof are fabricated, even under an OP_RETURN parent block challenge, and mints the pegged fee asset; validatepegin=1 needs a reachable mainchain daemon, without which the node does not start, so no declared parameter of this same-host profile closes the peg-in path, and the subsidy path is declared zero but not yet attempted against the node."
     },
     {
       "group": "profile",

@@ -2880,6 +2880,22 @@
       "before": "",
       "after": "Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, equal-position and later parents still refuse, candidate causal-key refusal remains, and earlier epochs precede smaller current positions.",
       "review": "The replay parent fixture retains all act fields across a time inversion, checks exact Mismatch evidence, and preserves missing/equal/later placement refusals and candidate causal-key refusal. The incidence fixture uses disjoint endpoints below the global maximum and reads an unaffected frontier, distinguishing both monotone-global and last-act clocks. These are local implementation witnesses; parent paper correspondence remains held."
+    },
+    {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_codec_pins",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:wallet-codec-pins-match-review",
+      "before": "",
+      "after": "Claim: Every registry package of the wallet's normal and build closure carries its reviewed archive checksum in the lockfile, and both built C archives export exactly the reviewed module families, with ECDH, SCHNORRSIG, EXTRAKEYS and ELLSWIFT in secp256k1-sys and SURJECTIONPROOF, GENERATOR, RANGEPROOF, ECDSA_ADAPTOR and WHITELIST in secp256k1-zkp-sys; a changed checksum, a missing module, an unreviewed module or an unknown family refuses.",
+      "review": "Read the executed check over the lockfile, the reviewed dependency registers, the rendered record and the artifacts cargo reports for the gate profile, then each negative witness and its refusal message. This binds identities, module exports, provenance files and compiler identity; it is not a review of the C sources or a proof of their behaviour."
+    },
+    {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_codec_provenance",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:wallet-codec-provenance-matches-build",
+      "before": "",
+      "after": "Claim: The workspace channel, the answering rustc's commit and the compiler identity each sys crate's built library embeds must all match the build policy's pinned rustc commit for nightly-2026-10-16, the bundled snapshots name exactly the upstream revisions record 023 cites, and the record states those revisions, modules and compiler; another channel, a compiler and both libraries agreeing on another nightly, a library disagreeing with the compiler, an empty library, another revision or an omitted record value refuses.",
+      "review": "Read the executed check over the lockfile, the reviewed dependency registers, the rendered record and the artifacts cargo reports for the gate profile, then each negative witness and its refusal message. This binds identities, module exports, provenance files and compiler identity; it is not a review of the C sources or a proof of their behaviour."
     }
   ]
 }

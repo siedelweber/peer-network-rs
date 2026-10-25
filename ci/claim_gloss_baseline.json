@@ -995,6 +995,8 @@
     "pn-graph::formation::affinity_coordinates": "",
     "pn-graph::formation::mixed_reconstruction": "",
     "ci::test_observe_runtime.Processes.test_graph_formation": "",
-    "pn-records::public::ordering::parent_replay": ""
+    "pn-records::public::ordering::parent_replay": "",
+    "ci::test_wallet_boundary.WalletBoundary.test_codec_pins": "",
+    "ci::test_wallet_boundary.WalletBoundary.test_codec_provenance": ""
   }
 }

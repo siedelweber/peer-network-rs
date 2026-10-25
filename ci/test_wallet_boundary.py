@@ -4,6 +4,7 @@ import unittest
 import copy
 from wallet_cases import check as check_cases
 from wallet_boundary import check, check_features, check_build_scripts, check_production_tree
+import wallet_crypto
 import json
 import tomllib
 import subprocess
@@ -131,6 +132,75 @@ class WalletBoundary(unittest.TestCase):
                                 capture_output=True, text=True, check=False)
         self.assertEqual(result.returncode, 1)
         self.assertEqual(result.stderr.strip(), 'Elements fixture unavailable: Elements fixture must be directly under workspace .lane')
+
+    def test_codec_pins(self):
+        """Claim: Every registry package of the wallet's normal and build closure carries its reviewed archive checksum in the lockfile, and both built C archives export exactly the reviewed module families, with ECDH, SCHNORRSIG, EXTRAKEYS and ELLSWIFT in secp256k1-sys and SURJECTIONPROOF, GENERATOR, RANGEPROOF, ECDSA_ADAPTOR and WHITELIST in secp256k1-zkp-sys; a changed checksum, a missing module, an unreviewed module or an unknown family refuses.
+        ´claim:discipline:wallet-codec-pins-match-review´
+        ´test:integration:test-codec-pins´
+        """
+        self.assertTrue(wallet_crypto.check())
+        rows = [dict(name='elements', version='0.27.0', checksum='a' * 64)]
+        lock = dict(package=[dict(name='elements', version='0.27.0', checksum='a' * 64), dict(name='pn-wallet', version='0.1.0')])
+        tree = {('elements', '0.27.0'), ('pn-wallet', '0.1.0')}
+        self.assertIsNone(wallet_crypto.check_checksums(lock, rows, tree))
+        for changed in ['b' * 64, None]:
+            altered = [dict(rows[0], checksum=changed)] if changed else []
+            with self.assertRaisesRegex(ValueError, 'checksum differs'):
+                wallet_crypto.check_checksums(lock, altered, tree)
+        with self.assertRaisesRegex(ValueError, 'checksums disagree'):
+            wallet_crypto.check_checksums(lock, rows + [dict(rows[0], checksum='c' * 64)], tree)
+        for package, spec in wallet_crypto.SNAPSHOTS.items():
+            reviewed = {spec['prefix'] + name for name in spec['enabled'].values()}
+            reviewed |= {spec['prefix'] + family + '_fixture' for family in spec['families']}
+            self.assertIsNone(wallet_crypto.check_modules(package, reviewed))
+            first = next(iter(spec['enabled'].values()))
+            for symbols in [reviewed - {spec['prefix'] + first},
+                            reviewed | {spec['prefix'] + next(iter(spec['absent'].values()))},
+                            reviewed | {spec['prefix'] + 'musig_unreviewed'}]:
+                with self.assertRaisesRegex(ValueError, 'C modules differ'):
+                    wallet_crypto.check_modules(package, symbols)
+        with self.assertRaisesRegex(ValueError, 'static library'):
+            wallet_crypto.archive_symbols(b'not an archive')
+
+    def test_codec_provenance(self):
+        """Claim: The workspace channel, the answering rustc's commit and the compiler identity each sys crate's built library embeds must all match the build policy's pinned rustc commit for nightly-2026-10-16, the bundled snapshots name exactly the upstream revisions record 023 cites, and the record states those revisions, modules and compiler; another channel, a compiler and both libraries agreeing on another nightly, a library disagreeing with the compiler, an empty library, another revision or an omitted record value refuses.
+        ´claim:discipline:wallet-codec-provenance-matches-build´
+        ´test:integration:test-codec-provenance´
+        """
+        self.assertTrue(wallet_crypto.check())
+        channel, commit = wallet_crypto.reviewed_compiler(Path('.'))
+        self.assertIsNone(wallet_crypto.check_channel(channel, channel))
+        with self.assertRaisesRegex(ValueError, 'reviewed pin'):
+            wallet_crypto.check_channel('nightly', channel)
+        def answering(hash_, release):
+            return f'rustc {release}\nrelease: {release}\ncommit-hash: {hash_}\ncommit-date: 2026-10-15\n'
+        version = f'rustc 1.101.0-nightly ({commit[:9]} 2026-10-15)'
+        library = b'\0' + version.encode() + b'\0'
+        self.assertIsNone(wallet_crypto.check_answering(answering(commit, '1.101.0-nightly'), commit))
+        self.assertIsNone(wallet_crypto.check_compiler('secp256k1-sys', library, version, commit))
+        # The declaration is unchanged while the compiler and both libraries agree on another nightly.
+        other = ''.join('e' if digit == 'f' else 'f' for digit in commit)
+        other_version = f'rustc 1.102.0-nightly ({other[:9]} 2026-11-01)'
+        with self.assertRaisesRegex(ValueError, 'pinned commit'):
+            wallet_crypto.check_answering(answering(other, '1.102.0-nightly'), commit)
+        for package in wallet_crypto.SNAPSHOTS:
+            with self.assertRaisesRegex(ValueError, 'another compiler'):
+                wallet_crypto.check_compiler(package, b'\0' + other_version.encode() + b'\0', other_version, commit)
+        for rlib in [b'\0' + other_version.encode() + b'\0', b'', library + other_version.encode()]:
+            with self.assertRaisesRegex(ValueError, 'another compiler'):
+                wallet_crypto.check_compiler('secp256k1-sys', rlib, version, commit)
+        record = Path('adr/023-cryptographic-base.md').read_text()
+        for package, spec in wallet_crypto.SNAPSHOTS.items():
+            revision = '# vendored\n' + spec['revision'] + '\n'
+            self.assertIsNone(wallet_crypto.check_provenance(package, revision))
+            for wrong in ['# vendored\n' + 'f' * 40 + '\n', revision + spec['revision'] + '\n', '']:
+                with self.assertRaisesRegex(ValueError, 'provenance differs'):
+                    wallet_crypto.check_provenance(package, wrong)
+            for value in [spec['revision'], next(iter(spec['enabled']))]:
+                with self.assertRaisesRegex(ValueError, 'record omits'):
+                    wallet_crypto.check_record(record.replace(value, ''), channel)
+        with self.assertRaisesRegex(ValueError, 'record omits the pinned compiler'):
+            wallet_crypto.check_record(record.replace(channel, ''), channel)
 
     def test_case_census(self):
         """Claim: Every declared case must remain present, bind a real source claim with a passed result when scoped, and block discharge while any case is held.

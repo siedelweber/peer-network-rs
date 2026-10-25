@@ -2141,7 +2141,7 @@ claims = []
 realizers = []
 hold = "ROOT::open:design:devnet-evidence"
 owner = "Bite 2 wallet implementer with independent integration review"
-missing = "No executed claim for this case census: exact versions, checksums, unified features and C modules; pinned toolchain and both C provenance records; invalid generator, commitment and public-key encodings; invalid proof metadata and encodings without claiming proof verification; global-context first use, entropy failure, concurrency, lifetime and fork review; confinement rejects aliases, re-exports and non-adapter use."
+missing = "Versions, checksums, unified features and C modules, the pinned toolchain and both C provenance records, curve and proof encodings and confinement have scoped claims; entropy-failure execution and the fork review keep the global-context case and the group held."
 closing_condition = "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: exact versions, checksums, unified features and C modules; pinned toolchain and both C provenance records; invalid generator, commitment and public-key encodings; invalid proof metadata and encodings without claiming proof verification; global-context first use, entropy failure, concurrency, lifetime and fork review; confinement rejects aliases, re-exports and non-adapter use."
 closing_step = "Bite 2 wallet integration, before enabling the adapter"
 
