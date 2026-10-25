@@ -13,12 +13,36 @@ fn main() {
     let empty = common::resolved();
     let mut root = common::act(1, Layout::Paired);
     root.authoritative_position = 1;
+    root.logical_time = 1;
     let mut later = common::act(2, Layout::Binary);
     later.authoritative_position = 2;
+    later.logical_time = 2;
     let mut results = Vec::new();
-    for dependency in [None, Some(later.id.clone()), Some(common::act(3, Layout::Binary).id)] {
+    for case in 0..6 {
+        let mut root = root.clone();
+        let mut later = later.clone();
+        let dependency = match case {
+            1 => Some(later.id.clone()),
+            2 => Some(common::act(3, Layout::Binary).id),
+            _ => None,
+        };
         root.projections.dependency =
             dependency.map_or(DependencyProjection::FullEmpty, |id| DependencyProjection::Full(vec![id]));
+        match case {
+            3 => root.logical_time = 7,
+            4 => {
+                root.logical_time = 7;
+                root.projections.dependency = DependencyProjection::Tombstoned((5, 3));
+            }
+            5 => {
+                root.finalization_epoch = 1;
+                root.authoritative_position = 2;
+                later.finalization_epoch = 2;
+                later.authoritative_position = 1;
+                later.projections.dependency = DependencyProjection::Full(vec![root.id.clone()]);
+            }
+            _ => {}
+        }
         let sequence = [root.clone(), later.clone()];
         let replay = validate_history(&sequence, &names).unwrap();
         let candidate = validate_record(&sequence, &empty, &[]);
@@ -28,6 +52,7 @@ fn main() {
         results.push(serde_json::json!({
             "acts": format!("{:?}", replay.acts()),
             "evidence": format!("{:?}", replay.non_compliance()),
+            "time_evidence": format!("{:?}", replay.time_evidence()),
             "candidate": format!("{candidate:?}"),
             "violations": replay.non_compliance().len(),
             "admitted": candidate.is_ok(),

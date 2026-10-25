@@ -4,7 +4,7 @@ use pn_records::{ActId, CandidateAct, test_support::Scenario};
 
 fn oracle(acts: &[CandidateAct]) -> Vec<Vec<ActId>> {
     let mut ordered: Vec<_> = acts.iter().collect();
-    ordered.sort_by_key(|act| act.authoritative_position);
+    ordered.sort_by_key(|act| (act.finalization_epoch, act.authoritative_position));
     // Independently enumerate each root's ancestors, then repeatedly merge
     // intersecting sets. No backend component algorithm supplies expectations.
     let mut closures = Vec::<BTreeSet<ActId>>::new();

@@ -17,7 +17,7 @@ pub struct Scenario {
     /// External names, never isolated history edges.
     pub names: Vec<PublicReference>,
     /// First proposal position.
-    pub boundary: u64,
+    pub boundary: crate::Position,
 }
 
 /// Generate two history acts and two to ten proposals from shrinkable words.
@@ -74,10 +74,10 @@ pub fn generate(words: &[u64]) -> Scenario {
                 content: if word & (1 << 62) == 0 {
                     Removal::Live
                 } else {
-                    Removal::Tombstoned(sequence + 2)
+                    Removal::Tombstoned((u64::from(index >= 2), sequence + 2))
                 },
                 dependency: if word & (1 << 63) != 0 {
-                    DependencyProjection::Tombstoned(sequence + 2)
+                    DependencyProjection::Tombstoned((u64::from(index >= 2), sequence + 2))
                 } else if dependencies.is_empty() {
                     DependencyProjection::FullEmpty
                 } else {
@@ -88,6 +88,7 @@ pub fn generate(words: &[u64]) -> Scenario {
             authentication_evidence: vec![1],
             finalization_epoch: u64::from(index >= 2),
             authoritative_position: sequence + 1,
+            logical_time: 1,
         });
     }
     let proposals = acts.split_off(2);
@@ -95,7 +96,7 @@ pub fn generate(words: &[u64]) -> Scenario {
         history: acts,
         proposals,
         names: vec![name],
-        boundary: 3,
+        boundary: (1, 3),
     }
 }
 
@@ -177,7 +178,7 @@ pub fn corrupt(case: &mut Scenario, mutation: &str) -> Option<crate::ValidationE
             Some(ValidationError::InvalidReference(reference))
         }
         "cut-placement" => {
-            case.boundary = first.authoritative_position + 1;
+            case.boundary = (first.finalization_epoch, first.authoritative_position + 1);
             Some(ValidationError::Dependency {
                 act: first.id,
                 dependency: None,

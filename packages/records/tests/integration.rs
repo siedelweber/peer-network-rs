@@ -17,6 +17,7 @@ fn complete_acts_count_once() {
         assert_eq!(view.protocol_references(), &candidate.protocol_references);
         assert_eq!(view.authentication_evidence(), &candidate.authentication_evidence);
         assert_eq!(view.finalization_epoch(), candidate.finalization_epoch);
+        assert_eq!(view.logical_time(), candidate.logical_time);
         assert_eq!(view.authoritative_position(), candidate.authoritative_position);
         for (leg, original) in view.legs().iter().zip(&candidate.legs) {
             assert_eq!(leg.id(), &original.id);
@@ -41,7 +42,7 @@ fn shared_ancestor_counts_once() {
     }
     let proposals = [shared.clone(), roots[0].clone(), roots[1].clone()];
     let view = validate_record(&proposals, &resolved(), &[]).unwrap();
-    let inputs = assemble_boundary_inputs(&view, 8).unwrap();
+    let inputs = assemble_boundary_inputs(&view, (5, 8)).unwrap();
     assert_eq!(inputs.closures().len(), 3);
     assert!(inputs.closures().iter().all(|closure| closure.members().contains(&shared.id)));
     assert_eq!(inputs.acts().len(), 3);
@@ -49,7 +50,7 @@ fn shared_ancestor_counts_once() {
     assert_eq!(inputs.acts().iter().map(|act| act.legs().len()).sum::<usize>(), 5);
     let history = validate_history(&[shared], &[named("left"), named("right")]).unwrap();
     let view = validate_record(&roots, &history, &[]).unwrap();
-    let inputs = assemble_boundary_inputs(&view, 9).unwrap();
+    let inputs = assemble_boundary_inputs(&view, (5, 9)).unwrap();
     assert_eq!(inputs.acts().len(), 2);
     assert!(
         inputs

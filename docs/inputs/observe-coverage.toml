@@ -51,11 +51,11 @@ generators = 89
 
 [[rows]]
 name = "pn-records"
-operations = 98
+operations = 101
 instrumented = 38
-exceptions = 60
+exceptions = 63
 helpers = 0
-generators = 76
+generators = 78
 
 [[rows]]
 name = "pn-wallet"

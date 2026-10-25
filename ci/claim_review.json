@@ -2765,9 +2765,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_records_replay",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:records-replay-retains-observed-noncompliance",
-      "before": "",
-      "after": "Claim: Finalized dependency violations and every retained act field agree with observation disabled, at default and at trace; candidate refusals remain refusals while replay is accounted as success.",
-      "review": "Read the exact retained-field, complete-evidence and candidate-refusal assertions. The process witness compares full public results in three observation modes and checks success/refusal accounting. These checks establish local replay carriage, not authentication of an opening, fault attribution, standing or title."
+      "before": "Claim: Finalized dependency violations and every retained act field agree with observation disabled, at default and at trace; candidate refusals remain refusals while replay is accounted as success.",
+      "after": "Claim: Finalized dependency violations, attached times and recurrence evidence agree with observation disabled, at default and at trace, including mismatches, unavailable openings and a cross-epoch predecessor; candidate refusals remain refusals while replay is accounted as success.",
+      "review": "Read the exact epoch-qualified placement and retained-time assertions. Recurrence expectations use independently scanned prior incidence; the process witness compares complete results and accounting across observation modes. These are internal carrier checks, conditional on family-valid incidence, not cryptographic authentication or a resolution of the non-compliant time and cross-epoch paper holds."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_missing_tracked_source",
@@ -2776,6 +2776,30 @@
       "before": "Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution.",
       "after": "Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution; the Meson census and incidence witnesses also refuse missing, stale, unconnected or broadly excluded tracked inputs and missing steps, including an addition without reconfiguration.",
       "review": "The existing traversal-loss assertion remains. The added constructed-tree battery executes the Meson target and deployed census, checks new source and dotfile additions without configuration changes, and checks independent malformed incidence manifests plus vendor and generated positives. It establishes structural accounting and fresh census execution, not semantic input completeness."
+    },
+    {
+      "operation": "pn-records::public::ordering::epoch_placement",
+      "path": "packages/records/tests/public/ordering.rs",
+      "claim": "RECORDS::claim:acts:epoch-qualified-placement-retains-causal-checks",
+      "before": "",
+      "after": "Claim: Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.",
+      "review": "Read the exact epoch-qualified placement and retained-time assertions. Recurrence expectations use independently scanned prior incidence; the process witness compares complete results and accounting across observation modes. These are internal carrier checks, conditional on family-valid incidence, not cryptographic authentication or a resolution of the non-compliant time and cross-epoch paper holds."
+    },
+    {
+      "operation": "pn-records::public::ordering::attached_times",
+      "path": "packages/records/tests/public/ordering.rs",
+      "claim": "RECORDS::claim:acts:attached-times-match-scoped-incidence-replay",
+      "before": "",
+      "after": "Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.",
+      "review": "Read the exact epoch-qualified placement and retained-time assertions. Recurrence expectations use independently scanned prior incidence; the process witness compares complete results and accounting across observation modes. These are internal carrier checks, conditional on family-valid incidence, not cryptographic authentication or a resolution of the non-compliant time and cross-epoch paper holds."
+    },
+    {
+      "operation": "pn-records::public::ordering::retained_time_evidence",
+      "path": "packages/records/tests/public/ordering.rs",
+      "claim": "RECORDS::claim:acts:time-evidence-never-rewrites-finalization",
+      "before": "",
+      "after": "Claim: Recurrence mismatches retain the attached time and exact expected value, including a value beyond u64; tombstoned openings, non-compliant dependencies and ambiguous placement yield no time verdict, and none rewrites finalization metadata.",
+      "review": "Read the exact epoch-qualified placement and retained-time assertions. Recurrence expectations use independently scanned prior incidence; the process witness compares complete results and accounting across observation modes. These are internal carrier checks, conditional on family-valid incidence, not cryptographic authentication or a resolution of the non-compliant time and cross-epoch paper holds."
     }
   ]
 }

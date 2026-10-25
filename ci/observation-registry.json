@@ -4038,7 +4038,7 @@
       "path": "packages/records/src/lib.rs",
       "item": "assemble_boundary_inputs",
       "owner": "RECORDS",
-      "signature": "fn assemble_boundary_inputs (records : & ValidatedRecords , boundary : u64) -> Result < BoundaryInputs < '_ > , ValidationError >",
+      "signature": "fn assemble_boundary_inputs (records : & ValidatedRecords , boundary : Position) -> Result < BoundaryInputs < '_ > , ValidationError >",
       "claim": "ROOT::sig:design:records",
       "mode": "instrumented",
       "shape": "shape-records",
@@ -4283,7 +4283,7 @@
       "path": "packages/records/src/lib.rs",
       "item": "BoundaryInputs < 'a >::boundary",
       "owner": "RECORDS",
-      "signature": "fn boundary (& self) -> u64",
+      "signature": "fn boundary (& self) -> Position",
       "claim": "ROOT::sig:design:records",
       "mode": "exception",
       "shape": "shape-records",
@@ -6373,6 +6373,60 @@
       "item": "ValidatedRecords::history",
       "owner": "RECORDS",
       "signature": "fn history (& self) -> & ValidatedHistory",
+      "claim": "ROOT::sig:design:records",
+      "mode": "exception",
+      "shape": "shape-records",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-replay-retains-observed-noncompliance",
+        "boundary": "pn-records::packages/records/src/lib.rs::validate_history",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedHistory::time_evidence",
+      "owner": "RECORDS",
+      "signature": "fn time_evidence (& self) -> & [TimeEvidence]",
+      "claim": "ROOT::sig:design:records",
+      "mode": "exception",
+      "shape": "shape-records",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-replay-retains-observed-noncompliance",
+        "boundary": "pn-records::packages/records/src/lib.rs::validate_history",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::position",
+      "owner": "RECORDS",
+      "signature": "fn position (& self) -> Position",
+      "claim": "ROOT::sig:design:records",
+      "mode": "exception",
+      "shape": "shape-records",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.",
+        "witness": "ROOT::claim:discipline:records-replay-retains-observed-noncompliance",
+        "boundary": "pn-records::packages/records/src/lib.rs::validate_history",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedAct::logical_time",
+      "owner": "RECORDS",
+      "signature": "fn logical_time (& self) -> u64",
       "claim": "ROOT::sig:design:records",
       "mode": "exception",
       "shape": "shape-records",
@@ -12324,6 +12378,39 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "Pure immutable access to the complete accepted history and its public local non-compliance evidence inherits the validation operation; no mutation, authentication or additional act counting occurs."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedHistory::time_evidence",
+      "body": "{ & self . time_evidence }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Pure immutable access to retained epoch-qualified placement, attached logical time or local recurrence evidence inherits the validation operation; it neither rewrites history nor adds an act-level operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::position",
+      "body": "{ (self . finalization_epoch , self . authoritative_position) }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Pure immutable access to retained epoch-qualified placement, attached logical time or local recurrence evidence inherits the validation operation; it neither rewrites history nor adds an act-level operation."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedAct::logical_time",
+      "body": "{ self . logical_time }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Pure immutable access to retained epoch-qualified placement, attached logical time or local recurrence evidence inherits the validation operation; it neither rewrites history nor adds an act-level operation."
     }
   ],
   "generators": [
@@ -14684,6 +14771,24 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
       "expansion_review": "Structural equality, cloning and full Debug retain only public act/dependency identities and typed causes, inheriting the finalized-history validation operation."
+    },
+    {
+      "item": "TimeVerdict",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural equality, cloning and full Debug retain only public act identities, host-attached times and exact local recurrence observations, inheriting finalized-history validation."
+    },
+    {
+      "item": "TimeEvidence",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural equality, cloning and full Debug retain only public act identities, host-attached times and exact local recurrence observations, inheriting finalized-history validation."
     }
   ],
   "reviewed_types": [
@@ -16086,10 +16191,22 @@
       "syntax": "# [doc = \" Projection completeness declared by the structural body.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Layout { # [doc = \" Exactly the Binary role.\"] Binary , # [doc = \" Exactly both A and T roles, owned by one act.\"] Paired , }"
     },
     {
+      "item": "TimeVerdict",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Local comparison of retained time with the complete available recurrence inputs.\"] # [doc = \" This never replaces the attached time or certifies family formation.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum TimeVerdict { # [doc = \" Attached time equals the recurrence over retained predecessor times.\"] Matches , # [doc = \" The exact recurrence result differs; u128 also represents `u64::MAX` + 1.\"] Mismatch { # [doc = \" Retained host-attached value.\"] attached : u64 , # [doc = \" Exact locally expected value, never written back.\"] expected : u128 , } , # [doc = \" The dependency opening is absent; no recurrence verdict follows.\"] UnavailableOpening , # [doc = \" Dependency placement is non-compliant; its time rule remains unspecified.\"] NonCompliant , # [doc = \" Repeated published positions do not supply a unique replay order.\"] AmbiguousPlacement , }"
+    },
+    {
+      "item": "TimeEvidence",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" One recurrence observation associated with its immutable act identity.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TimeEvidence { # [doc = \" Act whose attached time was read.\"] pub act : ActId , # [doc = \" Scoped equality, mismatch or explicit absence of a verdict.\"] pub verdict : TimeVerdict , }"
+    },
+    {
       "item": "Removal",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" A dependency projection's versioned removal fact, distinct from identity.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Removal { # [doc = \" Present in this accepted snapshot.\"] Live , # [doc = \" Removed at the given authoritative position; the identity remains.\"] Tombstoned (u64) , }"
+      "syntax": "# [doc = \" A dependency projection's versioned removal fact, distinct from identity.\"] # [doc = \" (´def:acts:projection´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Removal { # [doc = \" Present in this accepted snapshot.\"] Live , # [doc = \" Removed at the given authoritative position; the identity remains.\"] Tombstoned (Position) , }"
     },
     {
       "item": "CandidateLeg",
@@ -16113,7 +16230,7 @@
       "item": "CandidateAct",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" An unchecked act candidate; downstream operations require `ValidatedRecords`.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateAct { # [doc = \" Authored structural identity.\"] pub id : ActId , # [doc = \" Unchanged structural body with units and vintages.\"] pub body : StructuralBody , # [doc = \" Immutable structural legs, always owned together by this candidate.\"] pub legs : Vec < CandidateLeg > , # [doc = \" One-way removal facts for the act, never for an individual co-leg.\"] pub projections : RemovableProjections , # [doc = \" Immutable protocol references, independently required even after removal.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public authentication evidence; retained, not cryptographically certified.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Accepted finalization epoch, not identity or a quantity's vintage.\"] pub finalization_epoch : u64 , # [doc = \" Host-authoritative order; never used for identity equality.\"] pub authoritative_position : u64 , }"
+      "syntax": "# [doc = \" An unchecked act candidate; downstream operations require `ValidatedRecords`.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CandidateAct { # [doc = \" Authored structural identity.\"] pub id : ActId , # [doc = \" Unchanged structural body with units and vintages.\"] pub body : StructuralBody , # [doc = \" Immutable structural legs, always owned together by this candidate.\"] pub legs : Vec < CandidateLeg > , # [doc = \" One-way removal facts for the act, never for an individual co-leg.\"] pub projections : RemovableProjections , # [doc = \" Immutable protocol references, independently required even after removal.\"] pub protocol_references : Vec < PublicReference > , # [doc = \" Public authentication evidence; retained, not cryptographically certified.\"] pub authentication_evidence : Vec < u8 > , # [doc = \" Accepted finalization epoch, not identity or a quantity's vintage.\"] pub finalization_epoch : u64 , # [doc = \" Host-authoritative order; never used for identity equality.\"] pub authoritative_position : u64 , # [doc = \" Host-attached logical time, retained unchanged and never authored identity.\"] pub logical_time : u64 , }"
     },
     {
       "item": "RemovableProjections",
@@ -16125,13 +16242,13 @@
       "item": "DependencyProjection",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Canonical dependency content; empty is available content, not absence.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum DependencyProjection { # [doc = \" Complete empty dependency set.\"] FullEmpty , # [doc = \" Complete nonempty sorted, duplicate-free identifiers; admission also requires self-free earlier targets.\"] Full (Vec < ActId >) , # [doc = \" Content unavailable after this position; never interpreted as empty.\"] Tombstoned (u64) , }"
+      "syntax": "# [doc = \" Canonical dependency content; empty is available content, not absence.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum DependencyProjection { # [doc = \" Complete empty dependency set.\"] FullEmpty , # [doc = \" Complete nonempty sorted, duplicate-free identifiers; admission also requires self-free earlier targets.\"] Full (Vec < ActId >) , # [doc = \" Content unavailable after this position; never interpreted as empty.\"] Tombstoned (Position) , }"
     },
     {
       "item": "DependencyStatus",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Status derived from the owning act, not an independently supplied removal fact.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum DependencyStatus { # [doc = \" Complete empty content.\"] FullEmpty , # [doc = \" Complete nonempty content.\"] Full , # [doc = \" The act's dependency content is unavailable at this position.\"] Tombstoned (u64) , }"
+      "syntax": "# [doc = \" Status derived from the owning act, not an independently supplied removal fact.\"] # [doc = \" (´def:acts:dependencies´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum DependencyStatus { # [doc = \" Complete empty content.\"] FullEmpty , # [doc = \" Complete nonempty content.\"] Full , # [doc = \" The act's dependency content is unavailable at this position.\"] Tombstoned (Position) , }"
     },
     {
       "item": "ValidatedLeg",
@@ -16143,13 +16260,13 @@
       "item": "ValidatedAct",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Immutable view owned by a validated snapshot, distinct from unchecked candidates.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedAct { # [doc = \" Structural identity, containing the sole author and family representation.\"] id : ActId , # [doc = \" Retained quantities, units, vintage and layout.\"] body : StructuralBody , # [doc = \" All required legs together, with act-derived dependency status.\"] legs : Vec < ValidatedLeg > , # [doc = \" Act-owned removable projections.\"] projections : RemovableProjections , # [doc = \" Immutable required public references.\"] protocol_references : Vec < PublicReference > , # [doc = \" Public evidence retained without cryptographic certification.\"] authentication_evidence : Vec < u8 > , # [doc = \" Finalization epoch, not identity.\"] finalization_epoch : u64 , # [doc = \" Authoritative position, not identity.\"] authoritative_position : u64 , }"
+      "syntax": "# [doc = \" Immutable view owned by a validated snapshot, distinct from unchecked candidates.\"] # [doc = \" (´def:acts:carrier´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ValidatedAct { # [doc = \" Structural identity, containing the sole author and family representation.\"] id : ActId , # [doc = \" Retained quantities, units, vintage and layout.\"] body : StructuralBody , # [doc = \" All required legs together, with act-derived dependency status.\"] legs : Vec < ValidatedLeg > , # [doc = \" Act-owned removable projections.\"] projections : RemovableProjections , # [doc = \" Immutable required public references.\"] protocol_references : Vec < PublicReference > , # [doc = \" Public evidence retained without cryptographic certification.\"] authentication_evidence : Vec < u8 > , # [doc = \" Finalization epoch, not identity.\"] finalization_epoch : u64 , # [doc = \" Authoritative position, not identity.\"] authoritative_position : u64 , # [doc = \" One retained time shared by all projections of this act.\"] logical_time : u64 , }"
     },
     {
       "item": "ValidatedHistory",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Previously accepted whole acts and external names, checked locally before use.\"] # [doc = \" The constructor checks representation, not host admission or authentication.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug)] pub struct ValidatedHistory { acts : Arc < Vec < ValidatedAct > > , references : Arc < BTreeSet < PublicReference > > , non_compliance : Arc < Vec < DependencyViolation > > , }"
+      "syntax": "# [doc = \" Previously accepted whole acts and external names, checked locally before use.\"] # [doc = \" The constructor checks representation, not host admission or authentication.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug)] pub struct ValidatedHistory { acts : Arc < Vec < ValidatedAct > > , references : Arc < BTreeSet < PublicReference > > , non_compliance : Arc < Vec < DependencyViolation > > , time_evidence : Arc < Vec < TimeEvidence > > , }"
     },
     {
       "item": "DependencyViolation",
@@ -16227,7 +16344,7 @@
       "item": "BoundaryInputs",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Node visits, parent inspections, inherited-member insert attempts and emitted members.\"] # [doc = \" None means counter overflow, never a work-limit refusal.\"] work : Option < u64 > , # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] boundary : u64 , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] closures : Vec < PrincipalClosure > , }"
+      "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Node visits, parent inspections, inherited-member insert attempts and emitted members.\"] # [doc = \" None means counter overflow, never a work-limit refusal.\"] work : Option < u64 > , # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] boundary : Position , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] closures : Vec < PrincipalClosure > , }"
     },
     {
       "item": "PartitionError",

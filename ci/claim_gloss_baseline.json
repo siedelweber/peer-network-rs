@@ -982,6 +982,9 @@
     "pn-wallet::settlement::tests::outpoint_once": "",
     "pn-wallet::rpc::settlement_forks": "",
     "pn-records::public::finalized_order": "",
-    "ci::test_observe_runtime.Processes.test_records_replay": ""
+    "ci::test_observe_runtime.Processes.test_records_replay": "Claim: Finalized dependency violations and every retained act field agree with observation disabled, at default and at trace; candidate refusals remain refusals while replay is accounted as success.",
+    "pn-records::public::ordering::epoch_placement": "",
+    "pn-records::public::ordering::attached_times": "",
+    "pn-records::public::ordering::retained_time_evidence": ""
   }
 }

@@ -1,6 +1,8 @@
 mod common;
 #[path = "public/numerics.rs"]
 mod numerics;
+#[path = "public/ordering.rs"]
+mod ordering;
 
 /// Claim: Public validation and boundary assembly preserve two distinct paired act identities as two complete acts with four owned legs, preventing public consumers from counting a co-leg as an act.
 /// (´claim:acts:complete-acts-are-counted-once´)
@@ -12,7 +14,7 @@ fn whole_act_boundary() {
         common::act(2, pn_records::Layout::Paired),
     ];
     let records = pn_records::validate_record(&candidates, &common::resolved(), &[]).unwrap();
-    let boundary = pn_records::assemble_boundary_inputs(&records, 8).unwrap();
+    let boundary = pn_records::assemble_boundary_inputs(&records, (5, 8)).unwrap();
     assert_eq!(boundary.acts().len(), 2);
     assert_eq!(boundary.acts().iter().map(|act| act.legs().len()).sum::<usize>(), 4);
     assert_ne!(boundary.acts()[0].id(), boundary.acts()[1].id());
@@ -74,7 +76,7 @@ fn missing_co_legs() {
 #[test]
 fn required_references() {
     let mut record = act(1, Layout::Binary);
-    record.projections.dependency = DependencyProjection::Tombstoned(9);
+    record.projections.dependency = DependencyProjection::Tombstoned((5, 9));
     let edge = PublicReference::Edge(record.legs[0].id.clone());
     record.protocol_references.push(edge.clone());
     record.protocol_references.push(named("missing"));
@@ -140,7 +142,7 @@ fn invalid_local_fields() {
 #[test]
 fn projection_removal() {
     for role in [Role::A, Role::T] {
-        for state in [Removal::Live, Removal::Tombstoned(9)] {
+        for state in [Removal::Live, Removal::Tombstoned((5, 9))] {
             let mut record = act(1, Layout::Paired);
             record.legs.iter_mut().find(|p| p.id.role == role).unwrap().removal = Some(state);
             let expected = ValidationError::InvalidRepresentation {
@@ -154,9 +156,9 @@ fn projection_removal() {
         for content in [false, true] {
             let mut record = act(1, Layout::Paired);
             if content {
-                record.projections.content = Removal::Tombstoned(position);
+                record.projections.content = Removal::Tombstoned((5, position));
             } else {
-                record.projections.dependency = DependencyProjection::Tombstoned(position);
+                record.projections.dependency = DependencyProjection::Tombstoned((5, position));
             }
             let expected = ValidationError::InvalidRepresentation {
                 act: record.id.clone(),
@@ -166,12 +168,12 @@ fn projection_removal() {
         }
     }
     let mut record = act(1, Layout::Paired);
-    record.projections.dependency = DependencyProjection::Tombstoned(9);
+    record.projections.dependency = DependencyProjection::Tombstoned((5, 9));
     let records = [record];
     let view = validate_record(&records, &resolved(), &[]).unwrap();
     assert_eq!(view.acts()[0].legs().len(), 2);
     for leg in view.acts()[0].legs() {
-        assert_eq!(dependency_status(&view, leg.id()), Ok(DependencyStatus::Tombstoned(9)));
+        assert_eq!(dependency_status(&view, leg.id()), Ok(DependencyStatus::Tombstoned((5, 9))));
         assert_eq!(
             resolve_public_reference(&view, &PublicReference::Edge(leg.id().clone())),
             Ok(ReferenceOrigin::Batch)
@@ -474,7 +476,7 @@ fn finalized_order() {
         []
     );
     assert!(validate_record(&[first.clone(), later.clone()], &empty, &[]).is_ok());
-    first.projections.dependency = DependencyProjection::Tombstoned(3);
+    first.projections.dependency = DependencyProjection::Tombstoned((5, 3));
     assert_eq!(validate_history(&[first.clone()], &names).unwrap().non_compliance(), []);
     first.projections.dependency = DependencyProjection::Full(vec![]);
     assert_eq!(
@@ -497,6 +499,7 @@ fn assert_retained(history: &pn_records::ValidatedHistory, records: &[pn_records
         assert_eq!(retained.authentication_evidence(), original.authentication_evidence);
         assert_eq!(retained.finalization_epoch(), original.finalization_epoch);
         assert_eq!(retained.authoritative_position(), original.authoritative_position);
+        assert_eq!(retained.logical_time(), original.logical_time);
         assert_eq!(retained.legs().len(), original.legs.len());
         for (leg, candidate) in retained.legs().iter().zip(&original.legs) {
             assert_eq!(leg.id(), &candidate.id);
@@ -552,7 +555,7 @@ fn overlapping_closures() {
     use std::collections::BTreeSet;
     let mut history_parent = act(1, Layout::Paired);
     history_parent.authoritative_position = 1;
-    history_parent.projections.dependency = DependencyProjection::Tombstoned(2);
+    history_parent.projections.dependency = DependencyProjection::Tombstoned((5, 2));
     let history = validate_history(std::slice::from_ref(&history_parent), &[named("left"), named("right")]).unwrap();
     let mut shared = act(2, Layout::Paired);
     shared.authoritative_position = 10;
@@ -576,8 +579,8 @@ fn overlapping_closures() {
             proposals.reverse();
         }
         let view = validate_record(&proposals, &history, &[]).unwrap();
-        let inputs = assemble_boundary_inputs(&view, 10).unwrap();
-        assert_eq!(inputs.boundary(), 10);
+        let inputs = assemble_boundary_inputs(&view, (5, 10)).unwrap();
+        assert_eq!(inputs.boundary(), (5, 10));
         let expected = [vec![2], vec![2, 3], vec![2, 4], vec![2, 3, 5], vec![6]];
         for (closure, ids) in inputs.closures().iter().zip(expected) {
             assert_eq!(closure.members().iter().map(|id| id.sequence).collect::<Vec<_>>(), ids);
@@ -616,7 +619,7 @@ fn boundary_refusals() {
     let view = validate_record(std::slice::from_ref(&root), &history, &[]).unwrap();
     for (cut, id) in [(1, parent.id.clone()), (11, root.id.clone())] {
         assert_eq!(
-            assemble_boundary_inputs(&view, cut).unwrap_err(),
+            assemble_boundary_inputs(&view, (5, cut)).unwrap_err(),
             ValidationError::Dependency {
                 act: id,
                 dependency: None,
@@ -624,10 +627,10 @@ fn boundary_refusals() {
             }
         );
     }
-    parent.projections.dependency = DependencyProjection::Tombstoned(2);
+    parent.projections.dependency = DependencyProjection::Tombstoned((5, 2));
     let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
     let view = validate_record(std::slice::from_ref(&root), &history, &[]).unwrap();
-    let inputs = assemble_boundary_inputs(&view, 10).unwrap();
+    let inputs = assemble_boundary_inputs(&view, (5, 10)).unwrap();
     assert_eq!(inputs.acts().len(), 1);
     assert_eq!(inputs.closures()[0].members(), vec![root.id]);
 }

@@ -82,6 +82,43 @@ pub enum Layout {
     Paired,
 }
 
+/// Published position as (finalization epoch, position within that epoch).
+/// The epoch-major convention remains provisional pending the paper correction.
+/// (´def:acts:history´)
+pub type Position = (u64, u64);
+
+/// Local comparison of retained time with the complete available recurrence inputs.
+/// This never replaces the attached time or certifies family formation.
+/// (´def:acts:history´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum TimeVerdict {
+    /// Attached time equals the recurrence over retained predecessor times.
+    Matches,
+    /// The exact recurrence result differs; u128 also represents `u64::MAX` + 1.
+    Mismatch {
+        /// Retained host-attached value.
+        attached: u64,
+        /// Exact locally expected value, never written back.
+        expected: u128,
+    },
+    /// The dependency opening is absent; no recurrence verdict follows.
+    UnavailableOpening,
+    /// Dependency placement is non-compliant; its time rule remains unspecified.
+    NonCompliant,
+    /// Repeated published positions do not supply a unique replay order.
+    AmbiguousPlacement,
+}
+
+/// One recurrence observation associated with its immutable act identity.
+/// (´def:acts:history´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct TimeEvidence {
+    /// Act whose attached time was read.
+    pub act: ActId,
+    /// Scoped equality, mismatch or explicit absence of a verdict.
+    pub verdict: TimeVerdict,
+}
+
 /// A dependency projection's versioned removal fact, distinct from identity.
 /// (´def:acts:projection´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -89,7 +126,7 @@ pub enum Removal {
     /// Present in this accepted snapshot.
     Live,
     /// Removed at the given authoritative position; the identity remains.
-    Tombstoned(u64),
+    Tombstoned(Position),
 }
 
 /// One owned edge projection; never an independent accounting record.
@@ -151,6 +188,8 @@ pub struct CandidateAct {
     pub finalization_epoch: u64,
     /// Host-authoritative order; never used for identity equality.
     pub authoritative_position: u64,
+    /// Host-attached logical time, retained unchanged and never authored identity.
+    pub logical_time: u64,
 }
 
 /// Act-level content and dependency projections, independent of structural legs.
@@ -172,7 +211,7 @@ pub enum DependencyProjection {
     /// Complete nonempty sorted, duplicate-free identifiers; admission also requires self-free earlier targets.
     Full(Vec<ActId>),
     /// Content unavailable after this position; never interpreted as empty.
-    Tombstoned(u64),
+    Tombstoned(Position),
 }
 
 /// Provisional representation bound, pending bite 2's published parameter.
@@ -193,7 +232,7 @@ pub enum DependencyStatus {
     /// Complete nonempty content.
     Full,
     /// The act's dependency content is unavailable at this position.
-    Tombstoned(u64),
+    Tombstoned(Position),
 }
 
 /// Validated structural leg; no candidate removal field exists here.
@@ -228,6 +267,8 @@ pub struct ValidatedAct {
     finalization_epoch: u64,
     /// Authoritative position, not identity.
     authoritative_position: u64,
+    /// One retained time shared by all projections of this act.
+    logical_time: u64,
 }
 
 /// Previously accepted whole acts and external names, checked locally before use.
@@ -238,6 +279,7 @@ pub struct ValidatedHistory {
     acts: Arc<Vec<ValidatedAct>>,
     references: Arc<BTreeSet<PublicReference>>,
     non_compliance: Arc<Vec<DependencyViolation>>,
+    time_evidence: Arc<Vec<TimeEvidence>>,
 }
 
 /// A committed-dependency violation retained without rewriting finalized history.
@@ -254,6 +296,14 @@ pub struct DependencyViolation {
 }
 
 impl ValidatedHistory {
+    /// Read recurrence evidence without replacing retained finalization metadata.
+    /// (´def:acts:history´)
+    #[must_use]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
+    pub fn time_evidence(&self) -> &[TimeEvidence] {
+        &self.time_evidence
+    }
+
     /// Read accepted acts unchanged, in the supplied presentation order.
     /// (´def:acts:history´)
     #[must_use]
@@ -595,8 +645,8 @@ fn validate(
     let available: BTreeMap<_, _> = history
         .acts
         .iter()
-        .map(|act| (&act.id, act.authoritative_position))
-        .chain(acts.iter().map(|act| (&act.id, act.authoritative_position)))
+        .map(|act| (&act.id, (act.position(), act.logical_time)))
+        .chain(acts.iter().map(|act| (&act.id, order(act))))
         .collect();
     for act in acts {
         validate_act(act, &references, &history.references)?;
@@ -688,7 +738,7 @@ fn validate_act(
         _ => Removal::Live,
     };
     for state in [act.projections.content, dependency_removal] {
-        if matches!(state, Removal::Tombstoned(position) if position <= act.authoritative_position) {
+        if matches!(state, Removal::Tombstoned(position) if position <= order(act).0) {
             return Err(invalid(InvalidCause::TombstonePosition));
         }
     }
@@ -843,6 +893,7 @@ fn validated_act(act: &CandidateAct) -> ValidatedAct {
         authentication_evidence: act.authentication_evidence.clone(),
         finalization_epoch: act.finalization_epoch,
         authoritative_position: act.authoritative_position,
+        logical_time: act.logical_time,
     }
 }
 
@@ -854,7 +905,78 @@ fn dependency_error(act: &ActId, dependency: Option<&ActId>, cause: DependencyCa
     }
 }
 
-fn validate_dependencies(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) -> Result<(), ValidationError> {
+fn order(act: &CandidateAct) -> (Position, u64) {
+    ((act.finalization_epoch, act.authoritative_position), act.logical_time)
+}
+
+fn precedes(left: (Position, u64), right: (Position, u64)) -> bool {
+    left.0 < right.0 && (left.0.0, left.1, left.0.1) < (right.0.0, right.1, right.0.1)
+}
+
+fn check_times(
+    ordered: &[&CandidateAct],
+    available: &BTreeMap<&ActId, (Position, u64)>,
+    violations: &[DependencyViolation],
+) -> Vec<TimeEvidence> {
+    if ordered.windows(2).any(|pair| order(pair[0]).0 == order(pair[1]).0) {
+        return ordered
+            .iter()
+            .map(|act| TimeEvidence {
+                act: act.id.clone(),
+                verdict: TimeVerdict::AmbiguousPlacement,
+            })
+            .collect();
+    }
+    let mut frontiers = BTreeMap::new();
+    let mut evidence = Vec::new();
+    for act in ordered {
+        let endpoints: BTreeSet<_> = act.legs.iter().flat_map(|leg| [&leg.source, &leg.target]).collect();
+        let verdict = if violations.iter().any(|violation| violation.act == act.id) {
+            TimeVerdict::NonCompliant
+        } else if matches!(act.projections.dependency, DependencyProjection::Tombstoned(_)) {
+            TimeVerdict::UnavailableOpening
+        } else {
+            let dependencies = match &act.projections.dependency {
+                DependencyProjection::Full(ids) => ids.as_slice(),
+                DependencyProjection::FullEmpty | DependencyProjection::Tombstoned(_) => &[],
+            };
+            let endpoint_max = endpoints
+                .iter()
+                .filter_map(|endpoint| frontiers.get(endpoint))
+                .copied()
+                .max()
+                .unwrap_or(0);
+            let predecessor_max = act
+                .body
+                .asserted_parents
+                .iter()
+                .chain(dependencies)
+                .filter_map(|id| available.get(id))
+                .map(|(_, time)| *time)
+                .max()
+                .unwrap_or(0);
+            let expected = u128::from(endpoint_max.max(predecessor_max)) + 1;
+            if expected == u128::from(act.logical_time) {
+                TimeVerdict::Matches
+            } else {
+                TimeVerdict::Mismatch {
+                    attached: act.logical_time,
+                    expected,
+                }
+            }
+        };
+        for endpoint in endpoints {
+            frontiers.insert(endpoint, act.logical_time);
+        }
+        evidence.push(TimeEvidence {
+            act: act.id.clone(),
+            verdict,
+        });
+    }
+    evidence
+}
+
+fn validate_dependencies(act: &CandidateAct, available: &BTreeMap<&ActId, (Position, u64)>) -> Result<(), ValidationError> {
     if let Some(violation) = dependency_violations(act, available)?.first() {
         return Err(dependency_error(&act.id, Some(&violation.dependency), violation.cause));
     }
@@ -863,7 +985,7 @@ fn validate_dependencies(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) 
 
 fn dependency_violations(
     act: &CandidateAct,
-    available: &BTreeMap<&ActId, u64>,
+    available: &BTreeMap<&ActId, (Position, u64)>,
 ) -> Result<Vec<DependencyViolation>, ValidationError> {
     let DependencyProjection::Full(dependencies) = &act.projections.dependency else {
         return Ok(Vec::new());
@@ -884,7 +1006,7 @@ fn dependency_violations(
         } else {
             match available.get(dependency) {
                 None => Some(DependencyCause::Missing),
-                Some(position) if *position >= act.authoritative_position => Some(DependencyCause::NotEarlier),
+                Some(position) if !precedes(*position, order(act)) => Some(DependencyCause::NotEarlier),
                 Some(_) => None,
             }
         };
@@ -899,7 +1021,7 @@ fn dependency_violations(
     Ok(violations)
 }
 
-fn validate_parents(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) -> Result<(), ValidationError> {
+fn validate_parents(act: &CandidateAct, available: &BTreeMap<&ActId, (Position, u64)>) -> Result<(), ValidationError> {
     let error = |parent: Option<&ActId>, cause| ValidationError::Parent {
         act: act.id.clone(),
         parent: parent.cloned(),
@@ -919,7 +1041,7 @@ fn validate_parents(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) -> Re
         let target = available
             .get(parent)
             .ok_or_else(|| error(Some(parent), ParentCause::Missing))?;
-        if *target >= act.authoritative_position {
+        if !precedes(*target, order(act)) {
             return Err(error(Some(parent), ParentCause::NotEarlier));
         }
     }
@@ -971,17 +1093,18 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
     for act in acts {
         validate_act(act, &references, &BTreeSet::new())?;
     }
-    let available: BTreeMap<_, _> = acts.iter().map(|act| (&act.id, act.authoritative_position)).collect();
+    let available: BTreeMap<_, _> = acts.iter().map(|act| (&act.id, order(act))).collect();
     let mut ordered: Vec<_> = acts.iter().collect();
-    ordered.sort_by_key(|act| (act.authoritative_position, &act.id));
+    ordered.sort_by_key(|act| (order(act).0, &act.id));
     let mut non_compliance = Vec::new();
-    for act in ordered {
+    for act in &ordered {
         non_compliance.extend(dependency_violations(act, &available)?);
         validate_parents(act, &available)?;
     }
     Ok(ValidatedHistory {
         acts: Arc::new(acts.iter().map(validated_act).collect()),
         references: Arc::new(references),
+        time_evidence: Arc::new(check_times(&ordered, &available, &non_compliance)),
         non_compliance: Arc::new(non_compliance),
     })
 }
@@ -1045,7 +1168,7 @@ pub struct BoundaryInputs<'a> {
     /// None means counter overflow, never a work-limit refusal.
     work: Option<u64>,
     /// Fixed pre-epoch cut: history lies before it and proposals at or after it.
-    boundary: u64,
+    boundary: Position,
     /// Union of all closures, each whole act carried once in authoritative order.
     acts: Vec<&'a ValidatedAct>,
     /// Overlap is retained; no connected components or disjoint blocks are computed.
@@ -1070,7 +1193,7 @@ pub struct BoundaryInputs<'a> {
     ),
     ret
 )]
-pub fn assemble_boundary_inputs(records: &ValidatedRecords, boundary: u64) -> Result<BoundaryInputs<'_>, ValidationError> {
+pub fn assemble_boundary_inputs(records: &ValidatedRecords, boundary: Position) -> Result<BoundaryInputs<'_>, ValidationError> {
     let result = assemble(records, boundary);
     match &result {
         Ok(inputs) => metrics::histogram!("records__root__sig__design__records__records_per_boundary")
@@ -1084,19 +1207,19 @@ fn carrier_count(count: usize) -> f64 {
     f64::from(u32::try_from(count).unwrap_or(u32::MAX))
 }
 
-fn assemble(records: &ValidatedRecords, boundary: u64) -> Result<BoundaryInputs<'_>, ValidationError> {
+fn assemble(records: &ValidatedRecords, boundary: Position) -> Result<BoundaryInputs<'_>, ValidationError> {
     for act in records.history.acts.iter() {
-        if act.authoritative_position >= boundary {
+        if act.position() >= boundary {
             return Err(dependency_error(&act.id, None, DependencyCause::BoundaryPlacement));
         }
     }
     for act in &records.acts {
-        if act.authoritative_position < boundary {
+        if act.position() < boundary {
             return Err(dependency_error(&act.id, None, DependencyCause::BoundaryPlacement));
         }
     }
     let mut roots: Vec<_> = records.acts.iter().collect();
-    roots.sort_by_key(|act| (act.authoritative_position, &act.id));
+    roots.sort_by_key(|act| (act.position(), &act.id));
     // Strict parent placement provides a topological order. This shared memo
     // visits each proposal once; history parents have no memo entry and add nothing.
     let mut visited: BTreeMap<&ActId, BTreeSet<&ActId>> = BTreeMap::new();
@@ -1120,7 +1243,7 @@ fn assemble(records: &ValidatedRecords, boundary: u64) -> Result<BoundaryInputs<
         visited.insert(&root.id, members);
     }
     let mut closures = Vec::new();
-    let positions: BTreeMap<_, _> = roots.iter().map(|act| (&act.id, act.authoritative_position)).collect();
+    let positions: BTreeMap<_, _> = roots.iter().map(|act| (&act.id, act.position())).collect();
     for root in &roots {
         let members = &visited[&root.id];
         let mut ordered: Vec<_> = members
@@ -1169,6 +1292,21 @@ impl ValidatedLeg {
 }
 
 impl ValidatedAct {
+    /// Read the published epoch and position pair.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
+    pub fn position(&self) -> Position {
+        (self.finalization_epoch, self.authoritative_position)
+    }
+    /// Read the sole attached logical time inherited by every owned projection.
+    /// (´def:acts:carrier´)
+    #[must_use]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
+    pub fn logical_time(&self) -> u64 {
+        self.logical_time
+    }
+
     /// Read the validated id without permitting replacement.
     /// (´def:acts:carrier´)
     #[must_use]
@@ -1249,7 +1387,7 @@ impl<'a> BoundaryInputs<'a> {
     /// (´def:acts:boundary-inputs´)
     #[must_use]
     /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
-    pub fn boundary(&self) -> u64 {
+    pub fn boundary(&self) -> Position {
         self.boundary
     }
     /// Read the validated acts without permitting replacement.

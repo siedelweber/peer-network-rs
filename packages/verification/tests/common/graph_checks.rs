@@ -3,7 +3,7 @@ use std::collections::BTreeSet;
 pub fn check(words: &[u64]) {
     let case = pn_records::test_support::generate(words);
     let mut ordered: Vec<_> = case.proposals.iter().collect();
-    ordered.sort_by_key(|act| act.authoritative_position);
+    ordered.sort_by_key(|act| (act.finalization_epoch, act.authoritative_position));
     // Every direct parent outside history puts its two acts in the same block.
     // Enumerate fixed points of this undirected relation, without computing
     // principal closures or reading the implementation's intersection graph.

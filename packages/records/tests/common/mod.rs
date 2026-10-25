@@ -57,6 +57,7 @@ pub fn act(sequence: u64, layout: Layout) -> CandidateAct {
         authentication_evidence: vec![1, 2, 3],
         finalization_epoch: 5,
         authoritative_position: 8,
+        logical_time: 1,
         id,
     }
 }

@@ -78,10 +78,11 @@ pub fn closures(words: &[u64]) {
     added.id.sequence += 1;
     added.authoritative_position += 1;
     if matches!(added.projections.content, pn_records::Removal::Tombstoned(_)) {
-        added.projections.content = pn_records::Removal::Tombstoned(added.authoritative_position + 1);
+        added.projections.content = pn_records::Removal::Tombstoned((added.finalization_epoch, added.authoritative_position + 1));
     }
     if matches!(added.projections.dependency, pn_records::DependencyProjection::Tombstoned(_)) {
-        added.projections.dependency = pn_records::DependencyProjection::Tombstoned(added.authoritative_position + 1);
+        added.projections.dependency =
+            pn_records::DependencyProjection::Tombstoned((added.finalization_epoch, added.authoritative_position + 1));
     }
     for leg in &mut added.legs {
         leg.id.act = added.id.clone();
