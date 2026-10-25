@@ -131,7 +131,7 @@
       "status": "planned; execution evidence pending"
     },
     {
-      "cases": "A depleted relay, zero-emission source, closed cluster and retained diagonal with nonzero incoming mass.",
+      "cases": "A depleted relay, zero-emission source, closed cluster and retained diagonal with nonzero incoming mass; matched funded partitions and burn-response counterexamples under (`verif:design:core-standing-properties`).",
       "decision": "dec:design:conservation",
       "fixture": "transport-cases",
       "hold": "Transcendental cases require the reviewed numerical backend and certified oracle.",
@@ -139,11 +139,14 @@
         "def:epoch:conserved-standing-equilibrium",
         "post:epoch:standing-pair-mass-conservation",
         "rem:epoch:transport-is-not-ledger-transfer",
-        "rem:gates:standing-safety-scope"
+        "rem:gates:standing-safety-scope",
+        "cor:comparator:sybil-resistance-is-faithfulness",
+        "cond:comparator:burn-non-transferability",
+        "thm:epoch:burn-response"
       ],
       "name": "conservation",
       "oracle": "Dense rational matrix products at zero tilt, independently compared with sparse factor application.",
-      "property": "Row sums and transported balance/count totals are conserved; exported count obeys the emission bound.",
+      "property": "Row sums and transported balance/count totals are conserved; exported count obeys the emission bound. These identities imply neither funded-address invariance nor universal burn monotonicity; recorded-amount non-transferability is not standing immobility.",
       "requirements": [
         "conservation"
       ],

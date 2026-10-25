@@ -63,7 +63,10 @@
         "def:epoch:conserved-standing-equilibrium",
         "post:epoch:standing-pair-mass-conservation",
         "rem:epoch:transport-is-not-ledger-transfer",
-        "rem:gates:standing-safety-scope"
+        "rem:gates:standing-safety-scope",
+        "cor:comparator:sybil-resistance-is-faithfulness",
+        "cond:comparator:burn-non-transferability",
+        "thm:epoch:burn-response"
       ],
       "name": "conservation"
     },

@@ -2395,10 +2395,10 @@
     },
     {
       "claims": [],
-      "closing_condition": "Attach passing source/configuration-matched test-site evidence and reviewed premises that preserve the open split-invariance and positive-tilt monotonicity questions; claim no equality or response sign.",
+      "closing_condition": "Attach passing source/configuration-matched evidence for non-monotonicity and the conditional response bounds; preserve the unresolved sharp splitting guarantees, and reject unconditional equality, monotonicity or recovery claims.",
       "closing_step": "Bites 5 and 6 scoped witnesses, with integrated evidence review in bite 11",
       "hold": "ROOT::open:design:core-standing-properties",
-      "missing": "Executed split and positive-tilt perturbation witnesses, reviewed fixture predicates and test-site claim text, and negative review probes.",
+      "missing": "Executed matched split comparisons and certified burn/act reversals, conditional invariant and response tests, reviewed claim premises and negative review probes.",
       "name": "ROOT::verif:design:core-standing-properties",
       "owner": "pn-epoch implementer and repository reviewer",
       "path": "docs/design/implementation.md",

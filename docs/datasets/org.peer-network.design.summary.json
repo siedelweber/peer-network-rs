@@ -38,7 +38,7 @@
     },
     {
       "category": "chapter",
-      "count": 207,
+      "count": 220,
       "name": "6 Epoch"
     },
     {
@@ -48,7 +48,7 @@
     },
     {
       "category": "chapter",
-      "count": 30,
+      "count": 32,
       "name": "8 Transport"
     },
     {
@@ -78,7 +78,7 @@
     },
     {
       "category": "chapter",
-      "count": 98,
+      "count": 104,
       "name": "D Dynamics"
     },
     {
@@ -88,12 +88,12 @@
     },
     {
       "category": "chapter",
-      "count": 213,
+      "count": 227,
       "name": "F Verification"
     },
     {
       "category": "chapter",
-      "count": 13,
+      "count": 12,
       "name": "G Frontiers"
     },
     {
@@ -108,7 +108,7 @@
     },
     {
       "category": "constants",
-      "count": 816,
+      "count": 2638,
       "home": "pn-verification",
       "name": ""
     },
@@ -144,27 +144,27 @@
     },
     {
       "category": "totals",
-      "count": 1611,
+      "count": 1645,
       "name": "inventory"
     },
     {
       "category": "totals",
-      "count": 979,
+      "count": 2801,
       "name": "constants"
     },
     {
       "category": "labels",
-      "count": 1573,
+      "count": 1608,
       "name": "explicit"
     },
     {
       "category": "labels",
-      "count": 38,
+      "count": 37,
       "name": "environment"
     },
     {
       "category": "constants-source",
-      "count": 977,
+      "count": 2799,
       "name": "declarations"
     }
   ]

@@ -8,7 +8,7 @@ rows = [
   { name = "formation-title", labels = ["def:graph:identifier-algebra", "def:network:admission-closure", "def:graph:act-edge-projection", "thm:graph:epoch-title-fold", "post:epoch:settlement-standing-title-coupling", "def:graph:settlement-recognition"] },
   { name = "ledger-vintages", labels = ["post:epoch:act-debit", "def:epoch:safety-threshold"] },
   { name = "final-state", labels = ["post:epoch:standing-epoch-set-determinism", "post:epoch:standing-memorylessness", "prop:deployment:allocation-input-completeness", "def:epoch:standing-domain-profile", "def:epoch:proposed-final-act-state"] },
-  { name = "conservation", labels = ["def:epoch:conserved-standing-equilibrium", "post:epoch:standing-pair-mass-conservation", "rem:epoch:transport-is-not-ledger-transfer", "rem:gates:standing-safety-scope"] },
+  { name = "conservation", labels = ["def:epoch:conserved-standing-equilibrium", "post:epoch:standing-pair-mass-conservation", "rem:epoch:transport-is-not-ledger-transfer", "rem:gates:standing-safety-scope", "cor:comparator:sybil-resistance-is-faithfulness", "cond:comparator:burn-non-transferability", "thm:epoch:burn-response"] },
   { name = "certificate", labels = ["def:dynamics:conserved-standing-certificate", "thm:dynamics:certified-conserved-standing-uniqueness", "lem:dynamics:fixed-point-residual-enclosure", "ver:standing:conserved-equilibrium-enclosure"] },
   { name = "rung-verdicts", labels = ["def:epoch:tilt-backoff-grid", "rem:epoch:certificate-failure-versus-indecisive-enclosure"] },
   { name = "final-membership", labels = ["def:network:write", "post:epoch:final-act-sequence-closure", "post:network:host-contract", "post:epoch:final-edge-set"] },

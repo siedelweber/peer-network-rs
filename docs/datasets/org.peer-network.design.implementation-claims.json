@@ -533,7 +533,7 @@
         6,
         11
       ],
-      "claim": "claim:standing:split-and-tilt-witnesses-preserve-open-claims",
+      "claim": "claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees",
       "hold": "open:design:core-standing-properties",
       "levels": [
         "unit",
