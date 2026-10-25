@@ -181,12 +181,12 @@ impl<'a> Reader<'a> {
             return Err(Refusal::Bytes);
         }
         // The pinned codec reserves at most a one-MiB batch per active collection.
-        // Each admitted entry is charged 64 KiB (including its C proof storage),
+        // Each admitted entry is charged 15 KiB (including its C proof storage),
         // and each encoded byte sixteen times for decoding and public projection.
         let envelope = bytes
             .len()
             .checked_mul(16)
-            .and_then(|n| limits.items.checked_mul(65_536).and_then(|items| n.checked_add(items)))
+            .and_then(|n| limits.items.checked_mul(15_360).and_then(|items| n.checked_add(items)))
             .and_then(|n| n.checked_add(4_194_304))
             .ok_or(Refusal::Allocation)?;
         if limits.allocation == 0 || limits.allocation > 134_217_728 || envelope > limits.allocation {
@@ -256,7 +256,7 @@ impl<'a> Reader<'a> {
         let length = match (kind, prefix) {
             (_, 0) => 0,
             (1, 1) => 8,
-            (0, 1 | 10 | 11) | (1, 8 | 9) | (2, 1 | 2 | 3) => 32,
+            (0, 1 | 10 | 11) | (1, 8 | 9) | (2, 1..=3) => 32,
             _ => return Err(Refusal::Flag),
         };
         self.take(length)?;
@@ -481,6 +481,79 @@ pub fn evidence_amount(
         tracing::info!(outcome = "refusal");
     }
     result
+}
+
+/// Bare codec verdict and projection, without the adapter framing pass.
+/// (´sig:wallet:codec-verdict´)
+///
+/// The boolean independently checks resource bounds on decoded codec fields.
+/// This unbounded test surface must only receive bounded campaign inputs.
+/// # Errors
+/// Returns the codec refusal when complete decoding fails.
+#[cfg(feature = "fuzzing")]
+#[doc(hidden)]
+#[doc = "Justified: Test-only comparison bypasses the observed adapter to keep its verdict independent."]
+pub fn codec_verdict(bytes: &[u8], block: bool, limits: Limits) -> Result<(Block, bool), Refusal> {
+    use elements::encode::{deserialize, serialize};
+    type InputWitness = (Vec<u8>, Vec<u8>, Vec<Vec<u8>>, Vec<Vec<u8>>);
+    let (header, transactions, mut items, mut fits) = if block {
+        let value: elements::Block = deserialize(bytes).map_err(|_| Refusal::Codec)?;
+        let mut items = value.txdata.len();
+        let mut fits = true;
+        match &value.header.ext {
+            elements::BlockExtData::Proof { challenge, solution } => {
+                fits &= challenge.len() <= limits.script && solution.len() <= limits.script;
+            }
+            elements::BlockExtData::Dynafed {
+                current,
+                proposed,
+                signblock_witness,
+            } => {
+                items += signblock_witness.len();
+                fits &= signblock_witness.iter().all(|v| v.len() <= limits.witness);
+                for params in [current, proposed] {
+                    fits &= params.signblockscript().is_none_or(|v| v.len() <= limits.script);
+                    fits &= params.fedpeg_program().is_none_or(|v| v.len() <= limits.script);
+                    fits &= params.fedpegscript().is_none_or(|v| v.len() <= limits.script);
+                    if let Some(extension) = params.extension_space() {
+                        items += extension.len();
+                        fits &= extension.iter().all(|v| v.len() <= limits.witness);
+                    }
+                }
+            }
+        }
+        (serialize(&value.header), value.txdata, items, fits)
+    } else {
+        let value = elements::encoding::decode_from_slice(bytes).map_err(|_| Refusal::Codec)?;
+        (Vec::new(), vec![value], 0, true)
+    };
+    for tx in &transactions {
+        items += tx.input.len() + tx.output.len();
+        for input in &tx.input {
+            fits &= input.script_sig.len() <= limits.script;
+            // Decode only the codec's own serialized witness, never the input framing.
+            let witness: InputWitness =
+                elements::bitcoin::consensus::deserialize(&serialize(&input.witness)).map_err(|_| Refusal::Codec)?;
+            items += witness.2.len() + witness.3.len();
+            fits &= witness.0.len() <= limits.witness && witness.1.len() <= limits.witness;
+            fits &= witness.2.iter().chain(&witness.3).all(|v| v.len() <= limits.witness);
+        }
+        for output in &tx.output {
+            fits &= output.script_pubkey.len() <= limits.script;
+            let witness: (Vec<u8>, Vec<u8>) =
+                elements::bitcoin::consensus::deserialize(&serialize(&output.witness)).map_err(|_| Refusal::Codec)?;
+            fits &= witness.0.len() <= limits.witness && witness.1.len() <= limits.witness;
+        }
+    }
+    fits &= items <= limits.items && bytes.len() <= limits.bytes;
+    fits &= 16 * bytes.len() + 15_360 * limits.items + 4_194_304 <= limits.allocation;
+    Ok((
+        Block {
+            header,
+            transactions: transactions.into_iter().map(project).collect(),
+        },
+        fits,
+    ))
 }
 
 #[cfg(test)]

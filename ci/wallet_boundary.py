@@ -4,12 +4,34 @@ import re
 import json
 import subprocess
 import tomllib
+import itertools
+from discipline import item_end
 from dependency_identity import metadata, spellings
 from source_sites import rust_mask
 
 CODEC_PACKAGES = {'elements', 'bitcoin', 'bitcoin_hashes', 'secp256k1', 'secp256k1-zkp',
                   'secp256k1-sys', 'secp256k1-zkp-sys', 'bitcoin-consensus-encoding'}
 ADAPTER = 'packages/wallet/src/decoder.rs'
+
+
+def check_build_scripts(rows, packages):
+    for row in rows:
+        matches = [p for p in packages if (p['name'], p['version']) == (row['name'], row['version'])]
+        if len(matches) != 1:
+            raise ValueError('wallet build-script package missing: '+row['name'])
+        package = matches[0]
+        targets = [Path(t['src_path']).relative_to(Path(package['manifest_path']).parent).as_posix()
+                   for t in package['targets'] if 'custom-build' in t['kind']]
+        if targets != ([] if row['build'] == 'none' else [row['build']]):
+            raise ValueError('wallet build-script field differs: '+row['name'])
+
+
+def check_production_tree(owner, tree, allowed, host_wallet=False):
+    actual = set(re.findall(r'^([^\s]+) v([^\s]+)', tree, re.M))
+    names = {name for name, _ in actual}
+    unknown = {name+' '+version for name, version in actual} - set(allowed[owner])
+    if unknown or (owner == 'pn-host' and not host_wallet and 'pn-wallet' in names):
+        raise ValueError('development dependency reached production graph: '+owner+' '+repr(sorted(unknown)))
 
 
 def check_features(root=Path('.')):
@@ -44,15 +66,26 @@ def check_features(root=Path('.')):
     for row in tomllib.loads((root/'docs/inputs/wallet-dependencies.toml').read_text())['rows']:
         if locked.get((row['name'],row['version'])) != row['checksum']:
             raise ValueError('wallet dependency checksum differs from reviewed pin')
+    check_build_scripts(tomllib.loads((root/'docs/inputs/wallet-dependencies.toml').read_text())['rows'], packages.values())
     for row in profile['wallet_unified_features']:
         matches = [p for p in packages.values() if (p['name'], p['version']) == (row['name'], row['version'])]
         if len(matches) != 1 or sorted(nodes[matches[0]['id']]['features']) != sorted(row['features']):
             raise ValueError('wallet unified binding features differ: '+row['name'])
-    for owner in ['pn-wallet', 'pn-host']:
-        tree = subprocess.check_output(['cargo','tree','--offline','--locked','-p',owner,'--no-default-features','--edges','normal,build','--prefix','none','--format','{p}'], cwd=root, text=True)
-        names = {line.split()[0] for line in tree.splitlines() if line.strip()}
-        if 'dhat' in names or ('pn-wallet' in names and owner == 'pn-host'):
-            raise ValueError('development dependency reached production graph')
+    allowed = json.loads((root/'ci/wallet-production-packages.json').read_text())
+    for package in data['packages']:
+        if package['id'] not in data['workspace_members']:
+            continue
+        owner = package['name']
+        features = sorted(set(package['features']) - {'default'})
+        combinations = [list(c) for n in range(len(features)+1) for c in itertools.combinations(features,n)]
+        for defaults in [True, False]:
+            for combination in combinations:
+                args = [] if defaults else ['--no-default-features']
+                if combination:
+                    args += ['--features', ','.join(combination)]
+                tree = subprocess.check_output(['cargo','tree','--offline','--locked','-p',owner,*args,
+                    '--edges','normal,build','--prefix','none','--format','{p}'], cwd=root, text=True)
+                check_production_tree(owner, tree, allowed, host_wallet='development-network' in combination)
     return True
 
 
@@ -81,6 +114,28 @@ def check(root=Path('.')):
             if name == ADAPTER:
                 if re.search(r'\bpub\s+(?:\([^)]*\)\s*)?(?:use|extern\s+crate)\b', source):
                     raise ValueError('adapter re-export is not admitted')
+                if re.search(r'\bpub\s*(?:\([^)]*\)\s*)?type\b', source):
+                    raise ValueError('adapter public type alias is not admitted')
+                # Follow local aliases as well as Cargo's resolved spellings.
+                tainted = set(names)
+                for _ in range(len(source.splitlines())):
+                    before = set(tainted)
+                    for declaration in re.finditer(r'\b(?:use|type)\s+([^;]+);', source):
+                        body = declaration.group(1)
+                        if any(re.search(r'\b'+re.escape(alias)+r'\b', body) for alias in tainted):
+                            tainted.update(re.findall(r'\b[A-Za-z_]\w*\b', body))
+                    if before == tainted:
+                        break
+                for signature in re.finditer(r'\bpub\s*(?:\([^)]*\)\s*)?(?:async\s+)?fn\b[^{};]*', source):
+                    if any(re.search(r'\b'+re.escape(alias)+r'\b', signature.group()) for alias in tainted):
+                        raise ValueError('adapter public signature carries codec type')
+                production = list(source)
+                # Only unconditional cfg(test) removes a production item.
+                for marker in re.finditer(r'#\s*\[\s*cfg\s*\(\s*test\s*\)\s*\]', source):
+                    end = item_end(source, marker.end())
+                    production[marker.start():end] = ' ' * (end-marker.start())
+                if re.search(r'\bSECP256K1\b', ''.join(production)):
+                    raise ValueError('adapter production global context is not admitted')
                 continue
             if re.search(r'\bSECP256K1\b', source) or any(
                     re.search(r'\b'+re.escape(alias)+r'\b', source) for alias in names):

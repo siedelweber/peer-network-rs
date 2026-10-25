@@ -4,7 +4,7 @@
 
 **Definition (Decoder scope)** · `def:wallet:scope` The three labelled operations implement the layout portion of (`[ROOT-sig:design:devnet]`). An allocation-free framing pass checks complete consumption and aggregate lengths before maintained decoding. Transactions use elements' incremental decoder. Block headers use its existing header decoder only after complete bounded framing; non-evidence confidential, issuance and peg-in transactions retain their full layouts. Point and proof encoding parsing is not signature or proof verification. The public DTO carries opaque serialized subfields without minting a chain or semantic identity.
 
-**Implementation remark (Measured limits)** · `impl:wallet:reservation-bound` Caller limits cannot exceed 4,000,000 encoded bytes, 4,096 aggregate entries, 10,000 script bytes or 65,536 bytes per witness/proof. The preflight envelope charges sixteen times encoded bytes, 65,536 bytes per declared entry and 4,194,304 bytes of fixed headroom, capped at 134,217,728 bytes. This is a conservative reservation admission rule, not a replacement global allocator or an enforced process RSS limit. The heap witness records actual requested and peak bytes per fixture, excluding profiler metadata, under (`[ROOT-amend:devnet:wallet-decoder-evidence]`).
+**Implementation remark (Measured limits)** · `impl:wallet:reservation-bound` Caller limits cannot exceed 4,000,000 encoded bytes, 4,096 aggregate entries, 10,000 script bytes or 65,536 bytes per witness/proof. The preflight envelope charges sixteen times encoded bytes, 15,360 bytes per declared entry and 4,194,304 bytes of fixed headroom, capped at 134,217,728 bytes. This is a conservative reservation admission rule, not a replacement global allocator or an enforced process RSS limit. The heap witness records actual requested and peak bytes per fixture, excluding profiler metadata, under (`[ROOT-amend:devnet:wallet-decoder-evidence]`).
 
 **Implementation remark (Remaining integration)** · `impl:wallet:held-integration` RPC, real-chain and settlement fixtures remain held. The 100-byte OP_RETURN fixture carries three literal 32-byte fields for run, target and request; it establishes local exact-match selection only. Its real-chain relay policy and transaction constructor are not admitted here. Global-context entropy-failure execution remains held; production decoder paths use the no-precomputation parsers and do not dereference the randomized global context. (`[ROOT-open:design:devnet-evidence]`) and (`[ROOT-open:crypto:dependency-admission]`) retain those integration duties.
 
@@ -14,7 +14,7 @@
 
 **Definition (Transaction layout)** · `def:wallet:transaction-layout` The public field view retains version, lock time, every input and output, and their opaque serialized curve and proof fields.
 
-**Definition (Validated layout)** · `def:wallet:validated-layout` Transaction owns a private field view, constructible only through complete bounded decoding; validation here means structural layout, not chain acceptance or cryptographic verification.
+**Definition (Validated layout)** · `def:wallet:validated-layout` Transaction owns a private field view, constructible in production builds only through complete bounded decoding; validation here means structural layout, not chain acceptance or cryptographic verification. The non-default fuzzing feature additionally exposes the bare codec projection for differential testing.
 
 **Definition (Input layout)** · `def:wallet:input-layout` An input retains outpoint, peg-in flag, script, sequence, issuance presence and full serialized issuance and witness bytes.
 
@@ -27,6 +27,8 @@
 **Signature (Decode transaction)** · `sig:wallet:decode-transaction` Preflight and decode exactly one complete transaction, refusing incomplete consumption or violated bounds.
 
 **Signature (Decode block)** · `sig:wallet:decode-block` Preflight the entire block before allocation, then decode its complete header and all transaction layouts.
+
+**Signature (Codec verdict)** · `sig:wallet:codec-verdict` The hidden fuzzing-only entry bypasses preflight, returns the bare codec verdict and first-party projection, and checks resource eligibility from decoded fields. Campaign callers bound input bytes before invoking this unbounded comparison surface; it is excluded from production defaults and the production observation census.
 
 **Signature (Evidence amount)** · `sig:wallet:evidence-amount` Select a positive explicit integer amount in the requested asset, with no issuance or peg-in and an exact run, target and request script.
 

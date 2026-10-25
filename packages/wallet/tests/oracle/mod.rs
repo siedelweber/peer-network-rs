@@ -62,7 +62,7 @@ impl Cursor<'_> {
         let prefix = self.number(1)?;
         let n = match (kind, prefix) {
             (_, 0) => 0,
-            (0, 1 | 10 | 11) | (1, 8 | 9) | (2, 1 | 2 | 3) => 32,
+            (0, 1 | 10 | 11) | (1, 8 | 9) | (2, 1..=3) => 32,
             (1, 1) => 8,
             _ => return Err(()),
         };

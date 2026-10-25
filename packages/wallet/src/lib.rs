@@ -5,3 +5,7 @@ mod decoder;
 pub use decoder::{
     Block, Input, Limits, Output, Refusal, Transaction, TransactionFields, decode_block, decode_transaction, evidence_amount,
 };
+
+#[cfg(feature = "fuzzing")]
+#[doc(hidden)]
+pub use decoder::codec_verdict;

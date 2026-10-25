@@ -199,7 +199,7 @@ def syntax_census():
     result['source']=source_id()
     result['declared_configuration']='seven production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration'
     for package in metadata['packages']:
-        admitted={'cli-common':{'observation-test-hook':[]},'pn-records':{'test-support':[]},'pn-host':{'default':[],'development-network':['dep:pn-wallet']}}
+        admitted={'cli-common':{'observation-test-hook':[]},'pn-records':{'test-support':[]},'pn-host':{'default':[],'development-network':['dep:pn-wallet']},'pn-wallet':{'default':[],'fuzzing':[]}}
         if package['id'] in metadata['workspace_members'] and '/packages/' in package['manifest_path'] and package['features'] and package['features']!=admitted.get(package['name']):
             raise StructuralError('new first-party feature configuration requires census admission')
     return result

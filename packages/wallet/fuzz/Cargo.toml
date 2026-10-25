@@ -13,7 +13,7 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "=0.4.13"
 arbitrary = { version = "=1.5.0", default-features = false }
-pn-wallet = { path = ".." }
+pn-wallet = { path = "..", features = ["fuzzing"] }
 
 [[bin]]
 name = "decode_layout"

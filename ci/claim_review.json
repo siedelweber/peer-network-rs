@@ -2446,8 +2446,8 @@
       "path": "packages/wallet/tests/layout.rs",
       "claim": "WALLET::claim:wallet:bounded-decoder-campaign-retains-layouts",
       "before": "",
-      "after": "Claim: Generated explicit and non-evidence layouts agree field by field with the independent oracle, while arbitrary bounded bytes and mutated curve coordinates either decode completely or return a bounded refusal without panic.",
-      "review": "Read generated valid layouts against the independent reader, arbitrary bytes and three mutated coordinate positions; this is bounded robustness evidence, not exhaustive cryptographic validation."
+      "after": "Claim: Generated explicit and non-evidence layouts agree field by field with the independent oracle, while the fuzzing feature compares codec acceptance and projections independently of preflight for arbitrary bytes, mutated fixtures, dynafed headers, proofs and explicit nonces within declared limits.",
+      "review": "Read the independent oracle and feature-enabled bare-codec comparison, decoded-field resource eligibility, original and mutated dynafed/proof fixtures and explicit nonces; codec acceptance within bounds requires adapter acceptance and equal projections."
     },
     {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_dependency_features",

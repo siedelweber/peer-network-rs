@@ -17,6 +17,25 @@ fn input(bytes: &mut Vec<u8>) {
     bytes.extend([255; 4]);
 }
 
+fn maximum_block() -> Vec<u8> {
+    let mut full = prefix(4095, false);
+    for index in 0..4095 {
+        full.extend([0; 32]);
+        full.extend([255; 4]);
+        let length = if index == 0 { 8215u16 } else { 932 };
+        full.push(253);
+        full.extend(length.to_le_bytes());
+        full.extend(vec![0; usize::from(length)]);
+        full.extend([255; 4]);
+    }
+    full.extend([0; 5]);
+    let mut full_block = vec![0; 76];
+    full_block.extend([0, 0, 1]);
+    full_block.extend(full);
+    assert_eq!(full_block.len(), 4_000_000);
+    full_block
+}
+
 /// Claim: Per-vector allocator measurements cover hostile, maximum and over-limit counts, short payloads and nested witnesses; rejected prefixes allocate nothing in the adapter, and successful layouts stay below the declared requested-allocation envelope and release their measured live storage.
 /// ´claim:wallet:decoder-reservations-have-measured-bounds´
 /// ´test:integration:decoder-reservations´
@@ -24,8 +43,8 @@ fn input(bytes: &mut Vec<u8>) {
 fn decoder_reservations() {
     let selected = std::env::var("PN_WALLET_ALLOCATION_VECTOR").ok();
     let limits = pn_wallet::Limits {
-        bytes: 1_048_576,
-        items: 1024,
+        bytes: 4_000_000,
+        items: 4096,
         script: 10_000,
         witness: 65_536,
         allocation: 134_217_728,
@@ -43,6 +62,10 @@ fn decoder_reservations() {
         nested.extend([1, 7]);
     }
     nested.push(0);
+    let mut block = vec![0; 76];
+    block.extend([0, 0, 1]);
+    block.extend(include_bytes!("../fuzz/seeds/proof-transaction"));
+    let full_block = maximum_block();
     let rows = [
         ("maximum-short", prefix(1024, false), false),
         ("over-limit", prefix(1025, false), false),
@@ -53,6 +76,11 @@ fn decoder_reservations() {
         ),
         ("maximum", maximum, true),
         ("nested", nested, true),
+        ("proof", include_bytes!("../fuzz/seeds/proof-transaction").to_vec(), true),
+        ("block-proof", block, true),
+        ("block-dynafed", include_bytes!("../fuzz/seeds/dynafed-block").to_vec(), true),
+        ("block-4096", full_block, true),
+        ("block-short", vec![0; 76], false),
     ];
     let mut evidence = String::from("vector,requested,peak,live\n");
     for (name, bytes, accepted) in rows {
@@ -70,10 +98,23 @@ fn decoder_reservations() {
         if selected.as_deref() != Some(name) {
             continue;
         }
+        let mut limits = limits;
+        if matches!(name, "maximum-short" | "over-limit" | "hostile" | "maximum" | "nested") {
+            limits.items = 1024;
+        }
+        let envelope = 16 * bytes.len() + 15_360 * limits.items + 4_194_304;
         let profiler = dhat::Profiler::builder().testing().build();
-        let decoded = pn_wallet::decode_transaction(&bytes, limits);
-        let success = decoded.is_ok();
-        drop(decoded);
+        let success = if name.starts_with("block-") {
+            let decoded = pn_wallet::decode_block(&bytes, limits);
+            let success = decoded.is_ok();
+            drop(decoded);
+            success
+        } else {
+            let decoded = pn_wallet::decode_transaction(&bytes, limits);
+            let success = decoded.is_ok();
+            drop(decoded);
+            success
+        };
         let stats = dhat::HeapStats::get();
         let requested = usize::try_from(stats.total_bytes).unwrap();
         let peak = stats.max_bytes;
@@ -81,7 +122,7 @@ fn decoder_reservations() {
         drop(profiler);
         assert_eq!(success, accepted, "{name}");
         assert_eq!(live, 0, "{name}");
-        assert!(peak <= limits.allocation && requested <= limits.allocation, "{name}");
+        assert!(peak <= envelope && requested <= envelope, "{name}");
         if !accepted {
             assert_eq!(requested, 0, "{name}");
         }

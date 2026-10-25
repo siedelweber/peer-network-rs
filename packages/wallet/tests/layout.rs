@@ -99,6 +99,19 @@ fn compare(actual: &pn_wallet::Transaction, expected: &oracle::Transaction) {
 /// ´test:integration:full-layouts´
 #[test]
 fn full_layouts() {
+    let proof = include_bytes!("../fuzz/seeds/proof-transaction");
+    let decoded = decode_transaction(proof, limits()).unwrap();
+    assert!(decoded.fields().outputs.iter().any(|output| output.witness.len() > 100));
+    compare(&decoded, &oracle::transaction(proof).unwrap());
+    let dynafed = include_bytes!("../fuzz/seeds/dynafed-block");
+    let decoded = decode_block(dynafed, limits()).unwrap();
+    let (header, transactions) = oracle::block(dynafed).unwrap();
+    assert_ne!(header[3] & 0x80, 0);
+    assert_eq!(decoded.header, header);
+    for (a, b) in decoded.transactions.iter().zip(&transactions) {
+        compare(a, b);
+    }
+
     let cases = [
         (false, false, false),
         (true, false, false),
@@ -251,7 +264,7 @@ fn invalid_curve_encodings() {
 
 proptest! {
     #![proptest_config(pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/layout.txt")))]
-    /// Claim: Generated explicit and non-evidence layouts agree field by field with the independent oracle, while arbitrary bounded bytes and mutated curve coordinates either decode completely or return a bounded refusal without panic.
+    /// Claim: Generated explicit and non-evidence layouts agree field by field with the independent oracle, while the fuzzing feature compares codec acceptance and projections independently of preflight for arbitrary bytes, mutated fixtures, dynafed headers, proofs and explicit nonces within declared limits.
     /// ´claim:wallet:bounded-decoder-campaign-retains-layouts´
     /// ´test:integration:decoder-campaign´
     #[test]
@@ -260,12 +273,51 @@ proptest! {
         let decoded = decode_transaction(&bytes,limits()).unwrap();
         compare(&decoded,&oracle::transaction(&bytes).unwrap());
         let _result = decode_transaction(&noise,limits());
+        #[cfg(feature = "fuzzing")]
+        {
+            differential(&noise);
+            differential(&bytes);
+            let mut nonce = transaction((false, false, false), true, amount);
+            nonce.splice(90..91, std::iter::once(1).chain([9; 32]));
+            differential(&nonce);
+            for fixture in [include_bytes!("../fuzz/seeds/dynafed-block").as_slice(), include_bytes!("../fuzz/seeds/proof-transaction").as_slice()] {
+                differential(fixture);
+                let mut changed = fixture.to_vec();
+                for (slot, value) in changed.iter_mut().zip(&noise) { *slot ^= value; }
+                differential(&changed);
+            }
+        }
         for start in [49,82,115] {
             let mut changed = transaction((true,false,false),false,17);
             changed[start..start+32].copy_from_slice(&x);
             if let Ok(decoded) = decode_transaction(&changed,limits()) {
                 compare(&decoded,&oracle::transaction(&changed).unwrap());
             }
+        }
+    }
+}
+
+#[cfg(feature = "fuzzing")]
+fn differential(data: &[u8]) {
+    let limits = pn_wallet::Limits {
+        bytes: 4_000_000,
+        items: 4096,
+        script: 10_000,
+        witness: 65_536,
+        allocation: 134_217_728,
+    };
+    for block in [false, true] {
+        let adapter = if block {
+            pn_wallet::decode_block(data, limits)
+        } else {
+            pn_wallet::decode_transaction(data, limits).map(|tx| pn_wallet::Block {
+                header: Vec::new(),
+                transactions: vec![tx],
+            })
+        };
+        match pn_wallet::codec_verdict(data, block, limits) {
+            Ok((expected, true)) => assert_eq!(adapter, Ok(expected)),
+            Ok((_, false)) | Err(_) => assert!(adapter.is_err()),
         }
     }
 }

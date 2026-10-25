@@ -7,6 +7,10 @@ license.workspace = true
 publish = false
 version.workspace = true
 
+[features]
+default = []
+fuzzing = []
+
 [dependencies]
 elements = { version = "=0.27.0", default-features = false }
 tracing.workspace = true

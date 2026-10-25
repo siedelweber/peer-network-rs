@@ -11,7 +11,7 @@ import tomllib
 
 from devperf import StructuralError, budgets
 
-CONFIGURATION = 'foundation-fast/gate/default-features+pn-records/test-support'
+CONFIGURATION = 'foundation-fast/gate/default-features+pn-records/test-support+pn-wallet/fuzzing'
 REGISTRY = Path(__file__).resolve().parent.parent / 'docs/inputs/harness-registry.toml'
 
 
