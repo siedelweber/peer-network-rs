@@ -1,7 +1,6 @@
 """Account for tracked hexadecimal values without recomputing their subjects."""
 
 import ast
-import base64
 import hashlib
 import json
 import fnmatch
@@ -113,22 +112,18 @@ def establish(root, rule):
             raise ValueError("hash citations: admitted import is not reachable from HEAD")
         return lambda value, _line: value == commit
     if kind == "imported-commit" and standing == "resolvable":
-        # Retain the exercised commit's exact object when signing/import rewrites
-        # its parents and metadata. Its tree must match a reachable imported commit.
+        # Campaigns identify the exercised tree and its public history location.
         commit = rule["commit"]
-        imported = rule["imported_as"]
-        establish(root, dict(reader="ancestor-commit", establishment="resolvable", commit=imported))
-        source = base64.b64decode(rule["source_object_base64"], validate=True)
-        identity = hashlib.sha1(b"commit " + str(len(source)).encode() + b"\0" + source).hexdigest()
-        if identity != commit:
-            raise ValueError("hash citations: retained source object identity differs")
-        tree = source.split(b"\n", 1)[0]
+        tree = rule["tree"]
+        establish(root, dict(reader="ancestor-commit", establishment="resolvable", commit=commit))
+        if not re.fullmatch(r"[0-9a-f]{40}", tree):
+            raise ValueError("hash citations: admitted import requires a full tree identity")
         started = time.monotonic()
-        result = subprocess.run(["git", "rev-parse", imported + "^{tree}"], cwd=root, capture_output=True)
+        result = subprocess.run(["git", "rev-parse", commit + "^{tree}"], cwd=root, capture_output=True, text=True)
         print(f"hash citations git rev-parse wall={time.monotonic()-started:.6f}s status={result.returncode}")
-        if result.returncode or tree != b"tree " + result.stdout.strip():
+        if result.returncode or tree != result.stdout.strip():
             raise ValueError("hash citations: imported source tree differs")
-        return lambda value, _line: value in {commit, imported}
+        return lambda value, _line: value in {commit, tree}
     if kind == "public-git" and standing == "resolvable":
         locator = rule["locator"]
         commit = rule["commit"]

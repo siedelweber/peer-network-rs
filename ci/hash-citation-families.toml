@@ -360,12 +360,11 @@ paths = ["packages/wallet/fuzz/Cargo.lock", "packages/wallet/fuzz/NOTICE-DEPENDE
 [[rows]]
 family = "wallet-differential-source"
 group = "wallet decoder differential campaign"
-measures = "Git commit containing the exercised adapter and differential target"
+measures = "Git tree exercised by the campaign and the public commit holding it"
 producer = "gate and bounded fuzz campaign source checkout"
 establishment = "resolvable"
 reader = "imported-commit"
-commit = "be598a9a8a3a393c33bc14fb80d27f765f9fbd76"
-imported_as = "289b6e3e043ce26c277d8e21a1edc164ce553d76"
-source_object_base64 = "dHJlZSAwNTIxMjdjNTE2MTgyYjhjNGM1NWM4MTRmNDc2MjdhNjdlZWYxY2M2CnBhcmVudCBkMGM0N2U3N2Q5NDhiZGQ3NjYxNmRlNmY5OTdjZjk5OGY3MDNiNGI5CmF1dGhvciBTaWVkZWx3ZWJlciA8c2llZGVsd2ViZXJAcG0ubWU+IDE3OTI5MjIwODMgKzAwMDAKY29tbWl0dGVyIFNpZWRlbHdlYmVyIDxzaWVkZWx3ZWJlckBwbS5tZT4gMTc5MjkyMjA4MyArMDAwMAoKZml4KHdhbGxldCk6IGNvbXBhcmUgY29kZWMgYWNjZXB0YW5jZSB3aXRoaW4gcmVhY2hhYmxlIGxpbWl0cwoKQSBmcmFtaW5nIHJlc3RyaWN0aW9uIG11c3Qgbm90IGhpZGUgYSBjb2RlYy12YWxpZCB0cmFuc2FjdGlvbiBvciBibG9jay4gQ29tcGFyZSBiYXJlIGNvZGVjIHZlcmRpY3RzIGFuZCBwcm9qZWN0aW9ucyBpbmRlcGVuZGVudGx5IG9mIHByZWZsaWdodCwgcmV0YWluIHByb29mIGFuZCBkeW5hZmVkIGZpeHR1cmVzLCBhbmQgbWVhc3VyZSB0aGUgZnVsbCBieXRlIGFuZCBpdGVtIGVudmVsb3BlLgoKS2VlcCBkZXBlbmRlbmN5IGFkbWlzc2lvbiBhdWRpdGFibGUgdGhyb3VnaCBtZXRhZGF0YSBidWlsZC1zY3JpcHQgY2hlY2tzLCBwZXItb3duZXIgcHJvZHVjdGlvbiBjbG9zdXJlcywgYWRhcHRlciBib3VuZGFyeSB3aXRuZXNzZXMgYW5kIGNvbXBsZXRlIGZ1enogcnVudGltZSBub3RpY2VzLgo="
-definition = "The retained Git commit object authenticates the exercised source identity; its tree must equal the imported ancestor after signing rewrites commit metadata and parents. The campaign citation keeps its original source identity."
+commit = "289b6e3e043ce26c277d8e21a1edc164ce553d76"
+tree = "052127c516182b8c4c55c814f47627a67eef1cc6"
+definition = "A campaign names its exercised tree and, once imported, the public commit holding that tree. The cited commit must be an ancestor of the checked-out history and its tree must equal the cited tree."
 paths = ["ci/hash-citation-families.toml", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
