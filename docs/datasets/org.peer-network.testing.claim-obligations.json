@@ -1822,7 +1822,7 @@
     {
       "admission": {
         "evidence": "ROOT::amend:xchg:implementation-entry-admission",
-        "evidence_kind": "Amended entry condition with present artifact evidence: vectors whose files state their sources, with coverage assessed from reviewer recollection rather than a staged RFC source, locked dependency review, adoption decisions and current witnesses",
+        "evidence_kind": "Amended entry condition with present artifact evidence: vectors whose files state their sources, with complete source-counted Appendix A coverage, locked dependency review, adoption decisions and current witnesses",
         "owner": "Interchange implementer and contract reviewer",
         "status": "admitted"
       },
@@ -1841,7 +1841,7 @@
       "name": "ROOT::gate:xchg:implementation",
       "owner": "Interchange implementer and contract reviewer",
       "path": "adr/010-interchange-design.md",
-      "premises": "The retained 93-row corpus, its declared sources and explained Appendix A omissions; the historical conditions are explicitly replaced by reviewed present artifact evidence. Executions establish roster and predicates, not authoring order.",
+      "premises": "The retained 119-row corpus, its declared sources and complete source-counted Appendix A coverage; the historical conditions are explicitly replaced by reviewed present artifact evidence. Executions establish roster and predicates, not authoring order.",
       "realizers": [],
       "status": "scoped-supported"
     },

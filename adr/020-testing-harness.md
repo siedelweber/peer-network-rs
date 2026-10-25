@@ -100,8 +100,8 @@
 | pn-interchange::public | active | public-surface | pn-interchange-rust | fast | 2 |
 | pn-interchange::benchmark_correctness | active | integration | pn-interchange-rust | fast | 2 |
 | ci::test_testkit | active | unit | ci-python | fast | 9 |
-| rfc8949-canonical | active | integration | pn-interchange-rust | fast | 67 |
-| rfc8949-refusal | active | integration | pn-interchange-rust | fast | 26 |
+| rfc8949-canonical | active | integration | pn-interchange-rust | fast | 86 |
+| rfc8949-refusal | active | integration | pn-interchange-rust | fast | 33 |
 | foundation-benchmarks | active | integration | pn-interchange-rust | fast | 2 |
 | ci::test_claims | active | unit | ci-python | fast | 23 |
 | ci::test_observe | active | unit | ci-python | fast | 13 |

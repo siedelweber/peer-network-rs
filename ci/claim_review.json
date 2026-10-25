@@ -2376,6 +2376,14 @@
       "claim": "ROOT::claim:discipline:binary-endpoint-results-are-detected",
       "after": "Claim: A fixture-only binary DataRow containing the TCP server port and address is detected as four-byte port and address octets, so decoding without decimal text cannot conceal reachability.",
       "review": "Read the TCP fixture binary inet and int4 query and exact decoded-frame patterns. Both endpoint octets and big-endian port must be detected; no decimal-string match substitutes for the binary control."
+    },
+    {
+      "operation": "pn-interchange::vectors::corpus_has_the_seeded_shape",
+      "path": "packages/interchange/tests/vectors.rs",
+      "claim": "INTERCHANGE::claim:vectors:the-corpus-keeps-its-seeded-counts",
+      "before": "Claim: The vector corpus still holds the 67 canonical rows and 26 refusals it was seeded with.",
+      "after": "Claim: The corpus retains 86 canonical rows and 33 refusals, including all 81 distinct Appendix A examples split into 64 canonical rows and 17 refusals, so a missing or duplicate row cannot silently shrink its evidence.",
+      "review": "Read the corpus and count assertions against all 81 source examples. The 26 added byte strings complete the source set; the test now fixes 86 canonical and 33 refusal rows overall, the 81/64 Appendix A split, and uniqueness. Row predicates independently exercise each disposition. No codec behavior changed."
     }
   ]
 }

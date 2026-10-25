@@ -14,17 +14,18 @@ use support::{hex_to_bytes, offset_of, variant_name};
 
 const CORPUS: &str = include_str!("corpus/rfc8949-vectors.json");
 
-/// The seeded set of the design's test plan: 67 canonical rows and 26
-/// refusals. The counts are asserted so that a corpus silently losing rows
-/// is a failure rather than a smaller test run.
-const CANONICAL_ROWS: usize = 67;
-const REFUSAL_ROWS: usize = 26;
+/// The complete Appendix A set plus the retained derived and Appendix F
+/// rows: 86 canonical rows and 33 refusals. Counts make silently losing rows
+/// a failure rather than a smaller test run.
+const CANONICAL_ROWS: usize = 86;
+const REFUSAL_ROWS: usize = 33;
 
 struct Row {
     hex: String,
     diagnostic: String,
     valid_canonical: bool,
     reason: String,
+    source: String,
 }
 
 fn corpus() -> Vec<Row> {
@@ -46,12 +47,13 @@ fn corpus() -> Vec<Row> {
                     .and_then(serde_json::Value::as_bool)
                     .expect("every row states whether it is canonical"),
                 reason: field("reason"),
+                source: field("source"),
             }
         })
         .collect()
 }
 
-/// Claim: The vector corpus still holds the 67 canonical rows and 26 refusals it was seeded with.
+/// Claim: The corpus retains 86 canonical rows and 33 refusals, including all 81 distinct Appendix A examples split into 64 canonical rows and 17 refusals, so a missing or duplicate row cannot silently shrink its evidence.
 /// ´claim:vectors:the-corpus-keeps-its-seeded-counts´
 /// ´test:integration:corpus-has-the-seeded-shape´
 #[test]
@@ -60,6 +62,11 @@ fn corpus_has_the_seeded_shape() {
     let canonical = rows.iter().filter(|row| row.valid_canonical).count();
     assert_eq!(canonical, CANONICAL_ROWS);
     assert_eq!(rows.len() - canonical, REFUSAL_ROWS);
+    let appendix: Vec<_> = rows.iter().filter(|row| row.source == "RFC 8949 Appendix A").collect();
+    assert_eq!(appendix.len(), 81);
+    assert_eq!(appendix.iter().filter(|row| row.valid_canonical).count(), 64);
+    let distinct: std::collections::BTreeSet<_> = rows.iter().map(|row| &row.hex).collect();
+    assert_eq!(distinct.len(), rows.len());
 }
 
 /// Claim: Every canonical vector of the standard decodes, re-encodes to the same bytes, and round-trips.
@@ -150,7 +157,7 @@ fn expected_refusal(bytes: &[u8], reason: &str) -> Expected {
     if reason.contains("but not canonical") {
         return Expected::Exactly("NonPreferredHead");
     }
-    if matches!(bytes.first(), Some(0x5f | 0x7f | 0x9f | 0xbf)) {
+    if reason.starts_with("indefinite-length") || matches!(bytes.first(), Some(0x5f | 0x7f | 0x9f | 0xbf)) {
         return Expected::Exactly("IndefiniteLength");
     }
     assert!(

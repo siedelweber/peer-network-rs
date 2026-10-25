@@ -1432,9 +1432,9 @@ closing_condition = "Supply provenance for vector transcription and dependency v
 closing_step = "Entry condition of gate:design:bite-1"
 entry_gate = "ROOT::gate:design:bite-1"
 
-admission = { owner = "Interchange implementer and contract reviewer", evidence_kind = "Amended entry condition with present artifact evidence: vectors whose files state their sources, with coverage assessed from reviewer recollection rather than a staged RFC source, locked dependency review, adoption decisions and current witnesses", status = "admitted", evidence = "ROOT::amend:xchg:implementation-entry-admission" }
+admission = { owner = "Interchange implementer and contract reviewer", evidence_kind = "Amended entry condition with present artifact evidence: vectors whose files state their sources, with complete source-counted Appendix A coverage, locked dependency review, adoption decisions and current witnesses", status = "admitted", evidence = "ROOT::amend:xchg:implementation-entry-admission" }
 admission_basis = "executed"
-premises = "The retained 93-row corpus, its declared sources and explained Appendix A omissions; the historical conditions are explicitly replaced by reviewed present artifact evidence. Executions establish roster and predicates, not authoring order."
+premises = "The retained 119-row corpus, its declared sources and complete source-counted Appendix A coverage; the historical conditions are explicitly replaced by reviewed present artifact evidence. Executions establish roster and predicates, not authoring order."
 evidence_paragraph = "EXECWRAP::amend:foundation:entry-interchange-execution"
 
 [[rows]]
