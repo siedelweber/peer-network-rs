@@ -31,6 +31,14 @@
       "operations": 12
     },
     {
+      "exceptions": 0,
+      "generators": 1,
+      "helpers": 0,
+      "instrumented": 1,
+      "name": "pn-graph",
+      "operations": 1
+    },
+    {
       "exceptions": 18,
       "generators": 13,
       "helpers": 0,

@@ -231,7 +231,7 @@
       "requirements": [
         "final-membership"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in records-level partition scope at bite 3 (pn-graph); authenticated formation and common-marker boundary selection remain held for their owning slices",
       "suite": "graph"
     },
     {

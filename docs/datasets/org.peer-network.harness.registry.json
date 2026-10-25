@@ -2550,7 +2550,7 @@
       "implementation": "",
       "kind": "suite",
       "name": "planned-graph",
-      "reason": "contract not implemented; first contributing domain bite 3",
+      "reason": "partition is implemented in its own scoped suites; family formation, geometry and title remain held",
       "status": "held",
       "tier": "fast"
     },
@@ -3046,6 +3046,8 @@
         "ci::test_observe_runtime.Processes.test_burn_entry",
         "ci::test_observe_runtime.Processes.test_numeric_entry",
         "ci::test_observe_runtime.Processes.test_generated_records_refusals",
+        "ci::test_observe_runtime.Processes.test_graph_partition",
+        "ci::test_observe_runtime.Processes.test_graph_dependency",
         "ci::test_observe_runtime.Processes.test_interchange_refusal",
         "ci::test_observe_runtime.Processes.test_four_mode_results",
         "ci::test_observe_runtime.Processes.test_records_entry",
@@ -3755,6 +3757,125 @@
       "runner": "nextest",
       "status": "active",
       "tier": "service"
+    },
+    {
+      "contract": "records-level dependent-act partition",
+      "edition": "0.1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-graph-rust"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::tests::publication_guard"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-graph",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::public::partition_cases",
+        "pn-graph::public::exhaustive_dags",
+        "pn-graph::public::invalid_inputs"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-graph::public",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::properties::generated_partitions"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-graph::properties",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::integration::shared_cases"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-graph::integration",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-verification::graph::graph_shared_cases",
+        "pn-verification::graph::generated_partitions"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-verification::graph",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::graph-partition-1::graph-partition-graph::minimal",
+        "contract::graph-partition-1::graph-partition-graph::independent",
+        "contract::graph-partition-1::graph-partition-graph::dense",
+        "contract::graph-partition-1::graph-partition-graph::mixed",
+        "contract::graph-partition-1::graph-partition-graph::dependencies",
+        "contract::graph-partition-1::graph-partition-graph::removals"
+      ],
+      "claim": "claim:membership:shared-partitions-retain-complete-results",
+      "claim_owner": "GRAPH",
+      "contract_edition": "graph-partition-1",
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "graph-partition-graph",
+      "parent_case": "pn-graph::integration::shared_cases",
+      "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::graph-partition-1::graph-partition-verification::minimal",
+        "contract::graph-partition-1::graph-partition-verification::independent",
+        "contract::graph-partition-1::graph-partition-verification::dense",
+        "contract::graph-partition-1::graph-partition-verification::mixed",
+        "contract::graph-partition-1::graph-partition-verification::dependencies",
+        "contract::graph-partition-1::graph-partition-verification::removals"
+      ],
+      "claim": "claim:verification:shared-partitions-retain-complete-results",
+      "claim_owner": "VERIFICATION",
+      "contract_edition": "graph-partition-1",
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "graph-partition-verification",
+      "parent_case": "pn-verification::graph::graph_shared_cases",
+      "runner": "contract",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

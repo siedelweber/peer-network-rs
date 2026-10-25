@@ -356,3 +356,26 @@ edition = "wallet-layout-1"
 dependency = "proptest 1.12.0"
 regressions = "packages/wallet/proptest-regressions"
 case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-graph::properties::generated_partitions"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support.rs"
+edition = "records-dag-1/graph-partition-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/graph/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+
+[[rows]]
+name = "pn-verification::graph::generated_partitions"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/records/src/test_support.rs"
+edition = "records-dag-1/graph-partition-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/verification/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+consumer = "pn-verification"

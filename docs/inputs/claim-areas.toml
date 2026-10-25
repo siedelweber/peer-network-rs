@@ -309,3 +309,10 @@ area = "wallet"
 stake = "If public layout decoding drops a field or accepts an ambiguous target, chain evidence can be misattributed or a hostile length can exhaust the reader."
 register = "WALLET::sec:wallet:area-wallet"
 contract = "WALLET::sec:wallet:area-wallet"
+
+[[rows]]
+owner = "GRAPH"
+area = "membership"
+stake = "Dropping or duplicating an act across dependent blocks changes the proposed whole-act union and can separate a causal ancestor from its dependent."
+register = "GRAPH::sec:membership:area-membership"
+contract = "GRAPH::def:membership:partition"

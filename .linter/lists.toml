@@ -375,3 +375,39 @@ allowances = []
 
 [WALLET."profile.claims-conform"]
 allowances = []
+
+[GRAPH."labels.citations-import-form"]
+allowances = []
+
+[GRAPH."labels.citations-imported-resolve"]
+allowances = []
+
+[GRAPH."labels.citations-layer-conform"]
+allowances = []
+
+[GRAPH."labels.citations-local-resolve"]
+allowances = []
+
+[GRAPH."labels.generated-regions-conform"]
+allowances = []
+
+[GRAPH."labels.heads-conform"]
+allowances = []
+
+[GRAPH."labels.mints-kind-conform"]
+allowances = []
+
+[GRAPH."labels.mints-unique"]
+allowances = []
+
+[GRAPH."labels.mints-well-formed"]
+allowances = []
+
+[GRAPH."labels.outlines-conform"]
+allowances = []
+
+[GRAPH."profile.tests-conform"]
+allowances = []
+
+[GRAPH."profile.claims-conform"]
+allowances = []

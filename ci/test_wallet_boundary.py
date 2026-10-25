@@ -53,8 +53,9 @@ class WalletBoundary(unittest.TestCase):
         allowed = json.loads(Path('ci/wallet-production-packages.json').read_text())
         for dependency in ['dhat 0.3.3', 'proptest 1.12.0', 'libfuzzer-sys 0.4.13', 'arbitrary 1.5.0', 'pn-wallet-fuzz 0.0.0']:
             name, version = dependency.split()
-            with self.assertRaisesRegex(ValueError, 'production graph'):
-                check_production_tree('pn-wallet', f'pn-wallet v0.1.0\n{name} v{version}\n', allowed)
+            for owner in ['pn-wallet', 'pn-graph']:
+                with self.assertRaisesRegex(ValueError, 'production graph'):
+                    check_production_tree(owner, f'{owner} v0.1.0\n{name} v{version}\n', allowed)
         with self.assertRaisesRegex(ValueError, 'production graph'):
             check_production_tree('pn-host', 'pn-host v0.1.0\npn-wallet v0.1.0\n', allowed)
         rows = tomllib.loads(Path('docs/inputs/wallet-dependencies.toml').read_text())['rows']

@@ -1,0 +1,23 @@
+[package]
+name = "pn-graph"
+description = "Whole-act dependency partition over validated records"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+version.workspace = true
+
+[dependencies]
+petgraph.workspace = true
+pn-records = { path = "../records" }
+tracing.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+pn-records = { path = "../records", features = ["test-support"] }
+pn-testkit.workspace = true
+cli-common.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

@@ -187,6 +187,55 @@ class Processes(unittest.TestCase):
         self.assertEqual(outputs['default'],outputs['trace'])
         self.assertEqual(outcomes['default'],outcomes['trace'])
 
+    def test_graph_partition(self):
+        """Claim: The real public partition operation returns identical whole-act blocks with observation disabled, default and trace; default and trace retain two graph invocations and elapsed samples, while trace records the complete public input and graph result.
+        ´claim:discipline:graph-partition-is-observed-without-changing-results´
+        ´test:integration:test-graph-partition´
+        """
+        samples = {}; accounting = {}
+        for mode in ('disabled', 'default', 'trace'):
+            env = os.environ | {'PN_OBSERVE_LEVEL': 'trace' if mode == 'trace' else 'default'}
+            result = compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/partition_observation'), mode], mode, env)
+            self.assertEqual(result.returncode, 0, result.stderr.decode())
+            samples[mode] = result.stdout
+            self.assertEqual(json.loads(result.stdout), {'partition_cases': [
+                {'nodes': 2, 'edges': 0, 'blocks': [[2], [3]]},
+                {'nodes': 10, 'edges': 45, 'blocks': [list(range(2, 12))]}]})
+            if mode == 'disabled': continue
+            rows = [json.loads(line) for line in result.stderr.splitlines()]
+            summary = expanded(next(row['metrics'] for row in rows if row.get('kind') == 'metric_summary'))
+            stem = 'graph__root__sig__design__graph__'
+            accounting[mode] = {key: value for key, value in distribution(summary).items() if key[0].startswith(stem)}
+            self.assertEqual(accounting[mode][stem+'started_operations', ''], 2)
+            self.assertEqual(accounting[mode][stem+'completed_operations', 'success'], 2)
+            instruments = {row['name']: row for row in summary['instruments'] if row['name'].startswith(stem)}
+            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 2)
+            if mode == 'trace':
+                for marker in (b'partition_dependencies', b'authentication_evidence', b'asserted_parents', b'Graph'):
+                    self.assertIn(marker, result.stderr)
+        self.assertEqual(samples['disabled'], samples['default'])
+        self.assertEqual(samples['default'], samples['trace'])
+        self.assertEqual(accounting['default'], accounting['trace'])
+
+    def test_graph_dependency(self):
+        """Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed 0.8.3 identity and exactly its default-plus-serde feature vocabulary, so manifest spelling alone cannot stand in for resolved dependency evidence.
+        ´claim:discipline:graph-backend-retains-reviewed-identity´
+        ´test:integration:test-graph-dependency´
+        """
+        import tomllib
+        from dependency_identity import metadata, spellings
+        workspace = tomllib.loads(Path('Cargo.toml').read_text())
+        manifest = tomllib.loads(Path('packages/graph/Cargo.toml').read_text())
+        self.assertEqual(workspace['workspace']['dependencies']['petgraph'], {'version': '0.8', 'features': ['serde-1']})
+        self.assertEqual(manifest['dependencies']['petgraph'], {'workspace': True})
+        data = metadata()
+        self.assertEqual(spellings(data, 'pn-graph', {'petgraph'}), {'petgraph'})
+        resolved = json.loads(subprocess.check_output(['cargo', 'metadata', '--offline', '--locked', '--format-version', '1']))
+        package = next(row for row in resolved['packages'] if row['name'] == 'petgraph')
+        self.assertEqual(package['version'], '0.8.3')
+        node = next(row for row in resolved['resolve']['nodes'] if row['id'] == package['id'])
+        self.assertEqual(set(node['features']), {'default', 'std', 'graphmap', 'stable_graph', 'matrix_graph', 'serde-1', 'serde', 'serde_derive'})
+
     def test_generated_records_refusals(self):
         """Claim: Each single corruption of the same seeded records DAG retains its exact typed refusal at default and trace, and both metric distributions contain nineteen refusals and no errors.
         ´claim:discipline:generated-records-refusals-retain-outcomes´

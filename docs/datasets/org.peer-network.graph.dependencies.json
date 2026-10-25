@@ -1,0 +1,27 @@
+{
+  "namespace": "org.peer-network.graph.dependencies",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "features": [
+        "default",
+        "std",
+        "graphmap",
+        "stable_graph",
+        "matrix_graph",
+        "serde-1",
+        "serde",
+        "serde_derive"
+      ],
+      "license": "MIT OR Apache-2.0; taken under MIT",
+      "name": "petgraph",
+      "notice": "packages/graph/NOTICE-DEPENDENCIES",
+      "role": "Temporary whole-act closure intersection graph; future complete projection storage remains held",
+      "version": "0.8.3"
+    }
+  ]
+}

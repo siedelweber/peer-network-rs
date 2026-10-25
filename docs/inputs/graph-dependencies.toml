@@ -1,0 +1,10 @@
+namespace = "org.peer-network.graph.dependencies"
+version = [1, 0, 0]
+
+[[rows]]
+name = "petgraph"
+version = "0.8.3"
+license = "MIT OR Apache-2.0; taken under MIT"
+features = ["default", "std", "graphmap", "stable_graph", "matrix_graph", "serde-1", "serde", "serde_derive"]
+role = "Temporary whole-act closure intersection graph; future complete projection storage remains held"
+notice = "packages/graph/NOTICE-DEPENDENCIES"

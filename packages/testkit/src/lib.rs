@@ -145,6 +145,18 @@ impl FaultPlan {
     }
 }
 
+/// Named word inputs for the records generator, shared by both graph consumers.
+/// Expectations remain independently owned by the consuming test suites.
+/// (´def:testkit:case´)
+pub const GRAPH_PARTITION_CASES: [(&str, &[u64]); 6] = [
+    ("minimal", &[]),
+    ("independent", &[1; 8]),
+    ("dense", &[u64::MAX; 8]),
+    ("mixed", &[9, 18, 37, 74, 149, 298]),
+    ("dependencies", &[(65_535 << 16) | 1; 8]),
+    ("removals", &[(3 << 62) | 1, (3 << 62) | 31, 1, 127]),
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;

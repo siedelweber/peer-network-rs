@@ -10,6 +10,26 @@
       "imports": [],
       "may_cite": [
         {
+          "owner": "GRAPH",
+          "target": "ROOT"
+        },
+        {
+          "owner": "GRAPH",
+          "target": "CLICOMMON"
+        },
+        {
+          "owner": "GRAPH",
+          "target": "RECORDS"
+        },
+        {
+          "owner": "GRAPH",
+          "target": "TESTKIT"
+        },
+        {
+          "owner": "VERIFICATION",
+          "target": "GRAPH"
+        },
+        {
           "owner": "WALLET",
           "target": "ROOT"
         },
@@ -142,9 +162,15 @@
         "VERIFICATION",
         "HOST",
         "WALLET",
+        "GRAPH",
         "VENDOR"
       ],
       "partitions": [
+        {
+          "name": "graph-package",
+          "owner": "GRAPH",
+          "pattern": "%s\"packages/graph/\" *VCHAR"
+        },
         {
           "name": "wallet-package",
           "owner": "WALLET",

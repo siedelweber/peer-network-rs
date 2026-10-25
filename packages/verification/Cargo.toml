@@ -8,6 +8,7 @@ publish = false
 version.workspace = true
 
 [dev-dependencies]
+pn-graph = { path = "../graph" }
 pn-records = { path = "../records", features = ["test-support"] }
 pn-testkit.workspace = true
 serde_json.workspace = true

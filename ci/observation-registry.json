@@ -6310,6 +6310,16 @@
         "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
         "class_decision": "wallet-decoder"
       }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/lib.rs",
+      "item": "partition_dependencies",
+      "owner": "GRAPH",
+      "signature": "fn partition_dependencies (input : & BoundaryInputs < '_ >) -> Result < (IntersectionGraph , DependencyBlocks) , PartitionError >",
+      "claim": "ROOT::alg:design:dependency-partition",
+      "shape": "shape-graph",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -12195,6 +12205,17 @@
         "exposure_consumers": "wallet-exposure_consumers"
       },
       "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/lib.rs::partition_dependencies",
+      "body": "{ let expected : BTreeSet < _ > = input . acts () . iter () . map (| act | act . id () . clone ()) . collect () ; let mut graph = IntersectionGraph :: new_undirected () ; let mut closures = Vec :: new () ; for act in input . acts () { let closure = input . closures () . iter () . find (| closure | closure . root () == act . id ()) . ok_or (PartitionError :: Coverage) ? ; let members : BTreeSet < _ > = closure . members () . iter () . cloned () . collect () ; if ! members . contains (act . id ()) || ! members . is_subset (& expected) { return Err (PartitionError :: Coverage) ; } let node = graph . try_add_node (act . id () . clone ()) . map_err (| _ | PartitionError :: Capacity) ? ; closures . push ((node , members)) ; } for (offset , (left , members)) in closures . iter () . enumerate () { for (right , other) in closures . iter () . skip (offset + 1) { let shared : Vec < _ > = members . intersection (other) . cloned () . collect () ; if ! shared . is_empty () { graph . try_add_edge (* left , * right , shared) . map_err (| _ | PartitionError :: Capacity) ? ; } } } let mut blocks = Vec :: new () ; for component in petgraph :: algo :: kosaraju_scc (& graph) { let mut members = BTreeSet :: new () ; for node in component { members . extend (closures [node . index ()] . 1 . iter () . cloned ()) ; } let block = input . acts () . iter () . filter (| act | members . contains (act . id ())) . map (| act | act . id () . clone ()) . collect () ; blocks . push (block) ; } if ! covers_once (& expected , & blocks) { return Err (PartitionError :: Coverage) ; } blocks . sort_by_key (| block | input . acts () . iter () . position (| act | block . first () == Some (act . id ()))) ; Ok ((graph , blocks)) }",
+      "class_decision": "graph-partition",
+      "item_premise": "Partition accepts only immutable public BoundaryInputs supplied by records; its Debug includes complete public acts and closures. The return retains structural identities, full shared identities and complete block vectors. No input or output contains a secret carrier, no graph result feeds observation back into computation, and no serializer or canonical publication path is exposed. Invocation totals and inclusive durations are observed; algorithmic work and allocation bounds are not claimed.",
+      "assessments": {
+        "full_recording": "graph-full_recording",
+        "secret_flow": "graph-secret_flow",
+        "exposure_consumers": "graph-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -14483,6 +14504,15 @@
       "syntax": "# [derive (Clone , Debug , serde :: Deserialize , PartialEq , Eq)]",
       "class_decision": "wallet-decoder",
       "expansion_review": "Derives format only public limits, typed reads/results, trusted-service diagnostics and public provisioning. Secret configuration and sockets use hand-written role-only formatting; no derive serializes their fields."
+    },
+    {
+      "item": "PartitionError",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "graph-partition",
+      "expansion_review": "Fieldless refusal variants derive copy, equality, complete Debug and fixed Display/Error messages. Generated methods carry no hidden content and inherit the enclosing partition operation."
     }
   ],
   "reviewed_types": [
@@ -16023,6 +16053,12 @@
       "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Node visits, parent inspections, inherited-member insert attempts and emitted members.\"] # [doc = \" None means counter overflow, never a work-limit refusal.\"] work : Option < u64 > , # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] boundary : u64 , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] closures : Vec < PrincipalClosure > , }"
     },
     {
+      "item": "PartitionError",
+      "package": "pn-graph",
+      "path": "packages/graph/src/lib.rs",
+      "syntax": "# [doc = \" Refusal to publish an incomplete or inconsistent partition.\"] # [doc = \" (´def:membership:partition´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum PartitionError { # [doc = \" The temporary backend cannot represent another vertex or edge.\"] # [error (\"intersection graph capacity exhausted\")] Capacity , # [doc = \" The closure union or block multiplicity differs from the proposed set.\"] # [error (\"partition does not cover the proposed act set exactly once\")] Coverage , }"
+    },
+    {
       "item": "config::Configuration",
       "package": "pn-host",
       "path": "packages/host/src/config.rs",
@@ -16415,6 +16451,14 @@
       "membership": {
         "labelled_package": "pn-wallet"
       }
+    },
+    {
+      "name": "graph-partition",
+      "membership": {
+        "labelled_package": "pn-graph"
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Partition accepts only immutable public BoundaryInputs supplied by records; its Debug includes complete public acts and closures. The return retains structural identities, full shared identities and complete block vectors. No input or output contains a secret carrier, no graph result feeds observation back into computation, and no serializer or canonical publication path is exposed. Invocation totals and inclusive durations are observed; algorithmic work and allocation bounds are not claimed."
     }
   ],
   "shapes": {
@@ -16588,6 +16632,27 @@
         "wallet__root__sig__design__devnet__elapsed_seconds",
         "wallet__root__sig__design__devnet__workload_bytes",
         "wallet__root__sig__design__devnet__workload_operations"
+      ]
+    },
+    "shape-graph": {
+      "fields": [
+        "complete public BoundaryInputs at trace",
+        "complete graph and block result at trace",
+        "bounded outcome",
+        "inclusive duration_seconds",
+        "declared invocation work",
+        "qualified resource totals"
+      ],
+      "metrics": [
+        "graph__root__sig__design__graph__started_operations",
+        "graph__root__sig__design__graph__completed_operations",
+        "graph__root__sig__design__graph__work_bytes",
+        "graph__root__sig__design__graph__work_operations",
+        "graph__root__sig__design__graph__active_operations",
+        "graph__root__sig__design__graph__resource_current_bytes",
+        "graph__root__sig__design__graph__elapsed_seconds",
+        "graph__root__sig__design__graph__workload_bytes",
+        "graph__root__sig__design__graph__workload_operations"
       ]
     }
   },
@@ -18136,6 +18201,21 @@
       "status": "reviewer-confirmed",
       "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, cookie and wire buffers are secret-owned; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
       "negative_probe": "WALLET::claim:wallet:rpc-observation-retains-public-results-only"
+    },
+    "graph-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Partition accepts only immutable public BoundaryInputs supplied by records; its Debug includes complete public acts and closures. The return retains structural identities, full shared identities and complete block vectors. No input or output contains a secret carrier, no graph result feeds observation back into computation, and no serializer or canonical publication path is exposed. Invocation totals and inclusive durations are observed; algorithmic work and allocation bounds are not claimed.",
+      "negative_probe": "ROOT::claim:discipline:graph-partition-is-observed-without-changing-results"
+    },
+    "graph-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Partition accepts only immutable public BoundaryInputs supplied by records; its Debug includes complete public acts and closures. The return retains structural identities, full shared identities and complete block vectors. No input or output contains a secret carrier, no graph result feeds observation back into computation, and no serializer or canonical publication path is exposed. Invocation totals and inclusive durations are observed; algorithmic work and allocation bounds are not claimed.",
+      "negative_probe": "ROOT::claim:discipline:graph-partition-is-observed-without-changing-results"
+    },
+    "graph-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Partition accepts only immutable public BoundaryInputs supplied by records; its Debug includes complete public acts and closures. The return retains structural identities, full shared identities and complete block vectors. No input or output contains a secret carrier, no graph result feeds observation back into computation, and no serializer or canonical publication path is exposed. Invocation totals and inclusive durations are observed; algorithmic work and allocation bounds are not claimed.",
+      "negative_probe": "ROOT::claim:discipline:graph-partition-is-observed-without-changing-results"
     }
   }
 }

@@ -531,7 +531,7 @@ status = "held"
 tier = "fast"
 implementation = ""
 cases = []
-reason = "contract not implemented; first contributing domain bite 3"
+reason = "partition is implemented in its own scoped suites; family formation, geometry and title remain held"
 contract = "formation, title folds and dependency closure"
 
 [[rows]]
@@ -833,7 +833,7 @@ level = "integration"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
+cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_graph_partition", "ci::test_observe_runtime.Processes.test_graph_dependency", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
 
 [[rows]]
 kind = "suite"
@@ -1211,3 +1211,95 @@ implementation = "pn-wallet-elements"
 tier = "service"
 budget = "pure-suite"
 cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals", "pn-wallet::rpc::authentication_refusals", "pn-wallet::rpc::observations", "pn-wallet::rpc::generic_negative", "pn-wallet::rpc::rotation", "pn-wallet::rpc::signed_reads", "pn-wallet::rpc::reader_limit_hold"]
+
+[[rows]]
+kind = "implementation"
+name = "pn-graph-rust"
+evidence = "pure"
+contract = "records-level dependent-act partition"
+edition = "0.1"
+
+[[rows]]
+kind = "suite"
+name = "pn-graph"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::tests::publication_guard"]
+
+[[rows]]
+kind = "suite"
+name = "pn-graph::public"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::public::partition_cases", "pn-graph::public::exhaustive_dags", "pn-graph::public::invalid_inputs"]
+
+[[rows]]
+kind = "suite"
+name = "pn-graph::properties"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::properties::generated_partitions"]
+
+[[rows]]
+kind = "suite"
+name = "pn-graph::integration"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::integration::shared_cases"]
+
+[[rows]]
+kind = "suite"
+name = "pn-verification::graph"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-verification::graph::graph_shared_cases", "pn-verification::graph::generated_partitions"]
+
+[[rows]]
+kind = "suite"
+name = "graph-partition-graph"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::graph-partition-1::graph-partition-graph::minimal", "contract::graph-partition-1::graph-partition-graph::independent", "contract::graph-partition-1::graph-partition-graph::dense", "contract::graph-partition-1::graph-partition-graph::mixed", "contract::graph-partition-1::graph-partition-graph::dependencies", "contract::graph-partition-1::graph-partition-graph::removals"]
+parent_case = "pn-graph::integration::shared_cases"
+contract_edition = "graph-partition-1"
+claim_owner = "GRAPH"
+claim = "claim:membership:shared-partitions-retain-complete-results"
+
+[[rows]]
+kind = "suite"
+name = "graph-partition-verification"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::graph-partition-1::graph-partition-verification::minimal", "contract::graph-partition-1::graph-partition-verification::independent", "contract::graph-partition-1::graph-partition-verification::dense", "contract::graph-partition-1::graph-partition-verification::mixed", "contract::graph-partition-1::graph-partition-verification::dependencies", "contract::graph-partition-1::graph-partition-verification::removals"]
+parent_case = "pn-verification::graph::graph_shared_cases"
+contract_edition = "graph-partition-1"
+claim_owner = "VERIFICATION"
+claim = "claim:verification:shared-partitions-retain-complete-results"

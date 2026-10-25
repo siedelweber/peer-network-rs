@@ -966,6 +966,16 @@
     "ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary": "",
     "pn-wallet::rpc::signed_reads": "",
     "pn-wallet::rpc::reader_limit_hold": "",
-    "cli-common::observation::tests::graph_owner_accounting": ""
+    "cli-common::observation::tests::graph_owner_accounting": "",
+    "pn-graph::tests::publication_guard": "",
+    "pn-graph::integration::shared_cases": "",
+    "pn-graph::properties::generated_partitions": "",
+    "pn-graph::public::partition_cases": "",
+    "pn-graph::public::exhaustive_dags": "",
+    "pn-graph::public::invalid_inputs": "",
+    "pn-verification::graph::graph_shared_cases": "",
+    "pn-verification::graph::generated_partitions": "",
+    "ci::test_observe_runtime.Processes.test_graph_partition": "",
+    "ci::test_observe_runtime.Processes.test_graph_dependency": ""
   }
 }

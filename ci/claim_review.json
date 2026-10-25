@@ -2640,6 +2640,86 @@
       "before": "",
       "after": "Claim: A GRAPH-labelled partition operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.",
       "review": "Read the graph owner span and its own stem counters, independently of other owner totals."
+    },
+    {
+      "operation": "pn-graph::tests::publication_guard",
+      "path": "packages/graph/src/lib.rs",
+      "claim": "GRAPH::claim:membership:partition-publication-requires-exact-cover",
+      "before": "",
+      "after": "Claim: The publication guard rejects omitted, foreign and repeated identities and empty blocks, while accepting an empty proposed set only as an empty partition, so a component computation cannot publish a partial or multiply counted union.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-graph::integration::shared_cases",
+      "path": "packages/graph/tests/integration.rs",
+      "claim": "GRAPH::claim:membership:shared-partitions-retain-complete-results",
+      "before": "",
+      "after": "Claim: Six shared word-vector cases execute the records-level partition through the public API with independently owned expectations and complete per-case results; both consumers observe one implementation rather than asserting independent implementations.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-graph::properties::generated_partitions",
+      "path": "packages/graph/tests/properties.rs",
+      "claim": "GRAPH::claim:membership:generated-partitions-match-set-oracle",
+      "before": "",
+      "after": "Claim: Recorded shrinkable DAG inputs agree with an independently enumerated closure-union partition and exact intersection witnesses in three presentations, preserving all whole-act identities without treating dependency tombstones as causal removals.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-graph::public::partition_cases",
+      "path": "packages/graph/tests/public.rs",
+      "claim": "GRAPH::claim:membership:dependency-closures-partition-the-final-act-set",
+      "before": "",
+      "after": "Claim: Against fixed history, overlapping principal closures merge once, interleaved blocks remain separate, history parents and removable declared dependencies do not join blocks, and every published union equals the proposed whole-act set; this establishes records-level partition only, not authenticated formation or final-marker selection.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-graph::public::exhaustive_dags",
+      "path": "packages/graph/tests/public.rs",
+      "claim": "GRAPH::claim:membership:small-dags-preserve-partition-and-indices",
+      "before": "",
+      "after": "Claim: Enumerating all 1024 backward-parent relations on five paired proposals agrees with a naive ancestor-and-set-merge oracle in original, reversed and shuffled presentations, including exact overlap witnesses and deterministic backend indices.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-graph::public::invalid_inputs",
+      "path": "packages/graph/tests/public.rs",
+      "claim": "GRAPH::claim:membership:invalid-records-never-reach-partition",
+      "before": "",
+      "after": "Claim: Missing or late causal parents and a missing paired co-leg fail with exact records causes before a boundary input can reach graph partition, so invalid placement or partial acts cannot acquire partition evidence through this public path.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-verification::graph::graph_shared_cases",
+      "path": "packages/verification/tests/graph.rs",
+      "claim": "VERIFICATION::claim:verification:shared-partitions-retain-complete-results",
+      "before": "",
+      "after": "Claim: Six shared word-vector cases execute the records-level partition through the public API with independently owned expectations and complete per-case results; both consumers observe one implementation rather than asserting independent implementations.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-verification::graph::generated_partitions",
+      "path": "packages/verification/tests/graph.rs",
+      "claim": "VERIFICATION::claim:verification:generated-partitions-match-parent-incidence",
+      "before": "",
+      "after": "Claim: Consumer-qualified recorded inputs yield exactly the blocks independently derived from direct causal-parent incidence, in original, reversed and shuffled presentations, without using the implementation's principal-closure intersection graph as an oracle.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:graph-partition-is-observed-without-changing-results",
+      "before": "",
+      "after": "Claim: The real public partition operation returns identical whole-act blocks with observation disabled, default and trace; default and trace retain two graph invocations and elapsed samples, while trace records the complete public input and graph result.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_graph_dependency",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:graph-backend-retains-reviewed-identity",
+      "before": "",
+      "after": "Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed 0.8.3 identity and exactly its default-plus-serde feature vocabulary, so manifest spelling alone cannot stand in for resolved dependency evidence.",
+      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
     }
   ]
 }

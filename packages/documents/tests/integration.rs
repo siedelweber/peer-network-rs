@@ -281,6 +281,7 @@ fn protected_outputs() -> Result<()> {
         "ci/gate.sh",
         "Cargo.toml",
         "packages/documents/Cargo.toml",
+        "packages/graph/Cargo.toml",
         "Cargo.lock",
     ] {
         let directory = fixture()?;
@@ -302,6 +303,12 @@ fn protected_outputs() -> Result<()> {
         }
         assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, "2\n");
     }
+    let directory = fixture()?;
+    let root = directory.path();
+    fs::create_dir_all(root.join("docs/templates/packages/graph"))?;
+    fs::write(root.join("docs/templates/packages/graph/README.md.j2"), "graph guide\n")?;
+    documents::run(root, Operation::Write)?;
+    assert_eq!(fs::read_to_string(root.join("packages/graph/README.md"))?, "graph guide\n");
     Ok(())
 }
 

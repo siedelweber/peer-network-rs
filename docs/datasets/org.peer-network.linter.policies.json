@@ -505,6 +505,54 @@
     {
       "owner": "WALLET",
       "policy": "profile.claims-conform"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.citations-import-form"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.citations-imported-resolve"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.citations-layer-conform"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.citations-local-resolve"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.generated-regions-conform"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.heads-conform"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.mints-kind-conform"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.mints-unique"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.mints-well-formed"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "labels.outlines-conform"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "profile.tests-conform"
+    },
+    {
+      "owner": "GRAPH",
+      "policy": "profile.claims-conform"
     }
   ]
 }

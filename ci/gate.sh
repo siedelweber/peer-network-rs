@@ -99,7 +99,7 @@ run_step determinism-documents cargo run -p documents --locked --profile gate --
 run_step design-correspondence python3 -B ci/design.py
 run_step design-tests python3 -B ci/run_ci.py test_design
 run_step benchmarks python3 -B ci/benchmarks.py
-run_step observation-build cargo build --offline --locked --profile gate -p execwrap -p pn-records --features pn-records/test-support --examples
+run_step observation-build cargo build --offline --locked --profile gate -p execwrap -p pn-records -p pn-graph --features pn-records/test-support --examples
 run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
 run_step host-observation-build python3 -B ci/host_evidence_build.py
 run_step host-observation-runtime python3 -B ci/run_ci.py test_host_runtime

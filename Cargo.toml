@@ -1,7 +1,7 @@
 [workspace]
 resolver = "3"
 exclude = ["packages/interchange/fuzz", "packages/wallet/fuzz"]
-members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap", "packages/testkit", "packages/records", "packages/verification", "packages/host", "packages/wallet"]
+members = ["packages/interchange", "vendor/regexml", "packages/documents", "packages/cli-common", "packages/execwrap", "packages/testkit", "packages/records", "packages/verification", "packages/host", "packages/wallet", "packages/graph"]
 
 [workspace.package]
 authors = ["Peer Network contributors"]
@@ -12,6 +12,7 @@ version = "0.1.0"
 license = "AGPL-3.0-only"
 
 [workspace.dependencies]
+petgraph = { version = "0.8", features = ["serde-1"] }
 # Reviewed exact carriers and explicit numeric bounds; manifest and lock pin one reviewed public revision.
 nrz-scalar = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", rev = "b90b8025a2c0fdc70e1a5a8e8fa83403c8634526" }
 nrz-accuracy = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", rev = "b90b8025a2c0fdc70e1a5a8e8fa83403c8634526" }

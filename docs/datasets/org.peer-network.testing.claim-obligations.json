@@ -2358,14 +2358,23 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "GRAPH::claim:membership:dependency-closures-partition-the-final-act-set",
+        "GRAPH::claim:membership:small-dags-preserve-partition-and-indices",
+        "GRAPH::claim:membership:partition-publication-requires-exact-cover",
+        "GRAPH::claim:membership:invalid-records-never-reach-partition",
+        "GRAPH::claim:membership:generated-partitions-match-set-oracle",
+        "GRAPH::claim:membership:shared-partitions-retain-complete-results"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "evidence_paragraph": "GRAPH::amend:membership:partition-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for verif:design:closure-partition-cases",
+      "missing": "Common final-marker selection, target/minimum and maximum-duration checks, earliest host determination and authenticated family formation remain unimplemented by the records-level partition.",
       "name": "ROOT::verif:design:closure-partition-cases",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "Validated records and fixed history supply whole acts and principal closures. Exhaustive finite DAGs, generated word vectors and six shared cases witness only the records-level partition and deterministic temporary indices.",
       "realizers": [],
       "status": "held"
     },
