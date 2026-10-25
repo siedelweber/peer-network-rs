@@ -84,6 +84,40 @@ async fn selected(adapter: &mut Adapter, family: Family, at: u64, required: &[(F
         .unwrap()
         .version
 }
+async fn representation(adapter: &mut Adapter) {
+    for (key, edition) in [
+        ("k".repeat(1024), "edition".into()),
+        ("edition-bound".into(), "e".repeat(1024)),
+    ] {
+        let input = version(Family::Rule, &key, &edition, 1, Some(1));
+        assert!(adapter.append(input.clone(), None).await.unwrap());
+        assert!(
+            adapter
+                .load(1, &[])
+                .await
+                .unwrap()
+                .rows
+                .iter()
+                .any(|row| row.version == input)
+        );
+    }
+    let mut invalid = vec![
+        version(Family::Rule, "", "one", 1, Some(1)),
+        version(Family::Rule, &"k".repeat(1025), "one", 1, Some(1)),
+        version(Family::Rule, "long-edition", &"e".repeat(1025), 1, Some(1)),
+        version(Family::Rule, "large-opening", "one", (i64::MAX as u64) + 1, Some(1)),
+    ];
+    let mut announced = version(Family::Rule, "late-announcement", "one", 1, Some(1));
+    announced.announced_at = 2;
+    invalid.push(announced);
+    let mut foreign = version(Family::Rule, "foreign-payload", "one", 1, Some(1));
+    foreign.payload = version(Family::Constants, "unused", "one", 1, Some(1)).payload;
+    invalid.push(foreign);
+    for input in invalid {
+        assert_eq!(check(&input), Err(StorageError::Representation));
+        assert_eq!(adapter.append(input, None).await, Err(StorageError::Representation));
+    }
+}
 async fn conformance(mut adapter: Adapter, implementation: &str) {
     for family in [
         Family::Constants,
@@ -155,9 +189,10 @@ async fn conformance(mut adapter: Adapter, implementation: &str) {
         assert!(selected(&mut adapter, family, u64::MAX, &[]).await.payload.is_none());
         cli_common::emit(&serde_json::json!({"kind":"storage_conformance","implementation":implementation,"family":family.name(),"boundaries":[10,20,30],"causes":["edition-conflict","gap","overlap","predecessor","retroactive","missing-required"],"interruptions":2})).unwrap();
     }
+    representation(&mut adapter).await;
 }
 
-/// Claim: The same six-family succession roster preserves earlier selected bytes and identities in memory and PostgreSQL, with exact boundaries, explicit withdrawal, immutable editions and rollback at both interrupted write phases.
+/// Claim: The shared memory and PostgreSQL roster preserves six-family succession and rejects invalid representations at append, with exact 1,024-byte key and edition bounds; a separate non-owner runtime role appends, loads, audits and reopens with MAINTAIN while row updates and deletes refuse.
 /// ´claim:history:atomic-effective-rows-preserve-earlier-verdicts´
 /// ´test:unit:storage-contract´
 #[test]
@@ -165,7 +200,67 @@ fn storage_contract() {
     runtime().block_on(async {
         conformance(Adapter::Memory(MemoryStore::default()), "memory").await;
         conformance(Adapter::Postgres(store("storage.json").await), "postgresql").await;
+        runtime_role().await;
     });
+}
+
+async fn runtime_role() {
+    let owner = store("storage-role.json").await;
+    owner.session.client().batch_execute("CREATE ROLE storage_runtime LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS PASSWORD 'public-role-fixture'; REVOKE CREATE ON SCHEMA public FROM PUBLIC; GRANT CONNECT ON DATABASE private_storage_role_731 TO storage_runtime; GRANT USAGE ON SCHEMA public TO storage_runtime; GRANT SELECT ON public.pn_store_identity, public.pn_versions, public.pn_closures TO storage_runtime; GRANT INSERT ON public.pn_versions, public.pn_closures TO storage_runtime; GRANT MAINTAIN ON public.pn_versions TO storage_runtime").await.unwrap();
+    let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
+    let bytes = std::fs::read(std::path::Path::new(&root).join("storage-role.json")).unwrap();
+    let mut config: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+    config["user"] = "storage_runtime".into();
+    config["password"] = "public-role-fixture".into();
+    let bytes = serde_json::to_vec(&config).unwrap();
+    let configuration = crate::Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
+    let mut runtime = PostgresStore::open_store(Session::connect(configuration).await.unwrap())
+        .await
+        .unwrap();
+    let one = version(Family::Rule, "role", "one", 10, Some(1));
+    let two = version(Family::Rule, "role", "two", 20, Some(2));
+    assert!(runtime.append_effective_successor(one, None).await.unwrap());
+    assert!(
+        runtime
+            .append_effective_successor(two.clone(), Some(&prior("one", 20)))
+            .await
+            .unwrap()
+    );
+    assert!(
+        !runtime
+            .append_effective_successor(two.clone(), Some(&prior("one", 20)))
+            .await
+            .unwrap()
+    );
+    assert_eq!(runtime.load_boundary(20, &[]).await.unwrap().rows[0].version, two);
+    runtime.audit_history().await.unwrap();
+    drop(runtime);
+    for sql in [
+        "UPDATE public.pn_versions SET announced=19 WHERE key='role' AND edition='two'",
+        "DELETE FROM public.pn_versions WHERE key='role' AND edition='two'",
+    ] {
+        let configuration = crate::Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
+        let session = Session::connect(configuration).await.unwrap();
+        session.client().execute(sql, &[]).await.unwrap_err();
+        assert_eq!(session.last_refusal(), Some(crate::Refusal::PrivateDiagnostic));
+        let diagnostics = session.private_diagnostics().unwrap();
+        assert_eq!(diagnostics.len(), 1);
+        // Inspect the fixture diagnostic in its existing private carrier: the shim
+        // deliberately closes the stream before this error reaches the driver.
+        assert!(
+            diagnostics[0]
+                .0
+                .bytes()
+                .split(|byte| *byte == 0)
+                .any(|field| field.strip_prefix(b"C") == Some(b"42501".as_slice()))
+        );
+    }
+    let configuration = crate::Configuration::acquire(Some("host-secured"), &mut bytes.as_slice()).unwrap();
+    let mut reopened = PostgresStore::open_store(Session::connect(configuration).await.unwrap())
+        .await
+        .unwrap();
+    assert_eq!(reopened.load_boundary(20, &[]).await.unwrap().rows[0].version, two);
+    reopened.audit_history().await.unwrap();
 }
 
 /// Claim: Two PostgreSQL successor writers holding the same predecessor serialize to one winner and one typed predecessor refusal; a fresh connection sees one complete history rather than two terminal versions.
@@ -312,7 +407,72 @@ fn storage_recognition_disclosure() {
     }
 }
 
-/// Claim: Bootstrap refuses foreign schema identity and same-named read indexes with a wrong table, column or ordering; refusal preserves each mismatched definition, and the admitted definitions reopen without replacement.
+async fn refuse_index(store: &PostgresStore, name: &str, definition: &str, correct: &str) {
+    let unique = if definition.starts_with("UNIQUE ") { "UNIQUE " } else { "" };
+    let invalid = definition.starts_with("INVALID ");
+    let definition = definition
+        .strip_prefix("UNIQUE ")
+        .or_else(|| definition.strip_prefix("INVALID "))
+        .unwrap_or(definition);
+    let sql = format!("DROP INDEX public.{name}; CREATE {unique}INDEX {name} {definition}");
+    store.session.client().batch_execute(&sql).await.unwrap();
+    if invalid {
+        store
+            .session
+            .client()
+            .execute(
+                "UPDATE pg_catalog.pg_index SET indisvalid=false WHERE indexrelid='public.pn_versions_opens'::regclass",
+                &[],
+            )
+            .await
+            .unwrap();
+    }
+    let before: String = store
+        .session
+        .client()
+        .query_one("SELECT pg_get_indexdef(to_regclass($1))", &[&format!("public.{name}")])
+        .await
+        .unwrap()
+        .get(0);
+    let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
+    let mut file = std::fs::File::open(std::path::Path::new(&root).join("storage-schema.json")).unwrap();
+    let config = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
+    assert_eq!(
+        PostgresStore::open_store(Session::connect(config).await.unwrap())
+            .await
+            .unwrap_err(),
+        StorageError::IndexDefinition
+    );
+    let after: String = store
+        .session
+        .client()
+        .query_one("SELECT pg_get_indexdef(to_regclass($1))", &[&format!("public.{name}")])
+        .await
+        .unwrap()
+        .get(0);
+    assert_eq!(before, after);
+    if invalid {
+        let valid: bool = store
+            .session
+            .client()
+            .query_one(
+                "SELECT indisvalid FROM pg_catalog.pg_index WHERE indexrelid='public.pn_versions_opens'::regclass",
+                &[],
+            )
+            .await
+            .unwrap()
+            .get(0);
+        assert!(!valid);
+    }
+    store
+        .session
+        .client()
+        .batch_execute(&format!("DROP INDEX public.{name}; CREATE INDEX {name} {correct}"))
+        .await
+        .unwrap();
+}
+
+/// Claim: Bootstrap refuses foreign schema identity and same-named read indexes with a wrong table, column, ordering, uniqueness, predicate, expression, included column, access method or validity; refusal preserves each mismatched definition, and the admitted definitions reopen without replacement.
 /// ´claim:history:foreign-schema-refuses-without-migration´
 /// ´test:unit:storage-schema-identity´
 #[test]
@@ -340,39 +500,38 @@ fn storage_schema_identity() {
                 "ON public.pn_closures(closes)",
                 "ON public.pn_versions(opens)",
             ),
+            (
+                "pn_versions_opens",
+                "UNIQUE ON public.pn_versions(opens)",
+                "ON public.pn_versions(opens)",
+            ),
+            (
+                "pn_versions_opens",
+                "ON public.pn_versions(opens) WHERE opens > 0",
+                "ON public.pn_versions(opens)",
+            ),
+            (
+                "pn_versions_opens",
+                "ON public.pn_versions((opens + 0))",
+                "ON public.pn_versions(opens)",
+            ),
+            (
+                "pn_versions_opens",
+                "ON public.pn_versions(opens) INCLUDE (edition)",
+                "ON public.pn_versions(opens)",
+            ),
+            (
+                "pn_versions_opens",
+                "ON public.pn_versions USING hash(opens)",
+                "ON public.pn_versions(opens)",
+            ),
+            (
+                "pn_versions_opens",
+                "INVALID ON public.pn_versions(opens)",
+                "ON public.pn_versions(opens)",
+            ),
         ] {
-            let sql = format!("DROP INDEX public.{name}; CREATE INDEX {name} {definition}");
-            store.session.client().batch_execute(&sql).await.unwrap();
-            let before: String = store
-                .session
-                .client()
-                .query_one("SELECT pg_get_indexdef(to_regclass($1))", &[&format!("public.{name}")])
-                .await
-                .unwrap()
-                .get(0);
-            let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
-            let mut file = std::fs::File::open(std::path::Path::new(&root).join("storage-schema.json")).unwrap();
-            let config = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
-            assert_eq!(
-                PostgresStore::open_store(Session::connect(config).await.unwrap())
-                    .await
-                    .unwrap_err(),
-                StorageError::IndexDefinition
-            );
-            let after: String = store
-                .session
-                .client()
-                .query_one("SELECT pg_get_indexdef(to_regclass($1))", &[&format!("public.{name}")])
-                .await
-                .unwrap()
-                .get(0);
-            assert_eq!(before, after);
-            store
-                .session
-                .client()
-                .batch_execute(&format!("DROP INDEX public.{name}; CREATE INDEX {name} {correct}"))
-                .await
-                .unwrap();
+            refuse_index(&store, name, definition, correct).await;
         }
         let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
         let mut file = std::fs::File::open(std::path::Path::new(&root).join("storage-schema.json")).unwrap();
@@ -767,7 +926,7 @@ fn storage_scaling() {
     });
 }
 
-/// Claim: Deleted successors, shortened closures and damaged selected payloads refuse in both adapters; future damage is unread by load but refused by the full audit, including after the store was opened.
+/// Claim: Deleted successors, shortened or overlapping closures, a deleted closed middle edition, compound tampering and damaged selected payloads refuse in both adapters at boundaries inside their defects; future damage is unread by load but refused by the full audit, including after the store was opened.
 /// ´claim:history:boundary-tampering-is-not-absence´
 /// ´test:unit:storage-tamper´
 #[test]
@@ -776,9 +935,31 @@ fn storage_tamper() {
         for implementation in ["memory", "postgresql"] {
             let mut adapter = if implementation == "memory" { Adapter::Memory(MemoryStore::default()) }
                 else { Adapter::Postgres(store("storage-tamper.json").await) };
-            for (case, at) in [("deleted", 20), ("closes", 15), ("inside", 10), ("outside", 10)] {
+            for (case, at) in [("deleted", 20), ("closes", 15), ("inside", 10), ("outside", 10),
+                ("earlier-closure-deleted", 22), ("lengthened", 22), ("middle-deleted", 22), ("compound", 20)] {
                 adapter.append(version(Family::Rule, case, "one", 10, Some(1)), None).await.unwrap();
                 adapter.append(version(Family::Rule, case, "two", 20, Some(2)), Some(&prior("one", 20))).await.unwrap();
+                if case == "middle-deleted" {
+                    adapter.append(version(Family::Rule, case, "three", 30, Some(3)), Some(&prior("two", 30))).await.unwrap();
+                }
+                // A opens at 5 without a closure, B opens at 10 and closes at 20,
+                // and its successor C is absent. Exactly one row remains active at 20.
+                if case == "compound" {
+                    match &mut adapter {
+                        Adapter::Memory(s) => {
+                            let rows = s.history.get_mut(&(Family::Rule, case.into())).unwrap();
+                            rows[0].version.opens_at = 5;
+                            rows[0].version.announced_at = 5;
+                            rows[0].closes_at = None;
+                            rows[1].version.opens_at = 10;
+                            rows[1].version.announced_at = 10;
+                            rows[1].closes_at = Some(20);
+                        }
+                        Adapter::Postgres(s) => {
+                            s.session.client.fixture().batch_execute("UPDATE public.pn_versions SET opens=5,announced=5 WHERE key='compound' AND edition='one'; UPDATE public.pn_versions SET opens=10,announced=10 WHERE key='compound' AND edition='two'; DELETE FROM public.pn_closures WHERE key='compound'; INSERT INTO public.pn_closures VALUES ('rule','compound','two',20)").await.unwrap();
+                        }
+                    }
+                }
                 match &mut adapter {
                     Adapter::Memory(s) => {
                         let rows = s.history.get_mut(&(Family::Rule, case.into())).unwrap();
@@ -786,14 +967,24 @@ fn storage_tamper() {
                             "deleted" => { rows.pop(); }
                             "closes" => rows[0].closes_at = Some(12),
                             "inside" => rows[0].version.payload.as_mut().unwrap().bytes = vec![0],
+                            "earlier-closure-deleted" => rows[0].closes_at = None,
+                            "lengthened" => rows[0].closes_at = Some(25),
+                            "middle-deleted" => { rows.remove(1); }
+                            "compound" => {},
                             _ => rows[1].version.payload.as_mut().unwrap().bytes = vec![0],
                         }
                     }
                     Adapter::Postgres(s) => {
+                        if case == "middle-deleted" {
+                            s.session.client.fixture().execute("DELETE FROM public.pn_closures WHERE key=$1 AND edition='two'", &[&case]).await.unwrap();
+                        }
                         let sql = match case {
-                            "deleted" => "DELETE FROM public.pn_versions WHERE key=$1 AND edition='two'",
+                            "deleted" | "middle-deleted" => "DELETE FROM public.pn_versions WHERE key=$1 AND edition='two'",
                             "closes" => "UPDATE public.pn_closures SET closes=12 WHERE key=$1",
                             "inside" => "UPDATE public.pn_versions SET payload=decode('00','hex') WHERE key=$1 AND edition='one'",
+                            "earlier-closure-deleted" => "DELETE FROM public.pn_closures WHERE key=$1 AND edition='one'",
+                            "lengthened" => "UPDATE public.pn_closures SET closes=25 WHERE key=$1 AND edition='one'",
+                            "compound" => "SELECT 1 WHERE $1::text='compound'",
                             _ => "UPDATE public.pn_versions SET payload=decode('00','hex') WHERE key=$1 AND edition='two'",
                         };
                         s.session.client.fixture().execute(sql, &[&case]).await.unwrap();

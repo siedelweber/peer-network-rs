@@ -158,6 +158,23 @@ class HashCitations(unittest.TestCase):
             rule["commit"] = ancestor[:7]
             with self.assertRaisesRegex(ValueError, "full commit identity"):
                 establish(root, rule)
+            import base64
+            source = (git("cat-file", "commit", unreachable) + "\n").encode()
+            imported = dict(reader="imported-commit", establishment="resolvable", commit=unreachable,
+                            imported_as=ancestor, source_object_base64=base64.b64encode(source).decode())
+            check = establish(root, imported)
+            self.assertTrue(check(unreachable, unreachable))
+            self.assertTrue(check(ancestor, ancestor))
+            self.assertFalse(check("f" * 40, ""))
+            with self.assertRaisesRegex(ValueError, "not reachable from HEAD"):
+                establish(root, dict(imported, imported_as=unreachable))
+            with self.assertRaisesRegex(ValueError, "source object identity differs"):
+                establish(root, dict(imported, source_object_base64=base64.b64encode(source+b"x").decode()))
+            (root / "changed").write_text("different source tree")
+            git("add", "changed")
+            git("commit", "-m", "Different tree")
+            with self.assertRaisesRegex(ValueError, "imported source tree differs"):
+                establish(root, dict(imported, imported_as=git("rev-parse", "HEAD")))
 
     def table(self):
         return {

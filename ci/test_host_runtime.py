@@ -65,7 +65,7 @@ def binary_reachability(config, rows):
 
 class HostRuntime(unittest.TestCase):
     def test_statement_type_boundary(self):
-        """Claim: Production modules cannot name a raw driver client outside its private wrapper, and an inline SQL string fails compilation at the wrapper's Statement parameter, so a new call site cannot bypass the reviewed vocabulary.
+        """Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, and inline SQL fails compilation at the wrapper's Statement parameter.
         ´claim:discipline:storage-statement-types-refuse-inline-sql´
         ´test:integration:test-statement-type-boundary´
         """
@@ -87,13 +87,26 @@ class HostRuntime(unittest.TestCase):
             lib.write_bytes(lib_original)
         source=Path('packages/host/src/lib.rs')
         original=source.read_bytes()
-        for fixture in (
-            b'\nasync fn inferred_driver(stream: impl tokio::io::AsyncRead + tokio::io::AsyncWrite + Unpin + Send) { let (driver, _) = tokio_postgres::Config::new().connect_raw(stream, tokio_postgres::NoTls).await.unwrap(); let _ = driver.simple_query("SELECT current_user").await; }\n',
-            b'\ninclude!("hidden.rs");\n',
+        for fixture,message in (
+            (b'\nasync fn inferred_driver(stream: impl tokio::io::AsyncRead + tokio::io::AsyncWrite + Unpin + Send) { let (driver, _) = tokio_postgres::Config::new().connect_raw(stream, tokio_postgres::NoTls).await.unwrap(); let _ = driver.simple_query("SELECT current_user").await; }\n',
+             'driver path outside the closed statement wrapper and Session constructor: packages/host/src/lib.rs'),
+            (b'\ninclude!("hidden.rs");\n', 'production include is not an admitted module: packages/host/src/lib.rs'),
+            (b'\n#[path = "config.rs"] mod concealed;\n', 'production module path needs reviewed traversal'),
         ):
             try:
                 source.write_bytes(original+fixture)
-                with self.assertRaises(ValueError):check()
+                with self.assertRaisesRegex(ValueError,re.escape(message)):check()
+            finally:source.write_bytes(original)
+        source=Path('packages/host/src/config.rs')
+        original=source.read_bytes()
+        for fixture in (
+            b'\nfn traversed_driver() { let _ = tokio_postgres::Config::new(); }\n',
+            # A raw-driver import in config must not inherit storage's exemption.
+            b'\nuse tokio_postgres::Client as ExemptedClient;\n',
+        ):
+            try:
+                source.write_bytes(original+fixture)
+                with self.assertRaisesRegex(ValueError,re.escape('driver path outside the closed statement wrapper and Session constructor: packages/host/src/config.rs')):check()
             finally:source.write_bytes(original)
         source=Path('packages/host/src/storage.rs')
         original=source.read_bytes()

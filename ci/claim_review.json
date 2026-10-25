@@ -2198,8 +2198,8 @@
       "path": "packages/host/src/scram.rs",
       "claim": "HOST::claim:host:scram-work-factor-cost-is-nonbinding",
       "before": "",
-      "after": "Claim: The SCRAM cost campaign derives the same public fixture key twice at each declared work factor; timing is reported without changing authentication or a test verdict.",
-      "review": "Read both derivations for each fixed public work factor: equal output is asserted; wall time is emitted and never compared to a correctness threshold."
+      "after": "Claim: The SCRAM derivation at 600,000 rounds matches an independently computed Python hashlib known answer; the cost campaign derives the same public fixture key twice at each declared work factor, with timing reported without changing authentication or a test verdict.",
+      "review": "Read derive at 600,000 rounds against Python hashlib PBKDF2-HMAC-SHA-256 output and the existing nonbinding timing campaign."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_sensitive_result_control",
@@ -2238,8 +2238,8 @@
       "before": "",
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:atomic-effective-rows-preserve-earlier-verdicts",
-      "after": "Claim: The same six-family succession roster preserves earlier selected bytes and identities in memory and PostgreSQL, with exact boundaries, explicit withdrawal, immutable editions and rollback at both interrupted write phases.",
-      "review": "Read both Adapter executions and each six-family iteration: exact selected Version equality, idempotence, conflict, each interval refusal, two injected rollback phases and explicit withdrawal are asserted. No ledger result exists."
+      "after": "Claim: The shared memory and PostgreSQL roster preserves six-family succession and rejects invalid representations at append, with exact 1,024-byte key and edition bounds; a separate non-owner runtime role appends, loads, audits and reopens with MAINTAIN while row updates and deletes refuse.",
+      "review": "Read shared 1024/1025-byte acceptance/refusal and invalid append inputs on both adapters, plus separate non-owner MAINTAIN role append, retry, load, audit, reopen and SQLSTATE 42501 update/delete refusals."
     },
     {
       "operation": "pn-host::storage::tests::storage_competing_writers",
@@ -2270,8 +2270,8 @@
       "before": "",
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:foreign-schema-refuses-without-migration",
-      "after": "Claim: Bootstrap refuses foreign schema identity and same-named read indexes with a wrong table, column or ordering; refusal preserves each mismatched definition, and the admitted definitions reopen without replacement.",
-      "review": "Read the four real PostgreSQL index substitutions, typed IndexDefinition refusals, unchanged catalogue definitions after refusal, successful reopen after restoration and foreign schema refusal."
+      "after": "Claim: Bootstrap refuses foreign schema identity and same-named read indexes with a wrong table, column, ordering, uniqueness, predicate, expression, included column, access method or validity; refusal preserves each mismatched definition, and the admitted definitions reopen without replacement.",
+      "review": "Read all nine index mismatch properties, exact IndexDefinition refusal, preservation of definition and invalid flag, and restored valid reopen."
     },
     {
       "operation": "pn-host::storage::tests::storage_historical_constants",
@@ -2342,8 +2342,8 @@
       "before": "",
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-statement-types-refuse-inline-sql",
-      "after": "Claim: Production modules cannot name a raw driver client outside its private wrapper, and an inline SQL string fails compilation at the wrapper's Statement parameter, so a new call site cannot bypass the reviewed vocabulary.",
-      "review": "Read the compiler type error for inline SQL, the inferred second driver fixture outside Session::connect and the include macro fixture. The path allow-list rejects both latter fixtures before a build; the wrapper probe fails on Statement versus string."
+      "after": "Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, and inline SQL fails compilation at the wrapper's Statement parameter.",
+      "review": "Read exact driver/include/path refusals, traversed config inference and import probes guarding the storage-only exemption, plus existing rename and inline SQL compile-fail probes."
     },
     {
       "operation": "pn-host::scram::tests::derivation_permits",
@@ -2358,8 +2358,8 @@
       "before": "",
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:boundary-tampering-is-not-absence",
-      "after": "Claim: Deleted successors, shortened closures and damaged selected payloads refuse in both adapters; future damage is unread by load but refused by the full audit, including after the store was opened.",
-      "review": "Read four separately restored histories in each adapter. Deleting the successor, shortening its predecessor closure and damaging the selected bytes each refuse; future damage is not decoded by load but the complete audit refuses it. The damage is made after construction, so an opening-time audit cannot substitute for this witness."
+      "after": "Claim: Deleted successors, shortened or overlapping closures, a deleted closed middle edition, compound tampering and damaged selected payloads refuse in both adapters at boundaries inside their defects; future damage is unread by load but refused by the full audit, including after the store was opened.",
+      "review": "Read boundaries inside deleted or lengthened closure overlaps, deleted closed middle successor and compound exact-closure state on memory and PostgreSQL, plus existing selected-payload and audit cases."
     },
     {
       "operation": "pn-host::storage::tests::storage_growth",

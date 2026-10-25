@@ -202,7 +202,7 @@ mod tests {
         tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap().block_on(async {
             let mut releases = Vec::new();
             let mut jobs = Vec::new();
-            for _ in 0..DERIVATION_LIMIT {
+            for _ in 0..2 {
                 let (started, ready) = tokio::sync::oneshot::channel();
                 let (release, receive) = std::sync::mpsc::channel();
                 PERMIT_HOOK.lock().unwrap().push((started, receive));
@@ -211,17 +211,23 @@ mod tests {
                 releases.push(release);
             }
             assert_eq!(DERIVATIONS.available_permits(), 0);
-            let mut excess = Box::pin(derive(Buffer::from_bytes(b"public-excess-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096));
+            let (started, mut ready) = tokio::sync::oneshot::channel();
+            let (release_excess, receive) = std::sync::mpsc::channel();
+            PERMIT_HOOK.lock().unwrap().push((started, receive));
+            let mut excess = tokio::spawn(derive(Buffer::from_bytes(b"public-permit-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096));
+            assert!(tokio::time::timeout(std::time::Duration::from_millis(30), &mut ready).await.is_err());
             assert!(tokio::time::timeout(std::time::Duration::from_millis(30), &mut excess).await.is_err());
             for job in jobs { job.abort(); assert!(job.await.unwrap_err().is_cancelled()); }
             assert_eq!(DERIVATIONS.available_permits(), 0);
             assert!(tokio::time::timeout(std::time::Duration::from_millis(30), &mut excess).await.is_err());
             for release in releases { release.send(()).unwrap(); }
-            tokio::time::timeout(std::time::Duration::from_secs(5), excess).await.unwrap().unwrap();
+            tokio::time::timeout(std::time::Duration::from_secs(5), ready).await.unwrap().unwrap();
+            release_excess.send(()).unwrap();
+            tokio::time::timeout(std::time::Duration::from_secs(5), excess).await.unwrap().unwrap().unwrap();
             tokio::time::timeout(std::time::Duration::from_secs(5), async {
-                while DERIVATIONS.available_permits() != DERIVATION_LIMIT { tokio::task::yield_now().await; }
+                while DERIVATIONS.available_permits() != 2 { tokio::task::yield_now().await; }
             }).await.unwrap();
-            cli_common::emit(&serde_json::json!({"kind":"derivation_permits","limit":DERIVATION_LIMIT,"cancelled_jobs_retain_permits":true,"excess_waits":true})).unwrap();
+            cli_common::emit(&serde_json::json!({"kind":"derivation_permits","limit":2,"cancelled_jobs_retain_permits":true,"excess_waits":true})).unwrap();
         });
     }
 
@@ -266,12 +272,33 @@ mod tests {
         });
     }
 
-    /// Claim: The SCRAM cost campaign derives the same public fixture key twice at each declared work factor; timing is reported without changing authentication or a test verdict.
+    /// Claim: The SCRAM derivation at 600,000 rounds matches an independently computed Python hashlib known answer; the cost campaign derives the same public fixture key twice at each declared work factor, with timing reported without changing authentication or a test verdict.
     /// ´claim:host:scram-work-factor-cost-is-nonbinding´
     /// ´test:unit:derivation-cost´
     #[test]
     fn derivation_cost() {
         use secrecy::{ExposeSecret as _, ExposeSecretMut as _, SecretBox};
+        // Independently computed with Python 3 hashlib (OpenSSL), not the Rust PBKDF2:
+        // list(hashlib.pbkdf2_hmac("sha256", b"public-fixture-password",
+        //                         b"public-fixture-salt", 600000, 32))
+        let expected = [
+            49, 138, 104, 75, 137, 204, 90, 99, 159, 151, 219, 158, 182, 75, 167, 227, 2, 57, 205, 198, 229, 149, 66, 33, 229,
+            101, 90, 249, 131, 231, 124, 187,
+        ];
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(async {
+                let actual = super::derive(
+                    crate::secret::Buffer::from_bytes(b"public-fixture-password").unwrap(),
+                    crate::secret::Buffer::from_bytes(b"public-fixture-salt").unwrap(),
+                    600_000,
+                )
+                .await
+                .unwrap();
+                assert_eq!(actual.expose_secret(), &expected);
+            });
         for iterations in [4096, 100_000, 600_000] {
             let mut first = SecretBox::new(Box::new([0_u8; 32]));
             let mut second = SecretBox::new(Box::new([0_u8; 32]));
