@@ -217,6 +217,36 @@ class Processes(unittest.TestCase):
         self.assertEqual(samples['default'], samples['trace'])
         self.assertEqual(accounting['default'], accounting['trace'])
 
+    def test_graph_registration(self):
+        """Claim: Registration projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the three successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.
+        ´claim:discipline:registration-formation-retains-observed-results´
+        ´test:integration:test-graph-registration´
+        """
+        samples={};accounting={}
+        for mode in ('disabled','default','trace'):
+            env=os.environ | {'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'}
+            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/registration_observation'),mode],mode,env)
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+            samples[mode]=result.stdout
+            values=json.loads(result.stdout)
+            self.assertEqual(values['valid'],'Ok(())')
+            self.assertIn('Unapproved',values['denied'])
+            self.assertIn('GraphMismatch',values['invalid'])
+            self.assertIn('Profile',values['projection'])
+            if mode=='disabled':continue
+            rows=[json.loads(line) for line in result.stderr.splitlines()]
+            summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
+            stem='graph__root__sig__design__graph__'
+            accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith(stem)}
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):5,(stem+'completed_operations','success'):3,(stem+'completed_operations','refusal'):2})
+            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],5)
+            if mode=='trace':
+                for marker in ('authentication_evidence','logical_time','RegistrationProjection','validate_registration_graph'):
+                    self.assertIn(marker,result.stderr.decode())
+        self.assertEqual(samples['disabled'],samples['default'])
+        self.assertEqual(samples['default'],samples['trace'])
+        self.assertEqual(accounting['default'],accounting['trace'])
+
     def test_graph_dependency(self):
         """Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed 0.8.3 identity and exactly its default-plus-serde feature vocabulary, so manifest spelling alone cannot stand in for resolved dependency evidence.
         ´claim:discipline:graph-backend-retains-reviewed-identity´

@@ -2808,6 +2808,38 @@
       "before": "",
       "after": "Claim: Causal chains of 32, 128 and 256 proposals produce one block and exactly N(N-1)/2 intersection edges, each storing only the least shared act identity; records retain N(N+1)/2 closure members from which full intersections can be recovered, so graph edge-weight identity storage is quadratic rather than cubic.",
       "review": "Read the exact least-shared-identity assertions and independent block expectations. The chain witness checks complete membership, exact pair count and one ActId per edge at three lengths. This bounds retained edge-weight identity count, not identifier bytes, closure storage, allocation or runtime."
+    },
+    {
+      "operation": "pn-graph::registration::complete_projection",
+      "path": "packages/graph/tests/registration.rs",
+      "claim": "GRAPH::claim:formation:registration-projection-requires-complete-approved-input",
+      "before": "",
+      "after": "Claim: Registration-only projection requires the complete binary act, the author's addr-to-prof pair, fixed-parameter carriage and declared verifier approval; another family, wrong incidence, changed approved content or unauthorized removal cannot publish a projection, and records refuse a missing leg first. Fixture authorization does not establish cryptographic soundness or title.",
+      "review": "Read the exact Registration projection, reconstruction, cache and process assertions. Fixture verifier decisions establish the explicit public approval/removal boundary, not cryptographic soundness. These tests retain all parallel edges and compare typed live indices and weights; no serde bytes establish binding equality. Complete outcomes and accounting agree across observation modes. Other families, epoch admission, geometry and title remain held."
+    },
+    {
+      "operation": "pn-graph::registration::reconstruction",
+      "path": "packages/graph/tests/registration.rs",
+      "claim": "GRAPH::claim:formation:registration-reconstruction-retains-parallel-projections",
+      "before": "",
+      "after": "Claim: Registration history reconstructs deterministic first-occurrence Actor/Profile indices and every parallel projection across reversed presentation; authorized opening removals are checked in published order without changing structural weights, while a later unapproved act refuses the entire reconstruction and non-compliant dependency carriage remains unchanged input rather than a time verdict.",
+      "review": "Read the exact Registration projection, reconstruction, cache and process assertions. Fixture verifier decisions establish the explicit public approval/removal boundary, not cryptographic soundness. These tests retain all parallel edges and compare typed live indices and weights; no serde bytes establish binding equality. Complete outcomes and accounting agree across observation modes. Other families, epoch admission, geometry and title remain held."
+    },
+    {
+      "operation": "pn-graph::registration::revalidation",
+      "path": "packages/graph/tests/registration.rs",
+      "claim": "GRAPH::claim:formation:registration-cache-requires-complete-revalidation",
+      "before": "",
+      "after": "Claim: A diagnostic serde round trip regains only scoped Registration validity after comparison with complete history; missing, extra or changed nodes and projections refuse, and backend removal preserves unrelated live indices while the resulting partial graph fails revalidation. Serialized bytes never supply binding equality.",
+      "review": "Read the exact Registration projection, reconstruction, cache and process assertions. Fixture verifier decisions establish the explicit public approval/removal boundary, not cryptographic soundness. These tests retain all parallel edges and compare typed live indices and weights; no serde bytes establish binding equality. Complete outcomes and accounting agree across observation modes. Other families, epoch admission, geometry and title remain held."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_graph_registration",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:registration-formation-retains-observed-results",
+      "before": "",
+      "after": "Claim: Registration projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the three successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Read the exact Registration projection, reconstruction, cache and process assertions. Fixture verifier decisions establish the explicit public approval/removal boundary, not cryptographic soundness. These tests retain all parallel edges and compare typed live indices and weights; no serde bytes establish binding equality. Complete outcomes and accounting agree across observation modes. Other families, epoch admission, geometry and title remain held."
     }
   ]
 }

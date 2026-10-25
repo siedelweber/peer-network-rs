@@ -6,5 +6,13 @@ name = "petgraph"
 version = "0.8.3"
 license = "MIT OR Apache-2.0; taken under MIT"
 features = ["default", "std", "graphmap", "stable_graph", "matrix_graph", "serde-1", "serde", "serde_derive"]
-role = "Temporary whole-act closure intersection graph; future complete projection storage remains held"
+role = "Whole-act closure intersection graph and scoped Registration projection storage"
 notice = "packages/graph/NOTICE-DEPENDENCIES"
+
+[[rows]]
+name = "serde"
+version = "1.0.229"
+license = "MIT OR Apache-2.0"
+features = ["default", "derive", "serde_derive", "std"]
+role = "Existing workspace dependency inherited for diagnostic Registration weights; no canonical publication encoding"
+notice = "Existing workspace dependency obligations"

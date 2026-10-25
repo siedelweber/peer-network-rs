@@ -833,7 +833,7 @@ level = "integration"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_graph_partition", "ci::test_observe_runtime.Processes.test_graph_dependency", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_records_replay", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
+cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_graph_partition", "ci::test_observe_runtime.Processes.test_graph_registration", "ci::test_observe_runtime.Processes.test_graph_dependency", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_records_replay", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
 
 [[rows]]
 kind = "suite"
@@ -1216,7 +1216,7 @@ cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals
 kind = "implementation"
 name = "pn-graph-rust"
 evidence = "pure"
-contract = "records-level dependent-act partition"
+contract = "records-level dependent-act partition and scoped Registration formation"
 edition = "0.1"
 
 [[rows]]
@@ -1303,3 +1303,14 @@ parent_case = "pn-verification::graph::graph_shared_cases"
 contract_edition = "graph-partition-1"
 claim_owner = "VERIFICATION"
 claim = "claim:verification:shared-partitions-retain-complete-results"
+
+[[rows]]
+kind = "suite"
+name = "pn-graph::registration"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::registration::complete_projection", "pn-graph::registration::reconstruction", "pn-graph::registration::revalidation"]

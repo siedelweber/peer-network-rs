@@ -3047,6 +3047,7 @@
         "ci::test_observe_runtime.Processes.test_numeric_entry",
         "ci::test_observe_runtime.Processes.test_generated_records_refusals",
         "ci::test_observe_runtime.Processes.test_graph_partition",
+        "ci::test_observe_runtime.Processes.test_graph_registration",
         "ci::test_observe_runtime.Processes.test_graph_dependency",
         "ci::test_observe_runtime.Processes.test_interchange_refusal",
         "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -3768,7 +3769,7 @@
       "tier": "service"
     },
     {
-      "contract": "records-level dependent-act partition",
+      "contract": "records-level dependent-act partition and scoped Registration formation",
       "edition": "0.1",
       "evidence": "pure",
       "kind": "implementation",
@@ -3884,6 +3885,21 @@
       "name": "graph-partition-verification",
       "parent_case": "pn-verification::graph::graph_shared_cases",
       "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::registration::complete_projection",
+        "pn-graph::registration::reconstruction",
+        "pn-graph::registration::revalidation"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-graph::registration",
+      "runner": "nextest",
       "status": "active",
       "tier": "fast"
     }

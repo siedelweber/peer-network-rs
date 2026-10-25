@@ -51,6 +51,7 @@ local_inputs = [
   ['docs/inputs/vision-plan.toml', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
   ['docs/inputs/vision-traces.toml', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
   ['docs/inputs/wallet-dependencies.toml', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
+  ['docs/inputs/graph-families.toml', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', ''],
 ]
 foreach row : local_inputs
   graph_files += files(meson.project_source_root() / row[0])

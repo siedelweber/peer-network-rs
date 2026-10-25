@@ -1607,6 +1607,7 @@ dependencies = [
  "petgraph",
  "pn-records",
  "pn-testkit",
+ "serde",
  "serde_json",
  "thiserror",
  "tracing",

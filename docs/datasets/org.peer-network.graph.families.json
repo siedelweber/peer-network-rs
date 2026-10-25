@@ -1,0 +1,27 @@
+{
+  "namespace": "org.peer-network.graph.families",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "mask": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "name": "Registration",
+      "paper": "network-v0.29.1",
+      "paper_label": "edge:nodes:registration",
+      "parameters": "p_d = 1, p_i = 1 (fixed)",
+      "polarity": "+1 (forced)",
+      "projection": "one binary edge",
+      "source": "Actor",
+      "target": "Profile",
+      "tier": "full"
+    }
+  ]
+}

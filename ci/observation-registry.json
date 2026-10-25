@@ -6438,6 +6438,36 @@
         "boundary": "pn-records::packages/records/src/lib.rs::validate_history",
         "class_decision": "public-records"
       }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "item": "registration::project_complete_registration",
+      "owner": "GRAPH",
+      "signature": "fn project_complete_registration (act : & ValidatedAct , verifier : & impl RegistrationVerifier ,) -> Result < CompleteRegistration , RegistrationError >",
+      "claim": "ROOT::alg:design:formation",
+      "shape": "shape-graph-registration",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "item": "registration::reconstruct_registrations",
+      "owner": "GRAPH",
+      "signature": "fn reconstruct_registrations (history : & ValidatedHistory , verifier : & impl RegistrationVerifier ,) -> Result < RegistrationGraph , RegistrationError >",
+      "claim": "ROOT::alg:design:formation",
+      "shape": "shape-graph-registration",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "item": "registration::validate_registration_graph",
+      "owner": "GRAPH",
+      "signature": "fn validate_registration_graph (graph : & RegistrationGraph , history : & ValidatedHistory , verifier : & impl RegistrationVerifier ,) -> Result < () , RegistrationError >",
+      "claim": "ROOT::alg:design:formation",
+      "shape": "shape-graph-registration",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -12411,6 +12441,39 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "Pure immutable access to retained epoch-qualified placement, attached logical time or local recurrence evidence inherits the validation operation; it neither rewrites history nor adds an act-level operation."
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/registration.rs::registration::project_complete_registration",
+      "body": "{ let result = project (act , verifier) . and_then (| projection | { authorize_removals (& [act] , verifier) ? ; Ok (projection) }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "class_decision": "graph-registration",
+      "item_premise": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "assessments": {
+        "full_recording": "graph-registration-full_recording",
+        "secret_flow": "graph-registration-secret_flow",
+        "exposure_consumers": "graph-registration-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/registration.rs::registration::reconstruct_registrations",
+      "body": "{ let result = reconstruct (history , verifier) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "class_decision": "graph-registration",
+      "item_premise": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "assessments": {
+        "full_recording": "graph-registration-full_recording",
+        "secret_flow": "graph-registration-secret_flow",
+        "exposure_consumers": "graph-registration-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/registration.rs::registration::validate_registration_graph",
+      "body": "{ let result = reconstruct (history , verifier) . and_then (| expected | { let matches = graph . node_count () == expected . node_count () && graph . edge_count () == expected . edge_count () && expected . node_indices () . all (| index | graph . node_weight (index) == expected . node_weight (index)) && expected . edge_indices () . all (| index | { graph . edge_weight (index) == expected . edge_weight (index) && graph . edge_endpoints (index) == expected . edge_endpoints (index) }) ; if matches { Ok (()) } else { Err (RegistrationError :: GraphMismatch) } }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "class_decision": "graph-registration",
+      "item_premise": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "assessments": {
+        "full_recording": "graph-registration-full_recording",
+        "secret_flow": "graph-registration-secret_flow",
+        "exposure_consumers": "graph-registration-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -14789,6 +14852,42 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
       "expansion_review": "Structural equality, cloning and full Debug retain only public act identities, host-attached times and exact local recurrence observations, inheriting finalized-history validation."
+    },
+    {
+      "item": "registration::GroundedNode",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Serialize , Deserialize)]",
+      "class_decision": "graph-registration",
+      "expansion_review": "Derives clone, compare and format public grounded identifiers, Registration projection metadata and bounded refusal/opening variants. Serde derives carry only diagnostic public node and edge weights; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+    },
+    {
+      "item": "registration::RegistrationProjection",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+      "class_decision": "graph-registration",
+      "expansion_review": "Derives clone, compare and format public grounded identifiers, Registration projection metadata and bounded refusal/opening variants. Serde derives carry only diagnostic public node and edge weights; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+    },
+    {
+      "item": "registration::OpeningKind",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+      "class_decision": "graph-registration",
+      "expansion_review": "Derives clone, compare and format public grounded identifiers, Registration projection metadata and bounded refusal/opening variants. Serde derives carry only diagnostic public node and edge weights; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+    },
+    {
+      "item": "registration::RegistrationError",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "graph-registration",
+      "expansion_review": "Derives clone, compare and format public grounded identifiers, Registration projection metadata and bounded refusal/opening variants. Serde derives carry only diagnostic public node and edge weights; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
     }
   ],
   "reviewed_types": [
@@ -16347,6 +16446,30 @@
       "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Node visits, parent inspections, inherited-member insert attempts and emitted members.\"] # [doc = \" None means counter overflow, never a work-limit refusal.\"] work : Option < u64 > , # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] boundary : Position , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] closures : Vec < PrincipalClosure > , }"
     },
     {
+      "item": "registration::GroundedNode",
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "syntax": "# [doc = \" Grounded identifiers; Registration anchors this existing pair and mints nothing.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Serialize , Deserialize)] pub enum GroundedNode { # [doc = \" The primitive address atom interpreted as its Actor.\"] Actor (String) , # [doc = \" The same address atom interpreted as its Profile.\"] Profile (String) , }"
+    },
+    {
+      "item": "registration::RegistrationProjection",
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "syntax": "# [doc = \" A cache of one Registration binary projection and inherited finalization fields.\"] # [doc = \" Family and role are fixed by this type; neither time nor position is identity.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct RegistrationProjection { # [doc = \" Public author atom, also the grounded pair's atom.\"] pub author : String , # [doc = \" Author-local sequence in the Registration act identity.\"] pub sequence : u64 , # [doc = \" Inherited published epoch and position, never an independent edge stamp.\"] pub position : Position , # [doc = \" Inherited attachment, never recomputed or independently authoritative.\"] pub logical_time : u64 , }"
+    },
+    {
+      "item": "registration::OpeningKind",
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "syntax": "# [doc = \" Which act-owned removable opening a public authorization covers.\"] # [doc = \" Structural graph edges are never removed by either operation.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum OpeningKind { # [doc = \" Content and its co-removed private value.\"] Content , # [doc = \" The declared dependency list and opening.\"] Dependency , }"
+    },
+    {
+      "item": "registration::RegistrationError",
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "syntax": "# [doc = \" Scoped refusal; no partial projection graph is returned on any error.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RegistrationError { # [doc = \" This entry point admits Registration only.\"] # [error (\"unsupported act family\")] UnsupportedFamily , # [doc = \" Layout, endpoints or fixed parameter carriage differs from Registration.\"] # [error (\"invalid Registration incidence or body\")] Incidence , # [doc = \" The declared verifier did not establish complete author approval.\"] # [error (\"Registration approval not established\")] Unapproved , # [doc = \" A removal fact lacks the declared verifier's authorization.\"] # [error (\"opening removal not authorized\")] UnauthorizedRemoval , # [doc = \" Repeated published positions cannot determine reconstruction order.\"] # [error (\"ambiguous published order\")] AmbiguousOrder , # [doc = \" The backend cannot represent another index.\"] # [error (\"Registration graph capacity exhausted\")] Capacity , # [doc = \" Live identifiers, projections, endpoints or indices differ from reconstruction.\"] # [error (\"Registration graph differs from complete reconstruction\")] GraphMismatch , }"
+    },
+    {
       "item": "PartitionError",
       "package": "pn-graph",
       "path": "packages/graph/src/lib.rs",
@@ -16785,10 +16908,24 @@
     {
       "name": "graph-partition",
       "membership": {
-        "labelled_package": "pn-graph"
+        "explicit": [
+          "pn-graph::packages/graph/src/lib.rs::partition_dependencies"
+        ]
       },
       "status": "reviewer-confirmed",
       "premises": "Partition accepts only immutable public BoundaryInputs supplied by records; its Debug includes complete public acts and closures. The return retains structural identities, one least shared identity per intersection edge and complete block vectors. No input or output contains a secret carrier, no graph result feeds observation back into computation, and no serializer or canonical publication path is exposed. Invocation totals and inclusive durations are observed; algorithmic work and allocation bounds are not claimed."
+    },
+    {
+      "name": "graph-registration",
+      "membership": {
+        "explicit": [
+          "pn-graph::packages/graph/src/registration.rs::registration::project_complete_registration",
+          "pn-graph::packages/graph/src/registration.rs::registration::reconstruct_registrations",
+          "pn-graph::packages/graph/src/registration.rs::registration::validate_registration_graph"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation."
     }
   ],
   "shapes": {
@@ -16968,6 +17105,27 @@
       "fields": [
         "complete public BoundaryInputs at trace",
         "complete graph and block result at trace",
+        "bounded outcome",
+        "inclusive duration_seconds",
+        "declared invocation work",
+        "qualified resource totals"
+      ],
+      "metrics": [
+        "graph__root__sig__design__graph__started_operations",
+        "graph__root__sig__design__graph__completed_operations",
+        "graph__root__sig__design__graph__work_bytes",
+        "graph__root__sig__design__graph__work_operations",
+        "graph__root__sig__design__graph__active_operations",
+        "graph__root__sig__design__graph__resource_current_bytes",
+        "graph__root__sig__design__graph__elapsed_seconds",
+        "graph__root__sig__design__graph__workload_bytes",
+        "graph__root__sig__design__graph__workload_operations"
+      ]
+    },
+    "shape-graph-registration": {
+      "fields": [
+        "complete public records, diagnostic graph and public verifier representation at trace",
+        "complete Registration projection, graph or validation result at trace",
         "bounded outcome",
         "inclusive duration_seconds",
         "declared invocation work",
@@ -18546,6 +18704,21 @@
       "status": "reviewer-confirmed",
       "premises": "Partition accepts only immutable public BoundaryInputs supplied by records; its Debug includes complete public acts and closures. The return retains structural identities, one least shared identity per intersection edge and complete block vectors. No input or output contains a secret carrier, no graph result feeds observation back into computation, and no serializer or canonical publication path is exposed. Invocation totals and inclusive durations are observed; algorithmic work and allocation bounds are not claimed.",
       "negative_probe": "ROOT::claim:discipline:graph-partition-is-observed-without-changing-results"
+    },
+    "graph-registration-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "negative_probe": "ROOT::claim:discipline:registration-formation-retains-observed-results"
+    },
+    "graph-registration-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "negative_probe": "ROOT::claim:discipline:registration-formation-retains-observed-results"
+    },
+    "graph-registration-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "negative_probe": "ROOT::claim:discipline:registration-formation-retains-observed-results"
     }
   }
 }

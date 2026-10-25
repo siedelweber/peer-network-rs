@@ -320,6 +320,13 @@
       "owner": "GRAPH",
       "register": "GRAPH::sec:membership:area-membership",
       "stake": "Dropping or duplicating an act across dependent blocks changes the proposed whole-act union and can separate a causal ancestor from its dependent."
+    },
+    {
+      "area": "formation",
+      "contract": "GRAPH::def:formation:registration",
+      "owner": "GRAPH",
+      "register": "GRAPH::sec:formation:area-formation",
+      "stake": "An unapproved, incomplete or mis-typed projection can falsely anchor an Actor/Profile pair, while stale mutable graph state can omit or alter accepted records."
     }
   ]
 }

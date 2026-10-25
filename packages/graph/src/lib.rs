@@ -1,6 +1,10 @@
 //! Whole-act dependency partition; family formation and geometry remain separate.
 //! (´def:membership:partition´)
 
+/// Scoped Registration formation and disposable projection storage.
+/// (´def:formation:registration´)
+pub mod registration;
+
 use std::collections::BTreeSet;
 
 use petgraph::graph::UnGraph;

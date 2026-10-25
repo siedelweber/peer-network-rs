@@ -20,8 +20,21 @@
       "license": "MIT OR Apache-2.0; taken under MIT",
       "name": "petgraph",
       "notice": "packages/graph/NOTICE-DEPENDENCIES",
-      "role": "Temporary whole-act closure intersection graph; future complete projection storage remains held",
+      "role": "Whole-act closure intersection graph and scoped Registration projection storage",
       "version": "0.8.3"
+    },
+    {
+      "features": [
+        "default",
+        "derive",
+        "serde_derive",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "name": "serde",
+      "notice": "Existing workspace dependency obligations",
+      "role": "Existing workspace dependency inherited for diagnostic Registration weights; no canonical publication encoding",
+      "version": "1.0.229"
     }
   ]
 }

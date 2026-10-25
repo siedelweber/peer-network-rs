@@ -9,6 +9,7 @@ version.workspace = true
 
 [dependencies]
 petgraph.workspace = true
+serde.workspace = true
 pn-records = { path = "../records" }
 tracing.workspace = true
 thiserror.workspace = true

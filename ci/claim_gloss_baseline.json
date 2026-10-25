@@ -986,6 +986,10 @@
     "pn-records::public::ordering::epoch_placement": "",
     "pn-records::public::ordering::attached_times": "",
     "pn-records::public::ordering::retained_time_evidence": "",
-    "pn-graph::public::chain_storage": ""
+    "pn-graph::public::chain_storage": "",
+    "pn-graph::registration::complete_projection": "",
+    "pn-graph::registration::reconstruction": "",
+    "pn-graph::registration::revalidation": "",
+    "ci::test_observe_runtime.Processes.test_graph_registration": ""
   }
 }
