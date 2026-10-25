@@ -30,6 +30,60 @@
       "status": "declared; implementation and chain evidence held",
       "unit_cost_test_units": 1,
       "units_per_token": 100000000,
+      "wallet_candidates": [
+        {
+          "build_scripts": 14,
+          "closure": 38,
+          "features": "default features disabled",
+          "license": "CC0-1.0; preserve file-level MIT OR Apache-2.0 notices",
+          "name": "elements",
+          "procedural_macros": 1,
+          "role": "preferred transaction decoder, evaluated only",
+          "version": "0.27.0"
+        },
+        {
+          "build_scripts": 6,
+          "closure": 13,
+          "features": "default features disabled; simple_http",
+          "license": "CC0-1.0",
+          "name": "jsonrpc",
+          "procedural_macros": 1,
+          "role": "rejected for real private HTTP configuration",
+          "version": "0.21.0"
+        },
+        {
+          "build_scripts": 0,
+          "closure": 1,
+          "features": "default features disabled",
+          "license": "ISC",
+          "name": "minreq",
+          "procedural_macros": 0,
+          "role": "rejected for real private HTTP configuration",
+          "version": "3.0.0"
+        },
+        {
+          "build_scripts": 1,
+          "closure": 10,
+          "features": "default features disabled",
+          "license": "MIT OR Apache-2.0",
+          "name": "ureq",
+          "procedural_macros": 0,
+          "role": "rejected for real private HTTP configuration",
+          "version": "3.5.0"
+        },
+        {
+          "build_scripts": 3,
+          "closure": 8,
+          "features": "default features disabled; std",
+          "license": "CC0-1.0; bundled C notices retained",
+          "name": "secp256k1-zkp",
+          "procedural_macros": 0,
+          "role": "operation-admission baseline, not a new signature consumer",
+          "version": "0.11.2"
+        }
+      ],
+      "wallet_evaluated_at": "2026-10-25T00:08:35Z",
+      "wallet_evaluation_target": "x86_64-unknown-linux-gnu",
       "window_blocks": 10
     }
   ]

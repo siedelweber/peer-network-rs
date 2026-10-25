@@ -26,3 +26,13 @@ adapter_owner = "pn-host"
 rpc_owner = "pn-wallet"
 host_feature = "development-network"
 status = "declared; implementation and chain evidence held"
+
+wallet_evaluated_at = "2026-10-25T00:08:35Z"
+wallet_evaluation_target = "x86_64-unknown-linux-gnu"
+wallet_candidates = [
+  { name = "elements", version = "0.27.0", license = "CC0-1.0; preserve file-level MIT OR Apache-2.0 notices", features = "default features disabled", closure = 38, build_scripts = 14, procedural_macros = 1, role = "preferred transaction decoder, evaluated only" },
+  { name = "jsonrpc", version = "0.21.0", license = "CC0-1.0", features = "default features disabled; simple_http", closure = 13, build_scripts = 6, procedural_macros = 1, role = "rejected for real private HTTP configuration" },
+  { name = "minreq", version = "3.0.0", license = "ISC", features = "default features disabled", closure = 1, build_scripts = 0, procedural_macros = 0, role = "rejected for real private HTTP configuration" },
+  { name = "ureq", version = "3.5.0", license = "MIT OR Apache-2.0", features = "default features disabled", closure = 10, build_scripts = 1, procedural_macros = 0, role = "rejected for real private HTTP configuration" },
+  { name = "secp256k1-zkp", version = "0.11.2", license = "CC0-1.0; bundled C notices retained", features = "default features disabled; std", closure = 8, build_scripts = 3, procedural_macros = 0, role = "operation-admission baseline, not a new signature consumer" },
+]
