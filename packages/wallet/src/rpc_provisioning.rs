@@ -25,7 +25,7 @@ pub struct Provisioning {
 
 impl Provisioning {
     pub(crate) fn check(&self, run: &str, limits: Limits) -> Result<(), RpcRefusal> {
-        if self.parameters.len() != 18
+        if self.parameters.len() != 20
             || self.parameters.iter().any(|(key, value)| key.len() > 64 || value.len() > 128)
             || self.challenge.len() != 35
             || self.binary.len() > 64

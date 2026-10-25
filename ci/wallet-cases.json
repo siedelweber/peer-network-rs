@@ -148,9 +148,12 @@
     {
       "group": "profile",
       "case": "reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed",
-      "status": "held",
-      "claims": [],
-      "missing": "Zero reissuance tokens in genesis and in the stock issuance, and the wallet reissuance refusal, are witnessed; a new issuance creates a distinct asset, never stock units. With validatepegin=0 the node accepts a peg-in whose parent transaction and merkle proof are fabricated, even under an OP_RETURN parent block challenge, and mints the pegged fee asset; validatepegin=1 needs a reachable mainchain daemon, without which the node does not start, so no declared parameter of this same-host profile closes the peg-in path, and the subsidy path is declared zero but not yet attempted against the node."
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:rpc-signed-fixtures-match-independent-layouts",
+        "WALLET::claim:wallet:rpc-settlement-forks-keep-the-pinned-floor"
+      ],
+      "missing": ""
     },
     {
       "group": "profile",

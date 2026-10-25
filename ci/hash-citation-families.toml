@@ -436,3 +436,13 @@ locator = "https://github.com/rust-lang/rust/commit/4ebd258257737d5b7635c116fa7d
 commit = "4ebd258257737d5b7635c116fa7d281627a7e937"
 definition = "The build policy pins this full public compiler commit; the toolchain step requires exact equality with the answering rustc commit-hash, independently of the declared channel."
 paths = ["docs/inputs/build-policy.toml", "docs/datasets/org.peer-network.build.policy.json", "adr/013-toolchain-and-build-profile.md", "ci/discipline.py", "ci/hash-citation-families.toml"]
+
+[[rows]]
+family = "wallet-null-parent-genesis"
+group = "wallet development profile"
+measures = "Null parent genesis hash declaring a chain without a parent"
+producer = "None; declared launch parameter"
+establishment = "defined"
+reader = "null-hash"
+definition = "The node requires a null parent genesis hash beside con_has_parent_chain=0; the all-zero value names no block and declares that the fixture chain has no parent from which a peg-in could be claimed."
+paths = ["packages/wallet/provisioning.json"]

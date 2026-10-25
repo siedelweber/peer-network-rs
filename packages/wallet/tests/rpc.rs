@@ -367,6 +367,37 @@ fn client() -> RpcClient {
     RpcClient::new(config(), RpcLimits::default(), limits(), &declaration(), "wallet-genesis-1").unwrap()
 }
 
+/// The parentless profile refuses a fabricated peg-in, and a later issuance mints only a distinct asset.
+fn profile_paths(evidence: &serde_json::Value) {
+    assert_eq!(
+        evidence["pegin_refusal"]["message"],
+        "Constructed peg-in witness is invalid: Parent chain is not enabled on this network."
+    );
+    assert_eq!(evidence["parent_blockhash"], "0".repeat(64));
+    assert!(evidence["reissuance_code"].is_i64());
+    for other in [&evidence["asset"], &evidence["fee_asset"]] {
+        assert_ne!(&evidence["other_asset"], other);
+    }
+}
+
+/// Explicit coinbase output total and explicit fee output total of one block.
+fn coinbase_and_fees(block: &pn_wallet::Block) -> (u64, u64) {
+    let explicit = |output: &pn_wallet::Output| match output.value.as_slice() {
+        [1, rest @ ..] => u64::from_be_bytes(rest.try_into().unwrap()),
+        [0] => 0,
+        _ => panic!("coinbase and fee amounts are explicit"),
+    };
+    let (coinbase, spends) = block.transactions.split_first().unwrap();
+    let minted = coinbase.fields().outputs.iter().map(explicit).sum();
+    let fees = spends
+        .iter()
+        .flat_map(|transaction| &transaction.fields().outputs)
+        .filter(|output| output.script.is_empty())
+        .map(explicit)
+        .sum();
+    (minted, fees)
+}
+
 fn genesis_funding(evidence: &serde_json::Value) {
     let raw = hex(&std::fs::read_to_string(root().join("genesis-block.hex")).unwrap());
     let (header, transactions) = oracle::block(&raw).unwrap();
@@ -449,7 +480,7 @@ fn reserve_funding(evidence: &serde_json::Value, first: &[oracle::Transaction]) 
     assert!(issuance.inputs.iter().any(|input| input.outpoint[..32] == spent[..32]));
 }
 
-/// Claim: The real BDB daemon accepts five signed blocks and refuses an invalid signature and a solved trivial replacement challenge; typed raw reads agree field-for-field with the independent oracle; the single anyone-can-spend genesis output moves whole to a producer-owned reserve funding one explicit, token-free issuance of the declared stock to a producer-owned destination, with zero explicit destruction in grants, fees and transfers and exactly one token destroyed.
+/// Claim: The real BDB daemon accepts five signed blocks and refuses an invalid signature and a solved trivial replacement challenge; typed raw reads agree field-for-field with the independent oracle; the single anyone-can-spend genesis output moves whole to a producer-owned reserve funding one explicit, token-free issuance of the declared stock to a producer-owned destination, with zero explicit destruction in grants, fees and transfers and exactly one token destroyed; each fixture coinbase mints exactly its block's collected fees, the parentless profile refuses a fabricated peg-in with the node's parent-chain verdict, and a later issuance creates a distinct asset.
 /// ´claim:wallet:rpc-signed-fixtures-match-independent-layouts´
 /// ´test:integration:signed-reads´
 #[test]
@@ -477,6 +508,7 @@ fn signed_reads() {
     assert_eq!(evidence["stock_owned"], true);
     assert_eq!(evidence["initial_units"], 1_000_000_000_000u64);
     genesis_funding(&evidence);
+    profile_paths(&evidence);
     let separation: serde_json::Value =
         serde_json::from_slice(&std::fs::read(root().join("credential-separation.json")).unwrap()).unwrap();
     assert_eq!(separation["separate"], true);
@@ -496,6 +528,10 @@ fn signed_reads() {
         for (actual, expected) in block.transactions.iter().zip(&transactions) {
             compare(actual, expected);
         }
+        assert!(
+            matches!(coinbase_and_fees(&block), (minted, fees) if minted == fees && fees > 0),
+            "a fixture coinbase mints exactly its collected fees"
+        );
         if index == 0 {
             reserve_funding(&evidence, &transactions);
         }
@@ -702,7 +738,7 @@ fn kept(
     view
 }
 
-/// Claim: On the real signed chain, two explicit burn outputs stay pending with four and five successors, set no floor, and pin at six with their block as the floor; a shallow replacement made with invalidateblock and freshly signed blocks changes only pending evidence and refuses the replaced locator, although the node still serves that transaction; the same outpoints re-mined in a new block and reported repeatedly count once; the pinned total, floor and pinned reads stay unchanged after later blocks, a replacement of the newest blocks and a replacement reaching below the tip-minus-six cutoff above the pinned block; and a replacement of the pinned block is a run fault that retains the pinned total. Epoch snapshot derivation is not performed here; it remains with bite 5.
+/// Claim: On the real signed chain, two explicit burn outputs stay pending with four and five successors, set no floor, and pin at six with their block as the floor; a shallow replacement made with invalidateblock and freshly signed blocks changes only pending evidence and refuses the replaced locator, although the node still serves that transaction; the same outpoints re-mined in a new block and reported repeatedly count once; the pinned total, floor and pinned reads stay unchanged after later blocks, a replacement of the newest blocks and a replacement reaching below the tip-minus-six cutoff above the pinned block; and a replacement of the pinned block is a run fault that retains the pinned total; an empty block's coinbase mints nothing. Epoch snapshot derivation is not performed here; it remains with bite 5.
 /// ´claim:wallet:rpc-settlement-forks-keep-the-pinned-floor´
 /// ´test:integration:settlement-forks´
 #[test]
@@ -738,6 +774,8 @@ fn settlement_forks() {
         [100_000_000, 200_000_000]
     );
     advance(&["--blocks", "4"]);
+    // Block 9 carries no transaction, so its coinbase collects and mints nothing.
+    assert_eq!(coinbase_and_fees(&read_block(chain_hash(9))), (0, 0));
     let mut settlement = pn_wallet::Settlement::default();
     let view = settlement.observe(&observation(first.clone(), None)).unwrap();
     assert_eq!(

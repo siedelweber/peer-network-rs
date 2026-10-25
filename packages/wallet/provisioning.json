@@ -20,6 +20,8 @@
     "deprecatedrpc": "create_bdb",
     "fallbackfee": "0.0001",
     "datacarriersize": "100",
+    "con_has_parent_chain": "0",
+    "parentgenesisblockhash": "0000000000000000000000000000000000000000000000000000000000000000",
     "blindedaddresses": "0"
   },
   "challenge": [

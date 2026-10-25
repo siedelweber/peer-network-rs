@@ -357,6 +357,13 @@ class HashCitations(unittest.TestCase):
             sample.write_text(format(28, "#x") + "\n")
             findings, _ = audit(root, ["sample.rs"], cbor)
             self.assertTrue(any("unaccounted" in finding for finding in findings))
+            null = copy.deepcopy(self.table())
+            null["rows"][0]["reader"] = "null-hash"
+            sample.write_text("0" * 64 + "\n")
+            self.assertEqual(audit(root, ["sample.rs"], null), ([], 1))
+            sample.write_text("0" * 63 + "1\n")
+            findings, _ = audit(root, ["sample.rs"], null)
+            self.assertTrue(any("unaccounted" in finding for finding in findings))
             sample.write_text("0x" + "ab" + "\n")
             findings, _ = audit(root, ["sample.rs"], self.table())
             self.assertTrue(any("unaccounted" in finding for finding in findings))

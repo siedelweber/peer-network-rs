@@ -236,6 +236,9 @@ def establish(root, rule):
         if not patterns or any(pattern not in {"abc123", "abcdef", "abcdef123", "123456"} for pattern in patterns):
             raise ValueError("hash citations: fixture has no stated visible pattern")
         return lambda value, _line: value in patterns
+    if kind == "null-hash" and standing == "defined":
+        # The all-zero hash names no object; it declares an absence, never an identity.
+        return lambda value, _line: value == "0" * 64
     if kind == "unicode-bound" and standing == "defined":
         return lambda value, _line: value in {"0x10ffff", "0xd800", "0xdfff"}
     raise ValueError(f"hash citations: no reader establishment for {rule['family']}")

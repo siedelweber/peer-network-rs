@@ -93,7 +93,7 @@ def installed_version(root):
     return result.stdout.splitlines()[0]
 
 
-def rpc(config, method, params=None, credential=None, refusal=False):
+def rpc(config, method, params=None, credential=None, refusal=False, detail=False):
     connection = http.client.HTTPConnection('127.0.0.1', config['port'], timeout=10)
     credential = credential if credential is not None else config['producer']
     try:
@@ -110,7 +110,8 @@ def rpc(config, method, params=None, credential=None, refusal=False):
         if refusal:
             if not isinstance(value.get('error', {}).get('code'), int):
                 raise RuntimeError('Elements expected refusal absent')
-            return value['error']['code']
+            # The node's own public verdict text, when a witness names its reason.
+            return dict(code=value['error']['code'], message=value['error'].get('message')) if detail else value['error']['code']
         if 'error' in value:
             raise RuntimeError('Elements harness RPC refused: '+method)
         return value['result']
@@ -327,6 +328,14 @@ def signed(root):
     mine()
     reissuance = rpc(config, 'reissueasset', [issuance['asset'], 1], refusal=True)
     peg = rpc(config, 'claimpegin', ['', '', '', 1], refusal=True)
+    # The profile declares no parent chain, so the node refuses every peg-in
+    # claim; this one carries a well-formed fabricated parent and proof.
+    peg_address = rpc(config, 'getpeginaddress')
+    parent, proof = fabricated_pegin(p2sh_script(peg_address['mainchain_address']))
+    pegin = rpc(config, 'claimpegin', [parent, proof, peg_address['claim_script']], refusal=True, detail=True)
+    parent_chain = rpc(config, 'getsidechaininfo')['parent_blockhash']
+    # Any spender may still issue, but an issuance creates a distinct asset.
+    other_asset = rpc(config, 'issueasset', [1, 0, False])['asset']
     transactions = dict(reserve=reserve, issuance=issuance['txid'], grant=grant, transfer=transfer,
                         destruction=destruction)
     for role, locator in transactions.items():
@@ -335,7 +344,8 @@ def signed(root):
                     entropy=issuance['entropy'], fee_asset=fee_asset, initial_units=stock,
                     stock_script=stock_owner['scriptPubKey'], stock_owned=stock_owner['ismine'],
                     invalid_signature=invalid_signature, trivial_challenge=trivial_challenge,
-                    reissuance_code=reissuance, malformed_peg_code=peg,
+                    reissuance_code=reissuance, malformed_peg_code=peg, pegin_refusal=pegin,
+                    parent_blockhash=parent_chain, other_asset=other_asset,
                     genesis=genesis_json, producer_descriptors=False)
     (root/'signed.json').write_text(json.dumps(evidence))
     print('WALLET-ELEMENTS version=elements-29.4.1rc1 scope=signed-fixtures blocks=5 credentials=separate')
@@ -354,6 +364,40 @@ EXPLICIT = '0' * 64
 # Run, target and request bindings of the settlement fixture's evidence
 # outputs; each burn takes a distinct request.
 RUN, TARGET = bytes([0x11]) * 32, bytes([0x22]) * 32
+
+
+def sha256d(data):
+    return hashlib.sha256(hashlib.sha256(data).digest()).digest()
+
+
+def p2sh_script(address):
+    """The P2SH script of a base58check parent-chain address."""
+    alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+    number = 0
+    for character in address:
+        number = number * 58 + alphabet.index(character)
+    raw = number.to_bytes(25, 'big')
+    if sha256d(raw[:21])[:4] != raw[21:]:
+        raise RuntimeError('Elements peg-in address checksum differs')
+    return bytes([0xa9, 20]) + raw[1:21] + bytes([0x87])
+
+
+# Compact difficulty bits of the regtest minimum work, written in decimal.
+REGTEST_BITS = 545259519
+
+
+def fabricated_pegin(script):
+    """A Bitcoin-format parent paying the peg-in script, with a one-transaction proof meeting the regtest work limit."""
+    tx = (bytes([2, 0, 0, 0, 1]) + hashlib.sha256(b'fabricated parent input').digest() + bytes(4) + bytes([0])
+          + bytes([255]) * 4 + bytes([1]) + (100_000_000).to_bytes(8, 'little') + bytes([len(script)]) + script + bytes(4))
+    txid = sha256d(tx)
+    limit = 0x7fffff << (8 * (0x20 - 3))
+    for nonce in range(1 << 20):
+        header = (bytes([4, 0, 0, 0]) + bytes(32) + txid + (1_700_000_000).to_bytes(4, 'little')
+                  + REGTEST_BITS.to_bytes(4, 'little') + nonce.to_bytes(4, 'little'))
+        if int.from_bytes(sha256d(header), 'little') <= limit:
+            return tx.hex(), (header + (1).to_bytes(4, 'little') + bytes([1]) + txid + bytes([1, 1])).hex()
+    raise RuntimeError('Elements fabricated parent header found no nonce')
 
 
 def producer(root):
