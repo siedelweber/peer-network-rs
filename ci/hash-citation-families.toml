@@ -368,3 +368,15 @@ commit = "289b6e3e043ce26c277d8e21a1edc164ce553d76"
 tree = "052127c516182b8c4c55c814f47627a67eef1cc6"
 definition = "A campaign names its exercised tree and, once imported, the public commit holding that tree. The cited commit must be an ancestor of the checked-out history and its tree must equal the cited tree."
 paths = ["ci/hash-citation-families.toml", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
+
+[[rows]]
+family = "storage-library-admission"
+group = "storage library admission"
+measures = "Git tree admitted and the public commit holding it"
+producer = "storage library evidence checkout"
+establishment = "resolvable"
+reader = "imported-commit"
+commit = "482a6eb9607da7216e2571cbd0d9523a97d4bb20"
+tree = "1f7f9d07e3c86989585aa4d62b6c92a7f8b47763"
+definition = "The admitted commit must be an ancestor of the checked-out history and its tree must equal the cited tree."
+paths = ["ci/hash-citation-families.toml", "docs/templates/adr/015-durable-storage.md.j2", "adr/015-durable-storage.md"]
