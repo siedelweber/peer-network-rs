@@ -356,3 +356,14 @@ reader = "cargo-archive"
 source = "packages/wallet/fuzz/Cargo.lock"
 definition = "The detached tool lock fixes libfuzzer-sys, arbitrary and their tool closure, which is absent from the stable production graph."
 paths = ["packages/wallet/fuzz/Cargo.lock", "packages/wallet/fuzz/NOTICE-DEPENDENCIES"]
+
+[[rows]]
+family = "wallet-differential-source"
+group = "wallet decoder differential campaign"
+measures = "Git commit containing the exercised adapter and differential target"
+producer = "gate and bounded fuzz campaign source checkout"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "be598a9a8a3a393c33bc14fb80d27f765f9fbd76"
+definition = "The campaign source is a retained ancestor of the evidence amendment; this records the exercised source rather than inferring evidence for later decoder changes."
+paths = ["ci/hash-citation-families.toml", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]

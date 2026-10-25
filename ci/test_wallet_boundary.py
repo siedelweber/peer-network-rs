@@ -85,8 +85,10 @@ class WalletBoundary(unittest.TestCase):
         adapter_original = adapter.read_bytes()
         for fixture, cause in [
             (b'pub use elements as exposed;', 're-export'),
+            (b'pub(crate) use elements as exposed;', 're-export'),
             (b'pub type Exposed = elements::Transaction;', 'public type alias'),
             (b'pub fn exposed() -> elements::Transaction { todo!() }', 'public signature'),
+            (b'pub const fn exposed() -> elements::Transaction { todo!() }', 'public signature'),
             (b'use elements::Transaction as Hidden; pub fn exposed() -> Hidden { todo!() }', 'public signature'),
             (b'fn misplaced() { let _ = &*elements::secp256k1_zkp::SECP256K1; }', 'production global context'),
             (b'#[cfg(any(test, feature="fuzzing"))] fn misplaced() { let _ = &*elements::secp256k1_zkp::SECP256K1; }', 'production global context'),

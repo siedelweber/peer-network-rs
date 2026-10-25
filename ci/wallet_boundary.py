@@ -112,7 +112,7 @@ def check(root=Path('.')):
             if re.search(r'\binclude\s*!', source):
                 raise ValueError('codec confinement requires reviewed include expansion: '+name)
             if name == ADAPTER:
-                if re.search(r'\bpub\s+(?:\([^)]*\)\s*)?(?:use|extern\s+crate)\b', source):
+                if re.search(r'\bpub(?:\s*\([^)]*\))?\s+(?:use|extern\s+crate)\b', source):
                     raise ValueError('adapter re-export is not admitted')
                 if re.search(r'\bpub\s*(?:\([^)]*\)\s*)?type\b', source):
                     raise ValueError('adapter public type alias is not admitted')
@@ -126,7 +126,7 @@ def check(root=Path('.')):
                             tainted.update(re.findall(r'\b[A-Za-z_]\w*\b', body))
                     if before == tainted:
                         break
-                for signature in re.finditer(r'\bpub\s*(?:\([^)]*\)\s*)?(?:async\s+)?fn\b[^{};]*', source):
+                for signature in re.finditer(r'\bpub\s*(?:\([^)]*\)\s*)?(?:(?:async|const|unsafe|extern)\s+)*fn\b[^{};]*', source):
                     if any(re.search(r'\b'+re.escape(alias)+r'\b', signature.group()) for alias in tainted):
                         raise ValueError('adapter public signature carries codec type')
                 production = list(source)
