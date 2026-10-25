@@ -2616,6 +2616,14 @@
       "before": "",
       "after": "Claim: A real genesis block exceeding a declared decoder byte limit or a lowered response-byte ceiling holds the reader with that block and Bytes cause, and later count or different-block requests return the same hold without advancing past it.",
       "review": "Read the real-node negative verdicts, raw typed reads, independent field comparisons and integer output sums, or the exact retained block/Bytes hold on later requests. These witnesses do not implement recognition, settlement, faucet enforcement or signature verification."
+    },
+    {
+      "operation": "ci::test_design.Correspondence.test_release_projections",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:release-fields-cannot-drift",
+      "before": "release additions, refreshed fields and answer fields cannot drift behind the study projections.",
+      "after": "Release fields remain pinned, and only structural inventory rows may retain placeholders.",
+      "review": "Read the structural-placeholder acceptance and condition, case and proposition refusal assertions beside the retained release-field pin probes. The assertions require the diagnostic to identify every refused label and retain the existing pin-drift checks; the gloss states those tested properties without claiming semantic review of inventory prose."
     }
   ]
 }

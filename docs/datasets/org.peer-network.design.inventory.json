@@ -8892,7 +8892,7 @@
       "kind": "none",
       "label": "case:transport:membership-policy",
       "label_source": "explicit",
-      "statement": "Branch of ``rem:transport:guild-grant-cases``: Choose a published terminal membership and sorting policy; the canonical fold admits participation and departure with advisory De-invites, without conditioning admission, departure or De-invite authoring."
+      "statement": "Branch of ``rem:transport:guild-grant-cases``: Choose a published terminal membership and sorting policy; the canonical fold admits participation and departure; De-invites are advisory unless recognized by a published policy, without conditioning admission, departure or De-invite authoring."
     },
     {
       "chapter": "8 Transport",
@@ -16317,7 +16317,7 @@
       "kind": "invariant check",
       "label": "case:necessity:conflict-not-causal-conflict-grouping",
       "label_source": "explicit",
-      "statement": "Refused simplification under ``subsec:necessity:conflict-not-causal``: Keep dependent sets as causal closure and conflict protection in the written-side tie rule plus the named censorship exposure; refuse co-transport grouping of concurrent cancels and commits, which would require cross-references or serialization that destroys the regret window."
+      "statement": "Refused simplification under ``subsec:necessity:conflict-not-causal``: Keep conflict protection as the written-side tie-favoring recognition rule plus the named boundary-censorship exposure; the dependent set is already its causal closure. Refuse co-transport grouping of concurrent cancels and commits, which would require cross-references or serialization that destroys the regret window."
     },
     {
       "chapter": "H Necessity",
@@ -16328,7 +16328,7 @@
       "kind": "invariant check",
       "label": "case:necessity:conflict-not-causal-mandatory-cross-reference",
       "label_source": "explicit",
-      "statement": "Refused simplification under ``subsec:necessity:conflict-not-causal``: Keep conflict protection separate from causal closure; refuse mandatory cancel-to-commit cross-references, which force a Rescind to cite Ratify or a Withdraw to cite a later Accept and let the counterparty outrun early regret."
+      "statement": "Refused simplification under ``subsec:necessity:conflict-not-causal``: Keep conflict protection as the written-side tie-favoring recognition rule plus the named boundary-censorship exposure; the dependent set is already its causal closure. Refuse mandatory cancel-to-commit cross-references, which force a Rescind to cite Ratify or a Withdraw to cite a later Accept and let the counterparty outrun early regret."
     },
     {
       "chapter": "H Necessity",
@@ -16339,7 +16339,7 @@
       "kind": "invariant check",
       "label": "case:necessity:conflict-not-causal-serialization",
       "label_source": "explicit",
-      "statement": "Refused simplification under ``subsec:necessity:conflict-not-causal``: Keep conflict recognition epoch-quantized rather than causally grouping concurrent races; refuse a serialization choice function, which re-imports sub-epoch ordering authority and destroys the regret window."
+      "statement": "Refused simplification under ``subsec:necessity:conflict-not-causal``: Keep conflict protection as the written-side tie-favoring recognition rule plus the named boundary-censorship exposure; the dependent set is already its causal closure. Refuse a serialization choice function, which re-imports sub-epoch ordering authority and destroys the regret window."
     },
     {
       "chapter": "H Necessity",

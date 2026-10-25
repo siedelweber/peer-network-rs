@@ -52,6 +52,12 @@ def validate():
     constants = data('constants')
     if not (len(inventory) == 1645 and len({row['label'] for row in inventory}) == 1645):
         raise ValueError('inventory label census')
+    placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
+    structural = {'section', 'subsection', 'appendix', 'motto'}
+    refused = [row['label'] for row in placeholders if row['environment'] not in structural]
+    print(f'INVENTORY-PLACEHOLDERS rows={len(inventory)} structural={len(placeholders) - len(refused)} refused={len(refused)}')
+    if refused:
+        raise ValueError('obligation-bearing inventory placeholders: ' + ', '.join(refused))
     if not (len(constants) == 2801 and len({row['id'] for row in constants}) == 2801):
         raise ValueError('constants id census')
     for name, pin in [('inventory', CURRENT_INVENTORY_PIN), ('constants', REFRESHED_CONSTANTS_PIN), ('questions', RELEASE_QUESTIONS_PIN)]:
@@ -161,7 +167,7 @@ def validate():
 
 
 PAPER_TAG = 'network-v0.29.1'
-CURRENT_INVENTORY_PIN = 'f2af846bf9689c5ac040b182fdfe62e89a3356085871f57db1c85349537dda56'
+CURRENT_INVENTORY_PIN = '15dee2309d23100c7ec16f60941062279a89db80d55bb734ec8b850f67a0daa9'
 REFRESHED_CONSTANTS_PIN = '4fff45473559b0fa977ff1ca3a1ff28d6c41f72535a0fef7ae861369b3ab3e4f'
 RELEASE_QUESTIONS_PIN = '80605718e898106860948960cd9aaa4b49ccf94532a9b465d826f7c5eb2c1e81'
 

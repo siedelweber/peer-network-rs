@@ -80,10 +80,29 @@ class Correspondence(unittest.TestCase):
         path.write_text(original)
 
     def test_release_projections(self):
-        """release additions, refreshed fields and answer fields cannot drift behind the study projections.
+        """Release fields remain pinned, and only structural inventory rows may retain placeholders.
         ´claim:design:release-fields-cannot-drift´
         ´test:integration:test-release-projections´
         """
+        baseline = self.check()
+        self.assertEqual(baseline.returncode, 0, baseline.stderr)
+        self.assertIn('INVENTORY-PLACEHOLDERS rows=1645 structural=132 refused=0', baseline.stdout)
+        path = self.root / 'docs/datasets/org.peer-network.design.inventory.json'
+        original = path.read_text()
+        dataset = json.loads(original)
+        labels = []
+        for kind in ('cond', 'case', 'prop'):
+            row = next(row for row in dataset['rows'] if row['label'].startswith(kind + ':'))
+            row['statement'] = f'Track the witness as a separately addressable {row["environment"]}.'
+            labels.append(row['label'])
+        path.write_text(json.dumps(dataset))
+        result = self.check()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('INVENTORY-PLACEHOLDERS rows=1645 structural=132 refused=3', result.stdout)
+        self.assertIn('obligation-bearing inventory placeholders:', result.stderr)
+        for label in labels:
+            self.assertIn(label, result.stderr)
+        path.write_text(original)
         for name, marker, field in [('inventory', 'current_at', 'label'), ('constants', 'refreshed_at', 'cites'), ('constants', 'refreshed_at', 'class'), ('constants', 'refreshed_at', 'home'), ('questions', 'status', 'status'), ('questions', 'status', 'section'), ('questions', 'status', 'ambiguity')]:
             with self.subTest(name=name, field=field):
                 path = self.root / f'docs/datasets/org.peer-network.design.{name}.json'
