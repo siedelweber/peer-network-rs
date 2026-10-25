@@ -36,7 +36,7 @@ fn partition_cases() {
     common::check(&case);
 }
 
-/// Claim: Enumerating all 1024 backward-parent relations on five paired proposals agrees with a naive ancestor-and-set-merge oracle in original, reversed and shuffled presentations, including exact overlap witnesses and deterministic backend indices.
+/// Claim: Enumerating all 1024 backward-parent relations on five paired proposals agrees with a naive ancestor-and-set-merge oracle in original, reversed and shuffled presentations, including the least shared identity on each intersection edge and deterministic backend indices.
 /// ´claim:membership:small-dags-preserve-partition-and-indices´
 /// ´test:integration:exhaustive-dags´
 #[test]
@@ -96,4 +96,49 @@ fn invalid_inputs() {
             role: Role::T
         }
     );
+}
+
+/// Claim: Causal chains of 32, 128 and 256 proposals produce one block and exactly N(N-1)/2 intersection edges, each storing only the least shared act identity; records retain N(N+1)/2 closure members from which full intersections can be recovered, so graph edge-weight identity storage is quadratic rather than cubic.
+/// ´claim:membership:chain-intersections-retain-quadratic-witness-storage´
+/// ´test:integration:chain-storage´
+#[test]
+fn chain_storage() {
+    for count in [32_u64, 128, 256] {
+        let mut case = pn_records::test_support::generate(&[1]);
+        let template = case.proposals[0].clone();
+        case.proposals.clear();
+        for index in 0..count {
+            let mut act = template.clone();
+            act.id.sequence = index + 1000;
+            act.authoritative_position = index + 10;
+            act.body.asserted_parents = case
+                .proposals
+                .last()
+                .map(|previous| previous.id.clone())
+                .into_iter()
+                .collect();
+            for leg in &mut act.legs {
+                leg.id.act = act.id.clone();
+            }
+            case.proposals.push(act);
+        }
+        let history = pn_records::validate_history(&case.history, &case.names).unwrap();
+        let records = pn_records::validate_record(&case.proposals, &history, &[]).unwrap();
+        let input = pn_records::assemble_boundary_inputs(&records, case.boundary).unwrap();
+        let (graph, blocks) = pn_graph::partition_dependencies(&input).unwrap();
+        let count = usize::try_from(count).unwrap();
+        assert_eq!(graph.node_count(), count);
+        assert_eq!(graph.edge_count(), count * (count - 1) / 2);
+        assert_eq!(
+            blocks,
+            vec![case.proposals.iter().map(|act| act.id.clone()).collect::<Vec<_>>()]
+        );
+        let witnesses: Vec<&pn_records::ActId> = graph.edge_weights().collect();
+        assert_eq!(witnesses.len(), count * (count - 1) / 2);
+        assert!(witnesses.iter().all(|id| **id == case.proposals[0].id));
+        assert_eq!(
+            input.closures().iter().map(|closure| closure.members().len()).sum::<usize>(),
+            count * (count + 1) / 2
+        );
+    }
 }

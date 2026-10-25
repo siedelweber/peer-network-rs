@@ -71,9 +71,8 @@ pub fn check(case: &Scenario) {
         let mut edges = Vec::new();
         for (left, root) in roots.iter().enumerate() {
             for (right, other) in roots.iter().enumerate().skip(left + 1) {
-                let shared: Vec<_> = closures[root].intersection(&closures[other]).cloned().collect();
-                if !shared.is_empty() {
-                    edges.push((left, right, shared));
+                if let Some(shared) = closures[root].iter().filter(|id| closures[other].contains(*id)).min() {
+                    edges.push((left, right, shared.clone()));
                 }
             }
         }

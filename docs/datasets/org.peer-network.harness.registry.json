@@ -3792,7 +3792,8 @@
       "cases": [
         "pn-graph::public::partition_cases",
         "pn-graph::public::exhaustive_dags",
-        "pn-graph::public::invalid_inputs"
+        "pn-graph::public::invalid_inputs",
+        "pn-graph::public::chain_storage"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",

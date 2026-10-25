@@ -6,10 +6,10 @@ use std::collections::BTreeSet;
 use petgraph::graph::UnGraph;
 use pn_records::{ActId, BoundaryInputs};
 
-/// Closure roots and the complete shared identities witnessing each intersection.
+/// Closure roots and the least shared identity witnessing each intersection.
 /// This is a disposable acceleration graph, not a publication encoding.
 /// (´def:membership:partition´)
-pub type IntersectionGraph = UnGraph<ActId, Vec<ActId>>;
+pub type IntersectionGraph = UnGraph<ActId, ActId>;
 
 /// Disjoint blocks of whole act identities, each in authoritative order.
 /// (´def:membership:partition´)
@@ -31,8 +31,9 @@ pub enum PartitionError {
 /// (´[ROOT-alg:design:dependency-partition]´)
 ///
 /// The returned graph has roots in authoritative order and each intersecting
-/// pair once in lexicographic position order. Edge weights retain all common
-/// identities. Blocks retain whole acts by identity and are ordered by their
+/// pair once in lexicographic position order. Each edge retains one least common
+/// identity; full intersections remain recoverable from records' closures.
+/// Blocks retain whole acts by identity and are ordered by their
 /// earliest authoritative member; they may interleave. Neither graph mutation
 /// nor serialization preserves this witness. No formation or marker verdict
 /// follows from a records-level partition.
@@ -69,10 +70,9 @@ pub fn partition_dependencies(input: &BoundaryInputs<'_>) -> Result<(Intersectio
     }
     for (offset, (left, members)) in closures.iter().enumerate() {
         for (right, other) in closures.iter().skip(offset + 1) {
-            let shared: Vec<_> = members.intersection(other).cloned().collect();
-            if !shared.is_empty() {
+            if let Some(shared) = members.intersection(other).next() {
                 graph
-                    .try_add_edge(*left, *right, shared)
+                    .try_add_edge(*left, *right, shared.clone())
                     .map_err(|_| PartitionError::Capacity)?;
             }
         }

@@ -413,3 +413,14 @@ commit = "482a6eb9607da7216e2571cbd0d9523a97d4bb20"
 tree = "1f7f9d07e3c86989585aa4d62b6c92a7f8b47763"
 definition = "The admitted commit must be an ancestor of the checked-out history and its tree must equal the cited tree."
 paths = ["ci/hash-citation-families.toml", "docs/templates/adr/015-durable-storage.md.j2", "adr/015-durable-storage.md"]
+
+[[rows]]
+family = "graph-notice-archive"
+group = "graph dependency attribution"
+measures = "SHA-256 of the existing petgraph registry crate archive"
+producer = "Cargo lock resolution"
+establishment = "resolvable"
+reader = "cargo-archive"
+source = "Cargo.lock"
+definition = "The package name and version locate the unmodified crates.io archive; the notice repeats its existing lock checksum to attribute the retained MIT permission text."
+paths = ["packages/graph/NOTICE-DEPENDENCIES"]

@@ -2661,9 +2661,9 @@
       "operation": "pn-graph::properties::generated_partitions",
       "path": "packages/graph/tests/properties.rs",
       "claim": "GRAPH::claim:membership:generated-partitions-match-set-oracle",
-      "before": "",
-      "after": "Claim: Recorded shrinkable DAG inputs agree with an independently enumerated closure-union partition and exact intersection witnesses in three presentations, preserving all whole-act identities without treating dependency tombstones as causal removals.",
-      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+      "before": "Claim: Recorded shrinkable DAG inputs agree with an independently enumerated closure-union partition and exact intersection witnesses in three presentations, preserving all whole-act identities without treating dependency tombstones as causal removals.",
+      "after": "Claim: Recorded shrinkable DAG inputs agree with an independently enumerated closure-union partition and least-shared-identity intersection witnesses in three presentations, preserving all whole-act identities without treating dependency tombstones as causal removals.",
+      "review": "Read the exact least-shared-identity assertions and independent block expectations. The chain witness checks complete membership, exact pair count and one ActId per edge at three lengths. This bounds retained edge-weight identity count, not identifier bytes, closure storage, allocation or runtime."
     },
     {
       "operation": "pn-graph::public::partition_cases",
@@ -2677,9 +2677,9 @@
       "operation": "pn-graph::public::exhaustive_dags",
       "path": "packages/graph/tests/public.rs",
       "claim": "GRAPH::claim:membership:small-dags-preserve-partition-and-indices",
-      "before": "",
-      "after": "Claim: Enumerating all 1024 backward-parent relations on five paired proposals agrees with a naive ancestor-and-set-merge oracle in original, reversed and shuffled presentations, including exact overlap witnesses and deterministic backend indices.",
-      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+      "before": "Claim: Enumerating all 1024 backward-parent relations on five paired proposals agrees with a naive ancestor-and-set-merge oracle in original, reversed and shuffled presentations, including exact overlap witnesses and deterministic backend indices.",
+      "after": "Claim: Enumerating all 1024 backward-parent relations on five paired proposals agrees with a naive ancestor-and-set-merge oracle in original, reversed and shuffled presentations, including the least shared identity on each intersection edge and deterministic backend indices.",
+      "review": "Read the exact least-shared-identity assertions and independent block expectations. The chain witness checks complete membership, exact pair count and one ActId per edge at three lengths. This bounds retained edge-weight identity count, not identifier bytes, closure storage, allocation or runtime."
     },
     {
       "operation": "pn-graph::public::invalid_inputs",
@@ -2800,6 +2800,14 @@
       "before": "",
       "after": "Claim: Recurrence mismatches retain the attached time and exact expected value, including a value beyond u64; tombstoned openings, non-compliant dependencies and ambiguous placement yield no time verdict, and none rewrites finalization metadata.",
       "review": "Read the exact epoch-qualified placement and retained-time assertions. Recurrence expectations use independently scanned prior incidence; the process witness compares complete results and accounting across observation modes. These are internal carrier checks, conditional on family-valid incidence, not cryptographic authentication or a resolution of the non-compliant time and cross-epoch paper holds."
+    },
+    {
+      "operation": "pn-graph::public::chain_storage",
+      "path": "packages/graph/tests/public.rs",
+      "claim": "GRAPH::claim:membership:chain-intersections-retain-quadratic-witness-storage",
+      "before": "",
+      "after": "Claim: Causal chains of 32, 128 and 256 proposals produce one block and exactly N(N-1)/2 intersection edges, each storing only the least shared act identity; records retain N(N+1)/2 closure members from which full intersections can be recovered, so graph edge-weight identity storage is quadratic rather than cubic.",
+      "review": "Read the exact least-shared-identity assertions and independent block expectations. The chain witness checks complete membership, exact pair count and one ActId per edge at three lengths. This bounds retained edge-weight identity count, not identifier bytes, closure storage, allocation or runtime."
     }
   ]
 }

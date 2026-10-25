@@ -3,7 +3,7 @@ use pn_testkit::proptest::{self, prelude::*};
 
 proptest! {
     #![proptest_config(pn_testkit::property_config(concat!(env!("CARGO_MANIFEST_DIR"), "/proptest-regressions/partition.txt")))]
-    /// Claim: Recorded shrinkable DAG inputs agree with an independently enumerated closure-union partition and exact intersection witnesses in three presentations, preserving all whole-act identities without treating dependency tombstones as causal removals.
+    /// Claim: Recorded shrinkable DAG inputs agree with an independently enumerated closure-union partition and least-shared-identity intersection witnesses in three presentations, preserving all whole-act identities without treating dependency tombstones as causal removals.
     /// ´claim:membership:generated-partitions-match-set-oracle´
     /// ´test:integration:generated-partitions´
     #[test]

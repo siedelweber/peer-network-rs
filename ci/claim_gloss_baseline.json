@@ -969,9 +969,9 @@
     "cli-common::observation::tests::graph_owner_accounting": "",
     "pn-graph::tests::publication_guard": "",
     "pn-graph::integration::shared_cases": "",
-    "pn-graph::properties::generated_partitions": "",
+    "pn-graph::properties::generated_partitions": "Claim: Recorded shrinkable DAG inputs agree with an independently enumerated closure-union partition and exact intersection witnesses in three presentations, preserving all whole-act identities without treating dependency tombstones as causal removals.",
     "pn-graph::public::partition_cases": "",
-    "pn-graph::public::exhaustive_dags": "",
+    "pn-graph::public::exhaustive_dags": "Claim: Enumerating all 1024 backward-parent relations on five paired proposals agrees with a naive ancestor-and-set-merge oracle in original, reversed and shuffled presentations, including exact overlap witnesses and deterministic backend indices.",
     "pn-graph::public::invalid_inputs": "",
     "pn-verification::graph::graph_shared_cases": "",
     "pn-verification::graph::generated_partitions": "",
@@ -985,6 +985,7 @@
     "ci::test_observe_runtime.Processes.test_records_replay": "Claim: Finalized dependency violations and every retained act field agree with observation disabled, at default and at trace; candidate refusals remain refusals while replay is accounted as success.",
     "pn-records::public::ordering::epoch_placement": "",
     "pn-records::public::ordering::attached_times": "",
-    "pn-records::public::ordering::retained_time_evidence": ""
+    "pn-records::public::ordering::retained_time_evidence": "",
+    "pn-graph::public::chain_storage": ""
   }
 }

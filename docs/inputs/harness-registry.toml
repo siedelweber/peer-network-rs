@@ -1239,7 +1239,7 @@ level = "public-surface"
 implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-graph::public::partition_cases", "pn-graph::public::exhaustive_dags", "pn-graph::public::invalid_inputs"]
+cases = ["pn-graph::public::partition_cases", "pn-graph::public::exhaustive_dags", "pn-graph::public::invalid_inputs", "pn-graph::public::chain_storage"]
 
 [[rows]]
 kind = "suite"

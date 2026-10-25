@@ -135,7 +135,7 @@
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | fast | 4 |
 | pn-wallet::rpc | active | integration | pn-wallet-elements | service | 9 |
 | pn-graph | active | unit | pn-graph-rust | fast | 1 |
-| pn-graph::public | active | public-surface | pn-graph-rust | fast | 3 |
+| pn-graph::public | active | public-surface | pn-graph-rust | fast | 4 |
 | pn-graph::properties | active | public-surface | pn-graph-rust | fast | 1 |
 | pn-graph::integration | active | integration | pn-graph-rust | fast | 1 |
 | pn-verification::graph | active | integration | pn-graph-rust | fast | 2 |

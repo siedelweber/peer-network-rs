@@ -1,3 +1,10 @@
+pn-graph dependency notices
+
+petgraph 0.8.3 — MIT OR Apache-2.0; MIT licence chosen
+Source: https://static.crates.io/crates/petgraph/petgraph-0.8.3.crate
+Registry archive SHA-256: 8701b58ea97060d5e5b155d383a69952a60943f0e6dfe30b04c287beb0b27455
+
+--- LICENSE-MIT ---
 Copyright (c) 2015
 
 Permission is hereby granted, free of charge, to any
