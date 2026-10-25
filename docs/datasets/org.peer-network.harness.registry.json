@@ -3051,6 +3051,7 @@
         "ci::test_observe_runtime.Processes.test_interchange_refusal",
         "ci::test_observe_runtime.Processes.test_four_mode_results",
         "ci::test_observe_runtime.Processes.test_records_entry",
+        "ci::test_observe_runtime.Processes.test_records_replay",
         "ci::test_observe_runtime.Processes.test_rendezvous_failures"
       ],
       "implementation": "ci-python",
@@ -3168,6 +3169,7 @@
         "pn-records::public::invalid_declarations",
         "pn-records::public::dependency_content",
         "pn-records::public::dependency_placement",
+        "pn-records::public::finalized_order",
         "pn-records::public::whole_history",
         "pn-records::public::overlapping_closures",
         "pn-records::public::boundary_refusals",

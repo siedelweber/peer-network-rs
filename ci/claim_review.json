@@ -2752,6 +2752,22 @@
       "before": "",
       "after": "Claim: On the real signed chain, two explicit burn outputs stay pending with four and five successors, set no floor, and pin at six with their block as the floor; a shallow replacement made with invalidateblock and freshly signed blocks changes only pending evidence and refuses the replaced locator, although the node still serves that transaction; the same outpoints re-mined in a new block and reported repeatedly count once; the pinned total, floor and pinned reads stay unchanged after later blocks, a replacement of the newest blocks and a replacement reaching below the tip-minus-six cutoff above the pinned block; and a replacement of the pinned block is a run fault that retains the pinned total. Epoch snapshot derivation is not performed here; it remains with bite 5.",
       "review": "Read the real signed-chain stages: producer burns and invalidateblock replacements, cookie-reader locators confirmed against active-chain hashes, the asserted pending, pinned and fault outcomes and the identical later reads. These witnesses implement no marker recognition, accepted set, epoch snapshot or signature verification."
+    },
+    {
+      "operation": "pn-records::public::finalized_order",
+      "path": "packages/records/tests/public.rs",
+      "claim": "RECORDS::claim:acts:finalized-order-retains-dependency-noncompliance",
+      "before": "",
+      "after": "Claim: Finalized replay retains every act and available dependency violation without changing identities, legs, fields or positions; the same non-compliant sequence refuses candidate admission, while compliant history has no violations and malformed representation still refuses.",
+      "review": "Read the exact retained-field, complete-evidence and candidate-refusal assertions. The process witness compares full public results in three observation modes and checks success/refusal accounting. These checks establish local replay carriage, not authentication of an opening, fault attribution, standing or title."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_records_replay",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:records-replay-retains-observed-noncompliance",
+      "before": "",
+      "after": "Claim: Finalized dependency violations and every retained act field agree with observation disabled, at default and at trace; candidate refusals remain refusals while replay is accounted as success.",
+      "review": "Read the exact retained-field, complete-evidence and candidate-refusal assertions. The process witness compares full public results in three observation modes and checks success/refusal accounting. These checks establish local replay carriage, not authentication of an opening, fault attribution, standing or title."
     }
   ]
 }

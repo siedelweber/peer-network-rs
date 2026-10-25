@@ -278,6 +278,37 @@ class Processes(unittest.TestCase):
             print('INTERCHANGE-OBSERVATION level='+mode+' distribution='+json.dumps({str(k):v for k,v in distributions[mode].items()},sort_keys=True))
         self.assertEqual(distributions['default'],distributions['trace'])
 
+    def test_records_replay(self):
+        """Claim: Finalized dependency violations and every retained act field agree with observation disabled, at default and at trace; candidate refusals remain refusals while replay is accounted as success.
+        ´claim:discipline:records-replay-retains-observed-noncompliance´
+        ´test:integration:test-records-replay´
+        """
+        target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'
+        samples={};accounting={}
+        for mode in ('disabled','default','trace'):
+            env=os.environ | {'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'}
+            result=compare([str(target/'examples/replay_observation'),mode],mode,env)
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+            samples[mode]=result.stdout
+            values=json.loads(result.stdout)
+            self.assertEqual([row['violations'] for row in values],[0,1,1])
+            self.assertEqual([row['admitted'] for row in values],[True,False,False])
+            self.assertIn('NotEarlier',values[1]['evidence'])
+            self.assertIn('Missing',values[2]['evidence'])
+            if mode=='disabled':continue
+            rows=[json.loads(line) for line in result.stderr.splitlines()]
+            summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
+            stem='records__root__sig__design__records__'
+            accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith(stem)}
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):7,(stem+'completed_operations','success'):5,(stem+'completed_operations','refusal'):2})
+            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],7)
+            if mode=='trace':
+                self.assertIn('non_compliance',result.stderr.decode())
+                self.assertIn('NotEarlier',result.stderr.decode())
+        self.assertEqual(samples['disabled'],samples['default'])
+        self.assertEqual(samples['default'],samples['trace'])
+        self.assertEqual(accounting['default'],accounting['trace'])
+
     def test_records_entry(self):
         """Claim: The first domain entry counts and times successful validation, complete-act access, reference resolution and historical edition selection, validated history and boundary assembly, plus their typed refusals at default and trace, with identical outcome distributions and unchanged JSON stdout and exit when observation is disabled; trace carries the public act content. Repeated reads through all seventeen pure field accessors create no additional operations or series, and assembly steps remain distinct from invocation work.
         ´claim:discipline:records-entry-is-observed-without-changing-results´

@@ -169,7 +169,7 @@ pub struct RemovableProjections {
 pub enum DependencyProjection {
     /// Complete empty dependency set.
     FullEmpty,
-    /// Complete nonempty sorted, duplicate-free, self-free act identifiers.
+    /// Complete nonempty sorted, duplicate-free identifiers; admission also requires self-free earlier targets.
     Full(Vec<ActId>),
     /// Content unavailable after this position; never interpreted as empty.
     Tombstoned(u64),
@@ -237,6 +237,39 @@ pub struct ValidatedAct {
 pub struct ValidatedHistory {
     acts: Arc<Vec<ValidatedAct>>,
     references: Arc<BTreeSet<PublicReference>>,
+    non_compliance: Arc<Vec<DependencyViolation>>,
+}
+
+/// A committed-dependency violation retained without rewriting finalized history.
+/// This is local evidence, not cryptographic verification of an opening.
+/// (´def:acts:history´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DependencyViolation {
+    /// Finalized act whose declared dependency fails compliance.
+    pub act: ActId,
+    /// Exact dependency identity retained in the opening.
+    pub dependency: ActId,
+    /// Missing, non-earlier or self dependency; representation errors still refuse.
+    pub cause: DependencyCause,
+}
+
+impl ValidatedHistory {
+    /// Read accepted acts unchanged, in the supplied presentation order.
+    /// (´def:acts:history´)
+    #[must_use]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
+    pub fn acts(&self) -> &[ValidatedAct] {
+        &self.acts
+    }
+
+    /// Read all available opening violations, ordered by act position and identity.
+    /// Tombstoned openings provide no compliance verdict.
+    /// (´def:acts:history´)
+    #[must_use]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
+    pub fn non_compliance(&self) -> &[DependencyViolation] {
+        &self.non_compliance
+    }
 }
 
 /// Finite declaration representation causes.
@@ -453,6 +486,14 @@ pub struct ValidatedRecords {
 }
 
 impl ValidatedRecords {
+    /// Read the fixed accepted history, including its retained non-compliance.
+    /// (´def:acts:history´)
+    #[must_use]
+    /// Justified: Pure immutable field access inherits the labelled records operation that obtained this validated view; it is not a new act-level operation.
+    pub fn history(&self) -> &ValidatedHistory {
+        &self.history
+    }
+
     /// Return whole acts, never a flattened list of accounting co-legs.
     /// (´def:acts:validation´)
     #[must_use]
@@ -814,8 +855,18 @@ fn dependency_error(act: &ActId, dependency: Option<&ActId>, cause: DependencyCa
 }
 
 fn validate_dependencies(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) -> Result<(), ValidationError> {
+    if let Some(violation) = dependency_violations(act, available)?.first() {
+        return Err(dependency_error(&act.id, Some(&violation.dependency), violation.cause));
+    }
+    Ok(())
+}
+
+fn dependency_violations(
+    act: &CandidateAct,
+    available: &BTreeMap<&ActId, u64>,
+) -> Result<Vec<DependencyViolation>, ValidationError> {
     let DependencyProjection::Full(dependencies) = &act.projections.dependency else {
-        return Ok(());
+        return Ok(Vec::new());
     };
     if dependencies.is_empty() {
         return Err(dependency_error(&act.id, None, DependencyCause::EmptyFull));
@@ -826,18 +877,26 @@ fn validate_dependencies(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) 
     if dependencies.windows(2).any(|pair| pair[0] >= pair[1]) {
         return Err(dependency_error(&act.id, None, DependencyCause::NonCanonical));
     }
+    let mut violations = Vec::new();
     for dependency in dependencies {
-        if dependency == &act.id {
-            return Err(dependency_error(&act.id, Some(dependency), DependencyCause::SelfDependency));
-        }
-        let target = available
-            .get(dependency)
-            .ok_or_else(|| dependency_error(&act.id, Some(dependency), DependencyCause::Missing))?;
-        if *target >= act.authoritative_position {
-            return Err(dependency_error(&act.id, Some(dependency), DependencyCause::NotEarlier));
+        let cause = if dependency == &act.id {
+            Some(DependencyCause::SelfDependency)
+        } else {
+            match available.get(dependency) {
+                None => Some(DependencyCause::Missing),
+                Some(position) if *position >= act.authoritative_position => Some(DependencyCause::NotEarlier),
+                Some(_) => None,
+            }
+        };
+        if let Some(cause) = cause {
+            violations.push(DependencyViolation {
+                act: act.id.clone(),
+                dependency: dependency.clone(),
+                cause,
+            });
         }
     }
-    Ok(())
+    Ok(violations)
 }
 
 fn validate_parents(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) -> Result<(), ValidationError> {
@@ -869,11 +928,12 @@ fn validate_parents(act: &CandidateAct, available: &BTreeMap<&ActId, u64>) -> Re
 
 /// Check caller-supplied accepted whole history and separately supplied external names.
 /// Act and edge references are derived together; free-standing act/edge names refuse.
-/// This checks representation and dependencies, not cryptographic or host admission.
+/// Representation errors refuse; committed-dependency violations remain evidence.
+/// This does not certify cryptographic or host admission.
 /// (´def:acts:history´)
 ///
 /// # Errors
-/// Returns typed local, dependency, duplicate or invalid external-name refusals.
+/// Returns typed local, dependency-content, parent, duplicate or invalid external-name refusals.
 #[tracing::instrument(
     name = "sig:design:records",
     fields(
@@ -912,13 +972,17 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
         validate_act(act, &references, &BTreeSet::new())?;
     }
     let available: BTreeMap<_, _> = acts.iter().map(|act| (&act.id, act.authoritative_position)).collect();
-    for act in acts {
-        validate_dependencies(act, &available)?;
+    let mut ordered: Vec<_> = acts.iter().collect();
+    ordered.sort_by_key(|act| (act.authoritative_position, &act.id));
+    let mut non_compliance = Vec::new();
+    for act in ordered {
+        non_compliance.extend(dependency_violations(act, &available)?);
         validate_parents(act, &available)?;
     }
     Ok(ValidatedHistory {
         acts: Arc::new(acts.iter().map(validated_act).collect()),
         references: Arc::new(references),
+        non_compliance: Arc::new(non_compliance),
     })
 }
 

@@ -395,6 +395,117 @@ fn dependency_placement() {
     }
 }
 
+/// Claim: Finalized replay retains every act and available dependency violation without changing identities, legs, fields or positions; the same non-compliant sequence refuses candidate admission, while compliant history has no violations and malformed representation still refuses.
+/// ´claim:acts:finalized-order-retains-dependency-noncompliance´
+/// ´test:integration:finalized-order´
+#[test]
+fn finalized_order() {
+    let names = [named("left"), named("right")];
+    let empty = validate_history(&[], &names).unwrap();
+    let mut first = act(1, Layout::Paired);
+    first.authoritative_position = 1;
+    let mut later = act(2, Layout::Binary);
+    later.authoritative_position = 2;
+    let missing = act(3, Layout::Binary).id;
+    first.projections.dependency = DependencyProjection::Full(vec![first.id.clone(), later.id.clone(), missing.clone()]);
+    let expected = vec![
+        pn_records::DependencyViolation {
+            act: first.id.clone(),
+            dependency: first.id.clone(),
+            cause: DependencyCause::SelfDependency,
+        },
+        pn_records::DependencyViolation {
+            act: first.id.clone(),
+            dependency: later.id.clone(),
+            cause: DependencyCause::NotEarlier,
+        },
+        pn_records::DependencyViolation {
+            act: first.id.clone(),
+            dependency: missing.clone(),
+            cause: DependencyCause::Missing,
+        },
+    ];
+    for records in [[first.clone(), later.clone()], [later.clone(), first.clone()]] {
+        let history = validate_history(&records, &names).unwrap();
+        assert_eq!(history.non_compliance(), expected);
+        assert_retained(&history, &records);
+        let next = validate_record(&[], &history, &[]).unwrap();
+        assert_eq!(next.history().non_compliance(), expected);
+        assert_eq!(next.history().acts(), history.acts());
+    }
+    for (dependency, cause) in [
+        (later.id.clone(), DependencyCause::NotEarlier),
+        (missing, DependencyCause::Missing),
+        (first.id.clone(), DependencyCause::SelfDependency),
+    ] {
+        first.projections.dependency = DependencyProjection::Full(vec![dependency.clone()]);
+        let sequence = [first.clone(), later.clone()];
+        assert_eq!(
+            validate_record(&sequence, &empty, &[]).unwrap_err(),
+            ValidationError::Dependency {
+                act: first.id.clone(),
+                dependency: Some(dependency.clone()),
+                cause
+            }
+        );
+        assert_eq!(
+            validate_history(&sequence, &names).unwrap().non_compliance(),
+            &[pn_records::DependencyViolation {
+                act: first.id.clone(),
+                dependency,
+                cause
+            }]
+        );
+    }
+    first.projections.dependency = DependencyProjection::Full(vec![later.id.clone()]);
+    later.authoritative_position = 1;
+    assert_eq!(
+        validate_history(&[first.clone(), later.clone()], &names)
+            .unwrap()
+            .non_compliance()[0]
+            .cause,
+        DependencyCause::NotEarlier
+    );
+    later.authoritative_position = 0;
+    assert_eq!(
+        validate_history(&[first.clone(), later.clone()], &names)
+            .unwrap()
+            .non_compliance(),
+        []
+    );
+    assert!(validate_record(&[first.clone(), later.clone()], &empty, &[]).is_ok());
+    first.projections.dependency = DependencyProjection::Tombstoned(3);
+    assert_eq!(validate_history(&[first.clone()], &names).unwrap().non_compliance(), []);
+    first.projections.dependency = DependencyProjection::Full(vec![]);
+    assert_eq!(
+        validate_history(&[first.clone()], &names).unwrap_err(),
+        ValidationError::Dependency {
+            act: first.id,
+            dependency: None,
+            cause: DependencyCause::EmptyFull
+        }
+    );
+}
+
+fn assert_retained(history: &pn_records::ValidatedHistory, records: &[pn_records::CandidateAct]) {
+    assert_eq!(history.acts().len(), records.len());
+    for (retained, original) in history.acts().iter().zip(records) {
+        assert_eq!(retained.id(), &original.id);
+        assert_eq!(retained.body(), &original.body);
+        assert_eq!(retained.projections(), &original.projections);
+        assert_eq!(retained.protocol_references(), original.protocol_references);
+        assert_eq!(retained.authentication_evidence(), original.authentication_evidence);
+        assert_eq!(retained.finalization_epoch(), original.finalization_epoch);
+        assert_eq!(retained.authoritative_position(), original.authoritative_position);
+        assert_eq!(retained.legs().len(), original.legs.len());
+        for (leg, candidate) in retained.legs().iter().zip(&original.legs) {
+            assert_eq!(leg.id(), &candidate.id);
+            assert_eq!(leg.source(), &candidate.source);
+            assert_eq!(leg.target(), &candidate.target);
+        }
+    }
+}
+
 /// Claim: Whole validated history derives an act and both co-leg identities together, refuses edge-only history input and reintroduced identities through the validated snapshot.
 /// ´claim:acts:history-owns-its-structural-references´
 /// ´test:integration:whole-history´

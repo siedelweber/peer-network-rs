@@ -980,6 +980,8 @@
     "pn-wallet::settlement::tests::pinning_depth": "",
     "pn-wallet::settlement::tests::replacement_floor": "",
     "pn-wallet::settlement::tests::outpoint_once": "",
-    "pn-wallet::rpc::settlement_forks": ""
+    "pn-wallet::rpc::settlement_forks": "",
+    "pn-records::public::finalized_order": "",
+    "ci::test_observe_runtime.Processes.test_records_replay": ""
   }
 }
