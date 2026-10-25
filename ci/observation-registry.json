@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "configuration": "six production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration",
+  "configuration": "seven production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration",
   "named_operations": [
     "cli-common::packages/cli-common/src/lib.rs::run_no_stdout_command_async",
     "cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation",
@@ -5954,6 +5954,54 @@
       "claim": "ROOT::sig:design:storage",
       "shape": "shape-host",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "item": "decoder::Transaction::fields",
+      "owner": "WALLET",
+      "signature": "fn fields (& self) -> & TransactionFields",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure field access inherits the labelled decoder or evidence operation; it neither starts work nor records the whole transaction again.",
+        "witness": "WALLET::claim:wallet:full-layouts-preserve-nonevidence-transactions",
+        "boundary": "pn-wallet::packages/wallet/src/decoder.rs::decoder::decode_transaction",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "item": "decoder::decode_transaction",
+      "owner": "WALLET",
+      "signature": "fn decode_transaction (bytes : & [u8] , limits : Limits) -> Result < Transaction , Refusal >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "item": "decoder::decode_block",
+      "owner": "WALLET",
+      "signature": "fn decode_block (bytes : & [u8] , limits : Limits) -> Result < Block , Refusal >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "item": "decoder::evidence_amount",
+      "owner": "WALLET",
+      "signature": "fn evidence_amount (tx : & Transaction , index : usize , asset : & [u8 ; 32] , run : & [u8 ; 32] , target : & [u8 ; 32] , request : & [u8 ; 32] ,) -> Result < u64 , Refusal >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -6727,6 +6775,69 @@
       "name": "host__root__sig__design__storage__transaction_elapsed_seconds",
       "kind": "histogram",
       "unit": "seconds",
+      "attributes": {}
+    },
+    {
+      "name": "wallet__root__sig__design__devnet__started_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "wallet__root__sig__design__devnet__completed_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {
+        "outcome": [
+          "success",
+          "refusal",
+          "error",
+          "cancelled",
+          "unwinding",
+          "incomplete"
+        ]
+      }
+    },
+    {
+      "name": "wallet__root__sig__design__devnet__work_bytes",
+      "kind": "counter",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "wallet__root__sig__design__devnet__work_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "wallet__root__sig__design__devnet__active_operations",
+      "kind": "gauge",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "wallet__root__sig__design__devnet__resource_current_bytes",
+      "kind": "gauge",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "wallet__root__sig__design__devnet__elapsed_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "attributes": {}
+    },
+    {
+      "name": "wallet__root__sig__design__devnet__workload_bytes",
+      "kind": "histogram",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "wallet__root__sig__design__devnet__workload_operations",
+      "kind": "histogram",
+      "unit": "operations",
       "attributes": {}
     }
   ],
@@ -8955,9 +9066,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_new_span",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"HOST\") => Some (OperationKind :: Host) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"HOST\") => Some (OperationKind :: Host) , Some (\"WALLET\") => Some (OperationKind :: Wallet) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
       "class_decision": "delivery",
-      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure. The authorized HOST dispatch selects its own storage stem; host-owner-accounting checks it independently of the other owners.",
+      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure. The authorized HOST dispatch selects its own storage stem; host-owner-accounting checks it independently of the other owners. The authorized WALLET dispatch selects its own devnet stem; wallet-owner-accounting checks default and trace counters and duration independently of the other owners.",
       "assessments": {
         "full_recording": "review-204",
         "secret_flow": "review-002",
@@ -11471,6 +11582,50 @@
         "secret_flow": "storage-secret_flow",
         "exposure_consumers": "storage-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/decoder.rs::decoder::Transaction::fields",
+      "class_decision": "wallet-decoder",
+      "body": "{ & self . 0 }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "The shared borrow exposes the already observed immutable public field view without new work or allocation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/decoder.rs::decoder::decode_transaction",
+      "class_decision": "wallet-decoder",
+      "body": "{ let result = (| | { let mut reader = Reader :: new (bytes , limits) ? ; reader . transaction () ? ; if reader . pos != bytes . len () { return Err (Refusal :: Trailing) ; } let tx : elements :: Transaction = elements :: encoding :: decode_from_slice (bytes) . map_err (| _ | Refusal :: Codec) ? ; Ok (project (tx)) }) () ; if result . is_err () { tracing :: info ! (outcome = \"refusal\") ; } result }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "An allocation-free framing pass precedes the maintained codec. Complete consumption is required, and every error publishes refusal."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/decoder.rs::decoder::decode_block",
+      "class_decision": "wallet-decoder",
+      "body": "{ let result = (| | { let mut reader = Reader :: new (bytes , limits) ? ; reader . header () ? ; let header_end = reader . pos ; let count = reader . entries () ? ; let transactions_start = reader . pos ; for _ in 0 .. count { reader . transaction () ? ; } if reader . pos != bytes . len () { return Err (Refusal :: Trailing) ; } let header : elements :: BlockHeader = elements :: encode :: deserialize (& bytes [.. header_end]) . map_err (| _ | Refusal :: Codec) ? ; drop (header) ; let mut cursor = transactions_start ; let mut transactions = Vec :: with_capacity (count) ; for _ in 0 .. count { let mut tx_reader = Reader :: new (& bytes [cursor ..] , limits) ? ; tx_reader . transaction () ? ; let tx = elements :: encoding :: decode_from_slice (& bytes [cursor .. cursor + tx_reader . pos]) . map_err (| _ | Refusal :: Codec) ? ; transactions . push (project (tx)) ; cursor += tx_reader . pos ; } Ok (Block { header : bytes [.. header_end] . to_vec () , transactions , }) }) () ; if result . is_err () { tracing :: info ! (outcome = \"refusal\") ; } result }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "The whole block is preflighted before allocation; every layout is retained, including transactions that cannot serve as explicit evidence."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/decoder.rs::decoder::evidence_amount",
+      "class_decision": "wallet-decoder",
+      "body": "{ let result = (| | { let tx = & tx . 0 ; if tx . inputs . iter () . any (| input | input . pegin || input . has_issuance) { return Err (Refusal :: EvidenceInput) ; } let output = tx . outputs . get (index) . ok_or (Refusal :: EvidenceOutput) ? ; if output . asset . first () != Some (& 1) || output . asset . get (1 ..) != Some (asset . as_slice ()) || output . value . len () != 9 || output . value [0] != 1 || output . nonce != [0] { return Err (Refusal :: EvidenceOutput) ; } let script = & output . script ; if script . len () != 100 || script [.. 2] != [0x6a , 0x20] || script [34] != 0x20 || script [67] != 0x20 || script [2 .. 34] != * run || script [35 .. 67] != * target || script [68 ..] != * request { return Err (Refusal :: Target) ; } let amount = u64 :: from_be_bytes (output . value [1 ..] . try_into () . map_err (| _ | Refusal :: EvidenceOutput) ?) ; if amount == 0 { return Err (Refusal :: EvidenceOutput) ; } Ok (amount) }) () ; if result . is_err () { tracing :: info ! (outcome = \"refusal\") ; } result }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "The selector checks explicit asset and positive integer amount, excludes issuance and peg-in inputs, and binds run, target and request without rewriting the transaction."
     }
   ],
   "generators": [
@@ -13633,6 +13788,69 @@
       "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
       "class_decision": "host-transport",
       "expansion_review": "Refusal derives inspect only bounded fieldless variants; tracing attributes use role-only private carrier Debug and Instrument future lifetimes, with explicit bounded outcome events."
+    },
+    {
+      "item": "decoder::Limits",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [derive (Clone , Copy , Debug)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "decoder::Refusal",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "decoder::TransactionFields",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [derive (Clone , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "decoder::Transaction",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [derive (Clone , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "decoder::Input",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [derive (Clone , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "decoder::Output",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [derive (Clone , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "decoder::Block",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [derive (Clone , Debug , Eq , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
     }
   ],
   "reviewed_types": [
@@ -14342,7 +14560,7 @@
       "item": "observation::OperationKind",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , # [doc = \" Host service transport and storage boundary operations.\"] Host , }"
+      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , # [doc = \" Host service transport and storage boundary operations.\"] Host , # [doc = \" Public Elements layout and evidence operations.\"] Wallet , }"
     },
     {
       "item": "observation::Outcome",
@@ -15333,6 +15551,54 @@
       "package": "pn-host",
       "path": "packages/host/src/lib.rs",
       "syntax": "struct Outbound { client : tokio :: io :: ReadHalf < tokio :: io :: DuplexStream > , server : tokio :: io :: WriteHalf < wire :: Socket > , refusal : Arc < Mutex < Option < Refusal > > > , }"
+    },
+    {
+      "item": "decoder::Limits",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [doc = \" Positive resource bounds applied before maintained-codec allocation.\"] # [doc = \" (´def:wallet:decoder-limits´)\"] # [derive (Clone , Copy , Debug)] pub struct Limits { # [doc = \" Maximum encoded input bytes.\"] pub bytes : usize , # [doc = \" Aggregate collection entries, including nested witnesses.\"] pub items : usize , # [doc = \" Maximum bytes in one script.\"] pub script : usize , # [doc = \" Maximum bytes in one witness or proof.\"] pub witness : usize , # [doc = \" Conservative requested-allocation ceiling, excluding observation and allocator metadata.\"] pub allocation : usize , }"
+    },
+    {
+      "item": "decoder::Refusal",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [doc = \" Bounded public refusal with no upstream error or input fragment.\"] # [doc = \" (´def:wallet:decoder-refusal´)\"] # [derive (Clone , Copy , Debug , Eq , PartialEq)] pub enum Refusal { # [doc = \" Invalid resource declaration.\"] Limits , # [doc = \" Encoded input exceeds its byte bound.\"] Bytes , # [doc = \" Collection count exceeds the aggregate budget.\"] Items , # [doc = \" The conservative total reservation envelope exceeds the caller's budget.\"] Allocation , # [doc = \" Script length exceeds its bound.\"] Script , # [doc = \" Witness length exceeds its bound.\"] Witness , # [doc = \" A field is truncated.\"] Truncated , # [doc = \" Bytes remain after the object.\"] Trailing , # [doc = \" A count uses a nonminimal encoding.\"] Count , # [doc = \" Invalid flag or discriminant.\"] Flag , # [doc = \" The maintained decoder refuses the framed object.\"] Codec , # [doc = \" Issuance and peg-in transactions are not evidence transactions.\"] EvidenceInput , # [doc = \" The output is missing, confidential or in a different asset.\"] EvidenceOutput , # [doc = \" The permanent destruction target has a different run/request binding.\"] Target , }"
+    },
+    {
+      "item": "decoder::TransactionFields",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [doc = \" Public transaction fields; encoded subfields retain their complete layout.\"] # [doc = \" (´def:wallet:transaction-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct TransactionFields { # [doc = \" Transaction version.\"] pub version : u32 , # [doc = \" Complete inputs, including issuance and peg-in carriage.\"] pub inputs : Vec < Input > , # [doc = \" Complete outputs, including confidential non-evidence outputs.\"] pub outputs : Vec < Output > , # [doc = \" Consensus lock time.\"] pub lock_time : u32 , }"
+    },
+    {
+      "item": "decoder::Transaction",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [doc = \" A transaction whose complete framing and maintained decoding succeeded.\"] # [doc = \" (´def:wallet:validated-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Transaction (TransactionFields) ;"
+    },
+    {
+      "item": "decoder::Input",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [doc = \" Input fields, with opaque encoded proof carriage rather than a proof verdict.\"] # [doc = \" (´def:wallet:input-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Input { # [doc = \" Transaction identifier and masked output index.\"] pub outpoint : Vec < u8 > , # [doc = \" Peg-in flag.\"] pub pegin : bool , # [doc = \" Public script bytes.\"] pub script : Vec < u8 > , # [doc = \" Consensus sequence.\"] pub sequence : u32 , # [doc = \" Encoded issuance, including its nonce, entropy and both amounts.\"] pub issuance : Vec < u8 > , # [doc = \" Whether the codec found a non-null issuance.\"] pub has_issuance : bool , # [doc = \" Complete encoded input witness.\"] pub witness : Vec < u8 > , }"
+    },
+    {
+      "item": "decoder::Output",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [doc = \" Output fields; commitment parsing does not establish a confidential amount.\"] # [doc = \" (´def:wallet:output-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Output { # [doc = \" Encoded asset discriminant and value.\"] pub asset : Vec < u8 > , # [doc = \" Encoded value discriminant and integer or commitment.\"] pub value : Vec < u8 > , # [doc = \" Encoded nonce.\"] pub nonce : Vec < u8 > , # [doc = \" Full public script bytes.\"] pub script : Vec < u8 > , # [doc = \" Complete encoded output witness.\"] pub witness : Vec < u8 > , }"
+    },
+    {
+      "item": "decoder::Block",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "# [doc = \" Full block layout without a local signature or proof-verification verdict.\"] # [doc = \" (´def:wallet:block-layout´)\"] # [derive (Clone , Debug , Eq , PartialEq)] pub struct Block { # [doc = \" Complete original header, including signing challenge and witness.\"] pub header : Vec < u8 > , # [doc = \" All transactions, not just evidence candidates.\"] pub transactions : Vec < Transaction > , }"
+    },
+    {
+      "item": "decoder::Reader",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/decoder.rs",
+      "syntax": "struct Reader < 'a > { bytes : & 'a [u8] , pos : usize , remaining : usize , limits : Limits , }"
     }
   ],
   "class_decisions": [
@@ -15442,6 +15708,14 @@
           "pn-host::packages/host/src/storage.rs::storage::PostgresStore::append_effective_successor",
           "pn-host::packages/host/src/storage.rs::storage::MemoryStore::audit_history"
         ]
+      }
+    },
+    {
+      "name": "wallet-decoder",
+      "status": "reviewer-confirmed",
+      "premises": "The wallet decoder receives public transaction and block bytes only. Three labelled operations retain complete input and result at trace and bounded refusal outcomes at every level. The opaque transaction accessor inherits its caller; no network, RPC, credential, signing or verification authority is exposed. The independent byte reader and allocation fixtures bound this admission to public layout parsing.",
+      "membership": {
+        "labelled_package": "pn-wallet"
       }
     }
   ],
@@ -15592,6 +15866,27 @@
         "host__root__sig__design__storage__work_operations",
         "host__root__sig__design__storage__workload_bytes",
         "host__root__sig__design__storage__workload_operations"
+      ]
+    },
+    "shape-wallet": {
+      "fields": [
+        "complete public byte input and configured limits at trace",
+        "complete public decoded fields and result at trace",
+        "bounded outcome",
+        "inclusive duration_seconds",
+        "declared invocation work",
+        "qualified resource totals"
+      ],
+      "metrics": [
+        "wallet__root__sig__design__devnet__started_operations",
+        "wallet__root__sig__design__devnet__completed_operations",
+        "wallet__root__sig__design__devnet__work_bytes",
+        "wallet__root__sig__design__devnet__work_operations",
+        "wallet__root__sig__design__devnet__active_operations",
+        "wallet__root__sig__design__devnet__resource_current_bytes",
+        "wallet__root__sig__design__devnet__elapsed_seconds",
+        "wallet__root__sig__design__devnet__workload_bytes",
+        "wallet__root__sig__design__devnet__workload_operations"
       ]
     }
   },
@@ -17125,6 +17420,21 @@
       "status": "reviewer-confirmed",
       "premises": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
       "negative_probe": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary"
+    },
+    "wallet-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "The wallet decoder receives public transaction and block bytes only. Three labelled operations retain complete input and result at trace and bounded refusal outcomes at every level. The opaque transaction accessor inherits its caller; no network, RPC, credential, signing or verification authority is exposed. The independent byte reader and allocation fixtures bound this admission to public layout parsing.",
+      "negative_probe": "CLICOMMON::claim:cli:wallet-operations-retain-owner-accounting"
+    },
+    "wallet-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "The wallet decoder receives public transaction and block bytes only. Three labelled operations retain complete input and result at trace and bounded refusal outcomes at every level. The opaque transaction accessor inherits its caller; no network, RPC, credential, signing or verification authority is exposed. The independent byte reader and allocation fixtures bound this admission to public layout parsing.",
+      "negative_probe": "CLICOMMON::claim:cli:wallet-operations-retain-owner-accounting"
+    },
+    "wallet-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "The wallet decoder receives public transaction and block bytes only. Three labelled operations retain complete input and result at trace and bounded refusal outcomes at every level. The opaque transaction accessor inherits its caller; no network, RPC, credential, signing or verification authority is exposed. The independent byte reader and allocation fixtures bound this admission to public layout parsing.",
+      "negative_probe": "CLICOMMON::claim:cli:wallet-operations-retain-owner-accounting"
     }
   }
 }

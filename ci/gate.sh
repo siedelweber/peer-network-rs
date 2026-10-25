@@ -97,6 +97,7 @@ run_step observation-build cargo build --offline --locked --profile gate -p exec
 run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
 run_step host-observation-build python3 -B ci/host_evidence_build.py
 run_step host-observation-runtime python3 -B ci/run_ci.py test_host_runtime
+run_step wallet-conformance python3 -B ci/run_ci.py test_wallet_boundary
 run_step host-postgresql-stop python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"
 run_step observation-parser python3 -B ci/run_ci.py test_observe_syntax
 run_step observation-syntax python3 -B ci/observe.py

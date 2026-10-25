@@ -95,7 +95,6 @@
         "cli-common::observation::tests::provider_bridge": "integration"
       },
       "cases": [
-        "cli-common::observation::tests::artifact_digest_vector",
         "cli-common::observation::tests::unavailable_observation",
         "cli-common::observation::tests::typed_export_bootstrap",
         "cli-common::observation::tests::default_emission",
@@ -129,6 +128,9 @@
         "cli-common::observation::tests::shared_transport_cutoff",
         "cli-common::observation::tests::counter_contention",
         "cli-common::observation::tests::host_owner_accounting",
+        "cli-common::observation::tests::storage_instrument_accounting",
+        "cli-common::observation::tests::artifact_digest_vector",
+        "cli-common::observation::tests::wallet_owner_accounting",
         "cli-common::tests::emit_writes_one_json_line",
         "cli-common::tests::emit_propagates_writer_error",
         "cli-common::tests::partial_stdout_write_during_emit_is_not_reverted",
@@ -190,8 +192,7 @@
         "cli-common::tests::publication::report::an_absent_report_is_published_publicly_readable",
         "cli-common::tests::publication::report::a_current_report_with_a_correct_mode_is_untouched",
         "cli-common::tests::publication::report::a_stale_report_is_rewritten",
-        "cli-common::tests::publication::report::an_owner_only_current_report_is_mode_repaired_without_rewriting",
-        "cli-common::observation::tests::storage_instrument_accounting"
+        "cli-common::tests::publication::report::an_owner_only_current_report_is_mode_repaired_without_rewriting"
       ],
       "implementation": "cli-common-rust",
       "kind": "suite",
@@ -3651,6 +3652,71 @@
       "evidence": "real",
       "kind": "implementation",
       "name": "pn-host-memory-and-postgresql"
+    },
+    {
+      "contract": "bounded public Elements layout decoding and independent field oracle",
+      "edition": "wallet-layout-1",
+      "evidence": "pure",
+      "kind": "implementation",
+      "name": "pn-wallet-rust"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-wallet::decoder::tests::global_context_initialization"
+      ],
+      "implementation": "pn-wallet-rust",
+      "kind": "suite",
+      "level": "unit",
+      "name": "pn-wallet",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-wallet::layout::full_layouts",
+        "pn-wallet::layout::explicit_evidence",
+        "pn-wallet::layout::hostile_prefixes",
+        "pn-wallet::layout::invalid_curve_encodings",
+        "pn-wallet::layout::decoder_campaign"
+      ],
+      "implementation": "pn-wallet-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-wallet::layout",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-wallet::allocation::decoder_reservations"
+      ],
+      "implementation": "pn-wallet-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-wallet::allocation",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "ci::test_wallet_boundary.WalletBoundary.test_dependency_features",
+        "ci::test_wallet_boundary.WalletBoundary.test_case_census",
+        "ci::test_wallet_boundary.WalletBoundary.test_confinement"
+      ],
+      "implementation": "pn-wallet-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "ci::test_wallet_boundary",
+      "runner": "ci",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

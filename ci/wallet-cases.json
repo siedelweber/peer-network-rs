@@ -1,0 +1,396 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "group": "crypto",
+      "case": "exact versions, checksums, unified features and C modules",
+      "status": "held",
+      "claims": [],
+      "missing": "Independent dependency admission and entropy-failure execution remain held."
+    },
+    {
+      "group": "crypto",
+      "case": "pinned toolchain and both C provenance records",
+      "status": "held",
+      "claims": [],
+      "missing": "Independent dependency admission and entropy-failure execution remain held."
+    },
+    {
+      "group": "crypto",
+      "case": "invalid generator, commitment and public-key encodings",
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:invalid-curve-encodings-refuse"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "crypto",
+      "case": "invalid proof metadata and encodings without claiming proof verification",
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:invalid-curve-encodings-refuse"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "crypto",
+      "case": "global-context first use, entropy failure, concurrency, lifetime and fork review",
+      "status": "held",
+      "claims": [],
+      "missing": "Independent dependency admission and entropy-failure execution remain held."
+    },
+    {
+      "group": "crypto",
+      "case": "confinement rejects aliases, re-exports and non-adapter use",
+      "status": "scoped",
+      "claims": [
+        "ROOT::claim:discipline:wallet-codec-paths-stay-confined"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "layout",
+      "case": "full layout and inclusion with confidential non-evidence transactions",
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:full-layouts-preserve-nonevidence-transactions"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "layout",
+      "case": "issuance and peg-in non-evidence layouts and witnesses",
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:full-layouts-preserve-nonevidence-transactions"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "layout",
+      "case": "explicit evidence assets and integer amounts; wrong asset or opaque evidence refused",
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:explicit-evidence-binds-target-run-and-request"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "layout",
+      "case": "malformed prefixes, truncated and trailing bytes",
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:hostile-prefixes-refuse-before-codec-allocation"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "layout",
+      "case": "independent decoder and raw vector agreement",
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:full-layouts-preserve-nonevidence-transactions"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "layout",
+      "case": "hostile count prefixes and nested allocation measured by counting allocator",
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:decoder-reservations-have-measured-bounds"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "layout",
+      "case": "permanent target and run/request binding; missing or altered commitments refused",
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:explicit-evidence-binds-target-run-and-request"
+      ],
+      "missing": ""
+    },
+    {
+      "group": "profile",
+      "case": "missing service, wrong binary, run, genesis or mode refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "profile",
+      "case": "nontrivial declared challenge and invalid block signature refused by real node",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "profile",
+      "case": "genesis asset outputs, ownership and fixed stock independently reconciled",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "profile",
+      "case": "reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "profile",
+      "case": "all supported funding paths and pre-opening transfers audited for distribution bypass",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "profile",
+      "case": "transfers, fees and grants give zero burn; destruction gives exact amount",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "profile",
+      "case": "harness producer credential isolated from read-only adapter",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "settlement",
+      "case": "depth immediately below and at the declared threshold",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "settlement",
+      "case": "shallow replacement and pinned-floor fault",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "settlement",
+      "case": "duplicate outpoints and aliases cannot double count",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "settlement",
+      "case": "wrong policy edition and lineage refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "settlement",
+      "case": "missing or ambiguous opening and unavailable evidence refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "settlement",
+      "case": "non-development adapter refusal",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "settlement",
+      "case": "old evidence reads unchanged; epoch snapshot derivation remains bite 5",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "http",
+      "case": "status 200 result and error; 400, 404 and 500 error-only bodies",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "http",
+      "case": "401 closes without body parsing or retry; other statuses refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "http",
+      "case": "bare LF, folded lines, 1xx and close-delimited bodies refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "http",
+      "case": "duplicate or conflicting lengths, transfer encoding, compression and redirects refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "http",
+      "case": "header/body truncation, trailing bytes and excessive size refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "http",
+      "case": "slow-drip traffic cannot renew the single exchange deadline",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "http",
+      "case": "one attempt per exchange and aggregate reconnection ceiling before cookie access",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "json",
+      "case": "JSON-RPC 2.0 and exact correlated identifier",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "json",
+      "case": "result and error exclusive, including successful null result",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "json",
+      "case": "integer error code, string message and bounded optional data",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "json",
+      "case": "invalid UTF-8, BOM and duplicate keys refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "json",
+      "case": "depth, item and numeric conversion bounds",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "json",
+      "case": "unsupported method, batch, notification and wallet-admin routes refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "cookie",
+      "case": "declared same UID owner and exact permitted file modes",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "cookie",
+      "case": "parent ownership, write permissions, ACL and symlink refusals",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "cookie",
+      "case": "regular file, single hard link and descriptor substitution checks",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "cookie",
+      "case": "exact username, separator, hexadecimal password and optional single LF",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "cookie",
+      "case": "oversized, partial, changed, malformed or missing cookie refused",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "cookie",
+      "case": "restart rotation with fresh read; authentication refusal has no replay or fallback",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "secrets",
+      "case": "compile-time carrier checks with reviewed data flow",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "secrets",
+      "case": "endpoint, port, username, cookie path/bytes and wallet-selection sentinels",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "secrets",
+      "case": "retained Debug, Display, source chains, panics and all observation streams",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "secrets",
+      "case": "impostor echoes in status, headers, JSON error and result fields",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "secrets",
+      "case": "wrong credentials, unreachable peer, disconnect and timeout errors",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "secrets",
+      "case": "unmodified generic client demonstrates real retention or leakage",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    },
+    {
+      "group": "secrets",
+      "case": "successful public objects and public diagnostics remain fully recorded",
+      "status": "held",
+      "claims": [],
+      "missing": "The service and carrier slice supplies this case before integration enablement."
+    }
+  ]
+}

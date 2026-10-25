@@ -936,6 +936,17 @@
     "pn-host::scram::tests::derivation_permits": "",
     "pn-host::storage::tests::storage_tamper": "",
     "pn-host::storage::tests::storage_growth": "",
-    "ci::test_host_runtime.HostRuntime.test_binary_reachability_control": ""
+    "ci::test_host_runtime.HostRuntime.test_binary_reachability_control": "",
+    "cli-common::observation::tests::wallet_owner_accounting": "",
+    "pn-wallet::decoder::tests::global_context_initialization": "",
+    "pn-wallet::allocation::decoder_reservations": "",
+    "pn-wallet::layout::full_layouts": "",
+    "pn-wallet::layout::explicit_evidence": "",
+    "pn-wallet::layout::hostile_prefixes": "",
+    "pn-wallet::layout::invalid_curve_encodings": "",
+    "pn-wallet::layout::decoder_campaign": "",
+    "ci::test_wallet_boundary.WalletBoundary.test_dependency_features": "",
+    "ci::test_wallet_boundary.WalletBoundary.test_case_census": "",
+    "ci::test_wallet_boundary.WalletBoundary.test_confinement": ""
   }
 }

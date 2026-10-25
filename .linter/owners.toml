@@ -1,9 +1,10 @@
 namespace = "org.peer-network.linter.owners"
 version = [1, 0, 0]
 
-owners = ["ROOT", "DOCUMENTS", "INTERCHANGE", "CLICOMMON", "EXECWRAP", "TESTKIT", "RECORDS", "VERIFICATION", "HOST", "VENDOR"]
+owners = ["ROOT", "DOCUMENTS", "INTERCHANGE", "CLICOMMON", "EXECWRAP", "TESTKIT", "RECORDS", "VERIFICATION", "HOST", "WALLET", "VENDOR"]
 imports = []
 partitions = [
+  { name = "wallet-package", owner = "WALLET", pattern = '%s"packages/wallet/" *VCHAR' },
   { name = "host-package", owner = "HOST", pattern = '%s"packages/host/" *VCHAR' },
   { name = "verification-package", owner = "VERIFICATION", pattern = '%s"packages/verification/" *VCHAR' },
   { name = "records-package", owner = "RECORDS", pattern = '%s"packages/records/" *VCHAR' },
@@ -19,4 +20,4 @@ partitions = [
   { name = "execwrap", owner = "EXECWRAP", pattern = '%s"packages/execwrap/" *VCHAR' },
   { name = "testkit", owner = "TESTKIT", pattern = '%s"packages/testkit/" *VCHAR' },
 ]
-may_cite = [{ owner = "HOST", target = "INTERCHANGE" }, { owner = "HOST", target = "RECORDS" }, { owner = "HOST", target = "ROOT" }, { owner = "HOST", target = "CLICOMMON" }, { owner = "VERIFICATION", target = "TESTKIT" }, { owner = "VERIFICATION", target = "ROOT" }, { owner = "VERIFICATION", target = "RECORDS" }, { owner = "RECORDS", target = "TESTKIT" }, { owner = "ROOT", target = "VERIFICATION" }, { owner = "RECORDS", target = "ROOT" }, { owner = "RECORDS", target = "CLICOMMON" }, { owner = "INTERCHANGE", target = "VENDOR" }, { owner = "INTERCHANGE", target = "ROOT" }, { owner = "ROOT", target = "INTERCHANGE" }, { owner = "DOCUMENTS", target = "ROOT" }, { owner = "ROOT", target = "DOCUMENTS" }, { owner = "DOCUMENTS", target = "CLICOMMON" }, { owner = "EXECWRAP", target = "CLICOMMON" }, { owner = "EXECWRAP", target = "INTERCHANGE" }, { owner = "EXECWRAP", target = "DOCUMENTS" }, { owner = "CLICOMMON", target = "ROOT" }, { owner = "EXECWRAP", target = "ROOT" }, { owner = "ROOT", target = "CLICOMMON" }, { owner = "ROOT", target = "EXECWRAP" }, { owner = "TESTKIT", target = "ROOT" }, { owner = "INTERCHANGE", target = "TESTKIT" }]
+may_cite = [{ owner = "WALLET", target = "ROOT" }, { owner = "WALLET", target = "CLICOMMON" }, { owner = "WALLET", target = "TESTKIT" }, { owner = "HOST", target = "WALLET" }, { owner = "HOST", target = "INTERCHANGE" }, { owner = "HOST", target = "RECORDS" }, { owner = "HOST", target = "ROOT" }, { owner = "HOST", target = "CLICOMMON" }, { owner = "VERIFICATION", target = "TESTKIT" }, { owner = "VERIFICATION", target = "ROOT" }, { owner = "VERIFICATION", target = "RECORDS" }, { owner = "RECORDS", target = "TESTKIT" }, { owner = "ROOT", target = "VERIFICATION" }, { owner = "RECORDS", target = "ROOT" }, { owner = "RECORDS", target = "CLICOMMON" }, { owner = "INTERCHANGE", target = "VENDOR" }, { owner = "INTERCHANGE", target = "ROOT" }, { owner = "ROOT", target = "INTERCHANGE" }, { owner = "DOCUMENTS", target = "ROOT" }, { owner = "ROOT", target = "DOCUMENTS" }, { owner = "DOCUMENTS", target = "CLICOMMON" }, { owner = "EXECWRAP", target = "CLICOMMON" }, { owner = "EXECWRAP", target = "INTERCHANGE" }, { owner = "EXECWRAP", target = "DOCUMENTS" }, { owner = "CLICOMMON", target = "ROOT" }, { owner = "EXECWRAP", target = "ROOT" }, { owner = "ROOT", target = "CLICOMMON" }, { owner = "ROOT", target = "EXECWRAP" }, { owner = "TESTKIT", target = "ROOT" }, { owner = "INTERCHANGE", target = "TESTKIT" }]

@@ -48,3 +48,11 @@ instrumented = 38
 exceptions = 57
 helpers = 0
 generators = 75
+
+[[rows]]
+name = "pn-wallet"
+operations = 4
+instrumented = 3
+exceptions = 1
+helpers = 0
+generators = 7

@@ -12,7 +12,7 @@ from collections import Counter
 from devperf import StructuralError
 from harness import source_id
 
-OWNERS={'cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','host':'HOST','records':'RECORDS'}
+OWNERS={'cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','wallet':'WALLET','host':'HOST','records':'RECORDS'}
 HELPERS={
     'cli-common::packages/cli-common/src/observation.rs::observation::scope',
     'cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation',
@@ -197,9 +197,9 @@ def syntax_census():
     output=command(['cargo','run','--offline','--locked','--profile','gate','-q','-p','cli-common','--example','observe_census'],input=json.dumps(request))
     result=json.loads(output)
     result['source']=source_id()
-    result['declared_configuration']='six production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration'
+    result['declared_configuration']='seven production packages, host target, default and no-default features; development-only pn-testkit, pn-verification and records test-support are outside this production configuration'
     for package in metadata['packages']:
-        admitted={'cli-common':{'observation-test-hook':[]},'pn-records':{'test-support':[]}}
+        admitted={'cli-common':{'observation-test-hook':[]},'pn-records':{'test-support':[]},'pn-host':{'default':[],'development-network':['dep:pn-wallet']}}
         if package['id'] in metadata['workspace_members'] and '/packages/' in package['manifest_path'] and package['features'] and package['features']!=admitted.get(package['name']):
             raise StructuralError('new first-party feature configuration requires census admission')
     return result

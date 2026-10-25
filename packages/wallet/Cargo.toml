@@ -1,0 +1,20 @@
+[package]
+name = "pn-wallet"
+description = "Bounded public Elements layout decoding; RPC and spending disabled"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+version.workspace = true
+
+[dependencies]
+elements = { version = "=0.27.0", default-features = false }
+tracing.workspace = true
+
+[dev-dependencies]
+dhat = "=0.3.3"
+cli-common.workspace = true
+pn-testkit.workspace = true
+
+[lints]
+workspace = true

@@ -50,7 +50,13 @@ def binary_directory():
 TARGET = Path('packages/host/postgresql-target.txt').read_text().strip()
 
 def dependency_pins(packages, reviewed):
-    """Require every reachable registry archive to retain its reviewed pin."""
+    """Check the storage test closure, excluding the disabled optional wallet."""
+    manifest=tomllib.loads(Path('packages/host/Cargo.toml').read_text())
+    wallet=manifest['dependencies'].get('pn-wallet',{})
+    features=manifest.get('features',{})
+    if (wallet.get('optional') is not True or features.get('default') != []
+            or features.get('development-network') != ['dep:pn-wallet']):
+        raise ValueError('host wallet edge is not the reviewed disabled optional edge')
     by_name={}
     for package in packages:
         by_name.setdefault(package['name'], []).append(package)
@@ -64,6 +70,10 @@ def dependency_pins(packages, reviewed):
         seen[key]=package
         for dependency in package.get('dependencies',[]):
             fields=dependency.split()
+            # Cargo.lock includes disabled optional edges. The service fixture
+            # runs the default host; the wallet graph has its own pin review.
+            if package['name']=='pn-host' and fields[0]=='pn-wallet':
+                continue
             choices=by_name[fields[0]]
             if len(fields)>1:
                 choices=[choice for choice in choices if choice['version']==fields[1]]

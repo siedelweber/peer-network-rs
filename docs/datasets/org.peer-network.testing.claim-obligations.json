@@ -2694,16 +2694,23 @@
         "hostile count prefixes and nested allocation measured by counting allocator",
         "permanent target and run/request binding; missing or altered commitments refused"
       ],
-      "claims": [],
+      "claims": [
+        "WALLET::claim:wallet:decoder-reservations-have-measured-bounds",
+        "WALLET::claim:wallet:explicit-evidence-binds-target-run-and-request",
+        "WALLET::claim:wallet:full-layouts-preserve-nonevidence-transactions",
+        "WALLET::claim:wallet:hostile-prefixes-refuse-before-codec-allocation"
+      ],
       "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: full layout and inclusion with confidential non-evidence transactions; issuance and peg-in non-evidence layouts and witnesses; explicit evidence assets and integer amounts; wrong asset or opaque evidence refused; malformed prefixes, truncated and trailing bytes; independent decoder and raw vector agreement; hostile count prefixes and nested allocation measured by counting allocator; permanent target and run/request binding; missing or altered commitments refused.",
       "closing_step": "Bite 2 wallet integration, before enabling the adapter",
-      "hold": "ROOT::open:design:devnet-evidence",
-      "missing": "No executed claim for this case census: full layout and inclusion with confidential non-evidence transactions; issuance and peg-in non-evidence layouts and witnesses; explicit evidence assets and integer amounts; wrong asset or opaque evidence refused; malformed prefixes, truncated and trailing bytes; independent decoder and raw vector agreement; hostile count prefixes and nested allocation measured by counting allocator; permanent target and run/request binding; missing or altered commitments refused.",
+      "evidence_paragraph": "WALLET::amend:wallet:layout-evidence",
+      "hold": "",
+      "missing": "Outside scope: real-chain inclusion, relay policy and service evidence remain held with the wallet integration implementer.",
       "name": "ROOT::verif:devnet:wallet-layout",
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
+      "premises": "The seven layout cases run through the public adapter, byte-only independent oracle and per-vector heap profiler; the fixture target selector is not a real-chain relay-policy admission.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "case_census": [

@@ -71,6 +71,20 @@ class HostRuntime(unittest.TestCase):
         """
         from host_statements import check
         self.assertTrue(check())
+        manifest=Path('packages/host/Cargo.toml')
+        manifest_original=manifest.read_bytes()
+        lib=Path('packages/host/src/lib.rs')
+        lib_original=lib.read_bytes()
+        try:
+            manifest.write_bytes(manifest_original.replace(
+                b'tokio-postgres = { version = "=0.7.18", default-features = false }',
+                b'concealed-driver = { package = "tokio-postgres", version = "=0.7.18", default-features = false }'))
+            self.assertNotEqual(manifest.read_bytes(),manifest_original)
+            lib.write_bytes(lib_original+b'\nfn inferred_renamed_driver() { let _driver = concealed_driver::Config::new(); }\n')
+            with self.assertRaisesRegex(ValueError,'driver path outside'):check()
+        finally:
+            manifest.write_bytes(manifest_original)
+            lib.write_bytes(lib_original)
         source=Path('packages/host/src/lib.rs')
         original=source.read_bytes()
         for fixture in (
@@ -192,7 +206,7 @@ class HostRuntime(unittest.TestCase):
             self.assertNotIn(b'STEP=',result.stdout)
 
     def test_dependency_pins(self):
-        """Claim: The host's complete reachable lock closure must match its reviewed archive pins; a changed checksum, an omitted package or a duplicate review row refuses before the service starts.
+        """Claim: The host storage test closure, excluding the checked disabled optional wallet edge, must match its reviewed archive pins; a changed checksum, an omitted package, a duplicate review row or an enabled wallet edge refuses before the service starts.
         ´claim:discipline:host-archive-pins-cover-the-reachable-closure´
         ´test:integration:test-dependency-pins´
         """
@@ -204,6 +218,15 @@ class HostRuntime(unittest.TestCase):
         for bad in (changed,rows[1:],rows+[rows[0]]):
             with self.assertRaisesRegex(ValueError,'reviewed archive pins'):
                 dependency_pins(packages,bad)
+        manifest=Path('packages/host/Cargo.toml')
+        original=manifest.read_bytes()
+        try:
+            manifest.write_bytes(original.replace(b'optional = true',b'optional = false'))
+            self.assertNotEqual(manifest.read_bytes(),original)
+            with self.assertRaisesRegex(ValueError,'disabled optional edge'):
+                dependency_pins(packages,rows)
+        finally:
+            manifest.write_bytes(original)
 
     def test_public_transport(self):
         """Claim: After a successful-query drain barrier, default and trace runs against the real host-secured service retain identical public results and lossless host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials.

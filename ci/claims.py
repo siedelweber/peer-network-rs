@@ -299,6 +299,8 @@ def main(argv=None):
                 raise StructuralError('public carrier mapping differs')
         result = evaluate(sites, expected, areas, obligations, declared, paragraphs,
                           [r for r in records if r.get('scope')=='case'], source)
+        from wallet_cases import repository_check
+        repository_check(sites, [r for r in records if r.get('scope') == 'case'])
         entry = paragraphs['ROOT::amend:decomposition:bite-one-entry-evidence']['citations'] & set(obligations)
         required=entry-{'ROOT::gate:design:bite-1'}
         result['entries']=enforce_entry(result['obligations'], bite_one_started(root), required, paragraphs, entry_bases(paragraphs,required))

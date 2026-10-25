@@ -2,6 +2,7 @@
 from pathlib import Path
 import re
 from source_sites import rust_mask
+from dependency_identity import metadata, spellings
 
 
 def production(text):
@@ -23,6 +24,9 @@ def production(text):
 
 
 def check(root=Path('.')):
+    driver_names = spellings(metadata(root), 'pn-host', {'tokio-postgres'})
+    if not driver_names:
+        raise ValueError('host driver package identity missing')
     pending=[root/'packages/host/src/lib.rs'];seen=set()
     while pending:
         path=pending.pop()
@@ -57,6 +61,6 @@ def check(root=Path('.')):
                 end+=1
             if depth:raise ValueError('unclosed Session constructor')
             text=text[:begin]+' '*(end-begin)+text[end:]
-        if re.search(r'\btokio_postgres\b',text):
+        if any(re.search(r'\b'+re.escape(name)+r'\b',text) for name in driver_names):
             raise ValueError('driver path outside the closed statement wrapper and Session constructor: '+relative)
     return True

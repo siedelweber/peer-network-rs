@@ -302,3 +302,10 @@ area = "declarations"
 stake = "Persisting a later edition must not replace the exact constants selected at an earlier boundary."
 register = "HOST::sec:declarations:area-declarations"
 contract = "HOST::sec:declarations:area-declarations"
+
+[[rows]]
+owner = "WALLET"
+area = "wallet"
+stake = "If public layout decoding drops a field or accepts an ambiguous target, chain evidence can be misattributed or a hostile length can exhaust the reader."
+register = "WALLET::sec:wallet:area-wallet"
+contract = "WALLET::sec:wallet:area-wallet"

@@ -300,3 +300,59 @@ reader = "evaluated-crate-archive"
 source = "docs/inputs/devnet-profile.toml"
 definition = "The evaluated name and version determine the public crates.io archive locator. Its recorded SHA-256 is checked against the registry and archive during evaluation; this reader validates that locator and accounts only for the declared checksums, without treating the evaluation as a Cargo lock resolution or dependency admission."
 paths = ["docs/inputs/devnet-profile.toml", "docs/datasets/org.peer-network.devnet.profile.json", "adr/019-development-network.md"]
+
+[[rows]]
+family = "wallet-admitted-archives"
+group = "wallet decoder and heap-test dependencies"
+measures = "SHA-256 of a registry crate archive"
+producer = "Cargo lock resolution"
+establishment = "resolvable"
+reader = "cargo-archive"
+source = "Cargo.lock"
+definition = "Exact registry checksums for the stable decoder and development-only heap profiler are resolved in the workspace lock and preserved with their notices."
+paths = ["docs/inputs/wallet-dependencies.toml", "docs/datasets/org.peer-network.wallet.dependencies.json", "adr/019-development-network.md", "docs/templates/adr/019-development-network.md.j2", "packages/wallet/NOTICE-DEPENDENCIES"]
+
+[[rows]]
+family = "wallet-layout-literals"
+group = "wallet independent byte-layout fixtures"
+measures = "Protocol integer and byte literals, not identities"
+producer = "Elements layout and curve fixture coordinates"
+establishment = "defined"
+reader = "interchange-literal"
+definition = "Explicit integer and byte literals construct public parser fixtures; no bare content identity is admitted."
+paths = ["packages/wallet/**/*.rs"]
+
+[[rows]]
+family = "wallet-c-base"
+group = "wallet native decoder provenance"
+measures = "Upstream C snapshot commit declared by the sys archive"
+producer = "sys crate vendored provenance file"
+establishment = "resolvable"
+reader = "public-git"
+locator = "https://github.com/bitcoin-core/secp256k1/commit/1ad5185cd42c0636104129fcc9f6a4bf9c67cc40"
+commit = "1ad5185cd42c0636104129fcc9f6a4bf9c67cc40"
+definition = "The published sys crate declares this upstream snapshot; this identity is provenance, not an assertion of an executed upstream fuzz campaign."
+paths = ["ci/hash-citation-families.toml", "adr/023-cryptographic-base.md", "docs/templates/adr/023-cryptographic-base.md.j2"]
+
+[[rows]]
+family = "wallet-c-zkp"
+group = "wallet native decoder provenance"
+measures = "Upstream C snapshot commit declared by the sys archive"
+producer = "sys crate vendored provenance file"
+establishment = "resolvable"
+reader = "public-git"
+locator = "https://github.com/ElementsProject/secp256k1-zkp/commit/6152622613fdf1c5af6f31f74c427c4e9ee120ce"
+commit = "6152622613fdf1c5af6f31f74c427c4e9ee120ce"
+definition = "The published sys crate declares this upstream snapshot; this identity is provenance, not an assertion of an executed upstream fuzz campaign."
+paths = ["ci/hash-citation-families.toml", "adr/023-cryptographic-base.md", "docs/templates/adr/023-cryptographic-base.md.j2"]
+
+[[rows]]
+family = "wallet-fuzz-archives"
+group = "detached decoder fuzz tool dependencies"
+measures = "SHA-256 of a registry crate archive"
+producer = "Cargo lock resolution in the detached fuzz workspace"
+establishment = "resolvable"
+reader = "cargo-archive"
+source = "packages/wallet/fuzz/Cargo.lock"
+definition = "The detached tool lock fixes libfuzzer-sys, arbitrary and their tool closure, which is absent from the stable production graph."
+paths = ["packages/wallet/fuzz/Cargo.lock", "packages/wallet/fuzz/NOTICE-DEPENDENCIES"]

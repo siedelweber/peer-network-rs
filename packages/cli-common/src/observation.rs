@@ -689,6 +689,8 @@ pub enum OperationKind {
     Records,
     /// Host service transport and storage boundary operations.
     Host,
+    /// Public Elements layout and evidence operations.
+    Wallet,
 }
 impl OperationKind {
     const fn stem(self) -> &'static str {
@@ -702,6 +704,7 @@ impl OperationKind {
             Self::PublicExec => STEMS[6],
             Self::Records => "records__root__sig__design__records",
             Self::Host => "host__root__sig__design__storage",
+            Self::Wallet => "wallet__root__sig__design__devnet",
         }
     }
     const fn label(self) -> &'static str {
@@ -712,6 +715,7 @@ impl OperationKind {
             Self::Document | Self::Interchange | Self::PublicCli | Self::PublicExec => "rule:observe:spans",
             Self::Records => "sig:design:records",
             Self::Host => "sig:design:storage",
+            Self::Wallet => "sig:design:devnet",
         }
     }
     const fn owner(self) -> &'static str {
@@ -721,6 +725,7 @@ impl OperationKind {
             Self::Interchange => "INTERCHANGE",
             Self::Records => "RECORDS",
             Self::Host => "HOST",
+            Self::Wallet => "WALLET",
             _ => "CLICOMMON",
         }
     }
@@ -1101,6 +1106,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                     Some("INTERCHANGE") => Some(OperationKind::Interchange),
                     Some("RECORDS") => Some(OperationKind::Records),
                     Some("HOST") => Some(OperationKind::Host),
+                    Some("WALLET") => Some(OperationKind::Wallet),
                     Some("CLICOMMON") => Some(OperationKind::PublicCli),
                     Some("EXECWRAP") => Some(OperationKind::PublicExec),
                     _ => None,

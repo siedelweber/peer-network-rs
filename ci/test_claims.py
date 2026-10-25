@@ -279,8 +279,9 @@ class Evidence(unittest.TestCase):
                                ('prose',(data['paragraphs'],data['obligations'])),('source_id','current')):
                 stack.enter_context(patch('claims.'+name,return_value=value))
             with redirect_stdout(io.StringIO()):
-                self.assertEqual(main([]),0)
-                self.assertEqual(main(['--fail-respellings']),1)
+                with patch('wallet_cases.repository_check', return_value=None):
+                    self.assertEqual(main([]),0)
+                    self.assertEqual(main(['--fail-respellings']),1)
             self.assertEqual(len(json.loads(Path('.lane/claim-respellings.json').read_text())['offenders']),1)
 
     def test_review_binding(self):

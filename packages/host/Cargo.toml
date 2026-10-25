@@ -8,7 +8,12 @@ license.workspace = true
 publish = false
 version.workspace = true
 
+[features]
+default = []
+development-network = ["dep:pn-wallet"]
+
 [dependencies]
+pn-wallet = { path = "../wallet", optional = true }
 cli-common.workspace = true
 tracing.workspace = true
 metrics.workspace = true

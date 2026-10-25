@@ -10,6 +10,22 @@
       "imports": [],
       "may_cite": [
         {
+          "owner": "WALLET",
+          "target": "ROOT"
+        },
+        {
+          "owner": "WALLET",
+          "target": "CLICOMMON"
+        },
+        {
+          "owner": "WALLET",
+          "target": "TESTKIT"
+        },
+        {
+          "owner": "HOST",
+          "target": "WALLET"
+        },
+        {
           "owner": "HOST",
           "target": "INTERCHANGE"
         },
@@ -125,9 +141,15 @@
         "RECORDS",
         "VERIFICATION",
         "HOST",
+        "WALLET",
         "VENDOR"
       ],
       "partitions": [
+        {
+          "name": "wallet-package",
+          "owner": "WALLET",
+          "pattern": "%s\"packages/wallet/\" *VCHAR"
+        },
         {
           "name": "host-package",
           "owner": "HOST",

@@ -2110,8 +2110,8 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:host-archive-pins-cover-the-reachable-closure",
       "before": "",
-      "after": "Claim: The host's complete reachable lock closure must match its reviewed archive pins; a changed checksum, an omitted package or a duplicate review row refuses before the service starts.",
-      "review": "Read the exact typed-cause assertions and protocol byte arrangements. Proof-suppression checks precede client proof, relay fixtures await their task result, and all real-service assertions concern the declared closed fixture statements; timings are evidence only. The raw client path is cfg(test), with a negative public doctest."
+      "after": "Claim: The host storage test closure, excluding the checked disabled optional wallet edge, must match its reviewed archive pins; a changed checksum, an omitted package, a duplicate review row or an enabled wallet edge refuses before the service starts.",
+      "review": "Read the checked default/optional host feature declaration and explicit disabled-wallet exclusion, then the checksum, omitted-row, duplicate-row and enabled-wallet mutations. The wallet closure is independently checked by its own suite."
     },
     {
       "operation": "pn-host::tests::relay_refusals",
@@ -2384,6 +2384,94 @@
       "before": "Claim: The vector corpus still holds the 67 canonical rows and 26 refusals it was seeded with.",
       "after": "Claim: The corpus retains 86 canonical rows and 33 refusals, including all 81 distinct Appendix A examples split into 64 canonical rows and 17 refusals, so a missing or duplicate row cannot silently shrink its evidence.",
       "review": "Read the corpus and count assertions against all 81 source examples. The 26 added byte strings complete the source set; the test now fixes 86 canonical and 33 refusal rows overall, the 81/64 Appendix A split, and uniqueness. Row predicates independently exercise each disposition. No codec behavior changed."
+    },
+    {
+      "operation": "cli-common::observation::tests::wallet_owner_accounting",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:wallet-operations-retain-owner-accounting",
+      "before": "",
+      "after": "Claim: A WALLET-labelled decoder operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.",
+      "review": "Read the wallet owner span and its own stem counters, independently of other owner totals."
+    },
+    {
+      "operation": "pn-wallet::decoder::tests::global_context_initialization",
+      "path": "packages/wallet/src/decoder.rs",
+      "claim": "WALLET::claim:wallet:global-context-initializes-once",
+      "before": "",
+      "after": "Claim: Concurrent first dereferences of the admitted global context return the same process-lifetime context; this performs initialization only, with no signing or key-bearing operation.",
+      "review": "Read the eight-thread barrier and equal process-lifetime context pointers; this proves concurrent first-use identity, not entropy-failure handling."
+    },
+    {
+      "operation": "pn-wallet::allocation::decoder_reservations",
+      "path": "packages/wallet/tests/allocation.rs",
+      "claim": "WALLET::claim:wallet:decoder-reservations-have-measured-bounds",
+      "before": "",
+      "after": "Claim: Per-vector allocator measurements cover hostile, maximum and over-limit counts, short payloads and nested witnesses; rejected prefixes allocate nothing in the adapter, and successful layouts stay below the declared requested-allocation envelope and release their measured live storage.",
+      "review": "Read separate child processes with one profiler each, complete drop before statistics, all five per-vector bounds and zero allocation for the rejected prefixes."
+    },
+    {
+      "operation": "pn-wallet::layout::full_layouts",
+      "path": "packages/wallet/tests/layout.rs",
+      "claim": "WALLET::claim:wallet:full-layouts-preserve-nonevidence-transactions",
+      "before": "",
+      "after": "Claim: The maintained adapter and an independent byte-only oracle agree on every exposed field of explicit, confidential, issuance and peg-in transaction layouts, including witnesses, and retain all four transactions in the block.",
+      "review": "Read four transaction layouts and the block oracle; every exposed field including issuance and witnesses is compared. Confidential carriage is retained without claiming proof verification."
+    },
+    {
+      "operation": "pn-wallet::layout::explicit_evidence",
+      "path": "packages/wallet/tests/layout.rs",
+      "claim": "WALLET::claim:wallet:explicit-evidence-binds-target-run-and-request",
+      "before": "",
+      "after": "Claim: Only positive explicit amounts in the named asset and exact run, permanent target and request commitment qualify; issuance, peg-in, confidential outputs, wrong assets and changed or absent commitments refuse.",
+      "review": "Read the exact script and asset checks, positive 17-unit result, zero amount, absent output, three changed commitments and issuance/peg-in/confidential refusals; no real-chain relay policy is established."
+    },
+    {
+      "operation": "pn-wallet::layout::hostile_prefixes",
+      "path": "packages/wallet/tests/layout.rs",
+      "claim": "WALLET::claim:wallet:hostile-prefixes-refuse-before-codec-allocation",
+      "before": "",
+      "after": "Claim: Hostile length prefixes refuse before their requested contents are available; truncation, trailing bytes, nonminimal counts, invalid flags and script/witness limits remain distinct bounded refusals.",
+      "review": "Read each truncation and the maximal/nonminimal count, flag, script, input-byte and witness-byte cases; the allocation assertion belongs to the separate heap witness."
+    },
+    {
+      "operation": "pn-wallet::layout::invalid_curve_encodings",
+      "path": "packages/wallet/tests/layout.rs",
+      "claim": "WALLET::claim:wallet:invalid-curve-encodings-refuse",
+      "before": "",
+      "after": "Claim: Prefix-correct but invalid generator, Pedersen commitment and public-key encodings, and malformed range/surjection proof encodings, reach the maintained codec and refuse without a cryptographic verification claim.",
+      "review": "Read the three invalid curve coordinates and two malformed proof byte encodings; parsing refusal does not establish proof verification."
+    },
+    {
+      "operation": "pn-wallet::layout::decoder_campaign",
+      "path": "packages/wallet/tests/layout.rs",
+      "claim": "WALLET::claim:wallet:bounded-decoder-campaign-retains-layouts",
+      "before": "",
+      "after": "Claim: Generated explicit and non-evidence layouts agree field by field with the independent oracle, while arbitrary bounded bytes and mutated curve coordinates either decode completely or return a bounded refusal without panic.",
+      "review": "Read generated valid layouts against the independent reader, arbitrary bytes and three mutated coordinate positions; this is bounded robustness evidence, not exhaustive cryptographic validation."
+    },
+    {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_dependency_features",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:wallet-development-edges-stay-out-of-production",
+      "before": "",
+      "after": "Claim: The codec's unified curve, hash and entropy features match the reviewed vocabulary; normal host dependencies exclude the wallet and normal wallet dependencies exclude the heap profiler.",
+      "review": "Read exact unified feature comparison and normal/build dependency graphs excluding dhat and the host optional wallet edge."
+    },
+    {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_case_census",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:wallet-census-refuses-missing-evidence",
+      "before": "",
+      "after": "Claim: Every declared case must remain present, bind a real source claim with a passed result when scoped, and block discharge while any case is held.",
+      "review": "Read omitted and duplicate cases, missing source and execution, and held-case discharge probes against the same join used by claims."
+    },
+    {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_confinement",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:wallet-codec-paths-stay-confined",
+      "before": "",
+      "after": "Claim: Cargo identifies renamed codec dependencies, and the source check rejects global-context, hash-path and re-export uses outside the sole decoder adapter.",
+      "review": "Read source mutations for global context, hash path and re-export, then the Cargo package-renaming mutation; each is restored and rejected by package identity."
     }
   ]
 }

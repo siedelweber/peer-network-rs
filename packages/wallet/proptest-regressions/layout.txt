@@ -1,0 +1,2 @@
+# Committed replay corpus for the bounded wallet decoder campaign.
+# New minimal counterexamples are retained here by proptest.

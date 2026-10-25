@@ -53,6 +53,14 @@
       "instrumented": 38,
       "name": "pn-records",
       "operations": 95
+    },
+    {
+      "exceptions": 1,
+      "generators": 7,
+      "helpers": 0,
+      "instrumented": 3,
+      "name": "pn-wallet",
+      "operations": 4
     }
   ]
 }

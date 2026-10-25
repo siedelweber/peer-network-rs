@@ -1,0 +1,33 @@
+# Wallet layout adapter · `guide:wallet:decoder`
+
+**Section (Wallet claims)** · `sec:wallet:area-wallet` If public layout decoding drops a field or accepts an ambiguous target, chain evidence can be misattributed or a hostile length can exhaust the reader. The package exposes public transaction and block layout decoding and explicit evidence-output selection. It performs no network access, RPC, signing, proof verification, custody or spending. The host edge requires development-network; the default host graph excludes this package.
+
+**Definition (Decoder scope)** · `def:wallet:scope` The three labelled operations implement the layout portion of (`[ROOT-sig:design:devnet]`). An allocation-free framing pass checks complete consumption and aggregate lengths before maintained decoding. Transactions use elements' incremental decoder. Block headers use its existing header decoder only after complete bounded framing; non-evidence confidential, issuance and peg-in transactions retain their full layouts. Point and proof encoding parsing is not signature or proof verification. The public DTO carries opaque serialized subfields without minting a chain or semantic identity.
+
+**Implementation remark (Measured limits)** · `impl:wallet:reservation-bound` Caller limits cannot exceed 4,000,000 encoded bytes, 4,096 aggregate entries, 10,000 script bytes or 65,536 bytes per witness/proof. The preflight envelope charges sixteen times encoded bytes, 65,536 bytes per declared entry and 4,194,304 bytes of fixed headroom, capped at 134,217,728 bytes. This is a conservative reservation admission rule, not a replacement global allocator or an enforced process RSS limit. The heap witness records actual requested and peak bytes per fixture, excluding profiler metadata, under (`[ROOT-amend:devnet:wallet-decoder-evidence]`).
+
+**Implementation remark (Remaining integration)** · `impl:wallet:held-integration` RPC, real-chain and settlement fixtures remain held. The 100-byte OP_RETURN fixture carries three literal 32-byte fields for run, target and request; it establishes local exact-match selection only. Its real-chain relay policy and transaction constructor are not admitted here. Global-context entropy-failure execution remains held; production decoder paths use the no-precomputation parsers and do not dereference the randomized global context. (`[ROOT-open:design:devnet-evidence]`) and (`[ROOT-open:crypto:dependency-admission]`) retain those integration duties.
+
+**Definition (Decoder limits)** · `def:wallet:decoder-limits` Caller-supplied byte, aggregate item, script, witness and reservation limits are bounded by the implementation ceilings. Framing checks precede maintained decoding.
+
+**Definition (Decoder refusal)** · `def:wallet:decoder-refusal` A fieldless cause distinguishes limits, count spelling, flags, incomplete or trailing input, codec refusal and unsupported evidence. No error owns input bytes.
+
+**Definition (Transaction layout)** · `def:wallet:transaction-layout` The public field view retains version, lock time, every input and output, and their opaque serialized curve and proof fields.
+
+**Definition (Validated layout)** · `def:wallet:validated-layout` Transaction owns a private field view, constructible only through complete bounded decoding; validation here means structural layout, not chain acceptance or cryptographic verification.
+
+**Definition (Input layout)** · `def:wallet:input-layout` An input retains outpoint, peg-in flag, script, sequence, issuance presence and full serialized issuance and witness bytes.
+
+**Definition (Output layout)** · `def:wallet:output-layout` An output retains complete serialized asset, value, nonce, script and witness bytes, including confidential non-evidence forms.
+
+**Definition (Block layout)** · `def:wallet:block-layout` A block retains its complete header bytes and every decoded transaction; one non-evidence transaction does not disqualify the other layouts.
+
+**Signature (Transaction fields)** · `sig:wallet:transaction-fields` Borrow the immutable already decoded view; pure access inherits its caller's observation.
+
+**Signature (Decode transaction)** · `sig:wallet:decode-transaction` Preflight and decode exactly one complete transaction, refusing incomplete consumption or violated bounds.
+
+**Signature (Decode block)** · `sig:wallet:decode-block` Preflight the entire block before allocation, then decode its complete header and all transaction layouts.
+
+**Signature (Evidence amount)** · `sig:wallet:evidence-amount` Select a positive explicit integer amount in the requested asset, with no issuance or peg-in and an exact run, target and request script.
+
+**Amendment (Layout evidence)** · `amend:wallet:layout-evidence` The seven fixture obligations of (`[ROOT-verif:devnet:wallet-layout]`) are supported by (`claim:wallet:decoder-reservations-have-measured-bounds`), (`claim:wallet:explicit-evidence-binds-target-run-and-request`), (`claim:wallet:full-layouts-preserve-nonevidence-transactions`), (`claim:wallet:hostile-prefixes-refuse-before-codec-allocation`). The independent byte reader compares exposed fields of full layouts; per-vector heap tests measure the declared finite fixtures. Real-chain acceptance, relay policy, RPC and settlement remain outside this scope.

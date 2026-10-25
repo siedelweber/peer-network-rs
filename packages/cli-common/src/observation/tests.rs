@@ -1745,3 +1745,48 @@ fn artifact_digest_vector() {
     assert_eq!(path, directory.path().join("objects").join("sha256").join(expected));
     assert_eq!(std::fs::read(path).unwrap(), encoded);
 }
+
+/// Claim: A WALLET-labelled decoder operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.
+/// ´claim:cli:wallet-operations-retain-owner-accounting´
+/// ´test:unit:wallet-owner-accounting´
+#[test]
+fn wallet_owner_accounting() {
+    for trace in [false, true] {
+        let (mut observation, clock, capture) = fixture();
+        observation.full_trace = trace;
+        let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
+        tracing::subscriber::with_default(subscriber, || {
+            let operation = scope("WALLET", "sig:design:devnet", "decode-transaction", &());
+            clock.0.store(250, Ordering::Relaxed);
+            operation.finish_with(Outcome::Success, &());
+        });
+        drop(BootstrapGuard(Some(observation.clone())));
+        let rows = records(&observation, &capture);
+        let mut instruments = rows.iter().find(|row| row["kind"] == "metric_summary").unwrap()["metrics"]["instruments"].clone();
+        if let Some(path) = instruments["artifact"]["path"].as_str() {
+            let bytes = std::fs::read(path).unwrap();
+            assert_eq!(instruments["artifact"]["length_bytes"], bytes.len());
+            assert_eq!(instruments["artifact"]["digest"], digest_hex(&bytes));
+            instruments = serde_json::from_slice(&bytes).unwrap();
+        }
+        let series = instruments.as_array().unwrap();
+        let started = series
+            .iter()
+            .find(|row| row["name"] == "wallet__root__sig__design__devnet__started_operations")
+            .unwrap();
+        assert_eq!(started["counter"], 1);
+        let elapsed = series
+            .iter()
+            .find(|row| row["name"] == "wallet__root__sig__design__devnet__elapsed_seconds")
+            .unwrap();
+        assert_eq!(elapsed["count"], 1);
+        assert_eq!(elapsed["sum"], 0.25);
+        assert!(
+            series
+                .iter()
+                .filter(|row| row["name"].as_str().unwrap().ends_with("started_operations")
+                    && !row["name"].as_str().unwrap().starts_with("wallet__"))
+                .all(|row| row["counter"] == 0)
+        );
+    }
+}
