@@ -138,7 +138,7 @@ class HostRuntime(unittest.TestCase):
                 self.assertIn('public_storage_payload_731',text)
                 source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
                 statements=re.findall(r'Self::[A-Za-z]+\s*=>\s*(?:\{\s*)?"([^"\n]+)"',source)
-                self.assertEqual(len(statements),13)
+                self.assertEqual(len(statements),14)
                 for statement in statements:self.assertIn(statement,text)
             print(f'STORAGE-RUNTIME level={level} wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]}')
         self.assertEqual(outputs[0],outputs[1])

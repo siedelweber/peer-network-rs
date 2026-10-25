@@ -2270,8 +2270,8 @@
       "before": "",
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:foreign-schema-refuses-without-migration",
-      "after": "Claim: A recorded foreign schema identity refuses before storage writes, while reopening the same admitted identity preserves the stored bytes without migration.",
-      "review": "Read the test-only identity corruption followed by a new connection: SchemaIdentity must refuse before write."
+      "after": "Claim: Bootstrap refuses foreign schema identity and same-named read indexes with a wrong table, column or ordering; refusal preserves each mismatched definition, and the admitted definitions reopen without replacement.",
+      "review": "Read the four real PostgreSQL index substitutions, typed IndexDefinition refusals, unchanged catalogue definitions after refusal, successful reopen after restoration and foreign schema refusal."
     },
     {
       "operation": "pn-host::storage::tests::storage_historical_constants",
@@ -2295,7 +2295,7 @@
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:closed-storage-statements-return-public-values",
       "after": "Claim: The closed storage statement set returns retained public values through `DataRows` under observation, with deterministic bytes and exact transaction results; its private service configuration remains behind Session.",
-      "review": "Read the thirteen closed SQL statements, including idempotent index bootstrap, reached by fresh bootstrap, two versions, boundary reads and ReadHistory through audit_history; the only metadata query is opt-in test code for the negative scan."
+      "review": "Read the fourteen closed SQL statements, including idempotent index bootstrap and catalogue definition verification, reached by fresh bootstrap, two versions, boundary reads and ReadHistory through audit_history; the only session-metadata query is opt-in test code for the negative scan."
     },
     {
       "operation": "pn-host::storage::tests::storage_restart",

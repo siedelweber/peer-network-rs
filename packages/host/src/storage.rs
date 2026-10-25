@@ -44,6 +44,7 @@ impl Family {
 pub enum StorageError {
     Representation,
     SchemaIdentity,
+    IndexDefinition,
     Transport,
     CorruptHistory,
     EditionConflict,
@@ -484,6 +485,7 @@ enum Statement {
     SetIdentity,
     GetIdentity,
     EnsureIndexes,
+    VerifyIndexes,
     LockHistory,
     ReadHistory,
     ReadKey,
@@ -505,6 +507,9 @@ impl Statement {
             Self::SetIdentity => "Insert INTO public.pn_store_identity VALUES ($1)",
             Self::EnsureIndexes => {
                 "DO $$ BEGIN IF to_regclass('public.pn_versions_opens') IS NULL THEN CREATE INDEX pn_versions_opens ON public.pn_versions(opens); END IF; IF to_regclass('public.pn_closures_closes') IS NULL THEN CREATE INDEX pn_closures_closes ON public.pn_closures(closes); END IF; END $$"
+            }
+            Self::VerifyIndexes => {
+                "SELECT bool_and(COALESCE(t.relnamespace='public'::regnamespace AND t.relname=e.table_name AND a.attname=e.column_name AND i.indnkeyatts=1 AND i.indnatts=1 AND i.indoption[0]=0 AND i.indisvalid AND i.indisready AND NOT i.indisunique AND i.indpred IS NULL AND i.indexprs IS NULL AND am.amname='btree',false)) FROM (VALUES ('pn_versions_opens','pn_versions','opens'),('pn_closures_closes','pn_closures','closes')) AS e(index_name,table_name,column_name) LEFT JOIN pg_catalog.pg_class c ON c.relnamespace='public'::regnamespace AND c.relname=e.index_name LEFT JOIN pg_catalog.pg_index i ON i.indexrelid=c.oid LEFT JOIN pg_catalog.pg_class t ON t.oid=i.indrelid LEFT JOIN pg_catalog.pg_attribute a ON a.attrelid=t.oid AND a.attnum=i.indkey[0] LEFT JOIN pg_catalog.pg_am am ON am.oid=c.relam"
             }
             Self::GetIdentity => "SELECT identity FROM public.pn_store_identity",
             Self::LockHistory => "LOCK TABLE public.pn_versions IN SHARE ROW EXCLUSIVE MODE",
@@ -620,7 +625,7 @@ impl PostgresStore {
     /// Initialize only an empty database, or require the exact existing schema identity.
     /// (´def:host:effective-storage´)
     /// # Errors
-    /// Refuses foreign schema identity or transport failure; only the declared indexes are added idempotently.
+    /// Refuses foreign schema identity, mismatched index definitions or transport failure; missing declared indexes are added idempotently.
     #[tracing::instrument(
         name = "sig:design:storage",
         fields(
@@ -654,6 +659,10 @@ impl PostgresStore {
             return Err(StorageError::SchemaIdentity);
         }
         observed(transaction.batch_execute(Statement::EnsureIndexes)).await?;
+        let indexes_match: bool = observed(transaction.query_one(Statement::VerifyIndexes, &[])).await?.get(0);
+        if !indexes_match {
+            return Err(StorageError::IndexDefinition);
+        }
         transaction.commit().await.map_err(|_| StorageError::CommitUnknown)?;
         meter.commit();
         Ok(())

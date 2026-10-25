@@ -15418,7 +15418,7 @@
       "item": "storage::StorageError",
       "package": "pn-host",
       "path": "packages/host/src/storage.rs",
-      "syntax": "# [doc = \" Bounded storage failure, never a mathematical verdict or a driver diagnostic.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum StorageError { Representation , SchemaIdentity , Transport , CorruptHistory , EditionConflict , Predecessor , Gap , Overlap , Retroactive , MissingRequired , Injected , CommitUnknown , EpochResultHeld , }"
+      "syntax": "# [doc = \" Bounded storage failure, never a mathematical verdict or a driver diagnostic.\"] # [doc = \" (´def:host:effective-storage´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum StorageError { Representation , SchemaIdentity , IndexDefinition , Transport , CorruptHistory , EditionConflict , Predecessor , Gap , Overlap , Retroactive , MissingRequired , Injected , CommitUnknown , EpochResultHeld , }"
     },
     {
       "item": "storage::TransactionMeter",
@@ -15478,7 +15478,7 @@
       "item": "storage::Statement",
       "package": "pn-host",
       "path": "packages/host/src/storage.rs",
-      "syntax": "# [derive (Clone , Copy)] enum Statement { BootstrapLock , HasTables , HasIdentity , Create , SetIdentity , GetIdentity , EnsureIndexes , LockHistory , ReadHistory , ReadKey , ReadBoundary , Close , Insert , }"
+      "syntax": "# [derive (Clone , Copy)] enum Statement { BootstrapLock , HasTables , HasIdentity , Create , SetIdentity , GetIdentity , EnsureIndexes , VerifyIndexes , LockHistory , ReadHistory , ReadKey , ReadBoundary , Close , Insert , }"
     },
     {
       "item": "storage::StatementClient",

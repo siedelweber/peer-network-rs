@@ -312,13 +312,76 @@ fn storage_recognition_disclosure() {
     }
 }
 
-/// Claim: A recorded foreign schema identity refuses before storage writes, while reopening the same admitted identity preserves the stored bytes without migration.
+/// Claim: Bootstrap refuses foreign schema identity and same-named read indexes with a wrong table, column or ordering; refusal preserves each mismatched definition, and the admitted definitions reopen without replacement.
 /// ´claim:history:foreign-schema-refuses-without-migration´
 /// ´test:unit:storage-schema-identity´
 #[test]
 fn storage_schema_identity() {
     runtime().block_on(async {
         let store = store("storage-schema.json").await;
+        for (name, definition, correct) in [
+            (
+                "pn_versions_opens",
+                "ON public.pn_versions(announced)",
+                "ON public.pn_versions(opens)",
+            ),
+            (
+                "pn_closures_closes",
+                "ON public.pn_closures(edition)",
+                "ON public.pn_closures(closes)",
+            ),
+            (
+                "pn_versions_opens",
+                "ON public.pn_versions(opens DESC)",
+                "ON public.pn_versions(opens)",
+            ),
+            (
+                "pn_versions_opens",
+                "ON public.pn_closures(closes)",
+                "ON public.pn_versions(opens)",
+            ),
+        ] {
+            let sql = format!("DROP INDEX public.{name}; CREATE INDEX {name} {definition}");
+            store.session.client().batch_execute(&sql).await.unwrap();
+            let before: String = store
+                .session
+                .client()
+                .query_one("SELECT pg_get_indexdef(to_regclass($1))", &[&format!("public.{name}")])
+                .await
+                .unwrap()
+                .get(0);
+            let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
+            let mut file = std::fs::File::open(std::path::Path::new(&root).join("storage-schema.json")).unwrap();
+            let config = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
+            assert_eq!(
+                PostgresStore::open_store(Session::connect(config).await.unwrap())
+                    .await
+                    .unwrap_err(),
+                StorageError::IndexDefinition
+            );
+            let after: String = store
+                .session
+                .client()
+                .query_one("SELECT pg_get_indexdef(to_regclass($1))", &[&format!("public.{name}")])
+                .await
+                .unwrap()
+                .get(0);
+            assert_eq!(before, after);
+            store
+                .session
+                .client()
+                .batch_execute(&format!("DROP INDEX public.{name}; CREATE INDEX {name} {correct}"))
+                .await
+                .unwrap();
+        }
+        let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
+        let mut file = std::fs::File::open(std::path::Path::new(&root).join("storage-schema.json")).unwrap();
+        let config = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
+        drop(
+            PostgresStore::open_store(Session::connect(config).await.unwrap())
+                .await
+                .unwrap(),
+        );
         store
             .session
             .client()
