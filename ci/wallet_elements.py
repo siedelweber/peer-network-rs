@@ -481,9 +481,8 @@ if __name__ == '__main__':
     try:
         main()
     except Exception as error:
-        # Harness RuntimeError messages are fixed public text, with at most a
-        # public RPC method name; other errors may carry a path or a port, so
-        # only their type is named. The traceback stays in the private log.
-        cause = str(error) if type(error) is RuntimeError else type(error).__name__
-        print('Elements fixture unavailable: ' + cause, file=sys.stderr)
+        # Paths, ports and node diagnostics are public. The fixture credential
+        # lives in the private producer file and no harness message includes
+        # it, so every error is printed with its type and message.
+        print(f'Elements fixture unavailable: {type(error).__name__}: {error}', file=sys.stderr)
         sys.exit(1)

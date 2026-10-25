@@ -2846,7 +2846,7 @@
       "path": "ci/test_wallet_boundary.py",
       "claim": "ROOT::claim:discipline:wallet-fixture-ports-survive-time-wait",
       "before": "",
-      "after": "Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its public cause.",
+      "after": "Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path.",
       "review": "Read the allocator over real sockets: a server-closed connection left in TIME_WAIT, a live listener, a port taken before a real daemon launch, and the harness entry's public cause line. This witnesses allocation and launch retry for this account's fixtures, not a lock shared with other accounts."
     },
     {

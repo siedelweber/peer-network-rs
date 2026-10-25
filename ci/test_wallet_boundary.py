@@ -8,6 +8,7 @@ import wallet_crypto
 import json
 import tomllib
 import subprocess
+import os
 
 
 class WalletBoundary(unittest.TestCase):
@@ -68,7 +69,7 @@ class WalletBoundary(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'build-script field'):
                 check_build_scripts([bad], [package])
     def test_fixture_ports(self):
-        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its public cause.
+        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path.
         ´claim:discipline:wallet-fixture-ports-survive-time-wait´
         ´test:integration:test-fixture-ports´
         """
@@ -131,7 +132,13 @@ class WalletBoundary(unittest.TestCase):
         result = subprocess.run(['python3', '-B', 'ci/wallet_elements.py', 'stop', '--root', '/'],
                                 capture_output=True, text=True, check=False)
         self.assertEqual(result.returncode, 1)
-        self.assertEqual(result.stderr.strip(), 'Elements fixture unavailable: Elements fixture must be directly under workspace .lane')
+        self.assertEqual(result.stderr.strip(),
+                         'Elements fixture unavailable: RuntimeError: Elements fixture must be directly under workspace .lane')
+        missing = subprocess.run(['python3', '-B', 'ci/wallet_elements.py', 'start', '--root', '.lane/wallet-cause-witness'],
+                                 capture_output=True, text=True, check=False, env=dict(os.environ, PN_ELEMENTS_BIN='/nonexistent'))
+        self.assertEqual(missing.returncode, 1)
+        self.assertTrue(missing.stderr.startswith('Elements fixture unavailable: FileNotFoundError: '))
+        self.assertIn('/nonexistent/elementsd', missing.stderr)
 
     def test_codec_pins(self):
         """Claim: Every registry package of the wallet's normal and build closure carries its reviewed archive checksum in the lockfile, and both built C archives export exactly the reviewed module families, with ECDH, SCHNORRSIG, EXTRAKEYS and ELLSWIFT in secp256k1-sys and SURJECTIONPROOF, GENERATOR, RANGEPROOF, ECDSA_ADAPTOR and WHITELIST in secp256k1-zkp-sys; a changed checksum, a missing module, an unreviewed module or an unknown family refuses.
