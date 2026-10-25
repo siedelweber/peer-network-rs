@@ -1731,7 +1731,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-shared-policy",
       "label_source": "explicit",
-      "statement": "Publish title and settlement recognition, target size and duration bounds, the policy-floor schedule announced at boundary k and effective at k+1, valid if and only if at or above the safety wall, threshold schedule and margin. Publish the in-force wall and fixed structural-floor declaration beside the numeraire before the first epoch, including its exact defining object and comparison procedure; include controller edition, reduced constants, completed width and rung, proposal and delivered led wall. No protocol formula changes silently."
+      "statement": "Publish title and settlement recognition, target size and duration bounds, the policy-floor schedule (announced at boundary k and effective at k+1, valid if and only if at or above the safety wall), the threshold schedule, and the margin. Publish the in-force wall and fixed structural-floor declaration beside the numeraire before the first epoch, including its exact defining object and comparison procedure; include controller edition, reduced constants, completed width and rung, proposal and delivered led wall. No protocol formula changes silently."
     },
     {
       "chapter": "03 Network",
@@ -15393,7 +15393,7 @@
       "kind": "invariant check",
       "label": "case:necessity:directed-edges-undirected",
       "label_source": "explicit",
-      "statement": "Track directed edges undirected as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:directed-edges``: Keep directed edges; refuse undirected, symmetric influence, which manufactures paths to clique members through shared content without the directed outward actions those paths would require."
     },
     {
       "chapter": "H Necessity",
@@ -15415,7 +15415,7 @@
       "kind": "invariant check",
       "label": "case:necessity:passivity-autonomous-emission",
       "label_source": "explicit",
-      "statement": "Track passivity autonomous emission as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:passivity``: Keep passive-sourced legs author-attributed, target-fixed and immutable; refuse autonomous passive-node emission, which injects routing connections no actor consented to or authored."
     },
     {
       "chapter": "H Necessity",
@@ -15437,7 +15437,7 @@
       "kind": "invariant check",
       "label": "case:necessity:tensor-format-scalar-routing",
       "label_source": "explicit",
-      "statement": "Track tensor format scalar routing as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:tensor-format``: Keep the stored 3 by 3 slice and extracted 2 by 2 path view for their distinct consumers; refuse routing on a single derived scalar, which loses orientation, matrix composition and the separation of routing discrimination from attribution equity, even if the parameters remain auditable."
     },
     {
       "chapter": "H Necessity",
@@ -15448,7 +15448,7 @@
       "kind": "invariant check",
       "label": "case:necessity:tensor-format-lossy-storage",
       "label_source": "explicit",
-      "statement": "Track tensor format lossy storage as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:tensor-format``: Keep the non-lossy parameter declaration so scoring objects can be recomputed; refuse storing only a derived scalar and discarding the parameters, which breaks auditability. This storage failure requires parameter sufficiency, not by itself the tensor format."
     },
     {
       "chapter": "H Necessity",
@@ -15481,7 +15481,7 @@
       "kind": "invariant check",
       "label": "case:necessity:average-based-aggregation-summation",
       "label_source": "explicit",
-      "statement": "Track average based aggregation summation as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:average-based-aggregation``: Keep arithmetic-mean aggregation; refuse summing sentiment parameters, which drives repeated identical contributions into clamp saturation and erases per-actor sentiment magnitude rather than preserving parameter fidelity."
     },
     {
       "chapter": "H Necessity",
@@ -15503,7 +15503,7 @@
       "kind": "invariant check",
       "label": "case:necessity:per-author-netting-weight-netting",
       "label_source": "explicit",
-      "statement": "Track per author netting weight netting as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:per-author-netting``: Keep full-incidence, per-author parameter netting by sum-then-clip to [-1,1] for endorsement projection only; refuse summing already transformed edge weights, which can exceed the published path-weight ceilings."
     },
     {
       "chapter": "H Necessity",
@@ -15514,7 +15514,7 @@
       "kind": "invariant check",
       "label": "case:necessity:per-author-netting-cross-author-netting",
       "label_source": "explicit",
-      "statement": "Track per author netting cross author netting as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:per-author-netting``: Keep full-incidence bundles separate by author and net their parameters only; refuse cross-author netting, which lets one author’s revision cancel another author’s live consent through a shared passive node."
     },
     {
       "chapter": "H Necessity",
@@ -15525,7 +15525,7 @@
       "kind": "invariant check",
       "label": "case:necessity:per-author-netting-derived-bond-netting",
       "label_source": "explicit",
-      "statement": "Track per author netting derived bond netting as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:per-author-netting``: Keep derived Self-edge components outside record netting and recompute their activation from final standing; refuse netting them as records, a category error because they have no authored bundle and their responsive channel is not an accumulated record quantity."
     },
     {
       "chapter": "H Necessity",
@@ -15536,7 +15536,7 @@
       "kind": "invariant check",
       "label": "case:necessity:per-author-netting-settlement-netting",
       "label_source": "explicit",
-      "statement": "Track per author netting settlement netting as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:per-author-netting``: Keep settlement records outside endorsement-only parameter netting; refuse netting them, which hides the individual records settlement recognition reads."
     },
     {
       "chapter": "H Necessity",
@@ -15547,7 +15547,7 @@
       "kind": "invariant check",
       "label": "case:necessity:per-author-netting-control-netting",
       "label_source": "explicit",
-      "statement": "Track per author netting control netting as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:per-author-netting``: Keep control records outside endorsement-only parameter netting; refuse netting them, which hides the individual control records settlement recognition reads."
     },
     {
       "chapter": "H Necessity",
@@ -15569,7 +15569,7 @@
       "kind": "invariant check",
       "label": "case:necessity:max-product-path-scoring-sum-of-paths",
       "label_source": "explicit",
-      "statement": "Track max product path scoring sum of paths as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:max-product-path-scoring``: Keep max-product path scoring; refuse summing over all paths, which lets k parallel paths multiply the score by k and turns internal redundancy into manufactured visibility."
     },
     {
       "chapter": "H Necessity",
@@ -15613,7 +15613,7 @@
       "kind": "invariant check",
       "label": "case:necessity:self-retention-base-drop-mass",
       "label_source": "explicit",
-      "statement": "Track self retention base drop mass as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:self-retention-base``: Keep unallocated source mass as positive self-retention; refuse dropping it, which lowers row sums below one and breaks the equality between a closed cluster’s weighted mean and its ledger ratio."
     },
     {
       "chapter": "H Necessity",
@@ -15624,7 +15624,7 @@
       "kind": "invariant check",
       "label": "case:necessity:self-retention-base-tilt-self",
       "label_source": "explicit",
-      "statement": "Track self retention base tilt self as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:self-retention-base``: Keep self-retention unmodulated by standing; refuse tilting the self share, which lets standing defend its own retention without a new source or act and introduces a direct feedback channel."
     },
     {
       "chapter": "H Necessity",
@@ -15646,7 +15646,7 @@
       "kind": "invariant check",
       "label": "case:necessity:domain-weighted-allocation-domain-double-counting",
       "label_source": "explicit",
-      "statement": "Track domain weighted allocation domain double counting as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:domain-weighted-allocation``: Keep published domain weights and a normalized domain profile summing to one for each folded act contribution; refuse counting an act once per projected domain, which lets its shape multiply the same authored intent for the same debit."
     },
     {
       "chapter": "H Necessity",
@@ -15668,7 +15668,7 @@
       "kind": "invariant check",
       "label": "case:necessity:finite-depth-conserved-transport-unbounded-closure",
       "label_source": "explicit",
-      "statement": "Track finite depth conserved transport unbounded closure as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:finite-depth-conserved-transport``: Keep one conserved transport operator mixed from a published finite depth mass; refuse unbounded transitive closure, which has no finite deepest-supported-depth screen and expands contributing width to the whole graph’s rate range."
     },
     {
       "chapter": "H Necessity",
@@ -15679,7 +15679,7 @@
       "kind": "invariant check",
       "label": "case:necessity:finite-depth-conserved-transport-single-hop",
       "label_source": "explicit",
-      "statement": "Track finite depth conserved transport single hop as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:finite-depth-conserved-transport``: Keep the published finite-depth transport mixture; refuse replacing it with a single hop, which reports only immediate allocation and loses whether allocating sources are themselves backed, making the comparator purely local."
     },
     {
       "chapter": "H Necessity",
@@ -15701,7 +15701,7 @@
       "kind": "invariant check",
       "label": "case:necessity:hop-faded-responsive-tilt-flat-profile",
       "label_source": "explicit",
-      "statement": "Track hop faded responsive tilt flat profile as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:hop-faded-responsive-tilt``: Keep a hop-decaying tilt profile owned by transported mass; refuse a flat profile, whose two-sided volume grows with the hop count instead of the front-loaded sum and fails the prior screen at twice the cap."
     },
     {
       "chapter": "H Necessity",
@@ -15712,7 +15712,7 @@
       "kind": "invariant check",
       "label": "case:necessity:hop-faded-responsive-tilt-row-owned-exponent",
       "label_source": "explicit",
-      "statement": "Track hop faded responsive tilt row owned exponent as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:hop-faded-responsive-tilt``: Keep the tilt exponent attached to transported mass at its own hop index; refuse a row-owned exponent, since one row relaying both its own and a distant source’s mass would need two exponents in one product, invalidating the propagation argument."
     },
     {
       "chapter": "H Necessity",
@@ -15734,7 +15734,7 @@
       "kind": "invariant check",
       "label": "case:necessity:epoch-set-standing-order-input",
       "label_source": "explicit",
-      "statement": "Track epoch set standing order input as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:epoch-set-standing``: Keep standing a function of the completed epoch set and final-state inputs; refuse intra-epoch order as a standing input, which lets a host reorder concurrent acts to move a verdict without a recorded semantic choice. Formation and order-sensitive raw quantities still read authoritative order."
     },
     {
       "chapter": "H Necessity",
@@ -15745,7 +15745,7 @@
       "kind": "invariant check",
       "label": "case:necessity:epoch-set-standing-memory-input",
       "label_source": "explicit",
-      "statement": "Track epoch set standing memory input as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:epoch-set-standing``: Keep standing memoryless on the completed epoch inputs; refuse the preceding epoch’s standing as a semantic input, which makes the answer path-dependent and prevents holders of the same records from independently agreeing by replay."
     },
     {
       "chapter": "H Necessity",
@@ -15767,7 +15767,7 @@
       "kind": "invariant check",
       "label": "case:necessity:title-coupled-settlement-standing-face-value",
       "label_source": "explicit",
-      "statement": "Track title coupled settlement standing face value as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:title-coupled-settlement-standing``: Keep settlement allocation coupled to the title fold: direct it to the counterparty only when settlement settled, otherwise to the author. Refuse weighing an asserted settlement at face value, which lets unauthorized or losing acts deliver directed allocation without completing a transfer."
     },
     {
       "chapter": "H Necessity",
@@ -15789,7 +15789,7 @@
       "kind": "invariant check",
       "label": "case:necessity:clamped-entry-bounds-raw-products",
       "label_source": "explicit",
-      "statement": "Track clamped entry bounds raw products as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:clamped-entry-bounds``: Keep the master formula’s clamped entry bounds and polarization floor; refuse unclamped raw parameter products, which lose the floor and allow rank-one degeneracy and zero path-view determinant at weak or vanishing parameters."
     },
     {
       "chapter": "H Necessity",
@@ -15811,7 +15811,7 @@
       "kind": "invariant check",
       "label": "case:necessity:always-active-baseline-drop-baseline",
       "label_source": "explicit",
-      "statement": "Track always active baseline drop baseline as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:always-active-baseline``: Keep the always-active baseline entry as the mask-independent norm anchor; refuse dropping it, which makes the guaranteed floor depend on the mask. Full-mask entries still contribute at zero parameters, so baseline deletion alone does not make that full-mask norm zero."
     },
     {
       "chapter": "H Necessity",
@@ -15833,7 +15833,7 @@
       "kind": "invariant check",
       "label": "case:necessity:eta-softening-hard-zeroing",
       "label_source": "explicit",
-      "statement": "Track eta softening hard zeroing as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:eta-softening``: Keep bleed-softening of masked path-view entries; refuse hard-zeroing, which makes the marginal restricted masks singular and their edges impassable even when the stored slice has nonzero norm."
     },
     {
       "chapter": "H Necessity",
@@ -15844,7 +15844,7 @@
       "kind": "invariant check",
       "label": "case:necessity:eta-softening-epistemic-zero",
       "label_source": "explicit",
-      "statement": "Track eta softening epistemic zero as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:eta-softening``: Keep bleed-softening for the Epistemic path-view mask; refuse zeroing its masked column, which gives an identically zero determinant and infinite routing cost regardless of parameters."
     },
     {
       "chapter": "H Necessity",
@@ -15855,7 +15855,7 @@
       "kind": "invariant check",
       "label": "case:necessity:eta-softening-economic-zero",
       "label_source": "explicit",
-      "statement": "Track eta softening economic zero as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:eta-softening``: Keep bleed-softening for the Economic path-view mask; refuse hard-zeroing its masked entries, which forces zero determinant."
     },
     {
       "chapter": "H Necessity",
@@ -15866,7 +15866,7 @@
       "kind": "invariant check",
       "label": "case:necessity:eta-softening-minimal-zero",
       "label_source": "explicit",
-      "statement": "Track eta softening minimal zero as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:eta-softening``: Keep bleed-softening for the Minimal path-view mask; refuse zeroing three of its four entries, which forces zero determinant and destroys routing through that mask."
     },
     {
       "chapter": "H Necessity",
@@ -15888,7 +15888,7 @@
       "kind": "invariant check",
       "label": "case:necessity:dual-view-architecture-frobenius-only",
       "label_source": "explicit",
-      "statement": "Track dual view architecture frobenius only as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:dual-view-architecture``: Keep path-view determinant and sign for routing and attribution-view Frobenius norm for CAN; refuse Frobenius-only scoring, which makes Tag and Opinion routing nearly equal and cannot distinguish orientation-preserving from orientation-reversing interactions."
     },
     {
       "chapter": "H Necessity",
@@ -15899,7 +15899,7 @@
       "kind": "invariant check",
       "label": "case:necessity:dual-view-architecture-determinant-only",
       "label_source": "explicit",
-      "statement": "Track dual view architecture determinant only as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:dual-view-architecture``: Keep the distinct routing and attribution views; refuse determinant-only CAN attribution, which gives Tag-based compositions less credit than Opinion-based compositions of comparable information content and discriminates by tier instead of contribution quality."
     },
     {
       "chapter": "H Necessity",
@@ -15921,7 +15921,7 @@
       "kind": "invariant check",
       "label": "case:necessity:positive-parity-routing-magnitude-only",
       "label_source": "explicit",
-      "statement": "Track positive parity routing magnitude only as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:positive-parity-routing``: Keep determinant signs and positive-path-parity filtering in the raw endorsement service; refuse magnitude-only routing, which treats a strong negative-parity path as coherent endorsement. Positive parity is necessary for that routing test, not sufficient for a standing vouch: coherent hostility still fails the separate local stance test."
     },
     {
       "chapter": "H Necessity",
@@ -15943,7 +15943,7 @@
       "kind": "none",
       "label": "case:necessity:strict-transmission-decay-lossless",
       "label_source": "explicit",
-      "statement": "Track strict transmission decay lossless as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:strict-transmission-decay``: Keep saturated transmission mean/(1+mean), strictly below one; refuse lossless transmission, which lets a one-child wrapper retain the child’s full credit even as its connection strength tends to zero, defeating depth decay."
     },
     {
       "chapter": "H Necessity",
@@ -15965,7 +15965,7 @@
       "kind": "invariant check",
       "label": "case:necessity:inverse-temperature-free-temperature",
       "label_source": "explicit",
-      "statement": "Track inverse temperature free temperature as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:inverse-temperature``: Keep the declared inverse-temperature anchor 2 ln 2; refuse treating it as a freely tuned post-deployment parameter, which moves the maturity crossover so moderate-maturity noise passes at low values or cross-cluster discovery is suppressed at high values."
     },
     {
       "chapter": "H Necessity",
@@ -15976,7 +15976,7 @@
       "kind": "invariant check",
       "label": "case:necessity:inverse-temperature-low-temperature",
       "label_source": "explicit",
-      "statement": "Track inverse temperature low temperature as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:inverse-temperature``: Keep the declared inverse-temperature anchor 2 ln 2; the beta=1 comparison is a refused replacement because its shifted crossover amplifies moderate-maturity noise, including the stated prior-degree example."
     },
     {
       "chapter": "H Necessity",
@@ -15987,7 +15987,7 @@
       "kind": "invariant check",
       "label": "case:necessity:inverse-temperature-high-temperature",
       "label_source": "explicit",
-      "statement": "Track inverse temperature high temperature as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:inverse-temperature``: Keep the declared inverse-temperature anchor 2 ln 2; the beta=2 comparison is a refused replacement because amplification requires very high prior degree and cross-cluster discovery becomes effectively impossible in the stated comparison."
     },
     {
       "chapter": "H Necessity",
@@ -16009,7 +16009,7 @@
       "kind": "none",
       "label": "case:necessity:redundancy-correction-ignore-overlap",
       "label_source": "explicit",
-      "statement": "Track redundancy correction ignore overlap as a separately addressable case."
+      "statement": "Terminal preference under ``subsec:necessity:redundancy-correction``: The canonical terminal overlap ratio discounts shared upstream work. Setting it to one is an alternative preference, not a forbidden simplification or an admission violation: normalized dependency weights already average identical contributions rather than multiply them. A guild may replace the discount under its published rule while preserving depth decay, strict transmission attenuation and context independence."
     },
     {
       "chapter": "H Necessity",
@@ -16031,7 +16031,7 @@
       "kind": "invariant check",
       "label": "case:necessity:participation-floor-coupled-price-policy",
       "label_source": "explicit",
-      "statement": "Track participation floor coupled price policy as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:participation-floor``: Keep the reduced wall, structural floor and policy dial distinct, joined to burn amounts by the numeraire; refuse one coupled price-policy constant, which forces congestion policy to reprice survivors although the door and curve are separable."
     },
     {
       "chapter": "H Necessity",
@@ -16042,7 +16042,7 @@
       "kind": "invariant check",
       "label": "case:necessity:participation-floor-capacity-gate",
       "label_source": "explicit",
-      "statement": "Track participation floor capacity gate as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:participation-floor``: Keep the participation gate distinct from capacity; refuse forcing them to coincide, which collapses the two-gate architecture and turns the dimensionless policy barrier into a hard monetary scale."
     },
     {
       "chapter": "H Necessity",
@@ -16053,7 +16053,7 @@
       "kind": "invariant check",
       "label": "case:necessity:participation-floor-uncontrolled-host-dial",
       "label_source": "explicit",
-      "statement": "Track participation floor uncontrolled host dial as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:participation-floor``: Keep a published wall controller and structural floor separate from the discretionary policy dial; refuse one uncontrolled host dial, which permits a wall below its floor and turns every controller adjustment into a governance decision."
     },
     {
       "chapter": "H Necessity",
@@ -16075,7 +16075,7 @@
       "kind": "invariant check",
       "label": "case:necessity:floor-as-numeraire-unreduced-debit",
       "label_source": "explicit",
-      "statement": "Track floor as numeraire unreduced debit as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:floor-as-numeraire``: Keep burn-balance debits in burn units and reduced-pair debits at the reduced wall; refuse subtracting the burn-denominated threshold directly from reduced pairs, which mixes burn and action units instead of using the numeraire as their unique join."
     },
     {
       "chapter": "H Necessity",
@@ -16086,7 +16086,7 @@
       "kind": "invariant check",
       "label": "case:necessity:floor-as-numeraire-unreduced-bond",
       "label_source": "explicit",
-      "statement": "Track floor as numeraire unreduced bond as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:floor-as-numeraire``: Keep burn and standing reduced by the numeraire before they meet counts or the bond kernel’s literal one; refuse unreduced burn/count adjacency, whose hidden unit makes bond activation saturate under redenomination. Reduction is invariant under a unit change only when the numeraire is re-expressed too; it does not make market repricing invariant."
     },
     {
       "chapter": "H Necessity",
@@ -16108,7 +16108,7 @@
       "kind": "invariant check",
       "label": "case:necessity:nu-reduced-kernel-gate-reduction",
       "label_source": "explicit",
-      "statement": "Track nu reduced kernel gate reduction as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:nu-reduced-kernel``: Keep the bond kernel reduced by the numeraire, with the participation floor confined to gate, freeze and entry cost; refuse reducing by the gate’s burn image, which makes every policy-floor move reshape bond weights and coupled dynamics for actors who remain admitted."
     },
     {
       "chapter": "H Necessity",
@@ -16152,7 +16152,7 @@
       "kind": "invariant check",
       "label": "case:necessity:three-step-settlement-accept-commit",
       "label_source": "explicit",
-      "statement": "Track three step settlement accept commit as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:three-step-settlement``: Keep buyer Ratify after seller Accept as the authored commitment proposal, finalized at the boundary; refuse commit-at-Accept, which separates earlier buyer funding from seller commitment and permits stale terms to bind without the buyer’s current consent."
     },
     {
       "chapter": "H Necessity",
@@ -16174,7 +16174,7 @@
       "kind": "invariant check",
       "label": "case:necessity:explicit-cancels-expiry",
       "label_source": "explicit",
-      "statement": "Track explicit cancels expiry as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:explicit-cancels``: Keep explicit authored, immutable Withdraw and Rescind records without per-object timeout; refuse per-Bid expiry, which causes an unrecorded state transition from unrelated throughput and violates causal locality."
     },
     {
       "chapter": "H Necessity",
@@ -16196,7 +16196,7 @@
       "kind": "invariant check",
       "label": "case:necessity:mutual-consumption-order-tiebreak",
       "label_source": "explicit",
-      "statement": "Track mutual consumption order tiebreak as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:mutual-consumption``: Keep conflicting co-epochal commits consumed without transfer while the incumbent retains title; refuse canonical-order tiebreaks, which re-import sub-epoch ordering authority into ownership."
     },
     {
       "chapter": "H Necessity",
@@ -16207,7 +16207,7 @@
       "kind": "invariant check",
       "label": "case:necessity:mutual-consumption-permanent-void",
       "label_source": "explicit",
-      "statement": "Track mutual consumption permanent void as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:mutual-consumption``: Keep mutual consumption without transfer and leave the Item transferable; refuse permanent void, which lets a persistent tied pair block the thread forever and strand its accumulated history."
     },
     {
       "chapter": "H Necessity",
@@ -16229,7 +16229,7 @@
       "kind": "invariant check",
       "label": "case:necessity:epoch-quantized-consent-instant-commit",
       "label_source": "explicit",
-      "statement": "Track epoch quantized consent instant commit as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:epoch-quantized-consent``: Keep consent live through the boundary, with a cancel in or before the Ratify epoch defeating commitment; refuse commit at the Ratify record instant, which requires a sub-epoch ordering authority to resolve cancel races."
     },
     {
       "chapter": "H Necessity",
@@ -16240,7 +16240,7 @@
       "kind": "invariant check",
       "label": "case:necessity:epoch-quantized-consent-arrival-order",
       "label_source": "explicit",
-      "statement": "Track epoch quantized consent arrival order as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:epoch-quantized-consent``: Keep epoch-membership-based consent through the boundary; refuse operator-assigned arrival order as the cancel/commit tiebreak, which makes ownership depend on arrival accident and the operator’s ordering choice."
     },
     {
       "chapter": "H Necessity",
@@ -16251,7 +16251,7 @@
       "kind": "invariant check",
       "label": "case:necessity:epoch-quantized-consent-asserted-time",
       "label_source": "explicit",
-      "statement": "Track epoch quantized consent asserted time as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:epoch-quantized-consent``: Keep epoch-membership-based consent through the boundary; refuse author-asserted times as the cancel/commit tiebreak, which admits time-stuffing and corrupts title."
     },
     {
       "chapter": "H Necessity",
@@ -16273,7 +16273,7 @@
       "kind": "invariant check",
       "label": "case:necessity:no-privileged-cancel-class-exempt-cancels",
       "label_source": "explicit",
-      "statement": "Track no privileged cancel class exempt cancels as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:no-privileged-cancel-class``: Keep cancels under universal gates, ordinary closure and ordinary act pricing; refuse gate- or write-exempt control records, which create an unpriced append channel detached from the author’s dilution cost. Equal-epoch recognition favors cancels without granting them a write right."
     },
     {
       "chapter": "H Necessity",
@@ -16295,7 +16295,7 @@
       "kind": "invariant check",
       "label": "case:necessity:endogenous-clearing-normative-selection",
       "label_source": "explicit",
-      "statement": "Track endogenous clearing normative selection as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:endogenous-clearing``: Keep published constraints, replayable dependent-set partition validity and discretionary selection; refuse a normative price-order or packing rule audited against all unwritten demand, since that demand is not a Layer-1 object and the supposed audit cannot verify the counterfactual selection."
     },
     {
       "chapter": "H Necessity",
@@ -16317,7 +16317,7 @@
       "kind": "invariant check",
       "label": "case:necessity:conflict-not-causal-conflict-grouping",
       "label_source": "explicit",
-      "statement": "Track conflict not causal conflict grouping as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:conflict-not-causal``: Keep dependent sets as causal closure and conflict protection in the written-side tie rule plus the named censorship exposure; refuse co-transport grouping of concurrent cancels and commits, which would require cross-references or serialization that destroys the regret window."
     },
     {
       "chapter": "H Necessity",
@@ -16328,7 +16328,7 @@
       "kind": "invariant check",
       "label": "case:necessity:conflict-not-causal-mandatory-cross-reference",
       "label_source": "explicit",
-      "statement": "Track conflict not causal mandatory cross reference as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:conflict-not-causal``: Keep conflict protection separate from causal closure; refuse mandatory cancel-to-commit cross-references, which force a Rescind to cite Ratify or a Withdraw to cite a later Accept and let the counterparty outrun early regret."
     },
     {
       "chapter": "H Necessity",
@@ -16339,7 +16339,7 @@
       "kind": "invariant check",
       "label": "case:necessity:conflict-not-causal-serialization",
       "label_source": "explicit",
-      "statement": "Track conflict not causal serialization as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:conflict-not-causal``: Keep conflict recognition epoch-quantized rather than causally grouping concurrent races; refuse a serialization choice function, which re-imports sub-epoch ordering authority and destroys the regret window."
     },
     {
       "chapter": "H Necessity",
@@ -16361,7 +16361,7 @@
       "kind": "invariant check",
       "label": "case:necessity:stance-marginal-reputation-parity-reputation",
       "label_source": "explicit",
-      "statement": "Track stance marginal reputation parity reputation as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:stance-marginal-reputation``: Keep commercial reputation on each settlement edge’s stance marginal and routing on bilinear parity; refuse parity for both, which makes a coerced-unfair Accept with two negative coordinates yield the same positive reputation sign as the best experience."
     },
     {
       "chapter": "H Necessity",
@@ -16394,7 +16394,7 @@
       "kind": "invariant check",
       "label": "case:necessity:universal-act-weighing-negative-weight",
       "label_source": "explicit",
-      "statement": "Track universal act weighing negative weight as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:universal-act-weighing``: Keep nonnegative conserved allocation and resolve non-vouch acts home; refuse negative standing weights as a remedy for hostility, which destroys the convex-combination standing hull."
     },
     {
       "chapter": "H Necessity",
@@ -16405,7 +16405,7 @@
       "kind": "invariant check",
       "label": "case:necessity:universal-act-weighing-composed-stance",
       "label_source": "explicit",
-      "statement": "Track universal act weighing composed stance as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:universal-act-weighing``: Keep stance as the local authored verdict deciding destination, with parity composing coherence; refuse composing stance along paths, which confuses local verdicts with orientation transport. A coherent hostile person-directed act remains weighed and resolves home."
     },
     {
       "chapter": "H Necessity",
@@ -16416,7 +16416,7 @@
       "kind": "invariant check",
       "label": "case:necessity:universal-act-weighing-exclude-hostility",
       "label_source": "explicit",
-      "statement": "Track universal act weighing exclude hostility as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:universal-act-weighing``: Keep every act weighed, with hostile person-directed acts charged at full magnitude against their author’s conserved unit and resolved home; refuse excluding hostility from the weighing census, which discounts the author’s attack instead of pricing it."
     },
     {
       "chapter": "H Necessity",
@@ -16438,7 +16438,7 @@
       "kind": "invariant check",
       "label": "case:necessity:declarative-item-identity-content-addressing",
       "label_source": "explicit",
-      "statement": "Track declarative item identity content addressing as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:declarative-item-identity``: Keep Item identity as the genesis record’s structural key; refuse hashing its removable description as identity, which welds title to erasable bytes and makes removal orphan or re-key the title thread."
     },
     {
       "chapter": "H Necessity",
@@ -16548,7 +16548,7 @@
       "kind": "invariant check",
       "label": "case:necessity:binary-join-request-ternary-request",
       "label_source": "explicit",
-      "statement": "Track binary join request ternary request as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:binary-join-request``: Keep Join Request binary from requester Actor to Chat; refuse a ternary request routed through the recipient Actor, which creates a recipient-sourced leg before that recipient authors anything and misrepresents their stance."
     },
     {
       "chapter": "H Necessity",
@@ -16570,7 +16570,7 @@
       "kind": "invariant check",
       "label": "case:necessity:invitation-profile-terminus-actor-terminus",
       "label_source": "explicit",
-      "statement": "Track invitation profile terminus actor terminus as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:invitation-profile-terminus``: Keep Invitation/T directed to the invitee’s Profile; refuse an Actor terminus, which creates another passive-sourced in-edge family and bypasses the standing-dependent Reputation funnel with an undamped conduit to fresh accounts."
     },
     {
       "chapter": "H Necessity",
@@ -16592,7 +16592,7 @@
       "kind": "invariant check",
       "label": "case:necessity:proposal-half-tier-full-routing",
       "label_source": "explicit",
-      "statement": "Track proposal half tier full routing as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:proposal-half-tier``: Keep Join Request and Invitation/A at Half-tier routing; refuse Full-tier proposal routing, which gives unanswered proposals enacted-relation force and lets mass invitations manufacture Chat-adjacent visibility at proposal cost."
     },
     {
       "chapter": "H Necessity",
@@ -16614,7 +16614,7 @@
       "kind": "invariant check",
       "label": "case:necessity:unrestricted-departure-leave-membership-check",
       "label_source": "explicit",
-      "statement": "Track unrestricted departure leave membership check as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:unrestricted-departure``: Keep Leave admission under the universal write rule without a membership precondition; refuse rejecting a nonmember’s Leave, which makes terminal membership a binding admission predicate and suppresses a priced public dissociation."
     },
     {
       "chapter": "H Necessity",
@@ -16625,7 +16625,7 @@
       "kind": "invariant check",
       "label": "case:necessity:unrestricted-departure-deinvite-authority-check",
       "label_source": "explicit",
-      "statement": "Track unrestricted departure deinvite authority check as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:unrestricted-departure``: Keep De-invite admission under the universal write rule without authority or target-membership preconditions; refuse those checks, which make membership binding and turn who may expel into a Layer-1 authority verdict instead of terminal guild policy."
     },
     {
       "chapter": "H Necessity",
@@ -16647,7 +16647,7 @@
       "kind": "invariant check",
       "label": "case:necessity:control-self-retention-outward-control",
       "label_source": "explicit",
-      "statement": "Track control self retention outward control as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:control-self-retention``: Keep type-fixed control acts weighed and resolved to their author in every quadrant; refuse outward allocation merely because their fixed coordinates are positive and their raw tier is small, which turns De-invite into a vouch for the expellee rather than authored stance."
     },
     {
       "chapter": "H Necessity",
@@ -16669,7 +16669,7 @@
       "kind": "invariant check",
       "label": "case:necessity:deinvite-profile-terminus-actor-terminus",
       "label_source": "explicit",
-      "statement": "Track deinvite profile terminus actor terminus as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:deinvite-profile-terminus``: Keep De-invite/T directed to the target Profile; refuse an Actor terminus, which breaks the sole passive-sourced Reputation funnel and opens an undamped attention conduit. The conduit is feed-only: the control act still resolves home for standing."
     },
     {
       "chapter": "H Necessity",
@@ -16691,7 +16691,7 @@
       "kind": "none",
       "label": "case:necessity:bridge-per-edge-positivity-endpoint-parity",
       "label_source": "explicit",
-      "statement": "Track bridge per edge positivity endpoint parity as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:bridge-per-edge-positivity``: Keep affinity on the per-edge positive subgraph; refuse endpoint-parity-only filtering for that channel, which admits paired interior inversions and prices delivery to an interior consumer receiving an inverted signal."
     },
     {
       "chapter": "H Necessity",
@@ -16713,7 +16713,7 @@
       "kind": "none",
       "label": "case:necessity:bridge-consent-difference-positive-only",
       "label_source": "explicit",
-      "statement": "Track bridge consent difference positive only as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:bridge-consent-difference``: Keep consent as the clipped positive-minus-negative register difference at the bridge Profile; refuse the positive register alone, which makes advertiser-authored dislike invisible to that consent comparison."
     },
     {
       "chapter": "H Necessity",
@@ -16724,7 +16724,7 @@
       "kind": "none",
       "label": "case:necessity:bridge-consent-difference-actor-register",
       "label_source": "explicit",
-      "statement": "Track bridge consent difference actor register as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:bridge-consent-difference``: Keep the consent register read at the bridge Profile; refuse reading it at the Actor, which traverses the Reputation component again after affinity already includes it, double-counting reputation and biasing bridge selection."
     },
     {
       "chapter": "H Necessity",
@@ -16735,7 +16735,7 @@
       "kind": "none",
       "label": "case:necessity:bridge-consent-difference-ratio",
       "label_source": "explicit",
-      "statement": "Track bridge consent difference ratio as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:bridge-consent-difference``: Keep the always-defined clipped register difference at the bridge Profile; refuse the positive/negative register ratio, which is undefined in the common zero-negative-register case."
     },
     {
       "chapter": "H Necessity",
@@ -16757,7 +16757,7 @@
       "kind": "none",
       "label": "case:necessity:bridge-self-exclusion-self-target",
       "label_source": "explicit",
-      "statement": "Track bridge self exclusion self target as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:bridge-self-exclusion``: Keep the advertiser outside the target domain; refuse self-targeting, which prices a circuit back to the advertiser without external audience value. Under the excluded self-target case the target set is empty and reward is zero."
     },
     {
       "chapter": "H Necessity",
@@ -16768,7 +16768,7 @@
       "kind": "none",
       "label": "case:necessity:bridge-self-exclusion-self-bridge",
       "label_source": "explicit",
-      "statement": "Track bridge self exclusion self bridge as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:bridge-self-exclusion``: Keep the advertiser outside the bridge domain; refuse self-bridging, which lets an advertiser author its own endorsement factor and manufacture a self-endorsement circuit without a counterparty."
     },
     {
       "chapter": "H Necessity",
@@ -16790,7 +16790,7 @@
       "kind": "invariant check",
       "label": "case:necessity:edge-ontology-node-records",
       "label_source": "explicit",
-      "statement": "Track edge ontology node records as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:edge-ontology``: Keep edge records and implicit node folds; refuse a second plane of first-class node records and attributes, which introduces new mutability, custody and erasure semantics and reopens genesis authorization and admission."
     },
     {
       "chapter": "H Necessity",
@@ -16801,7 +16801,7 @@
       "kind": "invariant check",
       "label": "case:necessity:edge-ontology-appended-bonds",
       "label_source": "explicit",
-      "statement": "Track edge ontology appended bonds as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:edge-ontology``: Keep Layer-1 bond readings derived rather than appended; refuse Layer-1-authored bond records, which re-enter the admission set and reopen the append exception and epoch cascade."
     },
     {
       "chapter": "H Necessity",
@@ -16823,7 +16823,7 @@
       "kind": "invariant check",
       "label": "case:necessity:universal-parallelism-uniqueness-constraint",
       "label_source": "explicit",
-      "statement": "Track universal parallelism uniqueness constraint as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:universal-parallelism``: Keep all record families parallelizable with no Layer-1 merge or supersession; refuse one-record-per-author/target or per-actor uniqueness constraints, which pull per-family state machines into admission and destroy the parallel accumulation needed for priced walk-back."
     },
     {
       "chapter": "H Necessity",
@@ -16834,7 +16834,7 @@
       "kind": "invariant check",
       "label": "case:necessity:universal-parallelism-latest-wins",
       "label_source": "explicit",
-      "statement": "Track universal parallelism latest wins as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:universal-parallelism``: Keep binding standing and title bundle readings distinct from terminal consumers’ fold choices; refuse Layer-1 latest-wins everywhere, which repeals sum-then-clip, makes stance free to flip and imposes one fold on consumers with different needs."
     },
     {
       "chapter": "H Necessity",
@@ -16856,7 +16856,7 @@
       "kind": "invariant check",
       "label": "case:necessity:payload-isolation-joint-commitment",
       "label_source": "explicit",
-      "statement": "Track payload isolation joint commitment as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:payload-isolation``: Keep a bounded payload in a separable, concealing and removable commitment part; refuse committing structure and payload jointly, which makes payload removal prevent authentication of intact structural history and forces a choice between removal and integrity."
     },
     {
       "chapter": "H Necessity",
@@ -16878,7 +16878,7 @@
       "kind": "invariant check",
       "label": "case:necessity:pre-commitment-before-salting-host-first",
       "label_source": "explicit",
-      "statement": "Track pre commitment before salting host first as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:pre-commitment-before-salting``: Keep the Actor’s signed unsalted proposal pre-commitment before host salting; refuse host-first commitments with only a final Actor signature, which leave no cryptographic trace of endpoints, content or dependencies substituted before salting."
     },
     {
       "chapter": "H Necessity",
@@ -16900,7 +16900,7 @@
       "kind": "invariant check",
       "label": "case:necessity:approval-after-salting-no-approval",
       "label_source": "explicit",
-      "statement": "Track approval after salting no approval as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:approval-after-salting``: Keep Actor approval of the exact host-salted verified act before admission; refuse admitting a host-constructed verified act without that second signature, which binds the Actor to content or dependencies they never opened or checked."
     },
     {
       "chapter": "H Necessity",
@@ -16922,7 +16922,7 @@
       "kind": "invariant check",
       "label": "case:necessity:act-level-dependencies-leg-dependencies",
       "label_source": "explicit",
-      "statement": "Track act level dependencies leg dependencies as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:act-level-dependencies``: Keep dependencies at act level with one dependency projection and shared parent act for both hyper-edge legs; refuse separate per-leg lists and ordering, which can split an atomic act across another act or bind a provable dependency list to only one leg."
     },
     {
       "chapter": "H Necessity",
@@ -16944,7 +16944,7 @@
       "kind": "invariant check",
       "label": "case:necessity:authoritative-order-local-linearization",
       "label_source": "explicit",
-      "statement": "Track authoritative order local linearization as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:authoritative-order``: Keep one published authoritative total act order; refuse publishing only the accepted set and letting readers linearize locally, which makes raw maturities, projected times and path eligibility diverge. Standing remains set-based on its final-state inputs rather than using that residual order."
     },
     {
       "chapter": "H Necessity",
@@ -16966,7 +16966,7 @@
       "kind": "invariant check",
       "label": "case:necessity:retained-commitment-remove-residue",
       "label_source": "explicit",
-      "statement": "Track retained commitment remove residue as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:retained-commitment``: Keep the binding dependency commitment residue after removing the list and opening; refuse deleting the residue too, which leaves a later fraud proof nothing to open against and permits fabricated lists or denial of the committed list."
     },
     {
       "chapter": "H Necessity",
@@ -16988,7 +16988,7 @@
       "kind": "invariant check",
       "label": "case:necessity:title-order-separation-host-title-tiebreak",
       "label_source": "explicit",
-      "statement": "Track title order separation host title tiebreak as a separately addressable case."
+      "statement": "Refused simplification under ``subsec:necessity:title-order-separation``: Keep Bid-before-Accept-before-Ratify well-formedness under authoritative order while title conflict resolution reads epoch membership; refuse using residual sub-epoch host order to choose the winning commit, which gives the operator a title-fabrication lever."
     },
     {
       "chapter": "Appendix I — Deployment",
