@@ -55,12 +55,12 @@
       "operations": 95
     },
     {
-      "exceptions": 1,
-      "generators": 7,
+      "exceptions": 17,
+      "generators": 14,
       "helpers": 0,
-      "instrumented": 3,
+      "instrumented": 5,
       "name": "pn-wallet",
-      "operations": 4
+      "operations": 22
     }
   ]
 }

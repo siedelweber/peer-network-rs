@@ -1159,7 +1159,7 @@ level = "unit"
 implementation = "pn-wallet-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-wallet::decoder::tests::global_context_initialization"]
+cases = ["pn-wallet::decoder::tests::global_context_initialization", "pn-wallet::rpc::tests::attempts_and_holds", "pn-wallet::rpc::tests::projections", "pn-wallet::rpc::tests::secret_carriers", "pn-wallet::rpc_cookie::tests::grammar_cases", "pn-wallet::rpc_cookie::tests::descriptor_cases", "pn-wallet::rpc_http::tests::framing_cases", "pn-wallet::rpc_http::tests::acquisition_cases", "pn-wallet::rpc_json::tests::parser_cases", "pn-wallet::rpc_json::tests::envelope_cases"]
 
 [[rows]]
 kind = "suite"
@@ -1192,4 +1192,15 @@ level = "integration"
 implementation = "pn-wallet-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_wallet_boundary.WalletBoundary.test_dependency_features", "ci::test_wallet_boundary.WalletBoundary.test_case_census", "ci::test_wallet_boundary.WalletBoundary.test_confinement"]
+cases = ["ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary", "ci::test_wallet_boundary.WalletBoundary.test_dependency_features", "ci::test_wallet_boundary.WalletBoundary.test_case_census", "ci::test_wallet_boundary.WalletBoundary.test_confinement"]
+
+[[rows]]
+kind = "suite"
+name = "pn-wallet::rpc"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-wallet-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals", "pn-wallet::rpc::authentication_refusals", "pn-wallet::rpc::observations", "pn-wallet::rpc::generic_negative", "pn-wallet::rpc::rotation"]

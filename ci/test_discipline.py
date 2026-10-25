@@ -114,6 +114,11 @@ class HashCitations(unittest.TestCase):
         self.assertFalse(reader("regexp-subject")("f" * 40, "f" * 40))
         self.assertTrue(reader("regexp-subject")("a" * 8, 'subject = "' + "a" * 8 + '"'))
         self.assertFalse(reader("interchange-literal")(seed, seed))
+        alphabet = ''.join(format(digit, 'x') for digit in range(16))
+        self.assertTrue(reader("hex-alphabet")(alphabet, 'DIGITS = "' + alphabet + '"'))
+        self.assertFalse(reader("hex-alphabet")(alphabet[:-1], alphabet[:-1]))
+        self.assertFalse(reader("hex-alphabet")(alphabet[::-1], alphabet[::-1]))
+        self.assertFalse(reader("hex-alphabet")(alphabet, 'digest = "' + alphabet + '"'))
 
     def test_public_git_locator(self):
         """a provenance family requires the exact declared public Git commit locator.

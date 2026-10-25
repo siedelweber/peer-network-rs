@@ -235,7 +235,7 @@
             "one attempt per exchange and aggregate reconnection ceiling before cookie access"
           ],
           "name": "http",
-          "title": "Hostile HTTP exchange"
+          "title": "Strict HTTP exchange"
         },
         {
           "cases": [
@@ -266,7 +266,7 @@
             "compile-time carrier checks with reviewed data flow",
             "endpoint, port, username, cookie path/bytes and wallet-selection sentinels",
             "retained Debug, Display, source chains, panics and all observation streams",
-            "impostor echoes in status, headers, JSON error and result fields",
+            "private acquisition and parser failures retain no secret bytes under the trusted-service boundary",
             "wrong credentials, unreachable peer, disconnect and timeout errors",
             "unmodified generic client demonstrates real retention or leakage",
             "successful public objects and public diagnostics remain fully recorded"

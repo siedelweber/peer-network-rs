@@ -6002,6 +6002,314 @@
       "claim": "ROOT::sig:design:devnet",
       "shape": "shape-wallet",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "item": "rpc::<RpcLimits as Default>::default",
+      "owner": "WALLET",
+      "signature": "fn default () -> Self",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Returning the declared finite constants is pure setup inherited by the RPC operation, which records its configured limits.",
+        "witness": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "item": "rpc::<RpcRefusal as fmt :: Display>::fmt",
+      "owner": "WALLET",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Only public typed outcomes and trusted public service diagnostics are formatted.",
+        "witness": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "item": "rpc::RpcConfig::new",
+      "owner": "WALLET",
+      "signature": "fn new (link : RpcLink , endpoint : SecretString , port : SecretBox < u16 > , root : std :: fs :: File , cookie : SecretString , uid : SecretBox < u32 > ,) -> Self",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Secret carrier ownership transfer has no public payload to record.",
+        "witness": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "item": "rpc::<RpcConfig as fmt :: Debug>::fmt",
+      "owner": "WALLET",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Configuration formatting exposes only its role, never secret fields or descriptors.",
+        "witness": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "item": "rpc::RpcClient::new",
+      "owner": "WALLET",
+      "signature": "fn new (config : RpcConfig , limits : RpcLimits , decode : crate :: Limits , provisioning : & crate :: Provisioning , run : & str ,) -> Result < Self , RpcRefusal >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "item": "rpc::RpcClient::read",
+      "owner": "WALLET",
+      "signature": "fn read (& self , request : Read) -> Result < ReadResult , RpcRefusal >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "item": "rpc::<RpcClient as fmt :: Debug>::fmt",
+      "owner": "WALLET",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Client formatting exposes a role marker, never bootstrap or socket state.",
+        "witness": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as DeserializeSeed < 'de >>::deserialize",
+      "owner": "WALLET",
+      "signature": "fn deserialize < D : serde :: Deserializer < 'de > > (self , decoder : D) -> Result < Value , D :: Error >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as Visitor < 'de >>::expecting",
+      "owner": "WALLET",
+      "signature": "fn expecting (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_bool",
+      "owner": "WALLET",
+      "signature": "fn visit_bool < E : serde :: de :: Error > (self , value : bool) -> Result < Value , E >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_unit",
+      "owner": "WALLET",
+      "signature": "fn visit_unit < E : serde :: de :: Error > (self) -> Result < Value , E >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_i64",
+      "owner": "WALLET",
+      "signature": "fn visit_i64 < E : serde :: de :: Error > (self , value : i64) -> Result < Value , E >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_u64",
+      "owner": "WALLET",
+      "signature": "fn visit_u64 < E : serde :: de :: Error > (self , value : u64) -> Result < Value , E >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_str",
+      "owner": "WALLET",
+      "signature": "fn visit_str < E : serde :: de :: Error > (self , value : & str) -> Result < Value , E >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_string",
+      "owner": "WALLET",
+      "signature": "fn visit_string < E : serde :: de :: Error > (self , value : String) -> Result < Value , E >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_seq",
+      "owner": "WALLET",
+      "signature": "fn visit_seq < A : SeqAccess < 'de > > (self , mut source : A) -> Result < Value , A :: Error >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "item": "rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_map",
+      "owner": "WALLET",
+      "signature": "fn visit_map < A : MapAccess < 'de > > (self , mut source : A) -> Result < Value , A :: Error >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Bounded JSON visitor plumbing inherits the RPC read operation; per-token observation would duplicate public content and defeat item bounds.",
+        "witness": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_secret.rs",
+      "item": "rpc_secret::<Buffer as fmt :: Debug>::fmt",
+      "owner": "WALLET",
+      "signature": "fn fmt (& self , f : & mut fmt :: Formatter < '_ >) -> fmt :: Result",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Formatting exposes only the carrier role, never exchange bytes.",
+        "witness": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
     }
   ],
   "metrics": [
@@ -11626,6 +11934,204 @@
         "exposure_consumers": "wallet-exposure_consumers"
       },
       "item_premise": "The selector checks explicit asset and positive integer amount, excludes issuance and peg-in inputs, and binds run, target and request without rewriting the transaction."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::<RpcLimits as Default>::default",
+      "class_decision": "wallet-decoder",
+      "body": "{ Self { request_bytes : 4096 , header_bytes : 8192 , header_count : 64 , response_bytes : 8_001_024 , json_depth : 16 , json_items : 4096 , chain_bytes : 4_000_000 , deadline : Duration :: from_secs (10) , } }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::<RpcRefusal as fmt :: Display>::fmt",
+      "class_decision": "wallet-decoder",
+      "body": "{ write ! (f , \"{self:?}\") }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcConfig::new",
+      "class_decision": "wallet-decoder",
+      "body": "{ Self { link , endpoint , port , cookie , uid , root , } }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::<RpcConfig as fmt :: Debug>::fmt",
+      "class_decision": "wallet-decoder",
+      "body": "{ match self . link { RpcLink :: HostSecured => f . write_str (\"RpcConfig { role: secret-bootstrap, link: host-secured }\") , } }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::new",
+      "class_decision": "wallet-decoder",
+      "body": "{ if ! limits . valid () || config . endpoint . expose_secret () . len () > 64 || config . endpoint . expose_secret () . parse :: < IpAddr > () . is_err () || * config . port . expose_secret () == 0 || config . cookie . expose_secret () . len () > 4096 || ! crate :: decoder :: valid_limits (decode) { return Err (RpcRefusal :: Configuration) ; } provisioning . check (run , decode) ? ; let client = Self { config , limits , decode , state : Mutex :: new (State :: default ()) , } ; if ! provisioning . matches_hash (& client . read (Read :: BlockHash (0)) ?) { return Err (RpcRefusal :: Provisioning) ; } if ! matches ! (client . read (Read :: BlockHeader (provisioning . genesis)) ?, ReadResult :: Header (bytes) if bytes == provisioning . header) { return Err (RpcRefusal :: Provisioning) ; } Ok (client) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body performs the declared public RPC operation with role-only secret argument formatting and complete public return recording."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+      "class_decision": "wallet-decoder",
+      "body": "{ let start = Instant :: now () ; let (method , params) = request . arguments () ; let mut status = None ; let mut result_bytes = 0 ; let result = (| | { let mut state = self . state . try_lock () . map_err (| _ | RpcRefusal :: Busy) ? ; let id = state . admit (start) ? ; let deadline = start . checked_add (self . limits . deadline) . ok_or (RpcRefusal :: Configuration) ? ; let value = self . exchange (method , & params , id , deadline , & mut status , & mut result_bytes) ? ; let result = self . project (& request , & value) ; if let Err (RpcRefusal :: Held { block , limit }) = & result { state . held = Some ((* block , * limit)) ; } rpc_http :: remaining (deadline) ? ; result }) () ; tracing :: info ! (method , status = ? status , elapsed_ns = start . elapsed () . as_nanos () , result_bytes , outcome = if result . is_ok () { \"success\" } else { \"refusal\" }) ; if let Err (cause) = & result { tracing :: warn ! (method , status =? status , elapsed_ns = start . elapsed () . as_nanos () , result_bytes , cause =? cause , outcome = \"refusal\") ; } result }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body performs the declared public RPC operation with role-only secret argument formatting and complete public return recording."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc.rs::rpc::<RpcClient as fmt :: Debug>::fmt",
+      "class_decision": "wallet-decoder",
+      "body": "{ f . write_str (\"RpcClient { role: chain-reader }\") }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as DeserializeSeed < 'de >>::deserialize",
+      "class_decision": "wallet-decoder",
+      "body": "{ if self . depth == 0 || * self . remaining == 0 { return Err (D :: Error :: custom (\"JSON resource limit\")) ; } * self . remaining -= 1 ; decoder . deserialize_any (self) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as Visitor < 'de >>::expecting",
+      "class_decision": "wallet-decoder",
+      "body": "{ f . write_str (\"bounded exact JSON\") }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_bool",
+      "class_decision": "wallet-decoder",
+      "body": "{ Ok (Value :: Bool (value)) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_unit",
+      "class_decision": "wallet-decoder",
+      "body": "{ Ok (Value :: Null) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_i64",
+      "class_decision": "wallet-decoder",
+      "body": "{ Ok (value . into ()) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_u64",
+      "class_decision": "wallet-decoder",
+      "body": "{ Ok (value . into ()) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_str",
+      "class_decision": "wallet-decoder",
+      "body": "{ Ok (value . into ()) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_string",
+      "class_decision": "wallet-decoder",
+      "body": "{ Ok (value . into ()) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_seq",
+      "class_decision": "wallet-decoder",
+      "body": "{ let mut values = Vec :: new () ; while let Some (value) = source . next_element_seed (Seed { depth : self . depth - 1 , remaining : self . remaining , }) ? { values . push (value) ; } Ok (Value :: Array (values)) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_json.rs::rpc_json::<Seed < '_ > as Visitor < 'de >>::visit_map",
+      "class_decision": "wallet-decoder",
+      "body": "{ let mut values = serde_json :: Map :: new () ; while let Some (key) = source . next_key_seed (Seed { depth : self . depth - 1 , remaining : self . remaining , }) ? { let Value :: String (key) = key else { return Err (A :: Error :: custom (\"JSON object key\")) ; } ; if values . contains_key (& key) { return Err (A :: Error :: custom (\"duplicate JSON key\")) ; } let value = source . next_value_seed (Seed { depth : self . depth - 1 , remaining : self . remaining , }) ? ; values . insert (key , value) ; } Ok (Value :: Object (values)) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_secret.rs::rpc_secret::<Buffer as fmt :: Debug>::fmt",
+      "class_decision": "wallet-decoder",
+      "body": "{ f . write_str (\"SecretRpcBuffer\") }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body is narrow trait or ownership plumbing inside the bounded RPC operation; its declared exception prevents recursive or per-token observation."
     }
   ],
   "generators": [
@@ -13851,6 +14357,69 @@
       "syntax": "# [derive (Clone , Debug , Eq , PartialEq)]",
       "class_decision": "wallet-decoder",
       "expansion_review": "Derives format and compare public layout data and bounded refusal variants only. Instrument attributes capture the complete public input and return under the WALLET owner."
+    },
+    {
+      "item": "rpc::RpcLimits",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [derive (Clone , Copy , Debug)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format only public limits, typed reads/results, trusted-service diagnostics and public provisioning. Secret configuration and sockets use hand-written role-only formatting; no derive serializes their fields."
+    },
+    {
+      "item": "rpc::RpcRefusal",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format only public limits, typed reads/results, trusted-service diagnostics and public provisioning. Secret configuration and sockets use hand-written role-only formatting; no derive serializes their fields."
+    },
+    {
+      "item": "rpc::RpcLink",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [derive (Clone , Copy , Debug)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format only public limits, typed reads/results, trusted-service diagnostics and public provisioning. Secret configuration and sockets use hand-written role-only formatting; no derive serializes their fields."
+    },
+    {
+      "item": "rpc::Read",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format only public limits, typed reads/results, trusted-service diagnostics and public provisioning. Secret configuration and sockets use hand-written role-only formatting; no derive serializes their fields."
+    },
+    {
+      "item": "rpc::ReadResult",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format only public limits, typed reads/results, trusted-service diagnostics and public provisioning. Secret configuration and sockets use hand-written role-only formatting; no derive serializes their fields."
+    },
+    {
+      "item": "rpc::State",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [derive (Default)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format only public limits, typed reads/results, trusted-service diagnostics and public provisioning. Secret configuration and sockets use hand-written role-only formatting; no derive serializes their fields."
+    },
+    {
+      "item": "rpc_provisioning::Provisioning",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_provisioning.rs",
+      "syntax": "# [derive (Clone , Debug , serde :: Deserialize , PartialEq , Eq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "Derives format only public limits, typed reads/results, trusted-service diagnostics and public provisioning. Secret configuration and sockets use hand-written role-only formatting; no derive serializes their fields."
     }
   ],
   "reviewed_types": [
@@ -15599,6 +16168,72 @@
       "package": "pn-wallet",
       "path": "packages/wallet/src/decoder.rs",
       "syntax": "struct Reader < 'a > { bytes : & 'a [u8] , pos : usize , remaining : usize , limits : Limits , }"
+    },
+    {
+      "item": "rpc::RpcLimits",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [doc = \" Positive finite resource ceilings declared before acquisition or connection.\"] # [doc = \" (´def:wallet:rpc-limits´)\"] # [derive (Clone , Copy , Debug)] pub struct RpcLimits { # [doc = \" Complete outbound request, including authorization.\"] pub request_bytes : usize , # [doc = \" Complete response headers.\"] pub header_bytes : usize , # [doc = \" Response header fields.\"] pub header_count : usize , # [doc = \" Encoded JSON response bytes.\"] pub response_bytes : usize , # [doc = \" JSON nesting depth, counting the envelope.\"] pub json_depth : usize , # [doc = \" Aggregate JSON values and object keys.\"] pub json_items : usize , # [doc = \" Public decoded chain bytes.\"] pub chain_bytes : usize , # [doc = \" One monotonic budget from cookie acquisition through typed decoding.\"] pub deadline : Duration , }"
+    },
+    {
+      "item": "rpc::RpcRefusal",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [doc = \" Public protocol or resource outcome; private transport errors never escape.\"] # [doc = \" (´def:wallet:rpc-refusal´)\"] # [derive (Clone , Debug , PartialEq)] pub enum RpcRefusal { # [doc = \" Invalid declared configuration or limits.\"] Configuration , # [doc = \" Invalid cookie acquisition or representation; no private cause is retained.\"] Cookie , # [doc = \" Private socket operation failed.\"] Transport , # [doc = \" The single exchange deadline expired.\"] Deadline , # [doc = \" Another call owns the single exchange slot.\"] Busy , # [doc = \" Eight attempts in the preceding sixty seconds, before cookie access.\"] Attempts , # [doc = \" Request byte ceiling.\"] RequestBytes , # [doc = \" Header byte ceiling.\"] HeaderBytes , # [doc = \" Header count ceiling.\"] HeaderCount , # [doc = \" Response byte ceiling.\"] ResponseBytes , # [doc = \" Decoded chain byte ceiling.\"] ChainBytes , # [doc = \" Strict HTTP framing failed.\"] Http , # [doc = \" Authentication refused; body unread, cookie discarded, no retry.\"] Authentication , # [doc = \" A non-admitted public HTTP status.\"] Status (u16) , # [doc = \" JSON syntax, resource or schema refusal.\"] Json , # [doc = \" JSON-RPC version, result/error choice or identifier mismatch.\"] Correlation , # [doc = \" Public diagnostic from the trusted service.\"] Remote { # [doc = \" Exact integer error code.\"] code : i64 , # [doc = \" Complete public diagnostic.\"] message : String , # [doc = \" Complete bounded public diagnostic data.\"] data : Option < serde_json :: Value > , } , # [doc = \" Raw chain layout was refused.\"] Decode (crate :: Refusal) , # [doc = \" Reader held at the named public block because a decoder limit was reached.\"] Held { # [doc = \" Public block locator.\"] block : [u8 ; 32] , # [doc = \" Exact decoder limit.\"] limit : crate :: Refusal , } , # [doc = \" Checked provisioning declaration or raw genesis differs.\"] Provisioning , }"
+    },
+    {
+      "item": "rpc::RpcConfig",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [doc = \" Secret bootstrap values with role-only Debug and no Display implementation.\"] # [doc = \" (´def:wallet:rpc-config´)\"] pub struct RpcConfig { link : RpcLink , endpoint : SecretString , port : SecretBox < u16 > , cookie : SecretString , uid : SecretBox < u32 > , root : std :: fs :: File , }"
+    },
+    {
+      "item": "rpc::RpcLink",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [doc = \" The only admitted RPC path case; authentication of the peer belongs to deployment.\"] # [doc = \" (´def:wallet:rpc-link´)\"] # [derive (Clone , Copy , Debug)] pub enum RpcLink { # [doc = \" Same-host, operator-secured path to the trusted Elements service.\"] HostSecured , }"
+    },
+    {
+      "item": "rpc::Read",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [doc = \" Closed public read vocabulary; no arbitrary method, URL or wallet selector.\"] # [doc = \" (´def:wallet:rpc-read´)\"] # [derive (Clone , Debug)] pub enum Read { # [doc = \" Current chain height.\"] BlockCount , # [doc = \" Locator at the given height.\"] BlockHash (u64) , # [doc = \" Full raw header at the public locator.\"] BlockHeader ([u8 ; 32]) , # [doc = \" Full raw block at the public locator.\"] Block ([u8 ; 32]) , # [doc = \" Full raw transaction, located in a declared block.\"] Transaction { # [doc = \" Public transaction locator.\"] transaction : [u8 ; 32] , # [doc = \" Public inclusion block locator.\"] block : [u8 ; 32] , } , }"
+    },
+    {
+      "item": "rpc::ReadResult",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [doc = \" Typed public read result with complete decoded layouts.\"] # [doc = \" (´def:wallet:rpc-result´)\"] # [derive (Clone , Debug)] pub enum ReadResult { # [doc = \" Exact chain height.\"] Count (u64) , # [doc = \" Display-order locator bytes.\"] Hash ([u8 ; 32]) , # [doc = \" Complete validated header encoding, without a signature verdict.\"] Header (Vec < u8 >) , # [doc = \" Complete block layout.\"] Block (crate :: Block) , # [doc = \" Complete transaction layout.\"] Transaction (crate :: Transaction) , }"
+    },
+    {
+      "item": "rpc::State",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [derive (Default)] struct State { attempts : VecDeque < Instant > , next_id : u64 , held : Option < ([u8 ; 32] , crate :: Refusal) > , }"
+    },
+    {
+      "item": "rpc::RpcClient",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc.rs",
+      "syntax": "# [doc = \" One service reader, one concurrent exchange, one shared rolling attempt budget.\"] # [doc = \" (´def:wallet:rpc-client´)\"] pub struct RpcClient { config : RpcConfig , limits : RpcLimits , decode : crate :: Limits , state : Mutex < State > , }"
+    },
+    {
+      "item": "rpc_json::Seed",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "syntax": "struct Seed < 'a > { depth : usize , remaining : & 'a mut usize , }"
+    },
+    {
+      "item": "rpc_provisioning::Provisioning",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_provisioning.rs",
+      "syntax": "# [doc = \" Public run declaration checked against the supported launch profile and raw genesis.\"] # [doc = \" (´def:wallet:rpc-provisioning´)\"] # [derive (Clone , Debug , serde :: Deserialize , PartialEq , Eq)] # [serde (deny_unknown_fields)] pub struct Provisioning { # [doc = \" Exact binary version, checked by the provisioning harness at launch.\"] pub binary : String , # [doc = \" Exact Elements chain name, checked by the provisioning harness.\"] pub chain : String , # [doc = \" Operator-declared run, compared with the caller's expected run.\"] pub run : String , # [doc = \" Complete supported public configuration overrides, excluding credentials and reachability.\"] pub parameters : BTreeMap < String , String > , # [doc = \" Nontrivial P2PK signing script; no local signature verification is implied.\"] pub challenge : Vec < u8 > , # [doc = \" Expected display-order genesis locator.\"] pub genesis : [u8 ; 32] , # [doc = \" Expected complete genesis header bytes.\"] pub header : Vec < u8 > , }"
+    },
+    {
+      "item": "rpc_secret::Buffer",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_secret.rs",
+      "syntax": "pub (crate) struct Buffer { bytes : SecretBox < [u8] > , length : usize , }"
     }
   ],
   "class_decisions": [
@@ -15713,7 +16348,7 @@
     {
       "name": "wallet-decoder",
       "status": "reviewer-confirmed",
-      "premises": "The wallet decoder receives public transaction and block bytes only. Three labelled operations retain complete input and result at trace and bounded refusal outcomes at every level. The opaque transaction accessor inherits its caller; no network, RPC, credential, signing or verification authority is exposed. The independent byte reader and allocation fixtures bound this admission to public layout parsing.",
+      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, cookie and wire buffers are secret-owned; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
       "membership": {
         "labelled_package": "pn-wallet"
       }
@@ -15870,8 +16505,11 @@
     },
     "shape-wallet": {
       "fields": [
-        "complete public byte input and configured limits at trace",
+        "complete public input and configured limits at trace",
         "complete public decoded fields and result at trace",
+        "role-only private carriers",
+        "method, status, elapsed nanoseconds and public result bytes at trace",
+        "typed refusal diagnostics at default and trace",
         "bounded outcome",
         "inclusive duration_seconds",
         "declared invocation work",
@@ -17423,18 +18061,18 @@
     },
     "wallet-full_recording": {
       "status": "reviewer-confirmed",
-      "premises": "The wallet decoder receives public transaction and block bytes only. Three labelled operations retain complete input and result at trace and bounded refusal outcomes at every level. The opaque transaction accessor inherits its caller; no network, RPC, credential, signing or verification authority is exposed. The independent byte reader and allocation fixtures bound this admission to public layout parsing.",
-      "negative_probe": "CLICOMMON::claim:cli:wallet-operations-retain-owner-accounting"
+      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, cookie and wire buffers are secret-owned; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
+      "negative_probe": "WALLET::claim:wallet:rpc-observation-retains-public-results-only"
     },
     "wallet-secret_flow": {
       "status": "reviewer-confirmed",
-      "premises": "The wallet decoder receives public transaction and block bytes only. Three labelled operations retain complete input and result at trace and bounded refusal outcomes at every level. The opaque transaction accessor inherits its caller; no network, RPC, credential, signing or verification authority is exposed. The independent byte reader and allocation fixtures bound this admission to public layout parsing.",
-      "negative_probe": "CLICOMMON::claim:cli:wallet-operations-retain-owner-accounting"
+      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, cookie and wire buffers are secret-owned; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
+      "negative_probe": "WALLET::claim:wallet:rpc-observation-retains-public-results-only"
     },
     "wallet-exposure_consumers": {
       "status": "reviewer-confirmed",
-      "premises": "The wallet decoder receives public transaction and block bytes only. Three labelled operations retain complete input and result at trace and bounded refusal outcomes at every level. The opaque transaction accessor inherits its caller; no network, RPC, credential, signing or verification authority is exposed. The independent byte reader and allocation fixtures bound this admission to public layout parsing.",
-      "negative_probe": "CLICOMMON::claim:cli:wallet-operations-retain-owner-accounting"
+      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, cookie and wire buffers are secret-owned; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
+      "negative_probe": "WALLET::claim:wallet:rpc-observation-retains-public-results-only"
     }
   }
 }

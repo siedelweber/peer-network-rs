@@ -422,6 +422,21 @@ pub fn decode_block(bytes: &[u8], limits: Limits) -> Result<Block, Refusal> {
     result
 }
 
+pub(crate) fn valid_limits(limits: Limits) -> bool {
+    Reader::new(&[], limits).is_ok()
+}
+
+pub(crate) fn decode_header(bytes: &[u8], limits: Limits) -> Result<(), Refusal> {
+    let mut reader = Reader::new(bytes, limits)?;
+    reader.header()?;
+    if reader.pos != bytes.len() {
+        return Err(Refusal::Trailing);
+    }
+    let header: elements::BlockHeader = elements::encode::deserialize(bytes).map_err(|_| Refusal::Codec)?;
+    drop(header);
+    Ok(())
+}
+
 /// Select only explicit evidence with a permanent `OP_RETURN` run/request target.
 /// (´sig:wallet:evidence-amount´)
 ///

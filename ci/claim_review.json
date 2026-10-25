@@ -2472,6 +2472,134 @@
       "before": "",
       "after": "Claim: Cargo identifies renamed codec dependencies, and the source check rejects global-context, hash-path and re-export uses outside the sole decoder adapter.",
       "review": "Read source mutations for global context, hash path and re-export, then the Cargo package-renaming mutation; each is restored and rejected by package identity."
+    },
+    {
+      "operation": "pn-wallet::rpc::tests::attempts_and_holds",
+      "path": "packages/wallet/src/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-attempts-and-holds-are-shared",
+      "before": "",
+      "after": "Claim: A shared rolling budget permits exactly eight attempts before any cookie access, refuses simultaneous callers, expires at sixty seconds, and retains the named decoder-limit hold.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc::tests::projections",
+      "path": "packages/wallet/src/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-reads-have-closed-typed-projections",
+      "before": "",
+      "after": "Claim: Closed read operations select only the five declared raw-mode methods; typed projections refuse null and malformed hex, preserve decoded transactions and blocks, and identify a limiting block without accepting unsupported routes.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc::tests::secret_carriers",
+      "path": "packages/wallet/src/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
+      "before": "",
+      "after": "Claim: Basic encoding writes directly into an erasing buffer; configuration and client Debug retain only roles, and parser refusals retain public causes without private input bytes.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc_cookie::tests::grammar_cases",
+      "path": "packages/wallet/src/rpc_cookie.rs",
+      "claim": "WALLET::claim:wallet:rpc-cookie-grammar-is-exact",
+      "before": "",
+      "after": "Claim: Cookie grammar accepts precisely the daemon username, sixty-four lowercase hexadecimal digits and an optional single LF, refusing every tested truncation, oversized input and forbidden separator or character.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc_cookie::tests::descriptor_cases",
+      "path": "packages/wallet/src/rpc_cookie.rs",
+      "claim": "WALLET::claim:wallet:rpc-cookie-descriptors-confine-acquisition",
+      "before": "",
+      "after": "Claim: Descriptor acquisition checks the current UID, exact file and root modes, regular single-link files and every traversed directory; symlinks, missing files, substitutions and mutation during reading refuse, while later reads acquire rotated bytes.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc_http::tests::framing_cases",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "claim": "WALLET::claim:wallet:rpc-http-framing-is-bounded",
+      "before": "",
+      "after": "Claim: Strict HTTP framing accepts the four admitted status classes and refuses malformed lines, missing or duplicate lengths, transfer encodings, compression, redirects and declared header or body excesses.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc_http::tests::acquisition_cases",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "claim": "WALLET::claim:wallet:rpc-http-acquisition-is-bounded",
+      "before": "",
+      "after": "Claim: Response acquisition refuses truncation and trailing bytes, closes a 401 before its body, and slow progress cannot renew the one monotonic exchange deadline.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc_json::tests::parser_cases",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "claim": "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+      "before": "",
+      "after": "Claim: JSON parsing rejects invalid UTF-8, BOM, duplicate escaped keys, depth and item excesses and inexact numbers before constructing an admitted message.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc_json::tests::envelope_cases",
+      "path": "packages/wallet/src/rpc_json.rs",
+      "claim": "WALLET::claim:wallet:rpc-json-envelope-is-correlated",
+      "before": "",
+      "after": "Claim: JSON-RPC envelopes require version 2.0, an exact identifier, exclusive result or error and exact error fields; only status 200 admits a result and method schemas decide nullability.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc::genesis_reads",
+      "path": "packages/wallet/tests/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-genesis-reads-match-provisioning",
+      "before": "",
+      "after": "Claim: The real declared Elements daemon supplies count zero and matching raw genesis header and block through the cookie reader, while a separately credentialed external harness records the same genesis without admitting producer methods into the client.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc::provisioning_refusals",
+      "path": "packages/wallet/tests/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-provisioning-rejects-mismatches",
+      "before": "",
+      "after": "Claim: Checked provisioning refuses wrong binary, chain, run, launch parameters, trivial challenge and raw genesis identity before exposing a ready reader.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc::authentication_refusals",
+      "path": "packages/wallet/tests/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-authentication-failures-are-secret-safe",
+      "before": "",
+      "after": "Claim: The real daemon rejects a well-formed wrong cookie with a typed authentication refusal; missing, partial and ACL-exposed cookies refuse locally without a password fallback or private error source.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc::observations",
+      "path": "packages/wallet/tests/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-observation-retains-public-results-only",
+      "before": "",
+      "after": "Claim: Real genesis reads and public service diagnostics survive default and trace observation unchanged, while retained output and content artifacts contain neither the endpoint nor cookie identity, bytes or private fixture path.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc::generic_negative",
+      "path": "packages/wallet/tests/rpc.rs",
+      "claim": "WALLET::claim:wallet:generic-rpc-socket-retains-private-reachability",
+      "before": "",
+      "after": "Claim: An unmodified standard TCP client retains the private endpoint and port in its Debug representation, demonstrating why its socket must remain behind the wallet's non-formatting bootstrap boundary.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc::rotation",
+      "path": "packages/wallet/tests/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-cookie-rotation-has-no-replay",
+      "before": "",
+      "after": "Claim: One reader acquires the daemon's rotated cookie after a real restart, returns a single authentication refusal for restored stale bytes, and succeeds only on a later explicit call after the fresh cookie is restored.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:wallet-rpc-types-confine-private-authority",
+      "before": "",
+      "after": "Claim: The RPC bootstrap requires secret carriers and has no Display representation, and a caller cannot supply arbitrary method strings or wallet selections to the closed read interface.",
+      "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
     }
   ]
 }

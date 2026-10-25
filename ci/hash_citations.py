@@ -140,6 +140,9 @@ def establish(root, rule):
                 return all(0 <= int(part, 16) < 2**21 for part in value[2:].split("-"))
             return bool(re.fullmatch(r"0b[01]+", value))
         return literal
+    if kind == "hex-alphabet" and standing == "defined":
+        alphabet = ''.join(format(digit, 'x') for digit in range(16))
+        return lambda value, line: value == alphabet and not IDENTITY_CONTEXT.search(line) and not re.search(r"\b(?:hash|rev|revision|tree|object)\b", line, re.I)
     if kind == "cbor-vectors" and standing == "defined":
         # Encodings, including deliberately invalid encodings, are the test input itself.
         # Scientific-notation fragments and repeated text subjects are also visible data.

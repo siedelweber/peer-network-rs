@@ -1672,6 +1672,9 @@ dependencies = [
  "dhat",
  "elements",
  "pn-testkit",
+ "secrecy",
+ "serde",
+ "serde_json",
  "tracing",
 ]
 

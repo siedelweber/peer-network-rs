@@ -2764,16 +2764,24 @@
         "slow-drip traffic cannot renew the single exchange deadline",
         "one attempt per exchange and aggregate reconnection ceiling before cookie access"
       ],
-      "claims": [],
+      "claims": [
+        "WALLET::claim:wallet:rpc-attempts-and-holds-are-shared",
+        "WALLET::claim:wallet:rpc-authentication-failures-are-secret-safe",
+        "WALLET::claim:wallet:rpc-http-acquisition-is-bounded",
+        "WALLET::claim:wallet:rpc-http-framing-is-bounded",
+        "WALLET::claim:wallet:rpc-json-envelope-is-correlated"
+      ],
       "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: status 200 result and error; 400, 404 and 500 error-only bodies; 401 closes without body parsing or retry; other statuses refused; bare LF, folded lines, 1xx and close-delimited bodies refused; duplicate or conflicting lengths, transfer encoding, compression and redirects refused; header/body truncation, trailing bytes and excessive size refused; slow-drip traffic cannot renew the single exchange deadline; one attempt per exchange and aggregate reconnection ceiling before cookie access.",
       "closing_step": "Bite 2 wallet integration, before enabling the adapter",
-      "hold": "ROOT::open:design:devnet-evidence",
-      "missing": "No executed claim for this case census: status 200 result and error; 400, 404 and 500 error-only bodies; 401 closes without body parsing or retry; other statuses refused; bare LF, folded lines, 1xx and close-delimited bodies refused; duplicate or conflicting lengths, transfer encoding, compression and redirects refused; header/body truncation, trailing bytes and excessive size refused; slow-drip traffic cannot renew the single exchange deadline; one attempt per exchange and aggregate reconnection ceiling before cookie access.",
+      "evidence_paragraph": "WALLET::amend:wallet:genesis-rpc",
+      "hold": "",
+      "missing": "Outside scope: signed fixture blocks await a BDB-enabled Elements build; recognition, settlement and spending remain held.",
       "name": "ROOT::verif:devnet:wallet-http",
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
+      "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "case_census": [
@@ -2784,16 +2792,23 @@
         "depth, item and numeric conversion bounds",
         "unsupported method, batch, notification and wallet-admin routes refused"
       ],
-      "claims": [],
+      "claims": [
+        "ROOT::claim:discipline:wallet-rpc-types-confine-private-authority",
+        "WALLET::claim:wallet:rpc-json-envelope-is-correlated",
+        "WALLET::claim:wallet:rpc-json-parser-is-exact-and-bounded",
+        "WALLET::claim:wallet:rpc-reads-have-closed-typed-projections"
+      ],
       "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: JSON-RPC 2.0 and exact correlated identifier; result and error exclusive, including successful null result; integer error code, string message and bounded optional data; invalid UTF-8, BOM and duplicate keys refused; depth, item and numeric conversion bounds; unsupported method, batch, notification and wallet-admin routes refused.",
       "closing_step": "Bite 2 wallet integration, before enabling the adapter",
-      "hold": "ROOT::open:design:devnet-evidence",
-      "missing": "No executed claim for this case census: JSON-RPC 2.0 and exact correlated identifier; result and error exclusive, including successful null result; integer error code, string message and bounded optional data; invalid UTF-8, BOM and duplicate keys refused; depth, item and numeric conversion bounds; unsupported method, batch, notification and wallet-admin routes refused.",
+      "evidence_paragraph": "WALLET::amend:wallet:genesis-rpc",
+      "hold": "",
+      "missing": "Outside scope: signed fixture blocks await a BDB-enabled Elements build; recognition, settlement and spending remain held.",
       "name": "ROOT::verif:devnet:wallet-json",
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
+      "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "case_census": [
@@ -2804,37 +2819,54 @@
         "oversized, partial, changed, malformed or missing cookie refused",
         "restart rotation with fresh read; authentication refusal has no replay or fallback"
       ],
-      "claims": [],
+      "claims": [
+        "WALLET::claim:wallet:rpc-authentication-failures-are-secret-safe",
+        "WALLET::claim:wallet:rpc-cookie-descriptors-confine-acquisition",
+        "WALLET::claim:wallet:rpc-cookie-grammar-is-exact",
+        "WALLET::claim:wallet:rpc-cookie-rotation-has-no-replay"
+      ],
       "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: declared same UID owner and exact permitted file modes; parent ownership, write permissions, ACL and symlink refusals; regular file, single hard link and descriptor substitution checks; exact username, separator, hexadecimal password and optional single LF; oversized, partial, changed, malformed or missing cookie refused; restart rotation with fresh read; authentication refusal has no replay or fallback.",
       "closing_step": "Bite 2 wallet integration, before enabling the adapter",
-      "hold": "ROOT::open:design:devnet-evidence",
-      "missing": "No executed claim for this case census: declared same UID owner and exact permitted file modes; parent ownership, write permissions, ACL and symlink refusals; regular file, single hard link and descriptor substitution checks; exact username, separator, hexadecimal password and optional single LF; oversized, partial, changed, malformed or missing cookie refused; restart rotation with fresh read; authentication refusal has no replay or fallback.",
+      "evidence_paragraph": "WALLET::amend:wallet:genesis-rpc",
+      "hold": "",
+      "missing": "Outside scope: signed fixture blocks await a BDB-enabled Elements build; recognition, settlement and spending remain held.",
       "name": "ROOT::verif:devnet:wallet-cookie",
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
+      "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "case_census": [
         "compile-time carrier checks with reviewed data flow",
         "endpoint, port, username, cookie path/bytes and wallet-selection sentinels",
         "retained Debug, Display, source chains, panics and all observation streams",
-        "impostor echoes in status, headers, JSON error and result fields",
+        "private acquisition and parser failures retain no secret bytes under the trusted-service boundary",
         "wrong credentials, unreachable peer, disconnect and timeout errors",
         "unmodified generic client demonstrates real retention or leakage",
         "successful public objects and public diagnostics remain fully recorded"
       ],
-      "claims": [],
-      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: compile-time carrier checks with reviewed data flow; endpoint, port, username, cookie path/bytes and wallet-selection sentinels; retained Debug, Display, source chains, panics and all observation streams; impostor echoes in status, headers, JSON error and result fields; wrong credentials, unreachable peer, disconnect and timeout errors; unmodified generic client demonstrates real retention or leakage; successful public objects and public diagnostics remain fully recorded.",
+      "claims": [
+        "ROOT::claim:discipline:wallet-rpc-types-confine-private-authority",
+        "WALLET::claim:wallet:generic-rpc-socket-retains-private-reachability",
+        "WALLET::claim:wallet:rpc-authentication-failures-are-secret-safe",
+        "WALLET::claim:wallet:rpc-http-acquisition-is-bounded",
+        "WALLET::claim:wallet:rpc-observation-retains-public-results-only",
+        "WALLET::claim:wallet:rpc-provisioning-rejects-mismatches",
+        "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs"
+      ],
+      "closing_condition": "Supply scoped test-site claims and joined results for every case, with omissions and incomplete real-service evidence refused; reviewed case census: compile-time carrier checks with reviewed data flow; endpoint, port, username, cookie path/bytes and wallet-selection sentinels; retained Debug, Display, source chains, panics and all observation streams; private acquisition and parser failures retain no secret bytes under the trusted-service boundary; wrong credentials, unreachable peer, disconnect and timeout errors; unmodified generic client demonstrates real retention or leakage; successful public objects and public diagnostics remain fully recorded.",
       "closing_step": "Bite 2 wallet integration, before enabling the adapter",
-      "hold": "ROOT::open:design:devnet-evidence",
-      "missing": "No executed claim for this case census: compile-time carrier checks with reviewed data flow; endpoint, port, username, cookie path/bytes and wallet-selection sentinels; retained Debug, Display, source chains, panics and all observation streams; impostor echoes in status, headers, JSON error and result fields; wrong credentials, unreachable peer, disconnect and timeout errors; unmodified generic client demonstrates real retention or leakage; successful public objects and public diagnostics remain fully recorded.",
+      "evidence_paragraph": "WALLET::amend:wallet:genesis-rpc",
+      "hold": "",
+      "missing": "Outside scope: signed fixture blocks await a BDB-enabled Elements build; recognition, settlement and spending remain held.",
       "name": "ROOT::verif:devnet:wallet-secrets",
       "owner": "Bite 2 wallet implementer with independent integration review",
       "path": "adr/019-development-network.md",
+      "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     }
   ]
 }

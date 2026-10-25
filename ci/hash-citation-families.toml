@@ -320,7 +320,17 @@ producer = "Elements layout and curve fixture coordinates"
 establishment = "defined"
 reader = "interchange-literal"
 definition = "Explicit integer and byte literals construct public parser fixtures; no bare content identity is admitted."
-paths = ["packages/wallet/**/*.rs"]
+paths = ["packages/wallet/**/*.rs", "ci/wallet_elements.py"]
+
+[[rows]]
+family = "wallet-hex-alphabet"
+group = "wallet RPC encoding"
+measures = "The sixteen lowercase base-sixteen digits in numeric order, not an identity"
+producer = "The base-sixteen positional alphabet"
+establishment = "defined"
+reader = "hex-alphabet"
+definition = "Reconstruct the exact alphabet by formatting integers zero through fifteen in lowercase base sixteen. Refuse any different spelling or identity context."
+paths = ["packages/wallet/src/rpc.rs", "ci/wallet_elements.py"]
 
 [[rows]]
 family = "wallet-c-base"

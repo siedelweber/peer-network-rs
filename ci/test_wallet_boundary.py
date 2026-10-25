@@ -6,9 +6,33 @@ from wallet_cases import check as check_cases
 from wallet_boundary import check, check_features, check_build_scripts, check_production_tree
 import json
 import tomllib
+import subprocess
 
 
 class WalletBoundary(unittest.TestCase):
+    def test_rpc_type_boundary(self):
+        """Claim: The RPC bootstrap requires secret carriers and has no Display representation, and a caller cannot supply arbitrary method strings or wallet selections to the closed read interface.
+        ´claim:discipline:wallet-rpc-types-confine-private-authority´
+        ´test:integration:test-rpc-type-boundary´
+        """
+        source=Path('packages/wallet/src/lib.rs')
+        original=source.read_bytes()
+        probe=b'''\nfn private_rpc_probe(config: RpcConfig, client: &RpcClient, root: std::fs::File) {
+            let _display = format!("{config}");
+            let _method = client.read("getwalletinfo");
+            let _wallet = Read::Wallet("private_wallet_sentinel");
+            let _plain = RpcConfig::new(RpcLink::HostSecured, String::new(), 42110, root, String::new(), 1);
+        }\n'''
+        try:
+            source.write_bytes(original+probe)
+            result=subprocess.run(['cargo','check','--offline','--locked','--profile','gate','-p','pn-wallet','--lib'],capture_output=True,check=False,timeout=180)
+        finally:
+            source.write_bytes(original)
+        Path('.lane/wallet-rpc-compile-fail.log').write_bytes(result.stderr)
+        self.assertNotEqual(result.returncode,0)
+        for message in [b'E0277',b'E0308',b'E0599',b'SecretBox',b'Display',b'expected `Read`',b'Wallet']:
+            self.assertIn(message,result.stderr)
+
     def test_dependency_features(self):
         """Claim: The codec's unified curve, hash and entropy features match the reviewed vocabulary; normal host dependencies exclude the wallet and normal wallet dependencies exclude the heap profiler.
         ´claim:discipline:wallet-development-edges-stay-out-of-production´

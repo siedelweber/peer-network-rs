@@ -51,8 +51,8 @@ generators = 75
 
 [[rows]]
 name = "pn-wallet"
-operations = 4
-instrumented = 3
-exceptions = 1
+operations = 22
+instrumented = 5
+exceptions = 17
 helpers = 0
-generators = 7
+generators = 14

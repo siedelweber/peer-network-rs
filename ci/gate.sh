@@ -19,7 +19,8 @@ mkdir -p .lane
 export PN_OBSERVE_ARTIFACT_DIR="$PWD/.lane/observations"
 export PN_OBSERVE_LEVEL=default
 export PN_HOST_TEST_ROOT="$PWD/.lane/host-postgres"
-trap 'python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"' EXIT
+export PN_WALLET_TEST_ROOT="$PWD/.lane/wallet-elements"
+trap 'python3 -B ci/wallet_elements.py stop --root "$PN_WALLET_TEST_ROOT"; python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"' EXIT
 gate_started=$(date -u +%s.%N)
 source ci/gate_resources.sh
 resource_root=$(gate_cgroup_root 2>/dev/null) || resource_root=
@@ -77,6 +78,7 @@ run_step fmt python3 ci/discipline.py fmt
 run_step clippy python3 ci/discipline.py clippy
 run_step nursery-advisory python3 ci/discipline.py nursery
 run_step host-postgresql-start python3 -B ci/host_postgresql.py start --root "$PN_HOST_TEST_ROOT"
+run_step wallet-elements-start python3 -B ci/wallet_elements.py start --root "$PN_WALLET_TEST_ROOT"
 run_step tests python3 -B ci/discipline.py tests
 run_step test-budgets python3 -B ci/devperf.py --input .lane/performance-events.jsonl --findings .lane/performance-findings.jsonl
 # Discover first-party members for feature-minimal builds and documentation.
@@ -98,6 +100,7 @@ run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
 run_step host-observation-build python3 -B ci/host_evidence_build.py
 run_step host-observation-runtime python3 -B ci/run_ci.py test_host_runtime
 run_step wallet-conformance python3 -B ci/run_ci.py test_wallet_boundary
+run_step wallet-elements-stop python3 -B ci/wallet_elements.py stop --root "$PN_WALLET_TEST_ROOT"
 run_step host-postgresql-stop python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"
 run_step observation-parser python3 -B ci/run_ci.py test_observe_syntax
 run_step observation-syntax python3 -B ci/observe.py
