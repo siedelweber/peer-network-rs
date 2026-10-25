@@ -5944,6 +5944,16 @@
       "claim": "ROOT::sig:design:storage",
       "shape": "shape-host",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-host",
+      "path": "packages/host/src/storage.rs",
+      "item": "storage::MemoryStore::audit_history",
+      "owner": "HOST",
+      "signature": "fn audit_history (& self) -> Result < () , StorageError >",
+      "claim": "ROOT::sig:design:storage",
+      "shape": "shape-host",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -11124,13 +11134,13 @@
     {
       "operation": "pn-host::packages/host/src/lib.rs::Session::connect",
       "class_decision": "host-transport",
-      "body": "{ let result = Self :: connect_inner (config) . await ; if let Err (cause) = & result { tracing :: warn ! (cause = ? cause , outcome = if matches ! (cause , Refusal :: Transport | Refusal :: Entropy) { \"error\" } else { \"refusal\" }) ; } result }",
+      "body": "{ let result = async { let mut socket = wire :: Socket :: open (& config) . await ? ; scram :: login (& mut socket , & config) . await ? ; let key = Arc :: new (Mutex :: new (None)) ; let diagnostics = Arc :: new (Mutex :: new (Vec :: new ())) ; let last_refusal = Arc :: new (Mutex :: new (None)) ; let mut startup = Vec :: new () ; loop { let frame = wire :: read (& mut socket) . await ? ; if frame . kind == b'Z' { if frame . payload . bytes () != b\"I\" { return Err (Refusal :: Protocol) ; } break ; } if let Some (frame) = filter (frame , & key , & diagnostics) ? { startup . push (frame) ; } } if key . lock () . map_err (| _ | Refusal :: Cancellation) ? . is_none () { return Err (Refusal :: Cancellation) ; } let (driver , shim) = tokio :: io :: duplex (65_536) ; let bridge_key = Arc :: clone (& key) ; let bridge_diagnostics = Arc :: clone (& diagnostics) ; let bridge_refusal = Arc :: clone (& last_refusal) ; let bridge = tokio :: spawn (async move { let _result = relay (Relay { shim , socket , startup , key : bridge_key , diagnostics : bridge_diagnostics , refusal : bridge_refusal , }) . await ; }) ; let mut placeholder = tokio_postgres :: Config :: new () ; placeholder . user (\"pn_public_placeholder\") . dbname (\"pn_public_placeholder\") . ssl_mode (tokio_postgres :: config :: SslMode :: Disable) . channel_binding (tokio_postgres :: config :: ChannelBinding :: Disable) ; let Ok ((client , connection)) = placeholder . connect_raw (driver , tokio_postgres :: NoTls) . await else { bridge . abort () ; return Err (Refusal :: DriverHandoff) ; } ; let connection = tokio :: spawn (async move { let _result = connection . await ; }) ; Ok (Self { client : storage :: StatementClient :: new (client) , config : Arc :: new (config) , backend_key : key , diagnostics , last_refusal , tasks : vec ! [bridge , connection] , }) } . await ; if let Err (cause) = & result { tracing :: warn ! (cause = ? cause , outcome = if matches ! (cause , Refusal :: Transport | Refusal :: Entropy) { \"error\" } else { \"refusal\" }) ; } result }",
       "assessments": {
         "full_recording": "host-full_recording",
         "secret_flow": "host-secret_flow",
         "exposure_consumers": "host-exposure_consumers"
       },
-      "item_premise": "The private raw client has no production accessor. Role-only carriers protect configuration, keys and diagnostics; exact frame buffers stay secret-owned until the checked public filter. Public session formatting reveals only the declared case, connection state and disabled persistence. Future-aware spans enter only when polled. Independent relay tasks report bounded terminal causes under their own operation; the connect span ends at handoff rather than measuring the session."
+      "item_premise": "The constructor owns the complete private startup and SCRAM handoff inline, inside its future-aware span. It alone acquires the placeholder driver outside the private storage module; configuration remains secret-owned. A process semaphore bounds outstanding derivations, without reading observation to choose results."
     },
     {
       "operation": "pn-host::packages/host/src/lib.rs::Session::cancel",
@@ -11445,6 +11455,17 @@
       "body": "{ let mut meter = TransactionMeter :: new () ; let transaction = self . session . client . snapshot () . await . map_err (| _ | StorageError :: Transport) ? ; let result = read (& transaction , Statement :: ReadHistory , & [] , true) . await . map (| _ | ()) ; transaction . commit () . await . map_err (| _ | StorageError :: Transport) ? ; meter . commit () ; classified (result) }",
       "class_decision": "host-storage",
       "item_premise": "Storage accepts public validated carriers and returns complete canonical packages and typed fieldless causes. The private Session is not formatted into public content. Closed SQL selects only schema identity and public history; every statement and decoded result is covered by the positive and sensitive DataRow controls. No storage computation reads observation. Async boundaries enter only when polled. Independent production admission remains held.",
+      "assessments": {
+        "full_recording": "storage-full_recording",
+        "secret_flow": "storage-secret_flow",
+        "exposure_consumers": "storage-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-host::packages/host/src/storage.rs::storage::MemoryStore::audit_history",
+      "body": "{ let span = cli_common :: observation :: scope (\"HOST\" , \"sig:design:storage\" , \"storage::MemoryStore::audit_history\" , & ()) ; let result = (| | { for rows in self . history . values () { for row in rows { verify_row (row) ? ; } if rows . windows (2) . any (| pair | { pair [0] . closes_at != Some (pair [1] . version . opens_at) || pair [0] . version . opens_at >= pair [1] . version . opens_at }) || rows . last () . is_some_and (| row | row . closes_at . is_some ()) { return Err (StorageError :: CorruptHistory) ; } } Ok (()) }) () ; let result = classified (result) ; span . finish (& result) ; result }",
+      "class_decision": "host-storage",
+      "item_premise": "Explicit full memory audit checks each public payload digest and canonical envelope, interval contiguity and the open terminal row. It takes no private configuration and makes no observation-dependent choice. Boundary load does not substitute for this complete audit.",
       "assessments": {
         "full_recording": "storage-full_recording",
         "secret_flow": "storage-secret_flow",
@@ -15239,7 +15260,7 @@
       "item": "storage::Statement",
       "package": "pn-host",
       "path": "packages/host/src/storage.rs",
-      "syntax": "# [derive (Clone , Copy)] enum Statement { BootstrapLock , HasTables , HasIdentity , Create , SetIdentity , GetIdentity , LockHistory , ReadHistory , ReadKey , ReadBoundary , Close , Insert , }"
+      "syntax": "# [derive (Clone , Copy)] enum Statement { BootstrapLock , HasTables , HasIdentity , Create , SetIdentity , GetIdentity , EnsureIndexes , LockHistory , ReadHistory , ReadKey , ReadBoundary , Close , Insert , }"
     },
     {
       "item": "storage::StatementClient",
@@ -15418,7 +15439,8 @@
           "pn-host::packages/host/src/storage.rs::storage::PostgresStore::open_store",
           "pn-host::packages/host/src/storage.rs::storage::PostgresStore::load_boundary",
           "pn-host::packages/host/src/storage.rs::storage::PostgresStore::audit_history",
-          "pn-host::packages/host/src/storage.rs::storage::PostgresStore::append_effective_successor"
+          "pn-host::packages/host/src/storage.rs::storage::PostgresStore::append_effective_successor",
+          "pn-host::packages/host/src/storage.rs::storage::MemoryStore::audit_history"
         ]
       }
     }

@@ -1,5 +1,6 @@
 """Independent fixed-fixture storage projections and restricted canonical CBOR reader."""
 import hashlib
+import copy
 import json
 from pathlib import Path
 
@@ -51,6 +52,32 @@ def vectors():
         value=[PAYLOAD,family,body]
         rows.append(dict(family=family,recipe=PAYLOAD,canonical_bytes=list(canonical(value)),digest=commitment(PAYLOAD,value).hex()))
     rows.append(dict(family='disclosure',recipe=DISCLOSURE,canonical_bytes=list(canonical(disclosure)),digest=commitment(DISCLOSURE,disclosure).hex()))
+    def add(name,family,body):
+        value=[PAYLOAD,family,body]
+        rows.append(dict(family=name,recipe=PAYLOAD,canonical_bytes=list(canonical(value)),digest=commitment(PAYLOAD,value).hex()))
+    ridge=copy.deepcopy(constants)
+    ridge[0][2]=2;ridge[1]='ridge-image';ridge[4]='controller-2'
+    ridge[-1]=['expression','structural-floor','p_ridge/(1-p_ridge); p_ridge is the defining ridge real','case:epoch:safety-wall-floor-ridge-floor']
+    add('constants-ridge','constants',ridge)
+    committed=copy.deepcopy(disclosure)
+    committed[3][9]='public-commitment';committed[3][10]='first-valid'
+    committed[4][-1][-1]=['bound',amount,'public operator bound proof']
+    for marker in committed[2]:
+        members=marker[9][1];proof=('set:'+'|'.join(members)).encode()
+        marker[9]=['commitment',proof,[[members,proof]]]
+    add('commitment-policy','marker-policy',[committed[3],committed[4]])
+    add('commitment-lineage','lineage',committed)
+    prefix=copy.deepcopy(disclosure);prefix[3][9]='whole-prefix';prefix[3][10]='first-valid'
+    for marker in prefix[2]:marker[9]=['whole-prefix']
+    add('whole-prefix-lineage','lineage',prefix)
+    refused=copy.deepcopy(disclosure)
+    competitor=copy.deepcopy(markers[1]);competitor[0]='competitor';competitor[6]=11
+    refused[2].append(competitor)
+    refused_output=[output[0],[output[1][0]],[markers[1],'succession',[markers[1],competitor]],'unsettled']
+    add('refused-recognition','unsettled-recognition',[DISCLOSURE,commitment(DISCLOSURE,refused),refused,refused_output])
+    causes=['policy-selection','policy-binding','deployment-binding','policy-digest','unsupported-policy-recipe','publication','evidence-binding','sample-coverage','units','bootstrap','policy','buffer','verifier','record-identity','history-policy','history-position','initial','succession','missing-lineage','regressed-lineage','encoding','missing-opening','ambiguous-opening','invalid-opening','regressed-acceptance','out-of-lineage','invalid-member','inconsistent-alias']
+    # Component table pins every spelling using the existing payload domain; it is not an admitted family.
+    add('cause-spellings','component-table',causes)
     return rows
 
 def check(path):
@@ -67,4 +94,4 @@ if __name__=='__main__':
     target=Path('packages/host/src/storage/vectors.json')
     if args.write:target.write_text(json.dumps(vectors(),indent=2)+'\n')
     check(target)
-    print('STORAGE-VECTORS checked=7')
+    print(f'STORAGE-VECTORS checked={len(vectors())}')

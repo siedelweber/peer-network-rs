@@ -168,7 +168,66 @@ impl Session {
         ret
     )]
     pub async fn connect(config: Configuration) -> Result<Self, Refusal> {
-        let result = Self::connect_inner(config).await;
+        let result = async {
+            let mut socket = wire::Socket::open(&config).await?;
+            scram::login(&mut socket, &config).await?;
+            let key = Arc::new(Mutex::new(None));
+            let diagnostics = Arc::new(Mutex::new(Vec::new()));
+            let last_refusal = Arc::new(Mutex::new(None));
+            let mut startup = Vec::new();
+            loop {
+                let frame = wire::read(&mut socket).await?;
+                if frame.kind == b'Z' {
+                    if frame.payload.bytes() != b"I" {
+                        return Err(Refusal::Protocol);
+                    }
+                    break;
+                }
+                if let Some(frame) = filter(frame, &key, &diagnostics)? {
+                    startup.push(frame);
+                }
+            }
+            if key.lock().map_err(|_| Refusal::Cancellation)?.is_none() {
+                return Err(Refusal::Cancellation);
+            }
+            let (driver, shim) = tokio::io::duplex(65_536);
+            let bridge_key = Arc::clone(&key);
+            let bridge_diagnostics = Arc::clone(&diagnostics);
+            let bridge_refusal = Arc::clone(&last_refusal);
+            let bridge = tokio::spawn(async move {
+                let _result = relay(Relay {
+                    shim,
+                    socket,
+                    startup,
+                    key: bridge_key,
+                    diagnostics: bridge_diagnostics,
+                    refusal: bridge_refusal,
+                })
+                .await;
+            });
+            let mut placeholder = tokio_postgres::Config::new();
+            placeholder
+                .user("pn_public_placeholder")
+                .dbname("pn_public_placeholder")
+                .ssl_mode(tokio_postgres::config::SslMode::Disable)
+                .channel_binding(tokio_postgres::config::ChannelBinding::Disable);
+            let Ok((client, connection)) = placeholder.connect_raw(driver, tokio_postgres::NoTls).await else {
+                bridge.abort();
+                return Err(Refusal::DriverHandoff);
+            };
+            let connection = tokio::spawn(async move {
+                let _result = connection.await;
+            });
+            Ok(Self {
+                client: storage::StatementClient::new(client),
+                config: Arc::new(config),
+                backend_key: key,
+                diagnostics,
+                last_refusal,
+                tasks: vec![bridge, connection],
+            })
+        }
+        .await;
         if let Err(cause) = &result {
             tracing::warn!(
                 cause = ?cause,
@@ -181,65 +240,7 @@ impl Session {
         }
         result
     }
-    async fn connect_inner(config: Configuration) -> Result<Self, Refusal> {
-        let mut socket = wire::Socket::open(&config).await?;
-        scram::login(&mut socket, &config).await?;
-        let key = Arc::new(Mutex::new(None));
-        let diagnostics = Arc::new(Mutex::new(Vec::new()));
-        let last_refusal = Arc::new(Mutex::new(None));
-        let mut startup = Vec::new();
-        loop {
-            let frame = wire::read(&mut socket).await?;
-            if frame.kind == b'Z' {
-                if frame.payload.bytes() != b"I" {
-                    return Err(Refusal::Protocol);
-                }
-                break;
-            }
-            if let Some(frame) = filter(frame, &key, &diagnostics)? {
-                startup.push(frame);
-            }
-        }
-        if key.lock().map_err(|_| Refusal::Cancellation)?.is_none() {
-            return Err(Refusal::Cancellation);
-        }
-        let (driver, shim) = tokio::io::duplex(65_536);
-        let bridge_key = Arc::clone(&key);
-        let bridge_diagnostics = Arc::clone(&diagnostics);
-        let bridge_refusal = Arc::clone(&last_refusal);
-        let bridge = tokio::spawn(async move {
-            let _result = relay(Relay {
-                shim,
-                socket,
-                startup,
-                key: bridge_key,
-                diagnostics: bridge_diagnostics,
-                refusal: bridge_refusal,
-            })
-            .await;
-        });
-        let mut placeholder = tokio_postgres::Config::new();
-        placeholder
-            .user("pn_public_placeholder")
-            .dbname("pn_public_placeholder")
-            .ssl_mode(tokio_postgres::config::SslMode::Disable)
-            .channel_binding(tokio_postgres::config::ChannelBinding::Disable);
-        let Ok((client, connection)) = placeholder.connect_raw(driver, tokio_postgres::NoTls).await else {
-            bridge.abort();
-            return Err(Refusal::DriverHandoff);
-        };
-        let connection = tokio::spawn(async move {
-            let _result = connection.await;
-        });
-        Ok(Self {
-            client: storage::StatementClient::new(client),
-            config: Arc::new(config),
-            backend_key: key,
-            diagnostics,
-            last_refusal,
-            tasks: vec![bridge, connection],
-        })
-    }
+
     /// Borrow the placeholder-only upstream client for public statement evidence.
     /// (´sig:host:public-client´)
     #[must_use]

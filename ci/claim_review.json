@@ -2286,8 +2286,8 @@
       "before": "",
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:storage-digest-domains-are-permanent",
-      "after": "Claim: All six fixed validated family projections and the recognition disclosure match independently encoded canonical bytes and SHA-256 literals; changing field order, an enum spelling or a digest domain breaks durable recipe correspondence.",
-      "review": "Read seven complete fixed projections: actual production constructors are compared byte-for-byte with independently constructed CBOR and SHA-256 values; all family names and the recognition disclosure are present."
+      "after": "Claim: Thirteen fixed projections and component tables pin all six families, the disclosure, alternate policy and floor layouts, refused recognition and all cause spellings to independently encoded canonical bytes and SHA-256 literals; storage grants the opaque rule fixture no domain validity.",
+      "review": "Read thirteen complete vectors: six families and disclosure, ridge-image constants, public-commitment policy and openings with a bound operator, whole-prefix first-valid lineage, refused recognition with named competitors, and all 28 cause spellings. The independent reader constructs every array and byte string without calling the Rust projector."
     },
     {
       "operation": "pn-host::storage::tests::storage_runtime",
@@ -2295,7 +2295,7 @@
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:closed-storage-statements-return-public-values",
       "after": "Claim: The closed storage statement set returns retained public values through `DataRows` under observation, with deterministic bytes and exact transaction results; its private service configuration remains behind Session.",
-      "review": "Read the ten closed SQL statements reached by fresh bootstrap, two versions and boundary reads; the only metadata query is opt-in test code for the negative scan."
+      "review": "Read the thirteen closed SQL statements, including idempotent index bootstrap, reached by fresh bootstrap, two versions, boundary reads and ReadHistory through audit_history; the only metadata query is opt-in test code for the negative scan."
     },
     {
       "operation": "pn-host::storage::tests::storage_restart",
@@ -2311,7 +2311,7 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary",
       "after": "Claim: Every closed storage statement is exercised under trace and its decoded DataRows contain only public fixture content; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.",
-      "review": "Read all twelve enum statement arms exercised under trace including the separate audit, and decoded DataRow scanning with the existing negative control."
+      "review": "Read all thirteen enum statement arms exercised under trace including the separate audit, and decoded DataRow scanning with the existing negative control."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_storage_restart",
@@ -2343,7 +2343,39 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-statement-types-refuse-inline-sql",
       "after": "Claim: Production modules cannot name a raw driver client outside its private wrapper, and an inline SQL string fails compilation at the wrapper's Statement parameter, so a new call site cannot bypass the reviewed vocabulary.",
-      "review": "Read the production type-name guard and injected cfg(test) inline-string call: compiler E0308 must specifically name Statement versus &str, and source bytes are restored in finally."
+      "review": "Read the compiler type error for inline SQL, the inferred second driver fixture outside Session::connect and the include macro fixture. The path allow-list rejects both latter fixtures before a build; the wrapper probe fails on Statement versus string."
+    },
+    {
+      "operation": "pn-host::scram::tests::derivation_permits",
+      "before": "",
+      "path": "packages/host/src/scram.rs",
+      "claim": "HOST::claim:host:cancelled-logins-retain-derivation-permits",
+      "after": "Claim: Two blocking derivations hold the process permits even after their logins are cancelled; an excess login remains outside the blocking pool until a job finishes, and all permits return after completion.",
+      "review": "Read the two blocking-job rendezvous controls and a third polled derivation. Both aborts cancel only awaiters; the permits remain unavailable until the jobs are released, and the queued future then completes with the full permit count restored."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_tamper",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:boundary-tampering-is-not-absence",
+      "after": "Claim: Deleted successors, shortened closures and damaged selected payloads refuse in both adapters; future damage is unread by load but refused by the full audit, including after the store was opened.",
+      "review": "Read four separately restored histories in each adapter. Deleting the successor, shortening its predecessor closure and damaging the selected bytes each refuse; future damage is not decoded by load but the complete audit refuses it. The damage is made after construction, so an opening-time audit cannot substitute for this witness."
+    },
+    {
+      "operation": "pn-host::storage::tests::storage_growth",
+      "before": "",
+      "path": "packages/host/src/storage/tests.rs",
+      "claim": "HOST::claim:history:storage-growth-has-executed-read-plans",
+      "after": "Claim: Requested-chain append, live-key load and sparse-boundary load are measured through 100,000 retained rows, while the three actual read plans expose server work; every measured boundary and appended successor is checked independently of timing.",
+      "review": "Read bulk-built valid histories at three sizes on each separate growth axis, measured production append/load, exact result cardinalities and EXPLAIN of the actual three enum statements. Timing and shared-node samples are evidence, not binding thresholds."
+    },
+    {
+      "operation": "ci::test_host_runtime.HostRuntime.test_binary_reachability_control",
+      "before": "",
+      "path": "ci/test_host_runtime.py",
+      "claim": "ROOT::claim:discipline:binary-endpoint-results-are-detected",
+      "after": "Claim: A fixture-only binary DataRow containing the TCP server port and address is detected as four-byte port and address octets, so decoding without decimal text cannot conceal reachability.",
+      "review": "Read the TCP fixture binary inet and int4 query and exact decoded-frame patterns. Both endpoint octets and big-endian port must be detected; no decimal-string match substitutes for the binary control."
     }
   ]
 }

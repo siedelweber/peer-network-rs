@@ -3538,7 +3538,8 @@
         "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory",
         "ci::test_host_runtime.HostRuntime.test_dependency_pins",
         "ci::test_host_runtime.HostRuntime.test_public_transport",
-        "ci::test_host_runtime.HostRuntime.test_sensitive_result_control"
+        "ci::test_host_runtime.HostRuntime.test_sensitive_result_control",
+        "ci::test_host_runtime.HostRuntime.test_binary_reachability_control"
       ],
       "implementation": "pn-host-postgresql",
       "kind": "suite",
@@ -3570,6 +3571,7 @@
         "pn-host::tests::wire_filter_boundary",
         "pn-host::tests::relay_refusals",
         "pn-host::scram::tests::ceiling_login_progress",
+        "pn-host::scram::tests::derivation_permits",
         "pn-host::scram::tests::derivation_cost"
       ],
       "implementation": "pn-host-rust",
@@ -3605,7 +3607,9 @@
         "pn-host::storage::tests::storage_digest_vectors",
         "pn-host::storage::tests::storage_runtime",
         "pn-host::storage::tests::storage_restart",
-        "pn-host::storage::tests::storage_scaling"
+        "pn-host::storage::tests::storage_scaling",
+        "pn-host::storage::tests::storage_tamper",
+        "pn-host::storage::tests::storage_growth"
       ],
       "implementation": "pn-host-memory-and-postgresql",
       "kind": "suite",

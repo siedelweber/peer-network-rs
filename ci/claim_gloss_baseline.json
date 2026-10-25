@@ -932,6 +932,10 @@
     "ci::test_host_runtime.HostRuntime.test_storage_restart": "",
     "pn-host::scram::tests::ceiling_login_progress": "",
     "pn-host::storage::tests::storage_scaling": "",
-    "ci::test_host_runtime.HostRuntime.test_statement_type_boundary": ""
+    "ci::test_host_runtime.HostRuntime.test_statement_type_boundary": "",
+    "pn-host::scram::tests::derivation_permits": "",
+    "pn-host::storage::tests::storage_tamper": "",
+    "pn-host::storage::tests::storage_growth": "",
+    "ci::test_host_runtime.HostRuntime.test_binary_reachability_control": ""
   }
 }

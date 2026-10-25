@@ -9,6 +9,9 @@ use hmac::{Hmac, KeyInit, Mac};
 use secrecy::{ExposeSecret, ExposeSecretMut, SecretBox};
 use sha2::{Digest, Sha256};
 
+const DERIVATION_LIMIT: usize = 2;
+static DERIVATIONS: tokio::sync::Semaphore = tokio::sync::Semaphore::const_new(DERIVATION_LIMIT);
+
 pub(crate) const ITERATIONS: std::ops::RangeInclusive<u32> = 4096..=600_000;
 
 fn encode(bytes: &[u8]) -> Result<Buffer, Refusal> {
@@ -69,7 +72,17 @@ fn authentication(frame: &wire::Frame, expected: u32) -> Result<&[u8], Refusal> 
     Ok(rest)
 }
 async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<SecretBox<[u8; 32]>, Refusal> {
+    let permit = DERIVATIONS.acquire().await.map_err(|_| Refusal::ScramFormat)?;
     tokio::task::spawn_blocking(move || {
+        let _permit = permit;
+        #[cfg(test)]
+        if password.bytes() == b"public-permit-password" {
+            let hook = PERMIT_HOOK.lock().unwrap().pop().unwrap();
+            let _ = hook.0.send(());
+            hook.1
+                .recv_timeout(std::time::Duration::from_secs(5))
+                .map_err(|_| Refusal::ScramFormat)?;
+        }
         #[cfg(test)]
         if password.bytes() == b"public-progress-password" {
             let hook = PROGRESS_HOOK.lock().unwrap().take();
@@ -175,7 +188,43 @@ static PROGRESS_HOOK: std::sync::Mutex<Option<(tokio::sync::oneshot::Sender<()>,
     std::sync::Mutex::new(None);
 
 #[cfg(test)]
+static PERMIT_HOOK: std::sync::Mutex<Vec<(tokio::sync::oneshot::Sender<()>, std::sync::mpsc::Receiver<()>)>> =
+    std::sync::Mutex::new(Vec::new());
+
+#[cfg(test)]
 mod tests {
+    /// Claim: Two blocking derivations hold the process permits even after their logins are cancelled; an excess login remains outside the blocking pool until a job finishes, and all permits return after completion.
+    /// ´claim:host:cancelled-logins-retain-derivation-permits´
+    /// ´test:unit:derivation-permits´
+    #[test]
+    fn derivation_permits() {
+        use super::*;
+        tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap().block_on(async {
+            let mut releases = Vec::new();
+            let mut jobs = Vec::new();
+            for _ in 0..DERIVATION_LIMIT {
+                let (started, ready) = tokio::sync::oneshot::channel();
+                let (release, receive) = std::sync::mpsc::channel();
+                PERMIT_HOOK.lock().unwrap().push((started, receive));
+                jobs.push(tokio::spawn(derive(Buffer::from_bytes(b"public-permit-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096)));
+                tokio::time::timeout(std::time::Duration::from_secs(5), ready).await.unwrap().unwrap();
+                releases.push(release);
+            }
+            assert_eq!(DERIVATIONS.available_permits(), 0);
+            let mut excess = Box::pin(derive(Buffer::from_bytes(b"public-excess-password").unwrap(), Buffer::from_bytes(b"salt").unwrap(), 4096));
+            assert!(tokio::time::timeout(std::time::Duration::from_millis(30), &mut excess).await.is_err());
+            for job in jobs { job.abort(); assert!(job.await.unwrap_err().is_cancelled()); }
+            assert_eq!(DERIVATIONS.available_permits(), 0);
+            assert!(tokio::time::timeout(std::time::Duration::from_millis(30), &mut excess).await.is_err());
+            for release in releases { release.send(()).unwrap(); }
+            tokio::time::timeout(std::time::Duration::from_secs(5), excess).await.unwrap().unwrap();
+            tokio::time::timeout(std::time::Duration::from_secs(5), async {
+                while DERIVATIONS.available_permits() != DERIVATION_LIMIT { tokio::task::yield_now().await; }
+            }).await.unwrap();
+            cli_common::emit(&serde_json::json!({"kind":"derivation_permits","limit":DERIVATION_LIMIT,"cancelled_jobs_retain_permits":true,"excess_waits":true})).unwrap();
+        });
+    }
+
     /// Claim: A current-thread executor forwards a public relay frame while a ceiling login is inside its blocking derivation job; a bounded rendezvous fails if that job is moved back onto the executor.
     /// ´claim:host:ceiling-login-leaves-relay-progress-independent´
     /// ´test:unit:ceiling-login-progress´

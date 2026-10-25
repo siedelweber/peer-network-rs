@@ -152,6 +152,7 @@ async fn conformance(mut adapter: Adapter, implementation: &str) {
             .unwrap();
         assert_eq!(adapter.load(30, &required).await, Err(StorageError::MissingRequired));
         assert!(selected(&mut adapter, family, 30, &[]).await.payload.is_none());
+        assert!(selected(&mut adapter, family, u64::MAX, &[]).await.payload.is_none());
         cli_common::emit(&serde_json::json!({"kind":"storage_conformance","implementation":implementation,"family":family.name(),"boundaries":[10,20,30],"causes":["edition-conflict","gap","overlap","predecessor","retroactive","missing-required"],"interruptions":2})).unwrap();
     }
 }
@@ -421,7 +422,7 @@ fn storage_historical_constants() {
     });
 }
 
-/// Claim: All six fixed validated family projections and the recognition disclosure match independently encoded canonical bytes and SHA-256 literals; changing field order, an enum spelling or a digest domain breaks durable recipe correspondence.
+/// Claim: Thirteen fixed projections and component tables pin all six families, the disclosure, alternate policy and floor layouts, refused recognition and all cause spellings to independently encoded canonical bytes and SHA-256 literals; storage grants the opaque rule fixture no domain validity.
 /// ´claim:history:storage-digest-domains-are-permanent´
 /// ´test:unit:storage-digest-vectors´
 #[test]
@@ -479,7 +480,7 @@ fn storage_digest_vectors() {
     case.history.records.retain(|v| v.identity == "r0");
     case.history.markers.truncate(2);
     case.history.markers[1].lineage = std::collections::BTreeSet::from(["r0".into()]);
-    let (burn, policy, history) = validated(case);
+    let (burn, policy, history) = validated(case.clone());
     let disclosure = encoding::disclosure(&history).to_canonical_bytes();
     let payloads = [
         constant_payload,
@@ -489,11 +490,17 @@ fn storage_digest_vectors() {
         Payload::burn_publication(&burn).unwrap(),
         Payload::recognition(&history).unwrap(),
     ];
+    let extra = variant_vectors(
+        case,
+        Payload::constants(constants.resolve("numeric", "constants", 20).unwrap()).unwrap(),
+    );
     let vectors: serde_json::Value = serde_json::from_str(include_str!("vectors.json")).unwrap();
-    assert_eq!(vectors.as_array().unwrap().len(), 7);
+    assert_eq!(vectors.as_array().unwrap().len(), 13);
     for row in vectors.as_array().unwrap() {
         let family = row["family"].as_str().unwrap();
-        let actual = if family == "disclosure" {
+        let actual = if let Some(bytes) = extra.get(family) {
+            bytes.as_slice()
+        } else if family == "disclosure" {
             disclosure.as_slice()
         } else {
             payloads.iter().find(|p| p.family.name() == family).unwrap().bytes()
@@ -511,6 +518,85 @@ fn storage_digest_vectors() {
         }
         assert_eq!(text, row["digest"].as_str().unwrap(), "digest {family}");
     }
+}
+
+fn variant_vectors(
+    case: pn_records::test_support::burn::BurnCase,
+    ridge: Payload,
+) -> std::collections::BTreeMap<&'static str, Vec<u8>> {
+    use pn_records::burn::{AcceptedSet, BurnError as E, CandidateRule, Disclosure, Encoding, OperatorEvidence};
+    let mut extra = std::collections::BTreeMap::new();
+    extra.insert("constants-ridge", ridge.bytes);
+    let mut commitment = case.clone();
+    pn_records::test_support::burn::committed(&mut commitment);
+    commitment.policy.candidate_rule = CandidateRule::FirstValidInHistoryOrder;
+    commitment.burn.evidence.operator = Some(OperatorEvidence::Bound {
+        amount: commitment.history.records[0].amount.clone(),
+        proof: "public operator bound proof".into(),
+    });
+    let (_, policy, history) = validated(commitment);
+    extra.insert("commitment-policy", Payload::marker_policy(&policy).unwrap().bytes().to_vec());
+    extra.insert("commitment-lineage", Payload::lineage(&history).unwrap().bytes().to_vec());
+    let mut prefix = case.clone();
+    prefix.policy.encoding = Encoding::WholePrefixAcceptAll;
+    prefix.policy.candidate_rule = CandidateRule::FirstValidInHistoryOrder;
+    for marker in &mut prefix.history.markers {
+        marker.accepted = AcceptedSet::WholePrefix;
+    }
+    let (_, _, history) = validated(prefix);
+    extra.insert("whole-prefix-lineage", Payload::lineage(&history).unwrap().bytes().to_vec());
+    let mut refused = case;
+    let mut competitor = refused.history.markers[1].clone();
+    competitor.name = "competitor".into();
+    competitor.history_position = 11;
+    refused.history.markers.push(competitor);
+    let (_, _, history) = validated(refused);
+    extra.insert(
+        "refused-recognition",
+        Payload::recognition(&history).unwrap().bytes().to_vec(),
+    );
+    let causes = [
+        E::PolicySelection(pn_records::ValidationError::InvalidSelectionKey(
+            pn_records::DeclarationCause::EmptyNamespace,
+        )),
+        E::PolicyBinding,
+        E::DeploymentBinding,
+        E::PolicyDigest,
+        E::UnsupportedPolicyRecipe,
+        E::Publication(Disclosure::Bootstrap),
+        E::EvidenceBinding,
+        E::SampleCoverage,
+        E::Units,
+        E::Bootstrap,
+        E::Policy,
+        E::Buffer,
+        E::Verifier,
+        E::RecordIdentity,
+        E::HistoryPolicy,
+        E::HistoryPosition,
+        E::Initial,
+        E::Succession,
+        E::MissingLineage,
+        E::RegressedLineage,
+        E::Encoding,
+        E::MissingOpening,
+        E::AmbiguousOpening,
+        E::InvalidOpening,
+        E::RegressedAcceptance,
+        E::OutOfLineage,
+        E::InvalidMember,
+        E::InconsistentAlias,
+    ];
+    extra.insert(
+        "cause-spellings",
+        encoding::array([
+            encoding::text(PAYLOAD_RECIPE),
+            encoding::text("component-table"),
+            encoding::array(causes.iter().map(encoding::cause)),
+        ])
+        .to_canonical_bytes(),
+    );
+    extra
 }
 
 /// Claim: The closed storage statement set returns retained public values through `DataRows` under observation, with deterministic bytes and exact transaction results; its private service configuration remains behind Session.
@@ -615,5 +701,124 @@ fn storage_scaling() {
         store.load_boundary(1, &[]).await.unwrap();
         store.append_effective_successor(version(Family::Rule, "after-unrelated-damage", "one", 2, Some(7)), None).await.unwrap();
         assert_eq!(store.audit_history().await, Err(StorageError::CorruptHistory));
+    });
+}
+
+/// Claim: Deleted successors, shortened closures and damaged selected payloads refuse in both adapters; future damage is unread by load but refused by the full audit, including after the store was opened.
+/// ´claim:history:boundary-tampering-is-not-absence´
+/// ´test:unit:storage-tamper´
+#[test]
+fn storage_tamper() {
+    runtime().block_on(async {
+        for implementation in ["memory", "postgresql"] {
+            let mut adapter = if implementation == "memory" { Adapter::Memory(MemoryStore::default()) }
+                else { Adapter::Postgres(store("storage-tamper.json").await) };
+            for (case, at) in [("deleted", 20), ("closes", 15), ("inside", 10), ("outside", 10)] {
+                adapter.append(version(Family::Rule, case, "one", 10, Some(1)), None).await.unwrap();
+                adapter.append(version(Family::Rule, case, "two", 20, Some(2)), Some(&prior("one", 20))).await.unwrap();
+                match &mut adapter {
+                    Adapter::Memory(s) => {
+                        let rows = s.history.get_mut(&(Family::Rule, case.into())).unwrap();
+                        match case {
+                            "deleted" => { rows.pop(); }
+                            "closes" => rows[0].closes_at = Some(12),
+                            "inside" => rows[0].version.payload.as_mut().unwrap().bytes = vec![0],
+                            _ => rows[1].version.payload.as_mut().unwrap().bytes = vec![0],
+                        }
+                    }
+                    Adapter::Postgres(s) => {
+                        let sql = match case {
+                            "deleted" => "DELETE FROM public.pn_versions WHERE key=$1 AND edition='two'",
+                            "closes" => "UPDATE public.pn_closures SET closes=12 WHERE key=$1",
+                            "inside" => "UPDATE public.pn_versions SET payload=decode('00','hex') WHERE key=$1 AND edition='one'",
+                            _ => "UPDATE public.pn_versions SET payload=decode('00','hex') WHERE key=$1 AND edition='two'",
+                        };
+                        s.session.client.fixture().execute(sql, &[&case]).await.unwrap();
+                    }
+                }
+                let loaded = adapter.load(at, &[]).await;
+                if case == "outside" { assert!(loaded.is_ok()); }
+                else { assert_eq!(loaded, Err(StorageError::CorruptHistory)); }
+                let audit = match &mut adapter {
+                    Adapter::Memory(s) => s.audit_history(),
+                    Adapter::Postgres(s) => s.audit_history().await,
+                };
+                assert_eq!(audit, Err(StorageError::CorruptHistory));
+                cli_common::emit(&serde_json::json!({"kind":"storage_tamper","implementation":implementation,"case":case,"load":if case=="outside" {"unread"} else {"CorruptHistory"},"audit":"CorruptHistory"})).unwrap();
+                match &mut adapter {
+                    Adapter::Memory(s) => s.history.clear(),
+                    Adapter::Postgres(s) => { s.session.client.fixture().batch_execute("TRUNCATE public.pn_closures, public.pn_versions").await.unwrap(); }
+                }
+            }
+        }
+    });
+}
+
+fn node_usage() -> Option<u64> {
+    let group = std::fs::read_to_string("/proc/self/cgroup").ok()?;
+    let relative = group.lines().find_map(|line| line.strip_prefix("0::"))?;
+    let path = std::path::Path::new("/sys/fs/cgroup")
+        .join(relative.trim_start_matches('/'))
+        .join("cpu.stat");
+    std::fs::read_to_string(path)
+        .ok()?
+        .lines()
+        .find_map(|line| line.strip_prefix("usage_usec "))?
+        .parse()
+        .ok()
+}
+
+/// Claim: Requested-chain append, live-key load and sparse-boundary load are measured through 100,000 retained rows, while the three actual read plans expose server work; every measured boundary and appended successor is checked independently of timing.
+/// ´claim:history:storage-growth-has-executed-read-plans´
+/// ´test:unit:storage-growth´
+#[test]
+fn storage_growth() {
+    runtime().block_on(async {
+        let mut store = store("storage-growth.json").await;
+        let payload = Payload::rule(&Value::Unsigned(731)).unwrap();
+        for axis in ["chain", "live", "total"] {
+            for size in [1000_i64, 10_000, 100_000] {
+                let client = store.session.client.fixture();
+                client.batch_execute("TRUNCATE public.pn_closures, public.pn_versions").await.unwrap();
+                let insert = match axis {
+                    "chain" => "INSERT INTO public.pn_versions SELECT 'rule','chain',g::text,g,g,$2,$3,NULL FROM generate_series(1,$1::bigint) g",
+                    "live" => "INSERT INTO public.pn_versions SELECT 'rule',g::text,'one',1,1,$2,$3,NULL FROM generate_series(1,$1::bigint) g",
+                    _ => "INSERT INTO public.pn_versions SELECT 'rule',g::text,'one',100,100,$2,$3,NULL FROM generate_series(1,$1::bigint) g",
+                };
+                client.execute(insert, &[&size, &payload.bytes(), &payload.digest.as_slice()]).await.unwrap();
+                if axis == "chain" {
+                    client.execute("INSERT INTO public.pn_closures SELECT 'rule','chain',g::text,g+1 FROM generate_series(1,$1::bigint-1) g", &[&size]).await.unwrap();
+                }
+                client.batch_execute("ANALYZE public.pn_versions; ANALYZE public.pn_closures").await.unwrap();
+                let usage = node_usage();
+                let started = std::time::Instant::now();
+                if axis == "chain" {
+                    assert!(store.append_effective_successor(version(Family::Rule,"chain","next",u64::try_from(size+1).unwrap(),Some(731)),Some(&prior(&size.to_string(),u64::try_from(size+1).unwrap()))).await.unwrap());
+                } else {
+                    let boundary = store.load_boundary(1,&[]).await.unwrap();
+                    assert_eq!(boundary.rows.len(), if axis == "live" { usize::try_from(size).unwrap() } else { 0 });
+                }
+                let wall = started.elapsed().as_secs_f64();
+                let cores = usage.zip(node_usage()).map(|(start,end)| std::time::Duration::from_micros(end-start).as_secs_f64() / wall);
+                cli_common::emit(&serde_json::json!({"kind":"storage_growth","axis":axis,"rows":size,"wall_seconds":wall,"node_cores":cores,"scope":"shared"})).unwrap();
+                if size == 100_000 {
+                    for statement in [Statement::ReadKey, Statement::ReadBoundary, Statement::ReadHistory] {
+                        let sql = format!("EXPLAIN (ANALYZE, BUFFERS) {}",statement.sql());
+                        let at = 1_i64;
+                        let params: Vec<&(dyn tokio_postgres::types::ToSql + Sync)> = match statement {
+                            Statement::ReadKey => vec![&"rule", &"chain"],
+                            Statement::ReadBoundary => vec![&at],
+                            _ => vec![],
+                        };
+                        let usage = node_usage();
+                        let started = std::time::Instant::now();
+                        let plan = store.session.client.fixture().query(&sql,&params).await.unwrap().iter().map(|r|r.get::<_,String>(0)).collect::<Vec<_>>();
+                        let wall = started.elapsed().as_secs_f64();
+                        let cores = usage.zip(node_usage()).map(|(start,end)| std::time::Duration::from_micros(end-start).as_secs_f64() / wall);
+                        cli_common::emit(&serde_json::json!({"kind":"storage_read_plan","axis":axis,"statement":statement.sql(),"plan":plan,"wall_seconds":wall,"node_cores":cores,"scope":"shared"})).unwrap();
+                    }
+                }
+            }
+        }
     });
 }

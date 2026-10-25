@@ -10,6 +10,7 @@ import tomllib
 import copy
 import re
 import base64
+import ipaddress
 
 from test_observe_runtime import expanded, distribution, witness
 
@@ -39,6 +40,29 @@ def decoded_content(value):
     return str(value)
 
 
+def decoded_frames(value):
+    """Return exact bytes, without a lossy UTF-8 conversion of binary DataRows."""
+    if isinstance(value,dict):
+        encoded=value
+        if value.get('type')=='Object':
+            entries=value.get('fields',{}).get('entries',[])
+            if all(isinstance(p,list) and len(p)==2 and isinstance(p[0],str) for p in entries):
+                encoded={k:(v['arguments'][0] if isinstance(v,dict) and v.get('constructor')=='String' and len(v.get('arguments',[]))==1 else v) for k,v in entries}
+        if encoded.get('encoding')=='base64':yield base64.b64decode(encoded['data'],validate=True)
+        elif encoded.get('encoding')=='utf-8':yield encoded['data'].encode()
+        for item in value.values():yield from decoded_frames(item)
+    elif isinstance(value,list):
+        for item in value:yield from decoded_frames(item)
+
+
+def binary_reachability(config, rows):
+    frames=list(decoded_frames(rows))
+    patterns={'port':int(config['port']).to_bytes(4,'big')}
+    try:patterns['endpoint']=ipaddress.ip_address(config['endpoint']).packed
+    except ValueError:pass  # A Unix path is already covered by the textual scan.
+    return {name for name,pattern in patterns.items() if any(pattern in frame for frame in frames)}
+
+
 class HostRuntime(unittest.TestCase):
     def test_statement_type_boundary(self):
         """Claim: Production modules cannot name a raw driver client outside its private wrapper, and an inline SQL string fails compilation at the wrapper's Statement parameter, so a new call site cannot bypass the reviewed vocabulary.
@@ -47,6 +71,16 @@ class HostRuntime(unittest.TestCase):
         """
         from host_statements import check
         self.assertTrue(check())
+        source=Path('packages/host/src/lib.rs')
+        original=source.read_bytes()
+        for fixture in (
+            b'\nasync fn inferred_driver(stream: impl tokio::io::AsyncRead + tokio::io::AsyncWrite + Unpin + Send) { let (driver, _) = tokio_postgres::Config::new().connect_raw(stream, tokio_postgres::NoTls).await.unwrap(); let _ = driver.simple_query("SELECT current_user").await; }\n',
+            b'\ninclude!("hidden.rs");\n',
+        ):
+            try:
+                source.write_bytes(original+fixture)
+                with self.assertRaises(ValueError):check()
+            finally:source.write_bytes(original)
         source=Path('packages/host/src/storage.rs')
         original=source.read_bytes()
         fixture=b'\n#[cfg(test)] async fn forbidden_inline_sql(t: &StatementTransaction<\'_>) { let _ = t.query("SELECT current_user", &[]).await; }\n'
@@ -79,6 +113,7 @@ class HostRuntime(unittest.TestCase):
             rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
             text=decoded_content(rows)
             config=json.loads((root/f'storage-trace-{level}.json').read_text())
+            self.assertFalse(binary_reachability(config,rows))
             for key,value in config.items():
                 if key!='transport':self.assertFalse(private_occurs(value,text))
             status=next(row for row in rows if row.get('kind')=='observation_status')
@@ -89,7 +124,7 @@ class HostRuntime(unittest.TestCase):
                 self.assertIn('public_storage_payload_731',text)
                 source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
                 statements=re.findall(r'Self::[A-Za-z]+\s*=>\s*(?:\{\s*)?"([^"\n]+)"',source)
-                self.assertEqual(len(statements),12)
+                self.assertEqual(len(statements),13)
                 for statement in statements:self.assertIn(statement,text)
             print(f'STORAGE-RUNTIME level={level} wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]}')
         self.assertEqual(outputs[0],outputs[1])
@@ -197,6 +232,7 @@ class HostRuntime(unittest.TestCase):
             for line in warnings:
                 print(line.decode(),flush=True)
             text=decoded_content(rows)
+            for config in configurations:self.assertFalse(binary_reachability(config,rows))
             for cause in ('MissingCase','HeldCase','UnknownCase','RepresentationLimit','Transport','Protocol','PrivateDiagnostic'):
                 self.assertIn(cause,text)
             self.assertNotIn('private_unread_input',text)
@@ -244,3 +280,17 @@ class HostRuntime(unittest.TestCase):
         role=config['user']
         self.assertTrue(private_occurs(role,text))
         print(f'HOST-SENSITIVE-CONTROL status=detected path=DataRow wall_seconds={wall:.6f}')
+
+    def test_binary_reachability_control(self):
+        """Claim: A fixture-only binary DataRow containing the TCP server port and address is detected as four-byte port and address octets, so decoding without decimal text cannot conceal reachability.
+        ´claim:discipline:binary-endpoint-results-are-detected´
+        ´test:integration:test-binary-reachability-control´
+        """
+        target=Path('.lane/host-test-binary.txt').read_text().strip()
+        env=dict(os.environ,PN_OBSERVE_LEVEL='trace',PN_HOST_BINARY_ROW_CONTROL='1')
+        result=subprocess.run([target,'transport_evidence::public_transport','--exact','--nocapture'],env=env,capture_output=True,check=False,timeout=60)
+        self.assertEqual(result.returncode,0,result.stderr.decode())
+        rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
+        config=json.loads((Path(os.environ['PN_HOST_TEST_ROOT'])/'tcp.json').read_text())
+        self.assertEqual(binary_reachability(config,rows),{'port','endpoint'})
+        print('HOST-BINARY-CONTROL port=detected endpoint=detected path=DataRow',flush=True)

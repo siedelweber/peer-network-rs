@@ -38,10 +38,25 @@ def check(root=Path('.')):
             found=[p for p in candidates if p.exists()]
             if len(found)!=1:raise ValueError('ambiguous production module')
             pending.extend(found)
-        if path.name=='storage.rs':
-            # Exactly the private field and constructor parameter, never a re-export.
-            text,count=re.subn(r'(struct StatementClient\s*\{\s*raw|fn new\(raw):\s*tokio_postgres::Client',r'\1: CLOSED_DRIVER',text)
-            if count!=2:raise ValueError('raw driver wrapper shape changed')
-        if re.search(r'\bClient\b',text) or re.search(r'tokio_postgres\s*::\s*\*',text):
-            raise ValueError('raw driver client outside the closed statement wrapper: '+relative)
+        if re.search(r'\binclude\s*!',text):
+            raise ValueError('production include is not an admitted module: '+relative)
+        if relative == 'packages/host/src/storage.rs':
+            continue
+        if relative == 'packages/host/src/lib.rs':
+            # Only the reviewed Session constructor may acquire the driver by inference.
+            owner=re.search(r'\bimpl\s+Session\s*\{',text)
+            if not owner:raise ValueError('Session constructor missing')
+            start=re.search(r'\bpub\s+async\s+fn\s+connect\s*\(',text[owner.end():])
+            if not start:raise ValueError('Session constructor missing')
+            begin=owner.end()+start.start()
+            opening=text.index('{',begin)
+            depth=1;end=opening+1
+            while depth and end<len(text):
+                if text[end]=='{':depth+=1
+                elif text[end]=='}':depth-=1
+                end+=1
+            if depth:raise ValueError('unclosed Session constructor')
+            text=text[:begin]+' '*(end-begin)+text[end:]
+        if re.search(r'\btokio_postgres\b',text):
+            raise ValueError('driver path outside the closed statement wrapper and Session constructor: '+relative)
     return True

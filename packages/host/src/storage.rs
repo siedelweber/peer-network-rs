@@ -360,15 +360,15 @@ fn append(history: &mut History, version: Version, predecessor: Option<&Predeces
 fn boundary(history: &History, at: u64, required: &[(Family, String)]) -> Result<Boundary, StorageError> {
     let mut rows = Vec::new();
     for versions in history.values() {
-        let selected: Vec<_> = versions
-            .iter()
-            .filter(|row| row.version.opens_at <= at && row.closes_at.is_none_or(|end| at < end))
-            .collect();
-        if selected.len() > 1 {
-            return Err(StorageError::CorruptHistory);
-        }
-        if let Some(row) = selected.first() {
-            rows.push((*row).clone());
+        let prior: Vec<_> = versions.iter().filter(|row| row.version.opens_at <= at).collect();
+        if let Some(row) = prior.iter().max_by_key(|row| row.version.opens_at) {
+            if row.closes_at.is_some_and(|end| end <= at)
+                || prior.iter().filter(|r| r.closes_at.is_none_or(|end| at < end)).count() != 1
+            {
+                return Err(StorageError::CorruptHistory);
+            }
+            verify_row(row)?;
+            rows.push((**row).clone());
         }
     }
     for (family, key) in required {
@@ -380,6 +380,21 @@ fn boundary(history: &History, at: u64, required: &[(Family, String)]) -> Result
         }
     }
     Ok(Boundary { at, rows })
+}
+
+fn verify_row(row: &EffectiveRow) -> Result<(), StorageError> {
+    check(&row.version).map_err(|_| StorageError::CorruptHistory)?;
+    if let Some(payload) = &row.version.payload {
+        if payload.bytes.len() > MAX_PACKAGE || payload.digest != digest(PAYLOAD_RECIPE, &payload.bytes) {
+            return Err(StorageError::CorruptHistory);
+        }
+        verify_payload(
+            row.version.family,
+            &payload.bytes,
+            payload.disclosure.as_ref().map(<[u8; 32]>::as_slice),
+        )?;
+    }
+    Ok(())
 }
 
 /// Functional fast substitute for the same append-only storage contract.
@@ -433,6 +448,30 @@ impl MemoryStore {
         span.finish(&result);
         result
     }
+    /// Verify every retained payload and complete interval chain.
+    /// (´def:host:effective-storage´)
+    /// # Errors
+    /// Refuses corruption without interpreting damaged rows as absence.
+    pub fn audit_history(&self) -> Result<(), StorageError> {
+        let span = cli_common::observation::scope("HOST", "sig:design:storage", "storage::MemoryStore::audit_history", &());
+        let result = (|| {
+            for rows in self.history.values() {
+                for row in rows {
+                    verify_row(row)?;
+                }
+                if rows.windows(2).any(|pair| {
+                    pair[0].closes_at != Some(pair[1].version.opens_at) || pair[0].version.opens_at >= pair[1].version.opens_at
+                }) || rows.last().is_some_and(|row| row.closes_at.is_some())
+                {
+                    return Err(StorageError::CorruptHistory);
+                }
+            }
+            Ok(())
+        })();
+        let result = classified(result);
+        span.finish(&result);
+        result
+    }
 }
 
 // Closed statement vocabulary: only this module can construct a statement.
@@ -444,6 +483,7 @@ enum Statement {
     Create,
     SetIdentity,
     GetIdentity,
+    EnsureIndexes,
     LockHistory,
     ReadHistory,
     ReadKey,
@@ -463,6 +503,9 @@ impl Statement {
                 "Create TABLE public.pn_store_identity(identity text PRIMARY KEY); Create TABLE public.pn_versions(family text NOT NULL, key text NOT NULL, edition text NOT NULL, announced bigint NOT NULL, opens bigint NOT NULL, payload bytea, digest bytea, disclosure bytea, PRIMARY KEY(family,key,edition), UNIQUE(family,key,opens)); Create INDEX pn_recognition_disclosure ON public.pn_versions(disclosure) WHERE family='unsettled-recognition'; Create TABLE public.pn_closures(family text NOT NULL, key text NOT NULL, edition text NOT NULL, closes bigint NOT NULL, PRIMARY KEY(family,key,edition), FOREIGN KEY(family,key,edition) REFERENCES public.pn_versions(family,key,edition));"
             }
             Self::SetIdentity => "Insert INTO public.pn_store_identity VALUES ($1)",
+            Self::EnsureIndexes => {
+                "DO $$ BEGIN IF to_regclass('public.pn_versions_opens') IS NULL THEN CREATE INDEX pn_versions_opens ON public.pn_versions(opens); END IF; IF to_regclass('public.pn_closures_closes') IS NULL THEN CREATE INDEX pn_closures_closes ON public.pn_closures(closes); END IF; END $$"
+            }
             Self::GetIdentity => "SELECT identity FROM public.pn_store_identity",
             Self::LockHistory => "LOCK TABLE public.pn_versions IN SHARE ROW EXCLUSIVE MODE",
             Self::ReadHistory => {
@@ -472,7 +515,7 @@ impl Statement {
                 "SELECT v.family,v.key,v.edition,v.announced,v.opens,v.payload,v.digest,v.disclosure,c.closes FROM public.pn_versions v LEFT JOIN public.pn_closures c USING(family,key,edition) WHERE v.family=$1 AND v.key=$2 ORDER BY v.opens"
             }
             Self::ReadBoundary => {
-                "SELECT v.family,v.key,v.edition,v.announced,v.opens,v.payload,v.digest,v.disclosure,c.closes FROM public.pn_versions v LEFT JOIN public.pn_closures c USING(family,key,edition) WHERE v.opens <= $1 AND (c.closes IS NULL OR c.closes > $1) ORDER BY v.family,v.key,v.opens"
+                "SELECT DISTINCT ON (v.family,v.key) v.family,v.key,v.edition,v.announced,v.opens,v.payload,v.digest,v.disclosure,c.closes,count(*) FILTER (WHERE c.closes IS NULL OR c.closes > $1) OVER (PARTITION BY v.family,v.key) FROM public.pn_versions v LEFT JOIN public.pn_closures c USING(family,key,edition) WHERE v.opens <= $1 ORDER BY v.family,v.key,v.opens DESC"
             }
             Self::Close => "Insert INTO public.pn_closures(family,key,edition,closes) VALUES($1,$2,$3,$4)",
             Self::Insert => {
@@ -577,7 +620,7 @@ impl PostgresStore {
     /// Initialize only an empty database, or require the exact existing schema identity.
     /// (´def:host:effective-storage´)
     /// # Errors
-    /// Refuses foreign schema identity or transport failure; no migration is attempted.
+    /// Refuses foreign schema identity or transport failure; only the declared indexes are added idempotently.
     #[tracing::instrument(
         name = "sig:design:storage",
         fields(
@@ -610,6 +653,7 @@ impl PostgresStore {
         if rows.len() != 1 || rows[0].get::<_, String>(0) != SCHEMA {
             return Err(StorageError::SchemaIdentity);
         }
+        observed(transaction.batch_execute(Statement::EnsureIndexes)).await?;
         transaction.commit().await.map_err(|_| StorageError::CommitUnknown)?;
         meter.commit();
         Ok(())
@@ -635,7 +679,7 @@ impl PostgresStore {
     async fn load_inner(&mut self, at: u64, required: &[(Family, String)]) -> Result<Boundary, StorageError> {
         let mut meter = TransactionMeter::new();
         let transaction = self.session.client.snapshot().await.map_err(|_| StorageError::Transport)?;
-        let at_sql = i64::try_from(at).map_err(|_| StorageError::Representation)?;
+        let at_sql = i64::try_from(at).unwrap_or(i64::MAX);
         let history = read(&transaction, Statement::ReadBoundary, &[&at_sql], false).await?;
         let result = boundary(&history, at, required);
         transaction.commit().await.map_err(|_| StorageError::Transport)?;
@@ -765,6 +809,9 @@ async fn read(
     let rows = observed(transaction.query(statement, params)).await?;
     let mut history = History::new();
     for row in rows {
+        if matches!(statement, Statement::ReadBoundary) && row.get::<_, i64>(9) != 1 {
+            return Err(StorageError::CorruptHistory);
+        }
         let family = match row.get::<_, String>(0).as_str() {
             "constants" => Family::Constants,
             "rule" => Family::Rule,

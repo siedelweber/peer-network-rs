@@ -215,7 +215,7 @@ pub(crate) fn recognition(value: &burn::RecognizedMarkers) -> Value {
         text("unsettled"),
     ])
 }
-fn cause(value: &burn::BurnError) -> Value {
+pub(crate) fn cause(value: &burn::BurnError) -> Value {
     use burn::BurnError as E;
     // Recognition cannot produce declaration binding errors. Keep the enum
     // exhaustive so a new refusal requires an explicit representation review.

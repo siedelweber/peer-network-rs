@@ -29,7 +29,14 @@ async fn exercise() -> Result<(), Refusal> {
         );
     }
     let root = std::env::var_os("PN_HOST_TEST_ROOT").ok_or(Refusal::ConfigurationIo)?;
-    let mut file = std::fs::File::open(std::path::Path::new(&root).join("unix.json")).map_err(|_| Refusal::ConfigurationIo)?;
+    let mut file = std::fs::File::open(std::path::Path::new(&root).join(
+        if std::env::var_os("PN_HOST_BINARY_ROW_CONTROL").is_some() {
+            "tcp.json"
+        } else {
+            "unix.json"
+        },
+    ))
+    .map_err(|_| Refusal::ConfigurationIo)?;
     let config = Configuration::acquire(Some("host-secured"), &mut file)?;
     let session = Session::connect(config).await?;
     let row = session
@@ -53,6 +60,15 @@ async fn exercise() -> Result<(), Refusal> {
             .unwrap()
             .get(0);
         assert_ne!(private.len(), 0);
+    }
+    if std::env::var_os("PN_HOST_BINARY_ROW_CONTROL").is_some() {
+        let row = session
+            .client()
+            .query_one("SELECT inet_server_port(), inet_server_addr()", &[])
+            .await
+            .unwrap();
+        assert!(row.get::<_, i32>(0) > 0);
+        assert!(row.get::<_, std::net::IpAddr>(1).is_loopback());
     }
     let error = session.client().query_one("SELECT 1 / 0", &[]).await.unwrap_err();
     assert_eq!(error.as_db_error().unwrap().message(), "division by zero");
