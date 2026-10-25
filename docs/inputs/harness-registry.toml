@@ -1199,7 +1199,7 @@ level = "integration"
 implementation = "pn-wallet-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary", "ci::test_wallet_boundary.WalletBoundary.test_dependency_features", "ci::test_wallet_boundary.WalletBoundary.test_case_census", "ci::test_wallet_boundary.WalletBoundary.test_confinement"]
+cases = ["ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary", "ci::test_wallet_boundary.WalletBoundary.test_dependency_features", "ci::test_wallet_boundary.WalletBoundary.test_fixture_ports", "ci::test_wallet_boundary.WalletBoundary.test_case_census", "ci::test_wallet_boundary.WalletBoundary.test_confinement"]
 
 [[rows]]
 kind = "suite"

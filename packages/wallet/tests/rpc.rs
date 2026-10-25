@@ -271,10 +271,21 @@ fn producer(action: &str, directory: &std::path::Path, arguments: &[&str]) -> st
         .unwrap()
 }
 
+/// Require a successful harness action; a failure names the exit status and the harness's public cause line.
+fn require(output: std::process::Output, action: &str) -> std::process::Output {
+    assert!(
+        output.status.success(),
+        "{action} failed: {} {}",
+        output.status,
+        String::from_utf8_lossy(&output.stderr).trim()
+    );
+    output
+}
+
 struct Running(PathBuf);
 impl Drop for Running {
     fn drop(&mut self) {
-        assert!(harness("stop", &self.0).status.success(), "fixture shutdown failed");
+        require(harness("stop", &self.0), "fixture shutdown");
     }
 }
 
@@ -287,7 +298,7 @@ fn rotation() {
         let client = RpcClient::new(config(), RpcLimits::default(), limits(), &declaration(), "wallet-genesis-1").unwrap();
         let old = std::fs::read(root().join("cookie")).unwrap();
         assert!(matches!(client.read(Read::BlockCount), Ok(ReadResult::Count(0))));
-        assert!(harness("restart", &root()).status.success(), "fixture restart failed");
+        require(harness("restart", &root()), "fixture restart");
         let fresh = std::fs::read(root().join("cookie")).unwrap();
         assert_ne!(old, fresh);
         assert!(matches!(client.read(Read::BlockCount), Ok(ReadResult::Count(0))));
@@ -299,7 +310,7 @@ fn rotation() {
     }
     let directory = root().with_file_name(format!("wallet-rotation-{}", std::process::id()));
     let running = Running(directory.clone());
-    assert!(harness("start", &directory).status.success(), "fixture start failed");
+    require(harness("start", &directory), "fixture start");
     let output = std::process::Command::new(std::env::current_exe().unwrap())
         .args(["--exact", "rotation", "--nocapture"])
         .env("PN_WALLET_ROTATION_CHILD", "1")
@@ -446,8 +457,7 @@ fn signed_reads() {
     if std::env::var_os("PN_WALLET_SIGNED_CHILD").is_none() {
         let directory = root().with_file_name(format!("wallet-signed-{}", std::process::id()));
         let running = Running(directory.clone());
-        let produced = harness("signed", &directory);
-        assert!(produced.status.success(), "signed fixture production failed");
+        let produced = require(harness("signed", &directory), "signed fixture production");
         let output = std::process::Command::new(std::env::current_exe().unwrap())
             .args(["--exact", "signed_reads", "--nocapture"])
             .env("PN_WALLET_SIGNED_CHILD", "1")
@@ -590,10 +600,7 @@ fn reader_limit_hold() {
 }
 
 fn advance(arguments: &[&str]) {
-    assert!(
-        producer("advance", &root(), arguments).status.success(),
-        "producer advance failed"
-    );
+    require(producer("advance", &root(), arguments), "producer advance");
 }
 
 fn tip() -> u64 {
@@ -704,10 +711,7 @@ fn settlement_forks() {
     if std::env::var_os("PN_WALLET_SETTLEMENT_CHILD").is_none() {
         let directory = root().with_file_name(format!("wallet-settlement-{}", std::process::id()));
         let running = Running(directory.clone());
-        assert!(
-            harness("settlement", &directory).status.success(),
-            "settlement fixture production failed"
-        );
+        require(harness("settlement", &directory), "settlement fixture production");
         let output = std::process::Command::new(std::env::current_exe().unwrap())
             .args(["--exact", "settlement_forks", "--nocapture"])
             .env("PN_WALLET_SETTLEMENT_CHILD", "1")
@@ -723,10 +727,7 @@ fn settlement_forks() {
     asset.reverse();
     assert_eq!(tip(), 6);
     for units in ["100000000", "200000000"] {
-        assert!(
-            producer("burn", &root(), &["--units", units]).status.success(),
-            "producer burn failed"
-        );
+        require(producer("burn", &root(), &["--units", units]), "producer burn");
     }
     advance(&["--blocks", "1"]);
     let burns = burns();

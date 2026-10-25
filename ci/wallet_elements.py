@@ -48,18 +48,49 @@ def allocation_lock():
         yield
 
 
+# Disjoint from the PostgreSQL allocator's 42100 to 42119, so neither
+# service's lingering connections consume the other's ports.
+PORTS = range(42120, 42160)
+
+
+def free(port):
+    """No live listener holds the port. The daemon binds with SO_REUSEADDR, so the probe does too:
+    connections the daemon closed first linger in TIME_WAIT for a minute and must not count as taken."""
+    with socket.socket() as probe:
+        probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            probe.bind(('127.0.0.1', port))
+        except OSError:
+            return False
+    return True
+
+
 @contextmanager
-def port_selection():
+def port_selection(ports=PORTS, exclude=()):
     with allocation_lock():
-        for port in range(42110, 42120):
-            with socket.socket() as reservation:
-                try:
-                    reservation.bind(('127.0.0.1', port))
-                except OSError:
-                    continue
-            yield port
-            return
+        # A random starting offset spreads allocators that share no mutex,
+        # which would otherwise all probe the lowest free port together.
+        ports = list(ports)
+        offset = secrets.randbelow(len(ports)) if ports else 0
+        for port in ports[offset:] + ports[:offset]:
+            if port not in exclude and free(port):
+                yield port
+                return
         raise RuntimeError('Elements gate port range exhausted')
+
+
+def port_taken(root):
+    """The daemon could not bind its RPC port: another account's process took it after the probe."""
+    log = root/'elementsregtest'/'debug.log'
+    return log.exists() and b'Unable to bind any endpoint for RPC server' in log.read_bytes()
+
+
+def installed_version(root):
+    # Even a version query writes a settings file into the data directory;
+    # the default one is shared by every fixture of this account, and
+    # concurrent queries race on its rename, so confine it to this fixture.
+    result = subprocess.run([binary(), '-datadir=' + str(root), '-version'], capture_output=True, text=True, check=True)
+    return result.stdout.splitlines()[0]
 
 
 def rpc(config, method, params=None, credential=None, refusal=False):
@@ -117,25 +148,34 @@ def start(root):
         shutil.rmtree(root)
     root.mkdir(mode=0o700, parents=True)
     profile = json.loads(PROFILE.read_text())
-    version = subprocess.run([binary(), '-version'], capture_output=True, text=True, check=True).stdout.splitlines()[0]
-    if version != profile['binary']:
+    if installed_version(root) != profile['binary']:
         raise RuntimeError('Elements binary differs from provisioning declaration')
     password, salt = secrets.token_hex(32), secrets.token_hex(16)
     producer = '__fixture_producer__:' + password
     auth = '__fixture_producer__:' + salt + '$' + hmac.new(salt.encode(), password.encode(), hashlib.sha256).hexdigest()
-    with port_selection() as port:
-        config = dict(port=port, producer=producer)
-        write_private(root/'producer.json', config)
-        lines = ['chain=' + profile['chain'], 'server=1', 'rpcauth=' + auth, 'rpcwhitelistdefault=0',
-                 'signblockscript=' + bytes(profile['challenge']).hex(), 'rpccookiefile=' + str(root/'cookie')]
-        lines += [name+'='+value for name, value in profile['parameters'].items()]
-        lines += ['[elementsregtest]', 'rpcport='+str(port), 'rpcbind=127.0.0.1', 'rpcallowip=127.0.0.1']
-        (root/'elements.conf').write_text('\n'.join(lines)+'\n')
-        (root/'elements.conf').chmod(0o600)
-        with (root/'private.log').open('wb') as log:
-            result = subprocess.run([binary(), '-datadir='+str(root), '-daemonwait'], stdout=log, stderr=log, timeout=30)
-        if result.returncode:
-            raise RuntimeError('Elements startup failed; private fixture log retained')
+    # Allocators under other accounts do not share this account's lock, so a
+    # probed port can still be taken before the daemon binds it; try another.
+    tried = []
+    while True:
+        with port_selection(exclude=tried) as port:
+            config = dict(port=port, producer=producer)
+            write_private(root/'producer.json', config)
+            lines = ['chain=' + profile['chain'], 'server=1', 'rpcauth=' + auth, 'rpcwhitelistdefault=0',
+                     'signblockscript=' + bytes(profile['challenge']).hex(), 'rpccookiefile=' + str(root/'cookie')]
+            lines += [name+'='+value for name, value in profile['parameters'].items()]
+            lines += ['[elementsregtest]', 'rpcport='+str(port), 'rpcbind=127.0.0.1', 'rpcallowip=127.0.0.1']
+            (root/'elements.conf').write_text('\n'.join(lines)+'\n')
+            (root/'elements.conf').chmod(0o600)
+            (root/'elementsregtest'/'debug.log').unlink(missing_ok=True)
+            with (root/'private.log').open('wb') as log:
+                result = subprocess.run([binary(), '-datadir='+str(root), '-daemonwait'], stdout=log, stderr=log, timeout=30)
+            if not result.returncode:
+                break
+            if not port_taken(root):
+                raise RuntimeError('Elements startup failed; private fixture log retained')
+        tried.append(port)
+        if len(tried) == 5:
+            raise RuntimeError('Elements RPC port was taken at launch five times')
     info = rpc(config, 'getblockchaininfo')
     if info['chain'] != profile['chain'] or info['blocks'] != 0:
         raise RuntimeError('Elements startup chain differs')
@@ -440,6 +480,10 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except Exception:
-        print('Elements fixture unavailable; inspect private fixture log', file=sys.stderr)
+    except Exception as error:
+        # Harness RuntimeError messages are fixed public text, with at most a
+        # public RPC method name; other errors may carry a path or a port, so
+        # only their type is named. The traceback stays in the private log.
+        cause = str(error) if type(error) is RuntimeError else type(error).__name__
+        print('Elements fixture unavailable: ' + cause, file=sys.stderr)
         sys.exit(1)

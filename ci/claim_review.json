@@ -2840,6 +2840,14 @@
       "before": "",
       "after": "Claim: Registration projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the three successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
       "review": "Read the exact Registration projection, reconstruction, cache and process assertions. Fixture verifier decisions establish the explicit public approval/removal boundary, not cryptographic soundness. These tests retain all parallel edges and compare typed live indices and weights; no serde bytes establish binding equality. Complete outcomes and accounting agree across observation modes. Other families, epoch admission, geometry and title remain held."
+    },
+    {
+      "operation": "ci::test_wallet_boundary.WalletBoundary.test_fixture_ports",
+      "path": "ci/test_wallet_boundary.py",
+      "claim": "ROOT::claim:discipline:wallet-fixture-ports-survive-time-wait",
+      "before": "",
+      "after": "Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its public cause.",
+      "review": "Read the allocator over real sockets: a server-closed connection left in TIME_WAIT, a live listener, a port taken before a real daemon launch, and the harness entry's public cause line. This witnesses allocation and launch retry for this account's fixtures, not a lock shared with other accounts."
     }
   ]
 }

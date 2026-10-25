@@ -66,6 +66,72 @@ class WalletBoundary(unittest.TestCase):
             bad = dict(row, build='build.rs' if row['build']=='none' else 'none')
             with self.assertRaisesRegex(ValueError, 'build-script field'):
                 check_build_scripts([bad], [package])
+    def test_fixture_ports(self):
+        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its public cause.
+        ´claim:discipline:wallet-fixture-ports-survive-time-wait´
+        ´test:integration:test-fixture-ports´
+        """
+        import socket
+        import time
+        import types
+        import wallet_elements
+        self.assertFalse(set(wallet_elements.PORTS) & set(range(42100, 42120)))
+        # Closing the accepted side first leaves the server port in TIME_WAIT, as the daemon does.
+        with socket.socket() as server:
+            server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server.bind(('127.0.0.1', 0))
+            server.listen()
+            port = server.getsockname()[1]
+            client = socket.create_connection(('127.0.0.1', port))
+            accepted, _ = server.accept()
+            accepted.close()
+            time.sleep(0.1)
+            client.close()
+        with socket.socket() as plain, self.assertRaises(OSError):
+            plain.bind(('127.0.0.1', port))
+        with wallet_elements.port_selection([port]) as chosen:
+            self.assertEqual(chosen, port)
+        with socket.socket() as listener:
+            listener.bind(('127.0.0.1', 0))
+            listener.listen()
+            with self.assertRaisesRegex(RuntimeError, 'range exhausted'):
+                with wallet_elements.port_selection([listener.getsockname()[1]]):
+                    pass
+        # Another account takes the probed port before launch: the daemon starts on the next one.
+        probe = wallet_elements.free
+        held = next(candidate for candidate in wallet_elements.PORTS if probe(candidate))
+        root = (Path('.lane')/'wallet-port-race').resolve()
+        with socket.socket() as taker:
+            taker.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            taker.bind(('127.0.0.1', held))
+            taker.listen()
+            # The scan starts at offset zero and reports the held port free, so the first launch meets it.
+            draw = wallet_elements.secrets
+            wallet_elements.secrets = types.SimpleNamespace(randbelow=lambda _bound: 0, token_hex=draw.token_hex)
+            wallet_elements.free = lambda candidate: candidate == held or (candidate > held and probe(candidate))
+            try:
+                wallet_elements.start(root)
+                started = json.loads((root/'producer.json').read_text())['port']
+            finally:
+                wallet_elements.free = probe
+                wallet_elements.secrets = draw
+                wallet_elements.stop(root)
+        self.assertGreater(started, held)
+        self.assertIn(started, wallet_elements.PORTS)
+        # Concurrent fixtures check the binary at once; each query stays in its own data directory.
+        import concurrent.futures
+        roots = [(Path('.lane')/f'wallet-version-{n}').resolve() for n in range(4)]
+        for directory in roots:
+            directory.mkdir(parents=True, exist_ok=True)
+        with concurrent.futures.ThreadPoolExecutor(4) as pool:
+            versions = list(pool.map(wallet_elements.installed_version, roots))
+        expected = json.loads(Path('packages/wallet/provisioning.json').read_text())['binary']
+        self.assertEqual(versions, [expected] * 4)
+        result = subprocess.run(['python3', '-B', 'ci/wallet_elements.py', 'stop', '--root', '/'],
+                                capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(result.stderr.strip(), 'Elements fixture unavailable: Elements fixture must be directly under workspace .lane')
+
     def test_case_census(self):
         """Claim: Every declared case must remain present, bind a real source claim with a passed result when scoped, and block discharge while any case is held.
         ´claim:discipline:wallet-census-refuses-missing-evidence´

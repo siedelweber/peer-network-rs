@@ -990,6 +990,7 @@
     "pn-graph::registration::complete_projection": "",
     "pn-graph::registration::reconstruction": "",
     "pn-graph::registration::revalidation": "",
-    "ci::test_observe_runtime.Processes.test_graph_registration": ""
+    "ci::test_observe_runtime.Processes.test_graph_registration": "",
+    "ci::test_wallet_boundary.WalletBoundary.test_fixture_ports": ""
   }
 }
