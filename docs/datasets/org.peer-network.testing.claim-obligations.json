@@ -2878,26 +2878,34 @@
       "status": "scoped-supported"
     },
     {
-      "claims": [],
+      "claims": [
+        "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic"
+      ],
       "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
       "closing_step": "Build graph slices 1 to 5",
+      "evidence_paragraph": "ROOT::amend:buildgraph:census-skeleton",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Executed census, graph freshness, status propagation, cleanup and command-equivalence witnesses with scoped test-site claims.",
+      "missing": "Step delegation, current-run result adapters, complete artifact joins, cleanup and command-equivalence witnesses for slices 2 to 5; slice 1 file and roster accounting is exercised.",
       "name": "ROOT::dec:buildgraph:composition",
       "owner": "Build-graph implementer and independent gate-contract reviewer",
       "path": "adr/024-build-graph.md",
+      "premises": "The constructed tracked tree exercises the real Meson always-run target and deployed census, including additions without reconfiguration; faulted graph manifests exercise structural incidence. This does not prove semantic dependency completeness or the unmigrated command adapters.",
       "realizers": [],
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic"
+      ],
       "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
       "closing_step": "Build graph slices 1 to 5",
+      "evidence_paragraph": "ROOT::amend:buildgraph:census-skeleton",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Executed census, graph freshness, status propagation, cleanup and command-equivalence witnesses with scoped test-site claims.",
+      "missing": "Step delegation, current-run result adapters, complete artifact joins, cleanup and command-equivalence witnesses for slices 2 to 5; slice 1 file and roster accounting is exercised.",
       "name": "ROOT::gate:buildgraph:implementation",
       "owner": "Build-graph implementer and independent gate-contract reviewer",
       "path": "adr/024-build-graph.md",
+      "premises": "The constructed tracked tree exercises the real Meson always-run target and deployed census, including additions without reconfiguration; faulted graph manifests exercise structural incidence. This does not prove semantic dependency completeness or the unmigrated command adapters.",
       "realizers": [],
       "status": "held"
     }

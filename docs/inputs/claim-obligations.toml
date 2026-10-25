@@ -2255,22 +2255,29 @@ evidence_paragraph = "WALLET::amend:wallet:genesis-rpc"
 name = "ROOT::dec:buildgraph:composition"
 path = "adr/024-build-graph.md"
 status = "held"
-claims = []
+claims = ["ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Build-graph implementer and independent gate-contract reviewer"
-missing = "Executed census, graph freshness, status propagation, cleanup and command-equivalence witnesses with scoped test-site claims."
+missing = "Step delegation, current-run result adapters, complete artifact joins, cleanup and command-equivalence witnesses for slices 2 to 5; slice 1 file and roster accounting is exercised."
 closing_condition = "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins."
 closing_step = "Build graph slices 1 to 5"
+
+
+premises = "The constructed tracked tree exercises the real Meson always-run target and deployed census, including additions without reconfiguration; faulted graph manifests exercise structural incidence. This does not prove semantic dependency completeness or the unmigrated command adapters."
+evidence_paragraph = "ROOT::amend:buildgraph:census-skeleton"
 
 [[rows]]
 name = "ROOT::gate:buildgraph:implementation"
 path = "adr/024-build-graph.md"
 status = "held"
-claims = []
+claims = ["ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Build-graph implementer and independent gate-contract reviewer"
-missing = "Executed census, graph freshness, status propagation, cleanup and command-equivalence witnesses with scoped test-site claims."
+missing = "Step delegation, current-run result adapters, complete artifact joins, cleanup and command-equivalence witnesses for slices 2 to 5; slice 1 file and roster accounting is exercised."
 closing_condition = "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins."
 closing_step = "Build graph slices 1 to 5"
+
+premises = "The constructed tracked tree exercises the real Meson always-run target and deployed census, including additions without reconfiguration; faulted graph manifests exercise structural incidence. This does not prove semantic dependency completeness or the unmigrated command adapters."
+evidence_paragraph = "ROOT::amend:buildgraph:census-skeleton"

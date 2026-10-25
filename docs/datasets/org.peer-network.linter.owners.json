@@ -199,7 +199,7 @@
         {
           "name": "root",
           "owner": "ROOT",
-          "pattern": "( %s\".gitignore\" / %s\"Cargo.toml\" / %s\"Cargo.lock\" / %s\"rust-toolchain.toml\" / %s\"rustfmt.toml\" / %s\"LICENSE-CODE\" / %s\"LICENSE-DOCS\" / %s\"README.md\" )"
+          "pattern": "( %s\"meson.build\" / %s\".gitignore\" / %s\"Cargo.toml\" / %s\"Cargo.lock\" / %s\"rust-toolchain.toml\" / %s\"rustfmt.toml\" / %s\"LICENSE-CODE\" / %s\"LICENSE-DOCS\" / %s\"README.md\" )"
         },
         {
           "name": "interchange",

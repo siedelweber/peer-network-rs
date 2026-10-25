@@ -2768,6 +2768,14 @@
       "before": "",
       "after": "Claim: Finalized dependency violations and every retained act field agree with observation disabled, at default and at trace; candidate refusals remain refusals while replay is accounted as success.",
       "review": "Read the exact retained-field, complete-evidence and candidate-refusal assertions. The process witness compares full public results in three observation modes and checks success/refusal accounting. These checks establish local replay carriage, not authentication of an opening, fault attribution, standing or title."
+    },
+    {
+      "operation": "ci::test_linter_entry.Conformance.test_missing_tracked_source",
+      "path": "ci/test_linter_entry.py",
+      "claim": "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic",
+      "before": "Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution.",
+      "after": "Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution; the Meson census and incidence witnesses also refuse missing, stale, unconnected or broadly excluded tracked inputs and missing steps, including an addition without reconfiguration.",
+      "review": "The existing traversal-loss assertion remains. The added constructed-tree battery executes the Meson target and deployed census, checks new source and dotfile additions without configuration changes, and checks independent malformed incidence manifests plus vendor and generated positives. It establishes structural accounting and fresh census execution, not semantic input completeness."
     }
   ]
 }

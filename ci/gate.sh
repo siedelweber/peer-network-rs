@@ -17,6 +17,10 @@ if [ -z "${PN_ELEMENTS_BIN:-}" ]; then
     echo "GATE-STRUCTURAL-ERROR: PN_ELEMENTS_BIN must name the Elements binary directory" >&2
     exit 2
 fi
+if [ -z "${PN_MESON_BIN:-}" ]; then
+    echo "GATE-STRUCTURAL-ERROR: PN_MESON_BIN must name the Meson executable" >&2
+    exit 2
+fi
 failed=0
 statuses=()
 mkdir -p .lane
@@ -62,6 +66,7 @@ run_step() {
         --findings .lane/performance-findings.jsonl
     if [ "$?" -ne 0 ]; then failed=1; fi
 }
+run_step build-graph python3 -B ci/build_graph.py gate
 run_step toolchain python3 ci/discipline.py toolchain
 run_step discipline-tests env FOUNDATION_COMPUTE_TESTS=1 python3 -B ci/run_ci.py test_discipline
 run_step harness-registry python3 -B ci/harness.py

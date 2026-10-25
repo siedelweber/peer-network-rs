@@ -209,7 +209,7 @@ class Conformance(unittest.TestCase):
         code,row=tree.check();self.assertEqual(code,3);self.assertEqual(row['index']['stale'],1)
 
     def test_missing_tracked_source(self):
-        """Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution.
+        """Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution; the Meson census and incidence witnesses also refuse missing, stale, unconnected or broadly excluded tracked inputs and missing steps, including an addition without reconfiguration.
         ´claim:discipline:fixture-traversal-loss-is-diagnostic´
         ´test:integration:test-missing-tracked-source´
         """
@@ -219,6 +219,8 @@ class Conformance(unittest.TestCase):
         result=tree.command([os.environ['LINTER_BIN'],'check','--root',str(tree.root)])
         row=json.loads(result.stdout)
         self.assertEqual(result.returncode,3);self.assertEqual([f['code'] for f in row['findings']],['traversal_failure']*4)
+        from build_graph_witnesses import exercise
+        exercise(self)
         self.assertTrue(all('root/src/lib.rs' in json.dumps(f) for f in row['findings']))
 
     def test_scoped_projection(self):
