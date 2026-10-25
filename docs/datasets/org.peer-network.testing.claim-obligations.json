@@ -2621,7 +2621,7 @@
       "closing_condition": "Pass rule:storage:first-commit-evidence with reviewed source/configuration-matched results before enabling persistence.",
       "closing_step": "Bite 2 storage integration admission before persistence",
       "hold": "ROOT::open:design:secret-integrations",
-      "missing": "The storage library is admitted under amend:storage:library-admission, including the closed statement and result surface, bounded SCRAM derivation and relay publication order. The executable still owes its own first-commit evidence and admitted-boundary check before enabling persistence. TLS counterparts remain in open:intranet:guarded-transport.",
+      "missing": "The storage library is admitted under amend:storage:library-admission, including the closed statement and result surface, bounded SCRAM derivation and relay publication order. Before enabling persistence, the executable must pass the admitted-boundary check of open:host:admitted-epoch-result and supply its own first-commit evidence under rule:storage:first-commit-evidence; the reviewed statement and diagnostic surface must expand with storage shapes under amend:storage:transport-evidence-boundary, and the deployment must retain custody of both owner and runtime credentials under conv:storage:ownership. TLS counterparts remain in open:intranet:guarded-transport.",
       "name": "ROOT::dec:storage:secret-shim",
       "owner": "Storage implementer and independent integration reviewer",
       "path": "adr/015-durable-storage.md",

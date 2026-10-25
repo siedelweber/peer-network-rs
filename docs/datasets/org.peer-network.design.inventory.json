@@ -510,7 +510,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:burn-exogenous-origin",
       "label_source": "explicit",
-      "statement": "Track burn exogenous origin as a separately addressable condition."
+      "statement": "Import burn amounts from outside the graph; no graph-derived rule or network operation may compute or write them."
     },
     {
       "chapter": "02 Comparator",
@@ -521,7 +521,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:burn-neutrality",
       "label_source": "explicit",
-      "statement": "Track burn neutrality as a separately addressable condition."
+      "statement": "Treat the primitive as a uniform measurement of destroyed magnitude, not a priced asset, redemption right, entitlement or selection of a winner."
     },
     {
       "chapter": "02 Comparator",
@@ -554,7 +554,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:burn-settlement-pin",
       "label_source": "explicit",
-      "statement": "Track burn settlement pin as a separately addressable condition."
+      "statement": "Pin the burn amount at a settlement event."
     },
     {
       "chapter": "02 Comparator",
@@ -565,7 +565,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:burn-pinned-monotonicity",
       "label_source": "explicit",
-      "statement": "Track burn pinned monotonicity as a separately addressable condition."
+      "statement": "Require successive pinned amounts at an address to be nondecreasing, with append-only records and nonnegative contributions."
     },
     {
       "chapter": "02 Comparator",
@@ -576,7 +576,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:burn-conservative-publication",
       "label_source": "explicit",
-      "statement": "Track burn conservative publication as a separately addressable condition."
+      "statement": "Between settlements, publish no amount greater than the amount pinned by the next settlement."
     },
     {
       "chapter": "02 Comparator",
@@ -609,7 +609,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:burn-bindability",
       "label_source": "explicit",
-      "statement": "Track burn bindability as a separately addressable condition."
+      "statement": "Supply opaque permanent addresses carrying no identity claim, so a consumer can bind its identities for the lifetime of its record."
     },
     {
       "chapter": "02 Comparator",
@@ -620,7 +620,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:burn-non-negativity",
       "label_source": "explicit",
-      "statement": "Track burn non negativity as a separately addressable condition."
+      "statement": "Require every address’s burn amount to lie on the same nonnegative real line."
     },
     {
       "chapter": "02 Comparator",
@@ -631,7 +631,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:burn-provenance-auditability",
       "label_source": "explicit",
-      "statement": "Track burn provenance auditability as a separately addressable condition."
+      "statement": "Anchor each contributing unit to genuine irrecoverable destruction and cap each recording event by its backing destruction; an unbacked record contributes zero. Publish enough quantities to recompute and verify provenance rather than merely total records."
     },
     {
       "chapter": "02 Comparator",
@@ -1027,7 +1027,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:source-actor-mass",
       "label_source": "explicit",
-      "statement": "Track source actor mass as a separately addressable condition."
+      "statement": "Require contributing Actor mass to be genuinely destroyed and non-transferable across addresses, with instantaneous-costliness grounding at genesis and net-cost grounding after a market exists. Treat this as an inherited primitive obligation."
     },
     {
       "chapter": "02 Comparator",
@@ -1104,7 +1104,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:faithfulness-numeraire",
       "label_source": "explicit",
-      "statement": "Track faithfulness numeraire as a separately addressable condition."
+      "statement": "Divide every burn-denominated input by the numeraire before combining it with a count."
     },
     {
       "chapter": "02 Comparator",
@@ -1115,7 +1115,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:faithfulness-measurement",
       "label_source": "explicit",
-      "statement": "Track faithfulness measurement as a separately addressable condition."
+      "statement": "Compute standing as a measurement of the record, not a possessed ledger asset; the ledger after measurement must equal the ledger before it."
     },
     {
       "chapter": "02 Comparator",
@@ -1137,7 +1137,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:faithfulness-epoch-set",
       "label_source": "explicit",
-      "statement": "Track faithfulness epoch set as a separately addressable condition."
+      "statement": "Keep host-assigned order, relation frontiers and intra-epoch latest positions out of every standing quantity."
     },
     {
       "chapter": "02 Comparator",
@@ -1148,7 +1148,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:faithfulness-title",
       "label_source": "explicit",
-      "statement": "Track faithfulness title as a separately addressable condition."
+      "statement": "Resolve a settlement act’s counterparty allocation only through the epoch title fold."
     },
     {
       "chapter": "02 Comparator",
@@ -1159,7 +1159,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:faithfulness-memorylessness",
       "label_source": "explicit",
-      "statement": "Track faithfulness memorylessness as a separately addressable condition."
+      "statement": "Use no previous epoch’s standing as a semantic input."
     },
     {
       "chapter": "02 Comparator",
@@ -1192,7 +1192,7 @@
       "kind": "invariant check",
       "label": "cond:comparator:faithfulness-responsive-tilt",
       "label_source": "explicit",
-      "statement": "Track faithfulness responsive tilt as a separately addressable condition."
+      "statement": "Use recipient standing only to modulate relative authored allocation, with hop fading at the greatest certified rung."
     },
     {
       "chapter": "02 Comparator",
@@ -1533,7 +1533,7 @@
       "kind": "type",
       "label": "itm:network:conserved-standing-package-final-state",
       "label_source": "explicit",
-      "statement": "Track conserved standing package final state as a separately addressable item."
+      "statement": "Publish the proposed final epoch state: final edge set, residual balances, action counts, settled burn snapshot and constants in force."
     },
     {
       "chapter": "03 Network",
@@ -1544,7 +1544,7 @@
       "kind": "type",
       "label": "itm:network:conserved-standing-package-folds",
       "label_source": "explicit",
-      "statement": "Track conserved standing package folds as a separately addressable item."
+      "statement": "Publish fold cells and coefficients, each cell’s recipient resolution, the domain weights and the base allocation matrix they determine."
     },
     {
       "chapter": "03 Network",
@@ -1555,7 +1555,7 @@
       "kind": "type",
       "label": "itm:network:conserved-standing-package-activation",
       "label_source": "explicit",
-      "statement": "Track conserved standing package activation as a separately addressable item."
+      "statement": "Publish responsive and wall-clamped activation formulas, the in-force wall and structural floor, and controller edition and reduced constants. Include the completed width and accepted rung as controller inputs beside its wall, proposal, delivered next wall and burn-image schedule."
     },
     {
       "chapter": "03 Network",
@@ -1566,7 +1566,7 @@
       "kind": "type",
       "label": "itm:network:conserved-standing-package-tilt",
       "label_source": "explicit",
-      "statement": "Track conserved standing package tilt as a separately addressable item."
+      "statement": "Publish the tilt profile, backoff grid, accepted rung and certificate verdict of every higher rung attempted."
     },
     {
       "chapter": "03 Network",
@@ -1577,7 +1577,7 @@
       "kind": "type",
       "label": "itm:network:conserved-standing-package-transport",
       "label_source": "explicit",
-      "statement": "Track conserved standing package transport as a separately addressable item."
+      "statement": "Publish the depth masses, hop allocation matrices and conserved transport they compose at the equilibrium."
     },
     {
       "chapter": "03 Network",
@@ -1588,7 +1588,7 @@
       "kind": "type",
       "label": "itm:network:conserved-standing-package-emission",
       "label_source": "explicit",
-      "statement": "Track conserved standing package emission as a separately addressable item."
+      "statement": "Publish each source’s emission fraction even though it is derivable from the final state, so its transport reach can be audited directly."
     },
     {
       "chapter": "03 Network",
@@ -1599,7 +1599,7 @@
       "kind": "type",
       "label": "itm:network:conserved-standing-package-certificate",
       "label_source": "explicit",
-      "statement": "Track conserved standing package certificate as a separately addressable item."
+      "statement": "Publish the rate-hull box, standing certificate and verdict, fixed-point enclosure, final standing and stamps, door headroom, and own-balance, individual-safety and epoch-admission verdicts."
     },
     {
       "chapter": "03 Network",
@@ -1610,7 +1610,7 @@
       "kind": "type",
       "label": "itm:network:conserved-standing-package-evidence",
       "label_source": "explicit",
-      "statement": "Track conserved standing package evidence as a separately addressable item."
+      "statement": "Publish interval boxes, residual bounds and other evidence sufficient to check the mathematical claims independently; these prove the binding package and are not separate standing inputs."
     },
     {
       "chapter": "03 Network",
@@ -1676,7 +1676,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-accepted-records",
       "label_source": "explicit",
-      "statement": "Track host contract accepted records as a separately addressable item."
+      "statement": "At each accepted boundary publish the final write and edge sets, the dependent-set partition obtained by merging overlapping principal closures against prior finalized history, realized size, closure cause and attested boundary timestamp."
     },
     {
       "chapter": "03 Network",
@@ -1687,7 +1687,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-final-ledger",
       "label_source": "explicit",
-      "statement": "Track host contract final ledger as a separately addressable item."
+      "statement": "Publish settled boundary burn state, final residual balances and action counts, accepted-act count increments and debit vintages."
     },
     {
       "chapter": "03 Network",
@@ -1698,7 +1698,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-semantic-projection",
       "label_source": "explicit",
-      "statement": "Track host contract semantic projection as a separately addressable item."
+      "statement": "Publish every accepted Actor-authored act, its fold cell and coefficient, recipient resolution and inviter revocation, together with the base allocation determined under the published domain weights."
     },
     {
       "chapter": "03 Network",
@@ -1709,7 +1709,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-transport",
       "label_source": "explicit",
-      "statement": "Track host contract transport as a separately addressable item."
+      "statement": "Publish the tilt profile, accepted rung and PASS, FAIL or INDECISIVE verdict for every higher attempted rung, depth masses, emission fractions and conserved transport."
     },
     {
       "chapter": "03 Network",
@@ -1720,7 +1720,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-final-standing",
       "label_source": "explicit",
-      "statement": "Track host contract final standing as a separately addressable item."
+      "statement": "Publish the rate-hull box, standing certificate, fixed-point enclosure, final standing, action and epoch stamps, door headroom and all three write-gate verdicts."
     },
     {
       "chapter": "03 Network",
@@ -1731,7 +1731,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-shared-policy",
       "label_source": "explicit",
-      "statement": "Track host contract shared policy as a separately addressable item."
+      "statement": "Publish title and settlement recognition, target size and duration bounds, the led policy-floor schedule with its wall comparison, threshold schedule and margin. Publish the in-force wall and fixed structural-floor declaration beside the numeraire before the first epoch, including its exact defining object and comparison procedure; include controller edition, reduced constants, completed width and rung, proposal and delivered led wall. No protocol formula changes silently."
     },
     {
       "chapter": "03 Network",
@@ -1742,7 +1742,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-evidence",
       "label_source": "explicit",
-      "statement": "Track host contract evidence as a separately addressable item."
+      "statement": "Publish formula editions, constants, interval boxes, residual bounds and reports sufficient for any participant to rerun the host calculation."
     },
     {
       "chapter": "03 Network",
@@ -2424,7 +2424,7 @@
       "kind": "invariant check",
       "label": "itm:graph:passivity-authorship",
       "label_source": "explicit",
-      "statement": "Track passivity authorship as a separately addressable item."
+      "statement": "Require every recorded edge to have an active Actor author: an Actor-sourced edge is authored by its source, while a passive-sourced edge is a terminal hyper-edge leg authored by the act’s Actor. Reputation is derived, not an exception allowing passive-authored records."
     },
     {
       "chapter": "04 Graph",
@@ -2457,7 +2457,7 @@
       "kind": "invariant check",
       "label": "itm:graph:passivity-non-autonomy",
       "label_source": "explicit",
-      "statement": "Track passivity non autonomy as a separately addressable item."
+      "statement": "Permit no passive node to initiate, redirect or modify an edge; its outgoing recorded legs are fixed by the Actor at creation and remain immutable."
     },
     {
       "chapter": "04 Graph",
@@ -2842,7 +2842,7 @@
       "kind": "invariant check",
       "label": "itm:graph:rank-two-constraint-unmasked-rank",
       "label_source": "explicit",
-      "statement": "Track rank two constraint unmasked rank as a separately addressable item."
+      "statement": "Check that the unclamped, unmasked sentiment slice is exactly rank one, as the outer product of its intensity and domain vectors with their absolute values and unit entries."
     },
     {
       "chapter": "04 Graph",
@@ -2853,7 +2853,7 @@
       "kind": "invariant check",
       "label": "itm:graph:rank-two-constraint-masked-bound",
       "label_source": "explicit",
-      "statement": "Track rank two constraint masked bound as a separately addressable item."
+      "statement": "After clamping and masking, check the smallest-to-largest singular-value ratio against the effective-mask bounds: full mask below 0.05, Identity at most 0.14, Epistemic and Economic at most 0.10, Minimal at most 0.22. The full-mask evidence is a 21-by-21 numerical grid; Identity and Minimal attain their bounds at the extremal corner, while Epistemic and Economic maxima are interior and their corner ratio is zero."
     },
     {
       "chapter": "04 Graph",
@@ -3788,7 +3788,7 @@
       "kind": "invariant check",
       "label": "itm:graph:hyper-edge-reduction-raw-scalar",
       "label_source": "explicit",
-      "statement": "Track hyper edge reduction raw scalar as a separately addressable item."
+      "statement": "For a complete hyper-edge act, compute its raw scalar norm as the product of its two leg norms."
     },
     {
       "chapter": "04 Graph",
@@ -3799,7 +3799,7 @@
       "kind": "invariant check",
       "label": "itm:graph:hyper-edge-reduction-raw-path",
       "label_source": "explicit",
-      "statement": "Track hyper edge reduction raw path as a separately addressable item."
+      "statement": "For a complete hyper-edge, multiply the two raw path-view matrices in leg order; its determinant and parity are the products of the leg determinants and parities."
     },
     {
       "chapter": "04 Graph",
@@ -3810,7 +3810,7 @@
       "kind": "invariant check",
       "label": "itm:graph:hyper-edge-reduction-attribution",
       "label_source": "explicit",
-      "statement": "Track hyper edge reduction attribution as a separately addressable item."
+      "statement": "For attribution, take each hyper-edge leg as an independent CAN base value and compose them at depth one with redundancy one."
     },
     {
       "chapter": "04 Graph",
@@ -3821,7 +3821,7 @@
       "kind": "invariant check",
       "label": "itm:graph:hyper-edge-reduction-standing",
       "label_source": "explicit",
-      "statement": "Track hyper edge reduction standing as a separately addressable item."
+      "statement": "Consume a hyper-edge once in standing exactly when its family is in the closed person-vouch census and the act is complete. Neither leg is an independent standing edge; forbid unmatched terminal-leg entry or substitution of an unrelated incoming leg, and omit the passive middle artifact from the projected standing path."
     },
     {
       "chapter": "04 Graph",
@@ -4129,7 +4129,7 @@
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-authorship",
       "label_source": "explicit",
-      "statement": "Track act authentication requirements authorship as a separately addressable item."
+      "statement": "Before authoritative-sequence eligibility, require publicly checkable evidence that the named Actor authorized the proposal."
     },
     {
       "chapter": "04 Graph",
@@ -4140,7 +4140,7 @@
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-proposal-integrity",
       "label_source": "explicit",
-      "statement": "Track act authentication requirements proposal integrity as a separately addressable item."
+      "statement": "Make host substitution of the proposal’s structural body, removable payload projection, dependency projection or requested publication state detectable before authoritative-sequence eligibility."
     },
     {
       "chapter": "04 Graph",
@@ -4151,7 +4151,7 @@
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-transparency",
       "label_source": "explicit",
-      "statement": "Track act authentication requirements transparency as a separately addressable item."
+      "statement": "Show the Actor every host-added field of the finalizable act before final approval."
     },
     {
       "chapter": "04 Graph",
@@ -4162,7 +4162,7 @@
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-approval",
       "label_source": "explicit",
-      "statement": "Track act authentication requirements approval as a separately addressable item."
+      "statement": "Admit to the authoritative sequence only the exact finalizable act the Actor approved."
     },
     {
       "chapter": "04 Graph",
@@ -4173,7 +4173,7 @@
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-unity",
       "label_source": "explicit",
-      "statement": "Track act authentication requirements unity as a separately addressable item."
+      "statement": "Require both hyper-edge projections to resolve to the same approved parent act."
     },
     {
       "chapter": "04 Graph",
@@ -4184,7 +4184,7 @@
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-projection-binding",
       "label_source": "explicit",
-      "statement": "Track act authentication requirements projection binding as a separately addressable item."
+      "statement": "Removing a projection opening must not allow the immutable act to be rebound to a different payload or dependency value."
     },
     {
       "chapter": "04 Graph",
@@ -4195,7 +4195,7 @@
       "kind": "policy",
       "label": "itm:graph:act-authentication-requirements-ordering",
       "label_source": "explicit",
-      "statement": "Track act authentication requirements ordering as a separately addressable item."
+      "statement": "Where dependency compliance is claimed, retain public evidence that can establish a violation without changing finalized history."
     },
     {
       "chapter": "04 Graph",
@@ -4239,7 +4239,7 @@
       "kind": "function",
       "label": "itm:graph:settlement-recognition-completeness",
       "label_source": "explicit",
-      "statement": "Track settlement recognition completeness as a separately addressable item."
+      "statement": "Recognize a settlement candidate only if its Bid, Accept and Ratify acts are present with their edge projections in the final epoch edge set."
     },
     {
       "chapter": "04 Graph",
@@ -4250,7 +4250,7 @@
       "kind": "function",
       "label": "itm:graph:settlement-recognition-reference-binding",
       "label_source": "explicit",
-      "statement": "Track settlement recognition reference binding as a separately addressable item."
+      "statement": "Require both Accept and Ratify settlement references to resolve to the identifier of the Bid act that opened the Offer."
     },
     {
       "chapter": "04 Graph",
@@ -4261,7 +4261,7 @@
       "kind": "function",
       "label": "itm:graph:settlement-recognition-authorization",
       "label_source": "explicit",
-      "statement": "Track settlement recognition authorization as a separately addressable item."
+      "statement": "Require the Accept author to be the certified owner at the boundary immediately before the Ratify’s finalization epoch, using the genesis owner for a fresh thread."
     },
     {
       "chapter": "04 Graph",
@@ -4272,7 +4272,7 @@
       "kind": "function",
       "label": "itm:graph:settlement-recognition-buyer-consent",
       "label_source": "explicit",
-      "statement": "Track settlement recognition buyer consent as a separately addressable item."
+      "statement": "Refuse settlement recognition if a buyer Withdraw on the Offer finalizes no later than the Ratify’s epoch; a same-epoch cancellation defeats consent."
     },
     {
       "chapter": "04 Graph",
@@ -4283,7 +4283,7 @@
       "kind": "function",
       "label": "itm:graph:settlement-recognition-seller-consent",
       "label_source": "explicit",
-      "statement": "Track settlement recognition seller consent as a separately addressable item."
+      "statement": "Refuse settlement recognition if a seller Rescind on the Offer finalizes no later than the Ratify’s epoch; a same-epoch cancellation defeats consent."
     },
     {
       "chapter": "04 Graph",
@@ -4294,7 +4294,7 @@
       "kind": "function",
       "label": "itm:graph:settlement-recognition-well-formedness",
       "label_source": "explicit",
-      "statement": "Track settlement recognition well formedness as a separately addressable item."
+      "statement": "Check the observed handshake order Bid before Accept before Ratify as well-formedness only; it provides no tie breaker."
     },
     {
       "chapter": "04 Graph",
@@ -5680,7 +5680,7 @@
       "kind": "invariant check",
       "label": "itm:nodes:raw-self-edge-properties-zero",
       "label_source": "explicit",
-      "statement": "Track raw self edge properties zero as a separately addressable item."
+      "statement": "At zero standing, require zero raw self-edge activation and damped Reputation weight, so the bond is inert."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5691,7 +5691,7 @@
       "kind": "invariant check",
       "label": "itm:nodes:raw-self-edge-properties-monotonicity",
       "label_source": "explicit",
-      "statement": "Track raw self edge properties monotonicity as a separately addressable item."
+      "statement": "At fixed raw maturity, require the damped Reputation weight to increase strictly with positive standing. This is an input derivative of the raw edge, not a burn-response guarantee."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5702,7 +5702,7 @@
       "kind": "invariant check",
       "label": "itm:nodes:raw-self-edge-properties-bound",
       "label_source": "explicit",
-      "statement": "Track raw self edge properties bound as a separately addressable item."
+      "statement": "Keep the raw damped Reputation weight strictly below one for every nonnegative standing and permitted maturity."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5713,7 +5713,7 @@
       "kind": "invariant check",
       "label": "itm:nodes:raw-self-edge-properties-concavity",
       "label_source": "explicit",
-      "statement": "Track raw self edge properties concavity as a separately addressable item."
+      "statement": "At fixed raw maturity, require the damped Reputation weight to be strictly concave in positive standing."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5724,7 +5724,7 @@
       "kind": "invariant check",
       "label": "itm:nodes:raw-self-edge-properties-parity",
       "label_source": "explicit",
-      "statement": "Track raw self edge properties parity as a separately addressable item."
+      "statement": "Require positive Declaration and Reputation determinant parity at every positive standing."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5735,7 +5735,7 @@
       "kind": "invariant check",
       "label": "itm:nodes:raw-self-edge-properties-synchronization",
       "label_source": "explicit",
-      "statement": "Track raw self edge properties synchronization as a separately addressable item."
+      "statement": "At every epoch boundary, derive Declaration and Reputation with identical stored tensors, determinant scores and damped-weight formulas."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5746,7 +5746,7 @@
       "kind": "invariant check",
       "label": "itm:nodes:raw-self-edge-properties-can-independence",
       "label_source": "explicit",
-      "statement": "Track raw self edge properties can independence as a separately addressable item."
+      "statement": "Treat normalized CAN as independent of an Actor’s standing only when its Declaration is outside its own composition dependency closure; Reputation contributes nothing to CAN."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5757,7 +5757,7 @@
       "kind": "invariant check",
       "label": "itm:nodes:raw-self-edge-properties-feed-hierarchy",
       "label_source": "explicit",
-      "statement": "Track raw self edge properties feed hierarchy as a separately addressable item."
+      "statement": "Bound a raw profile-bridged feed path by the squared Opinion ceiling times the Reputation ceiling; this ceiling is at most half the direct Opinion ceiling."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5768,7 +5768,7 @@
       "kind": "invariant check",
       "label": "itm:nodes:raw-self-edge-properties-temporal-ceiling",
       "label_source": "explicit",
-      "statement": "Track raw self edge properties temporal ceiling as a separately addressable item."
+      "statement": "At frozen raw sentiment, use the maturity-channel supremum equal to the determinant score times the square root of two, strictly below one. This is a raw feed bound only."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -6549,7 +6549,7 @@
       "kind": "invariant check",
       "label": "itm:epoch:rival-allocation-response-rivalry",
       "label_source": "explicit",
-      "statement": "Track rival allocation response rivalry as a separately addressable item."
+      "statement": "Check that allocation derivatives sum to zero in each row: a recipient’s gain is exactly balanced by sibling and self-share losses, with self loss arising from the common denominator."
     },
     {
       "chapter": "6 Epoch",
@@ -6560,7 +6560,7 @@
       "kind": "invariant check",
       "label": "itm:epoch:rival-allocation-response-wall-flatness",
       "label_source": "explicit",
-      "statement": "Track rival allocation response wall flatness as a separately addressable item."
+      "statement": "Below the safety wall, require zero allocation derivative with respect to that recipient’s standing at every hop; the recipient remains level-discounted rather than dynamically responsive."
     },
     {
       "chapter": "6 Epoch",
@@ -6571,7 +6571,7 @@
       "kind": "invariant check",
       "label": "itm:epoch:rival-allocation-response-row-independence",
       "label_source": "explicit",
-      "statement": "Track rival allocation response row independence as a separately addressable item."
+      "statement": "Keep an allocation row independent of its own Actor’s standing because its self score is unmodulated. Retain indirect diagonal Jacobian terms through other Actors’ rows in the certificate."
     },
     {
       "chapter": "6 Epoch",
@@ -7495,7 +7495,7 @@
       "kind": "policy",
       "label": "itm:epoch:final-act-sequence-closure-formation",
       "label_source": "explicit",
-      "statement": "Track final act sequence closure formation as a separately addressable item."
+      "statement": "Require the final act union to be formation-valid and each member’s author to pass own-balance solvency and individual safety on that completed state."
     },
     {
       "chapter": "6 Epoch",
@@ -7506,7 +7506,7 @@
       "kind": "policy",
       "label": "itm:epoch:final-act-sequence-closure-safety",
       "label_source": "explicit",
-      "statement": "Track final act sequence closure safety as a separately addressable item."
+      "statement": "Require every final-set member’s action stamp to be at least the safety wall."
     },
     {
       "chapter": "6 Epoch",
@@ -7517,7 +7517,7 @@
       "kind": "policy",
       "label": "itm:epoch:final-act-sequence-closure-policy",
       "label_source": "explicit",
-      "statement": "Track final act sequence closure policy as a separately addressable item."
+      "statement": "Compute the epoch stamp once over the complete final act union and require it to meet the effective policy floor."
     },
     {
       "chapter": "6 Epoch",
@@ -8111,7 +8111,7 @@
       "kind": "invariant check",
       "label": "prop:epoch:safety-independent-of-controller",
       "label_source": "explicit",
-      "statement": "Track safety independent of controller as a separately addressable proposition."
+      "statement": "Under the conserved-map ledger, support and invariant-box hypotheses, every finite wall at or above its structural floor has a greatest proved passing rung on the completed epoch’s own width, with a unique fixed point and geometric convergence from its box. This does not require a correct controller forecast or attainment of the chartered rung, and does not discharge the separate write and policy tests."
     },
     {
       "chapter": "6 Epoch",
@@ -8144,7 +8144,7 @@
       "kind": "invariant check",
       "label": "prop:epoch:wall-controller-total",
       "label_source": "explicit",
-      "statement": "Track wall controller total as a separately addressable proposition."
+      "statement": "Define empty-domain width as zero and otherwise use the maximum contributing source-rate range. On every finite declared input triple, the canonical interim controller must return a finite proposal and delivered wall at or above the floor, obeying the step bound. Zero width proposes the floor, and a wall already there stays there."
     },
     {
       "chapter": "6 Epoch",
@@ -8155,7 +8155,7 @@
       "kind": "invariant check",
       "label": "prop:epoch:wall-controller-covariance",
       "label_source": "explicit",
-      "statement": "Track wall controller covariance as a separately addressable proposition."
+      "statement": "Under recoinage, co-scale burn values and numeraire while retaining reduced constants and counts: reduced rates, standing, width and wall stay unchanged, the next price co-scales, and old debits change representation only. A fixed-ledger numeraire migration instead evaluates the controller on its published transformed inputs; same-pair width scales inversely, compensation preserves the door product, and floor and policy tests still apply. No controller homogeneity or solvency and individual-safety invariance is promised for that migration."
     },
     {
       "chapter": "6 Epoch",
@@ -8727,7 +8727,7 @@
       "kind": "none",
       "label": "itm:sorting:score-monotonicity-quality",
       "label_source": "explicit",
-      "statement": "Track score monotonicity quality as a separately addressable item."
+      "statement": "With other score inputs fixed, require feed score to be nondecreasing in the content tensor’s Frobenius norm."
     },
     {
       "chapter": "7 Sorting",
@@ -8738,7 +8738,7 @@
       "kind": "none",
       "label": "itm:sorting:score-monotonicity-coherence",
       "label_source": "explicit",
-      "statement": "Track score monotonicity coherence as a separately addressable item."
+      "statement": "With other score inputs fixed, require feed score to be nondecreasing in the absolute path-view determinant of any path edge."
     },
     {
       "chapter": "7 Sorting",
@@ -8749,7 +8749,7 @@
       "kind": "none",
       "label": "itm:sorting:score-monotonicity-maturity",
       "label_source": "explicit",
-      "statement": "Track score monotonicity maturity as a separately addressable item."
+      "statement": "Treat feed maturity response as non-monotone, with the stated minimum near one half and net amplification only beyond the maturity crossing."
     },
     {
       "chapter": "7 Sorting",
@@ -8760,7 +8760,7 @@
       "kind": "none",
       "label": "itm:sorting:score-monotonicity-entropy",
       "label_source": "explicit",
-      "statement": "Track score monotonicity entropy as a separately addressable item."
+      "statement": "With other score inputs fixed, require feed score to be nonincreasing in tensor entropy."
     },
     {
       "chapter": "7 Sorting",
@@ -8771,7 +8771,7 @@
       "kind": "none",
       "label": "itm:sorting:score-monotonicity-diversity",
       "label_source": "explicit",
-      "statement": "Track score monotonicity diversity as a separately addressable item."
+      "statement": "For positive diversity preference and fixed other score inputs, require feed score to be nondecreasing in the second singular value."
     },
     {
       "chapter": "7 Sorting",
@@ -8782,7 +8782,7 @@
       "kind": "none",
       "label": "itm:sorting:score-monotonicity-focus",
       "label_source": "explicit",
-      "statement": "Track score monotonicity focus as a separately addressable item."
+      "statement": "For positive diversity preference, require the score’s condition-number derivative to be nonpositive when the first singular value exceeds the second; the isotropic case is excluded from that premise."
     },
     {
       "chapter": "7 Sorting",
@@ -9618,7 +9618,7 @@
       "kind": "invariant check",
       "label": "itm:scalability:spam-resistance-closed-person-vouch-census",
       "label_source": "explicit",
-      "statement": "Track spam resistance closed person vouch census as a separately addressable item."
+      "statement": "Limit standing contributions to the closed person-vouch family census."
     },
     {
       "chapter": "10 Scalability",
@@ -9629,7 +9629,7 @@
       "kind": "invariant check",
       "label": "itm:scalability:spam-resistance-complete-act-author-continuity",
       "label_source": "explicit",
-      "statement": "Track spam resistance complete act author continuity as a separately addressable item."
+      "statement": "Require complete acts and continuous Actor authorship for standing contributions."
     },
     {
       "chapter": "10 Scalability",
@@ -9640,7 +9640,7 @@
       "kind": "invariant check",
       "label": "itm:scalability:spam-resistance-passive-unmatched-leg-exclusion",
       "label_source": "explicit",
-      "statement": "Track spam resistance passive unmatched leg exclusion as a separately addressable item."
+      "statement": "Exclude passive interference and unmatched hyper-edge legs from standing contributions."
     },
     {
       "chapter": "10 Scalability",
@@ -9651,7 +9651,7 @@
       "kind": "invariant check",
       "label": "itm:scalability:spam-resistance-conserved-apportionment",
       "label_source": "explicit",
-      "statement": "Track spam resistance conserved apportionment as a separately addressable item."
+      "statement": "Allocate one rival unit per source across self and recipients, preserving it through hop products and the depth mixture. Additional acts and routes divide that unit rather than add copies, and final standing remains in its contributing-rate hull."
     },
     {
       "chapter": "10 Scalability",
@@ -9662,7 +9662,7 @@
       "kind": "invariant check",
       "label": "itm:scalability:spam-resistance-safety-wall-clamp",
       "label_source": "explicit",
-      "statement": "Track spam resistance safety wall clamp as a separately addressable item."
+      "statement": "Apply the safety-wall clamp to limit below-wall dynamic gain without erasing the Actor’s source pair."
     },
     {
       "chapter": "10 Scalability",
@@ -9673,7 +9673,7 @@
       "kind": "invariant check",
       "label": "itm:scalability:spam-resistance-conserved-standing-certificate",
       "label_source": "explicit",
-      "statement": "Track spam resistance conserved standing certificate as a separately addressable item."
+      "statement": "Require the conserved-standing certificate to bound row feedback."
     },
     {
       "chapter": "10 Scalability",
@@ -9684,7 +9684,7 @@
       "kind": "invariant check",
       "label": "itm:scalability:spam-resistance-final-gates-record-budget",
       "label_source": "explicit",
-      "statement": "Track spam resistance final gates record budget as a separately addressable item."
+      "statement": "Apply final individual-safety checks to every proposed-set author, epoch admission to the closed set, and the finite epoch record budget."
     },
     {
       "chapter": "10 Scalability",
@@ -9695,7 +9695,7 @@
       "kind": "invariant check",
       "label": "itm:scalability:spam-resistance-per-action-debit",
       "label_source": "explicit",
-      "statement": "Track spam resistance per action debit as a separately addressable item."
+      "statement": "Debit the in-force action price and retain each accepted act’s count increment: residual balance falls while its denominator rises, and merely stopping does not undo the dilution. A below-wall final stamp fails individual safety; this ledger-rate effect supplies no universal final-standing direction."
     },
     {
       "chapter": "10 Scalability",
@@ -10058,7 +10058,7 @@
       "kind": "none",
       "label": "itm:can:dependency-induction-actor-edges",
       "label_source": "explicit",
-      "statement": "Track dependency induction actor edges as a separately addressable item."
+      "statement": "For the canonical CAN mapping, make each non-control Actor-sourced contribution record a leaf valued by its raw slice Frobenius norm. Source class, not authorship, controls this rule: a referenced derived Declaration may be a leaf, subject to CAN insulation, without exposing standing hop matrices or emission fractions."
     },
     {
       "chapter": "B Compositional attribution",
@@ -10069,7 +10069,7 @@
       "kind": "none",
       "label": "itm:can:dependency-induction-hyper-legs",
       "label_source": "explicit",
-      "statement": "Track dependency induction hyper legs as a separately addressable item."
+      "statement": "Map each contributing hyper-edge to a depth-one CAN composition of its two leg leaves with redundancy one, irrespective of leg source class. A coincident Participant terminal self-loop remains a guild leaf although raw traversal prunes it; this two-leaf reading does not replace complete-act standing."
     },
     {
       "chapter": "B Compositional attribution",
@@ -10080,7 +10080,7 @@
       "kind": "none",
       "label": "itm:can:dependency-induction-passive-exclusion",
       "label_source": "explicit",
-      "statement": "Track dependency induction passive exclusion as a separately addressable item."
+      "statement": "Exclude standalone passive-sourced edges that are not designated hyper-edge legs from CAN, including Reputation; check source class and the composition-graph designation."
     },
     {
       "chapter": "B Compositional attribution",
@@ -10091,7 +10091,7 @@
       "kind": "none",
       "label": "itm:can:dependency-induction-control-exclusion",
       "label_source": "explicit",
-      "statement": "Track dependency induction control exclusion as a separately addressable item."
+      "statement": "Exclude Withdraw, Rescind, Leave and De-invite control edges from CAN regardless of source class or hyper-edge membership; this exclusion overrides the leg-composition rule. Do not assign contribution value to cancellation or expulsion."
     },
     {
       "chapter": "B Compositional attribution",
@@ -12082,7 +12082,7 @@
       "kind": "policy",
       "label": "prop:dynamics:floor-above-the-ridge",
       "label_source": "explicit",
-      "statement": "Track floor above the ridge as a separately addressable proposition."
+      "statement": "For a wall at or above the clean-elasticity ridge and a reduced coordinate at or above that wall, clean elasticity is at most its wall value, strictly less above the wall. Apply this to either chartered floor declaration without identifying the clean envelope with deployed per-hop sensitivity."
     },
     {
       "chapter": "D Dynamics",
@@ -12269,7 +12269,7 @@
       "kind": "invariant check",
       "label": "cond:dynamics:core-mobius-flip",
       "label_source": "explicit",
-      "statement": "Track core mobius flip as a separately addressable condition."
+      "statement": "Retain the unpowered-core flip diagnostic: its Schwarzian must exceed three halves of the squared logarithmic derivative on the half-open interval from one half to one. Positive core normalization leaves both unchanged. This is a core diagnostic, not a standing condition for the projected map."
     },
     {
       "chapter": "D Dynamics",
@@ -12280,7 +12280,7 @@
       "kind": "invariant check",
       "label": "cond:dynamics:core-pitchfork-neimark-sacker",
       "label_source": "explicit",
-      "statement": "Track core pitchfork neimark sacker as a separately addressable condition."
+      "statement": "Keep the core oscillator’s pitchfork and Neimark–Sacker condition as a named diagnostic only: its coefficient inequalities and center-manifold second-order offsets are unspecified, so the name supplies no certified projected-map criterion."
     },
     {
       "chapter": "D Dynamics",
