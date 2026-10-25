@@ -1445,7 +1445,7 @@
       "kind": "policy",
       "label": "case:network:admission-closure-binding",
       "label_source": "explicit",
-      "statement": "An object that influences admission lies in the admission closure and is binding: consumers must use its published value, though they may recompute it for audit."
+      "statement": "Branch of ``def:network:admission-closure``: An object that influences admission lies in the admission closure and is binding: consumers must use its published value, though they may recompute it for audit."
     },
     {
       "chapter": "03 Network",
@@ -1456,7 +1456,7 @@
       "kind": "policy",
       "label": "case:network:admission-closure-free",
       "label_source": "explicit",
-      "statement": "An object is free only when every read-site is terminal and never feeds forward epoch evolution; guild reimplementation is then permitted. Recomputability alone does not make a binding object free."
+      "statement": "Branch of ``def:network:admission-closure``: An object is free only when every read-site is terminal and never feeds forward epoch evolution; guild reimplementation is then permitted. Recomputability alone does not make a binding object free."
     },
     {
       "chapter": "03 Network",
@@ -1731,7 +1731,7 @@
       "kind": "type",
       "label": "itm:network:host-contract-shared-policy",
       "label_source": "explicit",
-      "statement": "Publish title and settlement recognition, target size and duration bounds, the led policy-floor schedule with its wall comparison, threshold schedule and margin. Publish the in-force wall and fixed structural-floor declaration beside the numeraire before the first epoch, including its exact defining object and comparison procedure; include controller edition, reduced constants, completed width and rung, proposal and delivered led wall. No protocol formula changes silently."
+      "statement": "Publish title and settlement recognition, target size and duration bounds, the policy-floor schedule announced at boundary k and effective at k+1, valid if and only if at or above the safety wall, threshold schedule and margin. Publish the in-force wall and fixed structural-floor declaration beside the numeraire before the first epoch, including its exact defining object and comparison procedure; include controller edition, reduced constants, completed width and rung, proposal and delivered led wall. No protocol formula changes silently."
     },
     {
       "chapter": "03 Network",
@@ -1874,7 +1874,7 @@
       "kind": "type",
       "label": "case:graph:authored-act-binary",
       "label_source": "explicit",
-      "statement": "A binary authored act projects to exactly one edge record and remains one atomic unit of formation, admission, ordering, counting and debit."
+      "statement": "Branch of ``def:graph:authored-act``: A binary authored act projects to exactly one edge record and remains one atomic unit of formation, admission, ordering, counting and debit."
     },
     {
       "chapter": "04 Graph",
@@ -1885,7 +1885,7 @@
       "kind": "type",
       "label": "case:graph:authored-act-hyper",
       "label_source": "explicit",
-      "statement": "A hyper-edge act projects to exactly two matched records, one A-leg and one T-leg; accept neither other cardinalities nor per-leg counting or debiting. It carries one dependency projection for the whole act."
+      "statement": "Branch of ``def:graph:authored-act``: A hyper-edge act projects to exactly two matched records, one A-leg and one T-leg; accept neither other cardinalities nor per-leg counting or debiting. It carries one dependency projection for the whole act."
     },
     {
       "chapter": "04 Graph",
@@ -1973,7 +1973,7 @@
       "kind": "function",
       "label": "case:graph:genesis-act-and-creator-genesis-role",
       "label_source": "explicit",
-      "statement": "An act of a genesis family has the genesis role exactly when its terminal target is mint of its own act identifier; decide this by syntactic equality of the act fields."
+      "statement": "Branch of ``def:graph:genesis-act-and-creator``: An act of a genesis family has the genesis role exactly when its terminal target is mint of its own act identifier; decide this by syntactic equality of the act fields."
     },
     {
       "chapter": "04 Graph",
@@ -1984,7 +1984,7 @@
       "kind": "function",
       "label": "case:graph:genesis-act-and-creator-ordinary-role",
       "label_source": "explicit",
-      "statement": "An act of a genesis family whose terminal target is not its own mint has ordinary role: it names an existing node and neither mints, fixes the creator, establishes genesis context nor roots title."
+      "statement": "Branch of ``def:graph:genesis-act-and-creator``: An act of a genesis family whose terminal target is not its own mint has ordinary role: it names an existing node and neither mints, fixes the creator, establishes genesis context nor roots title."
     },
     {
       "chapter": "04 Graph",
@@ -1995,7 +1995,7 @@
       "kind": "function",
       "label": "case:graph:genesis-act-and-creator-minted-creator",
       "label_source": "explicit",
-      "statement": "For a minted node, resolve its creator to the author of its genesis act."
+      "statement": "Branch of ``def:graph:genesis-act-and-creator``: For a minted node, resolve its creator to the author of its genesis act."
     },
     {
       "chapter": "04 Graph",
@@ -2006,7 +2006,7 @@
       "kind": "function",
       "label": "case:graph:genesis-act-and-creator-address-creator",
       "label_source": "explicit",
-      "statement": "For an address node addr(a), resolve its creator to that address node itself."
+      "statement": "Branch of ``def:graph:genesis-act-and-creator``: For an address node addr(a), resolve its creator to that address node itself."
     },
     {
       "chapter": "04 Graph",
@@ -2017,7 +2017,7 @@
       "kind": "function",
       "label": "case:graph:genesis-act-and-creator-profile-creator",
       "label_source": "explicit",
-      "statement": "For a profile node prof(a), resolve its creator to addr(a)."
+      "statement": "Branch of ``def:graph:genesis-act-and-creator``: For a profile node prof(a), resolve its creator to addr(a)."
     },
     {
       "chapter": "04 Graph",
@@ -2028,7 +2028,7 @@
       "kind": "function",
       "label": "case:graph:genesis-act-and-creator-named-creator",
       "label_source": "explicit",
-      "statement": "For a named node name(s), creator is absent; assign absent-creator standing zero and the neutral feed amplifier one. Named concepts have no owner."
+      "statement": "Branch of ``def:graph:genesis-act-and-creator``: For a named node name(s), creator is absent; assign absent-creator standing zero and the neutral feed amplifier one. Named concepts have no owner."
     },
     {
       "chapter": "04 Graph",
@@ -2105,7 +2105,7 @@
       "kind": "invariant check",
       "label": "case:graph:raw-weight-ceiling-positive-walk",
       "label_source": "explicit",
-      "statement": "Because every routing-live raw edge has weight below one, removing a repeated-node cycle from a positive-weight walk strictly improves its product and shortens it. This simplification is not valid for a fixed parity register."
+      "statement": "Branch of ``thm:graph:raw-weight-ceiling`` proof: Because every routing-live raw edge has weight below one, removing a repeated-node cycle from a positive-weight walk strictly improves its product and shortens it. This simplification is not valid for a fixed parity register."
     },
     {
       "chapter": "04 Graph",
@@ -2116,7 +2116,7 @@
       "kind": "invariant check",
       "label": "case:graph:raw-weight-ceiling-zero-walk",
       "label_source": "explicit",
-      "statement": "Removing a cycle from a zero-weight walk cannot decrease its product and yields a simple path within the original depth bound when parity is unconstrained. Signed traversal must enforce original-vertex simplicity explicitly because removing a negative cycle changes sign."
+      "statement": "Branch of ``thm:graph:raw-weight-ceiling`` proof: Removing a cycle from a zero-weight walk cannot decrease its product; repeated removal gives a simple path within the same upper depth bound when parity is unconstrained. Removing a negative-parity cycle changes the sign, so this argument supplies no fixed-parity simplification."
     },
     {
       "chapter": "04 Graph",
@@ -2193,7 +2193,7 @@
       "kind": "function",
       "label": "case:graph:act-edge-projection-binary-count",
       "label_source": "explicit",
-      "statement": "A binary act has exactly one edge projection, with identity derived from its parent act identifier and binary role."
+      "statement": "Branch of ``def:graph:act-edge-projection``: A binary act has exactly one edge projection, with identity derived from its parent act identifier and binary role."
     },
     {
       "chapter": "04 Graph",
@@ -2204,7 +2204,7 @@
       "kind": "function",
       "label": "case:graph:act-edge-projection-hyper-count",
       "label_source": "explicit",
-      "statement": "A hyper-edge act has exactly two projections with A and T roles, agreeing author, family, incidence and family parameters, sharing one act time and parent identifier. A missing leg is malformed or incompletely retrieved, never a partially accepted act."
+      "statement": "Branch of ``def:graph:act-edge-projection``: A hyper-edge act has exactly two projections with A and T roles, agreeing author, family, incidence and family parameters, sharing one act time and parent identifier. A missing leg is malformed or incompletely retrieved, never a partially accepted act."
     },
     {
       "chapter": "04 Graph",
@@ -2270,7 +2270,7 @@
       "kind": "none",
       "label": "case:graph:chain-ordered-revision-head-unique-maximal",
       "label_source": "explicit",
-      "statement": "Within the root-reachable revision acts, a unique causal-parent-maximal act is the revision head; with only the root, read its payload."
+      "statement": "Branch of ``def:graph:chain-ordered-revision-head``: Within the root-reachable revision acts, a unique causal-parent-maximal act is the revision head; with only the root, read its payload."
     },
     {
       "chapter": "04 Graph",
@@ -2281,7 +2281,7 @@
       "kind": "none",
       "label": "case:graph:chain-ordered-revision-head-incumbent",
       "label_source": "explicit",
-      "statement": "When root-reachable revision acts have several maximal elements, keep the deepest common causal ancestor as incumbent; do not break the branch tie by order. Acts without a root chain are fold-ignored but remain admitted and priced in other consumers."
+      "statement": "Branch of ``def:graph:chain-ordered-revision-head``: When root-reachable revision acts have several maximal elements, keep the deepest common causal ancestor as incumbent; do not break the branch tie by order. Acts without a root chain are fold-ignored but remain admitted and priced in other consumers."
     },
     {
       "chapter": "04 Graph",
@@ -2292,7 +2292,7 @@
       "kind": "none",
       "label": "case:graph:chain-ordered-revision-head-genesis-root",
       "label_source": "explicit",
-      "statement": "For Content, Comment and Message, root the chain-ordered revision fold at the genesis act."
+      "statement": "Branch of ``def:graph:chain-ordered-revision-head``: For Content, Comment and Message, root the chain-ordered revision fold at the genesis act."
     },
     {
       "chapter": "04 Graph",
@@ -2303,7 +2303,7 @@
       "kind": "none",
       "label": "case:graph:chain-ordered-revision-head-registration-root",
       "label_source": "explicit",
-      "statement": "For Profile, root the revision fold at its anchoring Registration, which is grounded and mints nothing."
+      "statement": "Branch of ``def:graph:chain-ordered-revision-head``: For Profile, root the revision fold at its anchoring Registration, which is grounded and mints nothing."
     },
     {
       "chapter": "04 Graph",
@@ -2314,7 +2314,7 @@
       "kind": "none",
       "label": "case:graph:chain-ordered-revision-head-prior-head-root",
       "label_source": "explicit",
-      "statement": "For Item, use the genesis act or the title-holder author own prior head as root; title chooses the author and causal ancestry orders that author acts, so a new owner first description is not lost for lacking a same-author genesis chain."
+      "statement": "Branch of ``def:graph:chain-ordered-revision-head``: For Item, use the genesis act or the title-holder author own prior head as root; title chooses the author and causal ancestry orders that author acts, so a new owner first description is not lost for lacking a same-author genesis chain."
     },
     {
       "chapter": "04 Graph",
@@ -2435,7 +2435,7 @@
       "kind": "invariant check",
       "label": "case:graph:passivity-source-actor",
       "label_source": "explicit",
-      "statement": "An edge whose source is an Actor is authored by that source Actor."
+      "statement": "Branch of ``ax:graph:passivity``: An edge whose source is an Actor is authored by that source Actor."
     },
     {
       "chapter": "04 Graph",
@@ -2446,7 +2446,7 @@
       "kind": "invariant check",
       "label": "case:graph:passivity-passive-terminal-leg",
       "label_source": "explicit",
-      "statement": "A record sourced from a passive node must be the T-leg of an Actor-authored hyper-edge; no third authorship case exists. Reputation is derived, not a record exception."
+      "statement": "Branch of ``ax:graph:passivity``: A record sourced from a passive node must be the T-leg of an Actor-authored hyper-edge; no third authorship case exists. Reputation is derived, not a record exception."
     },
     {
       "chapter": "04 Graph",
@@ -2534,7 +2534,7 @@
       "kind": "function",
       "label": "case:graph:act-incidence-causality-incident-update",
       "label_source": "explicit",
-      "statement": "After an act, advance every endpoint in its incidence set to that act frontier; both hyper-edge legs inherit the same event time."
+      "statement": "Branch of ``def:graph:act-incidence-causality``: After an act, advance every endpoint in its incidence set to that act frontier; both hyper-edge legs inherit the same event time."
     },
     {
       "chapter": "04 Graph",
@@ -2545,7 +2545,7 @@
       "kind": "function",
       "label": "case:graph:act-incidence-causality-unchanged-endpoint",
       "label_source": "explicit",
-      "statement": "For an endpoint outside an act incidence set, retain its preceding frontier unchanged."
+      "statement": "Branch of ``def:graph:act-incidence-causality``: For an endpoint outside an act incidence set, retain its preceding frontier unchanged."
     },
     {
       "chapter": "04 Graph",
@@ -2875,7 +2875,7 @@
       "kind": "invariant check",
       "label": "case:graph:rank-two-constraint-full-mask",
       "label_source": "explicit",
-      "statement": "For the full stored mask, clamping breaks exact rank-one proportionality; reproduce the reference singular values and the third-to-first ratio bound on the declared 21 by 21 grid. The interpolation gap and a closed-form bound are not certified by that grid."
+      "statement": "Branch of ``prop:graph:rank-two-constraint`` proof: For the full stored mask, clamping breaks exact rank-one proportionality. The reference singular values and the 21 by 21 grid numerically support the third-to-first ratio bound at sampled points; neither the interpolation gap nor a closed-form bound is certified by that grid."
     },
     {
       "chapter": "04 Graph",
@@ -2886,7 +2886,7 @@
       "kind": "invariant check",
       "label": "case:graph:rank-two-constraint-restricted-mask",
       "label_source": "explicit",
-      "statement": "Restricted masks can retain genuine rank three: Identity and Minimal reach their stated bounds at the extremal corner, while Epistemic and Economic have zero third singular value there and interior maxima on the sampled grid. Do not collapse all restricted masks to the same corner behavior."
+      "statement": "Branch of ``prop:graph:rank-two-constraint`` proof: Restricted masks inject genuine rank-three content. Identity and Minimal attain their bounds at the extremal corner; Epistemic and Economic have zero third singular value there and interior maxima confirmed on the sampled grid."
     },
     {
       "chapter": "04 Graph",
@@ -2974,7 +2974,7 @@
       "kind": "function",
       "label": "case:graph:path-view-extraction-full-or-minimal",
       "label_source": "explicit",
-      "statement": "For full or marginal tiers, soften each binary mask entry a to a+(1-a) times the bleed parameter when extracting the path view."
+      "statement": "Branch of ``def:graph:path-view-extraction``: For full or marginal tiers, soften each binary mask entry a to a+(1-a) times the bleed parameter when extracting the path view."
     },
     {
       "chapter": "04 Graph",
@@ -2985,7 +2985,7 @@
       "kind": "function",
       "label": "case:graph:path-view-extraction-half-corner",
       "label_source": "explicit",
-      "statement": "For the half tier, keep the path-view polarization corner (1,1) at coefficient one."
+      "statement": "Branch of ``def:graph:path-view-extraction``: For the half tier, keep the path-view polarization corner (1,1) at coefficient one."
     },
     {
       "chapter": "04 Graph",
@@ -2996,7 +2996,7 @@
       "kind": "function",
       "label": "case:graph:path-view-extraction-half-off-corner",
       "label_source": "explicit",
-      "statement": "For the half tier, set the three off-corner path-view coefficients to the half floor; keep the full stored slice, attribution Frobenius norm and CAN base values unchanged."
+      "statement": "Branch of ``def:graph:path-view-extraction``: For the half tier, set the three off-corner path-view coefficients to the half floor; keep the full stored slice, attribution Frobenius norm and CAN base values unchanged."
     },
     {
       "chapter": "04 Graph",
@@ -3040,7 +3040,7 @@
       "kind": "invariant check",
       "label": "case:graph:signed-svd-uniqueness-distinct-singular-values",
       "label_source": "explicit",
-      "statement": "For distinct singular values in the signed SO(2) decomposition, the only residual ambiguity is simultaneous negation of both rotations; the dominant axis line is invariant."
+      "statement": "Branch of ``lem:graph:signed-svd-uniqueness`` proof: For distinct singular values in the signed SO(2) decomposition, the only residual ambiguity is simultaneous negation of both rotations; the dominant axis line is invariant."
     },
     {
       "chapter": "04 Graph",
@@ -3051,7 +3051,7 @@
       "kind": "invariant check",
       "label": "case:graph:signed-svd-uniqueness-isotropic",
       "label_source": "explicit",
-      "statement": "For equal singular values, allow the continuous decomposition residual and leave the dominant axis and its angle unassigned."
+      "statement": "Branch of ``lem:graph:signed-svd-uniqueness`` proof: For equal singular values, the residual expands to a continuous family; the dominant axis is undefined and its angle is not assigned."
     },
     {
       "chapter": "04 Graph",
@@ -3227,7 +3227,7 @@
       "kind": "invariant check",
       "label": "case:graph:path-view-determinant-bound-full-mask",
       "label_source": "explicit",
-      "statement": "For the full path-view mask, use the four unsoftened entries with determinant ad-bc and verify the reference determinant and its square-root magnitude."
+      "statement": "Branch of ``prop:graph:path-view-determinant-bound`` proof: For the full path-view mask, all four entries are unsoftened and the determinant is ad-bc; the reference parameters give the stated determinant and square-root magnitude."
     },
     {
       "chapter": "04 Graph",
@@ -3238,7 +3238,7 @@
       "kind": "invariant check",
       "label": "case:graph:path-view-determinant-bound-epistemic-mask",
       "label_source": "explicit",
-      "statement": "For the Epistemic path-view mask, soften the first column by the bleed parameter, giving determinant bleed times (ad-bc); check the reference Epistemic determinant and square-root score."
+      "statement": "Branch of ``prop:graph:path-view-determinant-bound`` proof: For the Epistemic path-view mask, softening the first column gives determinant bleed times (ad-bc); the reference parameters give the stated determinant and square-root score."
     },
     {
       "chapter": "04 Graph",
@@ -3249,7 +3249,7 @@
       "kind": "invariant check",
       "label": "case:graph:path-view-determinant-bound-economic-mask",
       "label_source": "explicit",
-      "statement": "For the Economic path-view mask, soften the first row by the bleed parameter, giving determinant bleed times (ad-bc) and square-root score of order sqrt(bleed)."
+      "statement": "Branch of ``prop:graph:path-view-determinant-bound`` proof: For the Economic path-view mask, softening the first row gives determinant bleed times (ad-bc), with square-root score of order sqrt(bleed)."
     },
     {
       "chapter": "04 Graph",
@@ -3260,7 +3260,7 @@
       "kind": "invariant check",
       "label": "case:graph:path-view-determinant-bound-identity-mask",
       "label_source": "explicit",
-      "statement": "For the Identity path-view mask, soften the two off-diagonal entries, giving determinant ad minus bleed squared times bc; check the reference Self score and its full-tier assignment."
+      "statement": "Branch of ``prop:graph:path-view-determinant-bound`` proof: For the Identity path-view mask, softening both off-diagonal entries gives determinant ad minus bleed squared times bc. The reference Self score is above the non-Self full-mask band and consistent with the full-tier assignment."
     },
     {
       "chapter": "04 Graph",
@@ -3271,7 +3271,7 @@
       "kind": "invariant check",
       "label": "case:graph:path-view-determinant-bound-minimal-mask",
       "label_source": "explicit",
-      "statement": "For the Minimal path-view mask, soften all but the polarization corner, giving determinant bleed times (ad-bleed times bc). The stated lower-bound estimate is strictly positive when the signed core magnitude exceeds twice bleed; small-parameter scores approach zero."
+      "statement": "Branch of ``prop:graph:path-view-determinant-bound`` proof: For the Minimal path-view mask, soften all but the polarization corner, giving determinant bleed times (ad-bleed times bc). The stated lower-bound estimate is strictly positive when the signed core magnitude exceeds twice bleed; small-parameter scores approach zero."
     },
     {
       "chapter": "04 Graph",
@@ -3282,7 +3282,7 @@
       "kind": "invariant check",
       "label": "case:graph:path-view-determinant-bound-half-tier",
       "label_source": "explicit",
-      "statement": "For a half-tier full block, attenuate the three off-corner entries by the half floor, giving determinant half-floor times (ad-half-floor times bc); check the reference Accept and Bid scores."
+      "statement": "Branch of ``prop:graph:path-view-determinant-bound`` proof: For a half-tier full block, attenuating the three off-corner entries gives determinant half-floor times (ad-half-floor times bc), of order half-floor; the reference Accept and Bid parameters give the stated scores."
     },
     {
       "chapter": "04 Graph",
@@ -4008,7 +4008,7 @@
       "kind": "serialization",
       "label": "case:graph:act-dependency-projection-full-empty",
       "label_source": "explicit",
-      "statement": "A full-empty dependency projection contains the canonical empty dependency list and its opening; distinguish it from a missing or tombstoned list."
+      "statement": "Branch of ``def:graph:act-dependency-projection``: A full-empty dependency projection contains the canonical empty dependency list and its opening; distinguish it from a missing or tombstoned list."
     },
     {
       "chapter": "04 Graph",
@@ -4019,7 +4019,7 @@
       "kind": "serialization",
       "label": "case:graph:act-dependency-projection-full",
       "label_source": "explicit",
-      "statement": "A full dependency projection carries its canonical list and opening, bound to the act; carriage may move one-way toward tombstoned."
+      "statement": "Branch of ``def:graph:act-dependency-projection``: A full dependency projection carries its canonical list and opening, bound to the act; carriage may move one-way toward tombstoned."
     },
     {
       "chapter": "04 Graph",
@@ -4030,7 +4030,7 @@
       "kind": "serialization",
       "label": "case:graph:act-dependency-projection-tombstoned",
       "label_source": "explicit",
-      "statement": "A tombstoned dependency projection removes the list and opening from Layer-1 carriage but retains the binding commitment residue that a later opening must reopen."
+      "statement": "Branch of ``def:graph:act-dependency-projection``: A tombstoned dependency projection removes the list and opening from Layer-1 carriage but retains the binding commitment residue that a later opening must reopen."
     },
     {
       "chapter": "04 Graph",
@@ -5119,7 +5119,7 @@
       "kind": "type",
       "label": "case:nodes:participant-found",
       "label_source": "explicit",
-      "statement": "A founding Participant uses mint of its own act identifier for both the A-leg origin and T-leg destination, creating the Chat through its terminal target."
+      "statement": "Branch of ``edge:nodes:participant``: A founding Participant uses mint of its own act identifier for both the A-leg origin and T-leg destination, creating the Chat through its terminal target."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5130,7 +5130,7 @@
       "kind": "type",
       "label": "case:nodes:participant-join",
       "label_source": "explicit",
-      "statement": "A joining Participant names the same existing Chat as A-leg origin and T-leg destination; it mints nothing."
+      "statement": "Branch of ``edge:nodes:participant``: A joining Participant names the same existing Chat as A-leg origin and T-leg destination; it mints nothing."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5141,7 +5141,7 @@
       "kind": "type",
       "label": "case:nodes:participant-found-successor",
       "label_source": "explicit",
-      "statement": "A Participant founding a successor names the old Chat as A-leg origin and its own minted Chat as T-leg destination."
+      "statement": "Branch of ``edge:nodes:participant``: A Participant founding a successor names the old Chat as A-leg origin and its own minted Chat as T-leg destination."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5152,7 +5152,7 @@
       "kind": "type",
       "label": "case:nodes:participant-move",
       "label_source": "explicit",
-      "statement": "A moving Participant names the origin Chat on the A-leg and destination Chat on the T-leg. Formation does not check prior membership in the origin; without it the act is a decorated join, and the fold reads leg roles rather than trusting the origin claim."
+      "statement": "Branch of ``edge:nodes:participant``: A moving Participant names the origin Chat on the A-leg and destination Chat on the T-leg. Formation does not check prior membership in the origin; without it the act is a decorated join, and the fold reads leg roles rather than trusting the origin claim."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5185,7 +5185,7 @@
       "kind": "invariant check",
       "label": "case:nodes:self-loop-neutral-routing-inert",
       "label_source": "explicit",
-      "statement": "A positive-parity self-loop with zero path-view determinant is routing-inert and must be skipped by canonical raw traversal."
+      "statement": "Branch of ``lem:nodes:self-loop-neutral`` proof: A zero-determinant self-loop is routing-inert and excluded from canonical raw traversal, so it cannot improve either parity register."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -5196,7 +5196,7 @@
       "kind": "invariant check",
       "label": "case:nodes:self-loop-neutral-routing-active",
       "label_source": "explicit",
-      "statement": "A routing-active positive-parity self-loop has weight strictly below one; removing it preserves parity and improves and shortens the walk, so it cannot improve a max-product register or additive log-cost optimum."
+      "statement": "Branch of ``lem:nodes:self-loop-neutral`` proof: A routing-active positive-parity self-loop has weight strictly below one; removing it preserves parity and improves and shortens the walk, so it cannot improve a max-product register or additive log-cost optimum."
     },
     {
       "chapter": "05 Nodes and edges",
@@ -6340,7 +6340,7 @@
       "kind": "policy",
       "label": "case:epoch:allocation-index-set-unanchored-recipient",
       "label_source": "explicit",
-      "statement": "Keep recipient resolution and allocation on the same finite set of anchored Actors; an unanchored recipient would have a column without a row and could incorrectly receive published standing. Canonical dangling-fold handling alone does not establish this allocation closure."
+      "statement": "Branch of ``rem:epoch:allocation-index-set``: Keep recipient resolution and allocation on the same finite set of anchored Actors; an unanchored recipient would have a column without a row and could incorrectly receive published standing. Canonical dangling-fold handling alone does not establish this allocation closure."
     },
     {
       "chapter": "6 Epoch",
@@ -6901,7 +6901,7 @@
       "kind": "policy",
       "label": "case:epoch:conviction-inertia-latest-edge",
       "label_source": "explicit",
-      "statement": "Use per-author sum-then-clip rather than latest-edge-wins: reversing accumulated conviction requires proportionate priced counter-acts. A bundle negative in both coordinates is routing-coherent but fails person-vouch eligibility; full withdrawal targets net zero."
+      "statement": "Branch of ``rem:epoch:conviction-inertia``: Use per-author sum-then-clip rather than latest-edge-wins: reversing accumulated conviction requires proportionate priced counter-acts. A bundle negative in both coordinates is routing-coherent but fails person-vouch eligibility; full withdrawal targets net zero."
     },
     {
       "chapter": "6 Epoch",
@@ -8001,7 +8001,7 @@
       "kind": "invariant check",
       "label": "case:epoch:safety-wall-floor-ridge-floor",
       "label_source": "explicit",
-      "statement": "The ridge-floor choice is the exact real p-star/(1-p-star) defined by the unique elasticity ridge, not a grid endpoint or rounded root. Declare it publicly before the first epoch and keep the structural declaration fixed unless a public structural change regenerates its evidence."
+      "statement": "Branch of ``def:epoch:safety-wall-floor``: The ridge-floor choice is the exact real p-star/(1-p-star) defined by the unique elasticity ridge, not a grid endpoint or rounded root. Declare it publicly before the first epoch and keep the structural declaration fixed unless a public structural change regenerates its evidence."
     },
     {
       "chapter": "6 Epoch",
@@ -8012,7 +8012,7 @@
       "kind": "invariant check",
       "label": "case:epoch:safety-wall-floor-rational-floor",
       "label_source": "explicit",
-      "statement": "The alternative floor is the declared exact rational value from the chartered two-element floor set. Publish the choice before the first epoch beside the numeraire; changing it or choosing a third value requires a public structural change with its own evidence, never epoch tuning."
+      "statement": "Branch of ``def:epoch:safety-wall-floor``: The alternative floor is the declared exact rational value from the chartered two-element floor set. Publish the choice before the first epoch beside the numeraire; changing it or choosing a third value requires a public structural change with its own evidence, never epoch tuning."
     },
     {
       "chapter": "6 Epoch",
@@ -8067,7 +8067,7 @@
       "kind": "invariant check",
       "label": "case:epoch:canonical-interim-wall-controller-zero-width",
       "label_source": "explicit",
-      "statement": "At zero completed-epoch width, propose the declared structural floor without inversion or division by width; the delivered wall still passes through deadband and step-cap handling."
+      "statement": "Branch of ``def:epoch:canonical-interim-wall-controller``: At zero completed-epoch width, propose the declared structural floor without inversion or division by width; the delivered wall still passes through deadband and step-cap handling."
     },
     {
       "chapter": "6 Epoch",
@@ -8078,7 +8078,7 @@
       "kind": "invariant check",
       "label": "case:epoch:canonical-interim-wall-controller-positive-width",
       "label_source": "explicit",
-      "statement": "At positive completed width W, propose the maximum of the structural floor and inverse deployed gain at 1/(2 times margin times chartered cumulative tilt times W). This targets the least mathematically passing wall; finite boundary comparisons may be indecisive and the next epoch certifies its own width."
+      "statement": "Branch of ``def:epoch:canonical-interim-wall-controller``: At positive completed width W, propose the maximum of the structural floor and inverse deployed gain at 1/(2 times margin times chartered cumulative tilt times W). This targets the least mathematically passing wall; finite boundary comparisons may be indecisive and the next epoch certifies its own width."
     },
     {
       "chapter": "6 Epoch",
@@ -8089,7 +8089,7 @@
       "kind": "invariant check",
       "label": "case:epoch:canonical-interim-wall-controller-deadband-hold",
       "label_source": "explicit",
-      "statement": "When the target error magnitude is at most deadband times the previous wall, set the effective error to zero and hold the wall, including equality."
+      "statement": "Branch of ``def:epoch:canonical-interim-wall-controller``: When the target error magnitude is at most deadband times the previous wall, set the effective error to zero and hold the wall, including equality."
     },
     {
       "chapter": "6 Epoch",
@@ -8100,7 +8100,7 @@
       "kind": "invariant check",
       "label": "case:epoch:canonical-interim-wall-controller-deadband-move",
       "label_source": "explicit",
-      "statement": "Outside the relative deadband, retain the signed target error and move by at most its magnitude, the absolute step and the relative step times the previous wall. Apply proposal, floor, deadband and cap in that order; publish proposal and delivered wall with one-boundary lead."
+      "statement": "Branch of ``def:epoch:canonical-interim-wall-controller``: Outside the relative deadband, retain the signed target error and move by at most its magnitude, the absolute step and the relative step times the previous wall. Apply proposal, floor, deadband and cap in that order; publish proposal and delivered wall with one-boundary lead."
     },
     {
       "chapter": "6 Epoch",
@@ -8122,7 +8122,7 @@
       "kind": "invariant check",
       "label": "case:epoch:safety-independent-of-controller-nonempty-domain",
       "label_source": "explicit",
-      "statement": "On a nonempty finite live domain satisfying the standing premises, the positive finite wall gives finite gain and the finite grid includes the zero-certificate anchor. Choose the greatest proved passing rung; its contraction gives unique standing and geometric convergence without a forecast of next-epoch width."
+      "statement": "Branch of ``prop:epoch:safety-independent-of-controller`` proof: On a nonempty finite live domain under the standing hypotheses, a positive finite wall gives finite gain, and the finite grid includes the zero-certificate anchor. The nonempty finite set of proved passes has a greatest rung; its contraction gives unique standing and geometric convergence without a next-epoch width-dominance premise."
     },
     {
       "chapter": "6 Epoch",
@@ -8133,7 +8133,7 @@
       "kind": "invariant check",
       "label": "case:epoch:safety-independent-of-controller-empty-domain",
       "label_source": "explicit",
-      "statement": "On an empty live domain, the standing box contains only the empty vector, which is the unique fixed point. This does not discharge own-balance, individual-safety, epoch-admission or policy-validity tests."
+      "statement": "Branch of ``prop:epoch:safety-independent-of-controller`` proof: On an empty live domain, the standing box contains only the empty vector, which is the unique fixed point. This does not discharge own-balance, individual-safety, epoch-admission or policy-validity tests."
     },
     {
       "chapter": "6 Epoch",
@@ -8155,7 +8155,7 @@
       "kind": "invariant check",
       "label": "prop:epoch:wall-controller-covariance",
       "label_source": "explicit",
-      "statement": "Under recoinage, co-scale burn values and numeraire while retaining reduced constants and counts: reduced rates, standing, width and wall stay unchanged, the next price co-scales, and old debits change representation only. A fixed-ledger numeraire migration instead evaluates the controller on its published transformed inputs; same-pair width scales inversely, compensation preserves the door product, and floor and policy tests still apply. No controller homogeneity or solvency and individual-safety invariance is promised for that migration."
+      "statement": "Under recoinage, co-scale burn values and numeraire while retaining reduced constants and counts: reduced rates, standing, width and wall stay unchanged, the next price co-scales, and old debits change representation only. A fixed-ledger numeraire migration instead evaluates the controller on its published transformed inputs; same-pair width scales inversely, compensation preserves the door product, an uncompensated move keeps its declared policy schedule, and floor and policy tests still apply. No controller homogeneity or solvency and individual-safety invariance is promised for that migration."
     },
     {
       "chapter": "6 Epoch",
@@ -8166,7 +8166,7 @@
       "kind": "invariant check",
       "label": "case:epoch:wall-controller-covariance-recoinage",
       "label_source": "explicit",
-      "statement": "For recoinage by positive c, co-scale every burn-denominated value and the numeraire while retaining reduced constants and counts; reduced ledger, standing, width and wall are unchanged, and the next price scales by c. Recorded debit changes are representational, not repricing."
+      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: For recoinage by positive c, co-scale every burn-denominated value and the numeraire while retaining reduced constants and counts; reduced ledger, standing, width and wall are unchanged, and the next price scales by c. Recorded debit changes are representational, not repricing."
     },
     {
       "chapter": "6 Epoch",
@@ -8177,7 +8177,7 @@
       "kind": "invariant check",
       "label": "case:epoch:wall-controller-covariance-fixed-ledger-migration",
       "label_source": "explicit",
-      "statement": "For numeraire migration by c at a fixed burn ledger, evaluate the controller on the published transformed wall, width and rung, then multiply by the new numeraire for price. The same fixed source pairs have width W/c; this is not a forecast for an epoch with different debits."
+      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: For numeraire migration by c at a fixed burn ledger, evaluate the controller on the published transformed wall, width and rung, then multiply by the new numeraire for price. The same fixed source pairs have width W/c; this is not a forecast for an epoch with different debits."
     },
     {
       "chapter": "6 Epoch",
@@ -8188,7 +8188,7 @@
       "kind": "invariant check",
       "label": "case:epoch:wall-controller-covariance-compensated",
       "label_source": "explicit",
-      "statement": "Compensated fixed-ledger migration also divides the policy floor by c so the numeraire-door product remains invariant. Validate the published wall floor and policy values; the product identity does not assert controller homogeneity or invariant write gates."
+      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: Compensated fixed-ledger migration also divides the policy floor by c so the numeraire-door product remains invariant. Validate the published wall floor and policy values; the product identity does not assert controller homogeneity or invariant write gates."
     },
     {
       "chapter": "6 Epoch",
@@ -8199,7 +8199,7 @@
       "kind": "invariant check",
       "label": "case:epoch:wall-controller-covariance-uncompensated",
       "label_source": "explicit",
-      "statement": "Uncompensated fixed-ledger migration retains its declared policy schedule. Apply wall-floor and policy-validity tests to the published values; do not assume controller homogeneity or invariance of own-balance and individual-safety tests."
+      "statement": "Branch of ``prop:epoch:wall-controller-covariance``: Uncompensated fixed-ledger migration retains its declared policy schedule. Apply wall-floor and policy-validity tests to the published values; do not assume controller homogeneity or invariance of own-balance and individual-safety tests."
     },
     {
       "chapter": "6 Epoch",
@@ -8474,7 +8474,7 @@
       "kind": "none",
       "label": "case:sorting:log-transform-equivalence-routing-active",
       "label_source": "explicit",
-      "statement": "On routing-active raw edges, positive weights admit the negative-log transform, turning max-product path comparison into positive additive cost comparison. Preserve the traversal admissibility constraints; this raw reduction is not standing transport."
+      "statement": "Branch of ``thm:sorting:log-transform-equivalence`` proof: On routing-active raw edges, positive weights admit the negative-log transform: maximizing a path product is equivalent to minimizing its additive log cost over the same admissible paths. This is a raw-path reduction, not standing transport."
     },
     {
       "chapter": "7 Sorting",
@@ -8485,7 +8485,7 @@
       "kind": "none",
       "label": "case:sorting:log-transform-equivalence-routing-inert",
       "label_source": "explicit",
-      "statement": "Exclude zero-weight routing-inert edges from the raw shortest-path reduction, assigning infinite negative-log cost rather than evaluating log zero; such edges contribute zero path product."
+      "statement": "Branch of ``thm:sorting:log-transform-equivalence`` proof: A routing-inert edge contributes zero path product and has infinite negative-log cost, so it is excluded from the shortest-path reduction."
     },
     {
       "chapter": "7 Sorting",
@@ -8892,7 +8892,7 @@
       "kind": "none",
       "label": "case:transport:membership-policy",
       "label_source": "explicit",
-      "statement": "Choose a published terminal membership and sorting policy; the canonical fold admits participation and departure with advisory De-invites, without conditioning admission, departure or De-invite authoring."
+      "statement": "Branch of ``rem:transport:guild-grant-cases``: Choose a published terminal membership and sorting policy; the canonical fold admits participation and departure with advisory De-invites, without conditioning admission, departure or De-invite authoring."
     },
     {
       "chapter": "8 Transport",
@@ -8903,7 +8903,7 @@
       "kind": "none",
       "label": "case:transport:deep-composition",
       "label_source": "explicit",
-      "statement": "Choose composition depth and scalar or matrix representation; the default scalar CAN follows the dependency DAG, and every choice preserves depth decay, transmission below one and context independence."
+      "statement": "Branch of ``rem:transport:guild-grant-cases``: Choose composition depth and scalar or matrix representation; the default scalar CAN follows the dependency DAG, and every choice preserves depth decay, transmission below one and context independence."
     },
     {
       "chapter": "8 Transport",
@@ -8914,7 +8914,7 @@
       "kind": "none",
       "label": "case:transport:svd-corrected-transmission",
       "label_source": "explicit",
-      "statement": "Optionally replace saturated mean edge norms by the saturated top singular value of the mean matrix; the full recursion must retain the CAN invariants."
+      "statement": "Branch of ``rem:transport:guild-grant-cases``: Optionally replace saturated mean edge norms by the saturated top singular value of the mean matrix; the full recursion must retain the CAN invariants."
     },
     {
       "chapter": "8 Transport",
@@ -8925,7 +8925,7 @@
       "kind": "none",
       "label": "case:transport:can-aggregation-function",
       "label_source": "explicit",
-      "statement": "Choose the aggregation function; arithmetic mean is canonical, while alternatives must preserve depth decay, strict transmission and context independence."
+      "statement": "Branch of ``rem:transport:guild-grant-cases``: Choose the aggregation function; arithmetic mean is canonical, while alternatives must preserve depth decay, strict transmission and context independence."
     },
     {
       "chapter": "8 Transport",
@@ -8936,7 +8936,7 @@
       "kind": "none",
       "label": "case:transport:bridge-multi-bridge",
       "label_source": "explicit",
-      "statement": "Choose public bridge composition and attribution; the canonical single-bridge rule takes the outer maximum per recipient, and replacements must re-establish any claimed canonical guarantees."
+      "statement": "Branch of ``rem:transport:guild-grant-cases``: Choose public bridge composition and attribution; the canonical single-bridge rule takes the outer maximum per recipient, and replacements must re-establish any claimed canonical guarantees."
     },
     {
       "chapter": "8 Transport",
@@ -8947,7 +8947,7 @@
       "kind": "policy",
       "label": "case:transport:bridge-eligibility-cliff",
       "label_source": "explicit",
-      "statement": "A guild chooses smoothing, with the unsmoothed single-bridge maximum as canonical default; a replacement accounts for redundancy amplification and inherits or re-derives each canonical guarantee it claims. Separately, the centralized-phase operator publishes an argmax-flip-rate threshold and a share-volatility companion, the ℓ1 distance between consecutive normalized share vectors, both computable from epoch-certificate data. Exceeding the threshold obliges the operator to publish a reference top-k ensemble composition rule; its use remains terminal and optional under the guild grant. This publication is a required policy; the implementation home is held in (`open:inventory:bridge-reaction-placement`)."
+      "statement": "Branch of ``rem:transport:guild-grant-cases``: A guild chooses smoothing, with the unsmoothed single-bridge maximum as canonical default; a replacement accounts for redundancy amplification and inherits or re-derives each canonical guarantee it claims. Separately, the centralized-phase operator publishes an argmax-flip-rate threshold and a share-volatility companion, the ℓ1 distance between consecutive normalized share vectors, both computable from epoch-certificate data. Exceeding the threshold obliges the operator to publish a reference top-k ensemble composition rule; its use remains terminal and optional under the guild grant. This publication is a required policy; the implementation home is held in (`open:inventory:bridge-reaction-placement`)."
     },
     {
       "chapter": "8 Transport",
@@ -8958,7 +8958,7 @@
       "kind": "none",
       "label": "case:transport:bridge-delivery-semantics",
       "label_source": "explicit",
-      "statement": "Use the canonical campaign scalar as circuit quality; privately observed traversal supplies no self-sufficient record, and adding a navigation edge type lies outside the terminal grant."
+      "statement": "Branch of ``rem:transport:guild-grant-cases``: Use the canonical campaign scalar as circuit quality; privately observed traversal supplies no self-sufficient record, and adding a navigation edge type lies outside the terminal grant."
     },
     {
       "chapter": "8 Transport",
@@ -8969,7 +8969,7 @@
       "kind": "none",
       "label": "case:transport:notoriety-field",
       "label_source": "explicit",
-      "statement": "Optionally declare a terminal negative aggregation; the canonical choice has no separate field, retains public negative records outside standing endorsement and gives them no feedback into admission or standing."
+      "statement": "Branch of ``rem:transport:guild-grant-cases``: Optionally declare a terminal negative aggregation; the canonical choice has no separate field, retains public negative records outside standing endorsement and gives them no feedback into admission or standing."
     },
     {
       "chapter": "8 Transport",
@@ -10014,7 +10014,7 @@
       "kind": "none",
       "label": "case:can:compositional-depth-leaf",
       "label_source": "explicit",
-      "statement": "Assign compositional depth zero to a CAN leaf."
+      "statement": "Branch of ``def:can:compositional-depth``: Assign compositional depth zero to a CAN leaf."
     },
     {
       "chapter": "B Compositional attribution",
@@ -10025,7 +10025,7 @@
       "kind": "none",
       "label": "case:can:compositional-depth-internal",
       "label_source": "explicit",
-      "statement": "Assign an internal CAN node one plus the maximum depth of its outgoing dependency children."
+      "statement": "Branch of ``def:can:compositional-depth``: Assign an internal CAN node one plus the maximum depth of its outgoing dependency children."
     },
     {
       "chapter": "B Compositional attribution",
@@ -10278,7 +10278,7 @@
       "kind": "none",
       "label": "case:can:intrinsic-value-leaf-value",
       "label_source": "explicit",
-      "statement": "At CAN depth zero, intrinsic value is the base value, the raw extended slice Frobenius norm."
+      "statement": "Branch of ``def:can:intrinsic-value``: At CAN depth zero, intrinsic value is the base value, the raw extended slice Frobenius norm."
     },
     {
       "chapter": "B Compositional attribution",
@@ -10289,7 +10289,7 @@
       "kind": "none",
       "label": "case:can:intrinsic-value-recursive-value",
       "label_source": "explicit",
-      "statement": "At positive CAN depth, intrinsic value is transmission times redundancy times the sum of dependency-weighted child intrinsic values."
+      "statement": "Branch of ``def:can:intrinsic-value``: At positive CAN depth, intrinsic value is transmission times redundancy times the sum of dependency-weighted child intrinsic values."
     },
     {
       "chapter": "B Compositional attribution",
@@ -10465,7 +10465,7 @@
       "kind": "none",
       "label": "case:can:redundancy-fairness-disjoint",
       "label_source": "explicit",
-      "statement": "For compositions spanning disjoint upstream work, the redundancy factor is one, so no overlap reduction is applied."
+      "statement": "Branch of ``thm:can:redundancy-fairness`` proof: For compositions spanning disjoint upstream work, the redundancy factor is one, so no overlap reduction is applied."
     },
     {
       "chapter": "B Compositional attribution",
@@ -10476,7 +10476,7 @@
       "kind": "none",
       "label": "case:can:redundancy-fairness-overlapping",
       "label_source": "explicit",
-      "statement": "For overlapping upstream work, the redundancy factor is below one and reduces intrinsic value linearly relative to the same weighted contribution without overlap."
+      "statement": "Branch of ``thm:can:redundancy-fairness`` proof: For overlapping upstream work, the redundancy factor is below one and reduces intrinsic value linearly relative to the same weighted contribution without overlap."
     },
     {
       "chapter": "B Compositional attribution",
@@ -10872,7 +10872,7 @@
       "kind": "none",
       "label": "case:bridge:consent-direct-veto",
       "label_source": "explicit",
-      "statement": "Set advertiser-to-bridge consent to zero whenever the advertiser net direct directional stance on the bridge Profile is negative, regardless of raw parity registers."
+      "statement": "Branch of ``def:bridge:consent``: Set advertiser-to-bridge consent to zero whenever the advertiser net direct directional stance on the bridge Profile is negative, regardless of raw parity registers."
     },
     {
       "chapter": "C Bridge",
@@ -10883,7 +10883,7 @@
       "kind": "none",
       "label": "case:bridge:consent-register-difference",
       "label_source": "explicit",
-      "statement": "When direct directional stance is nonnegative, compute consent as max(0, positive raw register minus negative raw register) at the bridge Profile."
+      "statement": "Branch of ``def:bridge:consent``: When direct directional stance is nonnegative, compute consent as max(0, positive raw register minus negative raw register) at the bridge Profile."
     },
     {
       "chapter": "C Bridge",
@@ -10927,7 +10927,7 @@
       "kind": "none",
       "label": "case:bridge:consent-difference-rationale-positive-only",
       "label_source": "explicit",
-      "statement": "Do not use the positive raw register alone for consent: it misses multi-hop inverted dislike. Use the register difference to preserve endpoint-parity opposition."
+      "statement": "Branch of ``rem:bridge:consent-difference-rationale``: Do not use the positive raw register alone for consent: it misses multi-hop inverted dislike. Use the register difference to preserve endpoint-parity opposition."
     },
     {
       "chapter": "C Bridge",
@@ -10938,7 +10938,7 @@
       "kind": "none",
       "label": "case:bridge:consent-difference-rationale-registers-only",
       "label_source": "explicit",
-      "statement": "Do not derive consent from registers alone: coherent negative-negative condemnation can raise the positive register. The advertiser negative direct stance must veto even that coherent path."
+      "statement": "Branch of ``rem:bridge:consent-difference-rationale``: Do not derive consent from registers alone: coherent negative-negative condemnation can raise the positive register. The advertiser negative direct stance must veto even that coherent path."
     },
     {
       "chapter": "C Bridge",
@@ -10949,7 +10949,7 @@
       "kind": "none",
       "label": "case:bridge:consent-difference-rationale-ratio",
       "label_source": "explicit",
-      "statement": "Do not replace the consent difference with a register ratio, which is undefined when the negative register is zero. Use raw snapshot registers and the direct veto; the positive-vouch relation multigraph cannot supply the negative channel."
+      "statement": "Branch of ``rem:bridge:consent-difference-rationale``: Do not replace the consent difference with a register ratio, which is undefined when the negative register is zero. Use raw snapshot registers and the direct veto; the positive-vouch relation multigraph cannot supply the negative channel."
     },
     {
       "chapter": "C Bridge",
@@ -11059,7 +11059,7 @@
       "kind": "none",
       "label": "case:bridge:cancellation-positive-gain",
       "label_source": "explicit",
-      "statement": "With a positive campaign increment, its creator-global factor cancels between reward numerator and denominator; relative creator shares do not depend on the increment magnitude."
+      "statement": "Branch of ``lem:bridge:cancellation`` proof: With a positive campaign increment, its creator-global factor cancels between reward numerator and denominator; relative creator shares do not depend on the increment magnitude."
     },
     {
       "chapter": "C Bridge",
@@ -11070,7 +11070,7 @@
       "kind": "none",
       "label": "case:bridge:cancellation-nonpositive-gain",
       "label_source": "explicit",
-      "statement": "With a zero or negative campaign increment, the reward gate sets every creator share to zero rather than applying positive-increment cancellation."
+      "statement": "Branch of ``lem:bridge:cancellation`` proof: With a zero or negative campaign increment, the reward gate sets every creator share to zero rather than applying positive-increment cancellation."
     },
     {
       "chapter": "C Bridge",
@@ -11158,7 +11158,7 @@
       "kind": "none",
       "label": "case:bridge:creditable-set-bridged",
       "label_source": "explicit",
-      "statement": "When bridge and target differ, credit the bridge and interior Actor intermediaries of the winning affinity segment; exclude the target source, buyer and buyer Profile."
+      "statement": "Branch of ``def:bridge:creditable-set``: When bridge and target differ, credit the bridge and interior Actor intermediaries of the winning affinity segment; exclude the target source, buyer and buyer Profile."
     },
     {
       "chapter": "C Bridge",
@@ -11169,7 +11169,7 @@
       "kind": "none",
       "label": "case:bridge:creditable-set-direct",
       "label_source": "explicit",
-      "statement": "When bridge equals target, the affinity path is trivial and the creditable set is the target alone, credited as the author of the endorsement edge; the buyer remains excluded."
+      "statement": "Branch of ``def:bridge:creditable-set``: When bridge equals target, the affinity path is trivial and the creditable set is the target alone, credited as the author of the endorsement edge; the buyer remains excluded."
     },
     {
       "chapter": "C Bridge",
@@ -11246,7 +11246,7 @@
       "kind": "none",
       "label": "case:bridge:realizing-active-influence-nonempty-change-set",
       "label_source": "explicit",
-      "statement": "For a nonempty creditable circuit-improvement set, a creator influence is its authored fraction of that set times sqrt(1+its average maturity)."
+      "statement": "Branch of ``def:bridge:realizing-active-influence``: For a nonempty creditable circuit-improvement set, a creator influence is its authored fraction of that set times sqrt(1+its average maturity)."
     },
     {
       "chapter": "C Bridge",
@@ -11268,7 +11268,7 @@
       "kind": "none",
       "label": "case:bridge:realizing-active-influence-cold-start",
       "label_source": "explicit",
-      "statement": "If the creditable change-set is empty and advertiser-authored consent alone opened the gate, use the creator authored fraction of Actor-authored edges in the current winning realizing forest, with the same maturity weighting."
+      "statement": "Branch of ``def:bridge:realizing-active-influence``: If the creditable change-set is empty and advertiser-authored consent alone opened the gate, use the creator authored fraction of Actor-authored edges in the current winning realizing forest, with the same maturity weighting."
     },
     {
       "chapter": "C Bridge",
@@ -11422,7 +11422,7 @@
       "kind": "none",
       "label": "case:bridge:guard-griefing",
       "label_source": "explicit",
-      "statement": "A hostile high-reach bridge cannot impose negative campaign drag when advertiser consent is zero, including when negative raw regard dominates positive regard."
+      "statement": "Branch of ``prop:bridge:guard``: A hostile high-reach bridge cannot impose negative campaign drag when advertiser consent is zero, including when negative raw regard dominates positive regard."
     },
     {
       "chapter": "C Bridge",
@@ -11433,7 +11433,7 @@
       "kind": "none",
       "label": "case:bridge:guard-flip-flop",
       "label_source": "explicit",
-      "statement": "A bridge oscillating endorsement sign cannot harvest swings when the advertiser withholds consent; negative direct stance vetoes even positive coherent regard."
+      "statement": "Branch of ``prop:bridge:guard``: A bridge oscillating endorsement sign cannot harvest swings when the advertiser withholds consent; negative direct stance vetoes even positive coherent regard."
     },
     {
       "chapter": "C Bridge",
@@ -11499,7 +11499,7 @@
       "kind": "none",
       "label": "case:bridge:degenerate-self-target",
       "label_source": "explicit",
-      "statement": "For a self-targeting buyer, the target set is empty, the campaign scalar is zero and all creator rewards are zero."
+      "statement": "Branch of ``rem:bridge:degenerate``: For a self-targeting buyer, the target set is empty, the campaign scalar is zero and all creator rewards are zero."
     },
     {
       "chapter": "C Bridge",
@@ -11510,7 +11510,7 @@
       "kind": "none",
       "label": "case:bridge:degenerate-direct",
       "label_source": "explicit",
-      "statement": "For a direct bridge equal to the target, affinity is one and the target endorsement and buyer consent determine the channel; the target is the sole credited endorser."
+      "statement": "Branch of ``rem:bridge:degenerate``: For a direct bridge equal to the target, affinity is one and the target endorsement and buyer consent determine the channel; the target is the sole credited endorser."
     },
     {
       "chapter": "C Bridge",
@@ -11521,7 +11521,7 @@
       "kind": "none",
       "label": "case:bridge:degenerate-bridged",
       "label_source": "explicit",
-      "statement": "For a distinct bridge, affinity is below one, with that bridge endorsement and buyer consent; credit the Actor relays between target and bridge plus the bridge, not the target source."
+      "statement": "Branch of ``rem:bridge:degenerate``: For a distinct bridge, affinity is below one, with that bridge endorsement and buyer consent; credit the Actor relays between target and bridge plus the bridge, not the target source."
     },
     {
       "chapter": "C Bridge",
@@ -12093,7 +12093,7 @@
       "kind": "invariant check",
       "label": "case:dynamics:floor-above-the-ridge-below-half",
       "label_source": "explicit",
-      "statement": "Between the unique ridge and p=1/2, strict concavity makes the clean elasticity derivative negative. Apply this only to the clean full-depth envelope, not deployed per-hop sensitivity."
+      "statement": "Branch of ``prop:dynamics:floor-above-the-ridge`` proof: Between the unique ridge and p=1/2, strict concavity makes the clean elasticity derivative negative. This argument concerns the clean full-depth envelope, not deployed per-hop sensitivity."
     },
     {
       "chapter": "D Dynamics",
@@ -12104,7 +12104,7 @@
       "kind": "invariant check",
       "label": "case:dynamics:floor-above-the-ridge-above-half",
       "label_source": "explicit",
-      "statement": "For p from one half to one, positivity and strict decrease of the kernel and nonincrease of p(1-p) make clean elasticity strictly decrease. Together with the lower interval and increasing p(x)=x/(1+x), this places both chartered floors at or beyond the ridge."
+      "statement": "Branch of ``prop:dynamics:floor-above-the-ridge`` proof: For p from one half to one, positivity and strict decrease of the kernel and nonincrease of p(1-p) make clean elasticity strictly decrease. Together with the lower interval and increasing p(x)=x/(1+x), this places both chartered floors at or beyond the ridge."
     },
     {
       "chapter": "D Dynamics",
@@ -12610,7 +12610,7 @@
       "kind": "invariant check",
       "label": "case:dynamics:minimal-safe-wall-positive-width",
       "label_source": "explicit",
-      "statement": "At positive width, the evaluated certificate 2 times gain times cumulative tilt times width passes exactly when cumulative tilt is at most the reciprocal of 2 times margin times gain times width; the division is valid only in this positive-width branch."
+      "statement": "Branch of ``cor:dynamics:minimal-safe-rung`` proof: At positive width, the evaluated certificate 2 times gain times cumulative tilt times width passes exactly when cumulative tilt is at most the reciprocal of 2 times margin times gain times width; the division is valid only in this positive-width branch."
     },
     {
       "chapter": "D Dynamics",
@@ -12621,7 +12621,7 @@
       "kind": "invariant check",
       "label": "case:dynamics:minimal-safe-wall-zero-width",
       "label_source": "explicit",
-      "statement": "At zero width, the evaluated rung certificate is zero by multiplication, without division by width; every rung passes this certificate."
+      "statement": "Branch of ``cor:dynamics:minimal-safe-rung`` proof: At zero width, the evaluated rung certificate is zero by multiplication, without division by width; every rung passes this certificate."
     },
     {
       "chapter": "D Dynamics",
@@ -12632,7 +12632,7 @@
       "kind": "invariant check",
       "label": "case:dynamics:minimal-safe-wall-anchor",
       "label_source": "explicit",
-      "statement": "At the zero-tilt anchor, cumulative tilt and the certificate are zero at every width, so the anchor passes independently of clean-screen profile-cap inversion."
+      "statement": "Branch of ``cor:dynamics:minimal-safe-rung`` proof: At the zero-tilt anchor, cumulative tilt and the certificate are zero at every width, so the anchor passes independently of clean-screen profile-cap inversion."
     },
     {
       "chapter": "D Dynamics",
@@ -17021,7 +17021,7 @@
       "kind": "policy",
       "label": "case:deployment:public-availability-streaming",
       "label_source": "explicit",
-      "statement": "Track public availability streaming as a separately addressable case."
+      "statement": "Streaming the append-log through pub/sub satisfies public availability when every participant can retrieve the public act records, projections and standing-package data required for independent verification; streaming minimizes cache staleness."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17032,7 +17032,7 @@
       "kind": "policy",
       "label": "case:deployment:public-availability-api-polling",
       "label_source": "explicit",
-      "statement": "Track public availability api polling as a separately addressable case."
+      "statement": "Open API polling with pagination is a public-availability option: it introduces bounded staleness without breaking the requirement that participants can retrieve the records and standing-package data needed for verification."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17043,7 +17043,7 @@
       "kind": "policy",
       "label": "case:deployment:public-availability-snapshot-delta",
       "label_source": "explicit",
-      "statement": "Track public availability snapshot delta as a separately addressable case."
+      "statement": "Periodic snapshots with delta encoding are a public-availability option: bounded staleness is permitted while participants retain access to the records and standing-package data needed for verification."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17054,7 +17054,7 @@
       "kind": "policy",
       "label": "case:deployment:public-availability-gossip",
       "label_source": "explicit",
-      "statement": "Track public availability gossip as a separately addressable case."
+      "statement": "P2P gossip replication satisfies public availability when it makes the public records and required standing-package data continuously retrievable for independent verification."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17065,7 +17065,7 @@
       "kind": "policy",
       "label": "case:deployment:public-availability-gated-access",
       "label_source": "explicit",
-      "statement": "Track public availability gated access as a separately addressable case."
+      "statement": "Gating read access to act envelopes or their edge projections violates public availability; a participant must not be confined to an arbitrary unreadable subset of the graph needed for verification."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17076,7 +17076,7 @@
       "kind": "policy",
       "label": "case:deployment:public-availability-through-creator",
       "label_source": "explicit",
-      "statement": "Track public availability through creator as a separately addressable case."
+      "statement": "In the public-availability proof sketch, an absent path that would pass through the creator is indistinguishable in a gated view from one routed around the creator. The invisible path therefore prevents independent verification of that creator’s centrality."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17087,7 +17087,7 @@
       "kind": "policy",
       "label": "case:deployment:public-availability-around-creator",
       "label_source": "explicit",
-      "statement": "Track public availability around creator as a separately addressable case."
+      "statement": "In the public-availability proof sketch, an absent path routed around the creator has the same visible symptom as one passing through the creator: neither is visible. Continuous access to the full published edge set removes this ambiguity."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17109,7 +17109,7 @@
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-linearization",
       "label_source": "explicit",
-      "statement": "Track final epoch state agreement linearization as a separately addressable case."
+      "statement": "Strict append-log linearization is a final-state agreement mechanism only if honest participants converge on the same authoritative order and complete epoch package."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17120,7 +17120,7 @@
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-cluster-closure",
       "label_source": "explicit",
-      "statement": "Track final epoch state agreement cluster closure as a separately addressable case."
+      "statement": "Cluster-closure writes under the published closure rule are compliant only if honest participants converge on the same authoritative order and complete epoch package; ordered membership alone does not choose the accepted marker view."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17131,7 +17131,7 @@
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-bft-finality",
       "label_source": "explicit",
-      "statement": "Track final epoch state agreement bft finality as a separately addressable case."
+      "statement": "A BFT or finality gadget committing the ordered frontier is compliant only if honest participants converge on the same authoritative order and complete epoch package."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17142,7 +17142,7 @@
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-gossip-stability",
       "label_source": "explicit",
-      "statement": "Track final epoch state agreement gossip stability as a separately addressable case."
+      "statement": "Gossip replication with stability depth is compliant only if honest participants converge on the same authoritative order and complete epoch package."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17153,7 +17153,7 @@
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-disagreement",
       "label_source": "explicit",
-      "statement": "Track final epoch state agreement disagreement as a separately addressable case."
+      "statement": "Disagreement between participants on the authoritative order fails final epoch state agreement; formation and order-sensitive raw quantities require that common order."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17164,7 +17164,7 @@
       "kind": "invariant check",
       "label": "case:deployment:final-epoch-state-agreement-inconsistent-projection",
       "label_source": "explicit",
-      "statement": "Track final epoch state agreement inconsistent projection as a separately addressable case."
+      "statement": "A projection, envelope or admission package not deterministically derived from the agreed complete epoch package fails agreement. Mixed histories, marker-policy editions or debit vintages, out-of-lineage burns, dropped predecessor acceptance, policy deviations and double-counted ancestry violate the package requirements."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17186,7 +17186,7 @@
       "kind": "invariant check",
       "label": "case:deployment:immutability-mutable-records",
       "label_source": "explicit",
-      "statement": "Track immutability mutable records as a separately addressable case."
+      "statement": "Mutable published edge records, including parameter updates, retroactive corrections and soft deletion, violate immutability: a retrieved record must remain valid for later replay rather than silently invalidating cached computations."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17219,7 +17219,7 @@
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-closed-form",
       "label_source": "explicit",
-      "statement": "Track feed reproducibility closed form as a separately addressable case."
+      "statement": "The chosen deterministic closed-form feed formula permits clients to execute the full ranking computation without server state and avoids model-weight overhead; it must remain compatible with device-local computation."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17230,7 +17230,7 @@
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-public-model",
       "label_source": "explicit",
-      "statement": "Track feed reproducibility public model as a separately addressable case."
+      "statement": "A model with publicly distributed, locally executable weights can satisfy feed reproducibility in principle only if the client can execute the full computation without server state. Modern-scale weight storage and inference requirements conflict with the device-local invariant described here."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17241,7 +17241,7 @@
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-consensus-ranking",
       "label_source": "explicit",
-      "statement": "Track feed reproducibility consensus ranking as a separately addressable case."
+      "statement": "Consensus-computed ranking refreshed per epoch satisfies feed reproducibility only if a client can execute the full computation without server state."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17252,7 +17252,7 @@
       "kind": "none",
       "label": "case:deployment:feed-reproducibility-opaque-model",
       "label_source": "explicit",
-      "statement": "Track feed reproducibility opaque model as a separately addressable case."
+      "statement": "Opaque server-held model weights inaccessible to clients fail feed reproducibility: clients cannot independently compute or falsify the claimed ranking."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17274,7 +17274,7 @@
       "kind": "none",
       "label": "case:deployment:device-local-depth-four",
       "label_source": "explicit",
-      "statement": "Track device local depth four as a separately addressable case."
+      "statement": "The chosen feed depth four bounds the ego-network for device-local caching and computation without a per-request server dependency. Its exact value is calibrated against degree distributions; device-local scope is the invariant."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17285,7 +17285,7 @@
       "kind": "none",
       "label": "case:deployment:device-local-depth-three",
       "label_source": "explicit",
-      "statement": "Track device local depth three as a separately addressable case."
+      "statement": "Feed depth three is an alternative depth bound subject to the same device-cacheability and no-per-request-server-dependency invariant; the exact depth is calibrated."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17296,7 +17296,7 @@
       "kind": "none",
       "label": "case:deployment:device-local-depth-six",
       "label_source": "explicit",
-      "statement": "Track device local depth six as a separately addressable case."
+      "statement": "Feed depth six is subject to device-cacheability; at mean out-degree ten its million-node envelope needs gigabytes and server infrastructure for most devices, unlike the chosen depth four."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17307,7 +17307,7 @@
       "kind": "none",
       "label": "case:deployment:device-local-server-assisted",
       "label_source": "explicit",
-      "statement": "Track device local server assisted as a separately addressable case."
+      "statement": "Server-assisted feed computation beyond the local cache fails device-local scope when the client needs per-request graph data from the server whose ranking it is verifying."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17329,7 +17329,7 @@
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-edition-fixed",
       "label_source": "explicit",
-      "statement": "Track transparency of protocol formulas edition fixed as a separately addressable case."
+      "statement": "The chosen protocol formulas and structural constants are immutable within a structural edition; changes require a publicly identified structural change with advance notice, not silent retuning."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17340,7 +17340,7 @@
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-scheduled-vote",
       "label_source": "explicit",
-      "statement": "Track transparency of protocol formulas scheduled vote as a separately addressable case."
+      "statement": "Governance-vote updates are compatible with formula transparency only on a published schedule with enough lead time for clients to recompute affected cached values before the change applies."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17351,7 +17351,7 @@
       "kind": "policy",
       "label": "case:deployment:transparency-of-protocol-formulas-time-locked",
       "label_source": "explicit",
-      "statement": "Track transparency of protocol formulas time locked as a separately addressable case."
+      "statement": "Time-locked update windows with independent oracle attestation are compatible with formula transparency only if clients cannot be surprised by silent changes; the declaration remains fixed within its structural edition."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17615,7 +17615,7 @@
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-minimal-record",
       "label_source": "explicit",
-      "statement": "Track sufficiency minimal record as a separately addressable case."
+      "statement": "The chosen minimal sufficient record permits independent recomputation from published parameters, temporal attributes, author and endpoints. Hyper-edge legs also carry role and reciprocal co-leg identity, and derived edges add no record fields."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17626,7 +17626,7 @@
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-precomputed-record",
       "label_source": "explicit",
-      "statement": "Track sufficiency precomputed record as a separately addressable case."
+      "statement": "An extended record may publish precomputed derived quantities for client convenience, such as cached temporal entropy, provided clients can recompute and verify them from the public sufficient record."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17637,7 +17637,7 @@
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-redundant-record",
       "label_source": "explicit",
-      "statement": "Track sufficiency redundant record as a separately addressable case."
+      "statement": "Additional verified but redundant fields preserve record sufficiency because clients can recompute them; the server must not depend on unpublished enrichment."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17648,7 +17648,7 @@
       "kind": "invariant check",
       "label": "case:deployment:sufficiency-proprietary-fields",
       "label_source": "explicit",
-      "statement": "Track sufficiency proprietary fields as a separately addressable case."
+      "statement": "Proprietary fields on which the server’s scoring depends are not a valid sufficient-record implementation: every load-bearing input must be published for independent recomputation."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17670,7 +17670,7 @@
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-operator-generated",
       "label_source": "explicit",
-      "statement": "Track concealment entropy operator generated as a separately addressable case."
+      "statement": "In the centralized phase, operator-generated concealment values under audit are compliant only if low-entropy generation is detectable or precluded before concealment is relied on; the operator owns that obligation."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17681,7 +17681,7 @@
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-client-generated",
       "label_source": "explicit",
-      "statement": "Track concealment entropy client generated as a separately addressable case."
+      "statement": "Client-side concealment-value generation is compliant against a published entropy specification validated at append, only if low-entropy generation is detectable or precluded before concealment is relied on."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17692,7 +17692,7 @@
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-secret-derived",
       "label_source": "explicit",
-      "statement": "Track concealment entropy secret derived as a separately addressable case."
+      "statement": "Deterministic concealment-value derivation from a client secret is compliant under a published rule only if low-entropy generation is detectable or precluded before concealment is relied on."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17703,7 +17703,7 @@
       "kind": "policy",
       "label": "case:deployment:concealment-entropy-unassigned-custody",
       "label_source": "explicit",
-      "statement": "Track concealment entropy unassigned custody as a separately addressable case."
+      "statement": "Leaving concealment-entropy custody unassigned in the decentralized phase fails the obligation: a published generation rule must bind the carriage layer before concealment is relied on."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17725,7 +17725,7 @@
       "kind": "invariant check",
       "label": "case:deployment:conserved-standing-reproducibility-reference-compiler",
       "label_source": "explicit",
-      "statement": "Track conserved standing reproducibility reference compiler as a separately addressable case."
+      "statement": "The chosen deterministic reference compiler and independently executable certificate tools must replay act reconstruction, folds, allocation, emission, certificate evaluation and mediant convergence from public inputs."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17736,7 +17736,7 @@
       "kind": "invariant check",
       "label": "case:deployment:conserved-standing-reproducibility-formal-compiler",
       "label_source": "explicit",
-      "statement": "Track conserved standing reproducibility formal compiler as a separately addressable case."
+      "statement": "A machine-checked formal compiler is an alternative for conserved-standing reproduction only with the same outputs from the published inputs; implementation variation requires a formula/compiler edition change under the no-silent-change rule."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17747,7 +17747,7 @@
       "kind": "invariant check",
       "label": "case:deployment:conserved-standing-reproducibility-equivalent-compiler",
       "label_source": "explicit",
-      "statement": "Track conserved standing reproducibility equivalent compiler as a separately addressable case."
+      "statement": "Another conserved-standing implementation is permitted only with the same outputs from published inputs; implementation variation requires a formula/compiler edition change under the no-silent-change rule."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17758,7 +17758,7 @@
       "kind": "invariant check",
       "label": "case:deployment:conserved-standing-reproducibility-mismatched-package",
       "label_source": "explicit",
-      "statement": "Track conserved standing reproducibility mismatched package as a separately addressable case."
+      "statement": "A safe-looking projection, base matrix, emission diagonal or verdict fails reproduction if it omits accepted records, differs from deterministic allocation, concerns another standing point or does not match final standing; isolated validity is insufficient."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17824,7 +17824,7 @@
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-tree-samples",
       "label_source": "explicit",
-      "statement": "Track terminal centrality certificates tree samples as a separately addressable case."
+      "statement": "Published Dijkstra-tree samples are the chosen terminal-centrality certificate: any participant can independently reproduce a creator’s centrality within the published approximation bounds without a trusted intermediary."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17835,7 +17835,7 @@
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-selective-reveal",
       "label_source": "explicit",
-      "statement": "Track terminal centrality certificates selective reveal as a separately addressable case."
+      "statement": "A commitment with per-creator selective reveal lets a creator verify their own centrality but not others’, weakening collective auditing compared with published Dijkstra-tree samples."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17846,7 +17846,7 @@
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-auditor",
       "label_source": "explicit",
-      "statement": "Track terminal centrality certificates auditor as a separately addressable case."
+      "statement": "Third-party auditor attestation of terminal centrality reintroduces a trusted intermediary; the chosen published-tree method instead permits every participant to run the computation independently."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17857,7 +17857,7 @@
       "kind": "none",
       "label": "case:deployment:terminal-centrality-certificates-scalar-only",
       "label_source": "explicit",
-      "statement": "Track terminal centrality certificates scalar only as a separately addressable case."
+      "statement": "Publishing only centrality scalars while suppressing sampled Dijkstra-path trees fails participant verification: the approximation error remains a server claim rather than an independently measured quantity."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17879,7 +17879,7 @@
       "kind": "none",
       "label": "case:deployment:can-enrichment-insulation-frobenius",
       "label_source": "explicit",
-      "statement": "Track can enrichment insulation frobenius as a separately addressable case."
+      "statement": "Pure attribution-view Frobenius norms are the chosen CAN enrichment inputs. No path-view or standing-derived quantity enters the recursion, and normalized enrichment is independent of an actor’s standing when that actor’s Declaration is outside its own dependency closure."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17890,7 +17890,7 @@
       "kind": "none",
       "label": "case:deployment:can-enrichment-insulation-standing-scaled",
       "label_source": "explicit",
-      "statement": "Track can enrichment insulation standing scaled as a separately addressable case."
+      "statement": "A standing-scaled CAN enrichment component is rejected: it introduces standing dependence and counts the influence signal again alongside the reward formula’s existing amplifier."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17901,7 +17901,7 @@
       "kind": "none",
       "label": "case:deployment:can-enrichment-insulation-path-corrected",
       "label_source": "explicit",
-      "statement": "Track can enrichment insulation path corrected as a separately addressable case."
+      "statement": "A path-view determinant correction in CAN enrichment is rejected: it introduces path-view tier discrimination into attribution rather than preserving the attribution-view recursion."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17923,7 +17923,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-written-specification",
       "label_source": "explicit",
-      "statement": "Track completeness written specification as a separately addressable case."
+      "statement": "A complete normative written specification is the chosen publication form: it must determine every binding computation and each terminal computation a guild elects to publish, with no proprietary load-bearing component."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17934,7 +17934,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-source-implementation",
       "label_source": "explicit",
-      "statement": "Track completeness source implementation as a separately addressable case."
+      "statement": "An open-source reference implementation is an alternative publication form only when complete enough to reproduce every binding computation and each terminal computation a guild elects to publish."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17945,7 +17945,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-formal-specification",
       "label_source": "explicit",
-      "statement": "Track completeness formal specification as a separately addressable case."
+      "statement": "A machine-checked formal specification with test vectors is an alternative complete publication form; vectors disambiguate mask promotion, bleed-softening boundaries and raw parity relaxation, without replacing the requirement for completeness."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17956,7 +17956,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-missing-constants",
       "label_source": "explicit",
-      "statement": "Track completeness missing constants as a separately addressable case."
+      "statement": "Publishing formula structure without constants fails completeness: participants cannot reproduce all binding outputs and the terminal outputs a guild elects to publish."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17967,7 +17967,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-missing-promotion",
       "label_source": "explicit",
-      "statement": "Track completeness missing promotion as a separately addressable case."
+      "statement": "Publishing constants without mask-promotion criteria fails completeness: the published information must determine the promoted masks used in computation."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17978,7 +17978,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-missing-epoch",
       "label_source": "explicit",
-      "statement": "Track completeness missing epoch as a separately addressable case."
+      "statement": "Publishing promotion criteria without epoch architecture fails completeness: the published information must also determine the boundary computation."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -17989,7 +17989,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-masks",
       "label_source": "explicit",
-      "statement": "Track completeness unpublished masks as a separately addressable case."
+      "statement": "In the formula-completeness proof sketch, unpublished mask-promotion criteria leave promoted-edge determinant scores underspecified, and the per-edge error multiplies along paths containing promoted edges."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18000,7 +18000,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-can",
       "label_source": "explicit",
-      "statement": "Track completeness unpublished can as a separately addressable case."
+      "statement": "In the formula-completeness proof sketch, an unpublished CAN recursion leaves the normalized enrichment factor uncomputable and the reward formula opaque at its attribution-view bridge."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18011,7 +18011,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-epoch",
       "label_source": "explicit",
-      "statement": "Track completeness unpublished epoch as a separately addressable case."
+      "statement": "In the formula-completeness proof sketch, unpublished boundary architecture leaves write budget, liveness window and burn snapshot undefined; different boundary assumptions yield different standing and unverifiable participation decisions."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18022,7 +18022,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-parity",
       "label_source": "explicit",
-      "statement": "Track completeness unpublished parity as a separately addressable case."
+      "statement": "In the formula-completeness proof sketch, an unpublished parity relaxation rule prevents verification of raw positive-parity paths. This requirement applies only to raw signed services publishing such results; standing instead requires its initiator-owned package."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18033,7 +18033,7 @@
       "kind": "policy",
       "label": "case:deployment:completeness-unpublished-standing",
       "label_source": "explicit",
-      "statement": "Track completeness unpublished standing as a separately addressable case."
+      "statement": "In the formula-completeness proof sketch, unpublished standing projection or certificate computation allows identical accepted edges to produce inconsistent standing claims. A final scalar or verdict alone cannot bind completeness, the base matrix and the accepted rung; the entire conserved standing package is needed."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18055,7 +18055,7 @@
       "kind": "policy",
       "label": "case:deployment:realization-obligations-pointer",
       "label_source": "explicit",
-      "statement": "Track realization obligations pointer as a separately addressable case."
+      "statement": "A pointer to the realization’s own publication is a compliant carriage mechanism only if participants can obtain its published quantities through the network at any time and compare them with the realization’s publication."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18066,7 +18066,7 @@
       "kind": "policy",
       "label": "case:deployment:realization-obligations-mirror",
       "label_source": "explicit",
-      "statement": "Track realization obligations mirror as a separately addressable case."
+      "statement": "Mirroring the realization’s publication in the network append-log is compliant only if participants can obtain the quantities at any time and compare them with the original publication; carriage must not silently alter them."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18077,7 +18077,7 @@
       "kind": "policy",
       "label": "case:deployment:realization-obligations-snapshot",
       "label_source": "explicit",
-      "statement": "Track realization obligations snapshot as a separately addressable case."
+      "statement": "Periodic snapshots of the realization’s read constants alongside network constants are compliant only if participants can obtain and compare them with the realization’s published quantities at any time."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18088,7 +18088,7 @@
       "kind": "policy",
       "label": "case:deployment:realization-obligations-withheld-evidence",
       "label_source": "explicit",
-      "statement": "Track realization obligations withheld evidence as a separately addressable case."
+      "statement": "A realization withholding audit quantities, capacity bound, unit cost or settlement depth does not meet the burn interface; the network cannot replace missing provenance with its own assertion."
     },
     {
       "chapter": "Appendix I — Deployment",
@@ -18099,7 +18099,7 @@
       "kind": "policy",
       "label": "case:deployment:realization-obligations-occlusion",
       "label_source": "explicit",
-      "statement": "Track realization obligations occlusion as a separately addressable case."
+      "statement": "A deployment must not occlude, restate or silently alter the realization’s published quantities: participants must be able to compare carriage with the original evidence rather than audit only the network’s assertion."
     }
   ]
 }
