@@ -289,3 +289,14 @@ establishment = "defined"
 reader = "interchange-literal"
 definition = "The null, true and false byte escapes are assigned CBOR simple values in the restricted independent fixture encoder. They denote encoding bytes rather than hash identities; bare identity-shaped values remain excluded."
 paths = ["ci/storage_vectors.py"]
+
+[[rows]]
+family = "wallet-evaluated-archives"
+group = "wallet dependency evaluation"
+measures = "SHA-256 of a public registry crate archive"
+producer = "Registry archive evaluation, before workspace admission"
+establishment = "resolvable"
+reader = "evaluated-crate-archive"
+source = "docs/inputs/devnet-profile.toml"
+definition = "The evaluated name and version determine the public crates.io archive locator. Its recorded SHA-256 is checked against the registry and archive during evaluation; this reader validates that locator and accounts only for the declared checksums, without treating the evaluation as a Cargo lock resolution or dependency admission."
+paths = ["docs/inputs/devnet-profile.toml", "docs/datasets/org.peer-network.devnet.profile.json", "adr/019-development-network.md"]

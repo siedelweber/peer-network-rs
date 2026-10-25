@@ -32,58 +32,336 @@
       "units_per_token": 100000000,
       "wallet_candidates": [
         {
+          "archive": "https://static.crates.io/crates/elements/elements-0.27.0.crate",
           "build_scripts": 14,
+          "checksum": "34e00f7ddcd826d2f4c9bd72d79a6b6991a0ac4286e7e2b2ff8eecd130549073",
           "closure": 38,
           "features": "default features disabled",
           "license": "CC0-1.0; preserve file-level MIT OR Apache-2.0 notices",
           "name": "elements",
+          "packages": [
+            "arrayvec 0.7.8",
+            "base58ck 0.1.101",
+            "bech32 0.11.1",
+            "bitcoin-consensus-encoding 1.3.0",
+            "bitcoin-internals 0.6.0",
+            "bitcoin-internals 0.7.0",
+            "bitcoin-io 0.1.101",
+            "bitcoin-private 0.1.0",
+            "bitcoin-units 0.1.101",
+            "bitcoin 0.32.102",
+            "bitcoin_hashes 0.14.101",
+            "bitcoin_hashes 1.2.0",
+            "cc 1.10.0",
+            "cfg-if 1.0.5",
+            "elements 0.27.0",
+            "find-msvc-tools 0.1.15",
+            "getrandom 0.2.17",
+            "hex-conservative 0.2.3",
+            "hex-conservative 1.3.0",
+            "hex_lit 0.1.1",
+            "libc 0.2.191",
+            "ppv-lite86 0.2.21",
+            "proc-macro2 1.0.107",
+            "quote 1.0.47",
+            "rand 0.8.8",
+            "rand_chacha 0.3.1",
+            "rand_core 0.6.4",
+            "secp256k1-sys 0.10.1",
+            "secp256k1-zkp-sys 0.10.1",
+            "secp256k1-zkp 0.11.2",
+            "secp256k1 0.29.1",
+            "serde 1.0.229",
+            "serde_core 1.0.229",
+            "serde_derive 1.0.229",
+            "shlex 2.0.1",
+            "syn 3.0.9",
+            "unicode-ident 1.0.27",
+            "zerocopy 0.8.63"
+          ],
           "procedural_macros": 1,
           "role": "preferred transaction decoder, evaluated only",
           "version": "0.27.0"
         },
         {
+          "archive": "https://static.crates.io/crates/jsonrpc/jsonrpc-0.21.0.crate",
           "build_scripts": 6,
+          "checksum": "6802a88c69545937a980fcc973543364aa948d7a7c0f258eb8713a7781248f1c",
           "closure": 13,
           "features": "default features disabled; simple_http",
           "license": "CC0-1.0",
           "name": "jsonrpc",
+          "packages": [
+            "base64 0.22.1",
+            "itoa 1.0.18",
+            "jsonrpc 0.21.0",
+            "memchr 2.8.3",
+            "proc-macro2 1.0.107",
+            "quote 1.0.47",
+            "serde 1.0.229",
+            "serde_core 1.0.229",
+            "serde_derive 1.0.229",
+            "serde_json 1.0.154",
+            "syn 3.0.9",
+            "unicode-ident 1.0.27",
+            "zmij 1.0.23"
+          ],
           "procedural_macros": 1,
           "role": "rejected for real private HTTP configuration",
           "version": "0.21.0"
         },
         {
+          "archive": "https://static.crates.io/crates/minreq/minreq-3.0.0.crate",
           "build_scripts": 0,
+          "checksum": "659579df697b372ef9e36f02fcbb41f6d6f157dcec7db9c9618fa0f23cf0fc20",
           "closure": 1,
           "features": "default features disabled",
           "license": "ISC",
           "name": "minreq",
+          "packages": [
+            "minreq 3.0.0"
+          ],
           "procedural_macros": 0,
           "role": "rejected for real private HTTP configuration",
           "version": "3.0.0"
         },
         {
+          "archive": "https://static.crates.io/crates/ureq/ureq-3.5.0.crate",
           "build_scripts": 1,
+          "checksum": "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b",
           "closure": 10,
           "features": "default features disabled",
           "license": "MIT OR Apache-2.0",
           "name": "ureq",
+          "packages": [
+            "base64 0.23.1",
+            "bytes 1.12.1",
+            "http 1.5.0",
+            "httparse 1.10.1",
+            "itoa 1.0.18",
+            "log 0.4.34",
+            "percent-encoding 2.3.2",
+            "ureq-proto 0.6.5",
+            "ureq 3.5.0",
+            "utf8-zero 0.8.1"
+          ],
           "procedural_macros": 0,
           "role": "rejected for real private HTTP configuration",
           "version": "3.5.0"
         },
         {
+          "archive": "https://static.crates.io/crates/secp256k1-zkp/secp256k1-zkp-0.11.2.crate",
           "build_scripts": 3,
+          "checksum": "403f6ab6ef5189ded7d11cb384a96a9f871001e50b391a8fcbb310c9ebc2099b",
           "closure": 8,
           "features": "default features disabled; std",
           "license": "CC0-1.0; bundled C notices retained",
           "name": "secp256k1-zkp",
+          "packages": [
+            "bitcoin-private 0.1.0",
+            "cc 1.10.0",
+            "find-msvc-tools 0.1.15",
+            "secp256k1-sys 0.10.1",
+            "secp256k1-zkp-sys 0.10.1",
+            "secp256k1-zkp 0.11.2",
+            "secp256k1 0.29.1",
+            "shlex 2.0.1"
+          ],
           "procedural_macros": 0,
           "role": "operation-admission baseline, not a new signature consumer",
           "version": "0.11.2"
         }
       ],
+      "wallet_case_groups": [
+        {
+          "cases": [
+            "exact versions, checksums, unified features and C modules",
+            "pinned toolchain and both C provenance records",
+            "invalid generator, commitment and public-key encodings",
+            "invalid proof metadata and encodings without claiming proof verification",
+            "global-context first use, entropy failure, concurrency, lifetime and fork review",
+            "confinement rejects aliases, re-exports and non-adapter use"
+          ],
+          "name": "crypto",
+          "title": "Codec base-library admission"
+        },
+        {
+          "cases": [
+            "full layout and inclusion with confidential non-evidence transactions",
+            "issuance and peg-in non-evidence layouts and witnesses",
+            "explicit evidence assets and integer amounts; wrong asset or opaque evidence refused",
+            "malformed prefixes, truncated and trailing bytes",
+            "independent decoder and raw vector agreement",
+            "hostile count prefixes and nested allocation measured by counting allocator",
+            "permanent target and run/request binding; missing or altered commitments refused"
+          ],
+          "name": "layout",
+          "title": "Complete block layouts"
+        },
+        {
+          "cases": [
+            "missing service, wrong binary, run, genesis or mode refused",
+            "nontrivial declared challenge and invalid block signature refused by real node",
+            "genesis asset outputs, ownership and fixed stock independently reconciled",
+            "reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed",
+            "all supported funding paths and pre-opening transfers audited for distribution bypass",
+            "transfers, fees and grants give zero burn; destruction gives exact amount",
+            "harness producer credential isolated from read-only adapter"
+          ],
+          "name": "profile",
+          "title": "Real chain and fixed stock"
+        },
+        {
+          "cases": [
+            "depth immediately below and at the declared threshold",
+            "shallow replacement and pinned-floor fault",
+            "duplicate outpoints and aliases cannot double count",
+            "wrong policy edition and lineage refused",
+            "missing or ambiguous opening and unavailable evidence refused",
+            "non-development adapter refusal",
+            "old evidence reads unchanged; epoch snapshot derivation remains bite 5"
+          ],
+          "name": "settlement",
+          "title": "Settlement and carriers"
+        },
+        {
+          "cases": [
+            "status 200 result and error; 400, 404 and 500 error-only bodies",
+            "401 closes without body parsing or retry; other statuses refused",
+            "bare LF, folded lines, 1xx and close-delimited bodies refused",
+            "duplicate or conflicting lengths, transfer encoding, compression and redirects refused",
+            "header/body truncation, trailing bytes and excessive size refused",
+            "slow-drip traffic cannot renew the single exchange deadline",
+            "one attempt per exchange and aggregate reconnection ceiling before cookie access"
+          ],
+          "name": "http",
+          "title": "Hostile HTTP exchange"
+        },
+        {
+          "cases": [
+            "JSON-RPC 2.0 and exact correlated identifier",
+            "result and error exclusive, including successful null result",
+            "integer error code, string message and bounded optional data",
+            "invalid UTF-8, BOM and duplicate keys refused",
+            "depth, item and numeric conversion bounds",
+            "unsupported method, batch, notification and wallet-admin routes refused"
+          ],
+          "name": "json",
+          "title": "Typed RPC messages"
+        },
+        {
+          "cases": [
+            "declared same UID owner and exact permitted file modes",
+            "parent ownership, write permissions, ACL and symlink refusals",
+            "regular file, single hard link and descriptor substitution checks",
+            "exact username, separator, hexadecimal password and optional single LF",
+            "oversized, partial, changed, malformed or missing cookie refused",
+            "restart rotation with fresh read; authentication refusal has no replay or fallback"
+          ],
+          "name": "cookie",
+          "title": "Cookie acquisition"
+        },
+        {
+          "cases": [
+            "compile-time carrier checks with reviewed data flow",
+            "endpoint, port, username, cookie path/bytes and wallet-selection sentinels",
+            "retained Debug, Display, source chains, panics and all observation streams",
+            "impostor echoes in status, headers, JSON error and result fields",
+            "wrong credentials, unreachable peer, disconnect and timeout errors",
+            "unmodified generic client demonstrates real retention or leakage",
+            "successful public objects and public diagnostics remain fully recorded"
+          ],
+          "name": "secrets",
+          "title": "Secret-safe observations"
+        }
+      ],
+      "wallet_closure_status": "informational evaluation snapshot; exact package versions and features are re-reviewed and pinned at implementation admission",
+      "wallet_connection_attempts": 8,
+      "wallet_connection_window_seconds": 60,
       "wallet_evaluated_at": "2026-10-25T00:08:35Z",
       "wallet_evaluation_target": "x86_64-unknown-linux-gnu",
+      "wallet_unified_features": [
+        {
+          "features": [
+            "alloc",
+            "bitcoin-io",
+            "io",
+            "std"
+          ],
+          "name": "bitcoin_hashes",
+          "version": "0.14.101"
+        },
+        {
+          "features": [
+            "alloc",
+            "default",
+            "hex",
+            "std"
+          ],
+          "name": "bitcoin_hashes",
+          "version": "1.2.0"
+        },
+        {
+          "features": [
+            "std"
+          ],
+          "name": "getrandom",
+          "version": "0.2.17"
+        },
+        {
+          "features": [
+            "alloc",
+            "getrandom",
+            "libc",
+            "rand_chacha",
+            "std",
+            "std_rng"
+          ],
+          "name": "rand",
+          "version": "0.8.8"
+        },
+        {
+          "features": [
+            "std"
+          ],
+          "name": "rand_chacha",
+          "version": "0.3.1"
+        },
+        {
+          "features": [
+            "alloc",
+            "getrandom",
+            "std"
+          ],
+          "name": "rand_core",
+          "version": "0.6.4"
+        },
+        {
+          "features": [
+            "actual-rand",
+            "default",
+            "global-context",
+            "hashes",
+            "rand-std",
+            "std"
+          ],
+          "name": "secp256k1-zkp",
+          "version": "0.11.2"
+        },
+        {
+          "features": [
+            "alloc",
+            "default",
+            "global-context",
+            "hashes",
+            "rand",
+            "rand-std",
+            "std"
+          ],
+          "name": "secp256k1",
+          "version": "0.29.1"
+        }
+      ],
       "window_blocks": 10
     }
   ]

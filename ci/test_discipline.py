@@ -266,6 +266,29 @@ class HashCitations(unittest.TestCase):
             findings, _ = audit(root, [name], self.table())
             self.assertTrue(any("pathname" in f for f in findings))
 
+        # Evaluation checksums have a public archive locator before admission,
+        # but do not authorize unrelated values or malformed locators.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "profile.toml"
+            checksum = "a" * 64
+            prefix = 'namespace = "org.peer-network.devnet.profile"\n[[rows]]\nname = "testnet-signet"\n'
+            candidate = '{ name = "codec", version = "1.2.3", checksum = "' + checksum + '", archive = "https://static.crates.io/crates/codec/codec-1.2.3.crate" }'
+            valid = prefix + 'wallet_candidates = [' + candidate + ']\n'
+            path.write_text(valid)
+            rule = dict(reader="evaluated-crate-archive", establishment="resolvable", source="profile.toml")
+            check = establish(root, rule)
+            self.assertTrue(check(checksum, checksum))
+            self.assertFalse(check("b" * 64, ""))
+            for text in [valid.replace("https://static.crates.io", "https://example.invalid"),
+                         valid.replace("codec-1.2.3.crate", "codec-1.2.4.crate"),
+                         valid.replace(checksum, "a" * 63),
+                         prefix + 'wallet_candidates = [' + candidate + ',' + candidate + ']\n',
+                         prefix + 'wallet_candidates = []\n']:
+                path.write_text(text)
+                with self.assertRaisesRegex(ValueError, "evaluated archive"):
+                    establish(root, rule)
+
     def test_hex_claim_sites(self):
         """Hash-reader claim sites carry a checkable gloss, one authored claim and the local inventory label in order.
         ´claim:hashcitations:probe-documentation-has-ordered-claims´

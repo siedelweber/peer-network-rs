@@ -145,6 +145,29 @@ def establish(root, rule):
         )
     if kind == "proptest-seed" and standing == "defined":
         return lambda value, line: bool(re.fullmatch(r"[0-9a-f]{64}", value) and line.startswith("cc " + value + " # shrinks to "))
+    if kind == "evaluated-crate-archive" and standing == "resolvable":
+        profile = tomllib.loads(relative_file(root, rule["source"]).read_text())
+        if profile.get("namespace") != "org.peer-network.devnet.profile":
+            raise ValueError("hash citations: invalid evaluated archive profile")
+        rows = profile.get("rows", [])
+        if len(rows) != 1 or rows[0].get("name") != "testnet-signet":
+            raise ValueError("hash citations: invalid evaluated archive profile row")
+        candidates = rows[0].get("wallet_candidates", [])
+        values, identities = set(), set()
+        if not candidates:
+            raise ValueError("hash citations: empty evaluated archive register")
+        for candidate in candidates:
+            name, version = candidate.get("name", ""), candidate.get("version", "")
+            checksum = candidate.get("checksum", "")
+            if (not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", name)
+                    or not isinstance(version, str) or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?", version)
+                    or not isinstance(checksum, str) or not re.fullmatch(r"[0-9a-f]{64}", checksum)
+                    or candidate.get("archive") != f"https://static.crates.io/crates/{name}/{name}-{version}.crate"
+                    or (name, version) in identities):
+                raise ValueError("hash citations: invalid evaluated archive locator or checksum")
+            identities.add((name, version))
+            values.add(checksum)
+        return lambda value, _line: value in values
     if kind == "cargo-archive" and standing == "resolvable":
         packages = tomllib.loads(relative_file(root, rule["source"]).read_text())["package"]
         values = set()
