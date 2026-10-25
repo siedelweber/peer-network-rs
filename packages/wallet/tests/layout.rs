@@ -94,7 +94,7 @@ fn compare(actual: &pn_wallet::Transaction, expected: &oracle::Transaction) {
     }
 }
 
-/// Claim: The maintained adapter and an independent byte-only oracle agree on every exposed field of explicit, confidential, issuance and peg-in transaction layouts, including witnesses, and retain all four transactions in the block.
+/// Claim: The maintained adapter and an independent byte-only oracle agree on every exposed field of explicit, confidential, issuance, peg-in and explicit-nonce layouts, retaining all five transactions and the evidence beside a non-evidence explicit nonce.
 /// ´claim:wallet:full-layouts-preserve-nonevidence-transactions´
 /// ´test:integration:full-layouts´
 #[test]
@@ -107,17 +107,31 @@ fn full_layouts() {
     ];
     let mut block = vec![0; 76];
     block[0] = 1;
-    block.extend([1, 0x51, 1, 0x51, 4]);
+    block.extend([1, 0x51, 1, 0x51, 5]);
     for (confidential, issuance, pegin) in cases {
         let bytes = transaction((confidential, issuance, pegin), true, 17);
         let decoded = decode_transaction(&bytes, limits()).unwrap();
         compare(&decoded, &oracle::transaction(&bytes).unwrap());
         block.extend(bytes);
     }
+    let mut explicit_nonce = transaction((false, false, false), true, 17);
+    assert_eq!(explicit_nonce[90], 0);
+    explicit_nonce.splice(90..91, std::iter::once(1).chain([9; 32]));
+    let nonce_tx = decode_transaction(&explicit_nonce, limits()).unwrap();
+    compare(&nonce_tx, &oracle::transaction(&explicit_nonce).unwrap());
+    block.extend(explicit_nonce);
     let decoded = decode_block(&block, limits()).unwrap();
     let (header, transactions) = oracle::block(&block).unwrap();
     assert_eq!(decoded.header, header);
-    assert_eq!(decoded.transactions.len(), 4);
+    assert_eq!(decoded.transactions.len(), 5);
+    assert_eq!(
+        evidence_amount(&decoded.transactions[0], 0, &[2; 32], &[3; 32], &[4; 32], &[5; 32]),
+        Ok(17)
+    );
+    assert_eq!(
+        evidence_amount(&decoded.transactions[4], 0, &[2; 32], &[3; 32], &[4; 32], &[5; 32]),
+        Err(Refusal::EvidenceOutput)
+    );
     for (a, b) in decoded.transactions.iter().zip(&transactions) {
         compare(a, b);
     }

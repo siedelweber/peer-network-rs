@@ -2414,8 +2414,8 @@
       "path": "packages/wallet/tests/layout.rs",
       "claim": "WALLET::claim:wallet:full-layouts-preserve-nonevidence-transactions",
       "before": "",
-      "after": "Claim: The maintained adapter and an independent byte-only oracle agree on every exposed field of explicit, confidential, issuance and peg-in transaction layouts, including witnesses, and retain all four transactions in the block.",
-      "review": "Read four transaction layouts and the block oracle; every exposed field including issuance and witnesses is compared. Confidential carriage is retained without claiming proof verification."
+      "after": "Claim: The maintained adapter and an independent byte-only oracle agree on every exposed field of explicit, confidential, issuance, peg-in and explicit-nonce layouts, retaining all five transactions and the evidence beside a non-evidence explicit nonce.",
+      "review": "Read all five layouts against the independent oracle, including prefix 1 with 32 nonce bytes. The mixed block retains its 17-unit evidence and refuses only the explicit-nonce output as evidence."
     },
     {
       "operation": "pn-wallet::layout::explicit_evidence",

@@ -256,7 +256,7 @@ impl<'a> Reader<'a> {
         let length = match (kind, prefix) {
             (_, 0) => 0,
             (1, 1) => 8,
-            (0, 1 | 10 | 11) | (1, 8 | 9) | (2, 2 | 3) => 32,
+            (0, 1 | 10 | 11) | (1, 8 | 9) | (2, 1 | 2 | 3) => 32,
             _ => return Err(Refusal::Flag),
         };
         self.take(length)?;
