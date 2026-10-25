@@ -2250,3 +2250,27 @@ closing_step = "Bite 2 wallet integration, before enabling the adapter"
 
 premises = "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred."
 evidence_paragraph = "WALLET::amend:wallet:genesis-rpc"
+
+[[rows]]
+name = "ROOT::dec:buildgraph:composition"
+path = "adr/024-build-graph.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Build-graph implementer and independent gate-contract reviewer"
+missing = "Executed census, graph freshness, status propagation, cleanup and command-equivalence witnesses with scoped test-site claims."
+closing_condition = "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins."
+closing_step = "Build graph slices 1 to 5"
+
+[[rows]]
+name = "ROOT::gate:buildgraph:implementation"
+path = "adr/024-build-graph.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Build-graph implementer and independent gate-contract reviewer"
+missing = "Executed census, graph freshness, status propagation, cleanup and command-equivalence witnesses with scoped test-site claims."
+closing_condition = "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins."
+closing_step = "Build graph slices 1 to 5"

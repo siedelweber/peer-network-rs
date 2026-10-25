@@ -207,3 +207,97 @@ title = "Cryptographic base"
 scope = "The asymmetric implementation base, complementary primitives and dependency admission."
 depends_on = ["rec:identity:decision", "rec:observe:decision", "rec:intranet:decision"]
 does_not_establish = "No dependency integration, signed-object recipe, key-management protocol or transport is admitted."
+
+[[rows]]
+label = "rec:buildgraph:decision"
+path = "adr/024-build-graph.md"
+status = "accepted"
+title = "Build graph"
+scope = "Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices."
+depends_on = ["rec:toolchain:decision", "rec:lint:decision", "rec:render:decision", "rec:testing:decision", "rec:devperf:decision"]
+does_not_establish = "No Meson graph, census enforcement or migration is implemented here; file accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established."
+step_names = ["toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "cargo-config-measurement", "vendor-set", "member-lints", "fmt", "clippy", "nursery-advisory", "host-postgresql-start", "wallet-elements-start", "tests", "test-budgets", "minimal", "rustdoc", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "datasets", "documents", "determinism-datasets", "determinism-documents", "design-correspondence", "design-tests", "benchmarks", "observation-build", "observation-runtime", "host-observation-build", "host-observation-runtime", "wallet-conformance", "wallet-elements-stop", "host-postgresql-stop", "observation-parser", "observation-syntax", "harness-matrix", "linter", "claim-evidence", "token", "hash-citations", "suppressions", "printing"]
+
+[[rows.step_groups]]
+name = "policy"
+steps = ["toolchain", "build-policy", "cargo-config", "vendor-set", "member-lints"]
+inputs = "ci/discipline.py and its imported checkers; toolchain, Cargo configuration, workspace and member manifests, lockfile, vendor declarations and build-policy input."
+outputs = "Policy and answering-tool reports; no source outputs."
+
+[[rows.step_groups]]
+name = "checker-witnesses"
+steps = ["discipline-tests", "harness-tests", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "design-tests", "observation-parser"]
+inputs = "ci/run_ci.py, each named test module and its imports and fixtures; the source, declarations, templates and inputs those witnesses inspect; pinned compiler and declared test configuration where used."
+outputs = "Case results and per-suite evidence consumed by the harness matrix and claim join."
+
+[[rows.step_groups]]
+name = "registry"
+steps = ["harness-registry", "testkit-guard"]
+inputs = "ci/harness.py, ci/testkit_guard.py and imports; first-party sources and manifests, harness registry, suite and claim-area inputs."
+outputs = "Registry and dependency-boundary reports."
+
+[[rows.step_groups]]
+name = "cargo"
+steps = ["fmt", "clippy", "nursery-advisory", "minimal", "rustdoc"]
+inputs = "ci/discipline.py and imports; toolchain and formatter configuration, all relevant manifests, lockfile, Rust sources, build scripts, included fixtures and feature selections; admitted vendor inputs for Cargo consumers."
+outputs = "Cargo artifacts or reports in the checkout-specific target directory; nursery findings retain their advisory status."
+
+[[rows.step_groups]]
+name = "configuration-measurement"
+steps = ["cargo-config-measurement"]
+inputs = "ci/measure_rustflags.py and imports; Cargo configuration, toolchain, probe source and declared measurement environment."
+outputs = "Configuration measurement and refusal reports."
+
+[[rows.step_groups]]
+name = "services"
+steps = ["host-postgresql-start", "wallet-elements-start", "wallet-elements-stop", "host-postgresql-stop"]
+inputs = "ci/host_postgresql.py, ci/wallet_elements.py and imports; service configuration and fixtures, declared executable paths, port ownership and per-run service roots."
+outputs = "Service readiness and shutdown reports; private connection material remains secret-owned, outside public graph reports."
+
+[[rows.step_groups]]
+name = "tests"
+steps = ["tests", "test-budgets"]
+inputs = "ci/discipline.py, ci/devperf.py and imports; Cargo input set, test fixtures, test configuration, harness and performance inputs; live-service readiness for service-backed cases; current performance events for budget reporting."
+outputs = "Current-source case results and performance events, followed by nonverdict timing findings."
+
+[[rows.step_groups]]
+name = "documents"
+steps = ["fixed-point-generate", "fixed-point-write", "fixed-point-clean", "datasets", "documents", "determinism-datasets", "determinism-documents"]
+inputs = "Documents engine and its Cargo input set; docs/inputs, templates, generated datasets, rendered documents, generator declarations and tracked-tree state; each consumer names its preceding generated outputs."
+outputs = "Generated datasets then documents, clean-tree and repeat-generation checks; exact committed outputs remain the comparison baseline."
+
+[[rows.step_groups]]
+name = "correspondence"
+steps = ["design-correspondence"]
+inputs = "ci/design.py and imports; design inputs, datasets, templates, renders and source projections read by its predicates."
+outputs = "Correspondence and inventory-placeholder reports."
+
+[[rows.step_groups]]
+name = "benchmarks"
+steps = ["benchmarks"]
+inputs = "ci/benchmarks.py and imports; benchmark sources, Cargo input set, fixtures, declared runner and baseline/performance inputs."
+outputs = "Benchmark artifacts and measurements; comparison findings never become failing timing verdicts."
+
+[[rows.step_groups]]
+name = "observation-build"
+steps = ["observation-build", "host-observation-build"]
+inputs = "Cargo input set for examples and instrumentation evidence; ci/host_evidence_build.py and imports; observation declarations and the exact features and profile."
+outputs = "Example executables and instrumentation artifacts consumed by runtime and syntax checks."
+
+[[rows.step_groups]]
+name = "observation-runtime"
+steps = ["observation-runtime", "host-observation-runtime", "wallet-conformance", "observation-syntax"]
+inputs = "ci/run_ci.py, ci/observe.py, the named runtime/boundary test modules and imports; built executables, instrumentation artifacts, observation fixtures and declarations; service readiness where required."
+outputs = "Runtime case results, traces, parser and instrumentation-coverage reports."
+
+[[rows.step_groups]]
+name = "evidence"
+steps = ["harness-matrix", "claim-evidence"]
+inputs = "ci/harness.py, ci/claims.py and imports; current-run case results, source/configuration identity, claim sites, obligation, review and gloss registers, claim areas and checked document citations."
+outputs = "Harness matrix and claim-evidence reports; missing, stale and held results retain their existing distinctions."
+
+[[rows.step_groups]]
+name = "corpus"
+steps = ["linter", "token", "hash-citations", "suppressions", "printing"]
+inputs = "Deployed linter and its declarations; ci/discipline.py and imported readers; tracked source, prose, datasets, templates, manifests and identity families within each existing policy, plus public history where checked."
+outputs = "Lint, token, citation, suppression and output-discipline reports."

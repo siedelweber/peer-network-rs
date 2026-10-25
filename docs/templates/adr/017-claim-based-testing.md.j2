@@ -62,4 +62,6 @@
 | Entry | Basis | Owner | Evidence kind | Admission | Resolving evidence |
 |---|---|---|---|---|---|
 {% for obligation in rows('org.peer-network.testing.claim-obligations') %}{% if obligation.entry_gate is defined %}| (`{{ obligation.name | replace('ROOT::', '') }}`) | {{ obligation.admission_basis }} | {{ obligation.admission.owner }} | {{ obligation.admission.evidence_kind }} | {{ obligation.admission.status }} | (`{{ obligation.admission.evidence | replace('ROOT::', '') }}`) |
-{% endif %}{% endfor -%}
+{% endif %}{% endfor %}
+
+**Amendment (Build graph evidence)** · `amend:testing:build-graph` The migration in (`rec:buildgraph:decision`) preserves (`rule:testing:coverage`) and (`rule:testing:results`): targets carry current invocation, source and configuration results into the existing claim and harness joins. A successful build target or cached artifact is not a passed test claim. Missing, stale, failed and held evidence keep their distinct outcomes; each migration slice supplies its own scoped test-site claims before its commands replace the old route (`gate:buildgraph:implementation`).

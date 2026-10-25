@@ -27,3 +27,4 @@
 | Development performance | accepted | (`rec:devperf:decision`) |
 | Host intranet | accepted | (`rec:intranet:decision`) |
 | Cryptographic base | accepted | (`rec:crypto:decision`) |
+| Build graph | accepted | (`rec:buildgraph:decision`) |

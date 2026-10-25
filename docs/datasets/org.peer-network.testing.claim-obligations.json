@@ -2876,6 +2876,30 @@
       "premises": "The case census joins strict parser units, actual descriptor fixtures, real daemon genesis and restart operations, closed-interface compile failures and retained observations. Elements responses are trusted under the host-secured service contract; no signed-chain verdict is inferred.",
       "realizers": [],
       "status": "scoped-supported"
+    },
+    {
+      "claims": [],
+      "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
+      "closing_step": "Build graph slices 1 to 5",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Executed census, graph freshness, status propagation, cleanup and command-equivalence witnesses with scoped test-site claims.",
+      "name": "ROOT::dec:buildgraph:composition",
+      "owner": "Build-graph implementer and independent gate-contract reviewer",
+      "path": "adr/024-build-graph.md",
+      "realizers": [],
+      "status": "held"
+    },
+    {
+      "claims": [],
+      "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
+      "closing_step": "Build graph slices 1 to 5",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Executed census, graph freshness, status propagation, cleanup and command-equivalence witnesses with scoped test-site claims.",
+      "name": "ROOT::gate:buildgraph:implementation",
+      "owner": "Build-graph implementer and independent gate-contract reviewer",
+      "path": "adr/024-build-graph.md",
+      "realizers": [],
+      "status": "held"
     }
   ]
 }

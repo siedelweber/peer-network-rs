@@ -77,3 +77,5 @@
 
 **Section (testing)** · `sec:foundation:claim-area-testing` If evidence-gate claims fail, missing obligations, unowned claims or failed siblings can be hidden by coverage totals.
 
+
+**Section (buildgraph)** · `sec:foundation:area-buildgraph` If gate composition or file accounting fails, an omitted input or stale result can masquerade as checked evidence. (`rec:buildgraph:decision`) fixes the declared graph, census and migration slices while preserving the gate entry and verdicts.
