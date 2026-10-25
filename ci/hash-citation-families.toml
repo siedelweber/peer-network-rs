@@ -387,7 +387,19 @@ producer = "bounded fuzz campaign source checkout"
 establishment = "resolvable"
 reader = "campaign-tree"
 tree = "88a3b4a1724641812c70fc10a2a72d7a8d85a6d8"
-definition = "A campaign names the tree it exercised. Before import the tree alone is cited and must be the tree of a commit in the checked-out history; signing at import changes commit identity, never the tree, and the public commit holding it is added then."
+definition = "A campaign names the tree it exercised, which must be the tree of a commit in the checked-out history. Signing at import changes commit identity, never the tree; the public commit holding this tree is bound by wallet-large-input-import."
+paths = ["ci/hash-citation-families.toml", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
+
+[[rows]]
+family = "wallet-large-input-import"
+group = "wallet decoder large-input campaign"
+measures = "Public commit holding the tree the large-input campaign exercised"
+producer = "import of the campaign's source commit"
+establishment = "resolvable"
+reader = "imported-commit"
+commit = "b67a5ba8cb46ef06b8a5b898c97d0669e9a86a86"
+tree = "88a3b4a1724641812c70fc10a2a72d7a8d85a6d8"
+definition = "The imported commit must be an ancestor of the checked-out history and its tree must equal the campaign's exercised tree."
 paths = ["ci/hash-citation-families.toml", "docs/templates/adr/019-development-network.md.j2", "adr/019-development-network.md"]
 
 [[rows]]

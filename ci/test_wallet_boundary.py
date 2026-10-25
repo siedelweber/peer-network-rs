@@ -122,6 +122,11 @@ class WalletBoundary(unittest.TestCase):
             (b'pub struct Exposed { pub value: elements::Transaction }', 'public struct'),
             (b'pub struct Exposed { pub value: std::collections::BTreeMap<u8, elements::Transaction> }', 'public struct'),
             (b'use elements::Transaction as Hidden; pub struct Exposed(pub(crate) Option<Hidden>);', 'public struct'),
+            (b'pub struct Exposed { pub callback: fn() -> elements::Transaction }', 'public struct'),
+            (b'pub struct Exposed { pub callback: fn() -> u8, pub value: elements::Transaction }', 'public struct'),
+            (b'pub struct Exposed(pub Option<fn() -> u8>, pub elements::Transaction);', 'public struct'),
+            (b'pub struct Exposed<F: Fn() -> u8> { callback: F, pub value: elements::Transaction }', 'public struct'),
+            (b'pub struct Exposed<F> where F: Fn() -> u8 { callback: F, pub value: elements::Transaction }', 'public struct'),
             (b'pub enum Exposed { Value { value: elements::Transaction } }', 'public enum'),
             (b'use elements::Transaction as Hidden; pub enum Exposed { Value(Hidden) }', 'public enum'),
             (b'pub const EXPOSED: Option<elements::Transaction> = None;', 'public const'),
@@ -134,6 +139,16 @@ class WalletBoundary(unittest.TestCase):
             try:
                 adapter.write_bytes(adapter_original+b'\n'+fixture+b'\n')
                 with self.assertRaisesRegex(ValueError,cause): check()
+            finally: adapter.write_bytes(adapter_original)
+        # Private codec storage stays admitted beside public callbacks.
+        for fixture in (
+            b'pub struct Wrapper { pub callback: fn() -> u8, value: elements::Transaction }',
+            b'pub struct Wrapper<F: Fn() -> u8> { pub callback: F, value: elements::Transaction }',
+            b'pub struct Wrapper(pub Option<fn() -> u8>, elements::Transaction);',
+        ):
+            try:
+                adapter.write_bytes(adapter_original+b'\n'+fixture+b'\n')
+                self.assertTrue(check())
             finally: adapter.write_bytes(adapter_original)
         try:
             manifest.write_bytes(original_manifest.replace(

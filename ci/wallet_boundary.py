@@ -14,26 +14,57 @@ CODEC_PACKAGES = {'elements', 'bitcoin', 'bitcoin_hashes', 'secp256k1', 'secp256
 ADAPTER = 'packages/wallet/src/decoder.rs'
 
 
+def delimiters(text):
+    """Yield each bracket and comma with its depth change; a return arrow's > closes nothing."""
+    for index, character in enumerate(text):
+        if character in '<([{':
+            yield index, character, 1
+        elif character in ')]}' or (character == '>' and text[index-1:index] != '-'):
+            yield index, character, -1
+        elif character == ',':
+            yield index, character, 0
+
+
 def public_struct_types(body):
-    opening = re.search(r'[({]', body)
+    """Return the struct's header, generic bounds, where clause and public fields."""
+    # The field block follows the name and generics: a tuple struct's
+    # parenthesis, otherwise the first top-level brace. Parentheses inside
+    # generic bounds or a where clause, such as Fn() -> T, are header text.
+    name = re.match(r'\s*\w+\s*', body)
+    position = name.end() if name else 0
+    depth = 0
+    if body[position:position+1] == '<':
+        for index, _, change in delimiters(body[position:]):
+            depth += change
+            if depth == 0:
+                position += index + 1
+                break
+    rest = body[position:]
+    opening = None
+    if rest.lstrip().startswith('('):
+        opening = position + len(rest) - len(rest.lstrip())
+    else:
+        depth = 0
+        for index, character, change in delimiters(rest):
+            if depth == 0 and character == '{':
+                opening = position + index
+                break
+            depth += change
     if opening is None:
         return body
-    header = body[:opening.start()]
-    fields = body[opening.end():]
     depth = 0
-    start = 0
-    exposed = [header]
-    for index, character in enumerate(fields):
-        if character in '<([{':
-            depth += 1
-        elif character in '>)]}':
-            depth -= 1
-        if (character == ',' and depth == 0) or depth < 0:
-            field = fields[start:index]
+    start = opening + 1
+    exposed = [body[:opening]]
+    for index, character, change in delimiters(body[opening:]):
+        index += opening
+        depth += change
+        if (character == ',' and depth == 1) or depth == 0:
+            field = body[start:index]
             if re.search(r'\bpub\b', field):
                 exposed.append(field)
             start = index + 1
-            if depth < 0:
+            if depth == 0:
+                exposed.append(body[index + 1:])
                 break
     return ' '.join(exposed)
 
