@@ -100,6 +100,10 @@ class WalletBoundary(unittest.TestCase):
             b'\npub use elements as exposed;\n',
             b'\npub type Exposed = elements::Transaction;\n',
             b'\npub fn exposed() -> elements::Transaction { todo!() }\n',
+            b'\npub struct Exposed { pub value: elements::Transaction }\n',
+            b'\npub enum Exposed { Value(elements::Transaction) }\n',
+            b'\npub const EXPOSED: Option<elements::Transaction> = None;\n',
+            b'\npub static EXPOSED: Option<elements::Transaction> = None;\n',
         ):
             try:
                 source.write_bytes(original+fixture)
@@ -110,10 +114,20 @@ class WalletBoundary(unittest.TestCase):
         for fixture, cause in [
             (b'pub use elements as exposed;', 're-export'),
             (b'pub(crate) use elements as exposed;', 're-export'),
+            (b'use elements::*;', 'codec glob import'),
             (b'pub type Exposed = elements::Transaction;', 'public type alias'),
             (b'pub fn exposed() -> elements::Transaction { todo!() }', 'public signature'),
             (b'pub const fn exposed() -> elements::Transaction { todo!() }', 'public signature'),
             (b'use elements::Transaction as Hidden; pub fn exposed() -> Hidden { todo!() }', 'public signature'),
+            (b'pub struct Exposed { pub value: elements::Transaction }', 'public struct'),
+            (b'pub struct Exposed { pub value: std::collections::BTreeMap<u8, elements::Transaction> }', 'public struct'),
+            (b'use elements::Transaction as Hidden; pub struct Exposed(pub(crate) Option<Hidden>);', 'public struct'),
+            (b'pub enum Exposed { Value { value: elements::Transaction } }', 'public enum'),
+            (b'use elements::Transaction as Hidden; pub enum Exposed { Value(Hidden) }', 'public enum'),
+            (b'pub const EXPOSED: Option<elements::Transaction> = None;', 'public const'),
+            (b'use elements::Transaction as Hidden; pub const EXPOSED: Option<Hidden> = None;', 'public const'),
+            (b'pub static EXPOSED: Option<elements::Transaction> = None;', 'public static'),
+            (b'use elements::Transaction as Hidden; pub static EXPOSED: Option<Hidden> = None;', 'public static'),
             (b'fn misplaced() { let _ = &*elements::secp256k1_zkp::SECP256K1; }', 'production global context'),
             (b'#[cfg(any(test, feature="fuzzing"))] fn misplaced() { let _ = &*elements::secp256k1_zkp::SECP256K1; }', 'production global context'),
         ]:

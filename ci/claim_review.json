@@ -2486,7 +2486,7 @@
       "path": "packages/wallet/src/rpc.rs",
       "claim": "WALLET::claim:wallet:rpc-reads-have-closed-typed-projections",
       "before": "",
-      "after": "Claim: Closed read operations select only the five declared raw-mode methods; typed projections refuse null and malformed hex, preserve decoded transactions and blocks, and identify a limiting block without accepting unsupported routes.",
+      "after": "Claim: Closed read operations select only the five declared raw-mode methods; typed projections refuse null and malformed hex, preserve decoded transactions and blocks, and identify a limiting block, including a block refused at the response-byte ceiling, without accepting unsupported routes.",
       "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
     },
     {
@@ -2558,7 +2558,7 @@
       "path": "packages/wallet/tests/rpc.rs",
       "claim": "WALLET::claim:wallet:rpc-provisioning-rejects-mismatches",
       "before": "",
-      "after": "Claim: Checked provisioning refuses wrong binary, chain, run, launch parameters, trivial challenge and raw genesis identity before exposing a ready reader.",
+      "after": "Claim: Checked provisioning refuses an undeclared harness binary directory, wrong binary, chain, run, launch parameters, trivial challenge and raw genesis identity before exposing a ready reader; refused and unreachable peers return the transport refusal within the single exchange budget.",
       "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
     },
     {
@@ -2600,6 +2600,22 @@
       "before": "",
       "after": "Claim: The RPC bootstrap requires secret carriers and has no Display representation, and a caller cannot supply arbitrary method strings or wallet selections to the closed read interface.",
       "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
+    },
+    {
+      "operation": "pn-wallet::rpc::signed_reads",
+      "path": "packages/wallet/tests/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-signed-fixtures-match-independent-layouts",
+      "before": "",
+      "after": "Claim: The real BDB daemon accepts five signed blocks and refuses an invalid signature and a solved trivial replacement challenge; typed raw reads agree field-for-field with the independent oracle; the single anyone-can-spend genesis output moves whole to a producer-owned reserve funding one explicit, token-free issuance of the declared stock to a producer-owned destination, with zero explicit destruction in grants, fees and transfers and exactly one token destroyed.",
+      "review": "Read the real-node negative verdicts, raw typed reads, independent field comparisons and integer output sums, or the exact retained block/Bytes hold on later requests. These witnesses do not implement recognition, settlement, faucet enforcement or signature verification."
+    },
+    {
+      "operation": "pn-wallet::rpc::reader_limit_hold",
+      "path": "packages/wallet/tests/rpc.rs",
+      "claim": "WALLET::claim:wallet:rpc-real-block-limit-holds-reader",
+      "before": "",
+      "after": "Claim: A real genesis block exceeding a declared decoder byte limit or a lowered response-byte ceiling holds the reader with that block and Bytes cause, and later count or different-block requests return the same hold without advancing past it.",
+      "review": "Read the real-node negative verdicts, raw typed reads, independent field comparisons and integer output sums, or the exact retained block/Bytes hold on later requests. These witnesses do not implement recognition, settlement, faucet enforcement or signature verification."
     }
   ]
 }

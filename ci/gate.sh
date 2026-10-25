@@ -13,6 +13,10 @@ if [ -z "${PN_POSTGRESQL_BIN:-}" ]; then
     echo "GATE-STRUCTURAL-ERROR: PN_POSTGRESQL_BIN must name the PostgreSQL binary directory" >&2
     exit 2
 fi
+if [ -z "${PN_ELEMENTS_BIN:-}" ]; then
+    echo "GATE-STRUCTURAL-ERROR: PN_ELEMENTS_BIN must name the Elements binary directory" >&2
+    exit 2
+fi
 failed=0
 statuses=()
 mkdir -p .lane
@@ -20,7 +24,7 @@ export PN_OBSERVE_ARTIFACT_DIR="$PWD/.lane/observations"
 export PN_OBSERVE_LEVEL=default
 export PN_HOST_TEST_ROOT="$PWD/.lane/host-postgres"
 export PN_WALLET_TEST_ROOT="$PWD/.lane/wallet-elements"
-trap 'python3 -B ci/wallet_elements.py stop --root "$PN_WALLET_TEST_ROOT"; python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"' EXIT
+trap 'python3 -B ci/wallet_elements.py stop-all --root "$PN_WALLET_TEST_ROOT"; python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"' EXIT
 gate_started=$(date -u +%s.%N)
 source ci/gate_resources.sh
 resource_root=$(gate_cgroup_root 2>/dev/null) || resource_root=

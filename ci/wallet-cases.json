@@ -125,37 +125,43 @@
     {
       "group": "profile",
       "case": "nontrivial declared challenge and invalid block signature refused by real node",
-      "status": "held",
-      "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:rpc-signed-fixtures-match-independent-layouts"
+      ],
+      "missing": ""
     },
     {
       "group": "profile",
       "case": "genesis asset outputs, ownership and fixed stock independently reconciled",
-      "status": "held",
-      "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:rpc-signed-fixtures-match-independent-layouts"
+      ],
+      "missing": ""
     },
     {
       "group": "profile",
       "case": "reissuance tokens and reachable issuance, peg and subsidy paths tested and disclosed",
       "status": "held",
       "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "missing": "Zero reissuance tokens in genesis and in the stock issuance, and the wallet reissuance refusal, are witnessed; a valid peg-in claim, which mints only the pegged fee asset while peg-in validation is disabled, and subsidy-producing blocks are not yet attempted against the node."
     },
     {
       "group": "profile",
       "case": "all supported funding paths and pre-opening transfers audited for distribution bypass",
       "status": "held",
       "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "missing": "Signed transfers are witnessed; complete funding-path accounting and exclusive faucet distribution remain held, with operational enforcement in bite 8."
     },
     {
       "group": "profile",
       "case": "transfers, fees and grants give zero burn; destruction gives exact amount",
-      "status": "held",
-      "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "status": "scoped",
+      "claims": [
+        "WALLET::claim:wallet:rpc-signed-fixtures-match-independent-layouts"
+      ],
+      "missing": ""
     },
     {
       "group": "profile",
@@ -171,35 +177,35 @@
       "case": "depth immediately below and at the declared threshold",
       "status": "held",
       "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
     },
     {
       "group": "settlement",
       "case": "shallow replacement and pinned-floor fault",
       "status": "held",
       "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
     },
     {
       "group": "settlement",
       "case": "duplicate outpoints and aliases cannot double count",
       "status": "held",
       "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
     },
     {
       "group": "settlement",
       "case": "wrong policy edition and lineage refused",
       "status": "held",
       "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
     },
     {
       "group": "settlement",
       "case": "missing or ambiguous opening and unavailable evidence refused",
       "status": "held",
       "claims": [],
-      "missing": "signed fixture blocks await a BDB-enabled Elements build"
+      "missing": "Signed blocks are available; real-chain recognition, lineage/opening validation and pinned-floor handling remain in the next slice."
     },
     {
       "group": "settlement",

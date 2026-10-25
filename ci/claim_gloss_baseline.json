@@ -963,6 +963,8 @@
     "pn-wallet::rpc::observations": "",
     "pn-wallet::rpc::generic_negative": "",
     "pn-wallet::rpc::rotation": "",
-    "ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary": ""
+    "ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary": "",
+    "pn-wallet::rpc::signed_reads": "",
+    "pn-wallet::rpc::reader_limit_hold": ""
   }
 }

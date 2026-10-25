@@ -181,6 +181,17 @@ class HashCitations(unittest.TestCase):
             git("commit", "-m", "Different tree")
             with self.assertRaisesRegex(ValueError, "imported source tree differs"):
                 establish(root, dict(imported, tree=git("rev-parse", "HEAD^{tree}")))
+            campaign = dict(reader="campaign-tree", establishment="resolvable", tree=tree)
+            check = establish(root, campaign)
+            self.assertTrue(check(tree, tree))
+            self.assertFalse(check(ancestor, ancestor))
+            with self.assertRaisesRegex(ValueError, "full tree identity"):
+                establish(root, dict(campaign, tree=tree[:7]))
+            detached_tree = git("rev-parse", "HEAD^{tree}")
+            git("reset", "--hard", ancestor)
+            for wrong in [detached_tree, "f" * 40]:
+                with self.assertRaisesRegex(ValueError, "not in HEAD history"):
+                    establish(root, dict(campaign, tree=wrong))
 
     def table(self):
         return {

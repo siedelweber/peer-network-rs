@@ -266,6 +266,18 @@ impl Read {
             Self::Transaction { transaction, block } => ("getrawtransaction", json!([hex(transaction), false, hex(block)])),
         }
     }
+
+    /// A block refused at the response-byte ceiling is a declared byte limit
+    /// like the decoder's: the reader holds there instead of skipping it.
+    fn ceiling(&self, error: RpcRefusal) -> RpcRefusal {
+        match (self, error) {
+            (Self::Block(block), RpcRefusal::ResponseBytes) => RpcRefusal::Held {
+                block: *block,
+                limit: crate::Refusal::Bytes,
+            },
+            (_, error) => error,
+        }
+    }
 }
 
 #[derive(Default)]
@@ -379,8 +391,14 @@ impl RpcClient {
             let mut state = self.state.try_lock().map_err(|_| RpcRefusal::Busy)?;
             let id = state.admit(start)?;
             let deadline = start.checked_add(self.limits.deadline).ok_or(RpcRefusal::Configuration)?;
-            let value = self.exchange(method, &params, id, deadline, &mut status, &mut result_bytes)?;
-            let result = self.project(&request, &value);
+            let value = self
+                .exchange(method, &params, id, deadline, &mut status, &mut result_bytes)
+                .map_err(|error| request.ceiling(error));
+            let result = match value {
+                Ok(value) => self.project(&request, &value),
+                Err(error @ RpcRefusal::Held { .. }) => Err(error),
+                Err(error) => return Err(error),
+            };
             if let Err(RpcRefusal::Held { block, limit }) = &result {
                 state.held = Some((*block, *limit));
             }
@@ -581,7 +599,7 @@ mod tests {
         );
     }
 
-    /// Claim: Closed read operations select only the five declared raw-mode methods; typed projections refuse null and malformed hex, preserve decoded transactions and blocks, and identify a limiting block without accepting unsupported routes.
+    /// Claim: Closed read operations select only the five declared raw-mode methods; typed projections refuse null and malformed hex, preserve decoded transactions and blocks, and identify a limiting block, including a block refused at the response-byte ceiling, without accepting unsupported routes.
     /// ´claim:wallet:rpc-reads-have-closed-typed-projections´
     /// ´test:unit:projections´
     #[test]
@@ -643,6 +661,17 @@ mod tests {
                 limit: crate::Refusal::Bytes
             }
         );
+        assert_eq!(
+            reads[3].ceiling(RpcRefusal::ResponseBytes),
+            RpcRefusal::Held {
+                block: [1; 32],
+                limit: crate::Refusal::Bytes
+            }
+        );
+        assert_eq!(reads[3].ceiling(RpcRefusal::Transport), RpcRefusal::Transport);
+        for read in [&reads[0], &reads[1], &reads[2], &reads[4]] {
+            assert_eq!(read.ceiling(RpcRefusal::ResponseBytes), RpcRefusal::ResponseBytes);
+        }
         let limits = RpcLimits::default();
         assert!(limits.valid());
         assert!(!RpcLimits { json_items: 0, ..limits }.valid());

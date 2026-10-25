@@ -124,6 +124,18 @@ def establish(root, rule):
         if result.returncode or tree != result.stdout.strip():
             raise ValueError("hash citations: imported source tree differs")
         return lambda value, _line: value in {commit, tree}
+    if kind == "campaign-tree" and standing == "resolvable":
+        # Signing changes commit identity, never the exercised tree. Before
+        # import, cite that tree only; the public commit locator is added then.
+        tree = rule["tree"]
+        if not re.fullmatch(r"[0-9a-f]{40}", tree):
+            raise ValueError("hash citations: campaign requires a full tree identity")
+        started = time.monotonic()
+        history = subprocess.run(["git", "log", "--format=%T", "HEAD"], cwd=root, capture_output=True, text=True)
+        print(f"hash citations git log wall={time.monotonic()-started:.6f}s status={history.returncode}")
+        if history.returncode or tree not in history.stdout.splitlines():
+            raise ValueError("hash citations: campaign tree is not in HEAD history")
+        return lambda value, _line: value == tree
     if kind == "public-git" and standing == "resolvable":
         locator = rule["locator"]
         commit = rule["commit"]

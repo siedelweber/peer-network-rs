@@ -14,6 +14,30 @@ CODEC_PACKAGES = {'elements', 'bitcoin', 'bitcoin_hashes', 'secp256k1', 'secp256
 ADAPTER = 'packages/wallet/src/decoder.rs'
 
 
+def public_struct_types(body):
+    opening = re.search(r'[({]', body)
+    if opening is None:
+        return body
+    header = body[:opening.start()]
+    fields = body[opening.end():]
+    depth = 0
+    start = 0
+    exposed = [header]
+    for index, character in enumerate(fields):
+        if character in '<([{':
+            depth += 1
+        elif character in '>)]}':
+            depth -= 1
+        if (character == ',' and depth == 0) or depth < 0:
+            field = fields[start:index]
+            if re.search(r'\bpub\b', field):
+                exposed.append(field)
+            start = index + 1
+            if depth < 0:
+                break
+    return ' '.join(exposed)
+
+
 def check_build_scripts(rows, packages):
     for row in rows:
         matches = [p for p in packages if (p['name'], p['version']) == (row['name'], row['version'])]
@@ -120,15 +144,44 @@ def check(root=Path('.')):
                 tainted = set(names)
                 for _ in range(len(source.splitlines())):
                     before = set(tainted)
-                    for declaration in re.finditer(r'\b(?:use|type)\s+([^;]+);', source):
-                        body = declaration.group(1)
+                    for declaration in re.finditer(r'\b(use|type)\s+([^;]+);', source):
+                        body = declaration.group(2)
                         if any(re.search(r'\b'+re.escape(alias)+r'\b', body) for alias in tainted):
-                            tainted.update(re.findall(r'\b[A-Za-z_]\w*\b', body))
+                            if declaration.group(1) == 'type':
+                                tainted.add(re.match(r'\s*(\w+)', body).group(1))
+                            else:
+                                if '*' in body:
+                                    raise ValueError('adapter codec glob import is not admitted')
+                                # Only the imported binding is introduced. In
+                                # `Transaction as Hidden`, Transaction may also
+                                # name our unrelated first-party projection.
+                                for part in body.split(','):
+                                    binding = re.search(r'(\w+)\s*[}]*\s*$', part)
+                                    if binding:
+                                        tainted.add(binding.group(1))
                     if before == tainted:
                         break
                 for signature in re.finditer(r'\bpub\s*(?:\([^)]*\)\s*)?(?:(?:async|const|unsafe|extern)\s+)*fn\b[^{};]*', source):
                     if any(re.search(r'\b'+re.escape(alias)+r'\b', signature.group()) for alias in tainted):
                         raise ValueError('adapter public signature carries codec type')
+                for declaration in re.finditer(r'\bpub\s*(?:\([^)]*\)\s*)?(struct|enum|const|static)\b', source):
+                    kind = declaration.group(1)
+                    body = source[declaration.end():item_end(source, declaration.start())]
+                    if kind in ('const', 'static'):
+                        # A const fn was checked above; an item's declared type
+                        # ends before its initializer, which is not exported.
+                        if re.match(r'\s+fn\b', body):
+                            continue
+                        exposed = body.split('=', 1)[0]
+                    elif kind == 'enum':
+                        # Every variant of an exported enum is exported too.
+                        exposed = body
+                    else:
+                        # Include generic bounds and public named/tuple fields,
+                        # while allowing private codec storage in a wrapper.
+                        exposed = public_struct_types(body)
+                    if any(re.search(r'\b'+re.escape(alias)+r'\b', exposed) for alias in tainted):
+                        raise ValueError('adapter public '+kind+' carries codec type')
                 production = list(source)
                 # Only unconditional cfg(test) removes a production item.
                 for marker in re.finditer(r'#\s*\[\s*cfg\s*\(\s*test\s*\)\s*\]', source):

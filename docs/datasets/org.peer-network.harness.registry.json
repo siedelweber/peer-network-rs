@@ -77,7 +77,7 @@
     {
       "kind": "tier",
       "name": "service",
-      "reason": "The gate owns PostgreSQL 19 RC 1 for transport and library storage evidence; executable activation, admitted epoch transactions and other service integrations remain held.",
+      "reason": "The gate owns PostgreSQL 19 RC 1 for transport and library storage evidence and Elements 29.4.1 RC 1 for wallet read evidence; executable activation, admitted epoch transactions and other service integrations remain held.",
       "status": "active"
     },
     {
@@ -3661,6 +3661,13 @@
       "name": "pn-wallet-rust"
     },
     {
+      "contract": "Elements 29.4.1 RC 1 daemon reads: genesis provisioning, cookie rotation and node-signed fixture blocks; recognition and settlement held",
+      "edition": "29.4.1rc1",
+      "evidence": "real",
+      "kind": "implementation",
+      "name": "pn-wallet-elements"
+    },
+    {
       "budget": "pure-suite",
       "cases": [
         "pn-wallet::decoder::tests::global_context_initialization",
@@ -3736,15 +3743,17 @@
         "pn-wallet::rpc::authentication_refusals",
         "pn-wallet::rpc::observations",
         "pn-wallet::rpc::generic_negative",
-        "pn-wallet::rpc::rotation"
+        "pn-wallet::rpc::rotation",
+        "pn-wallet::rpc::signed_reads",
+        "pn-wallet::rpc::reader_limit_hold"
       ],
-      "implementation": "pn-wallet-rust",
+      "implementation": "pn-wallet-elements",
       "kind": "suite",
       "level": "integration",
       "name": "pn-wallet::rpc",
       "runner": "nextest",
       "status": "active",
-      "tier": "fast"
+      "tier": "service"
     }
   ]
 }

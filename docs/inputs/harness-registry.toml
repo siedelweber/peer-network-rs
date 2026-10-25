@@ -73,7 +73,7 @@ reason = "per-change local and process evidence"
 kind = "tier"
 name = "service"
 status = "active"
-reason = "The gate owns PostgreSQL 19 RC 1 for transport and library storage evidence; executable activation, admitted epoch transactions and other service integrations remain held."
+reason = "The gate owns PostgreSQL 19 RC 1 for transport and library storage evidence and Elements 29.4.1 RC 1 for wallet read evidence; executable activation, admitted epoch transactions and other service integrations remain held."
 
 [[rows]]
 kind = "tier"
@@ -1151,6 +1151,13 @@ contract = "bounded public Elements layout decoding and independent field oracle
 edition = "wallet-layout-1"
 
 [[rows]]
+kind = "implementation"
+name = "pn-wallet-elements"
+evidence = "real"
+contract = "Elements 29.4.1 RC 1 daemon reads: genesis provisioning, cookie rotation and node-signed fixture blocks; recognition and settlement held"
+edition = "29.4.1rc1"
+
+[[rows]]
 kind = "suite"
 name = "pn-wallet"
 status = "active"
@@ -1200,7 +1207,7 @@ name = "pn-wallet::rpc"
 status = "active"
 runner = "nextest"
 level = "integration"
-implementation = "pn-wallet-rust"
-tier = "fast"
+implementation = "pn-wallet-elements"
+tier = "service"
 budget = "pure-suite"
-cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals", "pn-wallet::rpc::authentication_refusals", "pn-wallet::rpc::observations", "pn-wallet::rpc::generic_negative", "pn-wallet::rpc::rotation"]
+cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals", "pn-wallet::rpc::authentication_refusals", "pn-wallet::rpc::observations", "pn-wallet::rpc::generic_negative", "pn-wallet::rpc::rotation", "pn-wallet::rpc::signed_reads", "pn-wallet::rpc::reader_limit_hold"]

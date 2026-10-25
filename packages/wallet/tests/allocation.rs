@@ -1,5 +1,6 @@
 //! One profiler per child test process; the reviewed dependency owns the allocator.
 use std::fmt::Write as _;
+mod oracle;
 
 #[global_allocator]
 static ALLOCATOR: dhat::Alloc = dhat::Alloc;
@@ -34,6 +35,39 @@ fn maximum_block() -> Vec<u8> {
     full_block.extend(full);
     assert_eq!(full_block.len(), 4_000_000);
     full_block
+}
+
+fn surjection_block() -> Vec<u8> {
+    let transaction = oracle::transaction(include_bytes!("../fuzz/seeds/proof-transaction")).unwrap();
+    let output = transaction.outputs.iter().find(|output| output.witness[0] != 0).unwrap();
+    // The upstream seed's short CompactSize prefixes a serialized surjection
+    // proof. Retain that proof, but omit the independent range proof so all
+    // 4,094 outputs and their native parsed proofs fit the byte envelope.
+    let proof_length = usize::from(output.witness[0]);
+    assert!((1..253).contains(&proof_length));
+    let mut bytes = vec![2, 0, 0, 0, 1, 1];
+    input(&mut bytes);
+    bytes.push(253);
+    bytes.extend(4094u16.to_le_bytes());
+    for _ in 0..4094 {
+        bytes.extend(&output.asset);
+        bytes.extend(&output.value);
+        bytes.extend(&output.nonce);
+        bytes.push(0); // Empty output script is structurally permitted.
+    }
+    bytes.extend([0; 8]); // Lock time and the single input's empty witness.
+    for _ in 0..4094 {
+        bytes.extend(&output.witness[..=proof_length]);
+        bytes.push(0); // No range proof.
+    }
+    let mut block = vec![0; 76];
+    block.extend([0, 0, 1]);
+    block.extend(bytes);
+    assert_eq!(block.len(), 692_023);
+    let (_, decoded) = oracle::block(&block).unwrap();
+    assert_eq!(decoded[0].outputs.len(), 4094);
+    assert!(decoded[0].outputs.iter().all(|output| output.witness[0] != 0));
+    block
 }
 
 /// Claim: Per-vector allocator measurements cover hostile, maximum and over-limit counts, short payloads and nested witnesses; rejected prefixes allocate nothing in the adapter, and successful layouts stay below the declared requested-allocation envelope and release their measured live storage.
@@ -80,6 +114,7 @@ fn decoder_reservations() {
         ("block-proof", block, true),
         ("block-dynafed", include_bytes!("../fuzz/seeds/dynafed-block").to_vec(), true),
         ("block-4096", full_block, true),
+        ("block-surjections", surjection_block(), true),
         ("block-short", vec![0; 76], false),
     ];
     let mut evidence = String::from("vector,requested,peak,live\n");
