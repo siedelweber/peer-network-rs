@@ -1022,6 +1022,14 @@ fn dependency_violations(
 }
 
 fn validate_parents(act: &CandidateAct, available: &BTreeMap<&ActId, (Position, u64)>) -> Result<(), ValidationError> {
+    validate_parents_with(act, available, precedes)
+}
+
+fn validate_parents_with(
+    act: &CandidateAct,
+    available: &BTreeMap<&ActId, (Position, u64)>,
+    earlier: impl Fn((Position, u64), (Position, u64)) -> bool,
+) -> Result<(), ValidationError> {
     let error = |parent: Option<&ActId>, cause| ValidationError::Parent {
         act: act.id.clone(),
         parent: parent.cloned(),
@@ -1041,7 +1049,7 @@ fn validate_parents(act: &CandidateAct, available: &BTreeMap<&ActId, (Position, 
         let target = available
             .get(parent)
             .ok_or_else(|| error(Some(parent), ParentCause::Missing))?;
-        if !precedes(*target, order(act)) {
+        if !earlier(*target, order(act)) {
             return Err(error(Some(parent), ParentCause::NotEarlier));
         }
     }
@@ -1099,7 +1107,7 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
     let mut non_compliance = Vec::new();
     for act in &ordered {
         non_compliance.extend(dependency_violations(act, &available)?);
-        validate_parents(act, &available)?;
+        validate_parents_with(act, &available, |parent, child| parent.0 < child.0)?;
     }
     Ok(ValidatedHistory {
         acts: Arc::new(acts.iter().map(validated_act).collect()),

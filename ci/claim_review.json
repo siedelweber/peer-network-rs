@@ -2789,9 +2789,9 @@
       "operation": "pn-records::public::ordering::attached_times",
       "path": "packages/records/tests/public/ordering.rs",
       "claim": "RECORDS::claim:acts:attached-times-match-scoped-incidence-replay",
-      "before": "",
-      "after": "Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.",
-      "review": "Read the exact epoch-qualified placement and retained-time assertions. Recurrence expectations use independently scanned prior incidence; the process witness compares complete results and accounting across observation modes. These are internal carrier checks, conditional on family-valid incidence, not cryptographic authentication or a resolution of the non-compliant time and cross-epoch paper holds."
+      "before": "Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.",
+      "after": "Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search, including disjoint incidence below the global maximum and a later read of an unchanged frontier; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.",
+      "review": "The replay parent fixture retains all act fields across a time inversion, checks exact Mismatch evidence, and preserves missing/equal/later placement refusals and candidate causal-key refusal. The incidence fixture uses disjoint endpoints below the global maximum and reads an unaffected frontier, distinguishing both monotone-global and last-act clocks. These are local implementation witnesses; parent paper correspondence remains held."
     },
     {
       "operation": "pn-records::public::ordering::retained_time_evidence",
@@ -2872,6 +2872,14 @@
       "before": "",
       "after": "Claim: Affinity projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the three successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
       "review": "Read the bounded coordinate grid, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
+    },
+    {
+      "operation": "pn-records::public::ordering::parent_replay",
+      "path": "packages/records/tests/public/ordering.rs",
+      "claim": "RECORDS::claim:acts:parent-replay-separates-placement-from-stamping",
+      "before": "",
+      "after": "Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, equal-position and later parents still refuse, candidate causal-key refusal remains, and earlier epochs precede smaller current positions.",
+      "review": "The replay parent fixture retains all act fields across a time inversion, checks exact Mismatch evidence, and preserves missing/equal/later placement refusals and candidate causal-key refusal. The incidence fixture uses disjoint endpoints below the global maximum and reads an unaffected frontier, distinguishing both monotone-global and last-act clocks. These are local implementation witnesses; parent paper correspondence remains held."
     }
   ]
 }

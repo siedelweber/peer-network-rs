@@ -984,7 +984,7 @@
     "pn-records::public::finalized_order": "",
     "ci::test_observe_runtime.Processes.test_records_replay": "Claim: Finalized dependency violations and every retained act field agree with observation disabled, at default and at trace; candidate refusals remain refusals while replay is accounted as success.",
     "pn-records::public::ordering::epoch_placement": "",
-    "pn-records::public::ordering::attached_times": "",
+    "pn-records::public::ordering::attached_times": "Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.",
     "pn-records::public::ordering::retained_time_evidence": "",
     "pn-graph::public::chain_storage": "",
     "pn-graph::registration::complete_projection": "",
@@ -994,6 +994,7 @@
     "ci::test_wallet_boundary.WalletBoundary.test_fixture_ports": "",
     "pn-graph::formation::affinity_coordinates": "",
     "pn-graph::formation::mixed_reconstruction": "",
-    "ci::test_observe_runtime.Processes.test_graph_formation": ""
+    "ci::test_observe_runtime.Processes.test_graph_formation": "",
+    "pn-records::public::ordering::parent_replay": ""
   }
 }

@@ -1,7 +1,7 @@
-use super::{act, named};
+use super::{act, assert_retained, named};
 use pn_records::{
-    CandidateAct, DependencyCause, DependencyProjection, Layout, Removal, TimeVerdict, ValidationError, assemble_boundary_inputs,
-    validate_history, validate_record,
+    CandidateAct, DependencyCause, DependencyProjection, Layout, ParentCause, Removal, TimeVerdict, ValidationError,
+    assemble_boundary_inputs, validate_history, validate_record,
 };
 
 /// Claim: Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.
@@ -57,7 +57,14 @@ fn epoch_placement() {
 }
 
 fn history_case() -> (Vec<CandidateAct>, Vec<pn_records::PublicReference>) {
-    let names = vec![named("left"), named("middle"), named("right")];
+    let names = vec![
+        named("left"),
+        named("middle"),
+        named("right"),
+        named("remote-left"),
+        named("remote-right"),
+        named("fresh"),
+    ];
     let mut first = act(1, Layout::Binary);
     first.authoritative_position = 1;
     first.logical_time = 1;
@@ -72,7 +79,19 @@ fn history_case() -> (Vec<CandidateAct>, Vec<pn_records::PublicReference>) {
     third.authoritative_position = 1;
     third.logical_time = 3;
     third.body.asserted_parents = vec![second.id.clone()];
-    (vec![first, second, third], names)
+    let mut disjoint = act(4, Layout::Binary);
+    disjoint.finalization_epoch = 6;
+    disjoint.authoritative_position = 2;
+    disjoint.logical_time = 1;
+    disjoint.legs[0].source = named("remote-left");
+    disjoint.legs[0].target = named("remote-right");
+    let mut unchanged = act(5, Layout::Binary);
+    unchanged.finalization_epoch = 6;
+    unchanged.authoritative_position = 3;
+    unchanged.logical_time = 4;
+    unchanged.legs[0].source = named("right");
+    unchanged.legs[0].target = named("fresh");
+    (vec![first, second, third, disjoint, unchanged], names)
 }
 
 fn independent_time(acts: &[CandidateAct], index: usize) -> u128 {
@@ -106,7 +125,7 @@ fn independent_time(acts: &[CandidateAct], index: usize) -> u128 {
     u128::from(endpoint_time.max(prior_time)) + 1
 }
 
-/// Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.
+/// Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search, including disjoint incidence below the global maximum and a later read of an unchanged frontier; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.
 /// ´claim:acts:attached-times-match-scoped-incidence-replay´
 /// ´test:integration:attached-times´
 #[test]
@@ -115,6 +134,12 @@ fn attached_times() {
     for (index, act) in acts.iter().enumerate() {
         assert_eq!(u128::from(act.logical_time), independent_time(&acts, index));
     }
+    let global_expected = acts[..3].iter().map(|act| act.logical_time).max().unwrap() + 1;
+    assert_eq!(global_expected, 4);
+    assert_eq!(acts[3].logical_time, 1);
+    assert_ne!(acts[3].logical_time, global_expected);
+    assert_eq!(independent_time(&acts, 4), 4);
+    assert_ne!(u128::from(acts[3].logical_time) + 1, independent_time(&acts, 4));
     let forward = validate_history(&acts, &names).unwrap();
     assert!(forward.time_evidence().iter().all(|row| row.verdict == TimeVerdict::Matches));
     for leg in forward.acts()[1].legs() {
@@ -126,6 +151,62 @@ fn attached_times() {
         validate_history(&reversed, &names).unwrap().time_evidence(),
         forward.time_evidence()
     );
+}
+
+/// Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, equal-position and later parents still refuse, candidate causal-key refusal remains, and earlier epochs precede smaller current positions.
+/// ´claim:acts:parent-replay-separates-placement-from-stamping´
+/// ´test:integration:parent-replay´
+#[test]
+fn parent_replay() {
+    let names = [named("left"), named("right")];
+    let empty = validate_history(&[], &names).unwrap();
+    let mut parent = act(1, Layout::Binary);
+    parent.authoritative_position = 1;
+    parent.logical_time = 5;
+    let mut child = act(2, Layout::Binary);
+    child.authoritative_position = 2;
+    child.logical_time = 3;
+    child.body.asserted_parents = vec![parent.id.clone()];
+    let inputs = [parent.clone(), child.clone()];
+    let replay = validate_history(&inputs, &names).unwrap();
+    assert_retained(&replay, &inputs);
+    assert_eq!(
+        replay.time_evidence()[1].verdict,
+        TimeVerdict::Mismatch {
+            attached: 3,
+            expected: 6
+        }
+    );
+    let refusal = |cause| ValidationError::Parent {
+        act: child.id.clone(),
+        parent: Some(parent.id.clone()),
+        cause,
+    };
+    assert_eq!(
+        validate_record(&inputs, &empty, &[]).unwrap_err(),
+        refusal(ParentCause::NotEarlier)
+    );
+    assert_eq!(
+        validate_history(&[child.clone()], &names).unwrap_err(),
+        refusal(ParentCause::Missing)
+    );
+    for position in [2, 3] {
+        parent.authoritative_position = position;
+        assert_eq!(
+            validate_history(&[parent.clone(), child.clone()], &names).unwrap_err(),
+            refusal(ParentCause::NotEarlier)
+        );
+    }
+    parent.finalization_epoch = 1;
+    parent.authoritative_position = 2;
+    child.finalization_epoch = 2;
+    child.authoritative_position = 1;
+    child.logical_time = 6;
+    let inputs = [parent, child];
+    let replay = validate_history(&inputs, &names).unwrap();
+    assert_retained(&replay, &inputs);
+    assert_eq!(replay.time_evidence()[1].verdict, TimeVerdict::Matches);
+    assert!(validate_record(&inputs, &empty, &[]).is_ok());
 }
 
 /// Claim: Recurrence mismatches retain the attached time and exact expected value, including a value beyond u64; tombstoned openings, non-compliant dependencies and ambiguous placement yield no time verdict, and none rewrites finalization metadata.
