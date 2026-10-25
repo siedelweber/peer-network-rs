@@ -424,3 +424,15 @@ reader = "cargo-archive"
 source = "Cargo.lock"
 definition = "The package name and version locate the unmodified crates.io archive; the notice repeats its existing lock checksum to attribute the retained MIT permission text."
 paths = ["packages/graph/NOTICE-DEPENDENCIES"]
+
+[[rows]]
+family = "pinned-rustc-identity"
+group = "external compiler"
+measures = "Public compiler commit answering the pinned dated nightly"
+producer = "rustc -vV"
+establishment = "resolvable"
+reader = "public-git"
+locator = "https://github.com/rust-lang/rust/commit/4ebd258257737d5b7635c116fa7d281627a7e937"
+commit = "4ebd258257737d5b7635c116fa7d281627a7e937"
+definition = "The build policy pins this full public compiler commit; the toolchain step requires exact equality with the answering rustc commit-hash, independently of the declared channel."
+paths = ["docs/inputs/build-policy.toml", "docs/datasets/org.peer-network.build.policy.json", "adr/013-toolchain-and-build-profile.md", "ci/discipline.py", "ci/hash-citation-families.toml"]

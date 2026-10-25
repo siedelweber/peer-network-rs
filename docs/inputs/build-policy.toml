@@ -4,6 +4,7 @@ version = [1, 0, 0]
 [[rows]]
 name = "workspace"
 channel = "nightly-2026-10-16"
+rustc_commit = "4ebd258257737d5b7635c116fa7d281627a7e937"
 components = ["rustfmt", "clippy"]
 lto = "thin"
 codegen_units = 1

@@ -16,6 +16,7 @@
       "lto": "thin",
       "name": "workspace",
       "profile_gate": "build-policy",
+      "rustc_commit": "4ebd258257737d5b7635c116fa7d281627a7e937",
       "tests_gate": "discipline-tests",
       "toolchain_gate": "toolchain"
     }

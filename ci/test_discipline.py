@@ -559,25 +559,33 @@ class SourceDiscipline(unittest.TestCase):
         self.assertFalse(cargo_config_findings(tomllib.loads('[build]\njobs = 2')))
 
     def test_toolchain_versions(self):
-        """Only the pinned dated nightly with both declared, answering components satisfies the compiler policy.
+        """Only the pinned dated nightly answering with the full declared compiler commit and both required components satisfies the compiler policy.
         ´claim:discipline:toolchain-family-is-consistent´
         ´test:integration:test-toolchain-versions´
         """
-        versions = ['rustc 1.101.0-nightly (abcdef 2026-10-16)', 'cargo 1.101.0-nightly', 'clippy 0.1.101', 'rustfmt 1.9.0-nightly']
-        validate_toolchain('nightly-2026-10-16', versions, ['rustfmt', 'clippy'])
+        expected = tomllib.loads(Path('docs/inputs/build-policy.toml').read_text())['rows'][0]['rustc_commit']
+        versions = [f'rustc 1.101.0-nightly ({expected[:9]} 2026-10-15)\ncommit-hash: {expected}', 'cargo 1.101.0-nightly', 'clippy 0.1.101', 'rustfmt 1.9.0-nightly']
+        validate_toolchain('nightly-2026-10-16', versions, ['rustfmt', 'clippy'], expected)
         for channel in ['nightly', 'nightly-2026-10-17', 'stable', '1.99.1']:
             with self.assertRaises(ValueError):
-                validate_toolchain(channel, versions, ['rustfmt', 'clippy'])
+                validate_toolchain(channel, versions, ['rustfmt', 'clippy'], expected)
         for components in [[], ['rustfmt'], ['clippy']]:
             with self.assertRaises(ValueError):
-                validate_toolchain('nightly-2026-10-16', versions, components)
+                validate_toolchain('nightly-2026-10-16', versions, components, expected)
         for index in range(4):
             missing = versions.copy()
             missing[index] = ''
             with self.assertRaises(ValueError):
-                validate_toolchain('nightly-2026-10-16', missing, ['rustfmt', 'clippy'])
+                validate_toolchain('nightly-2026-10-16', missing, ['rustfmt', 'clippy'], expected)
         with self.assertRaises(ValueError):
-            validate_toolchain('nightly-2026-10-16', ['rustc 1.99.1', *versions[1:]], ['rustfmt', 'clippy'])
+            validate_toolchain('nightly-2026-10-16', ['rustc 1.99.1', *versions[1:]], ['rustfmt', 'clippy'], expected)
+        for answer in [versions[0].replace(expected, '0' * 40), versions[0].splitlines()[0],
+                       versions[0] + '\ncommit-hash: ' + expected,
+                       versions[0].replace(expected, expected[:9])]:
+            with self.subTest(answer=answer), self.assertRaisesRegex(ValueError, 'commit-hash'):
+                validate_toolchain('nightly-2026-10-16', [answer, *versions[1:]], ['rustfmt', 'clippy'], expected)
+        with self.assertRaisesRegex(ValueError, 'full rustc commit'):
+            validate_toolchain('nightly-2026-10-16', versions, ['rustfmt', 'clippy'], expected[:9])
 
     @unittest.skipUnless(os.environ.get('FOUNDATION_COMPUTE_TESTS') == '1', 'compute-node compiler witness')
     def test_nursery_warning(self):

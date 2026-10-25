@@ -237,7 +237,7 @@ def cargo_config_findings(value):
     return False
 
 
-def validate_toolchain(channel, versions, components):
+def validate_toolchain(channel, versions, components, expected_commit):
     if channel != "nightly-2026-10-16":
         raise ValueError("rust-toolchain.toml: expected nightly-2026-10-16")
     if not {"rustfmt", "clippy"} <= set(components):
@@ -249,6 +249,11 @@ def validate_toolchain(channel, versions, components):
             raise ValueError(f"unexpected toolchain response: {value}")
     if "-nightly" not in versions[0].splitlines()[0]:
         raise ValueError("the compiler must be nightly")
+    if not re.fullmatch(r"[0-9a-f]{40}", expected_commit):
+        raise ValueError("build policy requires a full rustc commit identity")
+    commits = re.findall(r"^commit-hash: ([0-9a-f]{40})$", versions[0], re.M)
+    if commits != [expected_commit]:
+        raise ValueError("answering rustc commit-hash differs from build policy")
 
 
 def workspace_packages():
@@ -261,7 +266,7 @@ def workspace_packages():
 def validate_build_policy(root):
     manifest = tomllib.loads((root / "Cargo.toml").read_text())
     if "rust-version" in manifest["workspace"]["package"]:
-        raise ValueError("tracked nightly declares no minimum compiler")
+        raise ValueError("pinned compiler declares no checked minimum compiler")
     for member in manifest["workspace"]["members"]:
         if member.startswith("vendor/"):
             continue
@@ -269,6 +274,7 @@ def validate_build_policy(root):
             raise ValueError(f"{member}: no minimum compiler declaration is checked")
     policy = tomllib.loads((root / "docs/inputs/build-policy.toml").read_text())["rows"]
     expected = {"name": "workspace", "channel": "nightly-2026-10-16", "components": ["rustfmt", "clippy"],
+                "rustc_commit": "4ebd258257737d5b7635c116fa7d281627a7e937",
                 "lto": "thin", "codegen_units": 1, "toolchain_gate": "toolchain",
                 "profile_gate": "build-policy", "tests_gate": "discipline-tests"}
     if policy != [expected]:
@@ -343,8 +349,10 @@ def main():
             result = subprocess.run(command, capture_output=True, text=True, check=True)
             print(result.stdout.strip())
             versions.append(result.stdout.strip())
-        validate_toolchain(toolchain["channel"], versions, toolchain.get("components", []))
+        policy = tomllib.loads(pathlib.Path("docs/inputs/build-policy.toml").read_text())["rows"][0]
+        validate_toolchain(toolchain["channel"], versions, toolchain.get("components", []), policy["rustc_commit"])
         print("TOOLCHAIN-CHANNEL=" + toolchain["channel"])
+        print("TOOLCHAIN-COMMIT=" + policy["rustc_commit"])
         return 0
     if mode == "cargo-config":
         tracked = git("ls-files", "-z")

@@ -2,6 +2,7 @@ namespace = "org.peer-network.graph.dependencies"
 version = [1, 0, 0]
 
 [[rows]]
+feature_scope = "Unified workspace petgraph feature set, including serde-1 and its serde dependencies."
 name = "petgraph"
 version = "0.8.3"
 license = "MIT OR Apache-2.0; taken under MIT"
@@ -13,6 +14,6 @@ notice = "packages/graph/NOTICE-DEPENDENCIES"
 name = "serde"
 version = "1.0.229"
 license = "MIT OR Apache-2.0"
-features = ["default", "derive", "serde_derive", "std"]
+features = ["alloc", "default", "derive", "serde_derive", "std"]
 role = "Existing workspace dependency inherited for diagnostic Registration weights; no canonical publication encoding"
 notice = "Existing workspace dependency obligations"

@@ -248,7 +248,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(accounting['default'],accounting['trace'])
 
     def test_graph_dependency(self):
-        """Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed 0.8.3 identity and exactly its default-plus-serde feature vocabulary, so manifest spelling alone cannot stand in for resolved dependency evidence.
+        """Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed identity and features, and the graph dependency rows and numeric serde row agree with locked identities and resolved features, so a table cannot omit an enabled serde feature.
         ´claim:discipline:graph-backend-retains-reviewed-identity´
         ´test:integration:test-graph-dependency´
         """
@@ -265,6 +265,25 @@ class Processes(unittest.TestCase):
         self.assertEqual(package['version'], '0.8.3')
         node = next(row for row in resolved['resolve']['nodes'] if row['id'] == package['id'])
         self.assertEqual(set(node['features']), {'default', 'std', 'graphmap', 'stable_graph', 'matrix_graph', 'serde-1', 'serde', 'serde_derive'})
+        declarations = tomllib.loads(Path('docs/inputs/graph-dependencies.toml').read_text())['rows']
+        locked = tomllib.loads(Path('Cargo.lock').read_text())['package']
+
+        def check_row(row):
+            package = next(p for p in resolved['packages'] if p['name'] == row['name'] and p['version'] == row['version'])
+            self.assertTrue(any(p['name'] == row['name'] and p['version'] == row['version'] for p in locked))
+            node = next(n for n in resolved['resolve']['nodes'] if n['id'] == package['id'])
+            features = row['features'].split(', ') if isinstance(row['features'], str) else row['features']
+            self.assertEqual(set(features), set(node['features']))
+
+        for row in declarations:
+            check_row(row)
+        serde = next(row for row in declarations if row['name'] == 'serde')
+        self.assertEqual(serde['version'], '1.0.229')
+        self.assertEqual(set(serde['features']), {'alloc', 'default', 'derive', 'serde_derive', 'std'})
+        numeric = tomllib.loads(Path('docs/inputs/numeric-dependencies.toml').read_text())['rows']
+        check_row(next(row for row in numeric if row['name'] == 'serde'))
+        with self.assertRaises(AssertionError):
+            check_row(serde | {'features': [feature for feature in serde['features'] if feature != 'alloc']})
 
     def test_generated_records_refusals(self):
         """Claim: Each single corruption of the same seeded records DAG retains its exact typed refusal at default and trace, and both metric distributions contain nineteen refusals and no errors.

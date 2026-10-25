@@ -86,7 +86,7 @@ class Correspondence(unittest.TestCase):
         """
         baseline = self.check()
         self.assertEqual(baseline.returncode, 0, baseline.stderr)
-        self.assertIn('INVENTORY-PLACEHOLDERS rows=1645 structural=132 refused=0', baseline.stdout)
+        self.assertIn('INVENTORY-PLACEHOLDERS rows=1648 structural=132 refused=0', baseline.stdout)
         path = self.root / 'docs/datasets/org.peer-network.design.inventory.json'
         original = path.read_text()
         dataset = json.loads(original)
@@ -98,7 +98,7 @@ class Correspondence(unittest.TestCase):
         path.write_text(json.dumps(dataset))
         result = self.check()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('INVENTORY-PLACEHOLDERS rows=1645 structural=132 refused=3', result.stdout)
+        self.assertIn('INVENTORY-PLACEHOLDERS rows=1648 structural=132 refused=3', result.stdout)
         self.assertIn('obligation-bearing inventory placeholders:', result.stderr)
         for label in labels:
             self.assertIn(label, result.stderr)

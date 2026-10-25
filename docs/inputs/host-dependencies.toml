@@ -2,6 +2,7 @@ namespace = "org.peer-network.storage.dependencies"
 version = [1, 0, 0]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "ahash 0.8.12"
 version = "0.8.12"
 checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
@@ -12,6 +13,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "aho-corasick 1.1.5"
 version = "1.1.5"
 checksum = "c982642fa9e8606056828ee9a8505737230110bb1099153c79efe865c59d12ba"
@@ -22,6 +24,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "anes 0.1.6"
 version = "0.1.6"
 checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
@@ -32,6 +35,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "anstream 1.0.0"
 version = "1.0.0"
 checksum = "824a212faf96e9acacdbd09febd34438f8f711fb84e09a8916013cd7815ca28d"
@@ -42,6 +46,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "anstyle 1.0.14"
 version = "1.0.14"
 checksum = "940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000"
@@ -52,6 +57,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "anstyle-parse 1.0.0"
 version = "1.0.0"
 checksum = "52ce7f38b242319f7cabaa6813055467063ecdc9d355bbb4ce0c68908cd8130e"
@@ -62,6 +68,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "anstyle-query 1.1.5"
 version = "1.1.5"
 checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
@@ -72,6 +79,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "anstyle-wincon 3.0.11"
 version = "3.0.11"
 checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
@@ -82,6 +90,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "anyhow 1.0.104"
 version = "1.0.104"
 checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
@@ -92,6 +101,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "async-trait 0.1.92"
 version = "0.1.92"
 checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
@@ -102,6 +112,7 @@ build_time = "none"
 procedural_macros = ["async_trait"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "autocfg 1.5.1"
 version = "1.5.1"
 checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
@@ -112,6 +123,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "base64 0.22.1"
 version = "0.22.1"
 checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
@@ -122,6 +134,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "base64 0.23.1"
 version = "0.23.1"
 checksum = "ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5"
@@ -132,6 +145,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "bit-set 0.11.1"
 version = "0.11.1"
 checksum = "56d87354e4229f54a44f7bf2435906a4656dba36026ab6eaca629a2c436a691c"
@@ -142,6 +156,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "bit-vec 0.10.1"
 version = "0.10.1"
 checksum = "5727b15fa97d4f4fee0a3b7c3d550ed0269f54329207b86388de918604e31269"
@@ -152,6 +167,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "bitflags 2.13.2"
 version = "2.13.2"
 checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
@@ -162,6 +178,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "block-buffer 0.12.1"
 version = "0.12.1"
 checksum = "d2f6c7dbe95a6ed67ad9f18e57daf93a2f034c524b99fd2b76d18fdfeb6660aa"
@@ -172,6 +189,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "borsh 1.8.1"
 version = "1.8.1"
 checksum = "553c5d846a6ba5150c65e3b1b8ec073bcf1abc20f9b7220de384a4443ea4e20a"
@@ -182,6 +200,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "borsh-derive 1.8.1"
 version = "1.8.1"
 checksum = "12cdfe656708a01f89b451a7d36466e6fe6c414de0aa18fc54f864f6f9ca9f56"
@@ -192,6 +211,7 @@ build_time = "none"
 procedural_macros = ["borsh_derive"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "bstr 1.13.1"
 version = "1.13.1"
 checksum = "6bb31b46c14244e20ee9984b11bf5c992b91fb6939fea616e3512c8baecdbe5f"
@@ -202,6 +222,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "bumpalo 3.20.3"
 version = "3.20.3"
 checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
@@ -212,6 +233,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "byteorder 1.5.0"
 version = "1.5.0"
 checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
@@ -222,6 +244,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "bytes 1.12.1"
 version = "1.12.1"
 checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
@@ -232,6 +255,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "cast 0.3.0"
 version = "0.3.0"
 checksum = "37b2a672a2cb129a2e41c10b1224bb368f9f37a2b16b612598138befd7b37eb5"
@@ -242,6 +266,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "cfg-if 1.0.5"
 version = "1.0.5"
 checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
@@ -252,6 +277,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "cfg_aliases 0.2.2"
 version = "0.2.2"
 checksum = "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527"
@@ -262,6 +288,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "chacha20 0.10.2"
 version = "0.10.2"
 checksum = "65c35e4b699c7e15ccbe7ee35c005e4fc0a278d22238a2857e6ce2dadeda1b06"
@@ -272,6 +299,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "ciborium 0.2.2"
 version = "0.2.2"
 checksum = "42e69ffd6f0917f5c029256a24d0161db17cea3997d185db0d35926308770f0e"
@@ -282,6 +310,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "ciborium-io 0.2.2"
 version = "0.2.2"
 checksum = "05afea1e0a06c9be33d539b876f1ce3692f4afea2cb41f740e7743225ed1c757"
@@ -292,6 +321,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "ciborium-ll 0.2.2"
 version = "0.2.2"
 checksum = "57663b653d948a338bfb3eeba9bb2fd5fcfaecb9e199e87e1eda4d9e8b240fd9"
@@ -302,6 +332,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "clap 4.6.7"
 version = "4.6.7"
 checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
@@ -312,6 +343,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "clap_builder 4.6.7"
 version = "4.6.7"
 checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
@@ -322,6 +354,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "clap_derive 4.6.7"
 version = "4.6.7"
 checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
@@ -332,6 +365,7 @@ build_time = "none"
 procedural_macros = ["clap_derive"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "clap_lex 1.1.1"
 version = "1.1.1"
 checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
@@ -342,6 +376,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "cmov 0.5.4"
 version = "0.5.4"
 checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
@@ -352,6 +387,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "colorchoice 1.0.5"
 version = "1.0.5"
 checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
@@ -362,6 +398,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "console 0.16.6"
 version = "0.16.6"
 checksum = "e96a4956774c13c126a8b5af4daa79384f4d826534c95a02d76afb39e2ab64e3"
@@ -372,6 +409,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "const-oid 0.10.2"
 version = "0.10.2"
 checksum = "a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c"
@@ -382,6 +420,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "core_detect 1.0.0"
 version = "1.0.0"
 checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
@@ -392,6 +431,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "cpufeatures 0.3.1"
 version = "0.3.1"
 checksum = "5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566"
@@ -402,6 +442,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "criterion 0.7.0"
 version = "0.7.0"
 checksum = "e1c047a62b0cc3e145fa84415a3191f628e980b194c2755aa12300a4e6cbd928"
@@ -412,6 +453,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "criterion-plot 0.6.0"
 version = "0.6.0"
 checksum = "9b1bcc0dc7dfae599d84ad0b1a55f80cde8af3725da8313b528da95ef783e338"
@@ -422,6 +464,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "crunchy 0.2.4"
 version = "0.2.4"
 checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
@@ -432,6 +475,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "crypto-common 0.2.2"
 version = "0.2.2"
 checksum = "ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453"
@@ -442,6 +486,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "ctutils 0.4.5"
 version = "0.4.5"
 checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
@@ -452,6 +497,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "digest 0.11.3"
 version = "0.11.3"
 checksum = "f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2"
@@ -462,6 +508,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "displaydoc 0.2.7"
 version = "0.2.7"
 checksum = "c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8"
@@ -472,6 +519,7 @@ build_time = "none"
 procedural_macros = ["displaydoc"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "either 1.19.0"
 version = "1.19.0"
 checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
@@ -482,6 +530,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "encode_unicode 1.0.0"
 version = "1.0.0"
 checksum = "34aa73646ffb006b8f5147f3dc182bd4bcb190227ce861fc4a4844bf8e3cb2c0"
@@ -492,6 +541,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "enum_dispatch 0.3.13"
 version = "0.3.13"
 checksum = "aa18ce2bc66555b3218614519ac839ddb759a7d6720732f979ef8d13be147ecd"
@@ -502,6 +552,7 @@ build_time = "none"
 procedural_macros = ["enum_dispatch"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "equivalent 1.0.3"
 version = "1.0.3"
 checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
@@ -512,6 +563,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "errno 0.3.14"
 version = "0.3.14"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
@@ -522,6 +574,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "fallible-iterator 0.2.0"
 version = "0.2.0"
 checksum = "4443176a9f2c162692bd3d352d745ef9413eec5782a80d8fd6f8a1ac692a07f7"
@@ -532,6 +585,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "fastrand 2.5.0"
 version = "2.5.0"
 checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
@@ -542,6 +596,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "fixedbitset 0.5.7"
 version = "0.5.7"
 checksum = "1d674e81391d1e1ab681a28d99df07927c6d4aa5b027d7da16ba32d1d21ecd99"
@@ -552,6 +607,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "fnv 1.0.7"
 version = "1.0.7"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
@@ -562,6 +618,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "foldhash 0.1.5"
 version = "0.1.5"
 checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
@@ -572,6 +629,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "futures-channel 0.3.34"
 version = "0.3.34"
 checksum = "b1f9e3d69d39e4862ffed03ed071a76f9a13ba1d9109d355b0f0aa6b15e393c4"
@@ -582,6 +640,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "futures-core 0.3.34"
 version = "0.3.34"
 checksum = "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e"
@@ -592,6 +651,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "futures-executor 0.3.34"
 version = "0.3.34"
 checksum = "031b47cf1a3c6cc8bc2fc76cd437f521619387907d469316e7c0bc278f1f5432"
@@ -602,6 +662,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "futures-macro 0.3.34"
 version = "0.3.34"
 checksum = "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44"
@@ -612,6 +673,7 @@ build_time = "none"
 procedural_macros = ["futures_macro"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "futures-sink 0.3.34"
 version = "0.3.34"
 checksum = "1944426bf7d03f1d14f708785e4b33efd750b36d48a157b836b3efc15ede8e1d"
@@ -622,6 +684,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "futures-task 0.3.34"
 version = "0.3.34"
 checksum = "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd"
@@ -632,6 +695,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "futures-util 0.3.34"
 version = "0.3.34"
 checksum = "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc"
@@ -642,6 +706,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "getrandom 0.3.4"
 version = "0.3.4"
 checksum = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
@@ -652,6 +717,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "getrandom 0.4.3"
 version = "0.4.3"
 checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
@@ -662,6 +728,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "globset 0.4.20"
 version = "0.4.20"
 checksum = "07c34a9410465b45bd9787443bc7370f37735bad04b0f0cd57ff1a3186c98988"
@@ -672,6 +739,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "half 2.7.1"
 version = "2.7.1"
 checksum = "6ea2d84b969582b4b1864a92dc5d27cd2b77b622a8d79306834f1be5ba20d84b"
@@ -682,6 +750,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "hashbrown 0.15.5"
 version = "0.15.5"
 checksum = "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1"
@@ -692,6 +761,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "hashbrown 0.17.1"
 version = "0.17.1"
 checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
@@ -702,6 +772,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "heck 0.5.0"
 version = "0.5.0"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
@@ -712,6 +783,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "hmac 0.13.0"
 version = "0.13.0"
 checksum = "6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f"
@@ -722,6 +794,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "http 1.5.0"
 version = "1.5.0"
 checksum = "918d3568bebf352712bc2ef3d46a8bcf1a75b373be6539de198e9105cbbf9ce0"
@@ -732,6 +805,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "httpdate 1.0.3"
 version = "1.0.3"
 checksum = "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9"
@@ -742,6 +816,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "hybrid-array 0.4.15"
 version = "0.4.15"
 checksum = "27f864f10dfb56725ce5ce5472bc52252c8f93a4ab86327122cebf62c5f59a17"
@@ -752,6 +827,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_casemap 1.5.1"
 version = "1.5.1"
 checksum = "9ff0c8ae9f8d31b12e27fc385ff9ab1f3cd9b17417c665c49e4ec958c37da75f"
@@ -762,6 +838,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_casemap_data 1.5.1"
 version = "1.5.1"
 checksum = "02bd9f6276270c85a5cd54611adbbf94e993ec464a2a86a452a6c565b7ded5d9"
@@ -772,6 +849,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_collections 1.5.0"
 version = "1.5.0"
 checksum = "db2fa452206ebee18c4b5c2274dbf1de17008e874b4dc4f0aea9d01ca79e4526"
@@ -782,6 +860,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_locid 1.5.0"
 version = "1.5.0"
 checksum = "13acbb8371917fc971be86fc8057c41a64b521c184808a698c02acc242dbf637"
@@ -792,6 +871,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_locid_transform 1.5.0"
 version = "1.5.0"
 checksum = "01d11ac35de8e40fdeda00d9e1e9d92525f3f9d887cdd7aa81d727596788b54e"
@@ -802,6 +882,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_locid_transform_data 1.5.1"
 version = "1.5.1"
 checksum = "7515e6d781098bf9f7205ab3fc7e9709d34554ae0b21ddbcb5febfa4bc7df11d"
@@ -812,6 +893,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_properties 1.5.1"
 version = "1.5.1"
 checksum = "93d6020766cfc6302c15dbbc9c8778c37e62c14427cb7f6e601d849e092aeef5"
@@ -822,6 +904,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_properties_data 1.5.1"
 version = "1.5.1"
 checksum = "85fb8799753b75aee8d2a21d7c14d9f38921b54b3dbda10f5a3c7a7b82dba5e2"
@@ -832,6 +915,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_provider 1.5.0"
 version = "1.5.0"
 checksum = "6ed421c8a8ef78d3e2dbc98a973be2f3770cb42b606e3ab18d6237c4dfde68d9"
@@ -842,6 +926,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "icu_provider_macros 1.5.0"
 version = "1.5.0"
 checksum = "1ec89e9337638ecdc08744df490b221a7399bf8d164eb52a665454e60e075ad6"
@@ -852,6 +937,7 @@ build_time = "none"
 procedural_macros = ["icu_provider_macros"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "indexmap 2.14.2"
 version = "2.14.2"
 checksum = "cc4e190f5d26ca7051642629da2c52fc03bde85a03197c99408dcd291734c855"
@@ -862,6 +948,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "insta 1.49.0"
 version = "1.49.0"
 checksum = "b67d3d2e287e4b86c10b3f3b641033d1f89b74bdb39d05f34952e2b9a6fe21cd"
@@ -872,6 +959,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "is_terminal_polyfill 1.70.2"
 version = "1.70.2"
 checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
@@ -882,6 +970,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "itertools 0.13.0"
 version = "0.13.0"
 checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
@@ -892,6 +981,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "itoa 1.0.18"
 version = "1.0.18"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
@@ -902,6 +992,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "js-sys 0.3.106"
 version = "0.3.106"
 checksum = "7883d941dae510fb2d978fc3fe018c71c9e2892fd38854de3e8b92c2e5ad9cc5"
@@ -912,6 +1003,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "lazy_static 1.5.1"
 version = "1.5.1"
 checksum = "20870f649af7073d53e38067b2a84312175d56ea15217e1b15bc83506ec50afb"
@@ -922,6 +1014,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "libc 0.2.191"
 version = "0.2.191"
 checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
@@ -932,6 +1025,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "libredox 0.1.25"
 version = "0.1.25"
 checksum = "61ff90caf6077a803a240f62fdbe88645a890bbca49ef8174c3cb0404362171d"
@@ -942,6 +1036,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "linux-raw-sys 0.12.1"
 version = "0.12.1"
 checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
@@ -952,6 +1047,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "litemap 0.7.5"
 version = "0.7.5"
 checksum = "23fb14cb19457329c82206317a5663005a4d404783dc74f4252769b0d5f42856"
@@ -962,6 +1058,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "lock_api 0.4.14"
 version = "0.4.14"
 checksum = "224399e74b87b5f3557511d98dff8b14089b3dadafcab6bb93eab67d3aace965"
@@ -972,6 +1069,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "log 0.4.34"
 version = "0.4.34"
 checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
@@ -982,6 +1080,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "matchers 0.2.0"
 version = "0.2.0"
 checksum = "d1525a2a28c7f4fa0fc98bb91ae755d1e2d1505079e05539e35bc876b5d65ae9"
@@ -992,6 +1091,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "md-5 0.11.0"
 version = "0.11.0"
 checksum = "69b6441f590336821bb897fb28fc622898ccceb1d6cea3fde5ea86b090c4de98"
@@ -1002,6 +1102,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "memchr 2.8.3"
 version = "2.8.3"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
@@ -1012,6 +1113,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "metrics 0.24.6"
 version = "0.24.6"
 checksum = "89550ee9f79e88fef3119de263694973a8adb26c21d75322164fb8c493039fe2"
@@ -1022,6 +1124,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "mio 1.2.4"
 version = "1.2.4"
 checksum = "1788edb87fdc09c7e26304471e2f5be8cdefb1b6930d6e3985fc02ff53bf86ee"
@@ -1032,6 +1135,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "nu-ansi-term 0.50.3"
 version = "0.50.3"
 checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
@@ -1042,6 +1146,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-bigint 0.4.8"
 version = "0.4.8"
 checksum = "c89e69e7e0f03bea5ef08013795c25018e101932225a656383bd384495ecc367"
@@ -1052,6 +1157,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-complex 0.4.6"
 version = "0.4.6"
 checksum = "73f88a1307638156682bada9d7604135552957b7818057dcef22705b4d509495"
@@ -1062,6 +1168,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-integer 0.1.47"
 version = "0.1.47"
 checksum = "7ce2d95d4b3734dc35aa2f45e1aa22cd416814592a4f9d9205e11affd5b8e10b"
@@ -1072,6 +1179,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-rational 0.4.2"
 version = "0.4.2"
 checksum = "f83d14da390562dca69fc84082e73e548e1ad308d24accdedd2720017cb37824"
@@ -1082,6 +1190,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-traits 0.2.19"
 version = "0.2.19"
 checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
@@ -1092,6 +1201,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "objc2-core-foundation 0.3.2"
 version = "0.3.2"
 checksum = "2a180dd8642fa45cdb7dd721cd4c11b1cadd4929ce112ebd8b9f5803cc79d536"
@@ -1102,6 +1212,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "objc2-system-configuration 0.3.2"
 version = "0.3.2"
 checksum = "7216bd11cbda54ccabcab84d523dc93b858ec75ecfb3a7d89513fa22464da396"
@@ -1112,6 +1223,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "once_cell 1.21.4"
 version = "1.21.4"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
@@ -1122,6 +1234,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "once_cell_polyfill 1.70.2"
 version = "1.70.2"
 checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
@@ -1132,6 +1245,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "oorandom 11.1.5"
 version = "11.1.5"
 checksum = "d6790f58c7ff633d8771f42965289203411a5e5c68388703c06e14f24770b41e"
@@ -1142,6 +1256,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "opentelemetry 0.33.1"
 version = "0.33.1"
 checksum = "8c1f1a6ac9c875a4941e4c7c085b61e8f4daa326de03b4701768c3491a6ad9ee"
@@ -1152,6 +1267,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "opentelemetry-http 0.33.1"
 version = "0.33.1"
 checksum = "302249bd8ee804789faaa7b5b2cbf79bc61cb864714079c644e3828af5b7e811"
@@ -1162,6 +1278,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "opentelemetry-otlp 0.33.1"
 version = "0.33.1"
 checksum = "0756af24841e367128ef31c831999937b8b5c5197d47914590d8f4e2e88c2e1a"
@@ -1172,6 +1289,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "opentelemetry-proto 0.33.1"
 version = "0.33.1"
 checksum = "d576f5dddc3299341bcd85a04be17b2564844c0c9563214f02d85f2524d1afae"
@@ -1182,6 +1300,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "opentelemetry_sdk 0.33.1"
 version = "0.33.1"
 checksum = "372a912db2974d1990207006fd0e3aa0ef3fd4ad3be43c65cfaadf2206866061"
@@ -1192,6 +1311,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "parking_lot 0.12.5"
 version = "0.12.5"
 checksum = "93857453250e3077bd71ff98b6a65ea6621a19bb0f559a85248955ac12c45a1a"
@@ -1202,6 +1322,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "parking_lot_core 0.9.12"
 version = "0.9.12"
 checksum = "2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1"
@@ -1212,6 +1333,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "pbkdf2 0.13.0"
 version = "0.13.0"
 checksum = "112d82ceb8c5bf524d9af484d4e4970c9fd5a0cc15ba14ad93dccd28873b0629"
@@ -1222,6 +1344,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "percent-encoding 2.3.2"
 version = "2.3.2"
 checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
@@ -1232,6 +1355,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "petgraph 0.8.3"
 version = "0.8.3"
 checksum = "8701b58ea97060d5e5b155d383a69952a60943f0e6dfe30b04c287beb0b27455"
@@ -1242,6 +1366,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "phf 0.13.1"
 version = "0.13.1"
 checksum = "c1562dc717473dbaa4c1f85a36410e03c047b2e7df7f45ee938fbef64ae7fadf"
@@ -1252,6 +1377,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "phf_shared 0.13.1"
 version = "0.13.1"
 checksum = "e57fef6bc5981e38c2ce2d63bfa546861309f875b8a75f092d1d54ae2d64f266"
@@ -1262,6 +1388,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "pin-project-lite 0.2.17"
 version = "0.2.17"
 checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
@@ -1272,6 +1399,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "portable-atomic 1.15.0"
 version = "1.15.0"
 checksum = "05c8b63e8d9609db387f0324918f81d68fe27748f084ef092fb35954d0539a85"
@@ -1282,6 +1410,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "postgres-protocol 0.6.12"
 version = "0.6.12"
 checksum = "08808e3c483c46e999108051c78334f473d5adb59d78bb80a1268c7e6aa6c514"
@@ -1292,6 +1421,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "postgres-types 0.2.14"
 version = "0.2.14"
 checksum = "851ca9db4932932d69f3ea811b1abe63087a0f740a47692619dd40d4899b68be"
@@ -1302,6 +1432,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "ppv-lite86 0.2.21"
 version = "0.2.21"
 checksum = "85eae3c4ed2f50dcfe72643da4befc30deadb458a9b590d720cde2f2b1e97da9"
@@ -1312,6 +1443,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "proc-macro-crate 3.5.0"
 version = "3.5.0"
 checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
@@ -1322,6 +1454,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "proc-macro2 1.0.107"
 version = "1.0.107"
 checksum = "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9"
@@ -1332,6 +1465,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "proptest 1.12.0"
 version = "1.12.0"
 checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54dc033eec1c50be28cfa0"
@@ -1342,6 +1476,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "prost 0.14.4"
 version = "0.14.4"
 checksum = "528ac67416ff8646872a3c02cad9cc4ee5dc9f9540c9b10771855c95cb2e5ae1"
@@ -1352,6 +1487,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "prost-derive 0.14.4"
 version = "0.14.4"
 checksum = "b570b25f7617e43d59005d0990ccb79e950a423952cea19671b7a876da390adf"
@@ -1362,6 +1498,7 @@ build_time = "none"
 procedural_macros = ["prost_derive"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "quick-error 1.2.3"
 version = "1.2.3"
 checksum = "a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0"
@@ -1372,6 +1509,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "quote 1.0.47"
 version = "1.0.47"
 checksum = "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001"
@@ -1382,6 +1520,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "r-efi 5.3.0"
 version = "5.3.0"
 checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
@@ -1392,6 +1531,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "r-efi 6.0.0"
 version = "6.0.0"
 checksum = "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
@@ -1402,6 +1542,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rand 0.10.3"
 version = "0.10.3"
 checksum = "65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af"
@@ -1412,6 +1553,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rand 0.9.5"
 version = "0.9.5"
 checksum = "b9ef1d0d795eb7d84685bca4f72f3649f064e6641543d3a8c415898726a57b41"
@@ -1422,6 +1564,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rand_chacha 0.9.0"
 version = "0.9.0"
 checksum = "d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb"
@@ -1432,6 +1575,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rand_core 0.10.1"
 version = "0.10.1"
 checksum = "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69"
@@ -1442,6 +1586,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rand_core 0.9.5"
 version = "0.9.5"
 checksum = "76afc826de14238e6e8c374ddcc1fa19e374fd8dd986b0d2af0d02377261d83c"
@@ -1452,6 +1597,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rand_xorshift 0.5.0"
 version = "0.5.0"
 checksum = "60aa6af80be32871323012e02e6e65f8a7cc7890931ae421d217ad8fe0df2ccf"
@@ -1462,6 +1608,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rapidhash 4.5.1"
 version = "4.5.1"
 checksum = "5da7e78a036ce858e8d55b7e7dc8ba3a88b78350fd2155d3591bbd966b58589e"
@@ -1472,6 +1619,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "redox_syscall 0.5.18"
 version = "0.5.18"
 checksum = "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d"
@@ -1482,6 +1630,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "regex 1.13.1"
 version = "1.13.1"
 checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
@@ -1492,6 +1641,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "regex-automata 0.4.18"
 version = "0.4.18"
 checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
@@ -1502,6 +1652,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "regex-syntax 0.8.11"
 version = "0.8.11"
 checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
@@ -1512,6 +1663,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rustix 1.1.5"
 version = "1.1.5"
 checksum = "891efababe418670775f199f0d233d84843c227a0949a883ce15b37c78d6629d"
@@ -1522,6 +1674,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rustversion 1.0.23"
 version = "1.0.23"
 checksum = "cf54715a573b99ac80df0bc206da022bcd442c974952c7b9720069370852e21f"
@@ -1532,6 +1685,7 @@ build_time = "build script: build-script-build"
 procedural_macros = ["rustversion"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "rusty-fork 0.3.1"
 version = "0.3.1"
 checksum = "cc6bf79ff24e648f6da1f8d1f011e9cac26491b619e6b9280f2b47f1774e6ee2"
@@ -1542,6 +1696,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "same-file 1.0.6"
 version = "1.0.6"
 checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
@@ -1552,6 +1707,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "scopeguard 1.2.0"
 version = "1.2.0"
 checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
@@ -1562,6 +1718,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "secrecy 0.10.3"
 version = "0.10.3"
 checksum = "e891af845473308773346dc847b2c23ee78fe442e0472ac50e22a18a93d3ae5a"
@@ -1572,6 +1729,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "serde 1.0.229"
 version = "1.0.229"
 checksum = "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba"
@@ -1582,6 +1740,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "serde_core 1.0.229"
 version = "1.0.229"
 checksum = "67dca2c9c51e58a4791a4b1ed58308b39c64224d349a935ab5039aa360942a48"
@@ -1592,6 +1751,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "serde_derive 1.0.229"
 version = "1.0.229"
 checksum = "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
@@ -1602,6 +1762,7 @@ build_time = "none"
 procedural_macros = ["serde_derive"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "serde_json 1.0.154"
 version = "1.0.154"
 checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
@@ -1612,6 +1773,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "sha2 0.11.1"
 version = "0.11.1"
 checksum = "47d7069beb7d6ac7b9acd1039986e73443f24234f41074da099d6f994ac9ad19"
@@ -1622,6 +1784,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "sharded-slab 0.1.7"
 version = "0.1.7"
 checksum = "f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6"
@@ -1632,6 +1795,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "similar 2.7.0"
 version = "2.7.0"
 checksum = "bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa"
@@ -1642,6 +1806,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "siphasher 1.0.4"
 version = "1.0.4"
 checksum = "33f4fe9184a62d842c9ef383018f3306d8ba224fd9d836f56d7288308847c256"
@@ -1652,6 +1817,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "slab 0.4.12"
 version = "0.4.12"
 checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
@@ -1662,6 +1828,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "smallvec 1.16.3"
 version = "1.16.3"
 checksum = "5b3dc8af474f516a851ff4bd12db780f948b9250ad37211e4eec0bccea54e01b"
@@ -1672,6 +1839,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "socket2 0.6.5"
 version = "0.6.5"
 checksum = "c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4"
@@ -1682,6 +1850,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "stable_deref_trait 1.2.1"
 version = "1.2.1"
 checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
@@ -1692,6 +1861,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "stringprep 0.1.5"
 version = "0.1.5"
 checksum = "7b4df3d392d81bd458a8a621b8bffbd2302a12ffe288a9d931670948749463b1"
@@ -1702,6 +1872,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "strsim 0.11.1"
 version = "0.11.1"
 checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
@@ -1712,6 +1883,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "syn 2.0.119"
 version = "2.0.119"
 checksum = "872831b642d1a07999a962a351ed35b955ea2cfc8f3862091e2a240a84f17297"
@@ -1722,6 +1894,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "syn 3.0.9"
 version = "3.0.9"
 checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
@@ -1732,6 +1905,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "synstructure 0.13.2"
 version = "0.13.2"
 checksum = "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2"
@@ -1742,6 +1916,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "synstructure 0.14.0"
 version = "0.14.0"
 checksum = "901704edd0dfe137f1987838ee4f259e4e063c31371bdb423f7ae38ec6f77f02"
@@ -1752,6 +1927,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tempfile 3.27.0"
 version = "3.27.0"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
@@ -1762,6 +1938,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "thiserror 2.0.21"
 version = "2.0.21"
 checksum = "09e52cb86a36cede5cb101bf8908837b3e4c6e5e59fe7fd85c23fb56200d189e"
@@ -1772,6 +1949,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "thiserror-impl 2.0.21"
 version = "2.0.21"
 checksum = "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524"
@@ -1782,6 +1960,7 @@ build_time = "none"
 procedural_macros = ["thiserror_impl"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "thread_local 1.1.10"
 version = "1.1.10"
 checksum = "1ad99c4c6d32803332c548b1af0540b357b3f5fc0be8f6c6bfe8b2e6ae784070"
@@ -1792,6 +1971,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tinystr 0.7.6"
 version = "0.7.6"
 checksum = "9117f5d4db391c1cf6927e7bea3db74b9a1c1add8f7eda9ffd5364f40f57b82f"
@@ -1802,6 +1982,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tinytemplate 1.2.1"
 version = "1.2.1"
 checksum = "be4d6b5f19ff7664e8c98d03e2139cb510db9b0a60b55f8e8709b689d939b6bc"
@@ -1812,6 +1993,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tinyvec 1.13.3"
 version = "1.13.3"
 checksum = "fd3ca314f692efd6c868f8408f53fe444634a845f96c028b97d35f6a1f79f0ee"
@@ -1822,6 +2004,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tokio 1.54.1"
 version = "1.54.1"
 checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
@@ -1832,6 +2015,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tokio-postgres 0.7.18"
 version = "0.7.18"
 checksum = "a528f7d280f6d5b9cd149635c8705b0dd049754bc67d81d31fa25169a93809d3"
@@ -1842,6 +2026,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tokio-util 0.7.20"
 version = "0.7.20"
 checksum = "e464cf451ba96ebfc6f9b6542f17ee8b8956e33f1e40d9690624e59d7a7f8a4b"
@@ -1852,6 +2037,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "toml_datetime 1.1.2+spec-1.1.0"
 version = "1.1.2+spec-1.1.0"
 checksum = "2b86d767906c6c42421dcba507eb9d203e779497710a47782a224bb871653053"
@@ -1862,6 +2048,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "toml_edit 0.25.17+spec-1.1.0"
 version = "0.25.17+spec-1.1.0"
 checksum = "e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c"
@@ -1872,6 +2059,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "toml_parser 1.1.5+spec-1.1.0"
 version = "1.1.5+spec-1.1.0"
 checksum = "baa693a8032d7e1cada7d0041e96126df243179ff061456783ac7f12bda4744c"
@@ -1882,6 +2070,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tracing 0.1.44"
 version = "0.1.44"
 checksum = "63e71662fa4b2a2c3a26f570f037eb95bb1f85397f3cd8076caed2f026a6d100"
@@ -1892,6 +2081,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tracing-attributes 0.1.31"
 version = "0.1.31"
 checksum = "7490cfa5ec963746568740651ac6781f701c9c5ea257c58e057f3ba8cf69e8da"
@@ -1902,6 +2092,7 @@ build_time = "none"
 procedural_macros = ["tracing_attributes"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tracing-core 0.1.36"
 version = "0.1.36"
 checksum = "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a"
@@ -1912,6 +2103,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tracing-log 0.2.0"
 version = "0.2.0"
 checksum = "ee855f1f400bd0e5c02d150ae5de3840039a3f54b025156404e34c23c03f47c3"
@@ -1922,6 +2114,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tracing-opentelemetry 0.34.0"
 version = "0.34.0"
 checksum = "0a904802a1b902f43638b677ff2a650847e3b4404101b6c586d648e8c1e3e8fe"
@@ -1932,6 +2125,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tracing-serde 0.2.0"
 version = "0.2.0"
 checksum = "704b1aeb7be0d0a84fc9828cae51dab5970fee5088f83d1dd7ee6f6246fc6ff1"
@@ -1942,6 +2136,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "tracing-subscriber 0.3.23"
 version = "0.3.23"
 checksum = "cb7f578e5945fb242538965c2d0b04418d38ec25c79d160cd279bf0731c8d319"
@@ -1952,6 +2147,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "typenum 1.20.1"
 version = "1.20.1"
 checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
@@ -1962,6 +2158,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "unarray 0.1.4"
 version = "0.1.4"
 checksum = "eaea85b334db583fe3274d12b4cd1880032beab409c0d774be044d4480ab9a94"
@@ -1972,6 +2169,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "unicode-bidi 0.3.18"
 version = "0.3.18"
 checksum = "5c1cb5db39152898a79168971543b1cb5020dff7fe43c8dc468b0885f5e29df5"
@@ -1982,6 +2180,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "unicode-ident 1.0.27"
 version = "1.0.27"
 checksum = "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563"
@@ -1992,6 +2191,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "unicode-normalization 0.1.26"
 version = "0.1.26"
 checksum = "75cd3fb03d5288b3ba9a1ee103ac7e9cbb59f0b03d64f8ddfcc04dd42758a85d"
@@ -2002,6 +2202,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "unicode-properties 0.1.4"
 version = "0.1.4"
 checksum = "7df058c713841ad818f1dc5d3fd88063241cc61f49f5fbea4b951e8cf5a8d71d"
@@ -2012,6 +2213,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "utf8parse 0.2.2"
 version = "0.2.2"
 checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
@@ -2022,6 +2224,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "valuable 0.1.1"
 version = "0.1.1"
 checksum = "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65"
@@ -2032,6 +2235,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "version_check 0.9.5"
 version = "0.9.5"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
@@ -2042,6 +2246,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wait-timeout 0.2.1"
 version = "0.2.1"
 checksum = "09ac3b126d3914f9849036f826e054cbabdc8519970b8998ddaf3b5bd3c65f11"
@@ -2052,6 +2257,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "walkdir 2.5.0"
 version = "2.5.0"
 checksum = "29790946404f91d9c5d06f9874efddea1dc06c5efe94541a7d6863108e3a5e4b"
@@ -2062,6 +2268,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wasi 0.11.1+wasi-snapshot-preview1"
 version = "0.11.1+wasi-snapshot-preview1"
 checksum = "ccf3ec651a847eb01de73ccad15eb7d99f80485de043efb2f370cd654f4ea44b"
@@ -2072,6 +2279,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wasi 0.14.7+wasi-0.2.4"
 version = "0.14.7+wasi-0.2.4"
 checksum = "883478de20367e224c0090af9cf5f9fa85bed63a95c1abf3afc5c083ebc06e8c"
@@ -2082,6 +2290,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wasip2 1.0.4+wasi-0.2.12"
 version = "1.0.4+wasi-0.2.12"
 checksum = "b67efb37e106e55ce722a510d6b5f9c17f083e5fc79afc2badeb12cc313d9487"
@@ -2092,6 +2301,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wasite 1.0.2"
 version = "1.0.2"
 checksum = "66fe902b4a6b8028a753d5424909b764ccf79b7a209eac9bf97e59cda9f71a42"
@@ -2102,6 +2312,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wasm-bindgen 0.2.129"
 version = "0.2.129"
 checksum = "9bb54f33acc68fd454578d9820b0bde1a1a3d17aa17bb7b6595806d02886d409"
@@ -2112,6 +2323,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wasm-bindgen-macro 0.2.129"
 version = "0.2.129"
 checksum = "2e29d0c35b16e224a7eeb5cd2d25e3e1968fbd65604117b44d3b789d00ee8535"
@@ -2122,6 +2334,7 @@ build_time = "none"
 procedural_macros = ["wasm_bindgen_macro"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wasm-bindgen-macro-support 0.2.129"
 version = "0.2.129"
 checksum = "6f501a8bc3719dba86ef8ae4728879c08001bea749eb1333ac5b91e040e2a6b7"
@@ -2132,6 +2345,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wasm-bindgen-shared 0.2.129"
 version = "0.2.129"
 checksum = "23f0c9c52aa7cd7d77769a4cfe2a9adb1b331f489a41d912ce14513d5ab995c6"
@@ -2142,6 +2356,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "web-sys 0.3.106"
 version = "0.3.106"
 checksum = "88261b9deccee56594c11a3460c462c41f58d148598fe70ad77070126a68aba4"
@@ -2152,6 +2367,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "web-time 1.1.0"
 version = "1.1.0"
 checksum = "5a6580f308b1fad9207618087a65c04e7a10bc77e02c8e84e9b00dd4b12fa0bb"
@@ -2162,6 +2378,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "whoami 2.1.3"
 version = "2.1.3"
 checksum = "626c4bac6755d76ffc12cb01b2eac751db1996b9e0041de9aa02c8c211ddc82c"
@@ -2172,6 +2389,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "winapi-util 0.1.11"
 version = "0.1.11"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
@@ -2182,6 +2400,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "windows-link 0.2.1"
 version = "0.2.1"
 checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
@@ -2192,6 +2411,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "windows-sys 0.61.2"
 version = "0.61.2"
 checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
@@ -2202,6 +2422,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "winnow 1.0.4"
 version = "1.0.4"
 checksum = "23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81"
@@ -2212,6 +2433,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "wit-bindgen 0.57.1"
 version = "0.57.1"
 checksum = "1ebf944e87a7c253233ad6766e082e3cd714b5d03812acc24c318f549614536e"
@@ -2222,6 +2444,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "writeable 0.5.5"
 version = "0.5.5"
 checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
@@ -2232,6 +2455,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "yoke 0.7.5"
 version = "0.7.5"
 checksum = "120e6aef9aa629e3d4f52dc8cc43a015c7724194c97dfaf45180d2daf2b77f40"
@@ -2242,6 +2466,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "yoke-derive 0.7.5"
 version = "0.7.5"
 checksum = "2380878cad4ac9aac1e2435f3eb4020e8374b5f13c296cb75b4620ff8e229154"
@@ -2252,6 +2477,7 @@ build_time = "none"
 procedural_macros = ["yoke_derive"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "zerocopy 0.8.63"
 version = "0.8.63"
 checksum = "e5fe1f8f1b06191a00962174c61aa5005e0bb391a6d80d07e24d115c01a92ed8"
@@ -2262,6 +2488,7 @@ build_time = "build script: build-script-build"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "zerocopy-derive 0.8.63"
 version = "0.8.63"
 checksum = "863ad3ac83293fb4d740aedbfdc9240dd8d1a50c1099acd76ce80ce7c7230c7f"
@@ -2272,6 +2499,7 @@ build_time = "none"
 procedural_macros = ["zerocopy_derive"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "zerofrom 0.1.8"
 version = "0.1.8"
 checksum = "0ec05a11813ea801ff6d75110ad09cd0824ddba17dfe17128ea0d5f68e6c5272"
@@ -2282,6 +2510,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "zerofrom-derive 0.1.8"
 version = "0.1.8"
 checksum = "f75b4683f6c7f45248d4d64056a24298c6281e0993356d7d1b4a1a962ef10d4a"
@@ -2292,6 +2521,7 @@ build_time = "none"
 procedural_macros = ["zerofrom_derive"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "zeroize 1.9.1"
 version = "1.9.1"
 checksum = "e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879"
@@ -2302,6 +2532,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "zerovec 0.10.4"
 version = "0.10.4"
 checksum = "aa2b893d79df23bfb12d5461018d408ea19dfafe76c2c7ef6d4eba614f8ff079"
@@ -2312,6 +2543,7 @@ build_time = "none"
 procedural_macros = []
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "zerovec-derive 0.10.4"
 version = "0.10.4"
 checksum = "3e3c6377872d72510393f688a555d7097b0f741995c7a00f0407f786dd486b2d"
@@ -2322,6 +2554,7 @@ build_time = "none"
 procedural_macros = ["zerovec_derive"]
 
 [[rows]]
+feature_scope = "Features resolved for pn-host built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
 name = "zmij 1.0.23"
 version = "1.0.23"
 checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"

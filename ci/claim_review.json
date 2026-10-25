@@ -2630,8 +2630,8 @@
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:toolchain-family-is-consistent",
       "before": "only undated nightly with both answering components satisfies the policy.",
-      "after": "Only the pinned dated nightly with both declared, answering components satisfies the compiler policy.",
-      "review": "Read the pinned-channel acceptance and undated, other-date, stable, missing-component and missing-response refusals. The assertions identify the declared compiler policy and require answering tools; they do not claim compatibility with an older compiler or cross-platform artifact identity."
+      "after": "Only the pinned dated nightly answering with the full declared compiler commit and both required components satisfies the compiler policy.",
+      "review": "Read the dated-channel and component witnesses, full answering rustc commit acceptance, and wrong, missing, repeated or shortened commit-hash refusals. The expected public identity comes from build policy; a channel file alone cannot admit a different answering nightly. These assertions do not establish older-compiler compatibility or artifact reproducibility."
     },
     {
       "operation": "cli-common::observation::tests::graph_owner_accounting",
@@ -2718,8 +2718,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:graph-backend-retains-reviewed-identity",
       "before": "",
-      "after": "Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed 0.8.3 identity and exactly its default-plus-serde feature vocabulary, so manifest spelling alone cannot stand in for resolved dependency evidence.",
-      "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+      "after": "Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed identity and features, and the graph dependency rows and numeric serde row agree with locked identities and resolved features, so a table cannot omit an enabled serde feature.",
+      "review": "Read the locked Cargo identities and resolved feature nodes against both graph input rows and the numeric serde row. The explicit missing-alloc negative witness fails the same comparison; this establishes table correspondence for these resolutions, not all future feature combinations."
     },
     {
       "operation": "pn-wallet::settlement::tests::pinning_depth",

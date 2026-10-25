@@ -14,7 +14,7 @@
         1
       ],
       "name": "Registration",
-      "paper": "network-v0.29.1",
+      "paper": "network-v0.29.2",
       "paper_label": "edge:nodes:registration",
       "parameters": "p_d = 1, p_i = 1 (fixed)",
       "polarity": "+1 (forced)",

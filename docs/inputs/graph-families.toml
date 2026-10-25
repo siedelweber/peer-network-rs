@@ -10,5 +10,5 @@ parameters = "p_d = 1, p_i = 1 (fixed)"
 mask = [1, 0, 0, 1]
 tier = "full"
 polarity = "+1 (forced)"
-paper = "network-v0.29.1"
+paper = "network-v0.29.2"
 paper_label = "edge:nodes:registration"
