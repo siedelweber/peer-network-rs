@@ -6468,6 +6468,36 @@
       "claim": "ROOT::alg:design:formation",
       "shape": "shape-graph-registration",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "item": "formation::project_complete_act",
+      "owner": "GRAPH",
+      "signature": "fn project_complete_act (act : & ValidatedAct , verifier : & impl RegistrationVerifier ,) -> Result < CompleteProjection , RegistrationError >",
+      "claim": "ROOT::alg:design:formation",
+      "shape": "shape-graph-affinity",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "item": "formation::reconstruct",
+      "owner": "GRAPH",
+      "signature": "fn reconstruct (history : & ValidatedHistory , verifier : & impl RegistrationVerifier ,) -> Result < FormationGraph , RegistrationError >",
+      "claim": "ROOT::alg:design:formation",
+      "shape": "shape-graph-affinity",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "item": "formation::validate_formation",
+      "owner": "GRAPH",
+      "signature": "fn validate_formation (graph : & FormationGraph , history : & ValidatedHistory , verifier : & impl RegistrationVerifier ,) -> Result < () , RegistrationError >",
+      "claim": "ROOT::alg:design:formation",
+      "shape": "shape-graph-affinity",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -12466,13 +12496,46 @@
     },
     {
       "operation": "pn-graph::packages/graph/src/registration.rs::registration::validate_registration_graph",
-      "body": "{ let result = reconstruct (history , verifier) . and_then (| expected | { let matches = graph . node_count () == expected . node_count () && graph . edge_count () == expected . edge_count () && expected . node_indices () . all (| index | graph . node_weight (index) == expected . node_weight (index)) && expected . edge_indices () . all (| index | { graph . edge_weight (index) == expected . edge_weight (index) && graph . edge_endpoints (index) == expected . edge_endpoints (index) }) ; if matches { Ok (()) } else { Err (RegistrationError :: GraphMismatch) } }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "body": "{ let result = reconstruct (history , verifier) . and_then (| expected | compare_graph (graph , & expected)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-registration",
-      "item_premise": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "item_premise": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. The shared typed comparator preserves the prior live-index, weight and endpoint checks; the public span and complete result remain unchanged.",
       "assessments": {
         "full_recording": "graph-registration-full_recording",
         "secret_flow": "graph-registration-secret_flow",
         "exposure_consumers": "graph-registration-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/formation.rs::formation::project_complete_act",
+      "body": "{ let result = project (act , verifier) . and_then (| projection | { registration :: authorize_removals (& [act] , verifier) ? ; Ok (projection) }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "class_decision": "graph-affinity",
+      "item_premise": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "assessments": {
+        "full_recording": "graph-affinity-full_recording",
+        "secret_flow": "graph-affinity-secret_flow",
+        "exposure_consumers": "graph-affinity-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/formation.rs::formation::reconstruct",
+      "body": "{ let result = registration :: reconstruct_with (history , verifier , | act | project (act , verifier)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "class_decision": "graph-affinity",
+      "item_premise": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "assessments": {
+        "full_recording": "graph-affinity-full_recording",
+        "secret_flow": "graph-affinity-secret_flow",
+        "exposure_consumers": "graph-affinity-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/formation.rs::formation::validate_formation",
+      "body": "{ let result = registration :: reconstruct_with (history , verifier , | act | project (act , verifier)) . and_then (| expected | registration :: compare_graph (graph , & expected)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "class_decision": "graph-affinity",
+      "item_premise": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "assessments": {
+        "full_recording": "graph-affinity-full_recording",
+        "secret_flow": "graph-affinity-secret_flow",
+        "exposure_consumers": "graph-affinity-exposure_consumers"
       }
     }
   ],
@@ -14888,6 +14951,42 @@
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "graph-registration",
       "expansion_review": "Derives clone, compare and format public grounded identifiers, Registration projection metadata and bounded refusal/opening variants. Serde derives carry only diagnostic public node and edge weights; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+    },
+    {
+      "item": "formation::Node",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Serialize , Deserialize)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Derives clone, compare and format public typed endpoints, exact bounded coordinate pairs and binary projection metadata. Serde derives carry diagnostic public node and edge weights only; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+    },
+    {
+      "item": "formation::Coordinate",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Derives clone, compare and format public typed endpoints, exact bounded coordinate pairs and binary projection metadata. Serde derives carry diagnostic public node and edge weights only; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+    },
+    {
+      "item": "formation::AffinityProjection",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Derives clone, compare and format public typed endpoints, exact bounded coordinate pairs and binary projection metadata. Serde derives carry diagnostic public node and edge weights only; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+    },
+    {
+      "item": "formation::Projection",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Derives clone, compare and format public typed endpoints, exact bounded coordinate pairs and binary projection metadata. Serde derives carry diagnostic public node and edge weights only; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
     }
   ],
   "reviewed_types": [
@@ -16470,6 +16569,30 @@
       "syntax": "# [doc = \" Scoped refusal; no partial projection graph is returned on any error.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RegistrationError { # [doc = \" This entry point admits Registration only.\"] # [error (\"unsupported act family\")] UnsupportedFamily , # [doc = \" Layout, endpoints or fixed parameter carriage differs from Registration.\"] # [error (\"invalid Registration incidence or body\")] Incidence , # [doc = \" The declared verifier did not establish complete author approval.\"] # [error (\"Registration approval not established\")] Unapproved , # [doc = \" A removal fact lacks the declared verifier's authorization.\"] # [error (\"opening removal not authorized\")] UnauthorizedRemoval , # [doc = \" Repeated published positions cannot determine reconstruction order.\"] # [error (\"ambiguous published order\")] AmbiguousOrder , # [doc = \" The backend cannot represent another index.\"] # [error (\"Registration graph capacity exhausted\")] Capacity , # [doc = \" Live identifiers, projections, endpoints or indices differ from reconstruction.\"] # [error (\"Registration graph differs from complete reconstruction\")] GraphMismatch , }"
     },
     {
+      "item": "formation::Node",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [doc = \" Disjoint grounded and public-name constructors in this implemented scope.\"] # [doc = \" Type names are exact strings; no normalization or minting is performed.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Serialize , Deserialize)] pub enum Node { # [doc = \" Existing Actor/Profile constructors, shared with Registration.\"] Grounded (GroundedNode) , # [doc = \" The public string commons constructor name(s), interpreted as Type.\"] Type (String) , }"
+    },
+    {
+      "item": "formation::Coordinate",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [doc = \" An exact bounded carrier for a signed unit-interval coordinate.\"] # [doc = \" Construction and deserialization do not establish validity; formation checks\"] # [doc = \" a positive denominator and absolute numerator no greater than denominator.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct Coordinate { # [doc = \" Authored integer numerator, retained without rounding.\"] pub numerator : i64 , # [doc = \" Authored positive integer denominator, retained without normalization.\"] pub denominator : i64 , }"
+    },
+    {
+      "item": "formation::AffinityProjection",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [doc = \" Complete Affinity binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct AffinityProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment; this operation gives no recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Association occupies the directional role `p_d`.\"] pub association : Coordinate , # [doc = \" Attraction occupies the intensity role `p_i`.\"] pub attraction : Coordinate , }"
+    },
+    {
+      "item": "formation::Projection",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [doc = \" Distinct supported families, preserving each complete authored projection.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum Projection { # [doc = \" Existing Registration projection, with its fixed coordinate roles.\"] Registration (RegistrationProjection) , # [doc = \" Affinity projection, with both required authored coordinates.\"] Affinity (AffinityProjection) , }"
+    },
+    {
       "item": "PartitionError",
       "package": "pn-graph",
       "path": "packages/graph/src/lib.rs",
@@ -16926,6 +17049,18 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation."
+    },
+    {
+      "name": "graph-affinity",
+      "membership": {
+        "explicit": [
+          "pn-graph::packages/graph/src/formation.rs::formation::project_complete_act",
+          "pn-graph::packages/graph/src/formation.rs::formation::reconstruct",
+          "pn-graph::packages/graph/src/formation.rs::formation::validate_formation"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation."
     }
   ],
   "shapes": {
@@ -17126,6 +17261,27 @@
       "fields": [
         "complete public records, diagnostic graph and public verifier representation at trace",
         "complete Registration projection, graph or validation result at trace",
+        "bounded outcome",
+        "inclusive duration_seconds",
+        "declared invocation work",
+        "qualified resource totals"
+      ],
+      "metrics": [
+        "graph__root__sig__design__graph__started_operations",
+        "graph__root__sig__design__graph__completed_operations",
+        "graph__root__sig__design__graph__work_bytes",
+        "graph__root__sig__design__graph__work_operations",
+        "graph__root__sig__design__graph__active_operations",
+        "graph__root__sig__design__graph__resource_current_bytes",
+        "graph__root__sig__design__graph__elapsed_seconds",
+        "graph__root__sig__design__graph__workload_bytes",
+        "graph__root__sig__design__graph__workload_operations"
+      ]
+    },
+    "shape-graph-affinity": {
+      "fields": [
+        "complete public records, diagnostic graph and public verifier representation at trace",
+        "complete typed binary projection, mixed graph or validation result at trace",
         "bounded outcome",
         "inclusive duration_seconds",
         "declared invocation work",
@@ -18719,6 +18875,21 @@
       "status": "reviewer-confirmed",
       "premises": "Registration operations consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
       "negative_probe": "ROOT::claim:discipline:registration-formation-retains-observed-results"
+    },
+    "graph-affinity-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "negative_probe": "ROOT::claim:discipline:affinity-formation-retains-observed-results"
+    },
+    "graph-affinity-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "negative_probe": "ROOT::claim:discipline:affinity-formation-retains-observed-results"
+    },
+    "graph-affinity-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
+      "negative_probe": "ROOT::claim:discipline:affinity-formation-retains-observed-results"
     }
   }
 }

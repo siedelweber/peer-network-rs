@@ -3048,6 +3048,7 @@
         "ci::test_observe_runtime.Processes.test_generated_records_refusals",
         "ci::test_observe_runtime.Processes.test_graph_partition",
         "ci::test_observe_runtime.Processes.test_graph_registration",
+        "ci::test_observe_runtime.Processes.test_graph_formation",
         "ci::test_observe_runtime.Processes.test_graph_dependency",
         "ci::test_observe_runtime.Processes.test_interchange_refusal",
         "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -3900,6 +3901,20 @@
       "kind": "suite",
       "level": "public-surface",
       "name": "pn-graph::registration",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::formation::affinity_coordinates",
+        "pn-graph::formation::mixed_reconstruction"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-graph::formation",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"

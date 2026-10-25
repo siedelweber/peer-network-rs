@@ -991,6 +991,9 @@
     "pn-graph::registration::reconstruction": "",
     "pn-graph::registration::revalidation": "",
     "ci::test_observe_runtime.Processes.test_graph_registration": "",
-    "ci::test_wallet_boundary.WalletBoundary.test_fixture_ports": ""
+    "ci::test_wallet_boundary.WalletBoundary.test_fixture_ports": "",
+    "pn-graph::formation::affinity_coordinates": "",
+    "pn-graph::formation::mixed_reconstruction": "",
+    "ci::test_observe_runtime.Processes.test_graph_formation": ""
   }
 }

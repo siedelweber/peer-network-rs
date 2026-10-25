@@ -2848,6 +2848,30 @@
       "before": "",
       "after": "Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its public cause.",
       "review": "Read the allocator over real sockets: a server-closed connection left in TIME_WAIT, a live listener, a port taken before a real daemon launch, and the harness entry's public cause line. This witnesses allocation and launch retry for this account's fixtures, not a lock shared with other accounts."
+    },
+    {
+      "operation": "pn-graph::formation::affinity_coordinates",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:affinity-requires-typed-complete-coordinates",
+      "before": "",
+      "after": "Claim: Affinity requires the author's Actor source, an exact public Type name and both signed rational coordinates within the unit interval; malformed units, vintage, missing or extra coordinates and wrong endpoint constructors refuse before projection. A finite independent numerator/denominator grid checks the bounded carrier without claiming real-valued geometry.",
+      "review": "Read the bounded coordinate grid, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
+    },
+    {
+      "operation": "pn-graph::formation::mixed_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:mixed-binary-history-refuses-partial-formation",
+      "before": "",
+      "after": "Claim: Mixed Registration and Affinity histories share deterministic reconstruction and authorization checks, preserve parallel acts and retained times, and refuse the entire result when any family, approval or removal is unsupported; diagnostic graph mutation and decoding require complete typed revalidation.",
+      "review": "Read the bounded coordinate grid, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
+    },
+    {
+      "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
+      "before": "",
+      "after": "Claim: Affinity projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the three successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Read the bounded coordinate grid, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
     }
   ]
 }

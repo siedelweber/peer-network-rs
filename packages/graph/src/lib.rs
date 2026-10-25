@@ -5,6 +5,10 @@
 /// (´def:formation:registration´)
 pub mod registration;
 
+/// Registration and Affinity formation over the shared reconstruction machinery.
+/// (´def:formation:affinity´)
+pub mod formation;
+
 use std::collections::BTreeSet;
 
 use petgraph::graph::UnGraph;

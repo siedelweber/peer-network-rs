@@ -176,29 +176,17 @@ pub fn validate_registration_graph(
     history: &ValidatedHistory,
     verifier: &impl RegistrationVerifier,
 ) -> Result<(), RegistrationError> {
-    let result = reconstruct(history, verifier).and_then(|expected| {
-        let matches = graph.node_count() == expected.node_count()
-            && graph.edge_count() == expected.edge_count()
-            && expected
-                .node_indices()
-                .all(|index| graph.node_weight(index) == expected.node_weight(index))
-            && expected.edge_indices().all(|index| {
-                graph.edge_weight(index) == expected.edge_weight(index)
-                    && graph.edge_endpoints(index) == expected.edge_endpoints(index)
-            });
-        if matches {
-            Ok(())
-        } else {
-            Err(RegistrationError::GraphMismatch)
-        }
-    });
+    let result = reconstruct(history, verifier).and_then(|expected| compare_graph(graph, &expected));
     if result.is_err() {
         tracing::event!(tracing::Level::TRACE, outcome = "refusal");
     }
     result
 }
 
-fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteRegistration, RegistrationError> {
+pub(super) fn project(
+    act: &ValidatedAct,
+    verifier: &impl RegistrationVerifier,
+) -> Result<CompleteRegistration, RegistrationError> {
     if act.id().family != "Registration" {
         return Err(RegistrationError::UnsupportedFamily);
     }
@@ -232,7 +220,7 @@ fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
     ))
 }
 
-fn authorize_removals(acts: &[&ValidatedAct], verifier: &impl RegistrationVerifier) -> Result<(), RegistrationError> {
+pub(super) fn authorize_removals(acts: &[&ValidatedAct], verifier: &impl RegistrationVerifier) -> Result<(), RegistrationError> {
     let mut removals = Vec::new();
     for act in acts {
         if let Removal::Tombstoned(at) = act.projections().content {
@@ -252,15 +240,43 @@ fn authorize_removals(acts: &[&ValidatedAct], verifier: &impl RegistrationVerifi
 }
 
 fn reconstruct(history: &ValidatedHistory, verifier: &impl RegistrationVerifier) -> Result<RegistrationGraph, RegistrationError> {
+    reconstruct_with(history, verifier, |act| project(act, verifier))
+}
+
+pub(super) fn compare_graph<N: PartialEq, E: PartialEq>(
+    graph: &StableDiGraph<N, E>,
+    expected: &StableDiGraph<N, E>,
+) -> Result<(), RegistrationError> {
+    let matches = graph.node_count() == expected.node_count()
+        && graph.edge_count() == expected.edge_count()
+        && expected
+            .node_indices()
+            .all(|index| graph.node_weight(index) == expected.node_weight(index))
+        && expected.edge_indices().all(|index| {
+            graph.edge_weight(index) == expected.edge_weight(index)
+                && graph.edge_endpoints(index) == expected.edge_endpoints(index)
+        });
+    if matches {
+        Ok(())
+    } else {
+        Err(RegistrationError::GraphMismatch)
+    }
+}
+
+pub(super) fn reconstruct_with<N: Ord + Clone, E>(
+    history: &ValidatedHistory,
+    verifier: &impl RegistrationVerifier,
+    project: impl Fn(&ValidatedAct) -> Result<(N, N, E), RegistrationError>,
+) -> Result<StableDiGraph<N, E>, RegistrationError> {
     let mut acts: Vec<_> = history.acts().iter().collect();
     acts.sort_by_key(|act| (act.position(), act.id()));
     if acts.windows(2).any(|pair| pair[0].position() == pair[1].position()) {
         return Err(RegistrationError::AmbiguousOrder);
     }
-    let mut graph = RegistrationGraph::new();
+    let mut graph = StableDiGraph::new();
     let mut nodes = BTreeMap::new();
     for act in &acts {
-        let (source, target, projection) = project(act, verifier)?;
+        let (source, target, projection) = project(act)?;
         let mut indices = Vec::new();
         for node in [source, target] {
             let index = if let Some(index) = nodes.get(&node) {

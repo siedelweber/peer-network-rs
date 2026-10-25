@@ -833,7 +833,7 @@ level = "integration"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_graph_partition", "ci::test_observe_runtime.Processes.test_graph_registration", "ci::test_observe_runtime.Processes.test_graph_dependency", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_records_replay", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
+cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_graph_partition", "ci::test_observe_runtime.Processes.test_graph_registration", "ci::test_observe_runtime.Processes.test_graph_formation", "ci::test_observe_runtime.Processes.test_graph_dependency", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_records_replay", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
 
 [[rows]]
 kind = "suite"
@@ -1314,3 +1314,14 @@ implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-graph::registration::complete_projection", "pn-graph::registration::reconstruction", "pn-graph::registration::revalidation"]
+
+[[rows]]
+kind = "suite"
+name = "pn-graph::formation"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::formation::affinity_coordinates", "pn-graph::formation::mixed_reconstruction"]

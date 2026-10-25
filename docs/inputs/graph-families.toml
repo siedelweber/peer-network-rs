@@ -3,12 +3,513 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "Registration"
+family = "Registration"
 source = "Actor"
-target = "Profile"
-projection = "one binary edge"
-parameters = "p_d = 1, p_i = 1 (fixed)"
+target = "Profile of author"
+projection = "Binary"
+parameters = "1; 1 (fixed)"
 mask = [1, 0, 0, 1]
 tier = "full"
 polarity = "+1 (forced)"
+domain = "Identity"
+promoted = false
+control = false
 paper = "network-v0.29.2"
 paper_label = "edge:nodes:registration"
+payload = "profile data"
+payload_controller = "act author"
+can = "leaf"
+
+[[rows]]
+name = "Publish"
+family = "Publish"
+source = "Actor"
+target = "Content"
+projection = "Binary"
+parameters = "attachment [-1,1]; 1"
+mask = [1, 1, 1, 1]
+tier = "full"
+polarity = "signed"
+domain = "Economic"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:publish"
+payload = "content body"
+payload_controller = "act author"
+can = "leaf"
+
+[[rows]]
+name = "Opinion"
+family = "Opinion"
+source = "Actor"
+target = "Passive"
+projection = "Binary"
+parameters = "polarity [-1,1]; reaction [-1,1]"
+mask = [1, 1, 1, 1]
+tier = "full"
+polarity = "signed"
+domain = "Tribal"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:opinion"
+payload = "rationale"
+payload_controller = "act author"
+can = "leaf"
+
+[[rows]]
+name = "Affinity"
+family = "Affinity"
+source = "Actor"
+target = "Type"
+projection = "Binary"
+parameters = "association [-1,1]; attraction [-1,1]"
+mask = [0, 1, 0, 1]
+tier = "marginal"
+polarity = "signed"
+domain = "Epistemic"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:affinity"
+payload = "rationale"
+payload_controller = "act author"
+can = "leaf"
+
+[[rows]]
+name = "Participant/A"
+family = "Participant"
+source = "Actor"
+target = "Chat (origin)"
+projection = "A"
+parameters = "interactivity [-1,1]; responsibility [-1,1]"
+mask = [1, 1, 1, 1]
+tier = "full"
+polarity = "signed"
+domain = "Relational"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:participant"
+payload = "participation note (A); continuity note (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Participant/T"
+family = "Participant"
+source = "Chat (origin)"
+target = "Chat (destination)"
+projection = "T"
+parameters = "continuity [0,1]; 1"
+mask = [0, 1, 0, 1]
+tier = "marginal"
+polarity = "+1 (forced)"
+domain = "Epistemic"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:participant"
+payload = "participation note (A); continuity note (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Owner"
+family = "Owner"
+source = "Actor"
+target = "Item"
+projection = "Binary"
+parameters = "attachment [-1,1]; 1"
+mask = [1, 1, 1, 1]
+tier = "full"
+polarity = "signed"
+domain = "Economic"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:owner"
+payload = "item description"
+payload_controller = "act author"
+can = "leaf"
+
+[[rows]]
+name = "Join Request"
+family = "Join Request"
+source = "Actor"
+target = "Chat"
+projection = "Binary"
+parameters = "urgency [-1,1]; formality [-1,1]"
+mask = [1, 1, 1, 1]
+tier = "half"
+polarity = "signed"
+domain = "Relational"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:join-request"
+payload = "request message"
+payload_controller = "act author"
+can = "leaf"
+
+[[rows]]
+name = "Invitation/A"
+family = "Invitation"
+source = "Actor"
+target = "Chat"
+projection = "A"
+parameters = "urgency [-1,1]; formality [-1,1]"
+mask = [1, 1, 1, 1]
+tier = "half"
+polarity = "signed"
+domain = "Relational"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-invitation"
+payload = "invitation message (A); empty (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Invitation/T"
+family = "Invitation"
+source = "Chat"
+target = "Profile of target"
+projection = "T"
+parameters = "relevance [0,1]; 1"
+mask = [0, 1, 0, 1]
+tier = "marginal"
+polarity = "+1 (forced)"
+domain = "Epistemic"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-invitation"
+payload = "invitation message (A); empty (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "De-invite/A"
+family = "De-invite"
+source = "Actor"
+target = "Chat"
+projection = "A"
+parameters = "1; 1 (fixed)"
+mask = [0, 0, 0, 1]
+tier = "marginal"
+polarity = "+1 (forced)"
+domain = "Minimal"
+promoted = false
+control = true
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-deinvite"
+payload = "reason (A); empty (T)"
+payload_controller = "act author"
+can = "excluded"
+
+[[rows]]
+name = "De-invite/T"
+family = "De-invite"
+source = "Chat"
+target = "Profile of target"
+projection = "T"
+parameters = "1; 1 (fixed)"
+mask = [0, 0, 0, 1]
+tier = "marginal"
+polarity = "+1 (forced)"
+domain = "Minimal"
+promoted = false
+control = true
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-deinvite"
+payload = "reason (A); empty (T)"
+payload_controller = "act author"
+can = "excluded"
+
+[[rows]]
+name = "Tag/A"
+family = "Tag"
+source = "Actor"
+target = "Taggable"
+projection = "A"
+parameters = "relevance [-1,1]; confidence [0,1]"
+mask = [0, 1, 0, 1]
+tier = "marginal"
+polarity = "signed"
+domain = "Epistemic"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-tag"
+payload = "rationale (A); empty (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Tag/T"
+family = "Tag"
+source = "Taggable"
+target = "Type"
+projection = "T"
+parameters = "confidence [0,1]; relevance [-1,1]"
+mask = [0, 1, 0, 1]
+tier = "marginal"
+polarity = "signed"
+domain = "Epistemic"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-tag"
+payload = "rationale (A); empty (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Review/A"
+family = "Review"
+source = "Actor"
+target = "Passive"
+projection = "A"
+parameters = "enthusiasm [-1,1]; effort [-1,1]"
+mask = [1, 1, 1, 1]
+tier = "full"
+polarity = "signed"
+domain = "Tribal"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-review"
+payload = "reviewer metadata (A); comment body (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Review/T"
+family = "Review"
+source = "Passive"
+target = "Comment"
+projection = "T"
+parameters = "effort [-1,1]; enthusiasm [-1,1]"
+mask = [0, 1, 0, 1]
+tier = "marginal"
+polarity = "signed"
+domain = "Epistemic"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-review"
+payload = "reviewer metadata (A); comment body (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Reference/A"
+family = "Reference"
+source = "Actor"
+target = "Passive artifact"
+projection = "A"
+parameters = "effort [-1,1]; enthusiasm [-1,1]"
+mask = [0, 1, 0, 1]
+tier = "marginal"
+polarity = "signed"
+domain = "Epistemic"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-reference"
+payload = "reference note (A); empty (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Reference/T"
+family = "Reference"
+source = "Passive artifact"
+target = "Passive target"
+projection = "T"
+parameters = "enthusiasm [-1,1]; effort [-1,1]"
+mask = [1, 1, 1, 1]
+tier = "full"
+polarity = "signed"
+domain = "Tribal"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-reference"
+payload = "reference note (A); empty (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Bid/A"
+family = "Bid"
+source = "Actor"
+target = "Item"
+projection = "A"
+parameters = "generosity [-1,1]; urgency [0,1]"
+mask = [1, 1, 1, 1]
+tier = "half"
+polarity = "signed"
+domain = "Economic"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-bid"
+payload = "bid terms (A); offer body (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Bid/T"
+family = "Bid"
+source = "Item"
+target = "Offer"
+projection = "T"
+parameters = "urgency [0,1]; generosity [-1,1]"
+mask = [1, 1, 1, 1]
+tier = "half"
+polarity = "signed"
+domain = "Economic"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-bid"
+payload = "bid terms (A); offer body (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Send/A"
+family = "Send"
+source = "Actor"
+target = "Chat"
+projection = "A"
+parameters = "importance [-1,1]; 1"
+mask = [1, 1, 1, 1]
+tier = "full"
+polarity = "signed"
+domain = "Relational"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-send"
+payload = "metadata (A); message body (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Send/T"
+family = "Send"
+source = "Chat"
+target = "Message"
+projection = "T"
+parameters = "1; importance [-1,1]"
+mask = [0, 0, 0, 1]
+tier = "marginal"
+polarity = "signed"
+domain = "Minimal"
+promoted = false
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:hyper-send"
+payload = "metadata (A); message body (T)"
+payload_controller = "act author"
+can = "leg"
+
+[[rows]]
+name = "Accept"
+family = "Accept"
+source = "Actor (seller)"
+target = "Actor (buyer)"
+projection = "Binary"
+parameters = "comfort [-1,1]; equity [-1,1]"
+mask = [1, 1, 1, 1]
+tier = "half"
+polarity = "signed"
+domain = "Relational"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:accept"
+payload = "terms"
+payload_controller = "act author"
+can = "leaf"
+
+[[rows]]
+name = "Ratify"
+family = "Ratify"
+source = "Actor (buyer)"
+target = "Actor (seller)"
+projection = "Binary"
+parameters = "comfort [-1,1]; equity [-1,1]"
+mask = [1, 1, 1, 1]
+tier = "half"
+polarity = "signed"
+domain = "Relational"
+promoted = true
+control = false
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:ratify"
+payload = "receipt"
+payload_controller = "act author"
+can = "leaf"
+
+[[rows]]
+name = "Withdraw"
+family = "Withdraw"
+source = "Actor"
+target = "Offer"
+projection = "Binary"
+parameters = "1; 1 (fixed)"
+mask = [0, 0, 0, 1]
+tier = "marginal"
+polarity = "+1 (forced)"
+domain = "Minimal"
+promoted = false
+control = true
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:withdraw"
+payload = "reason"
+payload_controller = "act author"
+can = "excluded"
+
+[[rows]]
+name = "Rescind"
+family = "Rescind"
+source = "Actor"
+target = "Offer"
+projection = "Binary"
+parameters = "1; 1 (fixed)"
+mask = [0, 0, 0, 1]
+tier = "marginal"
+polarity = "+1 (forced)"
+domain = "Minimal"
+promoted = false
+control = true
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:rescind"
+payload = "reason"
+payload_controller = "act author"
+can = "excluded"
+
+[[rows]]
+name = "Leave"
+family = "Leave"
+source = "Actor"
+target = "Chat"
+projection = "Binary"
+parameters = "1; 1 (fixed)"
+mask = [0, 0, 0, 1]
+tier = "marginal"
+polarity = "+1 (forced)"
+domain = "Minimal"
+promoted = false
+control = true
+paper = "network-v0.29.2"
+paper_label = "edge:nodes:leave"
+payload = "parting reason"
+payload_controller = "act author"
+can = "excluded"
