@@ -116,7 +116,7 @@ status = "accepted"
 title = "Toolchain and build profile"
 scope = "The workspace compiler channel, compiler minimum and release optimisation policy."
 depends_on = ["rec:lint:decision"]
-does_not_establish = "Tracking nightly establishes no reproducible compiler pin or measured dev and test optimisation policy."
+does_not_establish = "The compiler pin establishes neither older-compiler compatibility nor universal artifact reproducibility; profile measurements remain scoped to their declared workloads."
 
 [[rows]]
 label = "rec:compatibility:decision"

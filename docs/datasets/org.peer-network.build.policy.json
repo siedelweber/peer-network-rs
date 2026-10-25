@@ -7,7 +7,7 @@
   ],
   "rows": [
     {
-      "channel": "nightly",
+      "channel": "nightly-2026-10-16",
       "codegen_units": 1,
       "components": [
         "rustfmt",

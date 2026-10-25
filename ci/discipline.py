@@ -238,8 +238,8 @@ def cargo_config_findings(value):
 
 
 def validate_toolchain(channel, versions, components):
-    if channel != "nightly":
-        raise ValueError("rust-toolchain.toml: expected undated nightly")
+    if channel != "nightly-2026-10-16":
+        raise ValueError("rust-toolchain.toml: expected nightly-2026-10-16")
     if not {"rustfmt", "clippy"} <= set(components):
         raise ValueError("rust-toolchain.toml: rustfmt and clippy are required")
     if len(versions) != 4 or any(not value.strip() for value in versions):
@@ -268,7 +268,7 @@ def validate_build_policy(root):
         if "rust-version" in tomllib.loads((root / member / "Cargo.toml").read_text())["package"]:
             raise ValueError(f"{member}: no minimum compiler declaration is checked")
     policy = tomllib.loads((root / "docs/inputs/build-policy.toml").read_text())["rows"]
-    expected = {"name": "workspace", "channel": "nightly", "components": ["rustfmt", "clippy"],
+    expected = {"name": "workspace", "channel": "nightly-2026-10-16", "components": ["rustfmt", "clippy"],
                 "lto": "thin", "codegen_units": 1, "toolchain_gate": "toolchain",
                 "profile_gate": "build-policy", "tests_gate": "discipline-tests"}
     if policy != [expected]:

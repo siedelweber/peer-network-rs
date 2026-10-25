@@ -1,6 +1,5 @@
 [toolchain]
-# Every workspace build, test and gate runs on compute nodes whose shared toolchain
-# root carries the current nightly. Workers cannot install a toolchain there, so
-# name the channel the nodes carry rather than a date they may not carry.
-channel = "nightly"
+# Keep the dated nightly provisioned on every compute node so gates and fuzz
+# campaigns use one named compiler. Move the pin only in its own gated commit.
+channel = "nightly-2026-10-16"
 components = ["rustfmt", "clippy"]

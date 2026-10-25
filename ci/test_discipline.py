@@ -447,7 +447,7 @@ class SourceDiscipline(unittest.TestCase):
             with self.assertRaises(ValueError):
                 validate_build_policy(root)
             (root / 'packages/example/Cargo.toml').write_text(member)
-            (root / 'docs/inputs/build-policy.toml').write_text(policy.replace('"nightly"', '"stable"'))
+            (root / 'docs/inputs/build-policy.toml').write_text(policy.replace('"nightly-2026-10-16"', '"stable"'))
             with self.assertRaises(ValueError):
                 validate_build_policy(root)
 
@@ -559,25 +559,25 @@ class SourceDiscipline(unittest.TestCase):
         self.assertFalse(cargo_config_findings(tomllib.loads('[build]\njobs = 2')))
 
     def test_toolchain_versions(self):
-        """only undated nightly with both answering components satisfies the policy.
+        """Only the pinned dated nightly with both declared, answering components satisfies the compiler policy.
         ´claim:discipline:toolchain-family-is-consistent´
         ´test:integration:test-toolchain-versions´
         """
         versions = ['rustc 1.101.0-nightly (abcdef 2026-10-16)', 'cargo 1.101.0-nightly', 'clippy 0.1.101', 'rustfmt 1.9.0-nightly']
-        validate_toolchain('nightly', versions, ['rustfmt', 'clippy'])
-        for channel in ['nightly-2026-10-16', 'stable', '1.99.1']:
+        validate_toolchain('nightly-2026-10-16', versions, ['rustfmt', 'clippy'])
+        for channel in ['nightly', 'nightly-2026-10-17', 'stable', '1.99.1']:
             with self.assertRaises(ValueError):
                 validate_toolchain(channel, versions, ['rustfmt', 'clippy'])
         for components in [[], ['rustfmt'], ['clippy']]:
             with self.assertRaises(ValueError):
-                validate_toolchain('nightly', versions, components)
+                validate_toolchain('nightly-2026-10-16', versions, components)
         for index in range(4):
             missing = versions.copy()
             missing[index] = ''
             with self.assertRaises(ValueError):
-                validate_toolchain('nightly', missing, ['rustfmt', 'clippy'])
+                validate_toolchain('nightly-2026-10-16', missing, ['rustfmt', 'clippy'])
         with self.assertRaises(ValueError):
-            validate_toolchain('nightly', ['rustc 1.99.1', *versions[1:]], ['rustfmt', 'clippy'])
+            validate_toolchain('nightly-2026-10-16', ['rustc 1.99.1', *versions[1:]], ['rustfmt', 'clippy'])
 
     @unittest.skipUnless(os.environ.get('FOUNDATION_COMPUTE_TESTS') == '1', 'compute-node compiler witness')
     def test_nursery_warning(self):

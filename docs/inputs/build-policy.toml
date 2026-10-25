@@ -3,7 +3,7 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "workspace"
-channel = "nightly"
+channel = "nightly-2026-10-16"
 components = ["rustfmt", "clippy"]
 lto = "thin"
 codegen_units = 1

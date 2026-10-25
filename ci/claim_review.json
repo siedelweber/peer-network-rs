@@ -2624,6 +2624,14 @@
       "before": "release additions, refreshed fields and answer fields cannot drift behind the study projections.",
       "after": "Release fields remain pinned, and only structural inventory rows may retain placeholders.",
       "review": "Read the structural-placeholder acceptance and condition, case and proposition refusal assertions beside the retained release-field pin probes. The assertions require the diagnostic to identify every refused label and retain the existing pin-drift checks; the gloss states those tested properties without claiming semantic review of inventory prose."
+    },
+    {
+      "operation": "ci::test_discipline.SourceDiscipline.test_toolchain_versions",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:toolchain-family-is-consistent",
+      "before": "only undated nightly with both answering components satisfies the policy.",
+      "after": "Only the pinned dated nightly with both declared, answering components satisfies the compiler policy.",
+      "review": "Read the pinned-channel acceptance and undated, other-date, stable, missing-component and missing-response refusals. The assertions identify the declared compiler policy and require answering tools; they do not claim compatibility with an older compiler or cross-platform artifact identity."
     }
   ]
 }
