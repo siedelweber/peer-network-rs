@@ -204,6 +204,11 @@ fn storage_contract() {
     });
 }
 
+// Fixture-only secret boundary: Only this isolated storage-role harness supplies these diagnostics.
+// Caveat: The fixture server's private diagnostic is borrowed only to compare its SQLSTATE with the expected permission refusal; the borrow ends at the assertion and field comparison requires a slice.
+// (´[ROOT-cav:observe:secret-host-storage-runtime-role-buffer-1]´)
+// Justified: The fixture server's private diagnostic is borrowed only for its permission-refusal assertion; field comparison requires a slice.
+#[allow(clippy::disallowed_methods)]
 async fn runtime_role() {
     let owner = store("storage-role.json").await;
     owner.session.client().batch_execute("CREATE ROLE storage_runtime LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS PASSWORD 'public-role-fixture'; REVOKE CREATE ON SCHEMA public FROM PUBLIC; GRANT CONNECT ON DATABASE private_storage_role_731 TO storage_runtime; GRANT USAGE ON SCHEMA public TO storage_runtime; GRANT SELECT ON public.pn_store_identity, public.pn_versions, public.pn_closures TO storage_runtime; GRANT INSERT ON public.pn_versions, public.pn_closures TO storage_runtime; GRANT MAINTAIN ON public.pn_versions TO storage_runtime").await.unwrap();
@@ -250,7 +255,7 @@ async fn runtime_role() {
         assert!(
             diagnostics[0]
                 .0
-                .bytes()
+                .expose_bytes(/* (´[ROOT-cav:observe:secret-host-storage-runtime-role-buffer-1]´) */)
                 .split(|byte| *byte == 0)
                 .any(|field| field.strip_prefix(b"C") == Some(b"42501".as_slice()))
         );

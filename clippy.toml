@@ -1,5 +1,7 @@
 # Every secret exit is a reviewed, labelled smallest-item exception.
 disallowed-methods = [
+  { path = "pn_host::secret::Buffer::expose_bytes", reason = "Requires a labelled consumer-specific secret borrow." },
+  { path = "pn_host::secret::Buffer::expose_storage", reason = "Requires a labelled consumer-specific secret borrow." },
   { path = "secrecy::ExposeSecret::expose_secret", reason = "Requires a labelled secret-exposure exception." },
   { path = "secrecy::ExposeSecretMut::expose_secret_mut", reason = "Requires a labelled secret-exposure exception." },
   { path = "secrecy::SecretBox::init_with_mut", reason = "The initializer receives an exposed mutable secret." },

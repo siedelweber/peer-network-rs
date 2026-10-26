@@ -45,6 +45,22 @@ impl Configuration {
         operation.finish(&result);
         result
     }
+    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // (´[ROOT-cav:observe:secret-host-config-read-buffer-1]´)
+    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // (´[ROOT-cav:observe:secret-host-config-read-buffer-2]´)
+    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // (´[ROOT-cav:observe:secret-host-config-read-buffer-3]´)
+    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // (´[ROOT-cav:observe:secret-host-config-read-buffer-4]´)
+    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // (´[ROOT-cav:observe:secret-host-config-read-buffer-5]´)
+    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // (´[ROOT-cav:observe:secret-host-config-read-buffer-6]´)
+    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // (´[ROOT-cav:observe:secret-host-config-read-buffer-7]´)
+    // Justified: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    #[allow(clippy::disallowed_methods)]
     fn read(case: Option<&str>, reader: &mut impl Read) -> Result<Self, Refusal> {
         match case {
             Some("host-secured") => (),
@@ -59,7 +75,7 @@ impl Configuration {
                 return Err(Refusal::RepresentationLimit);
             }
             let count = reader
-                .read(&mut input.storage()[length..])
+                .read(&mut input.expose_storage(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-1]´) */)[length..])
                 .map_err(|_| Refusal::ConfigurationIo)?;
             if count == 0 {
                 break;
@@ -68,7 +84,7 @@ impl Configuration {
         }
         input.set_length(length)?;
         let mut cursor = Json {
-            bytes: input.bytes(),
+            bytes: input.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-2]´) */),
             at: 0,
         };
         let mut data = Buffer::new();
@@ -76,7 +92,7 @@ impl Configuration {
         cursor.token(b'{')?;
         loop {
             let key = cursor.string()?;
-            let index = match key.bytes() {
+            let index = match key.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-3]´) */) {
                 b"transport" => 0,
                 b"endpoint" => 1,
                 b"port" => 2,
@@ -90,12 +106,12 @@ impl Configuration {
             }
             cursor.token(b':')?;
             let value = cursor.string()?;
-            if value.bytes().contains(&0) {
+            if value.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-4]´) */).contains(&0) {
                 return Err(Refusal::ConfigurationSyntax);
             }
-            let start = data.bytes().len();
-            data.append(value.bytes())?;
-            fields[index] = Some(start..data.bytes().len());
+            let start = data.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-5]´) */).len();
+            data.append(value.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-6]´) */))?;
+            fields[index] = Some(start..data.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-7]´) */).len());
             cursor.space();
             if cursor.bytes.get(cursor.at) == Some(&b'}') {
                 cursor.at += 1;
@@ -120,8 +136,12 @@ impl Configuration {
         result.port()?;
         Ok(result)
     }
+    // Caveat: A private configuration field is borrowed for the declared connection or authentication consumer until that consumer returns; indexed slice selection cannot operate on the carrier.
+    // (´[ROOT-cav:observe:secret-host-config-field-buffer-1]´)
+    // Justified: A private configuration field is borrowed for the declared connection or authentication consumer until that consumer returns; indexed slice selection cannot operate on the carrier.
+    #[allow(clippy::disallowed_methods)]
     pub(crate) fn field(&self, index: usize) -> &[u8] {
-        &self.data.bytes()[self.fields[index].clone()]
+        &self.data.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-field-buffer-1]´) */)[self.fields[index].clone()]
     }
     pub(crate) fn text(&self, index: usize) -> Result<&str, Refusal> {
         std::str::from_utf8(self.field(index)).map_err(|_| Refusal::ConfigurationSyntax)
@@ -168,9 +188,11 @@ impl Json<'_> {
         }
         Ok(value)
     }
+    // Caveat: Private configuration text is borrowed only for UTF-8 validation before returning its carrier; the validator requires a slice.
+    // (´[ROOT-cav:observe:secret-host-config-string-buffer-1]´)
     // Caveat: The Unicode encoder writes private configuration text into protected storage; its API requires a mutable byte array.
     // (´[ROOT-cav:observe:secret-host-config-string-1]´)
-    // Justified: The Unicode encoder writes private configuration text into protected storage; its API requires a mutable byte array.
+    // Justified: Private configuration text is borrowed only for UTF-8 validation before returning its carrier; the validator requires a slice.
     #[allow(clippy::disallowed_methods)]
     fn string(&mut self) -> Result<Buffer, Refusal> {
         self.token(b'"')?;
@@ -180,7 +202,8 @@ impl Json<'_> {
             self.at += 1;
             match byte {
                 b'"' => {
-                    std::str::from_utf8(value.bytes()).map_err(|_| Refusal::ConfigurationSyntax)?;
+                    std::str::from_utf8(value.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-string-buffer-1]´) */))
+                        .map_err(|_| Refusal::ConfigurationSyntax)?;
                     return Ok(value);
                 }
                 b'\\' => {

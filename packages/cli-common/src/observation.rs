@@ -263,6 +263,10 @@ pub struct Observation {
     publication: Arc<Mutex<bool>>,
     #[cfg(test)]
     before_publication: PublicationPause,
+    #[cfg(test)]
+    before_drain: PublicationPause,
+    #[cfg(test)]
+    after_drain: PublicationPause,
     drain_timeouts: Arc<AtomicU64>,
     drain_unavailable: Arc<AtomicU64>,
     #[cfg(test)]
@@ -287,6 +291,10 @@ struct Delivery {
     publication: Arc<Mutex<bool>>,
     #[cfg(test)]
     before_publication: PublicationPause,
+    #[cfg(test)]
+    before_drain: PublicationPause,
+    #[cfg(test)]
+    after_drain: PublicationPause,
     closing: Arc<std::sync::atomic::AtomicBool>,
     worker_bridge: Option<Arc<crate::observation_export::Bridge>>,
     worker_queued: Arc<AtomicU64>,
@@ -325,7 +333,31 @@ impl Delivery {
                     Message::Wake => {}
                 }
             }
+            #[cfg(test)]
+            if let Some(pause) = self.before_drain.lock().unwrap().take() {
+                pause();
+            }
             for done in flush_receiver.try_iter().take(1) {
+                // A request can arrive after the batch's final empty poll.
+                // At most QUEUE_RECORDS earlier messages remain in this bounded
+                // channel. Drain that prefix before acknowledging; later sends
+                // cannot overtake it. Keep the separate reserved request slot so
+                // a saturated record queue cannot reject the drain request.
+                for message in receiver.try_iter().take(QUEUE_RECORDS) {
+                    if worker_closing.load(Ordering::Acquire) {
+                        return;
+                    }
+                    for diagnostic in diagnostic_receiver.try_iter().take(8) {
+                        delivery.deliver(&mut writer, diagnostic);
+                    }
+                    for summary in summary_receiver.try_iter().take(2) {
+                        delivery.deliver(&mut writer, summary);
+                    }
+                    if let Message::Record(record, charged) = message {
+                        delivery.deliver(&mut writer, record);
+                        worker_queued.fetch_sub(charged, Ordering::Relaxed);
+                    }
+                }
                 for diagnostic in diagnostic_receiver.try_iter().take(8) {
                     delivery.deliver(&mut writer, diagnostic);
                 }
@@ -333,6 +365,10 @@ impl Delivery {
                     delivery.deliver(&mut writer, summary);
                 }
                 let _ignored = done.try_send(());
+                #[cfg(test)]
+                if let Some(pause) = self.after_drain.lock().unwrap().take() {
+                    pause();
+                }
             }
         }
     }
@@ -430,6 +466,14 @@ impl Observation {
         let before_publication = Arc::new(Mutex::new(None));
         #[cfg(test)]
         let worker_before_publication = Arc::clone(&before_publication);
+        #[cfg(test)]
+        let before_drain = Arc::new(Mutex::new(None));
+        #[cfg(test)]
+        let worker_before_drain = Arc::clone(&before_drain);
+        #[cfg(test)]
+        let after_drain = Arc::new(Mutex::new(None));
+        #[cfg(test)]
+        let worker_after_drain = Arc::clone(&after_drain);
         let worker_publication = publication.clone();
         let drain_timeouts = Arc::new(AtomicU64::new(0));
         let worker_timeouts = drain_timeouts.clone();
@@ -451,6 +495,10 @@ impl Observation {
                 publication: worker_publication,
                 #[cfg(test)]
                 before_publication: worker_before_publication,
+                #[cfg(test)]
+                before_drain: worker_before_drain,
+                #[cfg(test)]
+                after_drain: worker_after_drain,
                 closing: worker_closing.clone(),
                 worker_queued,
             };
@@ -471,6 +519,10 @@ impl Observation {
             publication,
             #[cfg(test)]
             before_publication,
+            #[cfg(test)]
+            before_drain,
+            #[cfg(test)]
+            after_drain,
             drain_timeouts,
             drain_unavailable,
             #[cfg(test)]

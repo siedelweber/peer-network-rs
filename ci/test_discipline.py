@@ -48,7 +48,7 @@ class WorkspaceChecks(unittest.TestCase):
             self.assertTrue(http_admission_findings(bad, rows)[0])
 
     def test_secret_carrier_traits(self):
-        """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies direct, trait-qualified and initializer exits until an item-local exception permits them.
+        """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer accessors until an item-local exception permits them.
         ´claim:discipline:secret-carriers-reject-printable-traits´
         ´test:integration:test-secret-carrier-traits´
         """
@@ -84,12 +84,30 @@ class WorkspaceChecks(unittest.TestCase):
             (fixture/'clippy.toml').write_bytes((root/'clippy.toml').read_bytes())
             for expression in ['secrecy::ExposeSecret::expose_secret(&value)',
                                'secrecy::ExposeSecretMut::expose_secret_mut(&mut value)',
+                               'value.expose_secret()',
+                               'value.expose_secret_mut()',
+                               'Some(&value).map(secrecy::ExposeSecret::expose_secret)',
                                'secrecy::SecretBox::<u8>::init_with(|| 7)',
                                'secrecy::SecretBox::<u8>::try_init_with(|| Ok::<u8, ()>(7))',
                                'secrecy::SecretBox::<u8>::init_with_mut(|v| *v = 7)']:
                 for allowed in [False, True]:
-                    source = ('#[allow(clippy::disallowed_methods)]\n' if allowed else '')
+                    source = 'use secrecy::{ExposeSecret, ExposeSecretMut};\n'
+                    source += ('#[allow(clippy::disallowed_methods)]\n' if allowed else '')
                     source += 'fn main(){let mut value = secrecy::SecretBox::new(Box::new(1_u8)); let _ = &mut value; let _ = '+expression+';}'
+                    (fixture/'src/main.rs').write_text(source)
+                    result=subprocess.run(['cargo','clippy','--offline','--profile','gate','--manifest-path',str(fixture/'Cargo.toml'),'--','-D','clippy::disallowed_methods'],capture_output=True,text=True)
+                    if allowed:self.assertEqual(result.returncode,0,result.stderr)
+                    else:
+                        self.assertNotEqual(result.returncode,0,result.stderr)
+                        self.assertIn('disallowed_methods',result.stderr)
+            # The host accessors are private. Reproduce their exact crate/module
+            # identities in a standalone control, including the mutable borrow.
+            (fixture/'Cargo.toml').write_text('[package]\nname="pn-host"\nversion="0.0.0"\nedition="2024"\n[workspace]\n[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\n')
+            for method in ['expose_bytes', 'expose_storage']:
+                for allowed in [False, True]:
+                    source = 'mod secret { pub struct Buffer; impl Buffer { pub fn expose_bytes(&self) -> &[u8] { &[] } pub fn expose_storage(&mut self) -> &mut [u8] { &mut [] } } }\n'
+                    source += ('#[allow(clippy::disallowed_methods)]\n' if allowed else '')
+                    source += 'fn main() { let mut value = secret::Buffer; let _ = value.'+method+'(); }'
                     (fixture/'src/main.rs').write_text(source)
                     result=subprocess.run(['cargo','clippy','--offline','--profile','gate','--manifest-path',str(fixture/'Cargo.toml'),'--','-D','clippy::disallowed_methods'],capture_output=True,text=True)
                     if allowed:self.assertEqual(result.returncode,0,result.stderr)
@@ -572,8 +590,10 @@ class SourceDiscipline(unittest.TestCase):
         self.assertFalse(exposure_registry_findings(sites, register))
         for bad in [[], register + register, [dict(register[0], function="other")], [dict(register[0], method="expose_secret_mut")]]:
             self.assertTrue(exposure_registry_findings(sites, bad))
-        for exit in ['expose_secret', 'expose_secret_mut', 'init_with', 'try_init_with', 'init_with_mut']:
+        for exit in ['expose_secret', 'expose_secret_mut', 'init_with', 'try_init_with', 'init_with_mut', 'expose_bytes', 'expose_storage']:
             self.assertTrue(exposure_sites(Path('src/lib.rs'), 'fn f() { let exit = Value::'+exit+'; }')[1])
+            self.assertFalse(exposure_sites(Path('src/lib.rs'), allowed.replace('expose_secret', exit))[1])
+            self.assertTrue(exposure_sites(Path('src/lib.rs'), 'fn f() { value.'+exit+'(); }')[1])
 
     def test_literals(self):
         """examples in comments and literals are not executable source.

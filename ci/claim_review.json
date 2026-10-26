@@ -63,7 +63,7 @@
       "claim": "ROOT::claim:discipline:test-lints-cannot-be-suppressed",
       "before": "inner, conditional and inline-test suppressions refuse, including nesting.",
       "after": "Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels and justified smallest-function allows, with only declared fixture boundaries permitted in tests.",
-      "review": "Read unlabelled, unjustified, repeated, nested and serialization exits, fixture-only test boundaries and unchanged unrelated-suppression refusals."
+      "review": "Read host accessor method-value and call refusal probes with matching labelled controls; no semantic data-flow proof is asserted."
     },
     {
       "operation": "ci::test_discipline.SourceDiscipline.test_toolchain_versions",
@@ -78,8 +78,8 @@
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:secret-carriers-reject-printable-traits",
       "before": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles, preventing accidental output opt-in.",
-      "after": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies direct, trait-qualified and initializer exits until an item-local exception permits them.",
-      "review": "Read compiler trait controls and five denied Clippy exits with matching item-local allowed controls; no data-flow claim follows from compiler syntax."
+      "after": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer accessors until an item-local exception permits them.",
+      "review": "Read denied and allowed method-call, mutable method-call, method-value and private host accessor controls alongside the existing carrier controls."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_binary_reachability_control",
@@ -448,6 +448,14 @@
       "before": "Claim: Default emission never formats operation payloads, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.",
       "after": "Claim: Default emission counts and times nested labelled work without constructing byte payloads or formatting Debug content, retains command completion with its injected elapsed time and outcome, and delivers warnings, errors and final counters without loss; only the named trace setting enables payload capture.",
       "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+    },
+    {
+      "operation": "cli-common::observation::tests::drain_timeout_preserves_loss",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:drain-timeouts-are-not-record-loss",
+      "before": "Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait.",
+      "after": "Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue.",
+      "review": "Read the batch-end rendezvous and one-record and full-queue prefixes, acknowledgement counts and successful close disclosure; existing timeout and unavailable accounting remains."
     },
     {
       "operation": "cli-common::observation::tests::exit_reports_pending_delivery",

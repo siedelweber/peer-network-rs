@@ -616,11 +616,66 @@ fn trace_burst_capacity() {
     assert_eq!(status["delivered_records"], rows.len() - 1);
 }
 
-/// Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait.
+/// Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue.
 /// ´claim:cli:drain-timeouts-are-not-record-loss´
 /// ´test:unit:drain-timeout-preserves-loss´
 #[test]
 fn drain_timeout_preserves_loss() {
+    // Hold the worker exactly after its batch ends, then populate the queue
+    // before requesting a drain. The old batch-end acknowledgement loses this
+    // ordering deterministically, without depending on a scheduler delay.
+    for close in [false, true] {
+        for count in [1, QUEUE_RECORDS] {
+            let (mut ordered, _, capture) = fixture();
+            let status = Capture::default();
+            ordered.final_writer = Arc::new(Mutex::new(Box::new(status.clone())));
+            let (entered, entry) = mpsc::sync_channel(1);
+            let (release, released) = mpsc::sync_channel(1);
+            *ordered.before_drain.lock().unwrap() = Some(Box::new(move || {
+                entered.send(()).unwrap();
+                released.recv().unwrap();
+            }));
+            // Prevent later delivery from masking an early acknowledgement.
+            let (continue_worker, continuation) = mpsc::sync_channel(1);
+            *ordered.after_drain.lock().unwrap() = Some(Box::new(move || {
+                let _continued = continuation.recv();
+            }));
+            ordered.sender.send(Message::Wake).unwrap();
+            entry.recv().unwrap();
+            for index in 0..count {
+                ordered.emit(json!({"public":index}));
+            }
+            if close {
+                // Intercept the close path's actual request to prove it was
+                // submitted before releasing the paused delivery worker.
+                let worker_requests = ordered.flush_sender.clone();
+                let (proxy, requests) = mpsc::sync_channel(1);
+                ordered.flush_sender = proxy;
+                let guard = BootstrapGuard(Some(ordered.clone()));
+                let closing = std::thread::spawn(move || drop(guard));
+                worker_requests.send(requests.recv().unwrap()).unwrap();
+                release.send(()).unwrap();
+                closing.join().unwrap();
+                let row: Value = serde_json::from_slice(&status.0.lock().unwrap()).unwrap();
+                assert_eq!(row["undelivered_records"], 0);
+                assert_eq!(row["in_flight_records"], 0);
+                assert_eq!(row["lost_records"], 0);
+                assert_eq!(row["delivered_records"], count + 1);
+            } else {
+                let (done, drained) = mpsc::sync_channel(1);
+                ordered.flush_sender.send(done).unwrap();
+                release.send(()).unwrap();
+                drained.recv().unwrap();
+                assert_eq!(ordered.delivered.load(Ordering::Relaxed), count as u64);
+                assert_eq!(
+                    String::from_utf8(capture.0.lock().unwrap().clone()).unwrap().lines().count(),
+                    count
+                );
+            }
+            assert_eq!(ordered.lost.load(Ordering::Relaxed), 0);
+            continue_worker.send(()).unwrap();
+        }
+    }
     let (mut observation, _, _) = fixture();
     let (sender, _receiver) = mpsc::sync_channel(1);
     observation.flush_sender = sender;
@@ -727,9 +782,9 @@ struct LocalExport {
 }
 impl crate::observation_export::ExportTransport for LocalExport {
     // Fixture-only secret boundary: No deployment secret is accepted by this test fixture route.
-    // Caveat: Only this test boundary's fixture secrets are borrowed for acquisition, comparison or fixture computation; these APIs require ordinary references to establish the carrier contract.
+    // Caveat: The export-credential fixture is borrowed only for comparison with the expected fixture token in LocalExport::send; the borrow ends with that assertion, whose comparison API requires a string reference.
     // (´[ROOT-cav:observe:secret-cli-tests-send-1]´)
-    // Justified: Only this test boundary's fixture secrets are borrowed for acquisition, comparison or fixture computation; these APIs require ordinary references to establish the carrier contract.
+    // Justified: The export-credential fixture is borrowed only for comparison with the expected fixture token in LocalExport::send; the borrow ends with that assertion, whose comparison API requires a string reference.
     #[allow(clippy::disallowed_methods)]
     fn send(
         &self,

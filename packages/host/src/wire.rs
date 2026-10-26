@@ -91,6 +91,10 @@ pub(crate) struct Frame {
     pub(crate) kind: u8,
     pub(crate) payload: Buffer,
 }
+// Caveat: Incoming private frame bytes are acquired directly into protected storage until the socket read completes; the read API requires a mutable slice.
+// (´[ROOT-cav:observe:secret-host-wire-read-buffer-1]´)
+// Justified: Incoming private frame bytes are acquired directly into protected storage until the socket read completes; the read API requires a mutable slice.
+#[allow(clippy::disallowed_methods)]
 pub(crate) async fn read(stream: &mut (impl AsyncRead + Unpin)) -> Result<Frame, Refusal> {
     let kind = stream.read_u8().await.map_err(|_| Refusal::Transport)?;
     let length = stream.read_u32().await.map_err(|_| Refusal::Transport)?;
@@ -100,12 +104,16 @@ pub(crate) async fn read(stream: &mut (impl AsyncRead + Unpin)) -> Result<Frame,
     }
     let mut payload = Buffer::with_capacity(length - 4);
     stream
-        .read_exact(&mut payload.storage()[..length - 4])
+        .read_exact(&mut payload.expose_storage(/* (´[ROOT-cav:observe:secret-host-wire-read-buffer-1]´) */)[..length - 4])
         .await
         .map_err(|_| Refusal::Transport)?;
     payload.set_length(length - 4)?;
     Ok(Frame { kind, payload })
 }
+// Caveat: Private encoded frame bytes are borrowed only for the socket write until it completes; the socket API requires a slice.
+// (´[ROOT-cav:observe:secret-host-wire-send-buffer-1]´)
+// Justified: Private encoded frame bytes are borrowed only for the socket write until it completes; the socket API requires a slice.
+#[allow(clippy::disallowed_methods)]
 pub(crate) async fn send(stream: &mut (impl AsyncWrite + Unpin), kind: u8, payload: &[u8]) -> Result<(), Refusal> {
     if payload.len() > LIMIT {
         return Err(Refusal::RepresentationLimit);
@@ -115,9 +123,18 @@ pub(crate) async fn send(stream: &mut (impl AsyncWrite + Unpin), kind: u8, paylo
     frame.append(&[kind])?;
     frame.append(&length.to_be_bytes())?;
     frame.append(payload)?;
-    stream.write_all(frame.bytes()).await.map_err(|_| Refusal::Transport)?;
+    stream
+        .write_all(frame.expose_bytes(/* (´[ROOT-cav:observe:secret-host-wire-send-buffer-1]´) */))
+        .await
+        .map_err(|_| Refusal::Transport)?;
     stream.flush().await.map_err(|_| Refusal::Transport)
 }
+// Caveat: Private startup packet bytes are borrowed for framing and socket writing until startup returns; those byte-oriented APIs require slices.
+// (´[ROOT-cav:observe:secret-host-wire-startup-buffer-1]´)
+// Caveat: Private startup packet bytes are borrowed for framing and socket writing until startup returns; those byte-oriented APIs require slices.
+// (´[ROOT-cav:observe:secret-host-wire-startup-buffer-2]´)
+// Justified: Private startup packet bytes are borrowed for framing and socket writing until startup returns; those byte-oriented APIs require slices.
+#[allow(clippy::disallowed_methods)]
 pub(crate) async fn startup(stream: &mut Socket, config: &Configuration) -> Result<(), Refusal> {
     let mut payload = Buffer::new();
     payload.append(&196_608_u32.to_be_bytes())?;
@@ -138,9 +155,15 @@ pub(crate) async fn startup(stream: &mut Socket, config: &Configuration) -> Resu
     }
     payload.append(&[0])?;
     stream
-        .write_u32(u32::try_from(payload.bytes().len() + 4).map_err(|_| Refusal::RepresentationLimit)?)
+        .write_u32(
+            u32::try_from(payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-wire-startup-buffer-1]´) */).len() + 4)
+                .map_err(|_| Refusal::RepresentationLimit)?,
+        )
         .await
         .map_err(|_| Refusal::Transport)?;
-    stream.write_all(payload.bytes()).await.map_err(|_| Refusal::Transport)?;
+    stream
+        .write_all(payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-wire-startup-buffer-2]´) */))
+        .await
+        .map_err(|_| Refusal::Transport)?;
     stream.flush().await.map_err(|_| Refusal::Transport)
 }

@@ -9,6 +9,7 @@ pub(crate) const LIMIT: usize = 1_048_576;
 pub(crate) struct Buffer {
     bytes: SecretBox<[u8]>,
     length: usize,
+    capacity: usize,
 }
 
 impl Buffer {
@@ -19,42 +20,37 @@ impl Buffer {
         Self {
             bytes: SecretBox::new(vec![0; capacity].into_boxed_slice()),
             length: 0,
+            capacity,
         }
     }
-    // Caveat: The borrowed private protocol bytes go only to the reviewed parser, cryptographic or socket consumer; those APIs require a slice rather than a secret container.
+    // Caveat: The protocol-storage borrow is forwarded only through a separately labelled host consumer, including classified-public observation after classification; these reviewed consumers require slices rather than a secret container.
     // (´[ROOT-cav:observe:secret-host-secret-bytes-1]´)
-    // Justified: The borrowed private protocol bytes go only to the reviewed parser, cryptographic or socket consumer; those APIs require a slice rather than a secret container.
+    // Justified: The protocol-storage borrow is forwarded only through a separately labelled host consumer, including classified-public observation after classification; these reviewed consumers require slices rather than a secret container.
     #[allow(clippy::disallowed_methods)]
-    pub(crate) fn bytes(&self) -> &[u8] {
+    pub(crate) fn expose_bytes(&self) -> &[u8] {
         &self.bytes.expose_secret(/* (´[ROOT-cav:observe:secret-host-secret-bytes-1]´) */)[..self.length]
     }
     // Caveat: The mutable private buffer goes only to acquisition or encoding into protected storage; the byte-oriented APIs cannot accept the container.
     // (´[ROOT-cav:observe:secret-host-secret-storage-1]´)
     // Justified: The mutable private buffer goes only to acquisition or encoding into protected storage; the byte-oriented APIs cannot accept the container.
     #[allow(clippy::disallowed_methods)]
-    pub(crate) fn storage(&mut self) -> &mut [u8] {
+    pub(crate) fn expose_storage(&mut self) -> &mut [u8] {
         self.bytes.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-secret-storage-1]´) */)
     }
-    // Caveat: Only the protected allocation length is inspected to enforce the public buffer ceiling; the container has no length accessor.
-    // (´[ROOT-cav:observe:secret-host-secret-set-length-1]´)
-    // Justified: Only the protected allocation length is inspected to enforce the public buffer ceiling; the container has no length accessor.
-    #[allow(clippy::disallowed_methods)]
     pub(crate) fn set_length(&mut self, length: usize) -> Result<(), Refusal> {
-        if length > self.bytes.expose_secret(/* (´[ROOT-cav:observe:secret-host-secret-set-length-1]´) */).len() {
+        if length > self.capacity {
             return Err(Refusal::RepresentationLimit);
         }
         self.length = length;
         Ok(())
     }
-    // Caveat: Only the protected allocation length is borrowed for the append capacity check; the container has no length operation.
-    // (´[ROOT-cav:observe:secret-host-secret-append-1]´)
     // Caveat: Incoming private bytes are copied directly into protected storage through a borrow ending when copying returns; the container has no bounded append operation.
     // (´[ROOT-cav:observe:secret-host-secret-append-2]´)
-    // Justified: Protected storage is borrowed to check capacity and copy incoming private bytes directly into it; the container has no bounded append operation.
+    // Justified: Incoming private bytes are copied directly into protected storage; the container has no bounded append operation.
     #[allow(clippy::disallowed_methods)]
     pub(crate) fn append(&mut self, bytes: &[u8]) -> Result<(), Refusal> {
         let end = self.length.checked_add(bytes.len()).ok_or(Refusal::RepresentationLimit)?;
-        if end > self.bytes.expose_secret(/* (´[ROOT-cav:observe:secret-host-secret-append-1]´) */).len() {
+        if end > self.capacity {
             return Err(Refusal::RepresentationLimit);
         }
         self.bytes.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-secret-append-2]´) */)[self.length..end]

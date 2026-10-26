@@ -132,7 +132,7 @@ def test_sources(sources):
         marked.update(added)
 
 
-SECRET_EXITS = {"expose_secret", "expose_secret_mut", "init_with_mut", "init_with", "try_init_with"}
+SECRET_EXITS = {"expose_bytes", "expose_storage", "expose_secret", "expose_secret_mut", "init_with_mut", "init_with", "try_init_with"}
 
 
 def exposure_sites(path, source):
@@ -549,7 +549,7 @@ def main():
             print(finding)
             failed = True
         config = tomllib.loads(pathlib.Path("clippy.toml").read_text())
-        required = {"secrecy::ExposeSecret::expose_secret", "secrecy::ExposeSecretMut::expose_secret_mut",
+        required = {"pn_host::secret::Buffer::expose_bytes", "pn_host::secret::Buffer::expose_storage", "secrecy::ExposeSecret::expose_secret", "secrecy::ExposeSecretMut::expose_secret_mut",
                     "secrecy::SecretBox::init_with_mut", "secrecy::SecretBox::init_with", "secrecy::SecretBox::try_init_with"}
         manifest = tomllib.loads(pathlib.Path("Cargo.toml").read_text())
         if not required <= {row["path"] for row in config["disallowed-methods"]} or manifest["workspace"]["lints"]["clippy"].get("disallowed_methods") != "deny":

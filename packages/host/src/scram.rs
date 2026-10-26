@@ -14,18 +14,32 @@ static DERIVATIONS: tokio::sync::Semaphore = tokio::sync::Semaphore::const_new(D
 
 pub(crate) const ITERATIONS: std::ops::RangeInclusive<u32> = 4096..=600_000;
 
+// Caveat: Private protocol bytes are encoded directly into protected storage until the base64 encoder returns; its destination API requires a mutable slice.
+// (´[ROOT-cav:observe:secret-host-scram-encode-buffer-1]´)
+// Justified: Private protocol bytes are encoded directly into protected storage until the base64 encoder returns; its destination API requires a mutable slice.
+#[allow(clippy::disallowed_methods)]
 fn encode(bytes: &[u8]) -> Result<Buffer, Refusal> {
     let mut result = Buffer::new();
     let length = STANDARD
-        .encode_slice(bytes, result.storage())
+        .encode_slice(
+            bytes,
+            result.expose_storage(/* (´[ROOT-cav:observe:secret-host-scram-encode-buffer-1]´) */),
+        )
         .map_err(|_| Refusal::RepresentationLimit)?;
     result.set_length(length)?;
     Ok(result)
 }
+// Caveat: Private protocol bytes are decoded directly into protected storage until the base64 decoder returns; its destination API requires a mutable slice.
+// (´[ROOT-cav:observe:secret-host-scram-decode-buffer-1]´)
+// Justified: Private protocol bytes are decoded directly into protected storage until the base64 decoder returns; its destination API requires a mutable slice.
+#[allow(clippy::disallowed_methods)]
 fn decode(bytes: &[u8]) -> Result<Buffer, Refusal> {
     let mut result = Buffer::new();
     let length = STANDARD
-        .decode_slice(bytes, result.storage())
+        .decode_slice(
+            bytes,
+            result.expose_storage(/* (´[ROOT-cav:observe:secret-host-scram-decode-buffer-1]´) */),
+        )
         .map_err(|_| Refusal::ScramFormat)?;
     result.set_length(length)?;
     Ok(result)
@@ -60,6 +74,10 @@ fn mac(key: &[u8], bytes: &[u8]) -> Result<SecretBox<[u8; 32]>, Refusal> {
     );
     Ok(output)
 }
+// Caveat: Private authentication-frame bytes are borrowed for the expected-code check and SCRAM parser until authentication processing returns; the parser requires slices.
+// (´[ROOT-cav:observe:secret-host-scram-authentication-buffer-1]´)
+// Justified: Private authentication-frame bytes are borrowed for the expected-code check and SCRAM parser until authentication processing returns; the parser requires slices.
+#[allow(clippy::disallowed_methods)]
 fn authentication(frame: &wire::Frame, expected: u32) -> Result<&[u8], Refusal> {
     if frame.kind != b'R' {
         return Err(if frame.kind == b'E' {
@@ -68,23 +86,31 @@ fn authentication(frame: &wire::Frame, expected: u32) -> Result<&[u8], Refusal> 
             Refusal::Protocol
         });
     }
-    let (code, rest) = frame.payload.bytes().split_at_checked(4).ok_or(Refusal::Protocol)?;
+    let (code, rest) = frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-authentication-buffer-1]´) */).split_at_checked(4).ok_or(Refusal::Protocol)?;
     let actual = u32::from_be_bytes(code.try_into().map_err(|_| Refusal::Protocol)?);
     if actual != expected {
         return Err(Refusal::authentication(actual));
     }
     Ok(rest)
 }
+// Caveat: Private password and salt bytes are borrowed by the bounded derivation and its declared fixture controls until derivation returns; the cryptographic API requires slices.
+// (´[ROOT-cav:observe:secret-host-scram-derive-buffer-1]´)
+// Caveat: Private password and salt bytes are borrowed by the bounded derivation and its declared fixture controls until derivation returns; the cryptographic API requires slices.
+// (´[ROOT-cav:observe:secret-host-scram-derive-buffer-2]´)
+// Caveat: Private password and salt bytes are borrowed by the bounded derivation and its declared fixture controls until derivation returns; the cryptographic API requires slices.
+// (´[ROOT-cav:observe:secret-host-scram-derive-buffer-3]´)
+// Caveat: Private password and salt bytes are borrowed by the bounded derivation and its declared fixture controls until derivation returns; the cryptographic API requires slices.
+// (´[ROOT-cav:observe:secret-host-scram-derive-buffer-4]´)
 // Caveat: PBKDF2 writes the derived password key directly into protected output; its API requires a mutable byte array.
 // (´[ROOT-cav:observe:secret-host-scram-derive-1]´)
-// Justified: PBKDF2 writes the derived password key directly into protected output; its API requires a mutable byte array.
+// Justified: Private password and salt bytes are borrowed by the bounded derivation and its declared fixture controls until derivation returns; the cryptographic API requires slices.
 #[allow(clippy::disallowed_methods)]
 async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<SecretBox<[u8; 32]>, Refusal> {
     let permit = DERIVATIONS.acquire().await.map_err(|_| Refusal::ScramFormat)?;
     tokio::task::spawn_blocking(move || {
         let _permit = permit;
         #[cfg(test)]
-        if password.bytes() == b"public-permit-password" {
+        if password.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-derive-buffer-1]´) */) == b"public-permit-password" {
             let hook = PERMIT_HOOK.lock().unwrap().pop().unwrap();
             let _ = hook.0.send(());
             hook.1
@@ -92,7 +118,8 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
                 .map_err(|_| Refusal::ScramFormat)?;
         }
         #[cfg(test)]
-        if password.bytes() == b"public-progress-password" {
+        if password.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-derive-buffer-2]´) */) == b"public-progress-password"
+        {
             let hook = PROGRESS_HOOK.lock().unwrap().take();
             if let Some((started, progress)) = hook {
                 let _ = started.send(());
@@ -103,8 +130,8 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
         }
         let mut salted = SecretBox::new(Box::new([0; 32]));
         pbkdf2::pbkdf2::<Hmac<Sha256>>(
-            password.bytes(),
-            salt.bytes(),
+            password.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-derive-buffer-3]´) */),
+            salt.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-derive-buffer-4]´) */),
             iterations,
             salted.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-derive-1]´) */),
         )
@@ -118,6 +145,18 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
 // (´[ROOT-cav:observe:secret-host-scram-login-1]´)
 // Caveat: The nonce is borrowed by base64 encoding into a protected buffer for that call; the encoder requires a byte slice.
 // (´[ROOT-cav:observe:secret-host-scram-login-2]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-1]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-2]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-3]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-4]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-5]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-6]´)
 // Caveat: The salted password is borrowed by the Client Key MAC; the MAC API requires bytes and its ordinary keyed state lasts until finalization.
 // (´[ROOT-cav:observe:secret-host-scram-login-3]´)
 // Caveat: The client key enters ordinary SHA-256 state until finalization into protected output; the digest API cannot consume the carrier.
@@ -126,8 +165,14 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
 // (´[ROOT-cav:observe:secret-host-scram-login-5]´)
 // Caveat: The salted password is borrowed by the Server Key MAC until finalization; its keyed state cannot be represented by the carrier API.
 // (´[ROOT-cav:observe:secret-host-scram-login-6]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-7]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-8]´)
 // Caveat: The stored key is borrowed by the transcript MAC until finalization into protected output; the MAC API requires key bytes.
 // (´[ROOT-cav:observe:secret-host-scram-login-7]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-9]´)
 // Caveat: The proof lends mutable protected bytes to the XOR loop until the loop ends; iteration cannot operate on the carrier directly.
 // (´[ROOT-cav:observe:secret-host-scram-login-8]´)
 // Caveat: The client key lends bytes to the proof XOR loop, including ordinary copied byte operands until each iteration ends; the arithmetic requires ordinary bytes.
@@ -136,9 +181,17 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
 // (´[ROOT-cav:observe:secret-host-scram-login-10]´)
 // Caveat: The proof is borrowed for base64 encoding into a protected buffer until encoding returns; the encoder requires a byte slice.
 // (´[ROOT-cav:observe:secret-host-scram-login-11]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-10]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-11]´)
 // Caveat: The server key enters the verifier's ordinary MAC state until server-signature verification returns; the MAC API cannot accept or retain the carrier.
 // (´[ROOT-cav:observe:secret-host-scram-login-12]´)
-// Justified: Nonce and derived authentication material are borrowed by entropy, digest, MAC and encoding operations and the proof loop; these consumers require byte slices and outputs remain secret-owned.
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-12]´)
+// Caveat: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
+// (´[ROOT-cav:observe:secret-host-scram-login-buffer-13]´)
+// Justified: Private SCRAM transcript, nonce, proof and signature bytes are borrowed for protocol construction, authentication checks, cryptographic operations and socket writes until login returns; these consumers require slices.
 #[allow(clippy::disallowed_methods)]
 pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result<(), Refusal> {
     wire::startup(socket, config).await?;
@@ -152,20 +205,23 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
         .map_err(|_| Refusal::Entropy)?;
     let nonce = encode(random.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-2]´) */))?;
     let mut bare = Buffer::from_bytes(b"n=,r=")?;
-    bare.append(nonce.bytes())?;
+    bare.append(nonce.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-1]´) */))?;
     let mut initial = Buffer::from_bytes(b"SCRAM-SHA-256\0")?;
     initial.append(
-        &u32::try_from(bare.bytes().len() + 3)
+        &u32::try_from(bare.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-2]´) */).len() + 3)
             .map_err(|_| Refusal::RepresentationLimit)?
             .to_be_bytes(),
     )?;
     initial.append(b"n,,")?;
-    initial.append(bare.bytes())?;
-    wire::send(socket, b'p', initial.bytes()).await?;
+    initial.append(bare.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-3]´) */))?;
+    let initial_bytes = initial.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-4]´) */);
+    wire::send(socket, b'p', initial_bytes).await?;
     let continuation = wire::read(socket).await?;
     let server_first = authentication(&continuation, 11)?;
     let server_nonce = attribute(server_first, b'r')?;
-    if !server_nonce.starts_with(nonce.bytes()) || server_nonce.len() <= nonce.bytes().len() {
+    if !server_nonce.starts_with(nonce.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-5]´) */))
+        || server_nonce.len() <= nonce.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-6]´) */).len()
+    {
         return Err(Refusal::ServerNonce);
     }
     let salt = decode(attribute(server_first, b's')?)?;
@@ -195,14 +251,14 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
     let mut final_without_proof = Buffer::from_bytes(b"c=biws,r=")?;
     final_without_proof.append(server_nonce)?;
     let mut transcript = Buffer::new();
-    transcript.append(bare.bytes())?;
+    transcript.append(bare.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-7]´) */))?;
     transcript.append(b",")?;
     transcript.append(server_first)?;
     transcript.append(b",")?;
-    transcript.append(final_without_proof.bytes())?;
+    transcript.append(final_without_proof.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-8]´) */))?;
     let signature = mac(
         stored.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-7]´) */),
-        transcript.bytes(),
+        transcript.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-9]´) */),
     )?;
     let mut proof = SecretBox::new(Box::new([0; 32]));
     for ((output, key), sig) in proof
@@ -216,16 +272,17 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
     let encoded_proof = encode(proof.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-11]´) */))?;
     let mut final_message = final_without_proof;
     final_message.append(b",p=")?;
-    final_message.append(encoded_proof.bytes())?;
-    wire::send(socket, b'p', final_message.bytes()).await?;
+    final_message.append(encoded_proof.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-10]´) */))?;
+    let final_bytes = final_message.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-11]´) */);
+    wire::send(socket, b'p', final_bytes).await?;
     let server_final = wire::read(socket).await?;
     let signature = decode(attribute(authentication(&server_final, 12)?, b'v')?)?;
     let mut verifier =
         Hmac::<Sha256>::new_from_slice(server_key.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-12]´) */))
             .map_err(|_| Refusal::ScramFormat)?;
-    verifier.update(transcript.bytes());
+    verifier.update(transcript.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-12]´) */));
     verifier
-        .verify_slice(signature.bytes())
+        .verify_slice(signature.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-login-buffer-13]´) */))
         .map_err(|_| Refusal::ServerSignature)?;
     let success = wire::read(socket).await?;
     if !authentication(&success, 0)?.is_empty() {
@@ -286,6 +343,17 @@ mod tests {
     /// ´claim:host:ceiling-login-leaves-relay-progress-independent´
     /// ´test:unit:ceiling-login-progress´
     #[test]
+    // Fixture-only secret boundary: Only this test constructs and consumes these fixture secrets.
+    // Caveat: Only the locally constructed authentication and progress fixtures are borrowed for fixture-server parsing, sending and result comparison until those operations return; the protocol assertions require slices.
+    // (´[ROOT-cav:observe:secret-host-scram-ceiling-login-progress-buffer-1]´)
+    // Caveat: Only the locally constructed authentication and progress fixtures are borrowed for fixture-server parsing, sending and result comparison until those operations return; the protocol assertions require slices.
+    // (´[ROOT-cav:observe:secret-host-scram-ceiling-login-progress-buffer-2]´)
+    // Caveat: Only the locally constructed authentication and progress fixtures are borrowed for fixture-server parsing, sending and result comparison until those operations return; the protocol assertions require slices.
+    // (´[ROOT-cav:observe:secret-host-scram-ceiling-login-progress-buffer-3]´)
+    // Caveat: Only the locally constructed authentication and progress fixtures are borrowed for fixture-server parsing, sending and result comparison until those operations return; the protocol assertions require slices.
+    // (´[ROOT-cav:observe:secret-host-scram-ceiling-login-progress-buffer-4]´)
+    // Justified: Only the locally constructed authentication and progress fixtures are borrowed for fixture-server parsing, sending and result comparison until those operations return; the protocol assertions require slices.
+    #[allow(clippy::disallowed_methods)]
     fn ceiling_login_progress() {
         use super::*;
         use tokio::io::AsyncReadExt;
@@ -303,11 +371,11 @@ mod tests {
                 server.read_exact(&mut startup).await.unwrap();
                 wire::send(&mut server, b'R', b"\0\0\0\x0aSCRAM-SHA-256\0\0").await.unwrap();
                 let initial = wire::read(&mut server).await.unwrap();
-                let offset = initial.payload.bytes().windows(2).position(|v| v == b"r=").unwrap()+2;
+                let offset = initial.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-ceiling-login-progress-buffer-1]´) */).windows(2).position(|v| v == b"r=").unwrap()+2;
                 let mut first = Buffer::from_bytes(b"\0\0\0\x0br=").unwrap();
-                first.append(&initial.payload.bytes()[offset..]).unwrap();
+                first.append(&initial.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-ceiling-login-progress-buffer-2]´) */)[offset..]).unwrap();
                 first.append(b"-server,s=c2FsdA==,i=600000").unwrap();
-                wire::send(&mut server, b'R', first.bytes()).await.unwrap();
+                wire::send(&mut server, b'R', first.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-ceiling-login-progress-buffer-3]´) */)).await.unwrap();
                 let proof = wire::read(&mut server).await.unwrap();
                 assert_eq!(proof.kind,b'p');
                 wire::send(&mut server,b'E',b"public fixture ends after proof").await.unwrap();
@@ -315,7 +383,7 @@ mod tests {
             ready.await.unwrap();
             let (mut sending, mut receiving) = tokio::io::duplex(64);
             let relay = tokio::spawn(async move { wire::send(&mut sending,b'D',b"public-progress").await.unwrap(); });
-            assert_eq!(wire::read(&mut receiving).await.unwrap().payload.bytes(),b"public-progress");
+            assert_eq!(wire::read(&mut receiving).await.unwrap().payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-scram-ceiling-login-progress-buffer-4]´) */),b"public-progress");
             progress.send(()).unwrap();
             relay.await.unwrap();
             assert_eq!(login.await.unwrap(),Err(Refusal::ServerAuthentication));

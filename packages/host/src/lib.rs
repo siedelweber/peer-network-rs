@@ -167,6 +167,10 @@ impl Session {
         ),
         ret
     )]
+    // Caveat: Private startup-frame bytes are borrowed only for the ready-state check until comparison returns; the protocol check requires a slice.
+    // (´[ROOT-cav:observe:secret-host-lib-connect-buffer-1]´)
+    // Justified: Private startup-frame bytes are borrowed only for the ready-state check until comparison returns; the protocol check requires a slice.
+    #[allow(clippy::disallowed_methods)]
     pub async fn connect(config: Configuration) -> Result<Self, Refusal> {
         let result = async {
             let mut socket = wire::Socket::open(&config).await?;
@@ -178,7 +182,7 @@ impl Session {
             loop {
                 let frame = wire::read(&mut socket).await?;
                 if frame.kind == b'Z' {
-                    if frame.payload.bytes() != b"I" {
+                    if frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-connect-buffer-1]´) */) != b"I" {
                         return Err(Refusal::Protocol);
                     }
                     break;
@@ -273,16 +277,25 @@ impl Session {
         }
         result
     }
+    // Caveat: Private cancellation capability and packet bytes are borrowed for protected packet assembly and its socket write until cancellation returns; the socket API requires a slice.
+    // (´[ROOT-cav:observe:secret-host-lib-cancel-inner-buffer-1]´)
+    // Caveat: Private cancellation capability and packet bytes are borrowed for protected packet assembly and its socket write until cancellation returns; the socket API requires a slice.
+    // (´[ROOT-cav:observe:secret-host-lib-cancel-inner-buffer-2]´)
+    // Justified: Private cancellation capability and packet bytes are borrowed for protected packet assembly and its socket write until cancellation returns; the socket API requires a slice.
+    #[allow(clippy::disallowed_methods)]
     async fn cancel_inner(&self) -> Result<(), Refusal> {
         let mut packet = Buffer::new();
         packet.append(&16_u32.to_be_bytes())?;
         packet.append(&80_877_102_u32.to_be_bytes())?;
         {
             let capability = self.backend_key.lock().map_err(|_| Refusal::Cancellation)?;
-            packet.append(capability.as_ref().ok_or(Refusal::Cancellation)?.bytes())?;
+            packet.append(capability.as_ref().ok_or(Refusal::Cancellation)?.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-cancel-inner-buffer-1]´) */))?;
         }
         let mut socket = wire::Socket::open(&self.config).await?;
-        socket.write_all(packet.bytes()).await.map_err(|_| Refusal::Transport)?;
+        socket
+            .write_all(packet.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-cancel-inner-buffer-2]´) */))
+            .await
+            .map_err(|_| Refusal::Transport)?;
         socket.shutdown().await.map_err(|_| Refusal::Transport)
     }
     /// Take quarantined whole diagnostics without exposing their private bytes.
@@ -311,6 +324,16 @@ impl Session {
     }
 }
 
+// Caveat: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+// (´[ROOT-cav:observe:secret-host-lib-forward-buffer-1]´)
+// Caveat: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+// (´[ROOT-cav:observe:secret-host-lib-forward-buffer-2]´)
+// Caveat: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+// (´[ROOT-cav:observe:secret-host-lib-forward-buffer-3]´)
+// Caveat: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+// (´[ROOT-cav:observe:secret-host-lib-forward-buffer-4]´)
+// Justified: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+#[allow(clippy::disallowed_methods)]
 async fn forward(
     mut shim: tokio::io::DuplexStream,
     socket: wire::Socket,
@@ -325,17 +348,23 @@ async fn forward(
     if !(4..=1024).contains(&length) {
         return Err(Refusal::DriverHandoff);
     }
-    shim.read_exact(&mut placeholder.storage()[..length - 4])
+    shim.read_exact(&mut placeholder.expose_storage(/* (´[ROOT-cav:observe:secret-host-lib-forward-buffer-1]´) */)[..length - 4])
         .await
         .map_err(|_| Refusal::DriverHandoff)?;
     placeholder.set_length(length - 4)?;
-    if placeholder.bytes() != b"\0\x03\0\0client_encoding\0UTF8\0user\0pn_public_placeholder\0database\0pn_public_placeholder\0\0"
+    if placeholder.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-forward-buffer-2]´) */)
+        != b"\0\x03\0\0client_encoding\0UTF8\0user\0pn_public_placeholder\0database\0pn_public_placeholder\0\0"
     {
         return Err(Refusal::DriverHandoff);
     }
     wire::send(&mut shim, b'R', &0_u32.to_be_bytes()).await?;
     for frame in startup {
-        wire::send(&mut shim, frame.kind, frame.payload.bytes()).await?;
+        wire::send(
+            &mut shim,
+            frame.kind,
+            frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-forward-buffer-3]´) */),
+        )
+        .await?;
     }
     wire::send(&mut shim, b'Z', b"I").await?;
     let (client_read, mut client_write) = tokio::io::split(shim);
@@ -350,7 +379,12 @@ async fn forward(
             let frame = wire::read(&mut server_read).await?;
             if let Some(frame) = filter(frame, &bridge_key, &bridge_diagnostics)? {
                 observe_public_frame(&frame);
-                wire::send(&mut client_write, frame.kind, frame.payload.bytes()).await?;
+                wire::send(
+                    &mut client_write,
+                    frame.kind,
+                    frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-forward-buffer-4]´) */),
+                )
+                .await?;
             }
         }
     };
@@ -445,6 +479,10 @@ async fn relay(state: Relay) -> Result<(), Refusal> {
     ),
     ret
 )]
+// Caveat: Private outbound frame storage is borrowed for the authenticated socket write until it completes; the socket API requires a slice.
+// (´[ROOT-cav:observe:secret-host-lib-relay-outbound-buffer-1]´)
+// Justified: Private outbound frame storage is borrowed for the authenticated socket write until it completes; the socket API requires a slice.
+#[allow(clippy::disallowed_methods)]
 async fn relay_outbound(state: Outbound) -> Result<(), Refusal> {
     let Outbound {
         mut client,
@@ -455,7 +493,12 @@ async fn relay_outbound(state: Outbound) -> Result<(), Refusal> {
         loop {
             let frame = wire::read(&mut client).await?;
             observe_public_frame(&frame);
-            wire::send(&mut server, frame.kind, frame.payload.bytes()).await?;
+            wire::send(
+                &mut server,
+                frame.kind,
+                frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-relay-outbound-buffer-1]´) */),
+            )
+            .await?;
             if frame.kind == b'X' {
                 return Ok(());
             }
@@ -470,13 +513,22 @@ async fn relay_outbound(state: Outbound) -> Result<(), Refusal> {
     result
 }
 
+// Caveat: Classified-public frame bytes are borrowed only to construct the full public observation after classification, ending when public_bytes returns; that representation API requires a slice.
+// (´[ROOT-cav:observe:secret-host-lib-observe-public-frame-buffer-1]´)
+// Justified: Classified-public frame bytes are borrowed only to construct the full public observation after classification, ending when public_bytes returns; that representation API requires a slice.
+#[allow(clippy::disallowed_methods)]
 fn observe_public_frame(frame: &wire::Frame) {
     let operation = cli_common::observation::scope(
         "HOST",
         "sig:design:storage",
         "observe_public_frame",
         &if cli_common::observation::trace_enabled() {
-            Some((frame.kind, cli_common::observation::public_bytes(frame.payload.bytes())))
+            Some((
+                frame.kind,
+                cli_common::observation::public_bytes(
+                    frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-observe-public-frame-buffer-1]´) */),
+                ),
+            ))
         } else {
             None
         },
@@ -485,6 +537,16 @@ fn observe_public_frame(frame: &wire::Frame) {
     operation.finish(&result);
 }
 
+// Caveat: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
+// (´[ROOT-cav:observe:secret-host-lib-filter-buffer-1]´)
+// Caveat: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
+// (´[ROOT-cav:observe:secret-host-lib-filter-buffer-2]´)
+// Caveat: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
+// (´[ROOT-cav:observe:secret-host-lib-filter-buffer-3]´)
+// Caveat: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
+// (´[ROOT-cav:observe:secret-host-lib-filter-buffer-4]´)
+// Justified: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
+#[allow(clippy::disallowed_methods)]
 fn filter(
     mut frame: wire::Frame,
     key: &Mutex<Option<Buffer>>,
@@ -492,21 +554,26 @@ fn filter(
 ) -> Result<Option<wire::Frame>, Refusal> {
     match frame.kind {
         b'K' => {
-            if frame.payload.bytes().len() != 8 {
+            if frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-filter-buffer-1]´) */).len() != 8 {
                 return Err(Refusal::Protocol);
             }
             *key.lock().map_err(|_| Refusal::Cancellation)? = Some(frame.payload);
             frame.payload = Buffer::from_bytes(&[0, 0, 0, 1, 0, 0, 0, 2])?;
         }
-        b'S' if frame.payload.bytes().starts_with(b"session_authorization\0") => return Ok(None),
-        b'S' if !public_parameter(frame.payload.bytes()) => {
+        b'S' if frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-filter-buffer-2]´) */).starts_with(b"session_authorization\0") =>
+        {
+            return Ok(None);
+        }
+        b'S' if !public_parameter(frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-filter-buffer-3]´) */)) => {
             diagnostics
                 .lock()
                 .map_err(|_| Refusal::PrivateDiagnostic)?
                 .push(PrivateDiagnostic(frame.payload));
             return Err(Refusal::UnclassifiedParameter);
         }
-        b'E' | b'N' if !public_diagnostic(frame.payload.bytes()) => {
+        b'E' | b'N'
+            if !public_diagnostic(frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-filter-buffer-4]´) */)) =>
+        {
             diagnostics
                 .lock()
                 .map_err(|_| Refusal::PrivateDiagnostic)?
@@ -590,6 +657,19 @@ mod tests {
     /// ´claim:host:wire-filter-precedes-ordinary-driver-storage´
     /// ´test:unit:wire-filter-boundary´
     #[test]
+    // Fixture-only secret boundary: Only this test constructs and consumes these fixture secrets.
+    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-1]´)
+    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-2]´)
+    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-3]´)
+    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-4]´)
+    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-5]´)
+    // Justified: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    #[allow(clippy::disallowed_methods)]
     fn wire_filter_boundary() {
         let key = Mutex::new(None);
         let diagnostics = Mutex::new(Vec::new());
@@ -598,8 +678,14 @@ mod tests {
             payload: Buffer::from_bytes(bytes).unwrap(),
         };
         let dummy = filter(frame(b'K', b"private!"), &key, &diagnostics).unwrap().unwrap();
-        assert_eq!(dummy.payload.bytes(), [0, 0, 0, 1, 0, 0, 0, 2]);
-        assert_eq!(key.lock().unwrap().as_ref().unwrap().bytes(), b"private!");
+        assert_eq!(
+            dummy.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-1]´) */),
+            [0, 0, 0, 1, 0, 0, 0, 2]
+        );
+        assert_eq!(
+            key.lock().unwrap().as_ref().unwrap().expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-2]´) */),
+            b"private!"
+        );
         assert!(
             filter(frame(b'S', b"session_authorization\0private_role\0"), &key, &diagnostics)
                 .unwrap()
@@ -616,8 +702,14 @@ mod tests {
             assert_eq!(filter(frame(kind, bytes), &key, &diagnostics).err(), Some(expected));
         }
         let retained = diagnostics.lock().unwrap();
-        assert_eq!(retained[0].0.bytes(), b"application_name\0private_application\0");
-        assert_eq!(retained[1].0.bytes(), b"Mprivate_error\0\0");
+        assert_eq!(
+            retained[0].0.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-3]´) */),
+            b"application_name\0private_application\0"
+        );
+        assert_eq!(
+            retained[1].0.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-4]´) */),
+            b"Mprivate_error\0\0"
+        );
         assert!(!format!("{retained:?}").contains("private_application"));
         assert!(!format!("{retained:?}").contains("private_error"));
         drop(retained);
@@ -627,7 +719,7 @@ mod tests {
                 .unwrap()
                 .unwrap()
                 .payload
-                .bytes(),
+                .expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-5]´) */),
             public
         );
     }
