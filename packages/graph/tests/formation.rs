@@ -2613,25 +2613,7 @@ fn leaving(sequence: u64, target: PublicReference) -> CandidateAct {
 /// ´test:integration:formed-reference-conformance´
 #[test]
 fn formed_reference_conformance() {
-    let inputs = vec![
-        candidate("Registration", 1),
-        candidate("Affinity", 2),
-        publication(3),
-        ownership(4),
-        participation(5, 5, 5),
-        review(6, named("name", "topic"), 6),
-        sending(7, 5, 7),
-        bidding(8, 4, 8),
-        opinion(9, named("prof", "a")),
-        join_request(10, PublicReference::Minted(inputs_chat())),
-        tagging(11, named("prof", "a")),
-        leaving(12, PublicReference::Minted(inputs_chat())),
-        referencing(13, named("prof", "a")),
-        invitation(14),
-        deinvite(15),
-        withdrawing(16, PublicReference::Minted(bidding(8, 4, 8).id)),
-        rescinding(17, PublicReference::Minted(bidding(8, 4, 8).id)),
-    ];
+    let inputs = formed_cases();
     for input in &inputs {
         let absent = ActId {
             sequence: 99,
@@ -3559,4 +3541,105 @@ fn rescind_projection() {
 fn rescind_reconstruction() {
     let offer = PublicReference::Minted(bidding(8, 4, 8).id);
     shared_family_reconstruction(rescinding(16, offer.clone()), rescinding(17, offer));
+}
+
+fn formed_cases() -> Vec<CandidateAct> {
+    vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        review(6, named("name", "topic"), 6),
+        sending(7, 5, 7),
+        bidding(8, 4, 8),
+        opinion(9, named("prof", "a")),
+        join_request(10, PublicReference::Minted(inputs_chat())),
+        tagging(11, named("prof", "a")),
+        leaving(12, PublicReference::Minted(inputs_chat())),
+        referencing(13, named("prof", "a")),
+        invitation(14),
+        deinvite(15),
+        withdrawing(16, PublicReference::Minted(bidding(8, 4, 8).id)),
+        rescinding(17, PublicReference::Minted(bidding(8, 4, 8).id)),
+    ]
+}
+
+/// Claim: All seventeen implemented families form together as twenty-five projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; settlement references, geometry and title remain outside this scope.
+/// ´claim:formation:implemented-families-share-complete-authorization´
+/// ´test:integration:formed-authorization-conformance´
+#[test]
+fn formed_authorization_conformance() {
+    let inputs = formed_cases();
+    source_sort_conformance(&inputs);
+    let verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &names()).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((inputs.len(), graph.node_count(), graph.edge_count()), (17, 10, 25));
+    let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    let mut reversed = inputs.clone();
+    reversed.reverse();
+    for act in &mut reversed {
+        act.legs.reverse();
+    }
+    assert_eq!(
+        validate_formation(&graph, &validate_history(&reversed, &names()).unwrap(), &verifier),
+        Ok(())
+    );
+    for edge in graph.edge_indices() {
+        let next = petgraph::graph::EdgeIndex::new((edge.index() + 1) % graph.edge_count());
+        let mut missing = graph.clone();
+        missing.remove_edge(edge);
+        assert_eq!(missing[next], graph[next]);
+        assert_eq!(
+            validate_formation(&missing, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+        let mut changed = graph.clone();
+        changed[edge] = graph[next].clone();
+        assert_eq!(
+            validate_formation(&changed, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    for (index, _) in inputs.iter().enumerate() {
+        let mut denied = Verifier {
+            acts: inputs.clone(),
+            removals: false,
+        };
+        denied.acts.remove(index);
+        assert_eq!(reconstruct(&history, &denied).unwrap_err(), RegistrationError::Unapproved);
+        let mut removed = inputs.clone();
+        removed[index].projections.content = Removal::Tombstoned((2, 1));
+        let removed = validate_history(&removed, &names()).unwrap();
+        assert_eq!(
+            reconstruct(&removed, &verifier).unwrap_err(),
+            RegistrationError::UnauthorizedRemoval
+        );
+        denied.acts.clone_from(&inputs);
+        denied.removals = true;
+        assert_eq!(validate_formation(&graph, &removed, &denied), Ok(()));
+    }
+}
+
+fn source_sort_conformance(inputs: &[CandidateAct]) {
+    let mut sources = vec![named("addr", "b"), named("prof", "a"), named("name", "a")];
+    for family in ["Publish", "Owner", "Participant", "Review", "Send", "Bid"] {
+        sources.push(PublicReference::Minted(ActId {
+            author: "a".into(),
+            sequence: 99,
+            family: family.into(),
+        }));
+    }
+    for input in inputs {
+        for source in &sources {
+            let mut changed = input.clone();
+            changed.legs[0].source = source.clone();
+            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+        }
+    }
 }

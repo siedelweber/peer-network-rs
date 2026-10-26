@@ -1362,6 +1362,14 @@
       "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
     {
+      "operation": "pn-graph::formation::formed_authorization_conformance",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:implemented-families-share-complete-authorization",
+      "before": "",
+      "after": "Claim: All seventeen implemented families form together as twenty-five projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; settlement references, geometry and title remain outside this scope.",
+      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
+    },
+    {
       "operation": "pn-graph::formation::formed_reference_conformance",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:formed-families-separate-protocol-resolution-from-incidence",
@@ -1589,7 +1597,7 @@
       "operation": "pn-graph::formation::withdraw_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:withdraw-requires-complete-offer-control-incidence",
-      "before": "Claim: Withdraw forms an approved author Actor to Offer control edge with no authored parameters, protocol references or license pair. A dangling Offer are admitted; wrong constructors, altered incidence and extra coordinates refuse at formation, while a license pair refuses at records validation. Formation decides no settlement, title or standing effect.",
+      "before": "",
       "after": "Claim: Withdraw forms an approved author Actor to Offer control edge with no authored parameters, protocol references or license pair. A dangling Offer is admitted; wrong constructors, altered incidence and extra coordinates refuse at formation, while a license pair refuses at records validation. Formation decides no settlement, title or standing effect.",
       "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
