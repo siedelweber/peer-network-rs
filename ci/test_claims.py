@@ -1,7 +1,7 @@
 """Controlled evidence graphs exercise structural and predicate failures."""
 
 from copy import deepcopy
-from contextlib import ExitStack, redirect_stdout
+from contextlib import ExitStack, redirect_stdout, redirect_stderr
 import io
 import json
 import os
@@ -11,7 +11,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from claims import evaluate, main, prose, respells, reconcile_mints, reviewed_sites, site_claim
+from claims import check_register, register_form, evaluate, main, prose, respells, reconcile_mints, reviewed_sites, site_claim
 from devperf import StructuralError
 from harness import CONFIGURATION
 
@@ -35,6 +35,72 @@ def fixture():
 
 
 class Evidence(unittest.TestCase):
+    def test_register_canonical_form(self):
+        """Claim: Unsorted, duplicate or non-canonical claim registers refuse before evidence evaluation without rewriting, while the explicit canonicalizer preserves entries and reaches a byte-stable form.
+        ´claim:testing:register-order-and-form-are-checked´
+        ´test:integration:test-register-canonical-form´
+        """
+        first = dict(operation='alpha', path='fixture.py', claim='ROOT::claim:testing:fixture', before='Before.', after='An accented é remains intact.', review='Read the assertion.')
+        second = first | {'operation': 'zeta'}
+        review = dict(schema=1, sites=[first, second])
+        baseline = dict(schema=1, glosses={'alpha': 'Before.', 'zeta': 'Before.'})
+        formatted = {name: register_form(json.dumps(data), field)[2] for name, field, data in (
+            ('ci/claim_review.json', 'sites', review), ('ci/claim_gloss_baseline.json', 'glosses', baseline))}
+        self.assertEqual(check_register(formatted['ci/claim_review.json'], 'sites'), review)
+        self.assertEqual(check_register(formatted['ci/claim_gloss_baseline.json'], 'glosses'), baseline)
+        invalid = [
+            ('ci/claim_review.json', json.dumps(review | {'sites': [second, first]}), 'order: entry zeta'),
+            ('ci/claim_gloss_baseline.json', json.dumps(dict(schema=1, glosses={'zeta': 'Before.', 'alpha': 'Before.'})), 'order: entry zeta'),
+            ('ci/claim_review.json', json.dumps(review | {'sites': [first, second, first | {'path': 'other.py'}]}), 'duplicate register operation: alpha'),
+            ('ci/claim_review.json', json.dumps(review), 'serialization: entry <root>'),
+            ('ci/claim_review.json', formatted['ci/claim_review.json'].replace('      "path"', '       "path"'), 'serialization: entry alpha'),
+            ('ci/claim_review.json', json.dumps(review, ensure_ascii=True, indent=2)+'\n', 'serialization: entry alpha'),
+            ('ci/claim_review.json', formatted['ci/claim_review.json'].replace('\n', '\r\n'), 'serialization'),
+            ('ci/claim_review.json', formatted['ci/claim_review.json'].rstrip('\n'), 'serialization'),
+            ('ci/claim_review.json', json.dumps({'sites': review['sites'], 'schema': 1}, ensure_ascii=False, indent=2)+'\n', 'serialization'),
+            ('ci/claim_review.json', json.dumps(review | {'sites': [dict(reversed(list(first.items()))), second]}, ensure_ascii=False, indent=2)+'\n', 'serialization: entry alpha'),
+            ('ci/claim_gloss_baseline.json', '{"schema":1,"glosses":{"alpha":"one","alpha":"two"}}', 'duplicate register member: alpha'),
+            ('ci/claim_review.json', '{"schema":1,"sites":[],}', 'ci/claim_review.json:'),
+        ]
+        with tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
+            previous = Path.cwd()
+            stack.callback(os.chdir, previous)
+            os.chdir(directory)
+            Path('ci').mkdir()
+            for path, text in formatted.items():
+                Path(path).write_bytes(text.encode('utf-8'))
+            for path, text, diagnostic in invalid:
+                with self.subTest(path=path, diagnostic=diagnostic):
+                    Path(path).write_bytes(text.encode('utf-8'))
+                    before = {name: Path(name).read_bytes() for name in formatted}
+                    errors = io.StringIO()
+                    with redirect_stdout(io.StringIO()), redirect_stderr(errors), patch('claims.load_registry') as downstream:
+                        self.assertEqual(main(['--fail-respellings']), 2)
+                        downstream.assert_not_called()
+                    self.assertIn(diagnostic, errors.getvalue())
+                    self.assertEqual(before, {name: Path(name).read_bytes() for name in formatted})
+                    Path(path).write_bytes(formatted[path].encode('utf-8'))
+            # A valid but differently ordered/formatted pair is edited only by
+            # the explicit command, with all semantic entries preserved.
+            Path('ci/claim_review.json').write_text(json.dumps(review | {'sites': [second, first]}))
+            Path('ci/claim_gloss_baseline.json').write_text(json.dumps(dict(schema=1, glosses={'zeta': 'Before.', 'alpha': 'Before.'})))
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(main(['canonicalize', 'ci/claim_review.json']), 0)
+                self.assertEqual(main(['canonicalize']), 0)
+            for path, text in formatted.items():
+                self.assertEqual(Path(path).read_bytes(), text.encode('utf-8'))
+            stamps = {path: Path(path).stat().st_mtime_ns for path in formatted}
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(main(['canonicalize']), 0)
+            self.assertEqual(stamps, {path: Path(path).stat().st_mtime_ns for path in formatted})
+            # A later invalid file prevents any earlier selected write.
+            Path('ci/claim_review.json').write_text(json.dumps(review))
+            Path('ci/claim_gloss_baseline.json').write_text('{"schema":1,"glosses":{"alpha":"one","alpha":"two"}}')
+            before = {path: Path(path).read_bytes() for path in formatted}
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                self.assertEqual(main(['canonicalize']), 2)
+            self.assertEqual(before, {path: Path(path).read_bytes() for path in formatted})
+
     def test_entry_basis_matches_authored_source(self):
         """Claim: Changing an executed entry to review cannot bypass current execution support, because its basis must match the independently authored paragraph; duplicate and omitted classifications also refuse.
         ´claim:testing:entry-basis-is-bound-to-authored-source´
@@ -271,8 +337,8 @@ class Evidence(unittest.TestCase):
             Path('Cargo.toml').write_text('[workspace]\nmembers=[]\n')
             Path('.lane/performance-events.jsonl').write_text('\n'.join(json.dumps(r) for r in records)+'\n')
             Path('.lane/harness-benchmarks.jsonl').write_text('')
-            Path('ci/claim_review.json').write_text('{"schema":1,"sites":[]}')
-            Path('ci/claim_gloss_baseline.json').write_text(json.dumps({'schema':1,'glosses':{s['operation']:site_claim(s)['gloss'] for s in sites}}))
+            Path('ci/claim_review.json').write_text(register_form('{"schema":1,"sites":[]}', 'sites')[2])
+            Path('ci/claim_gloss_baseline.json').write_text(register_form(json.dumps({'schema':1,'glosses':{s['operation']:site_claim(s)['gloss'] for s in sites}}), 'glosses')[2])
             Path('.lane/observation-coverage.json').write_text('{"source":"current","mechanical_status":"passed"}')
             for name,value in (('load_registry',registry),('census',sites),
                                ('claim_mints',{}),('checked_linter',None),

@@ -14,6 +14,91 @@ from source_sites import census, claim_mints, OWNERS
 
 LABEL = r'[a-z][a-z0-9-]*:[a-z0-9-]+:[a-z0-9.-]+'
 OBLIGATION_KINDS = {'req', 'dec', 'verif', 'plan', 'gate'}
+REGISTERS = {'ci/claim_review.json': 'sites', 'ci/claim_gloss_baseline.json': 'glosses'}
+REVIEW_FIELDS = ('operation', 'path', 'claim', 'before', 'after', 'review')
+
+
+def unique_members(pairs):
+    """Do not lose a repeated JSON member before checking register identities."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise StructuralError('duplicate register member: '+key)
+        result[key] = value
+    return result
+
+
+def register_form(text, field):
+    """Validate without discarding content, then build the one permitted form."""
+    data = json.loads(text, object_pairs_hook=unique_members)
+    if not isinstance(data, dict) or set(data) != {'schema', field} or type(data['schema']) is not int or data['schema'] != 1:
+        raise StructuralError('register root requires schema 1 and '+field)
+    if field == 'sites':
+        if not isinstance(data[field], list):
+            raise StructuralError('register sites must be a list')
+        rows = []
+        seen = set()
+        for index, row in enumerate(data[field]):
+            if not isinstance(row, dict) or set(row) != set(REVIEW_FIELDS) or any(not isinstance(row[key], str) for key in REVIEW_FIELDS):
+                raise StructuralError('malformed register entry: '+str(index))
+            name = row['operation']
+            if name in seen:
+                raise StructuralError('duplicate register operation: '+name)
+            seen.add(name)
+            rows.append({key: row[key] for key in REVIEW_FIELDS})
+        ordered = sorted(rows, key=lambda row: (row['operation'], row['path'], row['claim']))
+    else:
+        if not isinstance(data[field], dict) or any(not isinstance(value, str) for value in data[field].values()):
+            raise StructuralError('register glosses must map keys to strings')
+        ordered = dict(sorted(data[field].items()))
+    canonical = {'schema': 1, field: ordered}
+    return data, canonical, json.dumps(canonical, ensure_ascii=False, indent=2, allow_nan=False)+'\n'
+
+
+def check_register(text, field):
+    """Refuse the first order/form difference; checking never writes a file."""
+    data, canonical, formatted = register_form(text, field)
+    actual = [row['operation'] for row in data[field]] if field == 'sites' else list(data[field])
+    expected = [row['operation'] for row in canonical[field]] if field == 'sites' else list(canonical[field])
+    for index, (left, right) in enumerate(zip(actual, expected)):
+        if left != right:
+            raise StructuralError(f'non-canonical register order: entry {left} at index {index}; expected {right}')
+    if text != formatted:
+        offset = next((i for i, (left, right) in enumerate(zip(text, formatted)) if left != right), min(len(text), len(formatted)))
+        # The common prefix puts the first byte difference at the same location
+        # in both strings. Locate that position in the canonical entry layout.
+        entry = '<root>'
+        if field == 'sites':
+            matches = re.finditer(r'^    \{\n      "operation": ("(?:\\.|[^"\\])*")', formatted, re.M)
+        else:
+            matches = re.finditer(r'^    ("(?:\\.|[^"\\])*"): ', formatted, re.M)
+        for match in matches:
+            if match.start() > offset:
+                break
+            entry = json.loads(match[1])
+        raise StructuralError(f'non-canonical register serialization: entry {entry}, byte {offset}; run ci/claims.py canonicalize')
+    return data
+
+
+def read_register(path, field):
+    try:
+        return check_register(Path(path).read_bytes().decode('utf-8'), field)
+    except ValueError as error:
+        raise StructuralError(str(path)+': '+str(error)) from error
+
+
+def canonicalize_registers(paths):
+    """Explicit edit route; validate every selected file before writing any."""
+    prepared = []
+    for path in paths:
+        text = Path(path).read_bytes().decode('utf-8')
+        _, _, formatted = register_form(text, REGISTERS[path])
+        prepared.append((Path(path), formatted.encode('utf-8')))
+    for path, content in prepared:
+        changed = path.read_bytes() != content
+        if changed:
+            path.write_bytes(content)
+        print(f'CLAIM-REGISTER path={path} changed={str(changed).lower()}')
 
 
 
@@ -278,8 +363,19 @@ def reviewed_sites(sites, manifest, baseline=None):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--fail-respellings', action='store_true')
+    commands = parser.add_subparsers(dest='command')
+    canonicalize = commands.add_parser('canonicalize', help='explicitly reorder and format claim registers without changing entries')
+    canonicalize.add_argument('registers', nargs='*', help='registered path(s); defaults to both registers')
     args = parser.parse_args(argv)
     try:
+        if args.command == 'canonicalize':
+            paths = args.registers or list(REGISTERS)
+            if any(path not in REGISTERS for path in paths) or len(paths) != len(set(paths)):
+                raise StructuralError('canonicalize requires distinct registered paths: '+', '.join(REGISTERS))
+            canonicalize_registers(paths)
+            return 0
+        registers = {field: read_register(path, field) for path, field in REGISTERS.items()}
+        print('CLAIM-REGISTERS canonical=2')
         root = Path('.')
         registry = load_registry()
         sites = [site_claim(s) for s in census(root)]
@@ -306,7 +402,7 @@ def main(argv=None):
         result['entries']=enforce_entry(result['obligations'], bite_one_started(root), required, paragraphs, entry_bases(paragraphs,required))
         for row in result['entries']:
             print(f'CLAIM-ENTRY name={row["name"]} basis={row["basis"]} status={row["status"]}')
-        reviews = reviewed_sites(sites, json.loads(Path('ci/claim_review.json').read_text()), json.loads(Path('ci/claim_gloss_baseline.json').read_text()))
+        reviews = reviewed_sites(sites, registers['sites'], registers['glosses'])
         Path('.lane/claim-gloss-review.json').write_text(json.dumps({'schema':1,'source':source,'sites':reviews},indent=2)+'\n')
         offenders = [{k:s[k] for k in ('owner','path','line','function','operation','claim','gloss')} for s in sites if respells(s)]
         Path('.lane/claim-respellings.json').write_text(json.dumps({'schema':1,'source':source,'offenders':offenders},indent=2)+'\n')
