@@ -229,9 +229,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request and Tag projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the twelve successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag and Leave projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the thirteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Leave witnesses cover unconditional typed Chat incidence with no authored parameters, whole-result twelve-family reconstruction, deterministic parallel edges and structural revalidation. Observation compares fifteen operations with thirteen successes and two refusals across disabled, default and trace. No membership fold, geometry, title or new ordering verdict is established."
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag and Leave projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the thirteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave and Reference projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the fourteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Reference follows the normative edge block with Actor initiation, all eight passive middle and target constructors, signed effort and enthusiasm, complete paired reconstruction and structural revalidation. Shared protocol exclusions cover thirteen formed families and observation compares sixteen operations with fourteen successes and two refusals. Geometry, standing, title and both ordering questions remain outside these witnesses."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1349,9 +1349,9 @@
       "operation": "pn-graph::formation::formed_reference_conformance",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:formed-families-separate-protocol-resolution-from-incidence",
-      "before": "",
-      "after": "Claim: Across the twelve formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
-      "review": "Scoped shared tests distinguish unresolved protocol targets from resolved but forbidden family fields across twelve families, and compare six typed genesis nodes with records lookup, dangling incidence and authorized removal. Complete mandatory settlement reference conformance, unimplemented families, geometry and title remain held."
+      "before": "Claim: Across the twelve formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
+      "after": "Claim: Across the thirteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
+      "review": "Reference follows the normative edge block with Actor initiation, all eight passive middle and target constructors, signed effort and enthusiasm, complete paired reconstruction and structural revalidation. Shared protocol exclusions cover thirteen formed families and observation compares sixteen operations with fourteen successes and two refusals. Geometry, standing, title and both ordering questions remain outside these witnesses."
     },
     {
       "operation": "pn-graph::formation::join_request_projection",
@@ -1472,6 +1472,22 @@
       "before": "Claim: Publish genesis and subsequent publication share one Content identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
       "after": "Claim: Publish genesis and subsequent publication share one Content identity through mixed binary reconstruction, retain the genesis pair and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
       "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
+    },
+    {
+      "operation": "pn-graph::formation::reference_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:reference-requires-complete-artifact-target-incidence",
+      "before": "",
+      "after": "Claim: Reference requires complete author Actor to Artifact to passive Target incidence, admitting all eight passive constructors as middle and target. Both projections retain signed effort and enthusiasm and shared metadata; malformed bounds, wrong sorts, unmatched co-legs and qualifiers refuse the entire bundle without minting a node or assigning standing.",
+      "review": "Reference follows the normative edge block with Actor initiation, all eight passive middle and target constructors, signed effort and enthusiasm, complete paired reconstruction and structural revalidation. Shared protocol exclusions cover thirteen formed families and observation compares sixteen operations with fourteen successes and two refusals. Geometry, standing, title and both ordering questions remain outside these witnesses."
+    },
+    {
+      "operation": "pn-graph::formation::reference_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:reference-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: Reference joins the formed families through shared deterministic reconstruction with complete A/T pairs and parallel citation acts. Revalidation rejects missing siblings, changed coordinates or roles after decoding while preserving unrelated indices; approval and removal failures refuse the whole result.",
+      "review": "Reference follows the normative edge block with Actor initiation, all eight passive middle and target constructors, signed effort and enthusiasm, complete paired reconstruction and structural revalidation. Shared protocol exclusions cover thirteen formed families and observation compares sixteen operations with fourteen successes and two refusals. Geometry, standing, title and both ordering questions remain outside these witnesses."
     },
     {
       "operation": "pn-graph::formation::review_projection",

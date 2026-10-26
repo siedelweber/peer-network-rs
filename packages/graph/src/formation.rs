@@ -288,6 +288,37 @@ pub struct TagProjection {
     pub confidence: Coordinate,
 }
 
+/// Constructor role of a Reference edge, derived from one complete act.
+/// (´def:formation:reference´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ReferenceRole {
+    /// Initiating Actor to anchoring artifact.
+    A,
+    /// Anchoring artifact to passive target.
+    T,
+}
+
+/// Complete Reference tuple shared by both role-addressed projections.
+/// (´def:formation:reference´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReferenceProjection {
+    /// Initiating author shared by both legs.
+    pub author: String,
+    /// Author-local act sequence shared by both legs.
+    pub sequence: u64,
+    /// A or T constructor role, never a separately authored identity.
+    pub role: ReferenceRole,
+    /// Retained published placement of the whole act.
+    pub position: Position,
+    /// One retained time shared by both projections.
+    pub logical_time: u64,
+    /// Signed effort, directional on A and intensity on T.
+    pub effort: Coordinate,
+    /// Signed enthusiasm, intensity on A and directional on T.
+    pub enthusiasm: Coordinate,
+}
+
 /// Constructor role of a Send edge, derived from one complete act.
 /// (´def:formation:send´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -376,6 +407,8 @@ pub enum Projection {
     Leave(LeaveProjection),
     /// Tag classifies a Taggable passive node with a public Type.
     Tag(TagProjection),
+    /// Reference cites a passive target through an author-fixed artifact.
+    Reference(ReferenceProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -475,7 +508,9 @@ pub fn validate_formation(
 }
 
 fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
-    if act.id().family == "Tag" {
+    if act.id().family == "Reference" {
+        reference(act, verifier)
+    } else if act.id().family == "Tag" {
         tag(act, verifier)
     } else if act.id().family == "Participant" {
         participant(act, verifier)
@@ -1090,4 +1125,57 @@ fn leave(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
             logical_time: act.logical_time(),
         }),
     ))
+}
+
+fn reference(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    let [first, second] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let (a, t) = match (first.id().role, second.id().role) {
+        (Role::A, Role::T) => (first, second),
+        (Role::T, Role::A) => (second, first),
+        _ => return Err(RegistrationError::Incidence),
+    };
+    if act.body().layout != Layout::Paired
+        || a.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || a.target() != t.source()
+        || act.body().quantities.len() != 4
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let middle = passive(a.target())?;
+    let target = passive(t.target())?;
+    let effort = coordinate(act, "effort.numerator", "effort.denominator")?;
+    let enthusiasm = coordinate(act, "enthusiasm.numerator", "enthusiasm.denominator")?;
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    let a_weight = ReferenceProjection {
+        author: act.id().author.clone(),
+        sequence: act.id().sequence,
+        role: ReferenceRole::A,
+        position: act.position(),
+        logical_time: act.logical_time(),
+        effort,
+        enthusiasm,
+    };
+    let t_weight = ReferenceProjection {
+        role: ReferenceRole::T,
+        ..a_weight.clone()
+    };
+    Ok(vec![
+        (
+            Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+            middle.clone(),
+            Projection::Reference(a_weight),
+        ),
+        (middle, target, Projection::Reference(t_weight)),
+    ])
 }

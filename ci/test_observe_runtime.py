@@ -248,7 +248,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(accounting['default'],accounting['trace'])
 
     def test_graph_formation(self):
-        """Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag and Leave projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the thirteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.
+        """Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave and Reference projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the fourteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.
         ´claim:discipline:affinity-formation-retains-observed-results´
         ´test:integration:test-graph-formation´
         """
@@ -273,6 +273,7 @@ class Processes(unittest.TestCase):
             self.assertIn('JoinRequestProjection',values['join_request'])
             self.assertIn('TagProjection',values['tag'])
             self.assertIn('LeaveProjection',values['leave'])
+            self.assertIn('ReferenceProjection',values['reference'])
             self.assertIn('role: A',values['tag'])
             self.assertIn('role: T',values['tag'])
             self.assertIn('role: A',values['bid'])
@@ -289,10 +290,10 @@ class Processes(unittest.TestCase):
             summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
             stem='graph__root__sig__design__graph__'
             accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith(stem)}
-            self.assertEqual(accounting[mode],{(stem+'started_operations',''):15,(stem+'completed_operations','success'):13,(stem+'completed_operations','refusal'):2})
-            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],15)
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):16,(stem+'completed_operations','success'):14,(stem+'completed_operations','refusal'):2})
+            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],16)
             if mode=='trace':
-                for marker in ('authentication_evidence','logical_time','AffinityProjection','PublishProjection','OwnerProjection','ParticipantProjection','ReviewProjection','SendProjection','BidProjection','OpinionProjection','JoinRequestProjection','TagProjection','LeaveProjection','LicenseQualifiers','validate_formation'):
+                for marker in ('authentication_evidence','logical_time','AffinityProjection','PublishProjection','OwnerProjection','ParticipantProjection','ReviewProjection','SendProjection','BidProjection','OpinionProjection','JoinRequestProjection','TagProjection','LeaveProjection','ReferenceProjection','LicenseQualifiers','validate_formation'):
                     self.assertIn(marker,result.stderr.decode())
         self.assertEqual(samples['disabled'],samples['default'])
         self.assertEqual(samples['default'],samples['trace'])

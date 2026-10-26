@@ -42,6 +42,7 @@ fn main() {
     let participant = participation(ownership.clone());
     let review = review(participant.clone());
     let tag = tagging(review.clone());
+    let reference = referencing(review.clone());
     let send = sending(participant.clone());
     let bid = bidding(ownership.clone());
     let opinion = opinion(act.clone());
@@ -60,6 +61,7 @@ fn main() {
             join_request,
             tag,
             leave,
+            reference,
         ],
         &names,
     )
@@ -76,6 +78,7 @@ fn main() {
     let join_request = project_complete_act(&history.acts()[8], &auth);
     let tag = project_complete_act(&history.acts()[9], &auth);
     let leave = project_complete_act(&history.acts()[10], &auth);
+    let reference = project_complete_act(&history.acts()[11], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -95,6 +98,7 @@ fn main() {
         "join_request": format!("{join_request:?}"),
         "tag": format!("{tag:?}"),
         "leave": format!("{leave:?}"),
+        "reference": format!("{reference:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -361,4 +365,16 @@ fn publication(mut publication: CandidateAct) -> CandidateAct {
     publication.authoritative_position = 2;
     publication.logical_time = 2;
     publication
+}
+
+fn referencing(mut input: CandidateAct) -> CandidateAct {
+    input.id.family = "Reference".into();
+    input.id.sequence = 12;
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[1].target = input.legs[0].target.clone();
+    input.authoritative_position = 12;
+    input.logical_time = 12;
+    input
 }
