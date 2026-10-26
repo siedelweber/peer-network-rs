@@ -3085,6 +3085,7 @@
         "ci::test_linter_entry.Conformance.test_build_graph_census",
         "ci::test_linter_entry.Conformance.test_build_graph_delegation",
         "ci::test_linter_entry.Conformance.test_build_graph_slice_assignment",
+        "ci::test_linter_entry.Conformance.test_cargo_delegation",
         "ci::test_linter_entry.Conformance.test_duplicate_locations",
         "ci::test_linter_entry.Conformance.test_generated_citations",
         "ci::test_linter_entry.Conformance.test_import_forms",

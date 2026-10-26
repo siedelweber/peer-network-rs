@@ -292,3 +292,104 @@ else:
             expected=[0]*6 if scenario=='clean' else ([3,0,1,0,0,0] if scenario=='stale-render' else [0,0,0,0,7,0])
             case.assertEqual([row[1] for row in outcomes[1][0]],expected)
     print('GRAPH-DELEGATION fixtures=3 equal=3 stale-envelopes=refused status-seven=preserved order=preserved')
+
+
+def cargo_delegation(case):
+    """Real Cargo in isolated sources, with serial builds and a separate doctest."""
+    import time
+    import tomllib
+    from build_graph import roster, selected
+    repository=Path(__file__).resolve().parent.parent
+    checker=repository/'ci/build_graph.py'
+    expected={
+        'cargo-config-measurement':'python3 -B ci/measure_rustflags.py',
+        'fmt':'python3 ci/discipline.py fmt',
+        'clippy':'python3 ci/discipline.py clippy',
+        'nursery-advisory':'python3 ci/discipline.py nursery',
+        'minimal':'python3 ci/discipline.py minimal',
+        'rustdoc':'python3 ci/discipline.py rustdoc',
+        'benchmarks':'python3 -B ci/benchmarks.py',
+        'observation-build':'cargo build --offline --locked --profile gate -p execwrap -p pn-records -p pn-graph --features pn-records/test-support --examples',
+        'host-observation-build':'python3 -B ci/host_evidence_build.py',
+    }
+    rows=tomllib.loads((repository/'docs/inputs/build-graph-slices.toml').read_text())['rows']
+    case.assertEqual({r['name'] for r in rows if r['slice']==3},set(expected))
+    case.assertEqual({n:c for n,c in roster(repository) if n in expected},expected)
+    case.assertTrue(set(expected)<=set(selected(repository)))
+    commands=[(n,'python3 -B fixture.py '+n) for n in ('build','tests','doctests','advisory','compile-failure','timing')]
+    driver=r'''import json,os,pathlib,subprocess,sys
+action=sys.argv[1]
+if action=='timing':
+ sys.path.insert(0,os.environ['FIXTURE_CHECKERS'])
+ from devperf import main
+ sys.argv=['devperf','--operation','injected-duration','--duration-s','6','--outcome','exit:0','--budget','ordinary-check','--source','fixture','--budgets',os.environ['FIXTURE_CHECKERS']+'/../docs/inputs/devperf-budgets.toml','--registry',os.environ['FIXTURE_CHECKERS']+'/../docs/inputs/devperf-registry.toml','--findings','.lane/timing.jsonl']
+ status=main();finding=json.loads(pathlib.Path('.lane/timing.jsonl').read_text())
+ print('FIXTURE '+json.dumps(dict(action=action,status=status,classification=finding['classification'],verdict_effect=finding['verdict_effect'])))
+ sys.exit(status)
+args={'build':['check','--message-format=json'],'tests':['test','--lib','--message-format=json','--','--list'],'doctests':['test','--doc','--','--list'],'advisory':['clippy','--message-format=json','--','-W','clippy::needless_return'],'compile-failure':['check','--message-format=json']}[action]
+argv=['cargo',args[0],'--offline','--locked','--profile','dev']+args[1:]
+source=pathlib.Path('src/lib.rs');saved=source.read_text()
+try:
+ if action=='compile-failure':source.write_text(saved+'\ncompile_error!("injected compile failure");\n')
+ result=subprocess.run(argv,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+finally:source.write_text(saved)
+artifacts=[];diagnostics=[];tests=[]
+for line in result.stdout.decode().splitlines():
+ try:item=json.loads(line)
+ except ValueError:
+  if line.endswith(': test'):tests.append(line)
+  continue
+ if item.get('reason')=='compiler-artifact':
+  artifacts.append(dict(name=item['target']['name'],kind=item['target']['kind'],profile=item['profile'],extensions=sorted(pathlib.Path(f).suffix for f in item['filenames'])))
+ if item.get('reason')=='compiler-message':
+  msg=item['message'];diagnostics.append((msg['level'],(msg.get('code') or {}).get('code'),msg['message']))
+print('FIXTURE '+json.dumps(dict(action=action,status=result.returncode,argv=argv,target=os.environ['CARGO_TARGET_DIR'],artifacts=artifacts,tests=tests,diagnostics=diagnostics),sort_keys=True))
+sys.exit(result.returncode)
+'''
+    with tempfile.TemporaryDirectory() as directory:
+        base=Path(directory);source=base/'source';source.mkdir()
+        (source/'src').mkdir();(source/'ci/build-inputs').mkdir(parents=True);(source/'docs/inputs').mkdir(parents=True)
+        (source/'Cargo.toml').write_text('[package]\nname="composition-fixture"\nversion="0.1.0"\nedition="2021"\n')
+        (source/'Cargo.lock').write_text('version = 4\n[[package]]\nname = "composition-fixture"\nversion = "0.1.0"\n')
+        fence=chr(96)*3
+        (source/'src/lib.rs').write_text('//! '+fence+'\n//! assert_eq!(composition_fixture::value(), 1);\n//! '+fence+'\npub fn value() -> u8 { return 1; }\n#[test] fn value_is_one() { assert_eq!(value(),1); }\n')
+        (source/'fixture.py').write_text(driver)
+        (source/'.gitignore').write_text('.lane/\n')
+        (source/'ci/gate.sh').write_text(''.join(f'run_graph {n} {c}\n' for n,c in commands))
+        (source/'docs/inputs/build-graph-slices.toml').write_text(''.join(f'[[rows]]\nname="{n}"\nslice=3\n' for n,_ in commands))
+        (source/'meson.build').write_text("project('cargo-delegation')\nsubdir('ci/build-inputs')\n")
+        (source/'ci/build-inputs/meson.build').write_text("python=find_program('python3')\n"+''.join("custom_target('gate-"+n+"', output:'gate-"+n+".json', command:[python, '"+str(checker)+"', 'execute', '--root', meson.project_source_root(), '--graph', meson.project_build_root() / 'gate-graph.json', '--report', '@OUTPUT@'], build_always_stale:true)\n" for n,_ in commands))
+        def invoke(root,argv,env=None):
+            return subprocess.run(argv,cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+        for argv in (['git','init','-q'],['git','add','-A'],['git','-c','user.name=Fixture','-c','user.email=fixture@example.invalid','-c','commit.gpgsign=false','commit','-qm','Cargo fixture']):
+            result=invoke(source,argv);case.assertEqual(result.returncode,0,result.stdout)
+        outcomes=[]
+        for route in ('legacy','graph'):
+            root=base/route;result=invoke(base,['git','clone','-q',str(source),str(root)]);case.assertEqual(result.returncode,0,result.stdout)
+            build=root/'.lane/build-graph';build.parent.mkdir();history=root/'.lane/gate-steps.tsv';history.write_text('')
+            env=dict(os.environ,PN_BUILDGRAPH_RUN='cargo-fixture',CARGO_TARGET_DIR=str(root/'.lane/target'),FIXTURE_CHECKERS=str(repository/'ci'),RUSTUP_TOOLCHAIN='nightly-2026-10-16')
+            if route=='graph':
+                result=invoke(root,[os.environ['PN_MESON_BIN'],'setup',str(build),str(root)],env);case.assertEqual(result.returncode,0,result.stdout)
+                graph=dict(steps=[dict(name=n,command=c) for n,c in commands],inputs=[dict(path=p,consumers=[n for n,_ in commands]) for p in ('fixture.py','Cargo.toml','Cargo.lock','src/lib.rs')])
+                (build/'gate-graph.json').write_text(json.dumps(graph))
+            records=[];started=time.monotonic()
+            for name,command in commands:
+                result=invoke(root,['bash','-c',command] if route=='legacy' else ['python3','-B',str(checker),'delegate',name],env)
+                values=[json.loads(line.removeprefix('FIXTURE ')) for line in result.stdout.decode().splitlines() if line.startswith('FIXTURE ')]
+                case.assertEqual(len(values),1,result.stdout);value=values[0]
+                case.assertEqual(result.returncode,value['status'])
+                if 'target' in value:case.assertEqual(value.pop('target'),env['CARGO_TARGET_DIR'])
+                records.append(value)
+                with history.open('a') as stream:stream.write(f'{name}\t{result.returncode}\t1\t2\n')
+            outcomes.append(records)
+            case.assertEqual([r['status'] for r in records],[0,0,0,0,101,0])
+            case.assertTrue(records[0]['artifacts'])
+            case.assertEqual(records[1]['tests'],['value_is_one: test'])
+            case.assertEqual(len(records[2]['tests']),1)
+            case.assertNotIn('value_is_one: test',records[2]['tests'])
+            case.assertTrue(any(d[1]=='clippy::needless_return' for d in records[3]['diagnostics']))
+            case.assertTrue(any(d[0]=='error' and d[2]=='injected compile failure' for d in records[4]['diagnostics']))
+            case.assertEqual(records[5]['verdict_effect'],'none')
+            print(f'CARGO-DELEGATION route={route} statuses={[r["status"] for r in records]} wall={time.monotonic()-started:.6f}')
+        case.assertEqual(outcomes[0],outcomes[1])
+    print('CARGO-DELEGATION inventories=equal diagnostics=equal compile-failure=101 advisory=0 timing-excess=0 target=serialized doctests=separate roster=9')

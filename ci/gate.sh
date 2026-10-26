@@ -92,21 +92,21 @@ run_graph observation-tests python3 -B ci/run_ci.py test_observe
 run_graph devperf-tests python3 -B ci/run_ci.py test_devperf
 run_graph build-policy python3 ci/discipline.py build-policy
 run_graph cargo-config python3 ci/discipline.py cargo-config
-run_step cargo-config-measurement python3 -B ci/measure_rustflags.py
+run_graph cargo-config-measurement python3 -B ci/measure_rustflags.py
 run_graph vendor-set python3 ci/discipline.py vendor-set
 run_graph member-lints python3 ci/discipline.py members
 # Preserve the engine source layout; README rule:vendor:regexml records the local aliases and XSD repetition correction.
-run_step fmt python3 ci/discipline.py fmt
-run_step clippy python3 ci/discipline.py clippy
-run_step nursery-advisory python3 ci/discipline.py nursery
+run_graph fmt python3 ci/discipline.py fmt
+run_graph clippy python3 ci/discipline.py clippy
+run_graph nursery-advisory python3 ci/discipline.py nursery
 run_step host-postgresql-start python3 -B ci/host_postgresql.py start --root "$PN_HOST_TEST_ROOT"
 run_step wallet-elements-start python3 -B ci/wallet_elements.py start --root "$PN_WALLET_TEST_ROOT"
 run_step tests python3 -B ci/discipline.py tests
 run_step test-budgets python3 -B ci/devperf.py --input .lane/performance-events.jsonl --findings .lane/performance-findings.jsonl
 # Discover first-party members for feature-minimal builds and documentation.
 # Exclude regexml by name in discipline.py: it retains upstream feature and documentation policy.
-run_step minimal python3 ci/discipline.py minimal
-run_step rustdoc python3 ci/discipline.py rustdoc
+run_graph minimal python3 ci/discipline.py minimal
+run_graph rustdoc python3 ci/discipline.py rustdoc
 run_graph fixed-point-generate cargo run -p documents --locked --profile gate -- generate
 run_graph fixed-point-write cargo run -p documents --locked --profile gate -- write
 run_graph fixed-point-clean python3 ci/discipline.py tree-clean
@@ -116,10 +116,10 @@ run_graph determinism-datasets cargo run -p documents --locked --profile gate --
 run_graph determinism-documents cargo run -p documents --locked --profile gate -- check
 run_graph design-correspondence python3 -B ci/design.py
 run_graph design-tests python3 -B ci/run_ci.py test_design
-run_step benchmarks python3 -B ci/benchmarks.py
-run_step observation-build cargo build --offline --locked --profile gate -p execwrap -p pn-records -p pn-graph --features pn-records/test-support --examples
+run_graph benchmarks python3 -B ci/benchmarks.py
+run_graph observation-build cargo build --offline --locked --profile gate -p execwrap -p pn-records -p pn-graph --features pn-records/test-support --examples
 run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
-run_step host-observation-build python3 -B ci/host_evidence_build.py
+run_graph host-observation-build python3 -B ci/host_evidence_build.py
 run_step host-observation-runtime python3 -B ci/run_ci.py test_host_runtime
 run_step wallet-conformance python3 -B ci/run_ci.py test_wallet_boundary
 run_step wallet-elements-stop python3 -B ci/wallet_elements.py stop --root "$PN_WALLET_TEST_ROOT"

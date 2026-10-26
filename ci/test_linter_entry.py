@@ -237,6 +237,14 @@ class Conformance(unittest.TestCase):
         from build_graph_witnesses import delegation
         delegation(self)
 
+    def test_cargo_delegation(self):
+        """Claim: Serial Cargo fixture commands preserve artifact and test inventories, compile-error refusal, advisory warnings and nonverdict timing excess through the Meson adapter, using the same target directory and a separate doctest command; the nine slice-three roster commands retain their exact arguments.
+        ´claim:discipline:cargo-delegation-preserves-build-evidence´
+        ´test:integration:test-cargo-delegation´
+        """
+        from build_graph_witnesses import cargo_delegation
+        cargo_delegation(self)
+
     def test_build_graph_slice_assignment(self):
         """Claim: Every live gate step has exactly one delegation slice and the record roster agrees with that set; each record group stays in one slice unless its exceptional rows explicitly name the split, so missing, repeated, unknown, invalid or unexplained assignments refuse before final migration.
         ´claim:discipline:build-graph-slices-cover-roster´
