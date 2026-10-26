@@ -242,6 +242,37 @@ pub struct ReviewProjection {
     pub effort: Coordinate,
 }
 
+/// Constructor role of a Tag edge, derived from one complete act.
+/// (´def:formation:tag´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TagRole {
+    /// Initiating Actor to taged passive node.
+    A,
+    /// Tagged passive node to Type.
+    T,
+}
+
+/// Complete Tag tuple shared by both role-addressed projections.
+/// (´def:formation:tag´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TagProjection {
+    /// Initiating author shared by both legs.
+    pub author: String,
+    /// Author-local act sequence shared by both legs.
+    pub sequence: u64,
+    /// A or T constructor role, never a separately authored identity.
+    pub role: TagRole,
+    /// Retained published placement of the whole act.
+    pub position: Position,
+    /// One retained time shared by both projections.
+    pub logical_time: u64,
+    /// Signed relevance, directional on A and intensity on T.
+    pub relevance: Coordinate,
+    /// Nonnegative confidence, intensity on A and directional on T.
+    pub confidence: Coordinate,
+}
+
 /// Constructor role of a Send edge, derived from one complete act.
 /// (´def:formation:send´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -326,6 +357,8 @@ pub enum Projection {
     Opinion(OpinionProjection),
     /// Join Request is a Chat proposal, without a membership effect.
     JoinRequest(JoinRequestProjection),
+    /// Tag classifies a Taggable passive node with a public Type.
+    Tag(TagProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -425,7 +458,9 @@ pub fn validate_formation(
 }
 
 fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
-    if act.id().family == "Participant" {
+    if act.id().family == "Tag" {
+        tag(act, verifier)
+    } else if act.id().family == "Participant" {
         participant(act, verifier)
     } else if act.id().family == "Review" {
         review(act, verifier)
@@ -944,4 +979,60 @@ fn join_request(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Res
             formality,
         }),
     ))
+}
+
+fn tag(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    let [first, second] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let (a, t) = match (first.id().role, second.id().role) {
+        (Role::A, Role::T) => (first, second),
+        (Role::T, Role::A) => (second, first),
+        _ => return Err(RegistrationError::Incidence),
+    };
+    if act.body().layout != Layout::Paired
+        || a.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || a.target() != t.source()
+        || act.body().quantities.len() != 4
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let middle = passive(a.target())?;
+    let target = passive(t.target())?;
+    if matches!(middle, Node::Offer { .. }) || !matches!(target, Node::Type(_)) {
+        return Err(RegistrationError::Incidence);
+    }
+    let relevance = coordinate(act, "relevance.numerator", "relevance.denominator")?;
+    let confidence = coordinate(act, "confidence.numerator", "confidence.denominator")?;
+    if confidence.numerator < 0 || !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    let a_weight = TagProjection {
+        author: act.id().author.clone(),
+        sequence: act.id().sequence,
+        role: TagRole::A,
+        position: act.position(),
+        logical_time: act.logical_time(),
+        relevance,
+        confidence,
+    };
+    let t_weight = TagProjection {
+        role: TagRole::T,
+        ..a_weight.clone()
+    };
+    Ok(vec![
+        (
+            Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+            middle.clone(),
+            Projection::Tag(a_weight),
+        ),
+        (middle, target, Projection::Tag(t_weight)),
+    ])
 }

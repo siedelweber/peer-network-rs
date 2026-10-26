@@ -2206,3 +2206,232 @@ fn inputs_chat() -> ActId {
         family: "Participant".into(),
     }
 }
+
+fn tagging(sequence: u64, middle: PublicReference) -> CandidateAct {
+    let mut input = review(sequence, middle, sequence);
+    input.id.family = "Tag".into();
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[1].target = named("name", "topic");
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "relevance.numerator",
+        "relevance.denominator",
+        "confidence.numerator",
+        "confidence.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input
+}
+
+/// Claim: Tag requires complete author Actor to Taggable to Type incidence, excluding Offer while admitting the other seven passive constructors. Both projections retain signed relevance, nonnegative confidence and shared metadata; malformed bounds, wrong sorts, unmatched co-legs and qualifiers refuse the entire bundle without minting a node or assigning standing.
+/// # Panics
+/// Panics only if the fixture projects to another family, which correct dispatch cannot arrange.
+/// ´claim:formation:tag-requires-complete-taggable-type-incidence´
+/// ´test:integration:tag-projection´
+#[test]
+fn tag_projection() {
+    let mut middles = vec![named("prof", "b"), named("name", "topic")];
+    for family in ["Publish", "Owner", "Participant", "Review", "Send"] {
+        middles.push(PublicReference::Minted(ActId {
+            author: "b".into(),
+            sequence: 99,
+            family: family.into(),
+        }));
+    }
+    for middle in middles {
+        let input = tagging(3, middle.clone());
+        let result = bundle(&input).unwrap();
+        assert_eq!(result.len(), 2);
+        assert_eq!(result[0].0, Node::Grounded(GroundedNode::Actor("a".into())));
+        assert_eq!(result[0].1, project(&opinion(4, middle)).unwrap().1);
+        assert_eq!(result[0].1, result[1].0);
+        assert_eq!(result[1].1, Node::Type("topic".into()));
+        let (Projection::Tag(a), Projection::Tag(t)) = (&result[0].2, &result[1].2) else {
+            panic!("wrong family")
+        };
+        assert_eq!(a.role, pn_graph::formation::TagRole::A);
+        assert_eq!((a.relevance.numerator, a.relevance.denominator), (-1, 2));
+        assert_eq!((a.confidence.numerator, a.confidence.denominator), (2, 3));
+        assert_eq!(
+            (a.author.as_str(), a.sequence, a.position, a.logical_time),
+            ("a", 3, (1, 3), 3)
+        );
+        let mut expected = a.clone();
+        expected.role = pn_graph::formation::TagRole::T;
+        assert_eq!(t, &expected);
+    }
+    let input = tagging(3, named("prof", "a"));
+    for (n, d) in [(0, 1), (2, 3)] {
+        for denominator in 1..=8 {
+            for numerator in -denominator - 1..=denominator + 1 {
+                let mut changed = input.clone();
+                changed.body.quantities[n].1.value = numerator;
+                changed.body.quantities[d].1.value = denominator;
+                let lower = if n == 0 { -denominator } else { 0 };
+                assert_eq!(bundle(&changed).is_ok(), (lower..=denominator).contains(&numerator));
+            }
+        }
+    }
+    tag_refusals(&input);
+}
+
+fn tag_refusals(input: &CandidateAct) {
+    for index in 0..4 {
+        let mut changed = input.clone();
+        changed.body.quantities.remove(index);
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        for (unit, vintage) in [("money", 0), ("one", 1)] {
+            let mut changed = input.clone();
+            changed.body.quantities[index].1.unit = unit.into();
+            changed.body.quantities[index].1.vintage = vintage;
+            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        }
+    }
+    for index in [1, 3] {
+        for value in [0, -1] {
+            let mut changed = input.clone();
+            changed.body.quantities[index].1.value = value;
+            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        }
+    }
+    for removed in [0, 1] {
+        let mut changed = input.clone();
+        changed.legs.remove(removed);
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    for target in [named("addr", "a"), named("prof", "a"), PublicReference::Minted(inputs_chat())] {
+        let mut changed = input.clone();
+        changed.legs[1].target = target;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    for middle in [
+        named("addr", "a"),
+        PublicReference::Minted(ActId {
+            author: "b".into(),
+            sequence: 99,
+            family: "Bid".into(),
+        }),
+    ] {
+        assert_eq!(bundle(&tagging(3, middle)), Err(RegistrationError::Incidence));
+    }
+    let mut changed = input.clone();
+    changed.legs[0].source = named("addr", "b");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.legs[1].source = named("prof", "other");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.protocol_references.push(named("name", "topic"));
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.body.license = publication(1).body.license;
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+}
+
+/// Claim: Tag joins the ten earlier families through shared deterministic reconstruction with complete A/T pairs and parallel classification acts. Revalidation rejects missing siblings, changed coordinates or roles after decoding while preserving unrelated indices; approval and removal failures refuse the whole result.
+/// # Panics
+/// Panics only if the fixture's Tag edge has another family, which correct reconstruction cannot arrange.
+/// ´claim:formation:tag-shares-whole-history-revalidation´
+/// ´test:integration:tag-reconstruction´
+#[test]
+fn tag_reconstruction() {
+    let content = PublicReference::Minted(publication(3).id);
+    let mut inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        review(6, named("name", "topic"), 6),
+        sending(7, 5, 7),
+        bidding(8, 4, 8),
+        opinion(9, named("prof", "a")),
+        join_request(10, PublicReference::Minted(inputs_chat())),
+        tagging(11, content.clone()),
+        tagging(12, content),
+    ];
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((graph.node_count(), graph.edge_count()), (9, 18));
+    for (index, endpoints) in [(14, (0, 3)), (15, (3, 2)), (16, (0, 3)), (17, (3, 2))] {
+        assert_eq!(
+            graph
+                .edge_endpoints(petgraph::graph::EdgeIndex::new(index))
+                .map(|(a, b)| (a.index(), b.index())),
+            Some(endpoints)
+        );
+    }
+    inputs.reverse();
+    for input in &mut inputs {
+        input.legs.reverse();
+    }
+    let reversed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(validate_formation(&graph, &reversed, &verifier), Ok(()));
+    let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    tag_cache(&graph, &history, &verifier);
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts = inputs.clone();
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    inputs.push(candidate("Withdraw", 13));
+    let unsupported = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&unsupported, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
+    );
+}
+
+fn tag_cache(graph: &pn_graph::formation::FormationGraph, history: &pn_records::ValidatedHistory, verifier: &Verifier) {
+    for index in [14, 15] {
+        let mut partial = graph.clone();
+        partial.remove_edge(petgraph::graph::EdgeIndex::new(index));
+        assert_eq!(
+            partial[petgraph::graph::EdgeIndex::new(17)],
+            graph[petgraph::graph::EdgeIndex::new(17)]
+        );
+        assert_eq!(
+            validate_formation(&partial, history, verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    for relevance in [true, false] {
+        let mut changed = graph.clone();
+        let Projection::Tag(weight) = &mut changed[petgraph::graph::EdgeIndex::new(14)] else {
+            panic!("wrong family")
+        };
+        let coordinate = if relevance {
+            &mut weight.relevance
+        } else {
+            &mut weight.confidence
+        };
+        coordinate.numerator *= 2;
+        coordinate.denominator *= 2;
+        assert_eq!(
+            validate_formation(&changed, history, verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    let mut changed = graph.clone();
+    let Projection::Tag(weight) = &mut changed[petgraph::graph::EdgeIndex::new(15)] else {
+        panic!("wrong family")
+    };
+    weight.role = pn_graph::formation::TagRole::A;
+    assert_eq!(
+        validate_formation(&changed, history, verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+}

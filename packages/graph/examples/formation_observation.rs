@@ -60,6 +60,7 @@ fn main() {
     ownership.logical_time = 3;
     let participant = participation(ownership.clone());
     let review = review(participant.clone());
+    let tag = tagging(review.clone());
     let send = sending(participant.clone());
     let bid = bidding(ownership.clone());
     let opinion = opinion(act.clone());
@@ -75,6 +76,7 @@ fn main() {
             bid,
             opinion,
             join_request,
+            tag,
         ],
         &names,
     )
@@ -89,6 +91,7 @@ fn main() {
     let bid = project_complete_act(&history.acts()[6], &auth);
     let opinion = project_complete_act(&history.acts()[7], &auth);
     let join_request = project_complete_act(&history.acts()[8], &auth);
+    let tag = project_complete_act(&history.acts()[9], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -106,6 +109,7 @@ fn main() {
         "bid": format!("{bid:?}"),
         "opinion": format!("{opinion:?}"),
         "join_request": format!("{join_request:?}"),
+        "tag": format!("{tag:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -315,5 +319,28 @@ fn join_request(mut input: CandidateAct, target: PublicReference) -> CandidateAc
     }
     input.authoritative_position = 9;
     input.logical_time = 9;
+    input
+}
+
+fn tagging(mut input: CandidateAct) -> CandidateAct {
+    input.id.family = "Tag".into();
+    input.id.sequence = 10;
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[1].target = PublicReference::Named {
+        namespace: "name".into(),
+        name: "topic".into(),
+    };
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "relevance.numerator",
+        "relevance.denominator",
+        "confidence.numerator",
+        "confidence.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input.authoritative_position = 10;
+    input.logical_time = 10;
     input
 }

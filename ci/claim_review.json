@@ -205,9 +205,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid and Opinion projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the ten successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion and Join Request projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eleven successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Join Request witnesses cover typed Chat incidence, independent signed-coordinate grids, complete binary incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares thirteen operations with eleven successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion and Join Request projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eleven successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request and Tag projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the twelve successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Tag witnesses cover seven Taggable constructors and the Offer exclusion, signed relevance and nonnegative confidence grids, complete paired incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares fourteen operations with twelve successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1448,6 +1448,22 @@
       "before": "",
       "after": "Claim: Send shares whole-history reconstruction with the six earlier families, retaining deterministic A/T indices and parallel ordinary acts. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.",
       "review": "Send witnesses cover complete Chat-to-Message incidence, signed importance, shared A/T metadata, whole-history authorization and typed revalidation alongside the six earlier families. Observation compares complete outputs and ten calls with eight successes and two refusals across disabled, default and trace. No membership, anchor, license interpretation, geometry or title verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::tag_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:tag-requires-complete-taggable-type-incidence",
+      "before": "",
+      "after": "Claim: Tag requires complete author Actor to Taggable to Type incidence, excluding Offer while admitting the other seven passive constructors. Both projections retain signed relevance, nonnegative confidence and shared metadata; malformed bounds, wrong sorts, unmatched co-legs and qualifiers refuse the entire bundle without minting a node or assigning standing.",
+      "review": "Tag witnesses cover seven Taggable constructors and the Offer exclusion, signed relevance and nonnegative confidence grids, complete paired incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares fourteen operations with twelve successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::tag_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:tag-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: Tag joins the ten earlier families through shared deterministic reconstruction with complete A/T pairs and parallel classification acts. Revalidation rejects missing siblings, changed coordinates or roles after decoding while preserving unrelated indices; approval and removal failures refuse the whole result.",
+      "review": "Tag witnesses cover seven Taggable constructors and the Offer exclusion, signed relevance and nonnegative confidence grids, complete paired incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares fourteen operations with twelve successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
     },
     {
       "operation": "pn-graph::integration::shared_cases",
