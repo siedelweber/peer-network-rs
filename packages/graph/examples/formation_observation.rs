@@ -63,8 +63,19 @@ fn main() {
     let send = sending(participant.clone());
     let bid = bidding(ownership.clone());
     let opinion = opinion(act.clone());
+    let join_request = join_request(act.clone(), participant.legs[0].target.clone());
     let history = pn_records::validate_history(
-        &[act, publication, ownership, participant, review, send, bid, opinion],
+        &[
+            act,
+            publication,
+            ownership,
+            participant,
+            review,
+            send,
+            bid,
+            opinion,
+            join_request,
+        ],
         &names,
     )
     .unwrap();
@@ -77,6 +88,7 @@ fn main() {
     let send = project_complete_act(&history.acts()[5], &auth);
     let bid = project_complete_act(&history.acts()[6], &auth);
     let opinion = project_complete_act(&history.acts()[7], &auth);
+    let join_request = project_complete_act(&history.acts()[8], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -93,6 +105,7 @@ fn main() {
         "send": format!("{send:?}"),
         "bid": format!("{bid:?}"),
         "opinion": format!("{opinion:?}"),
+        "join_request": format!("{join_request:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -284,5 +297,23 @@ fn opinion(mut input: CandidateAct) -> CandidateAct {
     }
     input.authoritative_position = 8;
     input.logical_time = 8;
+    input
+}
+
+fn join_request(mut input: CandidateAct, target: PublicReference) -> CandidateAct {
+    input.id.family = "Join Request".into();
+    input.id.sequence = 9;
+    input.legs[0].id.act = input.id.clone();
+    input.legs[0].target = target;
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "urgency.numerator",
+        "urgency.denominator",
+        "formality.numerator",
+        "formality.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input.authoritative_position = 9;
+    input.logical_time = 9;
     input
 }

@@ -32,7 +32,7 @@
     },
     {
       "exceptions": 0,
-      "generators": 21,
+      "generators": 22,
       "helpers": 0,
       "instrumented": 7,
       "name": "pn-graph",

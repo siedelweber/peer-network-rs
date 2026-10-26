@@ -205,9 +205,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send and Bid projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the nine successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid and Opinion projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the ten successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Opinion witnesses cover all passive constructors, independent signed-coordinate grids, complete binary incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares twelve operations with ten successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid and Opinion projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the ten successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion and Join Request projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eleven successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Join Request witnesses cover typed Chat incidence, independent signed-coordinate grids, complete binary incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares thirteen operations with eleven successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1320,6 +1320,22 @@
       "before": "",
       "after": "Claim: Bid shares whole-history reconstruction with the seven earlier families, retaining deterministic A/T indices and parallel bids with distinct fresh Offers. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.",
       "review": "Bid witnesses cover complete Item-to-Offer incidence, fresh terminal identity including attempted reuse of an existing Offer, independent signed/nonnegative coordinate grids and zero values, shared A/T metadata, whole-history authorization and typed revalidation. Observation compares complete outputs and eleven calls with nine successes and two refusals across disabled, default and trace. No settlement, title, geometry or ordering verdict follows."
+    },
+    {
+      "operation": "pn-graph::formation::join_request_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:join-request-requires-complete-chat-coordinates",
+      "before": "",
+      "after": "Claim: Join Request requires author Actor to Chat incidence and both signed urgency and formality coordinates. Dangling Chat terms and zero or negative proposal coordinates remain formable without membership effects; other endpoint sorts, malformed carriers and qualifiers refuse the whole projection.",
+      "review": "Join Request witnesses cover typed Chat incidence, independent signed-coordinate grids, complete binary incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares thirteen operations with eleven successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::join_request_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:join-request-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: Join Request joins the nine earlier families through shared deterministic reconstruction, retaining parallel binary edges and unrelated indices. Typed revalidation after decoding rejects altered coordinates or missing acts; approval and removal failures refuse the whole history without publishing a partial graph.",
+      "review": "Join Request witnesses cover typed Chat incidence, independent signed-coordinate grids, complete binary incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares thirteen operations with eleven successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
     },
     {
       "operation": "pn-graph::formation::mixed_reconstruction",

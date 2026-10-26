@@ -2040,3 +2040,169 @@ fn opinion_reconstruction() {
         RegistrationError::UnsupportedFamily
     );
 }
+
+fn join_request(sequence: u64, target: PublicReference) -> CandidateAct {
+    let mut input = candidate("Affinity", sequence);
+    input.id.family = "Join Request".into();
+    input.legs[0].id.act = input.id.clone();
+    input.legs[0].target = target;
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "urgency.numerator",
+        "urgency.denominator",
+        "formality.numerator",
+        "formality.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input
+}
+
+/// Claim: Join Request requires author Actor to Chat incidence and both signed urgency and formality coordinates. Dangling Chat terms and zero or negative proposal coordinates remain formable without membership effects; other endpoint sorts, malformed carriers and qualifiers refuse the whole projection.
+/// # Panics
+/// Panics only if the fixture projects to another family, which correct dispatch cannot arrange.
+/// ´claim:formation:join-request-requires-complete-chat-coordinates´
+/// ´test:integration:join-request-projection´
+#[test]
+fn join_request_projection() {
+    let target = PublicReference::Minted(ActId {
+        author: "b".into(),
+        sequence: 99,
+        family: "Participant".into(),
+    });
+    let input = join_request(3, target);
+    let (source, target, edge) = project(&input).unwrap();
+    assert_eq!(source, Node::Grounded(GroundedNode::Actor("a".into())));
+    assert_eq!(
+        target,
+        Node::Chat {
+            author: "b".into(),
+            sequence: 99
+        }
+    );
+    let Projection::JoinRequest(weight) = edge else {
+        panic!("wrong family")
+    };
+    assert_eq!((weight.urgency.numerator, weight.urgency.denominator), (-1, 2));
+    assert_eq!((weight.formality.numerator, weight.formality.denominator), (2, 3));
+    assert_eq!(
+        (weight.author.as_str(), weight.sequence, weight.position, weight.logical_time),
+        ("a", 3, (1, 3), 3)
+    );
+    for (n, d) in [(0, 1), (2, 3)] {
+        for denominator in 1..=8 {
+            for numerator in -denominator - 1..=denominator + 1 {
+                let mut changed = input.clone();
+                changed.body.quantities[n].1.value = numerator;
+                changed.body.quantities[d].1.value = denominator;
+                assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+            }
+        }
+    }
+    for changed in opinion_refusals(&input) {
+        assert_eq!(project(&changed), Err(RegistrationError::Incidence));
+    }
+    for target in [named("prof", "b"), named("name", "topic")] {
+        let mut changed = input.clone();
+        changed.legs[0].target = target;
+        assert_eq!(project(&changed), Err(RegistrationError::Incidence));
+    }
+    for family in ["Publish", "Owner", "Review", "Send", "Bid", "Join Request"] {
+        let mut changed = input.clone();
+        changed.legs[0].target = PublicReference::Minted(ActId {
+            author: "b".into(),
+            sequence: 99,
+            family: family.into(),
+        });
+        assert_eq!(project(&changed), Err(RegistrationError::Incidence));
+    }
+}
+
+/// Claim: Join Request joins the nine earlier families through shared deterministic reconstruction, retaining parallel binary edges and unrelated indices. Typed revalidation after decoding rejects altered coordinates or missing acts; approval and removal failures refuse the whole history without publishing a partial graph.
+/// # Panics
+/// Panics only if the fixture's Join Request edge has another family, which correct reconstruction cannot arrange.
+/// ´claim:formation:join-request-shares-whole-history-revalidation´
+/// ´test:integration:join-request-reconstruction´
+#[test]
+fn join_request_reconstruction() {
+    let mut inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        review(6, named("name", "topic"), 6),
+        sending(7, 5, 7),
+        bidding(8, 4, 8),
+        opinion(9, named("prof", "a")),
+        join_request(10, PublicReference::Minted(inputs_chat())),
+        join_request(11, PublicReference::Minted(inputs_chat())),
+    ];
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((graph.node_count(), graph.edge_count()), (9, 15));
+    for index in [13, 14] {
+        assert_eq!(
+            graph
+                .edge_endpoints(petgraph::graph::EdgeIndex::new(index))
+                .map(|(a, b)| (a.index(), b.index())),
+            Some((0, 5))
+        );
+    }
+    inputs.reverse();
+    let reversed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(validate_formation(&graph, &reversed, &verifier), Ok(()));
+    let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    let mut partial = graph.clone();
+    partial.remove_edge(petgraph::graph::EdgeIndex::new(13));
+    assert_eq!(
+        partial[petgraph::graph::EdgeIndex::new(14)],
+        graph[petgraph::graph::EdgeIndex::new(14)]
+    );
+    assert_eq!(
+        validate_formation(&partial, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    for urgency in [true, false] {
+        let mut changed = graph.clone();
+        let Projection::JoinRequest(weight) = &mut changed[petgraph::graph::EdgeIndex::new(13)] else {
+            panic!("wrong family")
+        };
+        let coordinate = if urgency { &mut weight.urgency } else { &mut weight.formality };
+        coordinate.numerator *= 2;
+        coordinate.denominator *= 2;
+        assert_eq!(
+            validate_formation(&changed, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts = inputs.clone();
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    inputs.push(candidate("Withdraw", 12));
+    let unsupported = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&unsupported, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
+    );
+}
+
+fn inputs_chat() -> ActId {
+    ActId {
+        author: "a".into(),
+        sequence: 5,
+        family: "Participant".into(),
+    }
+}
