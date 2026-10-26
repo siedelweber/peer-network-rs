@@ -189,9 +189,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "",
-      "after": "Claim: Affinity projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the three successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Read the bounded coordinate grid, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
+      "before": "Claim: Affinity projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the three successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity and Publish projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the four successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Read Publish endpoint and coordinate refusals, exact license qualifier retention, ordinary versus self-mint targets, dangling incidence without anchoring, and mixed reconstruction with authorized removals and partial-cache refusal. The process witness compares complete Affinity and Publish outcomes and six operations across observation modes. This is the bounded internal structural carrier and declared authentication callback, not canonical encoding, license policy, full family conformance, geometry or title."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1296,6 +1296,22 @@
       "before": "",
       "after": "Claim: Mixed Registration and Affinity histories share deterministic reconstruction and authorization checks, preserve parallel acts and retained times, and refuse the entire result when any family, approval or removal is unsupported; diagnostic graph mutation and decoding require complete typed revalidation.",
       "review": "Read the bounded coordinate grid, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
+    },
+    {
+      "operation": "pn-graph::formation::publish_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:publish-retains-typed-content-and-qualifiers",
+      "before": "",
+      "after": "Claim: Scoped Publish formation requires the author's Actor, a Content mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
+      "review": "Read Publish endpoint and coordinate refusals, exact license qualifier retention, ordinary versus self-mint targets, dangling incidence without anchoring, and mixed reconstruction with authorized removals and partial-cache refusal. The process witness compares complete Affinity and Publish outcomes and six operations across observation modes. This is the bounded internal structural carrier and declared authentication callback, not canonical encoding, license policy, full family conformance, geometry or title."
+    },
+    {
+      "operation": "pn-graph::formation::publish_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:publish-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: Publish genesis and subsequent publication share one Content identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
+      "review": "Read Publish endpoint and coordinate refusals, exact license qualifier retention, ordinary versus self-mint targets, dangling incidence without anchoring, and mixed reconstruction with authorized removals and partial-cache refusal. The process witness compares complete Affinity and Publish outcomes and six operations across observation modes. This is the bounded internal structural carrier and declared authentication callback, not canonical encoding, license policy, full family conformance, geometry or title."
     },
     {
       "operation": "pn-graph::integration::shared_cases",

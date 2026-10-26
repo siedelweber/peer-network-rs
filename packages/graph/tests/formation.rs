@@ -78,7 +78,223 @@ fn names() -> Vec<PublicReference> {
         named("prof", "a"),
         named("name", "topic"),
         named("addr", "b"),
+        named("license", "fixture-terms"),
     ]
+}
+
+fn publication(sequence: u64) -> CandidateAct {
+    let mut input = candidate("Publish", sequence);
+    input.legs[0].target = PublicReference::Minted(input.id.clone());
+    input.body.quantities = [("attachment.numerator", -1), ("attachment.denominator", 2)]
+        .into_iter()
+        .map(|(name, value)| {
+            (
+                name.into(),
+                Quantity {
+                    value,
+                    unit: "one".into(),
+                    vintage: 0,
+                },
+            )
+        })
+        .collect();
+    input.protocol_references = vec![named("license", "fixture-terms")];
+    input
+}
+
+fn malformed_publications(input: &CandidateAct) -> Vec<CandidateAct> {
+    let mut cases = Vec::new();
+    let mut paired = input.clone();
+    paired.body.layout = Layout::Paired;
+    paired.legs[0].id.role = Role::A;
+    let mut terminal = paired.legs[0].clone();
+    terminal.id.role = Role::T;
+    paired.legs.push(terminal);
+    cases.push(paired);
+    for target in [
+        PublicReference::Act(input.id.clone()),
+        named("name", "topic"),
+        PublicReference::Minted(ActId {
+            family: "Owner".into(),
+            ..input.id.clone()
+        }),
+    ] {
+        let mut c = input.clone();
+        c.legs[0].target = target;
+        cases.push(c);
+    }
+    for denominator in [0, -1] {
+        let mut c = input.clone();
+        c.body.quantities[1].1.value = denominator;
+        cases.push(c);
+    }
+    let mut c = input.clone();
+    c.body.quantities[0].1.value = i64::MIN;
+    cases.push(c);
+    let mut c = input.clone();
+    c.body.quantities[0].1.unit = "money".into();
+    cases.push(c);
+    let mut c = input.clone();
+    c.body.quantities[0].1.vintage = 1;
+    cases.push(c);
+    let mut c = input.clone();
+    c.body.quantities.pop();
+    cases.push(c);
+    let mut c = input.clone();
+    c.body.quantities.push((
+        "extra".into(),
+        Quantity {
+            value: 1,
+            unit: "one".into(),
+            vintage: 0,
+        },
+    ));
+    cases.push(c);
+    let mut c = input.clone();
+    c.legs[0].source = named("addr", "b");
+    cases.push(c);
+    let mut c = input.clone();
+    c.protocol_references = vec![named("name", "topic")];
+    cases.push(c);
+    cases
+}
+
+/// Claim: Scoped Publish formation requires the author's Actor, a Content mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.
+/// # Panics
+/// Panics only if Publish dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:publish-retains-typed-content-and-qualifiers´
+/// ´test:integration:publish-projection´
+#[test]
+fn publish_projection() {
+    let input = publication(1);
+    let (source, target, edge) = project(&input).unwrap();
+    assert_eq!(source, Node::Grounded(GroundedNode::Actor("a".into())));
+    assert_eq!(
+        target,
+        Node::Content {
+            author: "a".into(),
+            sequence: 1
+        }
+    );
+    let Projection::Publish(weight) = edge else {
+        panic!("wrong family")
+    };
+    assert_eq!((weight.attachment.numerator, weight.attachment.denominator), (-1, 2));
+    assert_eq!(weight.licenses, vec!["fixture-terms"]);
+    for denominator in 1..=8 {
+        for numerator in -denominator - 1..=denominator + 1 {
+            let mut changed = input.clone();
+            changed.body.quantities[0].1.value = numerator;
+            changed.body.quantities[1].1.value = denominator;
+            assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+        }
+    }
+    let mut dangling = input.clone();
+    let mut absent = input.id.clone();
+    absent.sequence = 99;
+    dangling.legs[0].target = PublicReference::Minted(absent);
+    assert_eq!(
+        project(&dangling).unwrap().1,
+        Node::Content {
+            author: "a".into(),
+            sequence: 99
+        }
+    );
+    for c in malformed_publications(&input) {
+        assert_eq!(project(&c), Err(RegistrationError::Incidence));
+    }
+}
+
+/// Claim: Publish genesis and subsequent publication share one Content identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.
+/// # Panics
+/// Panics only if the fixture's Publish edge has another family, which correct reconstruction cannot arrange.
+/// ´claim:formation:publish-shares-whole-history-revalidation´
+/// ´test:integration:publish-reconstruction´
+#[test]
+fn publish_reconstruction() {
+    let mut inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        publication(4),
+    ];
+    inputs[3].legs[0].target = PublicReference::Minted(inputs[2].id.clone());
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &names()).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((graph.node_count(), graph.edge_count()), (4, 4));
+    let endpoints: Vec<_> = graph
+        .edge_indices()
+        .map(|i| graph.edge_endpoints(i).map(|(a, b)| (a.index(), b.index())).unwrap())
+        .collect();
+    assert_eq!(endpoints, vec![(0, 1), (0, 2), (0, 3), (0, 3)]);
+    assert_eq!(
+        graph[petgraph::graph::NodeIndex::new(3)],
+        Node::Content {
+            author: "a".into(),
+            sequence: 3
+        }
+    );
+    inputs.reverse();
+    assert_eq!(
+        validate_formation(&graph, &validate_history(&inputs, &names()).unwrap(), &verifier),
+        Ok(())
+    );
+    let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    let mut partial = graph.clone();
+    partial.remove_edge(petgraph::graph::EdgeIndex::new(2));
+    assert_eq!(
+        partial[petgraph::graph::EdgeIndex::new(3)],
+        graph[petgraph::graph::EdgeIndex::new(3)]
+    );
+    assert_eq!(
+        validate_formation(&partial, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    let mut changed = graph.clone();
+    let Projection::Publish(weight) = &mut changed[petgraph::graph::EdgeIndex::new(2)] else {
+        panic!("wrong family")
+    };
+    weight.attachment.numerator *= 2;
+    weight.attachment.denominator *= 2;
+    assert_eq!(
+        validate_formation(&changed, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    let Projection::Publish(weight) = &mut changed[petgraph::graph::EdgeIndex::new(2)] else {
+        panic!("wrong family")
+    };
+    weight.licenses.clear();
+    weight.attachment = pn_graph::formation::Coordinate {
+        numerator: -1,
+        denominator: 2,
+    };
+    assert_eq!(
+        validate_formation(&changed, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts = inputs.clone();
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &names()).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    inputs[0].id.family = "Opinion".into();
+    inputs[0].legs[0].id.act = inputs[0].id.clone();
+    let unsupported = validate_history(&inputs, &names()).unwrap();
+    assert_eq!(
+        reconstruct(&unsupported, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
+    );
 }
 
 #[derive(Debug)]

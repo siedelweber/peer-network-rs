@@ -1,4 +1,4 @@
-//! Scoped Affinity observation witness (´[ROOT-inv:observe:noninterference]´).
+//! Scoped binary formation observation witness (´[ROOT-inv:observe:noninterference]´).
 
 use pn_graph::formation::{project_complete_act, reconstruct, validate_formation};
 use pn_graph::registration::{OpeningKind, RegistrationVerifier};
@@ -27,7 +27,7 @@ fn main() {
         sequence: 1,
         family: "Affinity".into(),
     };
-    let names: Vec<_> = ["addr", "name"]
+    let names: Vec<_> = ["addr", "name", "license"]
         .into_iter()
         .map(|namespace| PublicReference::Named {
             namespace: namespace.into(),
@@ -77,9 +77,21 @@ fn main() {
         authoritative_position: 1,
         logical_time: 1,
     };
-    let history = pn_records::validate_history(&[act], &names).unwrap();
+    let mut publication = act.clone();
+    publication.id.family = "Publish".into();
+    publication.id.sequence = 2;
+    publication.legs[0].id.act = publication.id.clone();
+    publication.legs[0].target = PublicReference::Minted(publication.id.clone());
+    publication.body.quantities.truncate(2);
+    publication.body.quantities[0].0 = "attachment.numerator".into();
+    publication.body.quantities[1].0 = "attachment.denominator".into();
+    publication.protocol_references = vec![names[2].clone()];
+    publication.authoritative_position = 2;
+    publication.logical_time = 2;
+    let history = pn_records::validate_history(&[act, publication], &names).unwrap();
     let auth = FixtureApproval(true);
     let projection = project_complete_act(&history.acts()[0], &auth);
+    let publication = project_complete_act(&history.acts()[1], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -89,6 +101,7 @@ fn main() {
     let invalid = validate_formation(&partial, &history, &auth);
     cli_common::emit(&serde_json::json!({
         "projection": format!("{projection:?}"), "graph": format!("{graph:?}"),
+        "publication": format!("{publication:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();

@@ -3917,7 +3917,9 @@
       "budget": "pure-suite",
       "cases": [
         "pn-graph::formation::affinity_coordinates",
-        "pn-graph::formation::mixed_reconstruction"
+        "pn-graph::formation::mixed_reconstruction",
+        "pn-graph::formation::publish_projection",
+        "pn-graph::formation::publish_reconstruction"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",
