@@ -2608,7 +2608,7 @@ fn leaving(sequence: u64, target: PublicReference) -> CandidateAct {
     input
 }
 
-/// Claim: Across the fourteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.
+/// Claim: Across the fifteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.
 /// ´claim:formation:formed-families-separate-protocol-resolution-from-incidence´
 /// ´test:integration:formed-reference-conformance´
 #[test]
@@ -2628,6 +2628,7 @@ fn formed_reference_conformance() {
         leaving(12, PublicReference::Minted(inputs_chat())),
         referencing(13, named("prof", "a")),
         invitation(14),
+        deinvite(15),
     ];
     for input in &inputs {
         let absent = ActId {
@@ -3329,4 +3330,59 @@ fn shared_family_reconstruction(first: CandidateAct, second: CandidateAct) {
     );
     verifier.removals = true;
     assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+}
+
+fn deinvite(sequence: u64) -> CandidateAct {
+    let mut input = invitation(sequence);
+    input.id.family = "De-invite".into();
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.body.quantities.clear();
+    input
+}
+
+/// Claim: De-invite forms a complete author Actor to Chat to Profile control pair with fixed unit parameters and shared public metadata. Formation requires neither membership, participation nor an Invitation; extra parameters, protocol references, license pairs, wrong endpoint classes and incomplete incidence refuse at their respective layers.
+/// # Panics
+/// Panics only if De-invite dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:deinvite-requires-complete-chat-profile-control´
+/// ´test:integration:deinvite-projection´
+#[test]
+fn deinvite_projection() {
+    let input = deinvite(15);
+    let edges = bundle(&input).unwrap();
+    assert_eq!(edges.len(), 2);
+    assert_eq!(edges[0].0, Node::Grounded(GroundedNode::Actor("a".into())));
+    assert_eq!(
+        edges[0].1,
+        Node::Chat {
+            author: "a".into(),
+            sequence: 5
+        }
+    );
+    assert_eq!(edges[1].0, edges[0].1);
+    assert_eq!(edges[1].1, Node::Grounded(GroundedNode::Profile("b".into())));
+    let (Projection::Deinvite(a), Projection::Deinvite(t)) = (&edges[0].2, &edges[1].2) else {
+        panic!("wrong family")
+    };
+    assert_eq!(a.role, pn_graph::formation::DeinviteRole::A);
+    assert_eq!(
+        (a.author.as_str(), a.sequence, a.position, a.logical_time),
+        ("a", 15, (1, 15), 15)
+    );
+    let mut expected = a.clone();
+    expected.role = pn_graph::formation::DeinviteRole::T;
+    assert_eq!(t, &expected);
+    let mut changed = input.clone();
+    changed.body.quantities = invitation(15).body.quantities;
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    paired_control_refusals(&input);
+}
+
+/// Claim: De-invite uses shared deterministic reconstruction and typed revalidation with parallel complete control pairs, retained metadata, authorized removal and no partial result. Missing siblings, replaced weights and unapproved acts refuse, including after diagnostic decoding; no revocation or membership fold is computed.
+/// ´claim:formation:deinvite-shares-whole-history-revalidation´
+/// ´test:integration:deinvite-reconstruction´
+#[test]
+fn deinvite_reconstruction() {
+    shared_family_reconstruction(deinvite(15), deinvite(16));
 }

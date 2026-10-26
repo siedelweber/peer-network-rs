@@ -229,8 +229,8 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave and Reference projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the fourteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference and Invitation projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the fifteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference and Invitation projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the fifteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation and De-invite projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the sixteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
       "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
     {
@@ -1346,11 +1346,27 @@
       "review": "Bid witnesses cover complete Item-to-Offer incidence, fresh terminal identity including attempted reuse of an existing Offer, independent signed/nonnegative coordinate grids and zero values, shared A/T metadata, whole-history authorization and typed revalidation. Observation compares complete outputs and eleven calls with nine successes and two refusals across disabled, default and trace. No settlement, title, geometry or ordering verdict follows."
     },
     {
+      "operation": "pn-graph::formation::deinvite_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:deinvite-requires-complete-chat-profile-control",
+      "before": "",
+      "after": "Claim: De-invite forms a complete author Actor to Chat to Profile control pair with fixed unit parameters and shared public metadata. Formation requires neither membership, participation nor an Invitation; extra parameters, protocol references, license pairs, wrong endpoint classes and incomplete incidence refuse at their respective layers.",
+      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
+    },
+    {
+      "operation": "pn-graph::formation::deinvite_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:deinvite-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: De-invite uses shared deterministic reconstruction and typed revalidation with parallel complete control pairs, retained metadata, authorized removal and no partial result. Missing siblings, replaced weights and unapproved acts refuse, including after diagnostic decoding; no revocation or membership fold is computed.",
+      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
+    },
+    {
       "operation": "pn-graph::formation::formed_reference_conformance",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:formed-families-separate-protocol-resolution-from-incidence",
-      "before": "Claim: Across the thirteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
-      "after": "Claim: Across the fourteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
+      "before": "Claim: Across the fourteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
+      "after": "Claim: Across the fifteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
       "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
     {

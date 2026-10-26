@@ -352,6 +352,33 @@ pub struct InvitationProjection {
     pub relevance: Coordinate,
 }
 
+/// Constructor role of a Deinvite edge, derived from one complete act.
+/// (´def:formation:deinvite´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum DeinviteRole {
+    /// Initiating Actor to Chat.
+    A,
+    /// Chat to departing Profile.
+    T,
+}
+
+/// Complete Deinvite tuple shared by both role-addressed projections.
+/// (´def:formation:deinvite´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DeinviteProjection {
+    /// Initiating author shared by both legs.
+    pub author: String,
+    /// Author-local act sequence shared by both legs.
+    pub sequence: u64,
+    /// A or T constructor role, never a separately authored identity.
+    pub role: DeinviteRole,
+    /// Retained published placement of the whole act.
+    pub position: Position,
+    /// One retained time shared by both projections.
+    pub logical_time: u64,
+}
+
 /// Constructor role of a Send edge, derived from one complete act.
 /// (´def:formation:send´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -444,6 +471,8 @@ pub enum Projection {
     Reference(ReferenceProjection),
     /// Invitation proposes Chat participation to a Profile.
     Invitation(InvitationProjection),
+    /// De-invite records unconditional Chat dissociation toward a Profile.
+    Deinvite(DeinviteProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -543,7 +572,9 @@ pub fn validate_formation(
 }
 
 fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
-    if act.id().family == "Invitation" {
+    if act.id().family == "De-invite" {
+        deinvite(act, verifier)
+    } else if act.id().family == "Invitation" {
         invitation(act, verifier)
     } else if act.id().family == "Reference" {
         reference(act, verifier)
@@ -1272,5 +1303,57 @@ fn invitation(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
             Projection::Invitation(a_weight),
         ),
         (middle, target, Projection::Invitation(t_weight)),
+    ])
+}
+
+fn deinvite(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    let [first, second] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let (a, t) = match (first.id().role, second.id().role) {
+        (Role::A, Role::T) => (first, second),
+        (Role::T, Role::A) => (second, first),
+        _ => return Err(RegistrationError::Incidence),
+    };
+    if act.body().layout != Layout::Paired
+        || a.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || a.target() != t.source()
+        || !act.body().quantities.is_empty()
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let middle = chat(a.target())?;
+    let target = passive(t.target())?;
+    if !matches!(target, Node::Grounded(GroundedNode::Profile(_))) {
+        return Err(RegistrationError::Incidence);
+    }
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    let a_weight = DeinviteProjection {
+        author: act.id().author.clone(),
+        sequence: act.id().sequence,
+        role: DeinviteRole::A,
+        position: act.position(),
+        logical_time: act.logical_time(),
+    };
+    let t_weight = DeinviteProjection {
+        role: DeinviteRole::T,
+        ..a_weight.clone()
+    };
+    Ok(vec![
+        (
+            Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+            middle.clone(),
+            Projection::Deinvite(a_weight),
+        ),
+        (middle, target, Projection::Deinvite(t_weight)),
     ])
 }

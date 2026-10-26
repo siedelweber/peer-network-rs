@@ -44,6 +44,7 @@ fn main() {
     let leave = project_complete_act(&history.acts()[10], &auth);
     let reference = project_complete_act(&history.acts()[11], &auth);
     let invitation = project_complete_act(&history.acts()[12], &auth);
+    let deinvite = project_complete_act(&history.acts()[13], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -65,6 +66,7 @@ fn main() {
         "leave": format!("{leave:?}"),
         "reference": format!("{reference:?}"),
         "invitation": format!("{invitation:?}"),
+        "deinvite": format!("{deinvite:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -361,6 +363,7 @@ fn formation_inputs(names: &[PublicReference]) -> Vec<CandidateAct> {
     let tag = tagging(review.clone());
     let reference = referencing(review.clone());
     let invitation = invitation(participant.clone());
+    let deinvite = deinvite(invitation.clone());
     let send = sending(participant.clone());
     let bid = bidding(ownership.clone());
     let opinion = opinion(act.clone());
@@ -380,6 +383,7 @@ fn formation_inputs(names: &[PublicReference]) -> Vec<CandidateAct> {
         leave,
         reference,
         invitation,
+        deinvite,
     ]
 }
 
@@ -405,5 +409,17 @@ fn invitation(mut input: CandidateAct) -> CandidateAct {
     }
     input.authoritative_position = 13;
     input.logical_time = 13;
+    input
+}
+
+fn deinvite(mut input: CandidateAct) -> CandidateAct {
+    input.id.family = "De-invite".into();
+    input.id.sequence = 14;
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.body.quantities.clear();
+    input.authoritative_position = 14;
+    input.logical_time = 14;
     input
 }
