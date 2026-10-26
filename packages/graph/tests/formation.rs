@@ -115,6 +115,7 @@ fn malformed_publications(input: &CandidateAct) -> Vec<CandidateAct> {
     let mut cases = Vec::new();
     let mut paired = input.clone();
     paired.body.layout = Layout::Paired;
+    paired.body.license = None;
     paired.legs[0].id.role = Role::A;
     let mut terminal = paired.legs[0].clone();
     terminal.id.role = Role::T;
@@ -130,6 +131,7 @@ fn malformed_publications(input: &CandidateAct) -> Vec<CandidateAct> {
     ] {
         let mut c = input.clone();
         c.legs[0].target = target;
+        c.body.license = None;
         cases.push(c);
     }
     for denominator in [0, -1] {
@@ -207,7 +209,14 @@ fn publish_projection() {
             let mut changed = input.clone();
             changed.body.quantities[0].1.value = numerator;
             changed.body.quantities[1].1.value = denominator;
-            assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+            assert_eq!(
+                project(&changed).map(|_| ()),
+                if (-denominator..=denominator).contains(&numerator) {
+                    Ok(())
+                } else {
+                    Err(FormationFailure::Graph(RegistrationError::Incidence))
+                }
+            );
         }
     }
     let mut dangling = input.clone();
@@ -223,7 +232,7 @@ fn publish_projection() {
         }
     );
     for c in malformed_publications(&input) {
-        assert_eq!(project(&c), Err(RegistrationError::Incidence));
+        assert_eq!(project(&c), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
 }
 
@@ -346,8 +355,14 @@ impl RegistrationVerifier for Verifier {
     }
 }
 
-fn project(input: &CandidateAct) -> Result<pn_graph::formation::CompleteProjection, RegistrationError> {
-    let history = validate_history(std::slice::from_ref(input), &names()).map_err(|_| RegistrationError::Incidence)?;
+#[derive(Debug, PartialEq, Eq)]
+enum FormationFailure {
+    Records(pn_records::ValidationError),
+    Graph(RegistrationError),
+}
+
+fn project(input: &CandidateAct) -> Result<pn_graph::formation::CompleteProjection, FormationFailure> {
+    let history = validate_history(std::slice::from_ref(input), &names()).map_err(FormationFailure::Records)?;
     project_complete_act(
         &history.acts()[0],
         &Verifier {
@@ -355,6 +370,7 @@ fn project(input: &CandidateAct) -> Result<pn_graph::formation::CompleteProjecti
             removals: false,
         },
     )
+    .map_err(FormationFailure::Graph)
     .map(|mut projections| {
         assert_eq!(projections.len(), 1);
         projections.remove(0)
@@ -383,7 +399,14 @@ fn affinity_coordinates() {
                 let mut changed = input.clone();
                 changed.body.quantities[numerator_index].1.value = numerator;
                 changed.body.quantities[denominator_index].1.value = denominator;
-                assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+                assert_eq!(
+                    project(&changed).map(|_| ()),
+                    if (-denominator..=denominator).contains(&numerator) {
+                        Ok(())
+                    } else {
+                        Err(FormationFailure::Graph(RegistrationError::Incidence))
+                    }
+                );
             }
         }
     }
@@ -422,7 +445,7 @@ fn affinity_coordinates() {
     c.legs[0].source = named("addr", "b");
     cases.push(c);
     for c in cases {
-        assert_eq!(project(&c), Err(RegistrationError::Incidence));
+        assert_eq!(project(&c), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
 }
 
@@ -605,7 +628,14 @@ fn owner_projection() {
             let mut changed = input.clone();
             changed.body.quantities[0].1.value = numerator;
             changed.body.quantities[1].1.value = denominator;
-            assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+            assert_eq!(
+                project(&changed).map(|_| ()),
+                if (-denominator..=denominator).contains(&numerator) {
+                    Ok(())
+                } else {
+                    Err(FormationFailure::Graph(RegistrationError::Incidence))
+                }
+            );
         }
     }
     let mut dangling = input.clone();
@@ -621,7 +651,7 @@ fn owner_projection() {
         }
     );
     for c in malformed_ownerships(&input) {
-        assert_eq!(project(&c), Err(RegistrationError::Incidence));
+        assert_eq!(project(&c), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
 }
 
@@ -756,8 +786,8 @@ fn participation(sequence: u64, origin: u64, destination: u64) -> CandidateAct {
     act
 }
 
-fn bundle(input: &CandidateAct) -> Result<Vec<pn_graph::formation::CompleteProjection>, RegistrationError> {
-    let history = validate_history(std::slice::from_ref(input), &names()).map_err(|_| RegistrationError::Incidence)?;
+fn bundle(input: &CandidateAct) -> Result<Vec<pn_graph::formation::CompleteProjection>, FormationFailure> {
+    let history = validate_history(std::slice::from_ref(input), &names()).map_err(FormationFailure::Records)?;
     project_complete_act(
         &history.acts()[0],
         &Verifier {
@@ -765,6 +795,7 @@ fn bundle(input: &CandidateAct) -> Result<Vec<pn_graph::formation::CompleteProje
             removals: false,
         },
     )
+    .map_err(FormationFailure::Graph)
 }
 
 /// Claim: Participant forms one ordered A/T bundle for found, join, found-successor and move, requiring Actor-to-Chat-to-Chat incidence, signed interactivity and responsibility and nonnegative continuity. Both projections retain one act identity, attached time and full parameter tuple; malformed coordinates or endpoints refuse the whole bundle without membership or ordering verdicts.
@@ -887,7 +918,14 @@ fn participant_coordinates() {
                 changed.body.quantities[pair].1.value = numerator;
                 changed.body.quantities[pair + 1].1.value = denominator;
                 let lower = if pair == 4 { 0 } else { -denominator };
-                assert_eq!(bundle(&changed).is_ok(), (lower..=denominator).contains(&numerator));
+                assert_eq!(
+                    bundle(&changed).map(|_| ()),
+                    if (lower..=denominator).contains(&numerator) {
+                        Ok(())
+                    } else {
+                        Err(FormationFailure::Graph(RegistrationError::Incidence))
+                    }
+                );
             }
         }
     }
@@ -898,19 +936,19 @@ fn participant_refusals() {
     for index in 0..6 {
         let mut changed = input.clone();
         changed.body.quantities.remove(index);
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         let mut changed = input.clone();
         changed.body.quantities[index].1.unit = "money".into();
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         let mut changed = input.clone();
         changed.body.quantities[index].1.vintage = 1;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     for index in [1, 3, 5] {
         for value in [0, -1] {
             let mut changed = input.clone();
             changed.body.quantities[index].1.value = value;
-            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         }
     }
     for endpoint in 0..4 {
@@ -922,21 +960,27 @@ fn participant_refusals() {
             2 => changed.legs[1].source = replacement,
             _ => changed.legs[1].target = replacement,
         }
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     let mut changed = input.clone();
     changed.legs[1].source = PublicReference::Minted(ActId {
         sequence: 99,
         ..input.id.clone()
     });
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.protocol_references = vec![named("name", "topic")];
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     for role in [0, 1] {
         let mut partial = input.clone();
-        partial.legs.remove(role);
-        assert!(validate_history(&[partial], &names()).is_err());
+        let removed = partial.legs.remove(role);
+        assert_eq!(
+            bundle(&partial),
+            Err(FormationFailure::Records(pn_records::ValidationError::MissingCoLeg {
+                act: partial.id.clone(),
+                role: removed.id.role,
+            }))
+        );
     }
 }
 
@@ -986,16 +1030,16 @@ fn participant_constructor_refusals() {
         changed.legs[0].target = other.clone();
         changed.legs[1].source = other.clone();
         changed.legs[1].target = other;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     let mut changed = input.clone();
     changed.legs[0].source = named("addr", "b");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.body.layout = Layout::Binary;
     changed.legs.truncate(1);
     changed.legs[0].id.role = Role::Binary;
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input;
     changed.body.quantities.push((
         "extra".into(),
@@ -1005,7 +1049,7 @@ fn participant_constructor_refusals() {
             vintage: 0,
         },
     ));
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
 }
 
 fn review(sequence: u64, middle: PublicReference, terminal: u64) -> CandidateAct {
@@ -1137,25 +1181,32 @@ fn review_refusals() {
                 let mut changed = input.clone();
                 changed.body.quantities[pair].1.value = numerator;
                 changed.body.quantities[pair + 1].1.value = denominator;
-                assert_eq!(bundle(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+                assert_eq!(
+                    bundle(&changed).map(|_| ()),
+                    if (-denominator..=denominator).contains(&numerator) {
+                        Ok(())
+                    } else {
+                        Err(FormationFailure::Graph(RegistrationError::Incidence))
+                    }
+                );
             }
         }
         for denominator in [0, -1] {
             let mut changed = input.clone();
             changed.body.quantities[pair + 1].1.value = denominator;
-            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         }
     }
     for index in 0..4 {
         let mut changed = input.clone();
         changed.body.quantities.remove(index);
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         let mut changed = input.clone();
         changed.body.quantities[index].1.unit = "money".into();
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         let mut changed = input.clone();
         changed.body.quantities[index].1.vintage = 1;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     for reference in [
         named("addr", "a"),
@@ -1168,25 +1219,31 @@ fn review_refusals() {
         let mut changed = input.clone();
         changed.legs[0].target = reference.clone();
         changed.legs[1].source = reference;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     for index in 0..2 {
         let mut changed = input.clone();
-        changed.legs.remove(index);
-        assert!(validate_history(&[changed], &[]).is_err());
+        let removed = changed.legs.remove(index);
+        assert_eq!(
+            bundle(&changed),
+            Err(FormationFailure::Records(pn_records::ValidationError::MissingCoLeg {
+                act: changed.id.clone(),
+                role: removed.id.role,
+            }))
+        );
     }
     let mut changed = input.clone();
     changed.legs[0].source = named("addr", "b");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.legs[1].source = named("name", "other");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.legs[1].target = named("name", "topic");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input;
     changed.protocol_references = vec![named("name", "topic")];
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
 }
 
 /// Claim: Review shares whole-history reconstruction with the five earlier families, retaining deterministic A/T indices and parallel ordinary acts. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.
@@ -1355,7 +1412,13 @@ fn publish_license_pair() {
         review(1, named("name", "topic"), 1),
     ] {
         input.protocol_references = vec![legacy.clone()];
-        assert!(validate_history(std::slice::from_ref(&input), &supplied).is_err());
+        assert_eq!(
+            validate_history(std::slice::from_ref(&input), &supplied).unwrap_err(),
+            pn_records::ValidationError::InvalidRepresentation {
+                act: input.id.clone(),
+                cause: pn_records::InvalidCause::LicenseQualifiers
+            }
+        );
         input.protocol_references = vec![named("name", "topic")];
         let history = validate_history(std::slice::from_ref(&input), &supplied).unwrap();
         let verifier = Verifier {
@@ -1426,7 +1489,14 @@ fn send_projection() {
             let mut changed = input.clone();
             changed.body.quantities[0].1.value = numerator;
             changed.body.quantities[1].1.value = denominator;
-            assert_eq!(bundle(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+            assert_eq!(
+                bundle(&changed).map(|_| ()),
+                if (-denominator..=denominator).contains(&numerator) {
+                    Ok(())
+                } else {
+                    Err(FormationFailure::Graph(RegistrationError::Incidence))
+                }
+            );
         }
     }
     send_refusals(&input);
@@ -1435,22 +1505,28 @@ fn send_projection() {
 fn send_refusals(input: &CandidateAct) {
     for index in 0..2 {
         let mut changed = input.clone();
-        changed.legs.remove(index);
-        assert!(validate_history(&[changed], &[]).is_err());
+        let removed = changed.legs.remove(index);
+        assert_eq!(
+            bundle(&changed),
+            Err(FormationFailure::Records(pn_records::ValidationError::MissingCoLeg {
+                act: changed.id.clone(),
+                role: removed.id.role,
+            }))
+        );
         let mut changed = input.clone();
         changed.body.quantities.remove(index);
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         let mut changed = input.clone();
         changed.body.quantities[index].1.unit = "money".into();
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         let mut changed = input.clone();
         changed.body.quantities[index].1.vintage = 1;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     for denominator in [0, -1] {
         let mut changed = input.clone();
         changed.body.quantities[1].1.value = denominator;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     for family in ["Publish", "Owner", "Review", "Bid"] {
         let wrong = PublicReference::Minted(ActId {
@@ -1460,26 +1536,34 @@ fn send_refusals(input: &CandidateAct) {
         let mut changed = input.clone();
         changed.legs[0].target = wrong.clone();
         changed.legs[1].source = wrong.clone();
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         let mut changed = input.clone();
         changed.legs[1].target = wrong;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     let mut changed = input.clone();
     changed.legs[0].source = named("addr", "b");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.legs[1].source = named("name", "topic");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.legs[1].target = PublicReference::Act(input.id.clone());
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.protocol_references = vec![named("name", "topic")];
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.body.license = publication(1).body.license;
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(
+        bundle(&changed),
+        Err(FormationFailure::Records(
+            pn_records::ValidationError::InvalidRepresentation {
+                act: changed.id.clone(),
+                cause: pn_records::InvalidCause::LicenseQualifiers,
+            }
+        ))
+    );
 }
 
 /// Claim: Send shares whole-history reconstruction with the six earlier families, retaining deterministic A/T indices and parallel ordinary acts. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.
@@ -1654,7 +1738,10 @@ fn bid_projection() {
     expected.role = BidRole::T;
     assert_eq!(t, &expected);
     for terminal in [1, 99] {
-        assert_eq!(bundle(&bidding(3, 1, terminal)), Err(RegistrationError::Incidence));
+        assert_eq!(
+            bundle(&bidding(3, 1, terminal)),
+            Err(FormationFailure::Graph(RegistrationError::Incidence))
+        );
     }
     for pair in [0, 2] {
         for denominator in 1..=8 {
@@ -1663,7 +1750,14 @@ fn bid_projection() {
                 changed.body.quantities[pair].1.value = numerator;
                 changed.body.quantities[pair + 1].1.value = denominator;
                 let lower = if pair == 0 { -denominator } else { 0 };
-                assert_eq!(bundle(&changed).is_ok(), (lower..=denominator).contains(&numerator));
+                assert_eq!(
+                    bundle(&changed).map(|_| ()),
+                    if (lower..=denominator).contains(&numerator) {
+                        Ok(())
+                    } else {
+                        Err(FormationFailure::Graph(RegistrationError::Incidence))
+                    }
+                );
             }
         }
     }
@@ -1681,25 +1775,31 @@ fn bid_refusals(input: &CandidateAct) {
     for index in 0..4 {
         let mut changed = input.clone();
         changed.body.quantities.remove(index);
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         let mut changed = input.clone();
         changed.body.quantities[index].1.unit = "money".into();
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         let mut changed = input.clone();
         changed.body.quantities[index].1.vintage = 1;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     for pair in [1, 3] {
         for denominator in [0, -1] {
             let mut changed = input.clone();
             changed.body.quantities[pair].1.value = denominator;
-            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         }
     }
     for index in 0..2 {
         let mut changed = input.clone();
-        changed.legs.remove(index);
-        assert!(validate_history(&[changed], &[]).is_err());
+        let removed = changed.legs.remove(index);
+        assert_eq!(
+            bundle(&changed),
+            Err(FormationFailure::Records(pn_records::ValidationError::MissingCoLeg {
+                act: changed.id.clone(),
+                role: removed.id.role,
+            }))
+        );
     }
     for family in ["Publish", "Participant", "Review", "Send", "Bid"] {
         let wrong = PublicReference::Minted(ActId {
@@ -1709,26 +1809,34 @@ fn bid_refusals(input: &CandidateAct) {
         let mut changed = input.clone();
         changed.legs[0].target = wrong.clone();
         changed.legs[1].source = wrong;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     let mut changed = input.clone();
     changed.legs[0].source = named("addr", "b");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.legs[1].source = named("name", "topic");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.legs[1].target = PublicReference::Minted(ActId {
         author: "b".into(),
         ..input.id.clone()
     });
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.protocol_references = vec![named("name", "topic")];
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.body.license = publication(1).body.license;
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(
+        bundle(&changed),
+        Err(FormationFailure::Records(
+            pn_records::ValidationError::InvalidRepresentation {
+                act: changed.id.clone(),
+                cause: pn_records::InvalidCause::LicenseQualifiers,
+            }
+        ))
+    );
 }
 
 /// Claim: Bid shares whole-history reconstruction with the seven earlier families, retaining deterministic A/T indices and parallel bids with distinct fresh Offers. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.
@@ -1900,13 +2008,31 @@ fn opinion_projection() {
                 let mut changed = input.clone();
                 changed.body.quantities[n].1.value = numerator;
                 changed.body.quantities[d].1.value = denominator;
-                assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+                assert_eq!(
+                    project(&changed).map(|_| ()),
+                    if (-denominator..=denominator).contains(&numerator) {
+                        Ok(())
+                    } else {
+                        Err(FormationFailure::Graph(RegistrationError::Incidence))
+                    }
+                );
             }
         }
     }
     for changed in opinion_refusals(&input) {
-        assert_eq!(project(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
+    let mut changed = input.clone();
+    changed.body.license = publication(1).body.license;
+    assert_eq!(
+        project(&changed),
+        Err(FormationFailure::Records(
+            pn_records::ValidationError::InvalidRepresentation {
+                act: changed.id.clone(),
+                cause: pn_records::InvalidCause::LicenseQualifiers,
+            }
+        ))
+    );
 }
 
 fn opinion_refusals(input: &CandidateAct) -> Vec<CandidateAct> {
@@ -1942,9 +2068,6 @@ fn opinion_refusals(input: &CandidateAct) -> Vec<CandidateAct> {
     cases.push(changed);
     let mut changed = input.clone();
     changed.protocol_references.push(named("name", "topic"));
-    cases.push(changed);
-    let mut changed = input.clone();
-    changed.body.license = publication(1).body.license;
     cases.push(changed);
     let mut changed = input.clone();
     changed.body.layout = Layout::Paired;
@@ -2094,17 +2217,35 @@ fn join_request_projection() {
                 let mut changed = input.clone();
                 changed.body.quantities[n].1.value = numerator;
                 changed.body.quantities[d].1.value = denominator;
-                assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+                assert_eq!(
+                    project(&changed).map(|_| ()),
+                    if (-denominator..=denominator).contains(&numerator) {
+                        Ok(())
+                    } else {
+                        Err(FormationFailure::Graph(RegistrationError::Incidence))
+                    }
+                );
             }
         }
     }
     for changed in opinion_refusals(&input) {
-        assert_eq!(project(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
+    let mut changed = input.clone();
+    changed.body.license = publication(1).body.license;
+    assert_eq!(
+        project(&changed),
+        Err(FormationFailure::Records(
+            pn_records::ValidationError::InvalidRepresentation {
+                act: changed.id.clone(),
+                cause: pn_records::InvalidCause::LicenseQualifiers,
+            }
+        ))
+    );
     for target in [named("prof", "b"), named("name", "topic")] {
         let mut changed = input.clone();
         changed.legs[0].target = target;
-        assert_eq!(project(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     for family in ["Publish", "Owner", "Review", "Send", "Bid", "Join Request"] {
         let mut changed = input.clone();
@@ -2113,7 +2254,7 @@ fn join_request_projection() {
             sequence: 99,
             family: family.into(),
         });
-        assert_eq!(project(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
 }
 
@@ -2270,7 +2411,14 @@ fn tag_projection() {
                 changed.body.quantities[n].1.value = numerator;
                 changed.body.quantities[d].1.value = denominator;
                 let lower = if n == 0 { -denominator } else { 0 };
-                assert_eq!(bundle(&changed).is_ok(), (lower..=denominator).contains(&numerator));
+                assert_eq!(
+                    bundle(&changed).map(|_| ()),
+                    if (lower..=denominator).contains(&numerator) {
+                        Ok(())
+                    } else {
+                        Err(FormationFailure::Graph(RegistrationError::Incidence))
+                    }
+                );
             }
         }
     }
@@ -2281,30 +2429,36 @@ fn tag_refusals(input: &CandidateAct) {
     for index in 0..4 {
         let mut changed = input.clone();
         changed.body.quantities.remove(index);
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         for (unit, vintage) in [("money", 0), ("one", 1)] {
             let mut changed = input.clone();
             changed.body.quantities[index].1.unit = unit.into();
             changed.body.quantities[index].1.vintage = vintage;
-            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         }
     }
     for index in [1, 3] {
         for value in [0, -1] {
             let mut changed = input.clone();
             changed.body.quantities[index].1.value = value;
-            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
         }
     }
     for removed in [0, 1] {
         let mut changed = input.clone();
-        changed.legs.remove(removed);
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let removed = changed.legs.remove(removed);
+        assert_eq!(
+            bundle(&changed),
+            Err(FormationFailure::Records(pn_records::ValidationError::MissingCoLeg {
+                act: changed.id.clone(),
+                role: removed.id.role,
+            }))
+        );
     }
     for target in [named("addr", "a"), named("prof", "a"), PublicReference::Minted(inputs_chat())] {
         let mut changed = input.clone();
         changed.legs[1].target = target;
-        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     }
     for middle in [
         named("addr", "a"),
@@ -2314,20 +2468,31 @@ fn tag_refusals(input: &CandidateAct) {
             family: "Bid".into(),
         }),
     ] {
-        assert_eq!(bundle(&tagging(3, middle)), Err(RegistrationError::Incidence));
+        assert_eq!(
+            bundle(&tagging(3, middle)),
+            Err(FormationFailure::Graph(RegistrationError::Incidence))
+        );
     }
     let mut changed = input.clone();
     changed.legs[0].source = named("addr", "b");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.legs[1].source = named("prof", "other");
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.protocol_references.push(named("name", "topic"));
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
     let mut changed = input.clone();
     changed.body.license = publication(1).body.license;
-    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    assert_eq!(
+        bundle(&changed),
+        Err(FormationFailure::Records(
+            pn_records::ValidationError::InvalidRepresentation {
+                act: changed.id.clone(),
+                cause: pn_records::InvalidCause::LicenseQualifiers,
+            }
+        ))
+    );
 }
 
 /// Claim: Tag joins the ten earlier families through shared deterministic reconstruction with complete A/T pairs and parallel classification acts. Revalidation rejects missing siblings, changed coordinates or roles after decoding while preserving unrelated indices; approval and removal failures refuse the whole result.
