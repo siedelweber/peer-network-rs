@@ -63,6 +63,36 @@ def binary_reachability(config, rows):
     return {name for name,pattern in patterns.items() if any(pattern in frame for frame in frames)}
 
 
+def capture_complete(status):
+    """A lossless capture is complete. The bounded observation queue may lose records under load; every loss
+    must then name its cause, and the capture is incomplete evidence rather than a failure of the run."""
+    accounting=json.dumps({key:status.get(key) for key in ('level','attempted_records','delivered_records','lost_records',
+        'undelivered_records','in_flight_records','drain_timeouts','drain_unavailable','loss_causes')},sort_keys=True)
+    if status['lost_records']!=sum(status['loss_causes'].values()):
+        raise AssertionError('observation loss without a named cause: '+accounting)
+    return status['lost_records']==0 and status['undelivered_records']==0 and status['in_flight_records']==0, accounting
+
+
+def traced_capture(test, command, env, level, attempts=3):
+    """The child writes observations to a file, so its delivery never waits on this reader; a capture that still
+    counts loss is retaken, at most three times, and each incomplete attempt prints its accounting."""
+    for attempt in range(1,attempts+1):
+        sink=Path(f'.lane/storage-{level}.stderr.jsonl')
+        started=time.monotonic()
+        with sink.open('wb') as stream:
+            result=subprocess.run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=60,check=False)
+        wall=time.monotonic()-started
+        stderr=sink.read_bytes()
+        test.assertEqual(result.returncode,0,stderr.decode())
+        rows=[expanded(json.loads(line)) for line in stderr.splitlines()]
+        status=next(row for row in rows if row.get('kind')=='observation_status')
+        complete,accounting=capture_complete(status)
+        if complete:
+            return result,rows,status,wall
+        print(f'STORAGE-RUNTIME level={level} attempt={attempt} incomplete={accounting} wall_seconds={wall:.3f}')
+    test.fail(f'no complete {level} capture in {attempts} attempts: {accounting}')
+
+
 class HostRuntime(unittest.TestCase):
     def test_statement_type_boundary(self):
         """Claim: Production modules cannot name a raw driver client outside its private wrapper and Session constructor; exact refusal probes cover traversal, path attributes, includes and the storage-only exemption, and inline SQL fails compilation at the wrapper's Statement parameter.
@@ -123,7 +153,7 @@ class HostRuntime(unittest.TestCase):
         self.assertIn(b'forbidden_inline_sql',result.stderr)
 
     def test_storage_statements(self):
-        """Claim: Every closed storage statement is exercised under trace and its decoded DataRows contain only public fixture content; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.
+        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; a capture that counts loss must name each loss's cause and is retaken at most three times; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.
         ´claim:discipline:storage-results-preserve-the-secret-boundary´
         ´test:integration:test-storage-statements´
         """
@@ -132,20 +162,13 @@ class HostRuntime(unittest.TestCase):
         outputs=[]
         for level in ('default','trace'):
             env=dict(os.environ,PN_OBSERVE_LEVEL=level,PN_HOST_STORAGE_FIXTURE=f'storage-trace-{level}.json')
-            started=time.monotonic()
-            result=subprocess.run([target,'storage::tests::storage_runtime','--exact','--nocapture'],env=env,capture_output=True,timeout=60,check=False)
-            wall=time.monotonic()-started
-            Path(f'.lane/storage-{level}.stderr.jsonl').write_bytes(result.stderr)
-            self.assertEqual(result.returncode,0,result.stderr.decode())
-            rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
+            result,rows,status,wall=traced_capture(self,[target,'storage::tests::storage_runtime','--exact','--nocapture'],env,level)
             text=decoded_content(rows)
             config=json.loads((root/f'storage-trace-{level}.json').read_text())
             self.assertFalse(binary_reachability(config,rows))
             for key,value in config.items():
                 if key!='transport':self.assertFalse(private_occurs(value,text))
-            status=next(row for row in rows if row.get('kind')=='observation_status')
-            self.assertEqual(status['lost_records'],0)
-            self.assertEqual(status['delivered_records'],len(rows)-1)
+            self.assertEqual(status['delivered_records'],len(rows)-1,'observation delivery: '+capture_complete(status)[1])
             outputs.append([line for line in result.stdout.splitlines() if line.startswith(b'{')])
             if level=='trace':
                 self.assertIn('public_storage_payload_731',text)
@@ -156,6 +179,12 @@ class HostRuntime(unittest.TestCase):
             print(f'STORAGE-RUNTIME level={level} wall_seconds={wall:.6f} delivered={status["delivered_records"]} lost={status["lost_records"]}')
         self.assertEqual(outputs[0],outputs[1])
         self.assertEqual(len(outputs[0]),1)
+        # Counted loss is incomplete evidence; loss without a named cause is refused.
+        lossy={'level':'trace','lost_records':2,'undelivered_records':0,'in_flight_records':0,'loss_causes':{'queue_full':2,'writer':0}}
+        self.assertFalse(capture_complete(lossy)[0])
+        with self.assertRaisesRegex(AssertionError,'without a named cause'):
+            capture_complete(dict(lossy,loss_causes={'queue_full':1,'writer':0}))
+        self.assertFalse(capture_complete(dict(lossy,lost_records=0,loss_causes={'queue_full':0},undelivered_records=3))[0])
         env.update(PN_HOST_STORAGE_PRIVATE_CONTROL='1')
         result=subprocess.run([target,'storage::tests::storage_runtime','--exact','--nocapture'],env=env,capture_output=True,timeout=60,check=False)
         self.assertEqual(result.returncode,0)

@@ -134,7 +134,7 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary",
       "before": "",
-      "after": "Claim: Every closed storage statement is exercised under trace and its decoded DataRows contain only public fixture content; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.",
+      "after": "Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; a capture that counts loss must name each loss's cause and is retaken at most three times; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.",
       "review": "Read all thirteen enum statement arms exercised under trace including the separate audit, and decoded DataRow scanning with the existing negative control."
     },
     {
