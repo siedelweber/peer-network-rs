@@ -12527,7 +12527,7 @@
       "operation": "pn-graph::packages/graph/src/formation.rs::formation::project_complete_act",
       "body": "{ let result = project (act , verifier) . and_then (| projection | { registration :: authorize_removals (& [act] , verifier) ? ; Ok (projection) }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-affinity",
-      "item_premise": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and immutable exact license-name qualifiers; ordinary and dangling targets do not assert anchoring or title.",
+      "item_premise": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and immutable exact license-name qualifiers; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment and exact immutable license qualifiers, without title recognition.",
       "assessments": {
         "full_recording": "graph-affinity-full_recording",
         "secret_flow": "graph-affinity-secret_flow",
@@ -12538,7 +12538,7 @@
       "operation": "pn-graph::packages/graph/src/formation.rs::formation::reconstruct",
       "body": "{ let result = registration :: reconstruct_with (history , verifier , | act | project (act , verifier)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-affinity",
-      "item_premise": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and immutable exact license-name qualifiers; ordinary and dangling targets do not assert anchoring or title.",
+      "item_premise": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and immutable exact license-name qualifiers; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment and exact immutable license qualifiers, without title recognition.",
       "assessments": {
         "full_recording": "graph-affinity-full_recording",
         "secret_flow": "graph-affinity-secret_flow",
@@ -12549,7 +12549,7 @@
       "operation": "pn-graph::packages/graph/src/formation.rs::formation::validate_formation",
       "body": "{ let result = registration :: reconstruct_with (history , verifier , | act | project (act , verifier)) . and_then (| expected | registration :: compare_graph (graph , & expected)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-affinity",
-      "item_premise": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and immutable exact license-name qualifiers; ordinary and dangling targets do not assert anchoring or title.",
+      "item_premise": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and immutable exact license-name qualifiers; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment and exact immutable license qualifiers, without title recognition.",
       "assessments": {
         "full_recording": "graph-affinity-full_recording",
         "secret_flow": "graph-affinity-secret_flow",
@@ -15034,6 +15034,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Clone, structural equality and full Debug retain public Publish attachment, finalization metadata and exact license-name qualifiers. Serde remains diagnostic; decoded values require typed reconstruction comparison and never establish canonical byte identity."
+    },
+    {
+      "item": "formation::OwnerProjection",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Clone, structural equality and full Debug retain public Owner attachment, finalization metadata and exact license-name qualifiers. Serde is diagnostic and requires typed reconstruction comparison before binding use; it is not canonical publication."
     }
   ],
   "reviewed_types": [
@@ -16625,7 +16634,7 @@
       "item": "formation::Node",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Disjoint grounded, public-name and Content mint constructors in this scope.\"] # [doc = \" Type names are exact strings; no normalization or new identity is invented.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Serialize , Deserialize)] pub enum Node { # [doc = \" Existing Actor/Profile constructors, shared with Registration.\"] Grounded (GroundedNode) , # [doc = \" The public string commons constructor name(s), interpreted as Type.\"] Type (String) , # [doc = \" Content minted by a Publish act; the family is fixed by this variant.\"] Content { # [doc = \" Genesis act author, never a host attachment.\"] author : String , # [doc = \" Genesis act's author-local sequence.\"] sequence : u64 , } , }"
+      "syntax": "# [doc = \" Disjoint grounded, public-name, Content and Item mint constructors in this scope.\"] # [doc = \" Type names are exact strings; no normalization or new identity is invented.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Serialize , Deserialize)] pub enum Node { # [doc = \" Existing Actor/Profile constructors, shared with Registration.\"] Grounded (GroundedNode) , # [doc = \" The public string commons constructor name(s), interpreted as Type.\"] Type (String) , # [doc = \" Content minted by a Publish act; the family is fixed by this variant.\"] Content { # [doc = \" Genesis act author, never a host attachment.\"] author : String , # [doc = \" Genesis act's author-local sequence.\"] sequence : u64 , } , # [doc = \" Item minted by a Owner act; the family is fixed by this variant.\"] Item { # [doc = \" Genesis act author, never a host attachment.\"] author : String , # [doc = \" Genesis act's author-local sequence.\"] sequence : u64 , } , }"
     },
     {
       "item": "formation::Coordinate",
@@ -16646,10 +16655,16 @@
       "syntax": "# [doc = \" Complete scoped Publish weight, retaining immutable license qualifiers.\"] # [doc = \" (´def:formation:publish´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct PublishProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained published placement.\"] pub position : Position , # [doc = \" Retained host attachment, without a recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , # [doc = \" Exact public names in the internal license namespace, in authored order.\"] pub licenses : Vec < String > , }"
     },
     {
+      "item": "formation::OwnerProjection",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [doc = \" Complete scoped Owner weight, retaining immutable license qualifiers.\"] # [doc = \" (´def:formation:owner´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct OwnerProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained ownered placement.\"] pub position : Position , # [doc = \" Retained host attachment, without a recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , # [doc = \" Exact public names in the internal license namespace, in authored order.\"] pub licenses : Vec < String > , }"
+    },
+    {
       "item": "formation::Projection",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Distinct supported families, preserving each complete authored projection.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum Projection { # [doc = \" Existing Registration projection, with its fixed coordinate roles.\"] Registration (RegistrationProjection) , # [doc = \" Affinity projection, with both required authored coordinates.\"] Affinity (AffinityProjection) , # [doc = \" Publish projection, with its required authored coordinate and qualifiers.\"] Publish (PublishProjection) , }"
+      "syntax": "# [doc = \" Distinct supported families, preserving each complete authored projection.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum Projection { # [doc = \" Existing Registration projection, with its fixed coordinate roles.\"] Registration (RegistrationProjection) , # [doc = \" Affinity projection, with both required authored coordinates.\"] Affinity (AffinityProjection) , # [doc = \" Publish projection, with its required authored coordinate and qualifiers.\"] Publish (PublishProjection) , # [doc = \" Owner projection; structural formation confers no title.\"] Owner (OwnerProjection) , }"
     },
     {
       "item": "PartitionError",

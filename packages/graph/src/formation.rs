@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::registration::{self, GroundedNode, RegistrationError, RegistrationProjection, RegistrationVerifier};
 
-/// Disjoint grounded, public-name and Content mint constructors in this scope.
+/// Disjoint grounded, public-name, Content and Item mint constructors in this scope.
 /// Type names are exact strings; no normalization or new identity is invented.
 /// (´def:formation:affinity´)
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -18,6 +18,13 @@ pub enum Node {
     Type(String),
     /// Content minted by a Publish act; the family is fixed by this variant.
     Content {
+        /// Genesis act author, never a host attachment.
+        author: String,
+        /// Genesis act's author-local sequence.
+        sequence: u64,
+    },
+    /// Item minted by a Owner act; the family is fixed by this variant.
+    Item {
         /// Genesis act author, never a host attachment.
         author: String,
         /// Genesis act's author-local sequence.
@@ -76,6 +83,25 @@ pub struct PublishProjection {
     pub licenses: Vec<String>,
 }
 
+/// Complete scoped Owner weight, retaining immutable license qualifiers.
+/// (´def:formation:owner´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OwnerProjection {
+    /// Author atom shared with the initiating Actor endpoint.
+    pub author: String,
+    /// Author-local act sequence.
+    pub sequence: u64,
+    /// Retained ownered placement.
+    pub position: Position,
+    /// Retained host attachment, without a recurrence verdict.
+    pub logical_time: u64,
+    /// Authored directional coordinate; intensity is fixed at one.
+    pub attachment: Coordinate,
+    /// Exact public names in the internal license namespace, in authored order.
+    pub licenses: Vec<String>,
+}
+
 /// Distinct supported families, preserving each complete authored projection.
 /// (´def:formation:affinity´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -86,6 +112,8 @@ pub enum Projection {
     Affinity(AffinityProjection),
     /// Publish projection, with its required authored coordinate and qualifiers.
     Publish(PublishProjection),
+    /// Owner projection; structural formation confers no title.
+    Owner(OwnerProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -192,6 +220,9 @@ fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
     if act.id().family == "Publish" {
         return publish(act, verifier);
     }
+    if act.id().family == "Owner" {
+        return owner(act, verifier);
+    }
     if act.id().family != "Affinity" {
         return Err(RegistrationError::UnsupportedFamily);
     }
@@ -270,6 +301,54 @@ fn publish(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
             sequence: genesis.sequence,
         },
         Projection::Publish(PublishProjection {
+            author: act.id().author.clone(),
+            sequence: act.id().sequence,
+            position: act.position(),
+            logical_time: act.logical_time(),
+            attachment,
+            licenses,
+        }),
+    ))
+}
+
+fn owner(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+    let [leg] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let PublicReference::Minted(genesis) = leg.target() else {
+        return Err(RegistrationError::Incidence);
+    };
+    if act.body().layout != Layout::Binary
+        || leg.id().role != Role::Binary
+        || leg.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || genesis.family != "Owner"
+        || act.body().quantities.len() != 2
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let attachment = coordinate(act, "attachment.numerator", "attachment.denominator")?;
+    let licenses = act
+        .protocol_references()
+        .iter()
+        .map(|reference| match reference {
+            PublicReference::Named { namespace, name } if namespace == "license" => Ok(name.clone()),
+            _ => Err(RegistrationError::Incidence),
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    Ok((
+        Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+        Node::Item {
+            author: genesis.author.clone(),
+            sequence: genesis.sequence,
+        },
+        Projection::Owner(OwnerProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
             position: act.position(),

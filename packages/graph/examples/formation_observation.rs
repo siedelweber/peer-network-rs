@@ -88,10 +88,18 @@ fn main() {
     publication.protocol_references = vec![names[2].clone()];
     publication.authoritative_position = 2;
     publication.logical_time = 2;
-    let history = pn_records::validate_history(&[act, publication], &names).unwrap();
+    let mut ownership = publication.clone();
+    ownership.id.family = "Owner".into();
+    ownership.id.sequence = 3;
+    ownership.legs[0].id.act = ownership.id.clone();
+    ownership.legs[0].target = PublicReference::Minted(ownership.id.clone());
+    ownership.authoritative_position = 3;
+    ownership.logical_time = 3;
+    let history = pn_records::validate_history(&[act, publication, ownership], &names).unwrap();
     let auth = FixtureApproval(true);
     let projection = project_complete_act(&history.acts()[0], &auth);
     let publication = project_complete_act(&history.acts()[1], &auth);
+    let ownership = project_complete_act(&history.acts()[2], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -102,6 +110,7 @@ fn main() {
     cli_common::emit(&serde_json::json!({
         "projection": format!("{projection:?}"), "graph": format!("{graph:?}"),
         "publication": format!("{publication:?}"),
+        "ownership": format!("{ownership:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
