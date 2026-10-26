@@ -45,6 +45,7 @@ fn main() {
     let reference = project_complete_act(&history.acts()[11], &auth);
     let invitation = project_complete_act(&history.acts()[12], &auth);
     let deinvite = project_complete_act(&history.acts()[13], &auth);
+    let withdraw = project_complete_act(&history.acts()[14], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -67,6 +68,7 @@ fn main() {
         "reference": format!("{reference:?}"),
         "invitation": format!("{invitation:?}"),
         "deinvite": format!("{deinvite:?}"),
+        "withdraw": format!("{withdraw:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -366,6 +368,7 @@ fn formation_inputs(names: &[PublicReference]) -> Vec<CandidateAct> {
     let deinvite = deinvite(invitation.clone());
     let send = sending(participant.clone());
     let bid = bidding(ownership.clone());
+    let withdraw = withdrawing(ownership.clone(), bid.legs[1].target.clone());
     let opinion = opinion(act.clone());
     let join_request = join_request(act.clone(), participant.legs[0].target.clone());
     let leave = leaving(join_request.clone());
@@ -384,6 +387,7 @@ fn formation_inputs(names: &[PublicReference]) -> Vec<CandidateAct> {
         reference,
         invitation,
         deinvite,
+        withdraw,
     ]
 }
 
@@ -421,5 +425,16 @@ fn deinvite(mut input: CandidateAct) -> CandidateAct {
     input.body.quantities.clear();
     input.authoritative_position = 14;
     input.logical_time = 14;
+    input
+}
+
+fn withdrawing(mut input: CandidateAct, offer: PublicReference) -> CandidateAct {
+    input.id.family = "Withdraw".into();
+    input.id.sequence = 15;
+    input.legs[0].id.act = input.id.clone();
+    input.legs[0].target = offer;
+    input.body.quantities.clear();
+    input.authoritative_position = 15;
+    input.logical_time = 15;
     input
 }
