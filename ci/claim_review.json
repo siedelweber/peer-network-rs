@@ -205,9 +205,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review and Send projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eight successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send and Bid projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the nine successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Bid witnesses cover complete Item-to-Offer incidence, fresh terminal identity including attempted reuse of an existing Offer, independent signed/nonnegative coordinate grids and zero values, shared A/T metadata, whole-history authorization and typed revalidation. Observation compares complete outputs and eleven calls with nine successes and two refusals across disabled, default and trace. No settlement, title, geometry or ordering verdict follows."
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send and Bid projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the nine successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid and Opinion projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the ten successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Opinion witnesses cover all passive constructors, independent signed-coordinate grids, complete binary incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares twelve operations with ten successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1328,6 +1328,22 @@
       "before": "",
       "after": "Claim: Mixed Registration and Affinity histories share deterministic reconstruction and authorization checks, preserve parallel acts and retained times, and refuse the entire result when any family, approval or removal is unsupported; diagnostic graph mutation and decoding require complete typed revalidation.",
       "review": "Read the bounded coordinate grid, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
+    },
+    {
+      "operation": "pn-graph::formation::opinion_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:opinion-requires-complete-passive-coordinates",
+      "before": "",
+      "after": "Claim: Opinion forms one author Actor to any of the eight passive constructors, retaining signed polarity and reaction with exact structural metadata. Both coordinate bounds and malformed carriers are checked independently; active targets, wrong incidence and protocol references refuse without an anchoring or standing verdict.",
+      "review": "Opinion witnesses cover all passive constructors, independent signed-coordinate grids, complete binary incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares twelve operations with ten successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::opinion_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:opinion-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: Opinion joins the eight earlier families through shared deterministic reconstruction, retaining parallel binary edges and unrelated indices. Typed revalidation after decoding rejects altered coordinates or missing acts; approval and removal failures refuse the whole history without publishing a partial graph.",
+      "review": "Opinion witnesses cover all passive constructors, independent signed-coordinate grids, complete binary incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares twelve operations with ten successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
     },
     {
       "operation": "pn-graph::formation::owner_projection",

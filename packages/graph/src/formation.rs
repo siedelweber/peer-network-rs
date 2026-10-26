@@ -92,6 +92,25 @@ pub struct AffinityProjection {
     pub attraction: Coordinate,
 }
 
+/// Complete Opinion binary weight; coordinates remain distinct directional roles.
+/// (´def:formation:opinion´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OpinionProjection {
+    /// Author atom shared with the initiating Actor endpoint.
+    pub author: String,
+    /// Author-local sequence, never host order.
+    pub sequence: u64,
+    /// Retained epoch-qualified published placement.
+    pub position: Position,
+    /// Retained host attachment; this operation gives no recurrence verdict.
+    pub logical_time: u64,
+    /// Polarity occupies the directional role `p_d`.
+    pub polarity: Coordinate,
+    /// Reaction occupies the intensity role `p_i`.
+    pub reaction: Coordinate,
+}
+
 /// Exact Content genesis pair, retained structurally for typed revalidation.
 /// No license interpretation participates in formation or geometry.
 /// (´def:formation:publish´)
@@ -284,6 +303,8 @@ pub enum Projection {
     Send(SendProjection),
     /// Bid creates one fresh Offer with both role-addressed projections.
     Bid(BidProjection),
+    /// Opinion retains signed polarity and reaction toward any passive node.
+    Opinion(OpinionProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -403,6 +424,9 @@ fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Co
     }
     if act.id().family == "Publish" {
         return publish(act, verifier);
+    }
+    if act.id().family == "Opinion" {
+        return opinion(act, verifier);
     }
     if act.id().family == "Owner" {
         return owner(act, verifier);
@@ -820,4 +844,42 @@ fn bid(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<C
         ),
         (middle, target, Projection::Bid(t_weight)),
     ])
+}
+
+fn opinion(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+    let [leg] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let target = passive(leg.target())?;
+    if act.body().layout != Layout::Binary
+        || leg.id().role != Role::Binary
+        || leg.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || act.body().quantities.len() != 4
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let polarity = coordinate(act, "polarity.numerator", "polarity.denominator")?;
+    let reaction = coordinate(act, "reaction.numerator", "reaction.denominator")?;
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    Ok((
+        Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+        target,
+        Projection::Opinion(OpinionProjection {
+            author: act.id().author.clone(),
+            sequence: act.id().sequence,
+            position: act.position(),
+            logical_time: act.logical_time(),
+            polarity,
+            reaction,
+        }),
+    ))
 }

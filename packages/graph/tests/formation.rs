@@ -311,7 +311,7 @@ fn publish_reconstruction() {
     );
     verifier.removals = true;
     assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
-    inputs[0].id.family = "Opinion".into();
+    inputs[0].id.family = "Withdraw".into();
     inputs[0].legs[0].id.act = inputs[0].id.clone();
     let unsupported = validate_history(&inputs, &names()).unwrap();
     assert_eq!(
@@ -492,7 +492,7 @@ fn mixed_reconstruction() {
     );
     verifier.removals = true;
     assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
-    inputs[0].id.family = "Opinion".into();
+    inputs[0].id.family = "Withdraw".into();
     inputs[0].legs[0].id.act = inputs[0].id.clone();
     let unsupported = validate_history(&inputs, &names()).unwrap();
     assert_eq!(
@@ -704,7 +704,7 @@ fn owner_reconstruction() {
     );
     verifier.removals = true;
     assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
-    inputs[0].id.family = "Opinion".into();
+    inputs[0].id.family = "Withdraw".into();
     inputs[0].legs[0].id.act = inputs[0].id.clone();
     let unsupported = validate_history(&inputs, &names()).unwrap();
     assert_eq!(
@@ -1843,5 +1843,200 @@ fn bid_cache(graph: &pn_graph::formation::FormationGraph, history: &pn_records::
     assert_eq!(
         validate_formation(&changed, history, verifier),
         Err(RegistrationError::GraphMismatch)
+    );
+}
+
+fn opinion(sequence: u64, target: PublicReference) -> CandidateAct {
+    let mut input = candidate("Affinity", sequence);
+    input.id.family = "Opinion".into();
+    input.legs[0].id.act = input.id.clone();
+    input.legs[0].target = target;
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "polarity.numerator",
+        "polarity.denominator",
+        "reaction.numerator",
+        "reaction.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input
+}
+
+/// Claim: Opinion forms one author Actor to any of the eight passive constructors, retaining signed polarity and reaction with exact structural metadata. Both coordinate bounds and malformed carriers are checked independently; active targets, wrong incidence and protocol references refuse without an anchoring or standing verdict.
+/// # Panics
+/// Panics only if the fixture projects to another family, which correct dispatch cannot arrange.
+/// ´claim:formation:opinion-requires-complete-passive-coordinates´
+/// ´test:integration:opinion-projection´
+#[test]
+fn opinion_projection() {
+    let mut targets = vec![named("prof", "b"), named("name", "topic")];
+    for family in ["Publish", "Owner", "Participant", "Review", "Send", "Bid"] {
+        targets.push(PublicReference::Minted(ActId {
+            author: "b".into(),
+            sequence: 99,
+            family: family.into(),
+        }));
+    }
+    for target in targets {
+        let input = opinion(3, target.clone());
+        let (source, node, edge) = project(&input).unwrap();
+        assert_eq!(source, Node::Grounded(GroundedNode::Actor("a".into())));
+        let reviewed = bundle(&review(4, target, 4)).unwrap();
+        assert_eq!(node, reviewed[0].1);
+        let Projection::Opinion(weight) = edge else {
+            panic!("wrong family")
+        };
+        assert_eq!((weight.polarity.numerator, weight.polarity.denominator), (-1, 2));
+        assert_eq!((weight.reaction.numerator, weight.reaction.denominator), (2, 3));
+        assert_eq!(
+            (weight.author.as_str(), weight.sequence, weight.position, weight.logical_time),
+            ("a", 3, (1, 3), 3)
+        );
+    }
+    let input = opinion(3, named("prof", "a"));
+    for (n, d) in [(0, 1), (2, 3)] {
+        for denominator in 1..=8 {
+            for numerator in -denominator - 1..=denominator + 1 {
+                let mut changed = input.clone();
+                changed.body.quantities[n].1.value = numerator;
+                changed.body.quantities[d].1.value = denominator;
+                assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+            }
+        }
+    }
+    for changed in opinion_refusals(&input) {
+        assert_eq!(project(&changed), Err(RegistrationError::Incidence));
+    }
+}
+
+fn opinion_refusals(input: &CandidateAct) -> Vec<CandidateAct> {
+    let mut cases = Vec::new();
+    for index in 0..4 {
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.unit = "money".into();
+        cases.push(changed);
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.vintage = 1;
+        cases.push(changed);
+        let mut changed = input.clone();
+        changed.body.quantities.remove(index);
+        cases.push(changed);
+    }
+    for index in [1, 3] {
+        for value in [0, -1] {
+            let mut changed = input.clone();
+            changed.body.quantities[index].1.value = value;
+            cases.push(changed);
+        }
+    }
+    for index in [0, 2] {
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.value = i64::MIN;
+        cases.push(changed);
+    }
+    let mut changed = input.clone();
+    changed.legs[0].source = named("addr", "other");
+    cases.push(changed);
+    let mut changed = input.clone();
+    changed.legs[0].target = named("addr", "a");
+    cases.push(changed);
+    let mut changed = input.clone();
+    changed.protocol_references.push(named("name", "topic"));
+    cases.push(changed);
+    let mut changed = input.clone();
+    changed.body.license = publication(1).body.license;
+    cases.push(changed);
+    let mut changed = input.clone();
+    changed.body.layout = Layout::Paired;
+    changed.legs[0].id.role = Role::A;
+    let mut terminal = changed.legs[0].clone();
+    terminal.id.role = Role::T;
+    changed.legs.push(terminal);
+    cases.push(changed);
+    cases
+}
+
+/// Claim: Opinion joins the eight earlier families through shared deterministic reconstruction, retaining parallel binary edges and unrelated indices. Typed revalidation after decoding rejects altered coordinates or missing acts; approval and removal failures refuse the whole history without publishing a partial graph.
+/// # Panics
+/// Panics only if the fixture's Opinion edge has another family, which correct reconstruction cannot arrange.
+/// ´claim:formation:opinion-shares-whole-history-revalidation´
+/// ´test:integration:opinion-reconstruction´
+#[test]
+fn opinion_reconstruction() {
+    let mut inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        review(6, named("name", "topic"), 6),
+        sending(7, 5, 7),
+        bidding(8, 4, 8),
+        opinion(9, named("prof", "a")),
+        opinion(10, named("prof", "a")),
+    ];
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((graph.node_count(), graph.edge_count()), (9, 14));
+    for index in [12, 13] {
+        assert_eq!(
+            graph
+                .edge_endpoints(petgraph::graph::EdgeIndex::new(index))
+                .map(|(a, b)| (a.index(), b.index())),
+            Some((0, 1))
+        );
+    }
+    inputs.reverse();
+    let reversed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(validate_formation(&graph, &reversed, &verifier), Ok(()));
+    let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    let mut partial = graph.clone();
+    partial.remove_edge(petgraph::graph::EdgeIndex::new(12));
+    assert_eq!(
+        partial[petgraph::graph::EdgeIndex::new(13)],
+        graph[petgraph::graph::EdgeIndex::new(13)]
+    );
+    assert_eq!(
+        validate_formation(&partial, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    for polarity in [true, false] {
+        let mut changed = graph.clone();
+        let Projection::Opinion(weight) = &mut changed[petgraph::graph::EdgeIndex::new(12)] else {
+            panic!("wrong family")
+        };
+        let coordinate = if polarity {
+            &mut weight.polarity
+        } else {
+            &mut weight.reaction
+        };
+        coordinate.numerator *= 2;
+        coordinate.denominator *= 2;
+        assert_eq!(
+            validate_formation(&changed, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts = inputs.clone();
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    inputs.push(candidate("Withdraw", 11));
+    let unsupported = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&unsupported, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
     );
 }

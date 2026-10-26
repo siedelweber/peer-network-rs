@@ -62,7 +62,12 @@ fn main() {
     let review = review(participant.clone());
     let send = sending(participant.clone());
     let bid = bidding(ownership.clone());
-    let history = pn_records::validate_history(&[act, publication, ownership, participant, review, send, bid], &names).unwrap();
+    let opinion = opinion(act.clone());
+    let history = pn_records::validate_history(
+        &[act, publication, ownership, participant, review, send, bid, opinion],
+        &names,
+    )
+    .unwrap();
     let auth = FixtureApproval(true);
     let projection = project_complete_act(&history.acts()[0], &auth);
     let publication = project_complete_act(&history.acts()[1], &auth);
@@ -71,6 +76,7 @@ fn main() {
     let review = project_complete_act(&history.acts()[4], &auth);
     let send = project_complete_act(&history.acts()[5], &auth);
     let bid = project_complete_act(&history.acts()[6], &auth);
+    let opinion = project_complete_act(&history.acts()[7], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -86,6 +92,7 @@ fn main() {
         "review": format!("{review:?}"),
         "send": format!("{send:?}"),
         "bid": format!("{bid:?}"),
+        "opinion": format!("{opinion:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -256,5 +263,26 @@ fn bidding(mut input: CandidateAct) -> CandidateAct {
     .collect();
     input.authoritative_position = 7;
     input.logical_time = 7;
+    input
+}
+
+fn opinion(mut input: CandidateAct) -> CandidateAct {
+    input.id.family = "Opinion".into();
+    input.id.sequence = 8;
+    input.legs[0].id.act = input.id.clone();
+    input.legs[0].target = PublicReference::Named {
+        namespace: "prof".into(),
+        name: "other".into(),
+    };
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "polarity.numerator",
+        "polarity.denominator",
+        "reaction.numerator",
+        "reaction.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input.authoritative_position = 8;
+    input.logical_time = 8;
     input
 }
