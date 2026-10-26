@@ -205,9 +205,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner and Participant projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the six successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant and Review projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the seven successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "The executable includes complete Review A/T outputs and mixed reconstruction; disabled, default and trace outputs agree. Nine graph calls yield seven successes and two explicit refusals, and trace retains ReviewProjection alongside the earlier families."
+      "before": "Claim: Affinity, Publish, Owner, Participant and Review projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the seven successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review and Send projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eight successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Send witnesses cover complete Chat-to-Message incidence, signed importance, shared A/T metadata, whole-history authorization and typed revalidation alongside the six earlier families. Observation compares complete outputs and ten calls with eight successes and two refusals across disabled, default and trace. No membership, anchor, license interpretation, geometry or title verdict is established."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1384,6 +1384,22 @@
       "before": "",
       "after": "Claim: Review shares whole-history reconstruction with the five earlier families, retaining deterministic A/T indices and parallel ordinary acts. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.",
       "review": "Read the complete typed Review bundle and shared reconstruction witnesses: eight passive middle constructors, signed coordinate grids, whole-result refusal, shared act metadata, deterministic indices and diagnostic revalidation. Observation compares complete outputs and nine operation outcomes across disabled, default and trace. No geometry, title, anchor or cryptographic verdict follows."
+    },
+    {
+      "operation": "pn-graph::formation::send_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:send-requires-complete-chat-message-incidence",
+      "before": "",
+      "after": "Claim: Send requires complete Actor-to-Chat-to-Message incidence and one signed bounded importance coordinate, retained with one act identity and attached time on both A/T projections. Genesis and ordinary terminals are representable without an anchor verdict; malformed coordinates, constructors, co-leg incidence and protocol references refuse the complete bundle.",
+      "review": "Send witnesses cover complete Chat-to-Message incidence, signed importance, shared A/T metadata, whole-history authorization and typed revalidation alongside the six earlier families. Observation compares complete outputs and ten calls with eight successes and two refusals across disabled, default and trace. No membership, anchor, license interpretation, geometry or title verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::send_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:send-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: Send shares whole-history reconstruction with the six earlier families, retaining deterministic A/T indices and parallel ordinary acts. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.",
+      "review": "Send witnesses cover complete Chat-to-Message incidence, signed importance, shared A/T metadata, whole-history authorization and typed revalidation alongside the six earlier families. Observation compares complete outputs and ten calls with eight successes and two refusals across disabled, default and trace. No membership, anchor, license interpretation, geometry or title verdict is established."
     },
     {
       "operation": "pn-graph::integration::shared_cases",

@@ -866,7 +866,7 @@ fn participant_reconstruction() {
     );
     verifier.removals = true;
     assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
-    inputs[0].id.family = "Send".into();
+    inputs[0].id.family = "Withdraw".into();
     let changed_id = inputs[0].id.clone();
     for leg in &mut inputs[0].legs {
         leg.id.act = changed_id.clone();
@@ -1271,7 +1271,7 @@ fn review_reconstruction() {
     );
     verifier.removals = true;
     assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
-    inputs[0].id.family = "Send".into();
+    inputs[0].id.family = "Withdraw".into();
     let id = inputs[0].id.clone();
     for leg in &mut inputs[0].legs {
         leg.id.act = id.clone();
@@ -1364,4 +1364,228 @@ fn publish_license_pair() {
         };
         assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Incidence);
     }
+}
+
+fn sending(sequence: u64, origin: u64, terminal: u64) -> CandidateAct {
+    let mut input = participation(sequence, origin, origin);
+    input.id.family = "Send".into();
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[1].target = PublicReference::Minted(ActId {
+        sequence: terminal,
+        ..input.id.clone()
+    });
+    input.body.quantities.truncate(2);
+    input.body.quantities[0].0 = "importance.numerator".into();
+    input.body.quantities[1].0 = "importance.denominator".into();
+    input
+}
+
+/// Claim: Send requires complete Actor-to-Chat-to-Message incidence and one signed bounded importance coordinate, retained with one act identity and attached time on both A/T projections. Genesis and ordinary terminals are representable without an anchor verdict; malformed coordinates, constructors, co-leg incidence and protocol references refuse the complete bundle.
+/// # Panics
+/// Panics only if Send dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:send-requires-complete-chat-message-incidence´
+/// ´test:integration:send-projection´
+#[test]
+fn send_projection() {
+    use pn_graph::formation::SendRole;
+    for terminal in [1, 3, 99] {
+        let input = sending(3, 1, terminal);
+        let result = bundle(&input).unwrap();
+        assert_eq!(result.len(), 2);
+        assert_eq!(result[0].0, Node::Grounded(GroundedNode::Actor("a".into())));
+        assert_eq!(
+            result[0].1,
+            Node::Chat {
+                author: "a".into(),
+                sequence: 1
+            }
+        );
+        assert_eq!(result[1].0, result[0].1);
+        assert_eq!(
+            result[1].1,
+            Node::Message {
+                author: "a".into(),
+                sequence: terminal
+            }
+        );
+        let (Projection::Send(a), Projection::Send(t)) = (&result[0].2, &result[1].2) else {
+            panic!("wrong family")
+        };
+        assert_eq!(a.role, SendRole::A);
+        assert_eq!((a.sequence, a.position, a.logical_time), (3, (1, 3), 3));
+        assert_eq!((a.importance.numerator, a.importance.denominator), (-1, 2));
+        let mut expected = a.clone();
+        expected.role = SendRole::T;
+        assert_eq!(t, &expected);
+    }
+    let input = sending(3, 1, 3);
+    for denominator in 1..=8 {
+        for numerator in -denominator - 1..=denominator + 1 {
+            let mut changed = input.clone();
+            changed.body.quantities[0].1.value = numerator;
+            changed.body.quantities[1].1.value = denominator;
+            assert_eq!(bundle(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+        }
+    }
+    send_refusals(&input);
+}
+
+fn send_refusals(input: &CandidateAct) {
+    for index in 0..2 {
+        let mut changed = input.clone();
+        changed.legs.remove(index);
+        assert!(validate_history(&[changed], &[]).is_err());
+        let mut changed = input.clone();
+        changed.body.quantities.remove(index);
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.unit = "money".into();
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.vintage = 1;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    for denominator in [0, -1] {
+        let mut changed = input.clone();
+        changed.body.quantities[1].1.value = denominator;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    for family in ["Publish", "Owner", "Review", "Bid"] {
+        let wrong = PublicReference::Minted(ActId {
+            family: family.into(),
+            ..input.id.clone()
+        });
+        let mut changed = input.clone();
+        changed.legs[0].target = wrong.clone();
+        changed.legs[1].source = wrong.clone();
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let mut changed = input.clone();
+        changed.legs[1].target = wrong;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    let mut changed = input.clone();
+    changed.legs[0].source = named("addr", "b");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.legs[1].source = named("name", "topic");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.legs[1].target = PublicReference::Act(input.id.clone());
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.protocol_references = vec![named("name", "topic")];
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.body.license = publication(1).body.license;
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+}
+
+/// Claim: Send shares whole-history reconstruction with the six earlier families, retaining deterministic A/T indices and parallel ordinary acts. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.
+/// # Panics
+/// Panics only if the fixture's Send edge has another family, which correct reconstruction cannot arrange.
+/// ´claim:formation:send-shares-whole-history-revalidation´
+/// ´test:integration:send-reconstruction´
+#[test]
+fn send_reconstruction() {
+    let mut inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        review(6, named("name", "topic"), 6),
+        sending(7, 5, 7),
+        sending(8, 5, 7),
+    ];
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((graph.node_count(), graph.edge_count()), (8, 12));
+    let endpoints: Vec<_> = graph
+        .edge_indices()
+        .map(|i| graph.edge_endpoints(i).map(|(a, b)| (a.index(), b.index())).unwrap())
+        .collect();
+    assert_eq!(
+        endpoints,
+        vec![
+            (0, 1),
+            (0, 2),
+            (0, 3),
+            (0, 4),
+            (0, 5),
+            (5, 5),
+            (0, 2),
+            (2, 6),
+            (0, 5),
+            (5, 7),
+            (0, 5),
+            (5, 7)
+        ]
+    );
+    inputs.reverse();
+    for input in &mut inputs {
+        input.legs.reverse();
+    }
+    let reordered = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(validate_formation(&graph, &reordered, &verifier), Ok(()));
+    let bytes = serde_json::to_vec(&graph).unwrap();
+    let decoded = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    for removed in [8, 9] {
+        let mut partial = graph.clone();
+        partial.remove_edge(petgraph::graph::EdgeIndex::new(removed));
+        assert_eq!(
+            partial[petgraph::graph::EdgeIndex::new(11)],
+            graph[petgraph::graph::EdgeIndex::new(11)]
+        );
+        assert_eq!(
+            validate_formation(&partial, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    let mut changed = graph.clone();
+    let Projection::Send(weight) = &mut changed[petgraph::graph::EdgeIndex::new(8)] else {
+        panic!("wrong family")
+    };
+    weight.importance.numerator *= 2;
+    weight.importance.denominator *= 2;
+    assert_eq!(
+        validate_formation(&changed, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    let mut changed = graph.clone();
+    let Projection::Send(weight) = &mut changed[petgraph::graph::EdgeIndex::new(9)] else {
+        panic!("wrong family")
+    };
+    weight.role = pn_graph::formation::SendRole::A;
+    assert_eq!(
+        validate_formation(&changed, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts = inputs.clone();
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    inputs[0].id.family = "Withdraw".into();
+    let id = inputs[0].id.clone();
+    for leg in &mut inputs[0].legs {
+        leg.id.act = id.clone();
+    }
+    let unsupported = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&unsupported, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
+    );
 }

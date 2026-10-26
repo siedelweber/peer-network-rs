@@ -204,6 +204,35 @@ pub struct ReviewProjection {
     pub effort: Coordinate,
 }
 
+/// Constructor role of a Send edge, derived from one complete act.
+/// (´def:formation:send´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SendRole {
+    /// Initiating Actor to Chat.
+    A,
+    /// Chat to Message.
+    T,
+}
+
+/// Complete Send tuple shared by both role-addressed projections.
+/// (´def:formation:send´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SendProjection {
+    /// Initiating author shared by both legs.
+    pub author: String,
+    /// Author-local act sequence shared by both legs.
+    pub sequence: u64,
+    /// A or T constructor role, never a separately authored identity.
+    pub role: SendRole,
+    /// Retained published placement of the whole act.
+    pub position: Position,
+    /// One retained time shared by both projections.
+    pub logical_time: u64,
+    /// Signed importance, directional on A and intensity on T.
+    pub importance: Coordinate,
+}
+
 /// Distinct supported families, preserving each complete authored projection.
 /// (´def:formation:affinity´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -220,6 +249,8 @@ pub enum Projection {
     Participant(ParticipantProjection),
     /// Review retains the full tuple on both author-fixed legs.
     Review(ReviewProjection),
+    /// Send retains importance and shared metadata on both legs.
+    Send(SendProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -323,6 +354,8 @@ fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<V
         participant(act, verifier)
     } else if act.id().family == "Review" {
         review(act, verifier)
+    } else if act.id().family == "Send" {
+        send(act, verifier)
     } else {
         binary(act, verifier).map(|projection| vec![projection])
     }
@@ -639,4 +672,58 @@ fn passive(reference: &PublicReference) -> Result<Node, RegistrationError> {
         }
         _ => Err(RegistrationError::Incidence),
     }
+}
+
+fn send(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    let [first, second] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let (a, t) = match (first.id().role, second.id().role) {
+        (Role::A, Role::T) => (first, second),
+        (Role::T, Role::A) => (second, first),
+        _ => return Err(RegistrationError::Incidence),
+    };
+    if act.body().layout != Layout::Paired
+        || a.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || a.target() != t.source()
+        || act.body().quantities.len() != 2
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let middle = chat(a.target())?;
+    let target = passive(t.target())?;
+    if !matches!(target, Node::Message { .. }) {
+        return Err(RegistrationError::Incidence);
+    }
+    let importance = coordinate(act, "importance.numerator", "importance.denominator")?;
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    let a_weight = SendProjection {
+        author: act.id().author.clone(),
+        sequence: act.id().sequence,
+        role: SendRole::A,
+        position: act.position(),
+        logical_time: act.logical_time(),
+        importance,
+    };
+    let t_weight = SendProjection {
+        role: SendRole::T,
+        ..a_weight.clone()
+    };
+    Ok(vec![
+        (
+            Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+            middle.clone(),
+            Projection::Send(a_weight),
+        ),
+        (middle, target, Projection::Send(t_weight)),
+    ])
 }

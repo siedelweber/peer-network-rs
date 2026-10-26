@@ -60,13 +60,15 @@ fn main() {
     ownership.logical_time = 3;
     let participant = participation(ownership.clone());
     let review = review(participant.clone());
-    let history = pn_records::validate_history(&[act, publication, ownership, participant, review], &names).unwrap();
+    let send = sending(participant.clone());
+    let history = pn_records::validate_history(&[act, publication, ownership, participant, review, send], &names).unwrap();
     let auth = FixtureApproval(true);
     let projection = project_complete_act(&history.acts()[0], &auth);
     let publication = project_complete_act(&history.acts()[1], &auth);
     let ownership = project_complete_act(&history.acts()[2], &auth);
     let participant = project_complete_act(&history.acts()[3], &auth);
     let review = project_complete_act(&history.acts()[4], &auth);
+    let send = project_complete_act(&history.acts()[5], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -80,6 +82,7 @@ fn main() {
         "ownership": format!("{ownership:?}"),
         "participant": format!("{participant:?}"),
         "review": format!("{review:?}"),
+        "send": format!("{send:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -196,5 +199,20 @@ fn review(mut input: CandidateAct) -> CandidateAct {
     }
     input.authoritative_position = 5;
     input.logical_time = 5;
+    input
+}
+
+fn sending(mut input: CandidateAct) -> CandidateAct {
+    input.id.family = "Send".into();
+    input.id.sequence = 6;
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[1].target = PublicReference::Minted(input.id.clone());
+    input.body.quantities.truncate(2);
+    input.body.quantities[0].0 = "importance.numerator".into();
+    input.body.quantities[1].0 = "importance.denominator".into();
+    input.authoritative_position = 6;
+    input.logical_time = 6;
     input
 }
