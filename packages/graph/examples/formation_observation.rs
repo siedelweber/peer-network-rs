@@ -49,12 +49,14 @@ fn main() {
     ownership.authoritative_position = 3;
     ownership.logical_time = 3;
     let participant = participation(ownership.clone());
-    let history = pn_records::validate_history(&[act, publication, ownership, participant], &names).unwrap();
+    let review = review(participant.clone());
+    let history = pn_records::validate_history(&[act, publication, ownership, participant, review], &names).unwrap();
     let auth = FixtureApproval(true);
     let projection = project_complete_act(&history.acts()[0], &auth);
     let publication = project_complete_act(&history.acts()[1], &auth);
     let ownership = project_complete_act(&history.acts()[2], &auth);
     let participant = project_complete_act(&history.acts()[3], &auth);
+    let review = project_complete_act(&history.acts()[4], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -67,6 +69,7 @@ fn main() {
         "publication": format!("{publication:?}"),
         "ownership": format!("{ownership:?}"),
         "participant": format!("{participant:?}"),
+        "review": format!("{review:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -162,4 +165,25 @@ fn affinity(names: &[PublicReference]) -> CandidateAct {
         authoritative_position: 1,
         logical_time: 1,
     }
+}
+
+fn review(mut input: CandidateAct) -> CandidateAct {
+    input.id.family = "Review".into();
+    input.id.sequence = 5;
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[1].target = PublicReference::Minted(input.id.clone());
+    input.body.quantities.truncate(4);
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "enthusiasm.numerator",
+        "enthusiasm.denominator",
+        "effort.numerator",
+        "effort.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input.authoritative_position = 5;
+    input.logical_time = 5;
+    input
 }

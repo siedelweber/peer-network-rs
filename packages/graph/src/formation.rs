@@ -37,6 +37,27 @@ pub enum Node {
         /// Genesis act's author-local sequence.
         sequence: u64,
     },
+    /// Comment minted by a Review act; the family is fixed by this variant.
+    Comment {
+        /// Genesis act author, never a host attachment.
+        author: String,
+        /// Genesis act's author-local sequence.
+        sequence: u64,
+    },
+    /// Message minted by a Send act; the family is fixed by this variant.
+    Message {
+        /// Genesis act author, never a host attachment.
+        author: String,
+        /// Genesis act's author-local sequence.
+        sequence: u64,
+    },
+    /// Offer minted by a Bid act; the family is fixed by this variant.
+    Offer {
+        /// Genesis act author, never a host attachment.
+        author: String,
+        /// Genesis act's author-local sequence.
+        sequence: u64,
+    },
 }
 
 /// An exact bounded carrier for a signed unit-interval coordinate.
@@ -144,6 +165,39 @@ pub struct ParticipantProjection {
     pub licenses: Vec<String>,
 }
 
+/// Constructor role of a Review edge, derived from one complete act.
+/// (´def:formation:review´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ReviewRole {
+    /// Initiating Actor to reviewed passive node.
+    A,
+    /// Reviewed passive node to Comment.
+    T,
+}
+
+/// Complete Review tuple shared by both role-addressed projections.
+/// (´def:formation:review´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewProjection {
+    /// Initiating author shared by both legs.
+    pub author: String,
+    /// Author-local act sequence shared by both legs.
+    pub sequence: u64,
+    /// A or T constructor role, never a separately authored identity.
+    pub role: ReviewRole,
+    /// Retained published placement of the whole act.
+    pub position: Position,
+    /// One retained time shared by both projections.
+    pub logical_time: u64,
+    /// Signed enthusiasm, directional on A and intensity on T.
+    pub enthusiasm: Coordinate,
+    /// Signed effort, intensity on A and directional on T.
+    pub effort: Coordinate,
+    /// Immutable public license names without policy interpretation.
+    pub licenses: Vec<String>,
+}
+
 /// Distinct supported families, preserving each complete authored projection.
 /// (´def:formation:affinity´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -158,6 +212,8 @@ pub enum Projection {
     Owner(OwnerProjection),
     /// Both Participant legs retain the same full tuple and act metadata.
     Participant(ParticipantProjection),
+    /// Review retains the full tuple on both author-fixed legs.
+    Review(ReviewProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -259,6 +315,8 @@ pub fn validate_formation(
 fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
     if act.id().family == "Participant" {
         participant(act, verifier)
+    } else if act.id().family == "Review" {
+        review(act, verifier)
     } else {
         binary(act, verifier).map(|projection| vec![projection])
     }
@@ -493,4 +551,82 @@ fn licenses(act: &ValidatedAct) -> Result<Vec<String>, RegistrationError> {
             _ => Err(RegistrationError::Incidence),
         })
         .collect()
+}
+
+fn review(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    let [first, second] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let (a, t) = match (first.id().role, second.id().role) {
+        (Role::A, Role::T) => (first, second),
+        (Role::T, Role::A) => (second, first),
+        _ => return Err(RegistrationError::Incidence),
+    };
+    if act.body().layout != Layout::Paired
+        || a.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || a.target() != t.source()
+        || act.body().quantities.len() != 4
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let middle = passive(a.target())?;
+    let target = passive(t.target())?;
+    if !matches!(target, Node::Comment { .. }) {
+        return Err(RegistrationError::Incidence);
+    }
+    let enthusiasm = coordinate(act, "enthusiasm.numerator", "enthusiasm.denominator")?;
+    let effort = coordinate(act, "effort.numerator", "effort.denominator")?;
+    let licenses = licenses(act)?;
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    let a_weight = ReviewProjection {
+        author: act.id().author.clone(),
+        sequence: act.id().sequence,
+        role: ReviewRole::A,
+        position: act.position(),
+        logical_time: act.logical_time(),
+        enthusiasm,
+        effort,
+        licenses,
+    };
+    let t_weight = ReviewProjection {
+        role: ReviewRole::T,
+        ..a_weight.clone()
+    };
+    Ok(vec![
+        (
+            Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+            middle.clone(),
+            Projection::Review(a_weight),
+        ),
+        (middle, target, Projection::Review(t_weight)),
+    ])
+}
+
+fn passive(reference: &PublicReference) -> Result<Node, RegistrationError> {
+    match reference {
+        PublicReference::Named { namespace, name } if namespace == "prof" => {
+            Ok(Node::Grounded(GroundedNode::Profile(name.clone())))
+        }
+        PublicReference::Named { namespace, name } if namespace == "name" => Ok(Node::Type(name.clone())),
+        PublicReference::Minted(genesis) => {
+            let author = genesis.author.clone();
+            let sequence = genesis.sequence;
+            match genesis.family.as_str() {
+                "Publish" => Ok(Node::Content { author, sequence }),
+                "Owner" => Ok(Node::Item { author, sequence }),
+                "Participant" => Ok(Node::Chat { author, sequence }),
+                "Review" => Ok(Node::Comment { author, sequence }),
+                "Send" => Ok(Node::Message { author, sequence }),
+                "Bid" => Ok(Node::Offer { author, sequence }),
+                _ => Err(RegistrationError::Incidence),
+            }
+        }
+        _ => Err(RegistrationError::Incidence),
+    }
 }

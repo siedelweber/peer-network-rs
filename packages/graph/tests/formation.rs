@@ -853,7 +853,7 @@ fn participant_reconstruction() {
     );
     verifier.removals = true;
     assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
-    inputs[0].id.family = "Review".into();
+    inputs[0].id.family = "Send".into();
     let changed_id = inputs[0].id.clone();
     for leg in &mut inputs[0].legs {
         leg.id.act = changed_id.clone();
@@ -993,4 +993,279 @@ fn participant_constructor_refusals() {
         },
     ));
     assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+}
+
+fn review(sequence: u64, middle: PublicReference, terminal: u64) -> CandidateAct {
+    let mut input = participation(sequence, 1, 2);
+    input.id.family = "Review".into();
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[0].target = middle.clone();
+    input.legs[1].source = middle;
+    input.legs[1].target = PublicReference::Minted(ActId {
+        sequence: terminal,
+        ..input.id.clone()
+    });
+    input.body.quantities.truncate(4);
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "enthusiasm.numerator",
+        "enthusiasm.denominator",
+        "effort.numerator",
+        "effort.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input.protocol_references = vec![named("license", "unlisted")];
+    input
+}
+
+/// Claim: Review forms an ordered Actor-to-passive-to-Comment bundle for every passive constructor, retaining both signed coordinates, qualifiers and one act time on each leg. Genesis, ordinary and dangling terminals are representable without an anchor verdict; wrong constructors, incomplete incidence and malformed coordinates refuse the whole bundle.
+/// # Panics
+/// Panics only if Review dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:review-requires-complete-passive-comment-incidence´
+/// ´test:integration:review-projection´
+#[test]
+fn review_projection() {
+    use pn_graph::formation::ReviewRole;
+    let mut middles = vec![
+        (named("prof", "a"), Node::Grounded(GroundedNode::Profile("a".into()))),
+        (named("name", "topic"), Node::Type("topic".into())),
+    ];
+    for (family, node) in [
+        (
+            "Publish",
+            Node::Content {
+                author: "a".into(),
+                sequence: 1,
+            },
+        ),
+        (
+            "Owner",
+            Node::Item {
+                author: "a".into(),
+                sequence: 1,
+            },
+        ),
+        (
+            "Participant",
+            Node::Chat {
+                author: "a".into(),
+                sequence: 1,
+            },
+        ),
+        (
+            "Review",
+            Node::Comment {
+                author: "a".into(),
+                sequence: 1,
+            },
+        ),
+        (
+            "Send",
+            Node::Message {
+                author: "a".into(),
+                sequence: 1,
+            },
+        ),
+        (
+            "Bid",
+            Node::Offer {
+                author: "a".into(),
+                sequence: 1,
+            },
+        ),
+    ] {
+        middles.push((
+            PublicReference::Minted(ActId {
+                author: "a".into(),
+                sequence: 1,
+                family: family.into(),
+            }),
+            node,
+        ));
+    }
+    for (middle, node) in middles {
+        for terminal in [1, 3, 99] {
+            let input = review(3, middle.clone(), terminal);
+            let result = bundle(&input).unwrap();
+            assert_eq!(result.len(), 2);
+            assert_eq!(result[0].0, Node::Grounded(GroundedNode::Actor("a".into())));
+            assert_eq!(result[0].1, node);
+            assert_eq!(result[1].0, node);
+            assert_eq!(
+                result[1].1,
+                Node::Comment {
+                    author: "a".into(),
+                    sequence: terminal
+                }
+            );
+            let (Projection::Review(a), Projection::Review(t)) = (&result[0].2, &result[1].2) else {
+                panic!("wrong family")
+            };
+            assert_eq!(a.role, ReviewRole::A);
+            assert_eq!((a.sequence, a.position, a.logical_time), (3, (1, 3), 3));
+            assert_eq!((a.enthusiasm.numerator, a.enthusiasm.denominator), (-1, 2));
+            assert_eq!((a.effort.numerator, a.effort.denominator), (2, 3));
+            assert_eq!(a.licenses, vec!["unlisted"]);
+            let mut expected = a.clone();
+            expected.role = ReviewRole::T;
+            assert_eq!(t, &expected);
+        }
+    }
+    review_refusals();
+}
+
+fn review_refusals() {
+    let input = review(3, named("name", "topic"), 3);
+    for pair in [0, 2] {
+        for denominator in 1..=8 {
+            for numerator in -denominator - 1..=denominator + 1 {
+                let mut changed = input.clone();
+                changed.body.quantities[pair].1.value = numerator;
+                changed.body.quantities[pair + 1].1.value = denominator;
+                assert_eq!(bundle(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+            }
+        }
+        for denominator in [0, -1] {
+            let mut changed = input.clone();
+            changed.body.quantities[pair + 1].1.value = denominator;
+            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        }
+    }
+    for index in 0..4 {
+        let mut changed = input.clone();
+        changed.body.quantities.remove(index);
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.unit = "money".into();
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.vintage = 1;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    for reference in [
+        named("addr", "a"),
+        PublicReference::Act(input.id.clone()),
+        PublicReference::Minted(ActId {
+            family: "Affinity".into(),
+            ..input.id.clone()
+        }),
+    ] {
+        let mut changed = input.clone();
+        changed.legs[0].target = reference.clone();
+        changed.legs[1].source = reference;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    for index in 0..2 {
+        let mut changed = input.clone();
+        changed.legs.remove(index);
+        assert!(validate_history(&[changed], &[]).is_err());
+    }
+    let mut changed = input.clone();
+    changed.legs[0].source = named("addr", "b");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.legs[1].source = named("name", "other");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.legs[1].target = named("name", "topic");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input;
+    changed.protocol_references = vec![named("name", "topic")];
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+}
+
+/// Claim: Review shares whole-history reconstruction with the five earlier families, retaining deterministic A/T indices and parallel ordinary acts. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.
+/// # Panics
+/// Panics only if the fixture's Review edge has another family, which correct reconstruction cannot arrange.
+/// ´claim:formation:review-shares-whole-history-revalidation´
+/// ´test:integration:review-reconstruction´
+#[test]
+fn review_reconstruction() {
+    let mut inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        review(6, named("name", "topic"), 6),
+        review(7, named("name", "topic"), 6),
+    ];
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((graph.node_count(), graph.edge_count()), (7, 10));
+    let endpoints: Vec<_> = graph
+        .edge_indices()
+        .map(|i| graph.edge_endpoints(i).map(|(a, b)| (a.index(), b.index())).unwrap())
+        .collect();
+    assert_eq!(
+        endpoints,
+        vec![(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (5, 5), (0, 2), (2, 6), (0, 2), (2, 6)]
+    );
+    inputs.reverse();
+    for input in &mut inputs {
+        input.legs.reverse();
+    }
+    let reordered = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(validate_formation(&graph, &reordered, &verifier), Ok(()));
+    let bytes = serde_json::to_vec(&graph).unwrap();
+    let decoded = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    for removed in [6, 7] {
+        let mut partial = graph.clone();
+        partial.remove_edge(petgraph::graph::EdgeIndex::new(removed));
+        assert_eq!(
+            partial[petgraph::graph::EdgeIndex::new(9)],
+            graph[petgraph::graph::EdgeIndex::new(9)]
+        );
+        assert_eq!(
+            validate_formation(&partial, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    let mut changed = graph.clone();
+    let Projection::Review(weight) = &mut changed[petgraph::graph::EdgeIndex::new(6)] else {
+        panic!("wrong family")
+    };
+    weight.effort.numerator *= 2;
+    weight.effort.denominator *= 2;
+    assert_eq!(
+        validate_formation(&changed, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    let mut changed = graph.clone();
+    let Projection::Review(weight) = &mut changed[petgraph::graph::EdgeIndex::new(7)] else {
+        panic!("wrong family")
+    };
+    weight.role = pn_graph::formation::ReviewRole::A;
+    assert_eq!(
+        validate_formation(&changed, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts = inputs.clone();
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    inputs[0].id.family = "Send".into();
+    let id = inputs[0].id.clone();
+    for leg in &mut inputs[0].legs {
+        leg.id.act = id.clone();
+    }
+    let unsupported = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&unsupported, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
+    );
 }
