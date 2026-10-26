@@ -1,0 +1,265 @@
+{
+  "namespace": "org.peer-network.buildgraph.slices",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "name": "build-graph",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "toolchain",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "discipline-tests",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "harness-registry",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "harness-tests",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "testkit-guard",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "testkit-tests",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "claim-tests",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "linter-entry-tests",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "observation-tests",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "devperf-tests",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "build-policy",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "cargo-config",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "cargo-config-measurement",
+      "reason": "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "vendor-set",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "member-lints",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "fmt",
+      "reason": "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "clippy",
+      "reason": "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "nursery-advisory",
+      "reason": "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "host-postgresql-start",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "wallet-elements-start",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "tests",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "test-budgets",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "minimal",
+      "reason": "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "rustdoc",
+      "reason": "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "fixed-point-generate",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "fixed-point-write",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "fixed-point-clean",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "datasets",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "documents",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "determinism-datasets",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "determinism-documents",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "design-correspondence",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "design-tests",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "benchmarks",
+      "reason": "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "observation-build",
+      "reason": "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "observation-runtime",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "host-observation-build",
+      "reason": "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing.",
+      "slice": 3
+    },
+    {
+      "name": "host-observation-runtime",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "wallet-conformance",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "wallet-elements-stop",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "host-postgresql-stop",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "observation-parser",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "observation-syntax",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "harness-matrix",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "linter",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "claim-evidence",
+      "reason": "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup.",
+      "slice": 4
+    },
+    {
+      "name": "token",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "hash-citations",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "suppressions",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    },
+    {
+      "name": "printing",
+      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
+      "slice": 2
+    }
+  ]
+}

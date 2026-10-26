@@ -36,7 +36,7 @@ def fixture():
 
 class Evidence(unittest.TestCase):
     def test_register_canonical_form(self):
-        """Claim: Unsorted, duplicate or non-canonical claim registers refuse before evidence evaluation without rewriting, while the explicit canonicalizer preserves entries and reaches a byte-stable form.
+        """Claim: Unsorted, duplicate or non-canonical claim registers refuse before evidence evaluation without rewriting, while the explicit canonicalizer preserves entries, reaches a byte-stable form and reports its wall time on success and refusal.
         ´claim:testing:register-order-and-form-are-checked´
         ´test:integration:test-register-canonical-form´
         """
@@ -90,15 +90,19 @@ class Evidence(unittest.TestCase):
             for path, text in formatted.items():
                 self.assertEqual(Path(path).read_bytes(), text.encode('utf-8'))
             stamps = {path: Path(path).stat().st_mtime_ns for path in formatted}
-            with redirect_stdout(io.StringIO()):
+            output = io.StringIO()
+            with redirect_stdout(output), patch('claims.time.monotonic', side_effect=[10.0, 10.25]):
                 self.assertEqual(main(['canonicalize']), 0)
+            self.assertIn('CLAIM-CANONICALIZE wall=0.250000s', output.getvalue())
             self.assertEqual(stamps, {path: Path(path).stat().st_mtime_ns for path in formatted})
             # A later invalid file prevents any earlier selected write.
             Path('ci/claim_review.json').write_text(json.dumps(review))
             Path('ci/claim_gloss_baseline.json').write_text('{"schema":1,"glosses":{"alpha":"one","alpha":"two"}}')
             before = {path: Path(path).read_bytes() for path in formatted}
-            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            output = io.StringIO()
+            with redirect_stdout(output), redirect_stderr(io.StringIO()), patch('claims.time.monotonic', side_effect=[20.0, 20.5]):
                 self.assertEqual(main(['canonicalize']), 2)
+            self.assertIn('CLAIM-CANONICALIZE wall=0.500000s', output.getvalue())
             self.assertEqual(before, {path: Path(path).read_bytes() for path in formatted})
 
     def test_entry_basis_matches_authored_source(self):

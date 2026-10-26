@@ -108,7 +108,7 @@
     {
       "build_time": "No build script or procedural macro",
       "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
-      "features": "default, std",
+      "features": "std",
       "license": "Apache-2.0 OR MIT",
       "name": "indexmap",
       "resolution": "retained",
@@ -185,7 +185,7 @@
     {
       "build_time": "build.rs probes compiler and span capabilities; macro support library",
       "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
-      "features": "default, proc-macro, span-locations",
+      "features": "default, proc-macro",
       "license": "MIT OR Apache-2.0",
       "name": "proc-macro2",
       "resolution": "retained",
@@ -207,7 +207,7 @@
     {
       "build_time": "build.rs writes private bindings and checks compiler capabilities; derive delegates to serde_derive",
       "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
-      "features": "alloc, default, derive, serde_derive, std",
+      "features": "default, derive, serde_derive, std",
       "license": "MIT OR Apache-2.0",
       "name": "serde",
       "resolution": "retained",
@@ -218,7 +218,7 @@
     {
       "build_time": "build.rs writes private bindings and checks compiler/target capabilities",
       "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
-      "features": "alloc, result, std",
+      "features": "result, std",
       "license": "MIT OR Apache-2.0",
       "name": "serde_core",
       "resolution": "retained",
@@ -240,7 +240,7 @@
     {
       "build_time": "No build script or procedural macro",
       "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
-      "features": "clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut",
+      "features": "clone-impls, default, derive, full, parsing, printing, proc-macro, visit-mut",
       "license": "MIT OR Apache-2.0",
       "name": "syn",
       "resolution": "retained",

@@ -215,8 +215,8 @@ status = "accepted"
 title = "Build graph"
 scope = "Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices."
 depends_on = ["rec:toolchain:decision", "rec:lint:decision", "rec:render:decision", "rec:testing:decision", "rec:devperf:decision"]
-does_not_establish = "No Meson graph, census enforcement or migration is implemented here; file accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established."
-step_names = ["toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "cargo-config-measurement", "vendor-set", "member-lints", "fmt", "clippy", "nursery-advisory", "host-postgresql-start", "wallet-elements-start", "tests", "test-budgets", "minimal", "rustdoc", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "datasets", "documents", "determinism-datasets", "determinism-documents", "design-correspondence", "design-tests", "benchmarks", "observation-build", "observation-runtime", "host-observation-build", "host-observation-runtime", "wallet-conformance", "wallet-elements-stop", "host-postgresql-stop", "observation-parser", "observation-syntax", "harness-matrix", "linter", "claim-evidence", "token", "hash-citations", "suppressions", "printing"]
+does_not_establish = "Step delegation or migration; slice one implements file and roster accounting only. File accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established."
+step_names = ["build-graph", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "linter-entry-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "cargo-config-measurement", "vendor-set", "member-lints", "fmt", "clippy", "nursery-advisory", "host-postgresql-start", "wallet-elements-start", "tests", "test-budgets", "minimal", "rustdoc", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "datasets", "documents", "determinism-datasets", "determinism-documents", "design-correspondence", "design-tests", "benchmarks", "observation-build", "observation-runtime", "host-observation-build", "host-observation-runtime", "wallet-conformance", "wallet-elements-stop", "host-postgresql-stop", "observation-parser", "observation-syntax", "harness-matrix", "linter", "claim-evidence", "token", "hash-citations", "suppressions", "printing"]
 
 [[rows.step_groups]]
 name = "policy"
@@ -301,3 +301,9 @@ name = "corpus"
 steps = ["linter", "token", "hash-citations", "suppressions", "printing"]
 inputs = "Deployed linter and its declarations; ci/discipline.py and imported readers; tracked source, prose, datasets, templates, manifests and identity families within each existing policy, plus public history where checked."
 outputs = "Lint, token, citation, suppression and output-discipline reports."
+
+[[rows.step_groups]]
+name = "graph-accounting"
+steps = ["build-graph"]
+inputs = "Meson directory lists, the live tracked index, the gate roster and deployed census."
+outputs = "Fresh file census and graph-incidence reports; no delegation of other steps."

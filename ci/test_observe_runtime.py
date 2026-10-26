@@ -278,7 +278,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(accounting['default'],accounting['trace'])
 
     def test_graph_dependency(self):
-        """Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed identity and features, and the graph dependency rows and numeric serde row agree with locked identities and resolved features, so a table cannot omit an enabled serde feature.
+        """Claim: Graph rows match the workspace feature union, numeric serde matches pn-records alone and host rows distinguish its own resolved features from lock-only packages, so a dependency table cannot borrow another build's features or portray an unbuilt package as built.
         ´claim:discipline:graph-backend-retains-reviewed-identity´
         ´test:integration:test-graph-dependency´
         """
@@ -298,22 +298,59 @@ class Processes(unittest.TestCase):
         declarations = tomllib.loads(Path('docs/inputs/graph-dependencies.toml').read_text())['rows']
         locked = tomllib.loads(Path('Cargo.lock').read_text())['package']
 
-        def check_row(row):
+        def feature_tree(owner):
+            command = ['cargo', 'tree', '--offline', '--locked', '--prefix', 'none', '--format', '{p}|{f}', '--no-dedupe']
+            command += ['--workspace'] if owner == 'workspace' else ['-p', owner]
+            started = time.monotonic()
+            output = subprocess.check_output(command, text=True)
+            print(f'DEPENDENCY-FEATURES owner={owner} wall={time.monotonic()-started:.6f}s')
+            features = {}
+            for line in output.splitlines():
+                if not line.strip():
+                    continue
+                package, enabled = line.split('|', 1)
+                name, version, *_ = package.split()
+                key = (name, version.removeprefix('v'))
+                features.setdefault(key, set()).update(filter(None, enabled.split(',')))
+            return features
+
+        scopes = {owner: feature_tree(owner) for owner in ('workspace', 'pn-records', 'pn-host')}
+
+        def check_row(row, owner):
             package = next(p for p in resolved['packages'] if p['name'] == row['name'] and p['version'] == row['version'])
             self.assertTrue(any(p['name'] == row['name'] and p['version'] == row['version'] for p in locked))
-            node = next(n for n in resolved['resolve']['nodes'] if n['id'] == package['id'])
             features = row['features'].split(', ') if isinstance(row['features'], str) else row['features']
-            self.assertEqual(set(features), set(node['features']))
+            self.assertEqual(set(features), scopes[owner][(package['name'], package['version'])])
 
         for row in declarations:
-            check_row(row)
+            check_row(row, 'workspace')
         serde = next(row for row in declarations if row['name'] == 'serde')
         self.assertEqual(serde['version'], '1.0.229')
         self.assertEqual(set(serde['features']), {'alloc', 'default', 'derive', 'serde_derive', 'std'})
         numeric = tomllib.loads(Path('docs/inputs/numeric-dependencies.toml').read_text())['rows']
-        check_row(next(row for row in numeric if row['name'] == 'serde'))
+        numeric_serde = next(row for row in numeric if row['name'] == 'serde')
+        self.assertIn('pn-records built on its own', numeric_serde['feature_scope'])
+        check_row(numeric_serde, 'pn-records')
+        host = tomllib.loads(Path('docs/inputs/host-dependencies.toml').read_text())['rows']
+
+        def check_host(row):
+            name = row['name'].removesuffix(' '+row['version'])
+            self.assertIn('all lock edges', row['membership_scope'])
+            self.assertIn('pn-host alone', row['feature_scope'])
+            actual = scopes['pn-host'].get((name, row['version']))
+            self.assertEqual(row['built_for_host'], actual is not None)
+            self.assertEqual(set(row['features']), actual if actual is not None else set())
+
+        for row in host:
+            check_host(row)
+        criterion = next(row for row in host if row['name'] == 'criterion 0.7.0')
+        self.assertFalse(criterion['built_for_host'])
         with self.assertRaises(AssertionError):
-            check_row(serde | {'features': [feature for feature in serde['features'] if feature != 'alloc']})
+            check_host(criterion | {'built_for_host': True})
+        with self.assertRaises(AssertionError):
+            check_row(serde | {'features': [feature for feature in serde['features'] if feature != 'alloc']}, 'workspace')
+        with self.assertRaises(AssertionError):
+            check_row(numeric_serde | {'features': serde['features']}, 'pn-records')
 
     def test_generated_records_refusals(self):
         """Claim: Each single corruption of the same seeded records DAG retains its exact typed refusal at default and trace, and both metric distributions contain nineteen refusals and no errors.

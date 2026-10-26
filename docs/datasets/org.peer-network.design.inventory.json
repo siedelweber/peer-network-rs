@@ -14370,7 +14370,7 @@
       "kind": "fixture",
       "label": "ver:standing:emission-split",
       "label_source": "explicit",
-      "statement": "Check each declared source’s export ceiling in the finite split diagnostic and report aggregate export and standing movement with its unsplit comparison. This normalized-row diagnostic is not complete-act invariance; certified partition counterexamples and exact surviving invariants delimit the remaining strategic questions."
+      "statement": "Check each declared source’s export ceiling in the finite split diagnostic and report aggregate export and standing movement with its unsplit comparison. This normalized-row diagnostic is not complete-act invariance; complete-act partitions can change standing and export. Guarantees retain the premises of ``prop:epoch:split-pair-displacement`` and ``prop:transport:split-terminal-readout-bounds``; legitimate and strategic completions of one record share observable consequences under ``thm:epoch:split-observational-equivalence``."
     },
     {
       "chapter": "F Verification",

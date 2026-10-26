@@ -1,0 +1,257 @@
+namespace = "org.peer-network.buildgraph.slices"
+version = [1, 0, 0]
+
+[[rows]]
+name = "build-graph"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "toolchain"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "discipline-tests"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "harness-registry"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "harness-tests"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "testkit-guard"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "testkit-tests"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "claim-tests"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "linter-entry-tests"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "observation-tests"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "devperf-tests"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "build-policy"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "cargo-config"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "cargo-config-measurement"
+slice = 3
+reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
+
+[[rows]]
+name = "vendor-set"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "member-lints"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "fmt"
+slice = 3
+reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
+
+[[rows]]
+name = "clippy"
+slice = 3
+reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
+
+[[rows]]
+name = "nursery-advisory"
+slice = 3
+reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
+
+[[rows]]
+name = "host-postgresql-start"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "wallet-elements-start"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "tests"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "test-budgets"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "minimal"
+slice = 3
+reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
+
+[[rows]]
+name = "rustdoc"
+slice = 3
+reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
+
+[[rows]]
+name = "fixed-point-generate"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "fixed-point-write"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "fixed-point-clean"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "datasets"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "documents"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "determinism-datasets"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "determinism-documents"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "design-correspondence"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "design-tests"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "benchmarks"
+slice = 3
+reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
+
+[[rows]]
+name = "observation-build"
+slice = 3
+reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
+
+[[rows]]
+name = "observation-runtime"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "host-observation-build"
+slice = 3
+reason = "Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing."
+
+[[rows]]
+name = "host-observation-runtime"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "wallet-conformance"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "wallet-elements-stop"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "host-postgresql-stop"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "observation-parser"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "observation-syntax"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "harness-matrix"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "linter"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "claim-evidence"
+slice = 4
+reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+
+[[rows]]
+name = "token"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "hash-citations"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "suppressions"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "printing"
+slice = 2
+reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."

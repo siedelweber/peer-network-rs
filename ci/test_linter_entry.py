@@ -209,7 +209,7 @@ class Conformance(unittest.TestCase):
         code,row=tree.check();self.assertEqual(code,3);self.assertEqual(row['index']['stale'],1)
 
     def test_missing_tracked_source(self):
-        """Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution; the Meson census and incidence witnesses also refuse missing, stale, unconnected or broadly excluded tracked inputs and missing steps, including an addition without reconfiguration.
+        """Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution.
         ´claim:discipline:fixture-traversal-loss-is-diagnostic´
         ´test:integration:test-missing-tracked-source´
         """
@@ -219,9 +219,39 @@ class Conformance(unittest.TestCase):
         result=tree.command([os.environ['LINTER_BIN'],'check','--root',str(tree.root)])
         row=json.loads(result.stdout)
         self.assertEqual(result.returncode,3);self.assertEqual([f['code'] for f in row['findings']],['traversal_failure']*4)
+        self.assertTrue(all('root/src/lib.rs' in json.dumps(f) for f in row['findings']))
+
+    def test_build_graph_census(self):
+        """Claim: The Meson census and incidence checks refuse unaccounted, stale, duplicate, unconnected or excluded tracked inputs and incomplete step reports, including tracked additions without reconfiguration, while explicitly declared vendor and generated files pass.
+        ´claim:discipline:build-graph-census-accounts-for-tracked-inputs´
+        ´test:integration:test-build-graph-census´
+        """
         from build_graph_witnesses import exercise
         exercise(self)
-        self.assertTrue(all('root/src/lib.rs' in json.dumps(f) for f in row['findings']))
+
+    def test_build_graph_slice_assignment(self):
+        """Claim: Every live gate step has exactly one delegation slice, and the record roster agrees with that set, so a missing, repeated, unknown or invalid assignment cannot hide until final migration.
+        ´claim:discipline:build-graph-slices-cover-roster´
+        ´test:integration:test-build-graph-slice-assignment´
+        """
+        from collections import Counter
+        import tomllib
+        from build_graph import roster
+        steps = [name for name, _ in roster(Path.cwd())]
+        rows = tomllib.loads(Path('docs/inputs/build-graph-slices.toml').read_text())['rows']
+        record = next(row for row in tomllib.loads(Path('docs/inputs/records.toml').read_text())['rows'] if row['label'] == 'rec:buildgraph:decision')
+        self.assertEqual(Counter(record['step_names']), Counter(steps))
+
+        def check(assignments):
+            self.assertEqual(Counter(row['name'] for row in assignments), Counter(steps))
+            self.assertTrue(all(type(row['slice']) is int and row['slice'] in {2, 3, 4, 5} and row['reason'] for row in assignments))
+
+        check(rows)
+        for fault in (rows[1:], rows+[rows[0]], rows+[dict(name='unknown', slice=2, reason='Unknown step')],
+                      [rows[0] | {'slice': 1}]+rows[1:]):
+            with self.assertRaises(AssertionError):
+                check(fault)
+        print(f'BUILD-SLICES steps={len(rows)} slice2={sum(r["slice"] == 2 for r in rows)} slice3={sum(r["slice"] == 3 for r in rows)} slice4={sum(r["slice"] == 4 for r in rows)} slice5={sum(r["slice"] == 5 for r in rows)}')
 
     def test_scoped_projection(self):
         """Claim: An unrelated owner's duplicate prose does not prevent regeneration of the active Rust test projection, so scoped maintenance remains possible without concealing the separate corpus failure.

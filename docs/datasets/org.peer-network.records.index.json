@@ -296,7 +296,7 @@
         "rec:testing:decision",
         "rec:devperf:decision"
       ],
-      "does_not_establish": "No Meson graph, census enforcement or migration is implemented here; file accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established.",
+      "does_not_establish": "Step delegation or migration; slice one implements file and roster accounting only. File accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established.",
       "label": "rec:buildgraph:decision",
       "path": "adr/024-build-graph.md",
       "scope": "Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices.",
@@ -449,9 +449,18 @@
             "suppressions",
             "printing"
           ]
+        },
+        {
+          "inputs": "Meson directory lists, the live tracked index, the gate roster and deployed census.",
+          "name": "graph-accounting",
+          "outputs": "Fresh file census and graph-incidence reports; no delegation of other steps.",
+          "steps": [
+            "build-graph"
+          ]
         }
       ],
       "step_names": [
+        "build-graph",
         "toolchain",
         "discipline-tests",
         "harness-registry",

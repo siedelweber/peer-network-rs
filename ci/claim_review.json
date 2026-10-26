@@ -18,6 +18,14 @@
       "review": "Read the changed carrier fixture assertions: citations now support both carriers, exhibitions cannot establish support, and property macro documentation remains an independently joined Rust carrier. Python commentary placement is delegated to the deployed linter."
     },
     {
+      "operation": "ci::test_claims.Evidence.test_register_canonical_form",
+      "path": "ci/test_claims.py",
+      "claim": "ROOT::claim:testing:register-order-and-form-are-checked",
+      "before": "Claim: Unsorted, duplicate or non-canonical claim registers refuse before evidence evaluation without rewriting, while the explicit canonicalizer preserves entries and reaches a byte-stable form.",
+      "after": "Claim: Unsorted, duplicate or non-canonical claim registers refuse before evidence evaluation without rewriting, while the explicit canonicalizer preserves entries, reaches a byte-stable form and reports its wall time on success and refusal.",
+      "review": "Read success and malformed-register refusal with controlled monotonic clocks; both print the measured wall while the existing content and no-write checks stay intact."
+    },
+    {
       "operation": "ci::test_claims.Evidence.test_source_carriers",
       "path": "ci/test_claims.py",
       "claim": "ROOT::claim:testing:source-carriers-are-lexically-checked",
@@ -134,8 +142,8 @@
       "path": "ci/test_linter_entry.py",
       "claim": "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic",
       "before": "Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution.",
-      "after": "Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution; the Meson census and incidence witnesses also refuse missing, stale, unconnected or broadly excluded tracked inputs and missing steps, including an addition without reconfiguration.",
-      "review": "The existing traversal-loss assertion remains. The added constructed-tree battery executes the Meson target and deployed census, checks new source and dotfile additions without configuration changes, and checks independent malformed incidence manifests plus vendor and generated positives. It establishes structural accounting and fresh census execution, not semantic input completeness."
+      "after": "Claim: A tracked Rust source removed from the fixture checkout produces a corpus diagnostic instead of silently shrinking the evidence carrier, so traversal loss is visible before resolution.",
+      "review": "The traversal assertions still diagnose only a removed tracked source; the census now has its own claim and test identity."
     },
     {
       "operation": "ci::test_observe.Admission.test_resource_samples",
@@ -174,8 +182,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:graph-backend-retains-reviewed-identity",
       "before": "",
-      "after": "Claim: Cargo resolves pn-graph's inherited petgraph declaration to the reviewed identity and features, and the graph dependency rows and numeric serde row agree with locked identities and resolved features, so a table cannot omit an enabled serde feature.",
-      "review": "Read the locked Cargo identities and resolved feature nodes against both graph input rows and the numeric serde row. The explicit missing-alloc negative witness fails the same comparison; this establishes table correspondence for these resolutions, not all future feature combinations."
+      "after": "Claim: Graph rows match the workspace feature union, numeric serde matches pn-records alone and host rows distinguish its own resolved features from lock-only packages, so a dependency table cannot borrow another build's features or portray an unbuilt package as built.",
+      "review": "Read the owning-package cargo tree scopes, all host built/absent rows and negative feature substitutions; the numeric serde check exposes workspace-only alloc."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",

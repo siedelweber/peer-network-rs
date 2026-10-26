@@ -160,19 +160,19 @@
 | foldhash | 0.1.5 | Zlib | none | new | CAS graph hash-table hashing | No build script or procedural macro |
 | hashbrown | 0.15.5 | MIT OR Apache-2.0 | default-hasher, inline-more | new | Petgraph direct hash storage, using foldhash | No build script or procedural macro |
 | hashbrown | 0.17.1 | MIT OR Apache-2.0 | none | retained | Indexmap hash storage | No build script or procedural macro |
-| indexmap | 2.14.2 | Apache-2.0 OR MIT | default, std | retained | Indexed graph mapping | No build script or procedural macro |
+| indexmap | 2.14.2 | Apache-2.0 OR MIT | std | retained | Indexed graph mapping | No build script or procedural macro |
 | num-bigint | 0.4.8 | MIT OR Apache-2.0 | none | new | Arbitrary-precision rational components | No build script or procedural macro |
 | num-complex | 0.4.6 | MIT OR Apache-2.0 | none | new | CAS complex syntax support, outside records scalar admission | No build script or procedural macro |
 | num-integer | 0.1.47 | MIT OR Apache-2.0 | i128 | new | Exact integer division and gcd | No build script or procedural macro |
 | num-rational | 0.4.2 | MIT OR Apache-2.0 | none | new | Reduced ratio backing | No build script or procedural macro |
 | num-traits | 0.2.19 | MIT OR Apache-2.0 | i128, std | retained | Integer and numeric trait support | build.rs probes numeric compiler capabilities through autocfg |
 | petgraph | 0.8.3 | MIT OR Apache-2.0 | default, graphmap, matrix_graph, stable_graph, std | new | CAS-owned graph storage; no records partition algorithm | No build script or procedural macro |
-| proc-macro2 | 1.0.107 | MIT OR Apache-2.0 | default, proc-macro, span-locations | retained | Derive token representation | build.rs probes compiler and span capabilities; macro support library |
+| proc-macro2 | 1.0.107 | MIT OR Apache-2.0 | default, proc-macro | retained | Derive token representation | build.rs probes compiler and span capabilities; macro support library |
 | quote | 1.0.47 | MIT OR Apache-2.0 | default, proc-macro | retained | Derive token generation | build.rs checks compiler diagnostic support; macro token library |
-| serde | 1.0.229 | MIT OR Apache-2.0 | alloc, default, derive, serde_derive, std | retained | Existing workspace serialization edge in metadata; CAS graph serialization is not enabled | build.rs writes private bindings and checks compiler capabilities; derive delegates to serde_derive |
-| serde_core | 1.0.229 | MIT OR Apache-2.0 | alloc, result, std | retained | Existing serialization core | build.rs writes private bindings and checks compiler/target capabilities |
+| serde | 1.0.229 | MIT OR Apache-2.0 | default, derive, serde_derive, std | retained | Existing workspace serialization edge in metadata; CAS graph serialization is not enabled | build.rs writes private bindings and checks compiler capabilities; derive delegates to serde_derive |
+| serde_core | 1.0.229 | MIT OR Apache-2.0 | result, std | retained | Existing serialization core | build.rs writes private bindings and checks compiler/target capabilities |
 | serde_derive | 1.0.229 | MIT OR Apache-2.0 | default | retained | Existing serialization derive | procedural macro expands serialization derives; no build script |
-| syn | 3.0.9 | MIT OR Apache-2.0 | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | retained | Derive syntax parsing | No build script or procedural macro |
+| syn | 3.0.9 | MIT OR Apache-2.0 | clone-impls, default, derive, full, parsing, printing, proc-macro, visit-mut | retained | Derive syntax parsing | No build script or procedural macro |
 | thiserror-impl | 2.0.21 | MIT OR Apache-2.0 | none | retained | Error derive expansion | procedural macro expands typed errors; no build script |
 | thiserror | 2.0.21 | MIT OR Apache-2.0 | default, std | retained | Typed scalar errors | build.rs writes private bindings and probes error/backtrace support; derive delegates to thiserror-impl |
 | unicode-ident | 1.0.27 | (MIT OR Apache-2.0) AND Unicode-3.0 | none | retained | Derive identifier tables | No build script or procedural macro |

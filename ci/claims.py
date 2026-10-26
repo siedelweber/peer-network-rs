@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import time
 import tomllib
 
 from devperf import StructuralError
@@ -369,10 +370,14 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.command == 'canonicalize':
-            paths = args.registers or list(REGISTERS)
-            if any(path not in REGISTERS for path in paths) or len(paths) != len(set(paths)):
-                raise StructuralError('canonicalize requires distinct registered paths: '+', '.join(REGISTERS))
-            canonicalize_registers(paths)
+            started = time.monotonic()
+            try:
+                paths = args.registers or list(REGISTERS)
+                if any(path not in REGISTERS for path in paths) or len(paths) != len(set(paths)):
+                    raise StructuralError('canonicalize requires distinct registered paths: '+', '.join(REGISTERS))
+                canonicalize_registers(paths)
+            finally:
+                print(f'CLAIM-CANONICALIZE wall={time.monotonic() - started:.6f}s')
             return 0
         registers = {field: read_register(path, field) for path, field in REGISTERS.items()}
         print('CLAIM-REGISTERS canonical=2')

@@ -1,4 +1,4 @@
-**Record (Build graph)** · `rec:buildgraph:decision` Status: accepted. Scope: Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices. Depends on: (`rec:toolchain:decision`), (`rec:lint:decision`), (`rec:render:decision`), (`rec:testing:decision`), (`rec:devperf:decision`). Does not establish: No Meson graph, census enforcement or migration is implemented here; file accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established.
+**Record (Build graph)** · `rec:buildgraph:decision` Status: accepted. Scope: Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices. Depends on: (`rec:toolchain:decision`), (`rec:lint:decision`), (`rec:render:decision`), (`rec:testing:decision`), (`rec:devperf:decision`). Does not establish: Step delegation or migration; slice one implements file and roster accounting only. File accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established.
 
 ## Build graph · `sec:buildgraph:record`
 
@@ -22,7 +22,7 @@
 
 ## Step migration · `sec:buildgraph:steps`
 
-**Table (Existing step envelope)** · `tab:buildgraph:steps` This roster is rendered from this record's input row: 50 named steps, grouped below by their input and output envelope. Each name becomes a separate always-run target under (`rule:buildgraph:freshness`); the group does not collapse its statuses or timings. Every target additionally consumes the shared runner and reporting configuration and produces its named current-run log, status and measurement. Slice 1 reconciles this roster with the gate at implementation time, including changes introduced after this decision, before any step is delegated.
+**Table (Existing step envelope)** · `tab:buildgraph:steps` This roster is rendered from this record's input row: 51 named steps, grouped below by their input and output envelope. Each name becomes a separate always-run target under (`rule:buildgraph:freshness`); the group does not collapse its statuses or timings. Every target additionally consumes the shared runner and reporting configuration and produces its named current-run log, status and measurement. Slice 1 reconciles this roster with the gate at implementation time, including changes introduced after this decision, before any step is delegated.
 
 | Step targets | Declared input envelope | Outputs and evidence |
 | --- | --- | --- |
@@ -40,6 +40,7 @@
 | observation-runtime, host-observation-runtime, wallet-conformance, observation-syntax | ci/run_ci.py, ci/observe.py, the named runtime/boundary test modules and imports; built executables, instrumentation artifacts, observation fixtures and declarations; service readiness where required. | Runtime case results, traces, parser and instrumentation-coverage reports. |
 | harness-matrix, claim-evidence | ci/harness.py, ci/claims.py and imports; current-run case results, source/configuration identity, claim sites, obligation, review and gloss registers, claim areas and checked document citations. | Harness matrix and claim-evidence reports; missing, stale and held results retain their existing distinctions. |
 | linter, token, hash-citations, suppressions, printing | Deployed linter and its declarations; ci/discipline.py and imported readers; tracked source, prose, datasets, templates, manifests and identity families within each existing policy, plus public history where checked. | Lint, token, citation, suppression and output-discipline reports. |
+| build-graph | Meson directory lists, the live tracked index, the gate roster and deployed census. | Fresh file census and graph-incidence reports; no delegation of other steps. |
 
 
 **Rule (Stable entry and finalization)** · `rule:buildgraph:entry` bash ci/gate.sh remains the caller's entry throughout the migration. It validates the existing environment, selects a checkout-local Meson build directory and the same checkout's Cargo target directory, and delegates only the migrated steps; each step executes once, not once in each route. Meson 1.12.1 and Ninja 1.11.1 are the provisioned baseline for the first slice, whose gate records the actual versions. The final slice leaves the entry responsible for environment setup, invoking the graph, unconditional service cleanup and publishing the aggregate result. Preserve kernel-owned service ports, cleanup on failure and interruption, and failure status for setup or build-system errors. Do not infer test ordering from Meson's test depends argument: artifact dependencies and runtime sequence must be explicit. Existing diagnostics extraction and finalization are graph consumers too, not unlisted work after the graph.
@@ -47,6 +48,63 @@
 **Rule (Resource reporting)** · `rule:buildgraph:reporting` Retain each step's name, actual status, UTC bounds, elapsed wall measurement and available CPU, memory, pressure and load observations, together with STEP-SUMMARY and GATE-RESOURCES. Keep unavailable measurements explicit and keep per-step inclusive measurements separate from whole-gate measurements rather than adding overlapping work. Retain performance events, budget findings, current-source case results and the final GATE-EXIT contract; a timing warning never changes a test, benchmark or gate verdict. A graph node links its measurements to its declared inputs and predecessor nodes so cost attribution can be inspected; the graph alone predicts no duration. The migration preserves the current reporter's resource scope and structured evidence under (`rule:observe:metering`) and (`rule:devperf:nonverdict`).
 
 ## Migration slices · `sec:buildgraph:slices`
+
+**Table (Step-to-slice assignment)** · `tab:buildgraph:slice-assignment` Each of the 51 roster steps is assigned exactly once below; the assignment is checked against the live shell roster by (`claim:discipline:build-graph-slices-cover-roster`). Slice 2 includes the census target itself, toolchain identity, observation-parser and all five corpus checks (linter, token, hash-citations, suppressions and printing). Slice 5 owns entry reduction and aggregate finalization rather than a second execution of any named step; it has no additional roster step. These assignments plan delegation and do not claim it has landed. Each move preserves the existing serial position even when its slice is implemented earlier than another step's slice.
+
+| Step | Delegation slice | Preserved responsibility |
+| --- | --- | --- |
+| build-graph | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| toolchain | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| discipline-tests | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| harness-registry | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| harness-tests | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| testkit-guard | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| testkit-tests | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| claim-tests | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| linter-entry-tests | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| observation-tests | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| devperf-tests | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| build-policy | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| cargo-config | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| cargo-config-measurement | 3 | Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing. |
+| vendor-set | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| member-lints | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| fmt | 3 | Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing. |
+| clippy | 3 | Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing. |
+| nursery-advisory | 3 | Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing. |
+| host-postgresql-start | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| wallet-elements-start | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| tests | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| test-budgets | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| minimal | 3 | Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing. |
+| rustdoc | 3 | Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing. |
+| fixed-point-generate | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| fixed-point-write | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| fixed-point-clean | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| datasets | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| documents | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| determinism-datasets | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| determinism-documents | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| design-correspondence | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| design-tests | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| benchmarks | 3 | Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing. |
+| observation-build | 3 | Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing. |
+| observation-runtime | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| host-observation-build | 3 | Cargo artifact or configuration measurement; preserve arguments, features, profiles and nonverdict timing. |
+| host-observation-runtime | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| wallet-conformance | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| wallet-elements-stop | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| host-postgresql-stop | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| observation-parser | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| observation-syntax | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| harness-matrix | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| linter | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| claim-evidence | 4 | Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup. |
+| token | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| hash-citations | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| suppressions | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+| printing | 2 | Policy, corpus, document or checker evidence; preserve the current command and serial report edge. |
+
 
 **Convention (Slice 1: census and skeleton)** · `conv:buildgraph:slice-one` Declare the root and directory lists, the full step roster and report edges, external-tool prerequisites, explicit exclusion reasons and a fresh census target. Keep existing commands on their current route while checking every tracked file and each roster name against the graph. Add negative witnesses for a new tracked source, a new tracked dotfile, an unconnected declared input, a stale path, a widened exclusion and a missing step, plus positive vendor and generated-file cases. Verify a new file is detected without reconfiguration. Gate the skeleton and its claim evidence before delegation; the additional accounting check strengthens coverage without changing any existing command's predicate.
 
@@ -61,6 +119,6 @@
 **Gate (Composition evidence)** · `gate:buildgraph:implementation` Owner: the build-graph implementer with independent gate-contract review. Held until the slices provide test-site claims for complete file and step accounting, source/configuration/run freshness, actual-status propagation, unchanged command and case inventories, generator fixed points, cleanup, and nonverdict timing. Each slice attaches its scoped evidence under (`rule:testing:coverage`) and (`rule:testing:results`); absence of a claim remains a named hold, not proof from the graph. Admit the completed migration only with the equivalence and negative witnesses in (`conv:buildgraph:slice-one`), (`conv:buildgraph:slice-two`), (`conv:buildgraph:slice-three`), (`conv:buildgraph:slice-four`) and (`conv:buildgraph:slice-five`).
 
 
-**Amendment (Census skeleton)** · `amend:buildgraph:census-skeleton` Repository amendment: the first slice of (`dec:buildgraph:composition`) and (`gate:buildgraph:implementation`) adds the root Meson graph, explicit directory input lists, the shell-step roster with serial report predecessors and final report consumers, and one fresh census step. Existing shell commands and predicates keep their route; the graph does not execute their skeleton nodes. Meson evaluates the lists into a build-directory manifest; the always-run census target reconciles that manifest with the live Git index, the shell roster and the deployed linter census on each invocation. No tracked path is excluded and the exclusion pattern matches nothing; changing either policy is refused. Declared consumers are conservative input envelopes, not proof that every command reads every listed byte. The registered tracked-corpus witness (`claim:discipline:fixture-traversal-loss-is-diagnostic`) exercises new tracked source and dotfile additions without reconfiguration, unconnected and stale declarations, widened exclusions, missing steps, duplicate declarations and report-edge defects, with positive vendor and generated-file cases and a fresh repeat. This evidence narrows the hold to step delegation, run/result adapters, complete artifact joins and command-equivalence slices; it does not admit the completed migration.
+**Amendment (Census skeleton)** · `amend:buildgraph:census-skeleton` Repository amendment: the first slice of (`dec:buildgraph:composition`) and (`gate:buildgraph:implementation`) adds the root Meson graph, explicit directory input lists, the shell-step roster with serial report predecessors and final report consumers, and one fresh census step. Existing shell commands and predicates keep their route; the graph does not execute their skeleton nodes. Meson evaluates the lists into a build-directory manifest; the always-run census target reconciles that manifest with the live Git index, the shell roster and the deployed linter census on each invocation. No tracked path is excluded and the exclusion pattern matches nothing; changing either policy is refused. Declared consumers are conservative input envelopes, not proof that every command reads every listed byte. The registered tracked-corpus witness (`claim:discipline:build-graph-census-accounts-for-tracked-inputs`) exercises new tracked source and dotfile additions without reconfiguration, unconnected and stale declarations, widened exclusions, missing steps, duplicate declarations and report-edge defects, with positive vendor and generated-file cases and a fresh repeat. This evidence narrows the hold to step delegation, run/result adapters, complete artifact joins and command-equivalence slices; it does not admit the completed migration.
 
 **Convention (Adding a tracked input)** · `conv:buildgraph:adding-files` Add a tracked file to its directory's meson.build local_inputs list in the same change, naming its source-root path, consuming step names and its generator step when applicable. Every non-root directory has its list mirrored under ci/build-inputs, so typed input and template directories, crate sources and existing package build definitions remain untouched; the root list is meson.build. The refusal names both the undeclared file and the precise list to edit; a new directory also adds its subdir call to the enclosing list. Every new Meson list declares itself with the build-graph consumer. Stage the file and list together, then run the unchanged bash ci/gate.sh entry. It refuses an unset or empty PN_MESON_BIN; the caller supplies the provisioned Meson executable, while Ninja is found on PATH and the census uses LINTER_BIN. A newly tracked file is checked even when Meson has not reconfigured, because the census reads the current index rather than a configuration-time file discovery. Untracked run products remain under .lane; generated tracked files, vendor files and tracked dotfiles receive explicit declarations rather than directory exemptions.

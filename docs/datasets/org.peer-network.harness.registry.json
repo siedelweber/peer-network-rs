@@ -3082,6 +3082,8 @@
       "budget": "pure-suite",
       "cases": [
         "ci::test_linter_entry.Conformance.test_asset_inventory",
+        "ci::test_linter_entry.Conformance.test_build_graph_census",
+        "ci::test_linter_entry.Conformance.test_build_graph_slice_assignment",
         "ci::test_linter_entry.Conformance.test_duplicate_locations",
         "ci::test_linter_entry.Conformance.test_generated_citations",
         "ci::test_linter_entry.Conformance.test_import_forms",

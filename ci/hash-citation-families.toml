@@ -434,7 +434,7 @@ establishment = "resolvable"
 reader = "public-git"
 locator = "https://github.com/rust-lang/rust/commit/4ebd258257737d5b7635c116fa7d281627a7e937"
 commit = "4ebd258257737d5b7635c116fa7d281627a7e937"
-definition = "The build policy pins this full public compiler commit; the toolchain step requires exact equality with the answering rustc commit-hash, independently of the declared channel."
+definition = "The public channel manifest https://static.rust-lang.org/dist/2026-10-16/channel-rust-nightly.toml names this full commit in [pkg.rustc].git_commit_hash for nightly-2026-10-16. The build policy pins this full public compiler commit; the toolchain step requires exact equality with the answering rustc commit-hash, independently of the declared channel."
 paths = ["docs/inputs/build-policy.toml", "docs/datasets/org.peer-network.build.policy.json", "adr/013-toolchain-and-build-profile.md", "ci/discipline.py", "ci/hash-citation-families.toml"]
 
 [[rows]]

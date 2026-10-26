@@ -2879,7 +2879,7 @@
     },
     {
       "claims": [
-        "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic"
+        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs"
       ],
       "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
       "closing_step": "Build graph slices 1 to 5",
@@ -2895,7 +2895,7 @@
     },
     {
       "claims": [
-        "ROOT::claim:discipline:fixture-traversal-loss-is-diagnostic"
+        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs"
       ],
       "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
       "closing_step": "Build graph slices 1 to 5",

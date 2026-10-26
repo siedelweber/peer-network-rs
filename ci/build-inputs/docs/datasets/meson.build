@@ -2,6 +2,7 @@
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
   ['ci/build-inputs/docs/datasets/meson.build', 'build-graph', ''],
+  ['docs/datasets/org.peer-network.buildgraph.slices.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
   ['docs/datasets/org.peer-network.api.plan.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
   ['docs/datasets/org.peer-network.build.policy.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
   ['docs/datasets/org.peer-network.design.bites.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],

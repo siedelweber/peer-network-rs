@@ -94,6 +94,8 @@
     "ci::test_host_runtime.HostRuntime.test_storage_restart": "",
     "ci::test_host_runtime.HostRuntime.test_storage_statements": "",
     "ci::test_linter_entry.Conformance.test_asset_inventory": "Claim: Removing or renaming a Rust fixture test invalidates its old citation and a misplaced derived label fails, so inventory evidence cannot survive departure or rename of its asset.",
+    "ci::test_linter_entry.Conformance.test_build_graph_census": "Claim: The Meson census and incidence checks refuse unaccounted, stale, duplicate, unconnected or excluded tracked inputs and incomplete step reports, including tracked additions without reconfiguration, while explicitly declared vendor and generated files pass.",
+    "ci::test_linter_entry.Conformance.test_build_graph_slice_assignment": "Claim: Every live gate step has exactly one delegation slice, and the record roster agrees with that set, so a missing, repeated, unknown or invalid assignment cannot hide until final migration.",
     "ci::test_linter_entry.Conformance.test_duplicate_locations": "Claim: Duplicate fixture mints fail with both physical locations in either owner, preserving the information needed to reconcile ownership rather than silently choosing one definition.",
     "ci::test_linter_entry.Conformance.test_generated_citations": "Claim: A generated Rust index resolves its citation without minting it, and a deleted target or a bare index label fails, preventing the index from sustaining its own membership.",
     "ci::test_linter_entry.Conformance.test_import_forms": "Claim: Invalid owner qualification fails and a local citation whose sole mint belongs elsewhere names the required import, so ownership cannot be repaired silently by lookup order.",
