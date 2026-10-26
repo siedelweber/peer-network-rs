@@ -229,9 +229,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw and Rescind projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eighteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the twenty successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the twenty successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation and complete-act title indexing return identical complete public results with observation disabled, default and trace; the twenty-two successful operations and four explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Complete-act title indexes revalidate every family and authorization before retaining structural identities and references. These inputs preserve parallel records and authorized removal; recognition and time compliance are not inferred. Observation compares the added success and refusal with unchanged public results across modes."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1632,6 +1632,14 @@
       "before": "",
       "after": "Claim: Tag joins the ten earlier families through shared deterministic reconstruction with complete A/T pairs and parallel classification acts. Revalidation rejects missing siblings, changed coordinates or roles after decoding while preserving unrelated indices; approval and removal failures refuse the whole result.",
       "review": "Tag witnesses cover seven Taggable constructors and the Offer exclusion, signed relevance and nonnegative confidence grids, complete paired incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares fourteen operations with twelve successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::title_inputs",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:title-inputs-require-complete-authorized-history",
+      "before": "",
+      "after": "Claim: On the scoped nineteen-family history, complete-act title indexes revalidate every projection and authorization before retaining each identity once, genesis Owner separately from ordinary Owner, and exact settlement references. Parallel identities survive; missing or substituted projections and unauthorized removals refuse the whole result. Authorized content and dependency removal leave every structural index unchanged. This is input evidence for compliant-history recognition, not a time, recognition or title verdict.",
+      "review": "Complete-act title indexes revalidate every family and authorization before retaining structural identities and references. These inputs preserve parallel records and authorized removal; recognition and time compliance are not inferred. Observation compares the added success and refusal with unchanged public results across modes."
     },
     {
       "operation": "pn-graph::formation::withdraw_projection",

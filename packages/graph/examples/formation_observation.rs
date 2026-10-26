@@ -51,12 +51,15 @@ fn main() {
     let ratify = project_complete_act(&history.acts()[17], &history, &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
+    let title = pn_graph::title::title_inputs(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
     let mut partial = graph.clone();
     let edge = partial.edge_indices().next().unwrap();
     partial.remove_edge(edge);
     let invalid = validate_formation(&partial, &history, &auth);
+    let partial_title = pn_graph::title::title_inputs(&partial, &history, &auth);
     cli_common::emit(&serde_json::json!({
+        "title": format!("{title:?}"), "partial_title": format!("{partial_title:?}"),
         "projection": format!("{projection:?}"), "graph": format!("{graph:?}"),
         "publication": format!("{publication:?}"),
         "ownership": format!("{ownership:?}"),

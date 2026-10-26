@@ -3577,6 +3577,85 @@ fn formed_cases() -> Vec<CandidateAct> {
     ]
 }
 
+/// Claim: On the scoped nineteen-family history, complete-act title indexes revalidate every projection and authorization before retaining each identity once, genesis Owner separately from ordinary Owner, and exact settlement references. Parallel identities survive; missing or substituted projections and unauthorized removals refuse the whole result. Authorized content and dependency removal leave every structural index unchanged. This is input evidence for compliant-history recognition, not a time, recognition or title verdict.
+/// (´[RECORDS-claim:acts:complete-acts-are-counted-once]´)
+/// ´claim:formation:title-inputs-require-complete-authorized-history´
+/// ´test:integration:title-inputs´
+#[test]
+fn title_inputs() {
+    use pn_graph::title::title_inputs;
+    let mut inputs = formed_cases();
+    let mut ordinary = ownership(20);
+    ordinary.legs[0].target = PublicReference::Minted(inputs[3].id.clone());
+    inputs.push(ordinary);
+    inputs.push(candidate("Affinity", 21));
+    let verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &names()).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    let expected = title_inputs(&graph, &history, &verifier).unwrap();
+    assert_eq!(expected.acts, inputs.iter().map(|act| act.id.clone()).collect());
+    assert_eq!(
+        expected.genesis,
+        std::collections::BTreeMap::from([(PublicReference::Minted(inputs[3].id.clone()), inputs[3].id.clone())])
+    );
+    assert_eq!(
+        expected.bids,
+        std::collections::BTreeMap::from([(inputs[7].id.clone(), PublicReference::Minted(inputs[3].id.clone()))])
+    );
+    assert_eq!(expected.settlements.len(), 2);
+    for input in &inputs[17..19] {
+        assert_eq!(expected.settlements.get(&input.id), input.body.settlement.as_ref());
+    }
+    for edge in graph.edge_indices() {
+        let mut changed = graph.clone();
+        changed.remove_edge(edge);
+        assert_eq!(
+            title_inputs(&changed, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+        let mut changed = graph.clone();
+        changed[edge] = graph[petgraph::graph::EdgeIndex::new((edge.index() + 1) % graph.edge_count())].clone();
+        assert_eq!(
+            title_inputs(&changed, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    for index in 0..inputs.len() {
+        let mut denied = Verifier {
+            acts: inputs.clone(),
+            removals: false,
+        };
+        denied.acts.remove(index);
+        assert_eq!(title_inputs(&graph, &history, &denied), Err(RegistrationError::Unapproved));
+        for dependency in [false, true] {
+            let mut removed = inputs.clone();
+            if dependency {
+                removed[index].projections.dependency = DependencyProjection::Tombstoned((2, 1));
+            } else {
+                removed[index].projections.content = Removal::Tombstoned((2, 1));
+            }
+            let removed_history = validate_history(&removed, &names()).unwrap();
+            let mut authorized = Verifier {
+                acts: removed,
+                removals: false,
+            };
+            assert_eq!(
+                title_inputs(&graph, &removed_history, &authorized),
+                Err(RegistrationError::UnauthorizedRemoval)
+            );
+            authorized.removals = true;
+            assert_eq!(title_inputs(&graph, &removed_history, &authorized).unwrap(), expected);
+        }
+    }
+    let mut reversed = inputs;
+    reversed.reverse();
+    let history = validate_history(&reversed, &names()).unwrap();
+    assert_eq!(title_inputs(&graph, &history, &verifier).unwrap(), expected);
+}
+
 /// Claim: All nineteen authored families form together as twenty-seven projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; typed settlement metadata resolves to completely formed and authorized Bid and Accept records; geometry and title remain outside this scope.
 /// ´claim:formation:implemented-families-share-complete-authorization´
 /// ´test:integration:formed-authorization-conformance´

@@ -6642,6 +6642,16 @@
         "boundary": "pn-records::packages/records/src/lib.rs::validate_history",
         "class_decision": "public-records"
       }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "item": "title::title_inputs",
+      "owner": "GRAPH",
+      "signature": "fn title_inputs (graph : & FormationGraph , history : & ValidatedHistory , verifier : & impl RegistrationVerifier ,) -> Result < TitleInputs , RegistrationError >",
+      "claim": "ROOT::alg:design:formation",
+      "shape": "shape-graph-affinity",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -12769,6 +12779,17 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "The pure distinct-set projection retains public asserted and typed settlement identities without validation, mutation or an additional act-level invocation. Validation and assembly callers retain their existing operation accounting."
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/title.rs::title::title_inputs",
+      "body": "{ let result = validate_formation (graph , history , verifier) . map (| () | { let mut inputs = TitleInputs { acts : BTreeSet :: new () , genesis : BTreeMap :: new () , bids : BTreeMap :: new () , settlements : BTreeMap :: new () , } ; for act in history . acts () { inputs . acts . insert (act . id () . clone ()) ; if let Some (references) = & act . body () . settlement { inputs . settlements . insert (act . id () . clone () , references . clone ()) ; } for leg in act . legs () { if act . id () . family == \"Owner\" && leg . target () == & PublicReference :: Minted (act . id () . clone ()) { inputs . genesis . insert (leg . target () . clone () , act . id () . clone ()) ; } if act . id () . family == \"Bid\" && leg . id () . role == pn_records :: Role :: A { inputs . bids . insert (act . id () . clone () , leg . target () . clone ()) ; } } } inputs }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "class_decision": "graph-affinity",
+      "item_premise": "Complete public graph and history are revalidated before structural title indexes are derived. Trace retains inputs, verifier and complete results or typed refusal. Nested formation and indexing each retain their own inclusive accounting. Observation changes no result and supplies no title or time-compliance verdict.",
+      "assessments": {
+        "full_recording": "graph-affinity-full_recording",
+        "secret_flow": "graph-affinity-secret_flow",
+        "exposure_consumers": "graph-affinity-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -15516,6 +15537,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Structural derives retain settlement act identities, exact coordinates and finalization metadata. The identity family is fixed by the type; no digest or canonical byte profile is introduced. Diagnostic serde requires complete history-based revalidation before binding use."
+    },
+    {
+      "item": "title::TitleInputs",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Structural clone, equality and Debug retain public identity indexes. No serialization, authentication, time or title verdict is generated."
     }
   ],
   "reviewed_types": [
@@ -17314,6 +17344,12 @@
       "syntax": "# [doc = \" Complete Ratify binary projection and non-incidence settlement metadata.\"] # [doc = \" (´def:formation:settlement´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct RatifyProjection { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , # [doc = \" Retained published placement.\"] pub position : Position , # [doc = \" Retained attached time, without a new recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Bid that opened the Offer; metadata adds no Offer incidence.\"] pub settles : BidIdentity , # [doc = \" Exact Accept confirming the same Bid.\"] pub accepts : AcceptIdentity , }"
     },
     {
+      "item": "title::TitleInputs",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [doc = \" Structural indexes derived after whole-history formation revalidation.\"] # [doc = \" These public values are evidence outputs, not a reusable validation token.\"] # [doc = \" (´def:formation:title-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleInputs { # [doc = \" Every complete authored identity, including parallel records.\"] pub acts : BTreeSet < ActId > , # [doc = \" Self-minting Item terms and their genesis Owner acts.\"] pub genesis : BTreeMap < PublicReference , ActId > , # [doc = \" Each Bid identity and the Item named by its A-leg.\"] pub bids : BTreeMap < ActId , PublicReference > , # [doc = \" Accept and Ratify identities with their exact structural references.\"] pub settlements : BTreeMap < ActId , SettlementReferences > , }"
+    },
+    {
       "item": "PartitionError",
       "package": "pn-graph",
       "path": "packages/graph/src/lib.rs",
@@ -17801,7 +17837,8 @@
         "explicit": [
           "pn-graph::packages/graph/src/formation.rs::formation::project_complete_act",
           "pn-graph::packages/graph/src/formation.rs::formation::reconstruct",
-          "pn-graph::packages/graph/src/formation.rs::formation::validate_formation"
+          "pn-graph::packages/graph/src/formation.rs::formation::validate_formation",
+          "pn-graph::packages/graph/src/title.rs::title::title_inputs"
         ]
       },
       "status": "reviewer-confirmed",

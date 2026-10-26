@@ -9,6 +9,10 @@ pub mod registration;
 /// (´def:formation:affinity´)
 pub mod formation;
 
+/// Complete-act inputs for settlement recognition.
+/// (´def:formation:title-inputs´)
+pub mod title;
+
 use std::collections::BTreeSet;
 
 use petgraph::graph::UnGraph;
