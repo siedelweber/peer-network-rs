@@ -309,8 +309,12 @@ impl RegistrationVerifier for Verifier {
                 && &input.body == act.body()
                 && input.authentication_evidence == act.authentication_evidence()
                 && input.protocol_references == act.protocol_references()
-                && input.legs.iter().zip(act.legs()).all(|(left, right)| {
-                    &left.id == right.id() && &left.source == right.source() && &left.target == right.target()
+                && input.legs.len() == act.legs().len()
+                && act.legs().iter().all(|right| {
+                    input
+                        .legs
+                        .iter()
+                        .any(|left| &left.id == right.id() && &left.source == right.source() && &left.target == right.target())
                 })
         })
     }
@@ -328,6 +332,10 @@ fn project(input: &CandidateAct) -> Result<pn_graph::formation::CompleteProjecti
             removals: false,
         },
     )
+    .map(|mut projections| {
+        assert_eq!(projections.len(), 1);
+        projections.remove(0)
+    })
 }
 
 /// Claim: Affinity requires the author's Actor source, an exact public Type name and both signed rational coordinates within the unit interval; malformed units, vintage, missing or extra coordinates and wrong endpoint constructors refuse before projection. A finite independent numerator/denominator grid checks the bounded carrier without claiming real-valued geometry.
@@ -678,4 +686,299 @@ fn owner_reconstruction() {
         reconstruct(&unsupported, &verifier).unwrap_err(),
         RegistrationError::UnsupportedFamily
     );
+}
+
+fn participation(sequence: u64, origin: u64, destination: u64) -> CandidateAct {
+    let mut act = candidate("Participant", sequence);
+    let chat = |sequence| {
+        PublicReference::Minted(ActId {
+            sequence,
+            ..act.id.clone()
+        })
+    };
+    act.body.layout = Layout::Paired;
+    act.body.quantities = [
+        ("interactivity.numerator", -1),
+        ("interactivity.denominator", 2),
+        ("responsibility.numerator", 2),
+        ("responsibility.denominator", 3),
+        ("continuity.numerator", 1),
+        ("continuity.denominator", 2),
+    ]
+    .into_iter()
+    .map(|(name, value)| {
+        (
+            name.into(),
+            Quantity {
+                value,
+                unit: "one".into(),
+                vintage: 0,
+            },
+        )
+    })
+    .collect();
+    act.legs[0].id.role = Role::A;
+    act.legs[0].target = chat(origin);
+    act.legs.push(CandidateLeg {
+        id: EdgeId {
+            act: act.id.clone(),
+            role: Role::T,
+        },
+        source: chat(origin),
+        target: chat(destination),
+        removal: None,
+    });
+    act
+}
+
+fn bundle(input: &CandidateAct) -> Result<Vec<pn_graph::formation::CompleteProjection>, RegistrationError> {
+    let history = validate_history(std::slice::from_ref(input), &names()).unwrap();
+    project_complete_act(
+        &history.acts()[0],
+        &Verifier {
+            acts: vec![input.clone()],
+            removals: false,
+        },
+    )
+}
+
+/// Claim: Participant forms one ordered A/T bundle for found, join, found-successor and move, requiring Actor-to-Chat-to-Chat incidence, signed interactivity and responsibility and nonnegative continuity. Both projections retain one act identity, attached time and full parameter tuple; malformed coordinates or endpoints refuse the whole bundle without membership or ordering verdicts.
+/// # Panics
+/// Panics only if Participant dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:participant-requires-complete-typed-incidence´
+/// ´test:integration:participant-projection´
+#[test]
+fn participant_projection() {
+    use pn_graph::formation::ParticipantRole;
+    for (origin, destination) in [(3, 3), (1, 1), (1, 3), (1, 2)] {
+        let input = participation(3, origin, destination);
+        let result = bundle(&input).unwrap();
+        assert_eq!(result.len(), 2);
+        assert_eq!(result[0].0, Node::Grounded(GroundedNode::Actor("a".into())));
+        assert_eq!(
+            result[0].1,
+            Node::Chat {
+                author: "a".into(),
+                sequence: origin
+            }
+        );
+        assert_eq!(result[1].0, result[0].1);
+        assert_eq!(
+            result[1].1,
+            Node::Chat {
+                author: "a".into(),
+                sequence: destination
+            }
+        );
+        let (Projection::Participant(a), Projection::Participant(t)) = (&result[0].2, &result[1].2) else {
+            panic!("wrong family")
+        };
+        assert_eq!(a.role, ParticipantRole::A);
+        assert_eq!(t.role, ParticipantRole::T);
+        assert_eq!((a.sequence, a.logical_time, a.position), (3, 3, (1, 3)));
+        let mut expected = a.clone();
+        expected.role = ParticipantRole::T;
+        assert_eq!(&expected, t);
+    }
+    participant_coordinates();
+    participant_refusals();
+    participant_constructor_refusals();
+}
+
+/// Claim: Shared reconstruction retains both Participant projections among binary families with deterministic nodes and A/T edge indices, parallel acts and one retained time per pair. Revalidation rejects a missing sibling or changed tuple, approval and removal refusals remain whole-result, and diagnostic decoding grants no validation by itself.
+/// # Panics
+/// Panics only if the fixture's Participant edge has another family, which correct reconstruction cannot arrange.
+/// ´claim:formation:participant-shares-whole-history-revalidation´
+/// ´test:integration:participant-reconstruction´
+#[test]
+fn participant_reconstruction() {
+    let mut inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        participation(6, 5, 5),
+    ];
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &names()).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((graph.node_count(), graph.edge_count()), (6, 8));
+    let endpoints: Vec<_> = graph
+        .edge_indices()
+        .map(|i| graph.edge_endpoints(i).map(|(a, b)| (a.index(), b.index())).unwrap())
+        .collect();
+    assert_eq!(
+        endpoints,
+        vec![(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (5, 5), (0, 5), (5, 5)]
+    );
+    inputs.reverse();
+    for input in &mut inputs {
+        input.legs.reverse();
+    }
+    let reordered = validate_history(&inputs, &names()).unwrap();
+    assert_eq!(validate_formation(&graph, &reordered, &verifier), Ok(()));
+    participant_cache(&graph, &history, &verifier);
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts = history
+        .acts()
+        .iter()
+        .map(|act| inputs.iter().find(|input| &input.id == act.id()).unwrap().clone())
+        .collect();
+    // Restore role order for the fixture verifier, which compares complete legs.
+    for input in &mut verifier.acts {
+        input.legs.sort_by_key(|leg| leg.id.role);
+    }
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &names()).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    inputs[0].id.family = "Review".into();
+    let changed_id = inputs[0].id.clone();
+    for leg in &mut inputs[0].legs {
+        leg.id.act = changed_id.clone();
+    }
+    let unsupported = validate_history(&inputs, &names()).unwrap();
+    assert_eq!(
+        reconstruct(&unsupported, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
+    );
+}
+
+fn participant_coordinates() {
+    let input = participation(3, 1, 2);
+    for pair in [0, 2, 4] {
+        for denominator in 1..=8 {
+            for numerator in -denominator - 1..=denominator + 1 {
+                let mut changed = input.clone();
+                changed.body.quantities[pair].1.value = numerator;
+                changed.body.quantities[pair + 1].1.value = denominator;
+                let lower = if pair == 4 { 0 } else { -denominator };
+                assert_eq!(bundle(&changed).is_ok(), (lower..=denominator).contains(&numerator));
+            }
+        }
+    }
+}
+
+fn participant_refusals() {
+    let input = participation(3, 1, 2);
+    for index in 0..6 {
+        let mut changed = input.clone();
+        changed.body.quantities.remove(index);
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.unit = "money".into();
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.vintage = 1;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    for index in [1, 3, 5] {
+        for value in [0, -1] {
+            let mut changed = input.clone();
+            changed.body.quantities[index].1.value = value;
+            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        }
+    }
+    for endpoint in 0..4 {
+        let mut changed = input.clone();
+        let replacement = named("name", "topic");
+        match endpoint {
+            0 => changed.legs[0].source = replacement,
+            1 => changed.legs[0].target = replacement,
+            2 => changed.legs[1].source = replacement,
+            _ => changed.legs[1].target = replacement,
+        }
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    let mut changed = input.clone();
+    changed.legs[1].source = PublicReference::Minted(ActId {
+        sequence: 99,
+        ..input.id.clone()
+    });
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.protocol_references = vec![named("name", "topic")];
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    for role in [0, 1] {
+        let mut partial = input.clone();
+        partial.legs.remove(role);
+        assert!(validate_history(&[partial], &names()).is_err());
+    }
+}
+
+fn participant_cache(graph: &pn_graph::formation::FormationGraph, history: &pn_records::ValidatedHistory, verifier: &Verifier) {
+    let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
+    assert_eq!(validate_formation(&decoded, history, verifier), Ok(()));
+    for index in [4, 5] {
+        let mut partial = graph.clone();
+        partial.remove_edge(petgraph::graph::EdgeIndex::new(index));
+        assert_eq!(
+            partial[petgraph::graph::EdgeIndex::new(7)],
+            graph[petgraph::graph::EdgeIndex::new(7)]
+        );
+        assert_eq!(
+            validate_formation(&partial, history, verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    let mut changed = graph.clone();
+    let Projection::Participant(weight) = &mut changed[petgraph::graph::EdgeIndex::new(5)] else {
+        panic!("wrong family")
+    };
+    weight.logical_time += 1;
+    assert_eq!(
+        validate_formation(&changed, history, verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    let mut changed = graph.clone();
+    let Projection::Participant(weight) = &mut changed[petgraph::graph::EdgeIndex::new(5)] else {
+        panic!("wrong family")
+    };
+    weight.continuity.numerator = 0;
+    assert_eq!(
+        validate_formation(&changed, history, verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+}
+
+fn participant_constructor_refusals() {
+    let input = participation(3, 1, 2);
+    for family in ["Owner", "Publish"] {
+        let mut changed = input.clone();
+        let other = PublicReference::Minted(ActId {
+            family: family.into(),
+            ..input.id.clone()
+        });
+        changed.legs[0].target = other.clone();
+        changed.legs[1].source = other.clone();
+        changed.legs[1].target = other;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    let mut changed = input.clone();
+    changed.legs[0].source = named("addr", "b");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.body.layout = Layout::Binary;
+    changed.legs.truncate(1);
+    changed.legs[0].id.role = Role::Binary;
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input;
+    changed.body.quantities.push((
+        "extra".into(),
+        Quantity {
+            value: 1,
+            unit: "one".into(),
+            vintage: 0,
+        },
+    ));
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
 }

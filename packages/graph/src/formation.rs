@@ -1,4 +1,4 @@
-//! Scoped binary formation; unsupported families refuse as whole acts.
+//! Scoped complete-act formation; unsupported families refuse as whole acts.
 //! (´def:formation:affinity´)
 
 use petgraph::stable_graph::StableDiGraph;
@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::registration::{self, GroundedNode, RegistrationError, RegistrationProjection, RegistrationVerifier};
 
-/// Disjoint grounded, public-name, Content and Item mint constructors in this scope.
+/// Disjoint grounded, public-name and minted node constructors in this scope.
 /// Type names are exact strings; no normalization or new identity is invented.
 /// (´def:formation:affinity´)
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -25,6 +25,13 @@ pub enum Node {
     },
     /// Item minted by a Owner act; the family is fixed by this variant.
     Item {
+        /// Genesis act author, never a host attachment.
+        author: String,
+        /// Genesis act's author-local sequence.
+        sequence: u64,
+    },
+    /// Chat minted by a Participant act; the family is fixed by this variant.
+    Chat {
         /// Genesis act author, never a host attachment.
         author: String,
         /// Genesis act's author-local sequence.
@@ -102,6 +109,41 @@ pub struct OwnerProjection {
     pub licenses: Vec<String>,
 }
 
+/// Constructor role of a Participant edge, derived from one complete act.
+/// (´def:formation:participant´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ParticipantRole {
+    /// Initiating Actor to origin Chat.
+    A,
+    /// Origin Chat to destination Chat.
+    T,
+}
+
+/// Complete Participant tuple shared by its two role-addressed projections.
+/// (´def:formation:participant´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ParticipantProjection {
+    /// Initiating author shared by both legs.
+    pub author: String,
+    /// Author-local act sequence shared by both legs.
+    pub sequence: u64,
+    /// A or T constructor role, never a separately authored identity.
+    pub role: ParticipantRole,
+    /// Retained published placement of the whole act.
+    pub position: Position,
+    /// One retained time shared by both projections.
+    pub logical_time: u64,
+    /// Signed A-leg directional coordinate.
+    pub interactivity: Coordinate,
+    /// Signed A-leg intensity coordinate.
+    pub responsibility: Coordinate,
+    /// Nonnegative T-leg directional coordinate; intensity is fixed at one.
+    pub continuity: Coordinate,
+    /// Immutable public license names, without policy interpretation.
+    pub licenses: Vec<String>,
+}
+
 /// Distinct supported families, preserving each complete authored projection.
 /// (´def:formation:affinity´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -114,17 +156,19 @@ pub enum Projection {
     Publish(PublishProjection),
     /// Owner projection; structural formation confers no title.
     Owner(OwnerProjection),
+    /// Both Participant legs retain the same full tuple and act metadata.
+    Participant(ParticipantProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
 /// (´def:formation:affinity´)
 pub type FormationGraph = StableDiGraph<Node, Projection>;
 
-/// A complete binary projection; no partial family witness is returned.
+/// One typed edge projection; complete acts return the entire ordered vector.
 /// (´def:formation:affinity´)
 pub type CompleteProjection = (Node, Node, Projection);
 
-/// Project a supported binary family with complete approval and removal checks.
+/// Project a supported family with complete approval and removal checks.
 /// The existing verifier is the explicit public authentication boundary for all.
 /// (´[ROOT-alg:design:formation]´)
 ///
@@ -144,7 +188,7 @@ pub type CompleteProjection = (Node, Node, Projection);
 pub fn project_complete_act(
     act: &ValidatedAct,
     verifier: &impl RegistrationVerifier,
-) -> Result<CompleteProjection, RegistrationError> {
+) -> Result<Vec<CompleteProjection>, RegistrationError> {
     let result = project(act, verifier).and_then(|projection| {
         registration::authorize_removals(&[act], verifier)?;
         Ok(projection)
@@ -212,7 +256,15 @@ pub fn validate_formation(
     result
 }
 
-fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    if act.id().family == "Participant" {
+        participant(act, verifier)
+    } else {
+        binary(act, verifier).map(|projection| vec![projection])
+    }
+}
+
+fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
     if act.id().family == "Registration" {
         return registration::project(act, verifier)
             .map(|(source, target, edge)| (Node::Grounded(source), Node::Grounded(target), Projection::Registration(edge)));
@@ -283,14 +335,7 @@ fn publish(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
         return Err(RegistrationError::Incidence);
     }
     let attachment = coordinate(act, "attachment.numerator", "attachment.denominator")?;
-    let licenses = act
-        .protocol_references()
-        .iter()
-        .map(|reference| match reference {
-            PublicReference::Named { namespace, name } if namespace == "license" => Ok(name.clone()),
-            _ => Err(RegistrationError::Incidence),
-        })
-        .collect::<Result<Vec<_>, _>>()?;
+    let licenses = licenses(act)?;
     if !verifier.approval(act) {
         return Err(RegistrationError::Unapproved);
     }
@@ -331,14 +376,7 @@ fn owner(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
         return Err(RegistrationError::Incidence);
     }
     let attachment = coordinate(act, "attachment.numerator", "attachment.denominator")?;
-    let licenses = act
-        .protocol_references()
-        .iter()
-        .map(|reference| match reference {
-            PublicReference::Named { namespace, name } if namespace == "license" => Ok(name.clone()),
-            _ => Err(RegistrationError::Incidence),
-        })
-        .collect::<Result<Vec<_>, _>>()?;
+    let licenses = licenses(act)?;
     if !verifier.approval(act) {
         return Err(RegistrationError::Unapproved);
     }
@@ -378,4 +416,81 @@ fn coordinate(act: &ValidatedAct, numerator: &str, denominator: &str) -> Result<
         return Err(RegistrationError::Incidence);
     }
     Ok(result)
+}
+
+fn participant(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    let [first, second] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let (a, t) = match (first.id().role, second.id().role) {
+        (Role::A, Role::T) => (first, second),
+        (Role::T, Role::A) => (second, first),
+        _ => return Err(RegistrationError::Incidence),
+    };
+    if act.body().layout != Layout::Paired
+        || a.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || a.target() != t.source()
+        || act.body().quantities.len() != 6
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let origin = chat(a.target())?;
+    let destination = chat(t.target())?;
+    let interactivity = coordinate(act, "interactivity.numerator", "interactivity.denominator")?;
+    let responsibility = coordinate(act, "responsibility.numerator", "responsibility.denominator")?;
+    let continuity = coordinate(act, "continuity.numerator", "continuity.denominator")?;
+    if continuity.numerator < 0 {
+        return Err(RegistrationError::Incidence);
+    }
+    let licenses = licenses(act)?;
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    let a_weight = ParticipantProjection {
+        author: act.id().author.clone(),
+        sequence: act.id().sequence,
+        role: ParticipantRole::A,
+        position: act.position(),
+        logical_time: act.logical_time(),
+        interactivity,
+        responsibility,
+        continuity,
+        licenses,
+    };
+    let t_weight = ParticipantProjection {
+        role: ParticipantRole::T,
+        ..a_weight.clone()
+    };
+    Ok(vec![
+        (
+            Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+            origin.clone(),
+            Projection::Participant(a_weight),
+        ),
+        (origin, destination, Projection::Participant(t_weight)),
+    ])
+}
+
+fn chat(reference: &PublicReference) -> Result<Node, RegistrationError> {
+    match reference {
+        PublicReference::Minted(genesis) if genesis.family == "Participant" => Ok(Node::Chat {
+            author: genesis.author.clone(),
+            sequence: genesis.sequence,
+        }),
+        _ => Err(RegistrationError::Incidence),
+    }
+}
+
+fn licenses(act: &ValidatedAct) -> Result<Vec<String>, RegistrationError> {
+    act.protocol_references()
+        .iter()
+        .map(|reference| match reference {
+            PublicReference::Named { namespace, name } if namespace == "license" => Ok(name.clone()),
+            _ => Err(RegistrationError::Incidence),
+        })
+        .collect()
 }

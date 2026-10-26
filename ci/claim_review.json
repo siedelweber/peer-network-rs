@@ -189,9 +189,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity and Publish projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the four successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish and Owner projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the five successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Read Owner typed Item and attachment refusals, qualifier retention, genesis and ordinary targets, mixed reconstruction, approval and removal refusal, structural cache mutation and diagnostic decoding. The process case compares complete outcomes across observation modes. This is scoped structural formation through the existing verifier, not title, geometry, cryptographic realization or full family conformance."
+      "before": "Claim: Affinity, Publish and Owner projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the five successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner and Participant projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the six successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Read the four Participant incidence cases, separate signed and nonnegative coordinate grids, shared full tuple and metadata, missing-sibling refusal and mixed five-family reconstruction. Both binary and paired operations use the same whole-result authorization and typed cache comparison. Observation modes retain complete paired outcomes. Membership, standing, title, geometry and both ordering questions remain outside this scoped evidence."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1312,6 +1312,22 @@
       "before": "",
       "after": "Claim: Owner genesis and subsequent ownership share one Item identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
       "review": "Read Owner typed Item and attachment refusals, qualifier retention, genesis and ordinary targets, mixed reconstruction, approval and removal refusal, structural cache mutation and diagnostic decoding. The process case compares complete outcomes across observation modes. This is scoped structural formation through the existing verifier, not title, geometry, cryptographic realization or full family conformance."
+    },
+    {
+      "operation": "pn-graph::formation::participant_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:participant-requires-complete-typed-incidence",
+      "before": "",
+      "after": "Claim: Participant forms one ordered A/T bundle for found, join, found-successor and move, requiring Actor-to-Chat-to-Chat incidence, signed interactivity and responsibility and nonnegative continuity. Both projections retain one act identity, attached time and full parameter tuple; malformed coordinates or endpoints refuse the whole bundle without membership or ordering verdicts.",
+      "review": "Read the four Participant incidence cases, separate signed and nonnegative coordinate grids, shared full tuple and metadata, missing-sibling refusal and mixed five-family reconstruction. Both binary and paired operations use the same whole-result authorization and typed cache comparison. Observation modes retain complete paired outcomes. Membership, standing, title, geometry and both ordering questions remain outside this scoped evidence."
+    },
+    {
+      "operation": "pn-graph::formation::participant_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:participant-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: Shared reconstruction retains both Participant projections among binary families with deterministic nodes and A/T edge indices, parallel acts and one retained time per pair. Revalidation rejects a missing sibling or changed tuple, approval and removal refusals remain whole-result, and diagnostic decoding grants no validation by itself.",
+      "review": "Read the four Participant incidence cases, separate signed and nonnegative coordinate grids, shared full tuple and metadata, missing-sibling refusal and mixed five-family reconstruction. Both binary and paired operations use the same whole-result authorization and typed cache comparison. Observation modes retain complete paired outcomes. Membership, standing, title, geometry and both ordering questions remain outside this scoped evidence."
     },
     {
       "operation": "pn-graph::formation::publish_projection",

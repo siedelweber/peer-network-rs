@@ -240,7 +240,9 @@ pub(super) fn authorize_removals(acts: &[&ValidatedAct], verifier: &impl Registr
 }
 
 fn reconstruct(history: &ValidatedHistory, verifier: &impl RegistrationVerifier) -> Result<RegistrationGraph, RegistrationError> {
-    reconstruct_with(history, verifier, |act| project(act, verifier))
+    reconstruct_with(history, verifier, |act| {
+        project(act, verifier).map(|projection| vec![projection])
+    })
 }
 
 pub(super) fn compare_graph<N: PartialEq, E: PartialEq>(
@@ -266,7 +268,7 @@ pub(super) fn compare_graph<N: PartialEq, E: PartialEq>(
 pub(super) fn reconstruct_with<N: Ord + Clone, E>(
     history: &ValidatedHistory,
     verifier: &impl RegistrationVerifier,
-    project: impl Fn(&ValidatedAct) -> Result<(N, N, E), RegistrationError>,
+    project: impl Fn(&ValidatedAct) -> Result<Vec<(N, N, E)>, RegistrationError>,
 ) -> Result<StableDiGraph<N, E>, RegistrationError> {
     let mut acts: Vec<_> = history.acts().iter().collect();
     acts.sort_by_key(|act| (act.position(), act.id()));
@@ -276,21 +278,22 @@ pub(super) fn reconstruct_with<N: Ord + Clone, E>(
     let mut graph = StableDiGraph::new();
     let mut nodes = BTreeMap::new();
     for act in &acts {
-        let (source, target, projection) = project(act)?;
-        let mut indices = Vec::new();
-        for node in [source, target] {
-            let index = if let Some(index) = nodes.get(&node) {
-                *index
-            } else {
-                let index = graph.try_add_node(node.clone()).map_err(|_| RegistrationError::Capacity)?;
-                nodes.insert(node, index);
-                index
-            };
-            indices.push(index);
+        let projections = project(act)?;
+        for (source, target, _) in &projections {
+            for node in [source, target] {
+                if let std::collections::btree_map::Entry::Vacant(entry) = nodes.entry(node.clone()) {
+                    let index = graph.try_add_node(node.clone()).map_err(|_| RegistrationError::Capacity)?;
+                    entry.insert(index);
+                }
+            }
         }
-        graph
-            .try_add_edge(indices[0], indices[1], projection)
-            .map_err(|_| RegistrationError::Capacity)?;
+        for (source, target, projection) in projections {
+            let source = *nodes.get(&source).ok_or(RegistrationError::Incidence)?;
+            let target = *nodes.get(&target).ok_or(RegistrationError::Incidence)?;
+            graph
+                .try_add_edge(source, target, projection)
+                .map_err(|_| RegistrationError::Capacity)?;
+        }
     }
     authorize_removals(&acts, verifier)?;
     Ok(graph)
