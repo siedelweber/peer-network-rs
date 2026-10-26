@@ -229,8 +229,8 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite and Withdraw projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the seventeen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw and Rescind projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eighteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw and Rescind projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eighteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the twenty successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
       "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
     {
@@ -1365,16 +1365,16 @@
       "operation": "pn-graph::formation::formed_authorization_conformance",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:implemented-families-share-complete-authorization",
-      "before": "",
-      "after": "Claim: All seventeen implemented families form together as twenty-five projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; settlement references, geometry and title remain outside this scope.",
+      "before": "Claim: All seventeen implemented families form together as twenty-five projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; settlement references, geometry and title remain outside this scope.",
+      "after": "Claim: All nineteen authored families form together as twenty-seven projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; typed settlement metadata resolves to completely formed and authorized Bid and Accept records; geometry and title remain outside this scope.",
       "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
     {
       "operation": "pn-graph::formation::formed_reference_conformance",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:formed-families-separate-protocol-resolution-from-incidence",
-      "before": "Claim: Across the sixteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
-      "after": "Claim: Across the seventeen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
+      "before": "Claim: Across the seventeen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
+      "after": "Claim: Across all nineteen formed families, missing extra act and edge protocol references refuse at records resolution, while resolved extra act, edge and supplied-name references refuse at formation because the blocks define no flat protocol-reference slots; Accept and Ratify carry their required references in the typed structural field. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
       "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
     {
@@ -1576,6 +1576,38 @@
       "before": "",
       "after": "Claim: Send shares whole-history reconstruction with the six earlier families, retaining deterministic A/T indices and parallel ordinary acts. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.",
       "review": "Send witnesses cover complete Chat-to-Message incidence, signed importance, shared A/T metadata, whole-history authorization and typed revalidation alongside the six earlier families. Observation compares complete outputs and ten calls with eight successes and two refusals across disabled, default and trace. No membership, anchor, license interpretation, geometry or title verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::settlement_context",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:settlement-targets-require-complete-authorized-acts",
+      "before": "",
+      "after": "Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced Bid and Accept projections, including their permitted removals. Malformed referenced coordinates, withheld approval or removal authority refuse even when projecting only the dependent act; records still refuses dangling, mistyped and different-Bid targets before graph formation.",
+      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
+    },
+    {
+      "operation": "pn-graph::formation::settlement_partition",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:membership:settlement-parents-join-complete-act-blocks",
+      "before": "",
+      "after": "Claim: In the complete nineteen-family fixture, settlement metadata alone joins Bid, Accept and Ratify into one whole-act dependency block while the other sixteen acts stay separate. Explicit repetition of these targets changes neither the partition nor closure membership, and the Bid retains both co-legs.",
+      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
+    },
+    {
+      "operation": "pn-graph::formation::settlement_projections",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:settlement-requires-complete-typed-actor-incidence",
+      "before": "",
+      "after": "Claim: Accept and Ratify form only complete Actor-to-Actor projections with both exact signed comfort and equity bounded independently, author-fixed sources and the settlement partner named by their Bid and exact Accept. Their metadata introduces no Offer incidence; wrong endpoint constructors, wrong partners and incomplete coordinate carriers refuse without a title or recognition verdict.",
+      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
+    },
+    {
+      "operation": "pn-graph::formation::settlement_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:settlement-reconstruction-retains-exact-metadata",
+      "before": "",
+      "after": "Claim: Parallel Accept and Ratify acts retain distinct complete metadata and stable reconstruction indices through reversed input and diagnostic decoding. Revalidation rejects a changed Bid, exact Accept or structurally changed coordinate, and candidate admission refuses settlement predecessors placed at or after their children within a batch or across epoch cuts.",
+      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
     {
       "operation": "pn-graph::formation::tag_projection",

@@ -31,22 +31,24 @@ fn main() {
         .collect();
     let history = pn_records::validate_history(&formation_inputs(&names), &names).unwrap();
     let auth = FixtureApproval(true);
-    let projection = project_complete_act(&history.acts()[0], &auth);
-    let publication = project_complete_act(&history.acts()[1], &auth);
-    let ownership = project_complete_act(&history.acts()[2], &auth);
-    let participant = project_complete_act(&history.acts()[3], &auth);
-    let review = project_complete_act(&history.acts()[4], &auth);
-    let send = project_complete_act(&history.acts()[5], &auth);
-    let bid = project_complete_act(&history.acts()[6], &auth);
-    let opinion = project_complete_act(&history.acts()[7], &auth);
-    let join_request = project_complete_act(&history.acts()[8], &auth);
-    let tag = project_complete_act(&history.acts()[9], &auth);
-    let leave = project_complete_act(&history.acts()[10], &auth);
-    let reference = project_complete_act(&history.acts()[11], &auth);
-    let invitation = project_complete_act(&history.acts()[12], &auth);
-    let deinvite = project_complete_act(&history.acts()[13], &auth);
-    let withdraw = project_complete_act(&history.acts()[14], &auth);
-    let rescind = project_complete_act(&history.acts()[15], &auth);
+    let projection = project_complete_act(&history.acts()[0], &history, &auth);
+    let publication = project_complete_act(&history.acts()[1], &history, &auth);
+    let ownership = project_complete_act(&history.acts()[2], &history, &auth);
+    let participant = project_complete_act(&history.acts()[3], &history, &auth);
+    let review = project_complete_act(&history.acts()[4], &history, &auth);
+    let send = project_complete_act(&history.acts()[5], &history, &auth);
+    let bid = project_complete_act(&history.acts()[6], &history, &auth);
+    let opinion = project_complete_act(&history.acts()[7], &history, &auth);
+    let join_request = project_complete_act(&history.acts()[8], &history, &auth);
+    let tag = project_complete_act(&history.acts()[9], &history, &auth);
+    let leave = project_complete_act(&history.acts()[10], &history, &auth);
+    let reference = project_complete_act(&history.acts()[11], &history, &auth);
+    let invitation = project_complete_act(&history.acts()[12], &history, &auth);
+    let deinvite = project_complete_act(&history.acts()[13], &history, &auth);
+    let withdraw = project_complete_act(&history.acts()[14], &history, &auth);
+    let rescind = project_complete_act(&history.acts()[15], &history, &auth);
+    let accept = project_complete_act(&history.acts()[16], &history, &auth);
+    let ratify = project_complete_act(&history.acts()[17], &history, &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -71,6 +73,8 @@ fn main() {
         "deinvite": format!("{deinvite:?}"),
         "withdraw": format!("{withdraw:?}"),
         "rescind": format!("{rescind:?}"),
+        "accept": format!("{accept:?}"),
+        "ratify": format!("{ratify:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -376,6 +380,8 @@ fn formation_inputs(names: &[PublicReference]) -> Vec<CandidateAct> {
     let opinion = opinion(act.clone());
     let join_request = join_request(act.clone(), participant.legs[0].target.clone());
     let leave = leaving(join_request.clone());
+    let accept = settlement(act.clone(), 17, &bid, None);
+    let ratify = settlement(act.clone(), 18, &bid, Some(&accept));
     vec![
         act,
         publication,
@@ -393,6 +399,8 @@ fn formation_inputs(names: &[PublicReference]) -> Vec<CandidateAct> {
         deinvite,
         withdraw,
         rescind,
+        accept,
+        ratify,
     ]
 }
 
@@ -450,5 +458,30 @@ fn rescinding(mut input: CandidateAct) -> CandidateAct {
     input.legs[0].id.act = input.id.clone();
     input.authoritative_position = 16;
     input.logical_time = 16;
+    input
+}
+
+fn settlement(mut input: CandidateAct, sequence: u64, bid: &CandidateAct, accept: Option<&CandidateAct>) -> CandidateAct {
+    input.id.family = if accept.is_some() { "Ratify" } else { "Accept" }.into();
+    input.id.sequence = sequence;
+    input.legs[0].id.act = input.id.clone();
+    input.legs[0].target = input.legs[0].source.clone();
+    input.body.settlement = Some(match accept {
+        Some(accept) => pn_records::SettlementReferences::Ratify {
+            settles: bid.id.clone(),
+            accepts: accept.id.clone(),
+        },
+        None => pn_records::SettlementReferences::Accept { settles: bid.id.clone() },
+    });
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "comfort.numerator",
+        "comfort.denominator",
+        "equity.numerator",
+        "equity.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input.authoritative_position = sequence;
+    input.logical_time = sequence;
     input
 }

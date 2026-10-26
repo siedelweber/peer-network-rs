@@ -3969,7 +3969,11 @@
         "pn-graph::formation::rescind_reconstruction",
         "pn-graph::formation::formed_authorization_conformance",
         "pn-graph::formation::formed_reference_conformance",
-        "pn-graph::formation::minted_node_conformance"
+        "pn-graph::formation::minted_node_conformance",
+        "pn-graph::formation::settlement_projections",
+        "pn-graph::formation::settlement_context",
+        "pn-graph::formation::settlement_reconstruction",
+        "pn-graph::formation::settlement_partition"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",

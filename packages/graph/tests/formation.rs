@@ -197,6 +197,7 @@ fn publish_projection() {
     assert_eq!(
         project_complete_act(
             &unsupplied.acts()[0],
+            &unsupplied,
             &Verifier {
                 acts: vec![input.clone()],
                 removals: false
@@ -366,6 +367,7 @@ fn project(input: &CandidateAct) -> Result<pn_graph::formation::CompleteProjecti
     let history = validate_history(std::slice::from_ref(input), &names()).map_err(FormationFailure::Records)?;
     project_complete_act(
         &history.acts()[0],
+        &history,
         &Verifier {
             acts: vec![input.clone()],
             removals: false,
@@ -791,6 +793,7 @@ fn bundle(input: &CandidateAct) -> Result<Vec<pn_graph::formation::CompleteProje
     let history = validate_history(std::slice::from_ref(input), &names()).map_err(FormationFailure::Records)?;
     project_complete_act(
         &history.acts()[0],
+        &history,
         &Verifier {
             acts: vec![input.clone()],
             removals: false,
@@ -2609,7 +2612,7 @@ fn leaving(sequence: u64, target: PublicReference) -> CandidateAct {
     input
 }
 
-/// Claim: Across the seventeen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.
+/// Claim: Across all nineteen formed families, missing extra act and edge protocol references refuse at records resolution, while resolved extra act, edge and supplied-name references refuse at formation because the blocks define no flat protocol-reference slots; Accept and Ratify carry their required references in the typed structural field. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.
 /// ´claim:formation:formed-families-separate-protocol-resolution-from-incidence´
 /// ´test:integration:formed-reference-conformance´
 #[test]
@@ -2630,7 +2633,7 @@ fn formed_reference_conformance() {
             let mut changed = input.clone();
             changed.protocol_references = vec![reference.clone()];
             assert_eq!(
-                bundle(&changed),
+                bundle_in(&changed, &inputs),
                 Err(FormationFailure::Records(pn_records::ValidationError::UnresolvedReference(
                     reference
                 )))
@@ -2643,7 +2646,10 @@ fn formed_reference_conformance() {
         ] {
             let mut changed = input.clone();
             changed.protocol_references = vec![reference];
-            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+            assert_eq!(
+                bundle_in(&changed, &inputs),
+                Err(FormationFailure::Graph(RegistrationError::Incidence))
+            );
             let mut batch = inputs.clone();
             *batch.iter_mut().find(|act| act.id == input.id).unwrap() = changed;
             let history = validate_history(&batch, &names()).unwrap();
@@ -3545,6 +3551,9 @@ fn rescind_reconstruction() {
 }
 
 fn formed_cases() -> Vec<CandidateAct> {
+    let bid = bidding(8, 4, 8);
+    let accept = accepting(18, &bid, "b");
+    let ratify = ratifying(19, &bid, &accept);
     vec![
         candidate("Registration", 1),
         candidate("Affinity", 2),
@@ -3563,15 +3572,42 @@ fn formed_cases() -> Vec<CandidateAct> {
         deinvite(15),
         withdrawing(16, PublicReference::Minted(bidding(8, 4, 8).id)),
         rescinding(17, PublicReference::Minted(bidding(8, 4, 8).id)),
+        accept,
+        ratify,
     ]
 }
 
-/// Claim: All seventeen implemented families form together as twenty-five projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; settlement references, geometry and title remain outside this scope.
+/// Claim: All nineteen authored families form together as twenty-seven projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; typed settlement metadata resolves to completely formed and authorized Bid and Accept records; geometry and title remain outside this scope.
 /// ´claim:formation:implemented-families-share-complete-authorization´
 /// ´test:integration:formed-authorization-conformance´
 #[test]
 fn formed_authorization_conformance() {
     let inputs = formed_cases();
+    let families: std::collections::BTreeSet<_> = inputs.iter().map(|act| act.id.family.as_str()).collect();
+    assert_eq!(
+        families,
+        std::collections::BTreeSet::from([
+            "Registration",
+            "Affinity",
+            "Publish",
+            "Owner",
+            "Participant",
+            "Review",
+            "Send",
+            "Bid",
+            "Opinion",
+            "Join Request",
+            "Tag",
+            "Leave",
+            "Reference",
+            "Invitation",
+            "De-invite",
+            "Withdraw",
+            "Rescind",
+            "Accept",
+            "Ratify",
+        ])
+    );
     source_sort_conformance(&inputs);
     let verifier = Verifier {
         acts: inputs.clone(),
@@ -3579,7 +3615,7 @@ fn formed_authorization_conformance() {
     };
     let history = validate_history(&inputs, &names()).unwrap();
     let graph = reconstruct(&history, &verifier).unwrap();
-    assert_eq!((inputs.len(), graph.node_count(), graph.edge_count()), (17, 10, 25));
+    assert_eq!((inputs.len(), graph.node_count(), graph.edge_count()), (19, 11, 27));
     let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
     assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
     let mut reversed = inputs.clone();
@@ -3628,7 +3664,7 @@ fn formed_authorization_conformance() {
 }
 
 fn source_sort_conformance(inputs: &[CandidateAct]) {
-    let mut sources = vec![named("addr", "b"), named("prof", "a"), named("name", "a")];
+    let mut sources = vec![named("addr", "other"), named("prof", "a"), named("name", "a")];
     for family in ["Publish", "Owner", "Participant", "Review", "Send", "Bid"] {
         sources.push(PublicReference::Minted(ActId {
             author: "a".into(),
@@ -3640,7 +3676,359 @@ fn source_sort_conformance(inputs: &[CandidateAct]) {
         for source in &sources {
             let mut changed = input.clone();
             changed.legs[0].source = source.clone();
-            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+            assert_eq!(
+                bundle_in(&changed, inputs),
+                Err(FormationFailure::Graph(RegistrationError::Incidence))
+            );
         }
+    }
+}
+
+fn accepting(sequence: u64, bid: &CandidateAct, author: &str) -> CandidateAct {
+    let mut input = candidate("Accept", sequence);
+    input.id.author = author.into();
+    input.legs[0].id.act = input.id.clone();
+    input.legs[0].source = named("addr", author);
+    input.legs[0].target = named("addr", &bid.id.author);
+    input.body.settlement = Some(pn_records::SettlementReferences::Accept { settles: bid.id.clone() });
+    input.body.quantities = [
+        ("comfort.numerator", -1),
+        ("comfort.denominator", 2),
+        ("equity.numerator", 2),
+        ("equity.denominator", 3),
+    ]
+    .into_iter()
+    .map(|(name, value)| {
+        (
+            name.into(),
+            Quantity {
+                value,
+                unit: "one".into(),
+                vintage: 0,
+            },
+        )
+    })
+    .collect();
+    input
+}
+
+fn ratifying(sequence: u64, bid: &CandidateAct, accept: &CandidateAct) -> CandidateAct {
+    let mut input = accepting(sequence, bid, &bid.id.author);
+    input.id.family = "Ratify".into();
+    input.legs[0].id.act = input.id.clone();
+    input.legs[0].target = named("addr", &accept.id.author);
+    input.body.settlement = Some(pn_records::SettlementReferences::Ratify {
+        settles: bid.id.clone(),
+        accepts: accept.id.clone(),
+    });
+    input
+}
+
+fn settlement_inputs() -> Vec<CandidateAct> {
+    let bid = bidding(8, 4, 8);
+    let accept = accepting(18, &bid, "b");
+    let ratify = ratifying(19, &bid, &accept);
+    vec![bid, accept, ratify]
+}
+
+fn bundle_in(
+    input: &CandidateAct,
+    context: &[CandidateAct],
+) -> Result<Vec<pn_graph::formation::CompleteProjection>, FormationFailure> {
+    let mut inputs = context.to_vec();
+    *inputs.iter_mut().find(|act| act.id == input.id).unwrap() = input.clone();
+    let history = validate_history(&inputs, &names()).map_err(FormationFailure::Records)?;
+    let act = history.acts().iter().find(|act| act.id() == &input.id).unwrap();
+    project_complete_act(
+        act,
+        &history,
+        &Verifier {
+            acts: inputs,
+            removals: false,
+        },
+    )
+    .map_err(FormationFailure::Graph)
+}
+
+/// Claim: Accept and Ratify form only complete Actor-to-Actor projections with both exact signed comfort and equity bounded independently, author-fixed sources and the settlement partner named by their Bid and exact Accept. Their metadata introduces no Offer incidence; wrong endpoint constructors, wrong partners and incomplete coordinate carriers refuse without a title or recognition verdict.
+/// ´claim:formation:settlement-requires-complete-typed-actor-incidence´
+/// ´test:integration:settlement-projections´
+#[test]
+fn settlement_projections() {
+    let inputs = settlement_inputs();
+    for input in &inputs[1..] {
+        let result = bundle_in(input, &inputs).unwrap();
+        assert_eq!(result.len(), 1);
+        assert_eq!(result[0].0, Node::Grounded(GroundedNode::Actor(input.id.author.clone())));
+        assert!(matches!(result[0].1, Node::Grounded(GroundedNode::Actor(_))));
+        for offset in [0, 2] {
+            for denominator in 1..=8 {
+                for numerator in -denominator - 1..=denominator + 1 {
+                    let mut changed = input.clone();
+                    changed.body.quantities[offset].1.value = numerator;
+                    changed.body.quantities[offset + 1].1.value = denominator;
+                    assert_eq!(
+                        bundle_in(&changed, &inputs).is_ok(),
+                        (-denominator..=denominator).contains(&numerator)
+                    );
+                }
+            }
+            for denominator in [0, -1, i64::MIN] {
+                let mut changed = input.clone();
+                changed.body.quantities[offset + 1].1.value = denominator;
+                assert_eq!(
+                    bundle_in(&changed, &inputs),
+                    Err(FormationFailure::Graph(RegistrationError::Incidence))
+                );
+            }
+        }
+        for target in [
+            named("addr", "other"),
+            named("prof", "a"),
+            named("name", "a"),
+            PublicReference::Minted(inputs[0].id.clone()),
+        ] {
+            let mut changed = input.clone();
+            changed.legs[0].target = target;
+            assert_eq!(
+                bundle_in(&changed, &inputs),
+                Err(FormationFailure::Graph(RegistrationError::Incidence))
+            );
+        }
+        for field in 0..4 {
+            let mut changed = input.clone();
+            changed.body.quantities.remove(field);
+            assert_eq!(
+                bundle_in(&changed, &inputs),
+                Err(FormationFailure::Graph(RegistrationError::Incidence))
+            );
+            let mut changed = input.clone();
+            changed.body.quantities[field].1.unit = "other".into();
+            assert_eq!(
+                bundle_in(&changed, &inputs),
+                Err(FormationFailure::Graph(RegistrationError::Incidence))
+            );
+            changed.body.quantities[field].1.unit = "one".into();
+            changed.body.quantities[field].1.vintage = 1;
+            assert_eq!(
+                bundle_in(&changed, &inputs),
+                Err(FormationFailure::Graph(RegistrationError::Incidence))
+            );
+        }
+        let mut changed = input.clone();
+        changed
+            .body
+            .quantities
+            .push(("extra".into(), changed.body.quantities[0].1.clone()));
+        assert_eq!(
+            bundle_in(&changed, &inputs),
+            Err(FormationFailure::Graph(RegistrationError::Incidence))
+        );
+    }
+}
+
+/// Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced Bid and Accept projections, including their permitted removals. Malformed referenced coordinates, withheld approval or removal authority refuse even when projecting only the dependent act; records still refuses dangling, mistyped and different-Bid targets before graph formation.
+/// ´claim:formation:settlement-targets-require-complete-authorized-acts´
+/// ´test:integration:settlement-context´
+#[test]
+fn settlement_context() {
+    let inputs = settlement_inputs();
+    for target in 0..=1 {
+        let mut malformed = inputs.clone();
+        malformed[target].body.quantities[1].1.value = 0;
+        assert_eq!(
+            bundle_in(&malformed[2], &malformed),
+            Err(FormationFailure::Graph(RegistrationError::Incidence))
+        );
+        let history = validate_history(&inputs, &names()).unwrap();
+        let mut verifier = Verifier {
+            acts: inputs.clone(),
+            removals: false,
+        };
+        verifier.acts.remove(target);
+        assert_eq!(
+            project_complete_act(&history.acts()[2], &history, &verifier),
+            Err(RegistrationError::Unapproved)
+        );
+        let mut removed = inputs.clone();
+        removed[target].projections.content = Removal::Tombstoned((2, 1));
+        let history = validate_history(&removed, &names()).unwrap();
+        verifier.acts.clone_from(&inputs);
+        assert_eq!(
+            project_complete_act(&history.acts()[2], &history, &verifier),
+            Err(RegistrationError::UnauthorizedRemoval)
+        );
+        verifier.removals = true;
+        assert!(project_complete_act(&history.acts()[2], &history, &verifier).is_ok());
+        let mut absent = inputs.clone();
+        let id = absent.remove(target).id;
+        assert_eq!(
+            validate_history(&absent, &names()).unwrap_err(),
+            pn_records::ValidationError::UnresolvedReference(PublicReference::Act(id))
+        );
+    }
+    let mut wrong = inputs.clone();
+    wrong[2].id.author = "other".into();
+    wrong[2].legs[0].id.act = wrong[2].id.clone();
+    wrong[2].legs[0].source = named("addr", "other");
+    assert_eq!(
+        bundle_in(&wrong[2], &wrong),
+        Err(FormationFailure::Graph(RegistrationError::Incidence))
+    );
+    let mut wrong = inputs.clone();
+    wrong[1].body.settlement = Some(pn_records::SettlementReferences::Accept {
+        settles: wrong[2].id.clone(),
+    });
+    assert!(matches!(
+        validate_history(&wrong, &names()),
+        Err(pn_records::ValidationError::InvalidRepresentation {
+            cause: pn_records::InvalidCause::SettlementReferences,
+            ..
+        })
+    ));
+    let mut wrong = inputs.clone();
+    let other = bidding(7, 4, 7);
+    wrong[2].body.settlement = Some(pn_records::SettlementReferences::Ratify {
+        settles: other.id.clone(),
+        accepts: wrong[1].id.clone(),
+    });
+    wrong.push(other);
+    assert!(matches!(
+        validate_history(&wrong, &names()),
+        Err(pn_records::ValidationError::InvalidRepresentation {
+            cause: pn_records::InvalidCause::SettlementReferences,
+            ..
+        })
+    ));
+    let history = validate_history(&inputs, &names()).unwrap();
+    let other = validate_history(&[], &[]).unwrap();
+    assert_eq!(
+        project_complete_act(
+            &history.acts()[2],
+            &other,
+            &Verifier {
+                acts: inputs,
+                removals: true
+            }
+        ),
+        Err(RegistrationError::Incidence)
+    );
+}
+
+/// Claim: Parallel Accept and Ratify acts retain distinct complete metadata and stable reconstruction indices through reversed input and diagnostic decoding. Revalidation rejects a changed Bid, exact Accept or structurally changed coordinate, and candidate admission refuses settlement predecessors placed at or after their children within a batch or across epoch cuts.
+/// # Panics
+/// Panics only if the settlement fixtures project to another family, which correct dispatch cannot arrange.
+/// ´claim:formation:settlement-reconstruction-retains-exact-metadata´
+/// ´test:integration:settlement-reconstruction´
+#[test]
+fn settlement_reconstruction() {
+    let mut inputs = settlement_inputs();
+    let accept = accepting(20, &inputs[0], "b");
+    let ratify = ratifying(21, &inputs[0], &accept);
+    inputs.extend([accept, ratify]);
+    let history = validate_history(&inputs, &names()).unwrap();
+    let verifier = Verifier {
+        acts: inputs.clone(),
+        removals: true,
+    };
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!(graph.edge_count(), 6);
+    let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    inputs.reverse();
+    assert_eq!(
+        validate_formation(&graph, &validate_history(&inputs, &names()).unwrap(), &verifier),
+        Ok(())
+    );
+    for index in [2, 3] {
+        let edge = petgraph::graph::EdgeIndex::new(index);
+        let mut changed = graph.clone();
+        match &mut changed[edge] {
+            Projection::Accept(weight) => weight.settles.sequence += 1,
+            Projection::Ratify(weight) => weight.accepts.sequence += 1,
+            _ => panic!("wrong family"),
+        }
+        assert_eq!(
+            validate_formation(&changed, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+        let mut changed = graph.clone();
+        let comfort = match &mut changed[edge] {
+            Projection::Accept(weight) => &mut weight.comfort,
+            Projection::Ratify(weight) => &mut weight.comfort,
+            _ => panic!("wrong family"),
+        };
+        comfort.numerator *= 2;
+        comfort.denominator *= 2;
+        assert_eq!(
+            validate_formation(&changed, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    settlement_candidate_order();
+}
+
+fn settlement_candidate_order() {
+    for cross_epoch in [false, true] {
+        let mut inputs = settlement_inputs();
+        if cross_epoch {
+            for (index, act) in inputs.iter_mut().enumerate() {
+                act.finalization_epoch = u64::try_from(index).unwrap() + 1;
+                act.authoritative_position = 1;
+            }
+        }
+        for child in [1, 2] {
+            for split in [false, true] {
+                let cut = if split { child } else { 0 };
+                let accepted = validate_history(&inputs[..cut], &names()).unwrap();
+                assert!(pn_records::validate_record(&inputs[cut..], &accepted, &[]).is_ok());
+                for before in [false, true] {
+                    let mut wrong = inputs.clone();
+                    wrong[child].finalization_epoch = wrong[child - 1].finalization_epoch;
+                    wrong[child].authoritative_position = wrong[child - 1].authoritative_position;
+                    if before {
+                        if cross_epoch {
+                            wrong[child].finalization_epoch -= 1;
+                        } else {
+                            wrong[child].authoritative_position -= 1;
+                        }
+                    }
+                    assert!(matches!(
+                        pn_records::validate_record(&wrong[cut..], &accepted, &[]),
+                        Err(pn_records::ValidationError::Parent {
+                            cause: pn_records::ParentCause::NotEarlier,
+                            ..
+                        })
+                    ));
+                }
+            }
+        }
+    }
+}
+
+/// Claim: In the complete nineteen-family fixture, settlement metadata alone joins Bid, Accept and Ratify into one whole-act dependency block while the other sixteen acts stay separate. Explicit repetition of these targets changes neither the partition nor closure membership, and the Bid retains both co-legs.
+/// ´claim:membership:settlement-parents-join-complete-act-blocks´
+/// ´test:integration:settlement-partition´
+#[test]
+fn settlement_partition() {
+    let mut inputs = formed_cases();
+    let expected = vec![inputs[7].id.clone(), inputs[17].id.clone(), inputs[18].id.clone()];
+    for repeated in [false, true] {
+        if repeated {
+            inputs[17].body.asserted_parents = vec![expected[0].clone()];
+            inputs[18].body.asserted_parents = vec![expected[0].clone(), expected[1].clone()];
+            inputs[18].body.asserted_parents.sort();
+        }
+        let history = validate_history(&[], &names()).unwrap();
+        let records = pn_records::validate_record(&inputs, &history, &[]).unwrap();
+        let boundary = pn_records::assemble_boundary_inputs(&records, (1, 1)).unwrap();
+        let (_, blocks) = pn_graph::partition_dependencies(&boundary).unwrap();
+        assert_eq!(blocks.len(), 17);
+        assert_eq!(
+            blocks.iter().filter(|block| block.len() > 1).collect::<Vec<_>>(),
+            vec![&expected]
+        );
+        assert_eq!(boundary.acts()[7].legs().len(), 2);
+        assert_eq!(blocks.iter().map(Vec::len).sum::<usize>(), 19);
     }
 }

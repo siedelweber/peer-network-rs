@@ -2,8 +2,9 @@
 //! (´def:formation:affinity´)
 
 use petgraph::stable_graph::StableDiGraph;
-use pn_records::{Layout, Position, PublicReference, Role, ValidatedAct, ValidatedHistory};
+use pn_records::{ActId, Layout, Position, PublicReference, Role, SettlementReferences, ValidatedAct, ValidatedHistory};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 
 use crate::registration::{self, GroundedNode, RegistrationError, RegistrationProjection, RegistrationVerifier};
 
@@ -473,6 +474,10 @@ pub struct BidProjection {
 /// (´def:formation:affinity´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Projection {
+    /// Seller consent with typed Bid metadata.
+    Accept(AcceptProjection),
+    /// Buyer confirmation with typed Bid and exact Accept metadata.
+    Ratify(RatifyProjection),
     /// Existing Registration projection, with its fixed coordinate roles.
     Registration(RegistrationProjection),
     /// Affinity projection, with both required authored coordinates.
@@ -509,6 +514,74 @@ pub enum Projection {
     Deinvite(DeinviteProjection),
 }
 
+/// Structural Bid act identity, never a node or an edge key.
+/// The family is fixed by this constructor; no byte encoding is assigned.
+/// (´def:formation:settlement´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BidIdentity {
+    /// Authored actor atom.
+    pub author: String,
+    /// Author-local act sequence.
+    pub sequence: u64,
+}
+
+/// Structural Accept act identity, never a node or an edge key.
+/// The family is fixed by this constructor; no byte encoding is assigned.
+/// (´def:formation:settlement´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AcceptIdentity {
+    /// Authored actor atom.
+    pub author: String,
+    /// Author-local act sequence.
+    pub sequence: u64,
+}
+
+/// Complete Accept binary projection and non-incidence settlement metadata.
+/// (´def:formation:settlement´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AcceptProjection {
+    /// Initiating author, equal to the source Actor.
+    pub author: String,
+    /// Author-local sequence.
+    pub sequence: u64,
+    /// Retained published placement.
+    pub position: Position,
+    /// Retained attached time, without a new recurrence verdict.
+    pub logical_time: u64,
+    /// Signed comfort, the directional parameter.
+    pub comfort: Coordinate,
+    /// Signed equity, the intensity parameter.
+    pub equity: Coordinate,
+    /// Bid that opened the Offer; metadata adds no Offer incidence.
+    pub settles: BidIdentity,
+}
+
+/// Complete Ratify binary projection and non-incidence settlement metadata.
+/// (´def:formation:settlement´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RatifyProjection {
+    /// Initiating author, equal to the source Actor.
+    pub author: String,
+    /// Author-local sequence.
+    pub sequence: u64,
+    /// Retained published placement.
+    pub position: Position,
+    /// Retained attached time, without a new recurrence verdict.
+    pub logical_time: u64,
+    /// Signed comfort, the directional parameter.
+    pub comfort: Coordinate,
+    /// Signed equity, the intensity parameter.
+    pub equity: Coordinate,
+    /// Bid that opened the Offer; metadata adds no Offer incidence.
+    pub settles: BidIdentity,
+    /// Exact Accept confirming the same Bid.
+    pub accepts: AcceptIdentity,
+}
+
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
 /// (´def:formation:affinity´)
 pub type FormationGraph = StableDiGraph<Node, Projection>;
@@ -518,7 +591,8 @@ pub type FormationGraph = StableDiGraph<Node, Projection>;
 pub type CompleteProjection = (Node, Node, Projection);
 
 /// Project a supported family with complete approval and removal checks.
-/// The existing verifier is the explicit public authentication boundary for all.
+/// The history supplies exact referenced acts; their complete formation, approval
+/// and removals are checked through the same operations before projection.
 /// (´[ROOT-alg:design:formation]´)
 ///
 /// # Errors
@@ -536,9 +610,11 @@ pub type CompleteProjection = (Node, Node, Projection);
 )]
 pub fn project_complete_act(
     act: &ValidatedAct,
+    history: &ValidatedHistory,
     verifier: &impl RegistrationVerifier,
 ) -> Result<Vec<CompleteProjection>, RegistrationError> {
-    let result = project(act, verifier).and_then(|projection| {
+    let acts = formation_context(history);
+    let result = checked_project(act, &acts, verifier).and_then(|projection| {
         registration::authorize_removals(&[act], verifier)?;
         Ok(projection)
     });
@@ -569,7 +645,8 @@ pub fn reconstruct(
     history: &ValidatedHistory,
     verifier: &impl RegistrationVerifier,
 ) -> Result<FormationGraph, RegistrationError> {
-    let result = registration::reconstruct_with(history, verifier, |act| project(act, verifier));
+    let acts = formation_context(history);
+    let result = registration::reconstruct_with(history, verifier, |act| checked_project(act, &acts, verifier));
     if result.is_err() {
         tracing::event!(tracing::Level::TRACE, outcome = "refusal");
     }
@@ -597,12 +674,125 @@ pub fn validate_formation(
     history: &ValidatedHistory,
     verifier: &impl RegistrationVerifier,
 ) -> Result<(), RegistrationError> {
-    let result = registration::reconstruct_with(history, verifier, |act| project(act, verifier))
+    let acts = formation_context(history);
+    let result = registration::reconstruct_with(history, verifier, |act| checked_project(act, &acts, verifier))
         .and_then(|expected| registration::compare_graph(graph, &expected));
     if result.is_err() {
         tracing::event!(tracing::Level::TRACE, outcome = "refusal");
     }
     result
+}
+
+fn formation_context(history: &ValidatedHistory) -> BTreeMap<&ActId, &ValidatedAct> {
+    history.acts().iter().map(|act| (act.id(), act)).collect()
+}
+
+fn checked_project(
+    act: &ValidatedAct,
+    acts: &BTreeMap<&ActId, &ValidatedAct>,
+    verifier: &impl RegistrationVerifier,
+) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    if acts.get(act.id()).copied() != Some(act) {
+        return Err(RegistrationError::Incidence);
+    }
+    if let Some(references) = &act.body().settlement {
+        let (SettlementReferences::Accept { settles } | SettlementReferences::Ratify { settles, .. }) = references;
+        let bid = settlement_target(settles, acts, verifier)?;
+        let partner = match references {
+            SettlementReferences::Accept { .. } => &bid.id().author,
+            SettlementReferences::Ratify { accepts, .. } => {
+                if act.id().author != bid.id().author {
+                    return Err(RegistrationError::Incidence);
+                }
+                &settlement_target(accepts, acts, verifier)?.id().author
+            }
+        };
+        if act.legs().first().map(pn_records::ValidatedLeg::target)
+            != Some(&PublicReference::Named {
+                namespace: "addr".into(),
+                name: partner.clone(),
+            })
+        {
+            return Err(RegistrationError::Incidence);
+        }
+    }
+    project(act, verifier)
+}
+
+fn settlement_target<'a>(
+    id: &ActId,
+    acts: &BTreeMap<&ActId, &'a ValidatedAct>,
+    verifier: &impl RegistrationVerifier,
+) -> Result<&'a ValidatedAct, RegistrationError> {
+    let target = acts.get(id).copied().ok_or(RegistrationError::Incidence)?;
+    checked_project(target, acts, verifier)?;
+    registration::authorize_removals(&[target], verifier)?;
+    Ok(target)
+}
+
+fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+    let [leg] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let PublicReference::Named { namespace, name } = leg.target() else {
+        return Err(RegistrationError::Incidence);
+    };
+    if namespace != "addr"
+        || act.body().layout != Layout::Binary
+        || leg.id().role != Role::Binary
+        || leg.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || act.body().quantities.len() != 4
+        || !act.protocol_references().is_empty()
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let comfort = coordinate(act, "comfort.numerator", "comfort.denominator")?;
+    let equity = coordinate(act, "equity.numerator", "equity.denominator")?;
+    let edge = match &act.body().settlement {
+        Some(SettlementReferences::Accept { settles }) if act.id().family == "Accept" => Projection::Accept(AcceptProjection {
+            author: act.id().author.clone(),
+            sequence: act.id().sequence,
+            position: act.position(),
+            logical_time: act.logical_time(),
+            comfort,
+            equity,
+            settles: BidIdentity {
+                author: settles.author.clone(),
+                sequence: settles.sequence,
+            },
+        }),
+        Some(SettlementReferences::Ratify { settles, accepts }) if act.id().family == "Ratify" => {
+            Projection::Ratify(RatifyProjection {
+                author: act.id().author.clone(),
+                sequence: act.id().sequence,
+                position: act.position(),
+                logical_time: act.logical_time(),
+                comfort,
+                equity,
+                settles: BidIdentity {
+                    author: settles.author.clone(),
+                    sequence: settles.sequence,
+                },
+                accepts: AcceptIdentity {
+                    author: accepts.author.clone(),
+                    sequence: accepts.sequence,
+                },
+            })
+        }
+        _ => return Err(RegistrationError::Incidence),
+    };
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    Ok((
+        Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+        Node::Grounded(GroundedNode::Actor(name.clone())),
+        edge,
+    ))
 }
 
 fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
@@ -628,6 +818,9 @@ fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<V
 }
 
 fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+    if matches!(act.id().family.as_str(), "Accept" | "Ratify") {
+        return settlement(act, verifier);
+    }
     if act.id().family == "Registration" {
         return registration::project(act, verifier)
             .map(|(source, target, edge)| (Node::Grounded(source), Node::Grounded(target), Projection::Registration(edge)));
