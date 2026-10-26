@@ -130,12 +130,14 @@ fn affinity_coordinates() {
     };
     assert_eq!((weight.association.numerator, weight.association.denominator), (-1, 2));
     assert_eq!((weight.attraction.numerator, weight.attraction.denominator), (2, 3));
-    for denominator in 1..=8 {
-        for numerator in -denominator - 1..=denominator + 1 {
-            let mut changed = input.clone();
-            changed.body.quantities[0].1.value = numerator;
-            changed.body.quantities[1].1.value = denominator;
-            assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+    for (numerator_index, denominator_index) in [(0, 1), (2, 3)] {
+        for denominator in 1..=8 {
+            for numerator in -denominator - 1..=denominator + 1 {
+                let mut changed = input.clone();
+                changed.body.quantities[numerator_index].1.value = numerator;
+                changed.body.quantities[denominator_index].1.value = denominator;
+                assert_eq!(project(&changed).is_ok(), (-denominator..=denominator).contains(&numerator));
+            }
         }
     }
     let mut cases = Vec::new();

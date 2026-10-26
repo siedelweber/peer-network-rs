@@ -1287,7 +1287,7 @@
       "claim": "GRAPH::claim:formation:affinity-requires-typed-complete-coordinates",
       "before": "",
       "after": "Claim: Affinity requires the author's Actor source, an exact public Type name and both signed rational coordinates within the unit interval; malformed units, vintage, missing or extra coordinates and wrong endpoint constructors refuse before projection. A finite independent numerator/denominator grid checks the bounded carrier without claiming real-valued geometry.",
-      "review": "Read the bounded coordinate grid, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
+      "review": "Read the same 96-case numerator/denominator grid independently applied to association and attraction, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
     },
     {
       "operation": "pn-graph::formation::mixed_reconstruction",
