@@ -132,6 +132,55 @@ def test_sources(sources):
         marked.update(added)
 
 
+SECRET_EXITS = {"expose_secret", "expose_secret_mut", "init_with_mut", "init_with", "try_init_with"}
+
+
+def exposure_sites(path, source):
+    """Inventory explicit exits; semantic copies and consumer lifetimes remain reviewed."""
+    code = rust_code(source)
+    functions = []
+    for match in re.finditer(r"\bfn\s+(\w+)\b", code):
+        start = source.rfind("\n", 0, match.start()) + 1
+        # Comments and attributes immediately before the smallest function item.
+        prefix = source[:start].splitlines(keepends=True)
+        header = []
+        while prefix and (prefix[-1].lstrip().startswith(("//", "#[")) or not prefix[-1].strip()):
+            header.insert(0, prefix.pop())
+        if not re.fullmatch(r"\s*(?:pub(?:\([^)]*\))?\s+)?(?:async\s+)?", code[start:match.start()]):
+            header = []
+        functions.append((match.start(), item_end(code, match.end()), match.group(1), "".join(header)))
+    rows = []
+    findings = []
+    grouped = {}
+    pattern = r"\b(?:" + "|".join(sorted(SECRET_EXITS)) + r")\b"
+    for match in re.finditer(pattern, code):
+        # Imports name the trait, not the method; method definitions are not exits.
+        if re.search(r"\bfn\s*$", code[:match.start()]):
+            continue
+        parents = [item for item in functions if item[0] < match.start() < item[1]]
+        if not parents:
+            findings.append(f"secret exit outside a function at line {source[:match.start()].count(chr(10)) + 1}")
+            continue
+        owner = max(parents, key=lambda item: item[0])
+        grouped.setdefault(owner, []).append(match)
+    for (_, _, name, header), calls in grouped.items():
+        labels = re.findall(r"\(´\[ROOT-(cav:observe:secret-[a-z0-9-]+)\]´\)", header)
+        allowed = re.search(r"#\[allow\(clippy::disallowed_methods\)\]", header)
+        justified = re.search(r"// Justified: [^\n]+\.\n\s*#\[allow\(clippy::disallowed_methods\)\]", header)
+        if not allowed or not justified or len(labels) != len(calls) or len(set(labels)) != len(labels):
+            findings.append(f"secret exits in {name} require one unique Caveat label per exit and a justified item-local allow")
+        for index, call in enumerate(calls):
+            label = labels[index] if index < len(labels) else None
+            citation = re.match(r"\s*(?:\(\s*)?/\* \(´\[ROOT-(cav:observe:secret-[a-z0-9-]+)\]´\) \*/", source[call.end():])
+            if not citation or citation.group(1) != label:
+                findings.append(f"secret exit in {name} lacks its own site citation")
+            rows.append({"path": str(path), "item": name, "line": source[:call.start()].count("\n") + 1,
+                         "method": call.group(), "label": label})
+    if re.search(r"\bSerializableSecret\b", code):
+        findings.append("secret serialization is not admitted; use a labelled explicit exposure boundary")
+    return rows, findings
+
+
 def source_findings(path, source, mode, forced_test=False):
     code = rust_code(source)
     if mode == "printing":
@@ -178,13 +227,80 @@ def source_findings(path, source, mode, forced_test=False):
         groups = {"warnings", "unused", "all", "pedantic", "nursery", "complexity", "correctness", "perf", "style", "suspicious", "deprecated_safe", "future_incompatible", "let_underscore", "nonstandard_style", "rust_2018_compatibility", "rust_2018_idioms", "rust_2021_compatibility", "rust_2024_compatibility"}
         named &= not any(name.strip().split("::")[-1] in groups for name in names.split(","))
         conditional = bool(re.search(r"\bcfg_attr\b", body))
-        if match.group(1) or conditional or test_tree or not justified or not named or not item_follows:
+        fixture_exit = (names == "clippy::disallowed_methods" and
+                        "// Fixture-only secret boundary:" in source[:match.start()].split("\n\n")[-1] and
+                        bool(re.match(r"\s*(?:pub(?:\([^)]*\))?\s+)?(?:async\s+)?fn\b", following)))
+        if match.group(1) or conditional or (test_tree and not fixture_exit) or not justified or not named or not item_follows:
             findings.append("suppression is not a justified named production-item attribute")
+    findings.extend(exposure_sites(path, source)[1])
     return findings
+
+
+def exposure_registry_findings(sites, register):
+    expected = {row["label"]: (row["path"], row["function"], row["method"]) for row in register}
+    actual = {row["label"]: (row["path"], row["item"], row["method"]) for row in sites}
+    if len(expected) != len(register) or len(actual) != len(sites) or expected != actual:
+        return ["secret exposure register differs from sites: " + str(sorted(set(expected.items()) ^ set(actual.items()), key=str))]
+    return []
 
 
 def inherits_lints(manifest):
     return manifest.get("lints") == {"workspace": True}
+
+
+HTTP_ROOTS = {"hyper", "tower", "hyper-util", "http-body-util", "http"}
+
+
+def http_admission_findings(metadata, rows):
+    """Check the active HTTP dependency graph against the admitted feature ceiling."""
+    admitted = {(row["name"], row["version"]): set(row["features"]) for row in rows}
+    packages = {row["id"]: row for row in metadata["packages"]}
+    nodes = {row["id"]: row for row in metadata["resolve"]["nodes"]}
+    pending = [key for key, row in packages.items() if row["name"] in HTTP_ROOTS]
+    visited = set()
+    findings = []
+    while pending:
+        key = pending.pop()
+        if key in visited:
+            continue
+        visited.add(key)
+        package, node = packages[key], nodes[key]
+        identity = (package["name"], package["version"])
+        if identity not in admitted:
+            findings.append(f"HTTP dependency is not admitted: {identity}")
+        elif not set(node["features"]) <= admitted[identity]:
+            findings.append(f"HTTP dependency features exceed admission: {identity}: {sorted(set(node['features']) - admitted[identity])}")
+        pending.extend(dep["pkg"] for dep in node.get("deps", [])
+                       if any(kind["kind"] != "dev" for kind in dep["dep_kinds"]))
+    return findings, len(visited)
+
+
+def check_http_admission(root):
+    rows = tomllib.loads((root / "docs/inputs/http-dependencies.toml").read_text())["rows"]
+    declarations = tomllib.loads((root / "Cargo.toml").read_text())["workspace"]["dependencies"]
+    for name in HTTP_ROOTS:
+        version = next(row["version"] for row in rows if row["name"] == name)
+        if declarations.get(name) != {"version": "=" + version, "default-features": False}:
+            raise ValueError(f"workspace HTTP declaration differs from admission: {name}")
+    start = time.monotonic()
+    result = subprocess.run(["cargo", "metadata", "--format-version=1", "--locked"], cwd=root, capture_output=True, text=True, check=True)
+    metadata = json.loads(result.stdout)
+    findings, active = http_admission_findings(metadata, rows)
+    secret_findings = secret_dependency_findings(metadata)
+    print(f"SECRET-LIBRARY reviewed=0.10.3 serde=disabled findings={len(secret_findings)}")
+    findings.extend(secret_findings)
+    for finding in findings:
+        print(finding)
+    print(f"HTTP-ADMISSION admitted={len(rows)} active={active} findings={len(findings)} wall={time.monotonic() - start:.6f}s")
+    if findings:
+        raise ValueError("HTTP dependency admission failed")
+
+
+def secret_dependency_findings(metadata):
+    nodes = {row["id"]: row for row in metadata["resolve"]["nodes"]}
+    return ["secrecy exit review requires version 0.10.3 without serde" for package in metadata["packages"]
+            if package["name"] == "secrecy" and
+            (package["version"] != "0.10.3" or "serde" in nodes[package["id"]]["features"])]
 
 
 def vendor_members(root):
@@ -332,6 +448,7 @@ def main():
             if not inherits_lints(manifest):
                 raise ValueError(f"{path}: expected only [lints] workspace = true; local lint tables are forbidden")
         print(f"MEMBER-LINTS={len(manifests)}")
+        check_http_admission(pathlib.Path.cwd())
         return 0
     if mode in {"clippy", "nursery"}:
         result, count = run_clippy(pathlib.Path.cwd(), advisory=mode == "nursery")
@@ -415,10 +532,32 @@ def main():
             sources[path] = path.read_text()
     tests = test_sources(sources)
     failed = False
+    exposures = []
     for path, source in sources.items():
         for finding in source_findings(path, source, mode, path in tests):
             print(f"{path}: {finding}")
             failed = True
+        if mode == "suppressions":
+            exposures.extend(exposure_sites(path, source)[0])
+    if mode == "suppressions":
+        labels = [row["label"] for row in exposures if row["label"]]
+        if len(labels) != len(set(labels)):
+            print("SECRET-EXPOSURES duplicate labels")
+            failed = True
+        register = tomllib.loads(pathlib.Path("docs/inputs/secret-exposures.toml").read_text())["rows"]
+        for finding in exposure_registry_findings(exposures, register):
+            print(finding)
+            failed = True
+        config = tomllib.loads(pathlib.Path("clippy.toml").read_text())
+        required = {"secrecy::ExposeSecret::expose_secret", "secrecy::ExposeSecretMut::expose_secret_mut",
+                    "secrecy::SecretBox::init_with_mut", "secrecy::SecretBox::init_with", "secrecy::SecretBox::try_init_with"}
+        manifest = tomllib.loads(pathlib.Path("Cargo.toml").read_text())
+        if not required <= {row["path"] for row in config["disallowed-methods"]} or manifest["workspace"]["lints"]["clippy"].get("disallowed_methods") != "deny":
+            print("SECRET-EXPOSURES deny configuration missing")
+            failed = True
+        pathlib.Path(".lane/secret-exposures.json").write_text(json.dumps(exposures, indent=2) + "\n")
+        print(f"SECRET-EXPOSURES sites={len(exposures)} labels={len(set(labels))} findings={int(failed)} artifact=.lane/secret-exposures.json")
+        print(f"SUPPRESSIONS files={len(sources)} findings={int(failed)}")
     return int(failed)
 
 

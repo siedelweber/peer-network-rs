@@ -1,6 +1,7 @@
 # Explicit source-root paths, consuming gate steps and generated-file producer.
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
+  ['docs/HTTP-NOTICES', 'member-lints,documents,hash-citations', ''],
   ['ci/build-inputs/docs/meson.build', 'build-graph', ''],
 ]
 foreach row : local_inputs

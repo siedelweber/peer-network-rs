@@ -42,6 +42,10 @@ fn attribute(message: &[u8], key: u8) -> Result<&[u8], Refusal> {
     }
     found.ok_or(Refusal::ScramFormat)
 }
+// Caveat: The MAC writes its derived key directly into protected output; the digest API requires a mutable byte array.
+// (´[ROOT-cav:observe:secret-host-scram-mac-1]´)
+// Justified: The MAC writes its derived key directly into protected output; the digest API requires a mutable byte array.
+#[allow(clippy::disallowed_methods)]
 fn mac(key: &[u8], bytes: &[u8]) -> Result<SecretBox<[u8; 32]>, Refusal> {
     let mut state = Hmac::<Sha256>::new_from_slice(key).map_err(|_| Refusal::ScramFormat)?;
     state.update(bytes);
@@ -49,7 +53,7 @@ fn mac(key: &[u8], bytes: &[u8]) -> Result<SecretBox<[u8; 32]>, Refusal> {
     sha2::digest::FixedOutput::finalize_into(
         state,
         output
-            .expose_secret_mut()
+            .expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-mac-1]´) */)
             .as_mut_slice()
             .try_into()
             .map_err(|_| Refusal::ScramFormat)?,
@@ -71,6 +75,10 @@ fn authentication(frame: &wire::Frame, expected: u32) -> Result<&[u8], Refusal> 
     }
     Ok(rest)
 }
+// Caveat: PBKDF2 writes the derived password key directly into protected output; its API requires a mutable byte array.
+// (´[ROOT-cav:observe:secret-host-scram-derive-1]´)
+// Justified: PBKDF2 writes the derived password key directly into protected output; its API requires a mutable byte array.
+#[allow(clippy::disallowed_methods)]
 async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<SecretBox<[u8; 32]>, Refusal> {
     let permit = DERIVATIONS.acquire().await.map_err(|_| Refusal::ScramFormat)?;
     tokio::task::spawn_blocking(move || {
@@ -94,13 +102,44 @@ async fn derive(password: Buffer, salt: Buffer, iterations: u32) -> Result<Secre
             }
         }
         let mut salted = SecretBox::new(Box::new([0; 32]));
-        pbkdf2::pbkdf2::<Hmac<Sha256>>(password.bytes(), salt.bytes(), iterations, salted.expose_secret_mut())
-            .map_err(|_| Refusal::ScramFormat)?;
+        pbkdf2::pbkdf2::<Hmac<Sha256>>(
+            password.bytes(),
+            salt.bytes(),
+            iterations,
+            salted.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-derive-1]´) */),
+        )
+        .map_err(|_| Refusal::ScramFormat)?;
         Ok(salted)
     })
     .await
     .map_err(|_| Refusal::ScramFormat)?
 }
+// Caveat: The nonce acquisition lends its protected array to the entropy API only until that call returns; the API cannot accept the carrier.
+// (´[ROOT-cav:observe:secret-host-scram-login-1]´)
+// Caveat: The nonce is borrowed by base64 encoding into a protected buffer for that call; the encoder requires a byte slice.
+// (´[ROOT-cav:observe:secret-host-scram-login-2]´)
+// Caveat: The salted password is borrowed by the Client Key MAC; the MAC API requires bytes and its ordinary keyed state lasts until finalization.
+// (´[ROOT-cav:observe:secret-host-scram-login-3]´)
+// Caveat: The client key enters ordinary SHA-256 state until finalization into protected output; the digest API cannot consume the carrier.
+// (´[ROOT-cav:observe:secret-host-scram-login-4]´)
+// Caveat: The stored-key output lends its protected array to digest finalization for that call; the digest API requires mutable bytes.
+// (´[ROOT-cav:observe:secret-host-scram-login-5]´)
+// Caveat: The salted password is borrowed by the Server Key MAC until finalization; its keyed state cannot be represented by the carrier API.
+// (´[ROOT-cav:observe:secret-host-scram-login-6]´)
+// Caveat: The stored key is borrowed by the transcript MAC until finalization into protected output; the MAC API requires key bytes.
+// (´[ROOT-cav:observe:secret-host-scram-login-7]´)
+// Caveat: The proof lends mutable protected bytes to the XOR loop until the loop ends; iteration cannot operate on the carrier directly.
+// (´[ROOT-cav:observe:secret-host-scram-login-8]´)
+// Caveat: The client key lends bytes to the proof XOR loop, including ordinary copied byte operands until each iteration ends; the arithmetic requires ordinary bytes.
+// (´[ROOT-cav:observe:secret-host-scram-login-9]´)
+// Caveat: The signature lends bytes to the proof XOR loop, including ordinary copied byte operands until each iteration ends; the arithmetic requires ordinary bytes.
+// (´[ROOT-cav:observe:secret-host-scram-login-10]´)
+// Caveat: The proof is borrowed for base64 encoding into a protected buffer until encoding returns; the encoder requires a byte slice.
+// (´[ROOT-cav:observe:secret-host-scram-login-11]´)
+// Caveat: The server key enters the verifier's ordinary MAC state until server-signature verification returns; the MAC API cannot accept or retain the carrier.
+// (´[ROOT-cav:observe:secret-host-scram-login-12]´)
+// Justified: Nonce and derived authentication material are borrowed by entropy, digest, MAC and encoding operations and the proof loop; these consumers require byte slices and outputs remain secret-owned.
+#[allow(clippy::disallowed_methods)]
 pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result<(), Refusal> {
     wire::startup(socket, config).await?;
     let mechanisms = wire::read(socket).await?;
@@ -109,8 +148,9 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
         return Err(Refusal::UnsupportedAuthentication);
     }
     let mut random = SecretBox::new(Box::new([0; 32]));
-    getrandom::fill(random.expose_secret_mut()).map_err(|_| Refusal::Entropy)?;
-    let nonce = encode(random.expose_secret())?;
+    getrandom::fill(random.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-login-1]´) */))
+        .map_err(|_| Refusal::Entropy)?;
+    let nonce = encode(random.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-2]´) */))?;
     let mut bare = Buffer::from_bytes(b"n=,r=")?;
     bare.append(nonce.bytes())?;
     let mut initial = Buffer::from_bytes(b"SCRAM-SHA-256\0")?;
@@ -135,17 +175,23 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
         .filter(|v| ITERATIONS.contains(v))
         .ok_or(Refusal::ScramIterations)?;
     let salted = derive(Buffer::from_bytes(config.field(4))?, salt, iterations).await?;
-    let client_key = mac(salted.expose_secret(), b"Client Key")?;
+    let client_key = mac(
+        salted.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-3]´) */),
+        b"Client Key",
+    )?;
     let mut stored = SecretBox::new(Box::new([0; 32]));
     Digest::finalize_into(
-        Sha256::new_with_prefix(client_key.expose_secret()),
+        Sha256::new_with_prefix(client_key.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-4]´) */)),
         stored
-            .expose_secret_mut()
+            .expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-login-5]´) */)
             .as_mut_slice()
             .try_into()
             .map_err(|_| Refusal::ScramFormat)?,
     );
-    let server_key = mac(salted.expose_secret(), b"Server Key")?;
+    let server_key = mac(
+        salted.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-6]´) */),
+        b"Server Key",
+    )?;
     let mut final_without_proof = Buffer::from_bytes(b"c=biws,r=")?;
     final_without_proof.append(server_nonce)?;
     let mut transcript = Buffer::new();
@@ -154,24 +200,29 @@ pub(crate) async fn login(socket: &mut Socket, config: &Configuration) -> Result
     transcript.append(server_first)?;
     transcript.append(b",")?;
     transcript.append(final_without_proof.bytes())?;
-    let signature = mac(stored.expose_secret(), transcript.bytes())?;
+    let signature = mac(
+        stored.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-7]´) */),
+        transcript.bytes(),
+    )?;
     let mut proof = SecretBox::new(Box::new([0; 32]));
     for ((output, key), sig) in proof
-        .expose_secret_mut()
+        .expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-login-8]´) */)
         .iter_mut()
-        .zip(client_key.expose_secret())
-        .zip(signature.expose_secret())
+        .zip(client_key.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-9]´) */))
+        .zip(signature.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-10]´) */))
     {
         *output = key ^ sig;
     }
-    let encoded_proof = encode(proof.expose_secret())?;
+    let encoded_proof = encode(proof.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-11]´) */))?;
     let mut final_message = final_without_proof;
     final_message.append(b",p=")?;
     final_message.append(encoded_proof.bytes())?;
     wire::send(socket, b'p', final_message.bytes()).await?;
     let server_final = wire::read(socket).await?;
     let signature = decode(attribute(authentication(&server_final, 12)?, b'v')?)?;
-    let mut verifier = Hmac::<Sha256>::new_from_slice(server_key.expose_secret()).map_err(|_| Refusal::ScramFormat)?;
+    let mut verifier =
+        Hmac::<Sha256>::new_from_slice(server_key.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-login-12]´) */))
+            .map_err(|_| Refusal::ScramFormat)?;
     verifier.update(transcript.bytes());
     verifier
         .verify_slice(signature.bytes())
@@ -276,6 +327,19 @@ mod tests {
     /// ´claim:host:scram-work-factor-cost-is-nonbinding´
     /// ´test:unit:derivation-cost´
     #[test]
+    // Fixture-only secret boundary: No deployment secret is accepted by this test fixture route.
+    // Caveat: The known-answer assertion borrows the derived public fixture key until comparison returns; equality requires its ordinary byte array.
+    // (´[ROOT-cav:observe:secret-host-scram-derivation-cost-1]´)
+    // Caveat: The first public-fixture PBKDF2 run writes directly into protected output until derivation returns; the API requires mutable bytes.
+    // (´[ROOT-cav:observe:secret-host-scram-derivation-cost-2]´)
+    // Caveat: The second public-fixture PBKDF2 run writes directly into protected output until derivation returns; the API requires mutable bytes.
+    // (´[ROOT-cav:observe:secret-host-scram-derivation-cost-3]´)
+    // Caveat: The repeated-run assertion borrows the first public fixture key until comparison returns; equality requires ordinary byte arrays.
+    // (´[ROOT-cav:observe:secret-host-scram-derivation-cost-4]´)
+    // Caveat: The repeated-run assertion borrows the second public fixture key until comparison returns; equality requires ordinary byte arrays.
+    // (´[ROOT-cav:observe:secret-host-scram-derivation-cost-5]´)
+    // Justified: Only this test boundary's fixture secrets are borrowed for acquisition, comparison or fixture computation; these APIs require ordinary references to establish the carrier contract.
+    #[allow(clippy::disallowed_methods)]
     fn derivation_cost() {
         use secrecy::{ExposeSecret as _, ExposeSecretMut as _, SecretBox};
         // Independently computed with Python 3 hashlib (OpenSSL), not the Rust PBKDF2:
@@ -297,7 +361,10 @@ mod tests {
                 )
                 .await
                 .unwrap();
-                assert_eq!(actual.expose_secret(), &expected);
+                assert_eq!(
+                    actual.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-derivation-cost-1]´) */),
+                    &expected
+                );
             });
         for iterations in [4096, 100_000, 600_000] {
             let mut first = SecretBox::new(Box::new([0_u8; 32]));
@@ -307,7 +374,7 @@ mod tests {
                 b"public-fixture-password",
                 b"public-fixture-salt",
                 iterations,
-                first.expose_secret_mut(),
+                first.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-derivation-cost-2]´) */),
             )
             .unwrap();
             let elapsed = started.elapsed().as_secs_f64();
@@ -315,10 +382,13 @@ mod tests {
                 b"public-fixture-password",
                 b"public-fixture-salt",
                 iterations,
-                second.expose_secret_mut(),
+                second.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-scram-derivation-cost-3]´) */),
             )
             .unwrap();
-            assert_eq!(first.expose_secret(), second.expose_secret());
+            assert_eq!(
+                first.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-derivation-cost-4]´) */),
+                second.expose_secret(/* (´[ROOT-cav:observe:secret-host-scram-derivation-cost-5]´) */)
+            );
             cli_common::emit(&serde_json::json!({"kind":"scram_cost", "iterations":iterations, "wall_seconds":elapsed})).unwrap();
         }
     }

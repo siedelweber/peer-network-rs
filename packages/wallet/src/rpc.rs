@@ -334,6 +334,16 @@ impl RpcClient {
         ),
         ret
     )]
+    // Caveat: Endpoint text is borrowed only to check its byte length; the container has no length operation.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-new-1]´)
+    // Caveat: Endpoint text is parsed into an ordinary IP address solely for validation and immediately discarded; the standard parser cannot accept the carrier.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-new-2]´)
+    // Caveat: The port scalar is copied only for its nonzero validation comparison; the comparison cannot operate on the carrier.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-new-3]´)
+    // Caveat: Cookie-path text is borrowed only to check its byte length; the container has no length operation.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-new-4]´)
+    // Justified: Private endpoint, port and cookie path are inspected for configuration validity and the temporary parsed address is discarded; standard parsers require ordinary strings and scalars.
+    #[allow(clippy::disallowed_methods)]
     pub fn new(
         config: RpcConfig,
         limits: RpcLimits,
@@ -342,10 +352,10 @@ impl RpcClient {
         run: &str,
     ) -> Result<Self, RpcRefusal> {
         if !limits.valid()
-            || config.endpoint.expose_secret().len() > 64
-            || config.endpoint.expose_secret().parse::<IpAddr>().is_err()
-            || *config.port.expose_secret() == 0
-            || config.cookie.expose_secret().len() > 4096
+            || config.endpoint.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-new-1]´) */).len() > 64
+            || config.endpoint.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-new-2]´) */).parse::<IpAddr>().is_err()
+            || *config.port.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-new-3]´) */) == 0
+            || config.cookie.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-new-4]´) */).len() > 4096
             || !crate::decoder::valid_limits(decode)
         {
             return Err(RpcRefusal::Configuration);
@@ -413,6 +423,16 @@ impl RpcClient {
         result
     }
 
+    // Caveat: The private cookie path is borrowed by secure file acquisition until that call returns; filesystem calls require ordinary path bytes.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-exchange-1]´)
+    // Caveat: The expected owner scalar is copied into cookie ownership validation for that call; filesystem metadata comparisons require an ordinary user identifier.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-exchange-2]´)
+    // Caveat: The private endpoint is parsed into an ordinary IP address used by connect during this exchange; the socket API cannot accept the carrier and socket state retains private reachability until close.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-exchange-3]´)
+    // Caveat: The private port is copied into the ordinary socket address for connect; the socket API cannot accept the carrier and socket state retains private reachability until close.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-exchange-4]´)
+    // Justified: The cookie acquisition and connect APIs require private path bytes, owner identity and an ordinary socket address; they are used within this exchange and are never attached to diagnostics.
+    #[allow(clippy::disallowed_methods)]
     fn exchange(
         &self,
         method: &str,
@@ -424,8 +444,8 @@ impl RpcClient {
     ) -> Result<serde_json::Value, RpcRefusal> {
         let cookie = rpc_cookie::acquire(
             &self.config.root,
-            self.config.cookie.expose_secret().as_bytes(),
-            *self.config.uid.expose_secret(),
+            self.config.cookie.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-exchange-1]´) */).as_bytes(),
+            *self.config.uid.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-exchange-2]´) */),
         )?;
         rpc_http::remaining(deadline)?;
         let body = serde_json::to_vec(&serde_json::json!({"jsonrpc":"2.0", "id":id, "method":method, "params":params}))
@@ -440,11 +460,14 @@ impl RpcClient {
         let endpoint = self
             .config
             .endpoint
-            .expose_secret()
+            .expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-exchange-3]´) */)
             .parse::<IpAddr>()
             .map_err(|_| RpcRefusal::Configuration)?;
         let mut stream = TcpStream::connect_timeout(
-            &SocketAddr::new(endpoint, *self.config.port.expose_secret()),
+            &SocketAddr::new(
+                endpoint,
+                *self.config.port.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-exchange-4]´) */),
+            ),
             rpc_http::remaining(deadline)?,
         )
         .map_err(|_| RpcRefusal::Transport)?;

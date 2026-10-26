@@ -132,7 +132,7 @@
 | hashbrown 0.17.1 | MIT OR Apache-2.0 | none enabled | 1.85.0 | none | ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a |
 | heck 0.5.0 | MIT OR Apache-2.0 | none enabled | 1.56 | none | 2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea |
 | hmac 0.13.0 | MIT OR Apache-2.0 | zeroize | 1.85 | none | 6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f |
-| http 1.5.0 | MIT OR Apache-2.0 | default, std | 1.57.0 | none | 918d3568bebf352712bc2ef3d46a8bcf1a75b373be6539de198e9105cbbf9ce0 |
+| http 1.5.0 | MIT OR Apache-2.0 | std | 1.57.0 | none | 918d3568bebf352712bc2ef3d46a8bcf1a75b373be6539de198e9105cbbf9ce0 |
 | httpdate 1.0.3 | MIT OR Apache-2.0 | none enabled | 1.56 | none | df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9 |
 | hybrid-array 0.4.15 | MIT OR Apache-2.0 | none enabled | 1.85 | none | 27f864f10dfb56725ce5ce5472bc52252c8f93a4ab86327122cebf62c5f59a17 |
 | icu_casemap 1.5.1 | Unicode-3.0 | compiled_data, default | 1.67 | none | 9ff0c8ae9f8d31b12e27fc385ff9ab1f3cd9b17417c665c49e4ec958c37da75f |

@@ -26,6 +26,13 @@ fn config() -> RpcConfig {
     config_for("cookie", None)
 }
 
+// Fixture-only secret boundary: No deployment secret is accepted by this test fixture route.
+// Caveat: The isolated harness bootstrap file is read directly into protected bytes until read returns; the file API requires a mutable slice.
+// (´[ROOT-cav:observe:secret-wallet-rpc-config-for-1]´)
+// Caveat: The fixture bootstrap bytes are borrowed for JSON decoding into ordinary fixture configuration fields until they are wrapped into the client configuration; this test-only acquisition exercises an isolated node and never reads deployment credentials.
+// (´[ROOT-cav:observe:secret-wallet-rpc-config-for-2]´)
+// Justified: Only this test boundary's fixture secrets are borrowed for acquisition, comparison or fixture computation; these APIs require ordinary references to establish the carrier contract.
+#[allow(clippy::disallowed_methods)]
 fn config_for(cookie: &str, endpoint: Option<&str>) -> RpcConfig {
     use secrecy::{ExposeSecret as _, ExposeSecretMut as _};
     #[derive(serde::Deserialize)]
@@ -37,8 +44,12 @@ fn config_for(cookie: &str, endpoint: Option<&str>) -> RpcConfig {
     // Private fixture bootstrap is acquired into an erasing carrier before parsing.
     let mut bytes = SecretBox::new(vec![0; 4096].into_boxed_slice());
     let mut file = File::open(root().join("reader.json")).unwrap();
-    let length = file.read(bytes.expose_secret_mut()).unwrap();
-    let value: Bootstrap = serde_json::from_slice(&bytes.expose_secret()[..length]).unwrap();
+    let length = file
+        .read(bytes.expose_secret_mut(/* (´[ROOT-cav:observe:secret-wallet-rpc-config-for-1]´) */))
+        .unwrap();
+    let value: Bootstrap =
+        serde_json::from_slice(&bytes.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-config-for-2]´) */)[..length])
+            .unwrap();
     RpcConfig::new(
         RpcLink::HostSecured,
         SecretString::from(endpoint.map_or(value.endpoint, String::from)),

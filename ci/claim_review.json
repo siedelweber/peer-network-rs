@@ -58,12 +58,28 @@
       "review": "Read the positive digest resolution and the three independently mutated digest, payload and recipe cases. Each must be refused by the family reader; no library-formatted expected digest is used by the Rust witness."
     },
     {
+      "operation": "ci::test_discipline.SourceDiscipline.test_suppressions",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:test-lints-cannot-be-suppressed",
+      "before": "inner, conditional and inline-test suppressions refuse, including nesting.",
+      "after": "Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels and justified smallest-function allows, with only declared fixture boundaries permitted in tests.",
+      "review": "Read unlabelled, unjustified, repeated, nested and serialization exits, fixture-only test boundaries and unchanged unrelated-suppression refusals."
+    },
+    {
       "operation": "ci::test_discipline.SourceDiscipline.test_toolchain_versions",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:toolchain-family-is-consistent",
       "before": "only undated nightly with both answering components satisfies the policy.",
       "after": "Only the pinned dated nightly answering with the full declared compiler commit and both required components satisfies the compiler policy.",
       "review": "Read the dated-channel and component witnesses, full answering rustc commit acceptance, and wrong, missing, repeated or shortened commit-hash refusals. The expected public identity comes from build policy; a channel file alone cannot admit a different answering nightly. These assertions do not establish older-compiler compatibility or artifact reproducibility."
+    },
+    {
+      "operation": "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:secret-carriers-reject-printable-traits",
+      "before": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles, preventing accidental output opt-in.",
+      "after": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies direct, trait-qualified and initializer exits until an item-local exception permits them.",
+      "review": "Read compiler trait controls and five denied Clippy exits with matching item-local allowed controls; no data-flow claim follows from compiler syntax."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_binary_reachability_control",

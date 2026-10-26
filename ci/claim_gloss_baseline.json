@@ -71,6 +71,7 @@
     "ci::test_discipline.SourceDiscipline.test_suppressions": "inner, conditional and inline-test suppressions refuse, including nesting.",
     "ci::test_discipline.SourceDiscipline.test_toolchain_versions": "only undated nightly with both answering components satisfies the policy.",
     "ci::test_discipline.WorkspaceChecks.test_discovered_members": "feature-minimal and documentation checks include a new binary-only member, exclude the engine and ignore nonmembers.",
+    "ci::test_discipline.WorkspaceChecks.test_http_admission": "The first HTTP dependency edge and its transitive closure must stay within admitted versions and features; absent edges do not manufacture lock entries.",
     "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles, preventing accidental output opt-in.",
     "ci::test_harness.Harness.test_case_level_declaration": "Claim: An explicit integration case retains its binary suite and implementation while receiving the integration budget; undeclared case identities, absent levels and missing premises cannot create overrides.",
     "ci::test_harness.Harness.test_doctest_identity": "Unrelated line shifts preserve item/example identity; ambiguous source positions refuse.",

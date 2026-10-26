@@ -639,6 +639,15 @@ use std::sync::Mutex;
 /// ´claim:cli:private-configuration-remains-owned-through-failure-and-drop´
 /// ´test:unit:private-configuration´
 #[test]
+// Fixture-only secret boundary: No deployment secret is accepted by this test fixture route.
+// Caveat: The fixture reader writes directly into the protected aggregate until read returns; the acquisition API requires mutable bytes.
+// (´[ROOT-cav:observe:secret-cli-tests-private-configuration-1]´)
+// Caveat: The fixture sets the protected numeric port through a mutable borrow that ends with assignment; the fixture must establish a populated secret before testing failed parsing.
+// (´[ROOT-cav:observe:secret-cli-tests-private-configuration-2]´)
+// Caveat: The assertion borrows the failed fixture's protected port until comparison returns; it must check preservation without moving the aggregate.
+// (´[ROOT-cav:observe:secret-cli-tests-private-configuration-3]´)
+// Justified: Only this test boundary's fixture secrets are borrowed for acquisition, comparison or fixture computation; these APIs require ordinary references to establish the carrier contract.
+#[allow(clippy::disallowed_methods)]
 fn private_configuration() {
     use secrecy::{ExposeSecret, ExposeSecretMut, zeroize::Zeroize};
     use std::io::Read;
@@ -664,12 +673,21 @@ fn private_configuration() {
     struct ParseFailure {
         configuration: SecretBox<Connection>,
     }
+    // Fixture-only secret boundary: No deployment secret is accepted by this test fixture route.
+    // Caveat: The fixture parser borrows private fixture text and computes an ordinary temporary port until assigning it back into the carrier; string and numeric parsers require ordinary types.
+    // (´[ROOT-cav:observe:secret-cli-tests-parse-connection-1]´)
+    // Caveat: The fixture parser writes the parsed port into the protected aggregate through a borrow ending at assignment; no carrier field setter exists.
+    // (´[ROOT-cav:observe:secret-cli-tests-parse-connection-2]´)
+    // Justified: Only this test boundary's fixture secrets are borrowed for acquisition, comparison or fixture computation; these APIs require ordinary references to establish the carrier contract.
+    #[allow(clippy::disallowed_methods)]
     fn parse_connection(mut configuration: SecretBox<Connection>, length: usize) -> Result<SecretBox<Connection>, ParseFailure> {
-        let port = std::str::from_utf8(&configuration.expose_secret().bytes[..length])
-            .ok()
-            .and_then(|text| text.rsplit(':').next()?.parse::<u16>().ok());
+        let port = std::str::from_utf8(
+            &configuration.expose_secret(/* (´[ROOT-cav:observe:secret-cli-tests-parse-connection-1]´) */).bytes[..length],
+        )
+        .ok()
+        .and_then(|text| text.rsplit(':').next()?.parse::<u16>().ok());
         if let Some(port) = port {
-            configuration.expose_secret_mut().port = port;
+            configuration.expose_secret_mut(/* (´[ROOT-cav:observe:secret-cli-tests-parse-connection-2]´) */).port = port;
             Ok(configuration)
         } else {
             Err(ParseFailure { configuration })
@@ -684,15 +702,20 @@ fn private_configuration() {
     let mut reader = std::io::Cursor::new(b"private-host:user:credential:invalid-port");
     // Necessary read targets protected storage directly; the parser borrows it
     // only for validation, and the failure owns the same protected aggregate.
-    let length = reader.read(&mut configuration.expose_secret_mut().bytes).unwrap();
-    configuration.expose_secret_mut().port = 5432;
+    let length = reader
+        .read(&mut configuration.expose_secret_mut(/* (´[ROOT-cav:observe:secret-cli-tests-private-configuration-1]´) */).bytes)
+        .unwrap();
+    configuration.expose_secret_mut(/* (´[ROOT-cav:observe:secret-cli-tests-private-configuration-2]´) */).port = 5432;
     let failure = parse_connection(configuration, length).unwrap_err();
     let diagnostic = format!("{failure:?}");
     assert!(!diagnostic.contains("private-host"));
     assert!(!diagnostic.contains("credential"));
     assert!(!diagnostic.contains("5432"));
     assert!(diagnostic.contains("REDACTED"));
-    assert_eq!(failure.configuration.expose_secret().port, 5432);
+    assert_eq!(
+        failure.configuration.expose_secret(/* (´[ROOT-cav:observe:secret-cli-tests-private-configuration-3]´) */).port,
+        5432
+    );
     drop(failure);
     assert!(erased.load(Ordering::Relaxed));
 }
@@ -703,6 +726,11 @@ struct LocalExport {
     fail: bool,
 }
 impl crate::observation_export::ExportTransport for LocalExport {
+    // Fixture-only secret boundary: No deployment secret is accepted by this test fixture route.
+    // Caveat: Only this test boundary's fixture secrets are borrowed for acquisition, comparison or fixture computation; these APIs require ordinary references to establish the carrier contract.
+    // (´[ROOT-cav:observe:secret-cli-tests-send-1]´)
+    // Justified: Only this test boundary's fixture secrets are borrowed for acquisition, comparison or fixture computation; these APIs require ordinary references to establish the carrier contract.
+    #[allow(clippy::disallowed_methods)]
     fn send(
         &self,
         request: http::Request<bytes::Bytes>,
@@ -711,7 +739,10 @@ impl crate::observation_export::ExportTransport for LocalExport {
         use secrecy::ExposeSecret;
         // Necessary authentication comparison borrows the protected value and
         // neither stores it nor includes it in an error or dependency request.
-        assert_eq!(credential.secret().expose_secret(), "fixture-private-token");
+        assert_eq!(
+            credential.secret().expose_secret(/* (´[ROOT-cav:observe:secret-cli-tests-send-1]´) */),
+            "fixture-private-token"
+        );
         assert!(!format!("{request:?}").contains("fixture-private-token"));
         self.requests
             .lock()

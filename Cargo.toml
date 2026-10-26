@@ -12,6 +12,10 @@ version = "0.1.0"
 license = "AGPL-3.0-only"
 
 [workspace.dependencies]
+hyper = { version = "=1.12.0", default-features = false }
+tower = { version = "=0.5.3", default-features = false }
+hyper-util = { version = "=0.1.21", default-features = false }
+http-body-util = { version = "=0.1.5", default-features = false }
 petgraph = { version = "0.8", features = ["serde-1"] }
 # Reviewed exact carriers and explicit numeric bounds; manifest and lock pin one reviewed public revision.
 nrz-scalar = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", rev = "b90b8025a2c0fdc70e1a5a8e8fa83403c8634526" }
@@ -47,7 +51,7 @@ opentelemetry_sdk = { version = "0.33.1", default-features = false, features = [
 opentelemetry-otlp = { version = "0.33.1", default-features = false, features = ["http-proto", "trace", "metrics"] }
 tracing-opentelemetry = { version = "0.34", default-features = false }
 opentelemetry-http = { version = "0.33.1", default-features = false }
-http = "1"
+http = { version = "=1.5.0", default-features = false }
 bytes = "1"
 futures-executor = "0.3"
 textwrap = "0.16"
@@ -70,6 +74,7 @@ unused = { level = "deny", priority = -2 }
 warnings = { level = "deny", priority = -1 }
 
 [workspace.lints.clippy]
+disallowed_methods = "deny"
 all = { level = "deny", priority = -1 }
 complexity = { level = "deny", priority = -1 }
 correctness = { level = "deny", priority = -1 }

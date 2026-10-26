@@ -2500,6 +2500,7 @@
         "ci::test_discipline.SourceDiscipline.test_suppressions",
         "ci::test_discipline.SourceDiscipline.test_toolchain_versions",
         "ci::test_discipline.WorkspaceChecks.test_discovered_members",
+        "ci::test_discipline.WorkspaceChecks.test_http_admission",
         "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits"
       ],
       "implementation": "ci-python",

@@ -21,24 +21,52 @@ import time
 import json
 from unittest.mock import patch
 
-from discipline import cargo_config_findings, inherits_lints, main, run_clippy, source_findings, test_sources, validate_build_policy, validate_toolchain
+from discipline import cargo_config_findings, exposure_registry_findings, exposure_sites, http_admission_findings, inherits_lints, main, run_clippy, secret_dependency_findings, source_findings, test_sources, validate_build_policy, validate_toolchain
 from clippy_fixture import crate
 from hash_citations import audit, establish, occurrences
 
 
 class WorkspaceChecks(unittest.TestCase):
+    def test_http_admission(self):
+        """The first HTTP dependency edge and its transitive closure must stay within admitted versions and features; absent edges do not manufacture lock entries.
+        ´claim:discipline:http-edges-stay-within-admission´
+        ´test:integration:test-http-admission´
+        """
+        rows = [{"name": "hyper", "version": "1.12.0", "features": ["client", "http1"]},
+                {"name": "bytes", "version": "1.12.1", "features": ["std"]}]
+        metadata = {"packages": [{"id": "h", "name": "hyper", "version": "1.12.0"},
+                                 {"id": "b", "name": "bytes", "version": "1.12.1"}],
+                    "resolve": {"nodes": [{"id": "h", "features": ["client"], "deps": [{"pkg": "b", "dep_kinds": [{"kind": None}]}]},
+                                          {"id": "b", "features": ["std"], "deps": []}]}}
+        self.assertEqual(http_admission_findings(metadata, rows), ([], 2))
+        self.assertEqual(http_admission_findings({"packages": [], "resolve": {"nodes": []}}, rows), ([], 0))
+        for target, field, value in [('package', 'version', '1.12.2'), ('package', 'name', 'new-dependency'),
+                                     ('node', 'features', ['std', 'unreviewed'])]:
+            bad = copy.deepcopy(metadata)
+            entry = bad['packages'][1] if target == 'package' else bad['resolve']['nodes'][1]
+            entry[field] = value
+            self.assertTrue(http_admission_findings(bad, rows)[0])
+
     def test_secret_carrier_traits(self):
-        """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles, preventing accidental output opt-in.
+        """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies direct, trait-qualified and initializer exits until an item-local exception permits them.
         ´claim:discipline:secret-carriers-reject-printable-traits´
         ´test:integration:test-secret-carrier-traits´
         """
+        metadata = {"packages": [{"id": "s", "name": "secrecy", "version": "0.10.3"}],
+                    "resolve": {"nodes": [{"id": "s", "features": []}]}}
+        self.assertFalse(secret_dependency_findings(metadata))
+        metadata['resolve']['nodes'][0]['features'] = ['serde']
+        self.assertTrue(secret_dependency_findings(metadata))
+        metadata['resolve']['nodes'][0]['features'] = []
+        metadata['packages'][0]['version'] = '0.10.4'
+        self.assertTrue(secret_dependency_findings(metadata))
         if os.environ.get('FOUNDATION_COMPUTE_TESTS') != '1':
             self.skipTest('requires the provisioned compute toolchain')
         root = Path.cwd()
         with tempfile.TemporaryDirectory(prefix='secret-traits-', dir=os.environ['TMPDIR']) as directory:
             fixture = Path(directory)
             (fixture/'src').mkdir()
-            (fixture/'Cargo.toml').write_text('[package]\nname="secret-trait-probe"\nversion="0.0.0"\nedition="2024"\n[workspace]\n[dependencies]\ncli-common={path='+json.dumps(str(root/'packages/cli-common'))+'}\nserde_json="1"\n[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\n')
+            (fixture/'Cargo.toml').write_text('[package]\nname="secret-trait-probe"\nversion="0.0.0"\nedition="2024"\n[workspace]\n[dependencies]\ncli-common={path='+json.dumps(str(root/'packages/cli-common'))+'}\nserde_json="1"\nsecrecy={version="=0.10.3",default-features=false}\n[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\n')
             constructors = [
                 'SecretString::from("private-sentinel")',
                 'SecretBox::<[u8]>::new(vec![1,2,3].into_boxed_slice())',
@@ -53,6 +81,21 @@ class WorkspaceChecks(unittest.TestCase):
                     else:
                         self.assertNotEqual(result.returncode,0)
                         self.assertIn(expected,result.stderr)
+            (fixture/'clippy.toml').write_bytes((root/'clippy.toml').read_bytes())
+            for expression in ['secrecy::ExposeSecret::expose_secret(&value)',
+                               'secrecy::ExposeSecretMut::expose_secret_mut(&mut value)',
+                               'secrecy::SecretBox::<u8>::init_with(|| 7)',
+                               'secrecy::SecretBox::<u8>::try_init_with(|| Ok::<u8, ()>(7))',
+                               'secrecy::SecretBox::<u8>::init_with_mut(|v| *v = 7)']:
+                for allowed in [False, True]:
+                    source = ('#[allow(clippy::disallowed_methods)]\n' if allowed else '')
+                    source += 'fn main(){let mut value = secrecy::SecretBox::new(Box::new(1_u8)); let _ = &mut value; let _ = '+expression+';}'
+                    (fixture/'src/main.rs').write_text(source)
+                    result=subprocess.run(['cargo','clippy','--offline','--profile','gate','--manifest-path',str(fixture/'Cargo.toml'),'--','-D','clippy::disallowed_methods'],capture_output=True,text=True)
+                    if allowed:self.assertEqual(result.returncode,0,result.stderr)
+                    else:
+                        self.assertNotEqual(result.returncode,0,result.stderr)
+                        self.assertIn('disallowed_methods',result.stderr)
 
     def test_discovered_members(self):
         """feature-minimal and documentation checks include a new binary-only member, exclude the engine and ignore nonmembers.
@@ -488,7 +531,7 @@ class SourceDiscipline(unittest.TestCase):
                 self.assertTrue(source_findings(Path('src/lib.rs'), source, 'printing'))
 
     def test_suppressions(self):
-        """inner, conditional and inline-test suppressions refuse, including nesting.
+        """Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels and justified smallest-function allows, with only declared fixture boundaries permitted in tests.
         ´claim:discipline:test-lints-cannot-be-suppressed´
         ´test:integration:test-suppressions´
         """
@@ -506,6 +549,31 @@ class SourceDiscipline(unittest.TestCase):
         source = '// Justified: Exact values are required.\n#[allow(clippy::float_cmp)] fn f() {}'
         self.assertFalse(source_findings(Path('src/lib.rs'), source, 'suppressions'))
         self.assertTrue(source_findings(Path('tests/probe.rs'), source, 'suppressions'))
+        allowed = ('// Fixture-only secret boundary: This fixture owns its test value.\n'
+                   '// Caveat: The fixture compares borrowed bytes.\n'
+                   '// (´[ROOT-cav:observe:secret-fixture]´)\n'
+                   '// Justified: The byte assertion requires a borrowed fixture value.\n'
+                   '#[allow(clippy::disallowed_methods)]\nfn fixture() { value.expose_secret(/* (´[ROOT-cav:observe:secret-fixture]´) */); }')
+        self.assertFalse(source_findings(Path('tests/probe.rs'), allowed, 'suppressions'))
+        call = 'value.expose_secret(/* (´[ROOT-cav:observe:secret-fixture]´) */);'
+        for bad in [allowed.replace('// Fixture-only secret boundary:', '/// Other:'),
+                    allowed.replace('cav:observe:secret-fixture', 'unlabelled'),
+                    allowed.replace('Justified:', 'Reason:'),
+                    allowed.replace('#[allow(clippy::disallowed_methods)]', ''),
+                    allowed.replace(call, call + ' value.expose_secret_mut();'),
+                    allowed.replace('fn fixture()', 'mod fixture'),
+                    allowed.replace(call, 'fn nested() { '+call+' }'),
+                    allowed.replace(call, call+' impl SerializableSecret for Value {}'),
+                    allowed.replace('/* (´[ROOT-cav:observe:secret-fixture]´) */', '')]:
+            self.assertTrue(source_findings(Path('tests/probe.rs'), bad, 'suppressions'), bad)
+        sites, findings = exposure_sites(Path('tests/probe.rs'), allowed)
+        self.assertFalse(findings)
+        register = [{"label": "cav:observe:secret-fixture", "path": "tests/probe.rs", "function": "fixture", "method": "expose_secret"}]
+        self.assertFalse(exposure_registry_findings(sites, register))
+        for bad in [[], register + register, [dict(register[0], function="other")], [dict(register[0], method="expose_secret_mut")]]:
+            self.assertTrue(exposure_registry_findings(sites, bad))
+        for exit in ['expose_secret', 'expose_secret_mut', 'init_with', 'try_init_with', 'init_with_mut']:
+            self.assertTrue(exposure_sites(Path('src/lib.rs'), 'fn f() { let exit = Value::'+exit+'; }')[1])
 
     def test_literals(self):
         """examples in comments and literals are not executable source.

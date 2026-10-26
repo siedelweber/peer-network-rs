@@ -1,0 +1,8 @@
+# Every secret exit is a reviewed, labelled smallest-item exception.
+disallowed-methods = [
+  { path = "secrecy::ExposeSecret::expose_secret", reason = "Requires a labelled secret-exposure exception." },
+  { path = "secrecy::ExposeSecretMut::expose_secret_mut", reason = "Requires a labelled secret-exposure exception." },
+  { path = "secrecy::SecretBox::init_with_mut", reason = "The initializer receives an exposed mutable secret." },
+  { path = "secrecy::SecretBox::init_with", reason = "The initializer constructs an ordinary secret temporary." },
+  { path = "secrecy::SecretBox::try_init_with", reason = "The initializer constructs an ordinary secret temporary." },
+]

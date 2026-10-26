@@ -946,7 +946,7 @@ version = "1.5.0"
 checksum = "918d3568bebf352712bc2ef3d46a8bcf1a75b373be6539de198e9105cbbf9ce0"
 licence = "MIT OR Apache-2.0"
 msrv = "1.57.0"
-features = ["default", "std"]
+features = ["std"]
 build_time = "none"
 procedural_macros = []
 

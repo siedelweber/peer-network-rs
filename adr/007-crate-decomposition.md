@@ -206,3 +206,49 @@
 **Amendment (Shared binary formation)** · `amend:decomposition:affinity-projection-scope` Extends (`amend:decomposition:registration-projection-scope`) with an Affinity projection over the records public surface and shared reconstruction, removal and revalidation helpers. The graph owns the bounded coordinate interpretation and endpoint typing; records behavior and canonical encoding remain unchanged. This adds no dependency, observer owner or authentication implementation. The full authored-family census and tensor-pipeline specification do not admit the unimplemented families or geometry.
 
 **Amendment (Minted reference placement)** · `amend:decomposition:minted-reference-carrier` Extends (`amend:decomposition:bite-one-admission`) with the distinct records Minted(ActId) reference required by network-v0.29.2, ``def:graph:identifier-algebra`` and ``def:graph:act-identifier``. Complete self-minting terminal targets in Publish, Owner, Participant, Review, Send and Bid derive node references alongside act and edge identities; ordinary acts do not mint. The existing act identifier is finite before finalization, so a genesis act can carry its own minted target without circular identity. Records validate and resolve this structural reference, while pn-graph owns complete family incidence, endpoint typing and authenticated approval. This carrier adds no codec or canonical byte profile; the first byte boundary remains held.
+
+**Amendment (Workspace HTTP stack)** · `amend:decomposition:http-stack` Repository amendment: hyper, tower, hyper-util, http-body-util and http are the workspace HTTP stack. Root workspace declarations pin their exact versions with default features disabled. Any member, library or executable, may inherit them with `.workspace = true` and enable the features it needs within the admitted ceiling below; a new version, feature or transitive package requires updating this admission before use. This is one workspace admission, not a wallet-only dependency decision. The initial connection-level client uses hyper client and http1, hyper-util tokio I/O, tower timeout and limit, and http-body-util's bounded body. The public API server will use the same stack, with its server feature closure reviewed before that edge lands. Cargo's existing tokio 1.54.1 is reused. The isolated runtime probe has 23 packages; the integrated workspace closure has 35, because already admitted shared features add existing packages. The two feature columns distinguish those scopes. Eleven packages are new to the lock closure; the remainder reuse current dependencies, including futures-core, futures-sink and tokio-util. All new packages offer MIT or MIT with Apache-2.0 alternatives. Existing Unicode and target-specific licence obligations remain in force. Preserved notices for the isolated closure are in `docs/HTTP-NOTICES`; the added workspace-only rows retain their existing notices.
+
+**Convention (HTTP admission before first use)** · `conv:decomposition:http-lock` The admission is measured in disposable scratch workspaces with exact declarations and the intended feature edges, seeded from the repository lockfile and resolved only by `cargo update --workspace`. The main tree adds no unused member dependency. Its lockfile therefore gains no dormant HTTP packages; the first member edge must resolve within this admission. The member-lints step traverses the actual resolved HTTP graph and refuses unknown packages, changed versions or features outside the table, including transitive additions. Workspace feature unification is checked against the integrated ceiling, not mistaken for the isolated minimal features. (`claim:discipline:http-edges-stay-within-admission`) witnesses absent edges, valid subsets, wrong versions, additional dependencies and excess features. A later server or transport feature request is not silently admitted by the root declaration.
+
+**Table (Admitted HTTP dependencies)** · `tab:decomposition:http-dependencies` Exact registry releases and feature ceilings; an empty minimal column on a workspace-only row does not mean that package belongs to the isolated probe.
+
+| Package | Version | Licence | Minimal HTTP features | Unified ceiling | Scope |
+| --- | --- | --- | --- | --- | --- |
+| atomic-waker | 1.1.2 | Apache-2.0 OR MIT |  |  | HTTP runtime closure plus existing unified workspace features |
+| bytes | 1.12.1 | MIT | default, std | default, std | HTTP runtime closure plus existing unified workspace features |
+| futures-core | 0.3.34 | MIT OR Apache-2.0 | alloc, default, std | alloc, default, std | HTTP runtime closure plus existing unified workspace features |
+| futures-sink | 0.3.34 | MIT OR Apache-2.0 | alloc, default, std | alloc, default, std | HTTP runtime closure plus existing unified workspace features |
+| http | 1.5.0 | MIT OR Apache-2.0 | default, std | default, std | HTTP runtime closure plus existing unified workspace features |
+| http-body | 1.1.0 | MIT |  |  | HTTP runtime closure plus existing unified workspace features |
+| http-body-util | 0.1.5 | MIT |  |  | HTTP runtime closure plus existing unified workspace features |
+| httparse | 1.10.1 | MIT OR Apache-2.0 | default, std | default, std | HTTP runtime closure plus existing unified workspace features |
+| hyper | 1.12.0 | MIT | client, default, http1 | client, default, http1 | HTTP runtime closure plus existing unified workspace features |
+| hyper-util | 0.1.21 | MIT | tokio | tokio | HTTP runtime closure plus existing unified workspace features |
+| itoa | 1.0.18 | MIT OR Apache-2.0 |  |  | HTTP runtime closure plus existing unified workspace features |
+| libc | 0.2.191 | MIT OR Apache-2.0 |  | default, std | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| mio | 1.2.4 | MIT |  | net, os-ext, os-poll | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| once_cell | 1.21.4 | MIT OR Apache-2.0 | alloc, default, race, std | alloc, default, race, std | HTTP runtime closure plus existing unified workspace features |
+| pin-project-lite | 0.2.17 | Apache-2.0 OR MIT |  |  | HTTP runtime closure plus existing unified workspace features |
+| proc-macro2 | 1.0.107 | MIT OR Apache-2.0 |  | default, proc-macro, span-locations | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| quote | 1.0.47 | MIT OR Apache-2.0 |  | default, proc-macro | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| smallvec | 1.16.3 | MIT OR Apache-2.0 | const_generics, const_new | const_generics, const_new | HTTP runtime closure plus existing unified workspace features |
+| socket2 | 0.6.5 | MIT OR Apache-2.0 |  | all | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| syn | 2.0.119 | MIT OR Apache-2.0 |  | clone-impls, default, derive, extra-traits, fold, full, parsing, printing, proc-macro, visit, visit-mut | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| tokio | 1.54.1 | MIT | default, rt, sync, time | bytes, default, io-util, libc, mio, net, rt, rt-multi-thread, socket2, sync, time, windows-sys | HTTP runtime closure plus existing unified workspace features |
+| tokio-util | 0.7.20 | MIT |  | codec, default, libc | HTTP runtime closure plus existing unified workspace features |
+| tower | 0.5.3 | MIT | limit, pin-project-lite, timeout, tokio, tokio-util, tracing | limit, pin-project-lite, timeout, tokio, tokio-util, tracing | HTTP runtime closure plus existing unified workspace features |
+| tower-layer | 0.3.3 | MIT |  |  | HTTP runtime closure plus existing unified workspace features |
+| tower-service | 0.3.3 | MIT |  |  | HTTP runtime closure plus existing unified workspace features |
+| tracing | 0.1.44 | MIT | std | attributes, default, std, tracing-attributes | HTTP runtime closure plus existing unified workspace features |
+| tracing-attributes | 0.1.31 | MIT |  |  | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| tracing-core | 0.1.36 | MIT | once_cell, std | default, once_cell, std | HTTP runtime closure plus existing unified workspace features |
+| try-lock | 0.2.5 | MIT |  |  | HTTP runtime closure plus existing unified workspace features |
+| unicode-ident | 1.0.27 | (MIT OR Apache-2.0) AND Unicode-3.0 |  |  | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| valuable | 0.1.1 | MIT |  | alloc, std | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| want | 0.3.2 | MIT |  |  | HTTP runtime closure plus existing unified workspace features |
+| wasi | 0.11.1+wasi-snapshot-preview1 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT |  | default, std | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| windows-link | 0.2.1 | MIT OR Apache-2.0 |  |  | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+| windows-sys | 0.61.2 | MIT OR Apache-2.0 |  | Wdk, Wdk_Foundation, Wdk_Storage, Wdk_Storage_FileSystem, Wdk_System, Wdk_System_IO, Win32, Win32_Foundation, Win32_Networking, Win32_Networking_WinSock, Win32_Security, Win32_Storage, Win32_Storage_FileSystem, Win32_System, Win32_System_Console, Win32_System_Diagnostics, Win32_System_Diagnostics_Debug, Win32_System_IO, Win32_System_Pipes, Win32_System_SystemInformation, Win32_System_SystemServices, Win32_System_Threading, Win32_System_WindowsProgramming, Win32_UI, Win32_UI_Input, Win32_UI_Input_KeyboardAndMouse, default | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
+
+

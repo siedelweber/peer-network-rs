@@ -176,3 +176,100 @@
 **Amendment (Storage instrument registration)** · `amend:observe:storage-instruments` Under (`model:design:observation-map`), HOST's existing storage stem additionally registers exactly eight counters (encoded and decoded bytes, queries, successor attempts, commits, rollbacks, retries and refusals), two gauges (active transactions and queue depth), and three histograms (package bytes and query and transaction elapsed seconds). No other owner gains these names; undeclared names still refuse registration. Query counts cover the closed statement executions; byte counts cover canonical package production and validated readback. Rollbacks count abandoned or explicitly rolled-back transaction handles, not a conclusion about an uncertain commit; CommitUnknown remains explicit. Queue depth measures pending succession locks. Completion and timing stay nonbinding and never enter canonical storage or replay equality.
 
 **Amendment (Graph accounting owner)** · `amend:observe:graph-owner` Under (`sig:design:graph`) and (`conv:observe:names`), GRAPH has its own accounting dispatch and graph contract metric stem. The graph_owner_accounting witness exercises one GRAPH-labelled operation at default and trace with an injected clock, checking its own invocation count and elapsed sample and zero invocations charged to other owners. This registers the accounting prerequisite; it does not establish formation, dependency partition, geometry or their domain work counters. Those operations and their runtime evidence remain obligations of (`gate:design:bite-3`).
+
+**Amendment (Labelled secret exits)** · `amend:observe:secret-exits` Repository amendment: (`rule:observe:privacy`) keeps private values in secret carriers and records all public content. The necessary suspension of that representation guarantee follows (`rule:observe:secret-exceptions`), rather than being an unrecorded convention. A borrowed reference, a mutable reference, an initializer's ordinary temporary, or a copy into an ordinary address, scalar, cryptographic state or protocol buffer is an exposure even when it is never logged. This does not permit filtering public observations.
+
+**Rule (Secret exposure exceptions)** · `rule:observe:secret-exceptions` Secret exposure is denied by default, like unsafe code. Each explicit exit has its own Caveat label, the closest declared genre for a local limitation of the representation guarantee, and the smallest enclosing function has an unconditional `#[allow(clippy::disallowed_methods)]` immediately preceded by a complete Justified sentence. The exception names the material, its destination, lifetime and the reason the consumer cannot accept a carrier. Container-preserving alternatives take precedence. Borrowed buffer accessors are themselves exposure boundaries: their permission covers only the declared parser, cryptographic, acquisition or socket consumers, never arbitrary retention or observation. Review every ordinary copy downstream, including transient configuration scalars and cryptographic library state, against that exception; a new destination or lifetime needs a new reviewed exception. Clippy resolves direct and trait-qualified method access; the source census accounts individual labels and the smallest item's allow and justification. Neither check proves semantic data flow, absence of copied secrets or macro-expanded consumer safety; those remain reviewer-confirmed obligations with negative leakage probes under (`proposal:observe:enforcement`). The census prints sites and distinct labels beside the suppressions census and retains the source locations as an artifact. Secret serialization is not admitted.
+
+**Convention (Fixture secret boundaries)** · `conv:observe:fixture-secret-exits` Tests retain the suppression ban except for `clippy::disallowed_methods` on an explicitly documented fixture-only secret boundary function. Each exit still needs its own Caveat label and justification. Such a boundary may acquire, compute or inspect only secrets created by that test or its isolated harness; it accepts no deployment secret. It may be the test function itself or a local helper when the test's local carrier type and acquisition or drop assertions require that scope. A generic unrestricted exposure helper would conceal fixture provenance rather than establish it. The gate refuses other test suppressions, module or implementation-wide allows, inherited permission from a parent function, missing labels and repeated labels. Fixture provenance is reviewed, not inferred from the function name. This narrowly amends the test-suppression clauses of (`proposal:observe:enforcement`) and (`dec:lint:policy`), without weakening the claims under test.
+
+
+**Register (Reviewed secret exits)** · `reg:observe:secret-exits` Each exception is minted here and cited at its individual source exit. Function-local lint permission does not extend to a nested function or to an uncited exit. The source census joins each citation, path, smallest function and method to this register; removed or additional exits refuse until the register is reviewed with them. All listed exits are retained; the consumer APIs require ordinary borrows or values. Fixture entries authorize only isolated test material under (`conv:observe:fixture-secret-exits`).
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-cli-tests-parse-connection-1` In `packages/cli-common/src/observation/tests.rs`, function `parse_connection`: The fixture parser borrows private fixture text and computes an ordinary temporary port until assigning it back into the carrier; string and numeric parsers require ordinary types. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-cli-tests-parse-connection-2` In `packages/cli-common/src/observation/tests.rs`, function `parse_connection`: The fixture parser writes the parsed port into the protected aggregate through a borrow ending at assignment; no carrier field setter exists. Source method: `expose_secret_mut`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-cli-tests-private-configuration-1` In `packages/cli-common/src/observation/tests.rs`, function `private_configuration`: The fixture reader writes directly into the protected aggregate until read returns; the acquisition API requires mutable bytes. Source method: `expose_secret_mut`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-cli-tests-private-configuration-2` In `packages/cli-common/src/observation/tests.rs`, function `private_configuration`: The fixture sets the protected numeric port through a mutable borrow that ends with assignment; the fixture must establish a populated secret before testing failed parsing. Source method: `expose_secret_mut`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-cli-tests-private-configuration-3` In `packages/cli-common/src/observation/tests.rs`, function `private_configuration`: The assertion borrows the failed fixture's protected port until comparison returns; it must check preservation without moving the aggregate. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-cli-tests-send-1` In `packages/cli-common/src/observation/tests.rs`, function `send`: Only this test boundary's fixture secrets are borrowed for acquisition, comparison or fixture computation; these APIs require ordinary references to establish the carrier contract. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-config-string-1` In `packages/host/src/config.rs`, function `string`: The Unicode encoder writes private configuration text into protected storage; its API requires a mutable byte array. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-mac-1` In `packages/host/src/scram.rs`, function `mac`: The MAC writes its derived key directly into protected output; the digest API requires a mutable byte array. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-derive-1` In `packages/host/src/scram.rs`, function `derive`: PBKDF2 writes the derived password key directly into protected output; its API requires a mutable byte array. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-1` In `packages/host/src/scram.rs`, function `login`: The nonce acquisition lends its protected array to the entropy API only until that call returns; the API cannot accept the carrier. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-2` In `packages/host/src/scram.rs`, function `login`: The nonce is borrowed by base64 encoding into a protected buffer for that call; the encoder requires a byte slice. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-3` In `packages/host/src/scram.rs`, function `login`: The salted password is borrowed by the Client Key MAC; the MAC API requires bytes and its ordinary keyed state lasts until finalization. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-4` In `packages/host/src/scram.rs`, function `login`: The client key enters ordinary SHA-256 state until finalization into protected output; the digest API cannot consume the carrier. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-5` In `packages/host/src/scram.rs`, function `login`: The stored-key output lends its protected array to digest finalization for that call; the digest API requires mutable bytes. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-6` In `packages/host/src/scram.rs`, function `login`: The salted password is borrowed by the Server Key MAC until finalization; its keyed state cannot be represented by the carrier API. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-7` In `packages/host/src/scram.rs`, function `login`: The stored key is borrowed by the transcript MAC until finalization into protected output; the MAC API requires key bytes. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-8` In `packages/host/src/scram.rs`, function `login`: The proof lends mutable protected bytes to the XOR loop until the loop ends; iteration cannot operate on the carrier directly. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-9` In `packages/host/src/scram.rs`, function `login`: The client key lends bytes to the proof XOR loop, including ordinary copied byte operands until each iteration ends; the arithmetic requires ordinary bytes. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-10` In `packages/host/src/scram.rs`, function `login`: The signature lends bytes to the proof XOR loop, including ordinary copied byte operands until each iteration ends; the arithmetic requires ordinary bytes. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-11` In `packages/host/src/scram.rs`, function `login`: The proof is borrowed for base64 encoding into a protected buffer until encoding returns; the encoder requires a byte slice. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-login-12` In `packages/host/src/scram.rs`, function `login`: The server key enters the verifier's ordinary MAC state until server-signature verification returns; the MAC API cannot accept or retain the carrier. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-derivation-cost-1` In `packages/host/src/scram.rs`, function `derivation_cost`: The known-answer assertion borrows the derived public fixture key until comparison returns; equality requires its ordinary byte array. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-derivation-cost-2` In `packages/host/src/scram.rs`, function `derivation_cost`: The first public-fixture PBKDF2 run writes directly into protected output until derivation returns; the API requires mutable bytes. Source method: `expose_secret_mut`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-derivation-cost-3` In `packages/host/src/scram.rs`, function `derivation_cost`: The second public-fixture PBKDF2 run writes directly into protected output until derivation returns; the API requires mutable bytes. Source method: `expose_secret_mut`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-derivation-cost-4` In `packages/host/src/scram.rs`, function `derivation_cost`: The repeated-run assertion borrows the first public fixture key until comparison returns; equality requires ordinary byte arrays. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-scram-derivation-cost-5` In `packages/host/src/scram.rs`, function `derivation_cost`: The repeated-run assertion borrows the second public fixture key until comparison returns; equality requires ordinary byte arrays. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-secret-bytes-1` In `packages/host/src/secret.rs`, function `bytes`: The borrowed private protocol bytes go only to the reviewed parser, cryptographic or socket consumer; those APIs require a slice rather than a secret container. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-secret-storage-1` In `packages/host/src/secret.rs`, function `storage`: The mutable private buffer goes only to acquisition or encoding into protected storage; the byte-oriented APIs cannot accept the container. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-secret-set-length-1` In `packages/host/src/secret.rs`, function `set_length`: Only the protected allocation length is inspected to enforce the public buffer ceiling; the container has no length accessor. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-secret-append-1` In `packages/host/src/secret.rs`, function `append`: Only the protected allocation length is borrowed for the append capacity check; the container has no length operation. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-host-secret-append-2` In `packages/host/src/secret.rs`, function `append`: Incoming private bytes are copied directly into protected storage through a borrow ending when copying returns; the container has no bounded append operation. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-new-1` In `packages/wallet/src/rpc.rs`, function `new`: Endpoint text is borrowed only to check its byte length; the container has no length operation. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-new-2` In `packages/wallet/src/rpc.rs`, function `new`: Endpoint text is parsed into an ordinary IP address solely for validation and immediately discarded; the standard parser cannot accept the carrier. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-new-3` In `packages/wallet/src/rpc.rs`, function `new`: The port scalar is copied only for its nonzero validation comparison; the comparison cannot operate on the carrier. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-new-4` In `packages/wallet/src/rpc.rs`, function `new`: Cookie-path text is borrowed only to check its byte length; the container has no length operation. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-exchange-1` In `packages/wallet/src/rpc.rs`, function `exchange`: The private cookie path is borrowed by secure file acquisition until that call returns; filesystem calls require ordinary path bytes. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-exchange-2` In `packages/wallet/src/rpc.rs`, function `exchange`: The expected owner scalar is copied into cookie ownership validation for that call; filesystem metadata comparisons require an ordinary user identifier. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-exchange-3` In `packages/wallet/src/rpc.rs`, function `exchange`: The private endpoint is parsed into an ordinary IP address used by connect during this exchange; the socket API cannot accept the carrier and socket state retains private reachability until close. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-exchange-4` In `packages/wallet/src/rpc.rs`, function `exchange`: The private port is copied into the ordinary socket address for connect; the socket API cannot accept the carrier and socket state retains private reachability until close. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-bytes-1` In `packages/wallet/src/rpc_secret.rs`, function `bytes`: Borrowed private RPC bytes go to the reviewed cookie, encoding or socket consumer; those APIs require slices rather than the container. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-vacant-1` In `packages/wallet/src/rpc_secret.rs`, function `vacant`: The acquisition API writes directly into the protected buffer through its mutable slice; it cannot accept the container. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-config-for-1` In `packages/wallet/tests/rpc.rs`, function `config_for`: The isolated harness bootstrap file is read directly into protected bytes until read returns; the file API requires a mutable slice. Source method: `expose_secret_mut`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-config-for-2` In `packages/wallet/tests/rpc.rs`, function `config_for`: The fixture bootstrap bytes are borrowed for JSON decoding into ordinary fixture configuration fields until they are wrapped into the client configuration; this test-only acquisition exercises an isolated node and never reads deployment credentials. Source method: `expose_secret`. Fixture-only boundary.
+
+

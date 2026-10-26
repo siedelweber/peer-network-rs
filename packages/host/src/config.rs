@@ -168,6 +168,10 @@ impl Json<'_> {
         }
         Ok(value)
     }
+    // Caveat: The Unicode encoder writes private configuration text into protected storage; its API requires a mutable byte array.
+    // (´[ROOT-cav:observe:secret-host-config-string-1]´)
+    // Justified: The Unicode encoder writes private configuration text into protected storage; its API requires a mutable byte array.
+    #[allow(clippy::disallowed_methods)]
     fn string(&mut self) -> Result<Buffer, Refusal> {
         self.token(b'"')?;
         let mut value = Buffer::new();
@@ -204,7 +208,13 @@ impl Json<'_> {
                             }
                             let scalar = char::from_u32(code).ok_or(Refusal::ConfigurationSyntax)?;
                             let mut encoded = secrecy::SecretBox::new(Box::new([0_u8; 4]));
-                            value.append(scalar.encode_utf8(encoded.expose_secret_mut()).as_bytes())?;
+                            value.append(
+                                scalar
+                                    .encode_utf8(
+                                        encoded.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-config-string-1]´) */),
+                                    )
+                                    .as_bytes(),
+                            )?;
                             continue;
                         }
                         _ => return Err(Refusal::ConfigurationSyntax),

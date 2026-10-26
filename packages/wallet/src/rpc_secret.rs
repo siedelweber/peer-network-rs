@@ -14,11 +14,19 @@ impl Buffer {
             length: 0,
         }
     }
+    // Caveat: Borrowed private RPC bytes go to the reviewed cookie, encoding or socket consumer; those APIs require slices rather than the container.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-secret-bytes-1]´)
+    // Justified: Borrowed private RPC bytes go to the reviewed cookie, encoding or socket consumer; those APIs require slices rather than the container.
+    #[allow(clippy::disallowed_methods)]
     pub(crate) fn bytes(&self) -> &[u8] {
-        &self.bytes.expose_secret()[..self.length]
+        &self.bytes.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-secret-bytes-1]´) */)[..self.length]
     }
+    // Caveat: The acquisition API writes directly into the protected buffer through its mutable slice; it cannot accept the container.
+    // (´[ROOT-cav:observe:secret-wallet-rpc-secret-vacant-1]´)
+    // Justified: The acquisition API writes directly into the protected buffer through its mutable slice; it cannot accept the container.
+    #[allow(clippy::disallowed_methods)]
     pub(crate) fn vacant(&mut self) -> &mut [u8] {
-        &mut self.bytes.expose_secret_mut()[self.length..]
+        &mut self.bytes.expose_secret_mut(/* (´[ROOT-cav:observe:secret-wallet-rpc-secret-vacant-1]´) */)[self.length..]
     }
     pub(crate) fn advance(&mut self, count: usize) {
         self.length += count;

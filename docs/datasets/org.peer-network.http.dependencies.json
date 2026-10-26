@@ -1,0 +1,499 @@
+{
+  "namespace": "org.peer-network.http.dependencies",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "features": [],
+      "license": "Apache-2.0 OR MIT",
+      "minimal_features": [],
+      "name": "atomic-waker",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.1.2"
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "license": "MIT",
+      "minimal_features": [
+        "default",
+        "std"
+      ],
+      "name": "bytes",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.12.1"
+    },
+    {
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [
+        "alloc",
+        "default",
+        "std"
+      ],
+      "name": "futures-core",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.3.34"
+    },
+    {
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [
+        "alloc",
+        "default",
+        "std"
+      ],
+      "name": "futures-sink",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.3.34"
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [
+        "default",
+        "std"
+      ],
+      "name": "http",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.5.0"
+    },
+    {
+      "features": [],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "http-body",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.1.0"
+    },
+    {
+      "features": [],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "http-body-util",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.1.5"
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [
+        "default",
+        "std"
+      ],
+      "name": "httparse",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.10.1"
+    },
+    {
+      "features": [
+        "client",
+        "default",
+        "http1"
+      ],
+      "license": "MIT",
+      "minimal_features": [
+        "client",
+        "default",
+        "http1"
+      ],
+      "name": "hyper",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.12.0"
+    },
+    {
+      "features": [
+        "tokio"
+      ],
+      "license": "MIT",
+      "minimal_features": [
+        "tokio"
+      ],
+      "name": "hyper-util",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.1.21"
+    },
+    {
+      "features": [],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "itoa",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.0.18"
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "libc",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "0.2.191"
+    },
+    {
+      "features": [
+        "net",
+        "os-ext",
+        "os-poll"
+      ],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "mio",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "1.2.4"
+    },
+    {
+      "features": [
+        "alloc",
+        "default",
+        "race",
+        "std"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [
+        "alloc",
+        "default",
+        "race",
+        "std"
+      ],
+      "name": "once_cell",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.21.4"
+    },
+    {
+      "features": [],
+      "license": "Apache-2.0 OR MIT",
+      "minimal_features": [],
+      "name": "pin-project-lite",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.2.17"
+    },
+    {
+      "features": [
+        "default",
+        "proc-macro",
+        "span-locations"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "proc-macro2",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "1.0.107"
+    },
+    {
+      "features": [
+        "default",
+        "proc-macro"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "quote",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "1.0.47"
+    },
+    {
+      "features": [
+        "const_generics",
+        "const_new"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [
+        "const_generics",
+        "const_new"
+      ],
+      "name": "smallvec",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.16.3"
+    },
+    {
+      "features": [
+        "all"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "socket2",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "0.6.5"
+    },
+    {
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "extra-traits",
+        "fold",
+        "full",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "visit",
+        "visit-mut"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "syn",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "2.0.119"
+    },
+    {
+      "features": [
+        "bytes",
+        "default",
+        "io-util",
+        "libc",
+        "mio",
+        "net",
+        "rt",
+        "rt-multi-thread",
+        "socket2",
+        "sync",
+        "time",
+        "windows-sys"
+      ],
+      "license": "MIT",
+      "minimal_features": [
+        "default",
+        "rt",
+        "sync",
+        "time"
+      ],
+      "name": "tokio",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "1.54.1"
+    },
+    {
+      "features": [
+        "codec",
+        "default",
+        "libc"
+      ],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "tokio-util",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.7.20"
+    },
+    {
+      "features": [
+        "limit",
+        "pin-project-lite",
+        "timeout",
+        "tokio",
+        "tokio-util",
+        "tracing"
+      ],
+      "license": "MIT",
+      "minimal_features": [
+        "limit",
+        "pin-project-lite",
+        "timeout",
+        "tokio",
+        "tokio-util",
+        "tracing"
+      ],
+      "name": "tower",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.5.3"
+    },
+    {
+      "features": [],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "tower-layer",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.3.3"
+    },
+    {
+      "features": [],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "tower-service",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.3.3"
+    },
+    {
+      "features": [
+        "attributes",
+        "default",
+        "std",
+        "tracing-attributes"
+      ],
+      "license": "MIT",
+      "minimal_features": [
+        "std"
+      ],
+      "name": "tracing",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.1.44"
+    },
+    {
+      "features": [],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "tracing-attributes",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "0.1.31"
+    },
+    {
+      "features": [
+        "default",
+        "once_cell",
+        "std"
+      ],
+      "license": "MIT",
+      "minimal_features": [
+        "once_cell",
+        "std"
+      ],
+      "name": "tracing-core",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.1.36"
+    },
+    {
+      "features": [],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "try-lock",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.2.5"
+    },
+    {
+      "features": [],
+      "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
+      "minimal_features": [],
+      "name": "unicode-ident",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "1.0.27"
+    },
+    {
+      "features": [
+        "alloc",
+        "std"
+      ],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "valuable",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "0.1.1"
+    },
+    {
+      "features": [],
+      "license": "MIT",
+      "minimal_features": [],
+      "name": "want",
+      "notice": "docs/HTTP-NOTICES",
+      "scope": "HTTP runtime closure plus existing unified workspace features",
+      "version": "0.3.2"
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+      "minimal_features": [],
+      "name": "wasi",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "0.11.1+wasi-snapshot-preview1"
+    },
+    {
+      "features": [],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "windows-link",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "0.2.1"
+    },
+    {
+      "features": [
+        "Wdk",
+        "Wdk_Foundation",
+        "Wdk_Storage",
+        "Wdk_Storage_FileSystem",
+        "Wdk_System",
+        "Wdk_System_IO",
+        "Win32",
+        "Win32_Foundation",
+        "Win32_Networking",
+        "Win32_Networking_WinSock",
+        "Win32_Security",
+        "Win32_Storage",
+        "Win32_Storage_FileSystem",
+        "Win32_System",
+        "Win32_System_Console",
+        "Win32_System_Diagnostics",
+        "Win32_System_Diagnostics_Debug",
+        "Win32_System_IO",
+        "Win32_System_Pipes",
+        "Win32_System_SystemInformation",
+        "Win32_System_SystemServices",
+        "Win32_System_Threading",
+        "Win32_System_WindowsProgramming",
+        "Win32_UI",
+        "Win32_UI_Input",
+        "Win32_UI_Input_KeyboardAndMouse",
+        "default"
+      ],
+      "license": "MIT OR Apache-2.0",
+      "minimal_features": [],
+      "name": "windows-sys",
+      "notice": "Existing workspace dependency notices",
+      "scope": "HTTP runtime closure plus existing unified workspace features; absent from minimal probe",
+      "version": "0.61.2"
+    }
+  ]
+}

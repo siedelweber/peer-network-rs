@@ -1068,7 +1068,6 @@
       "checksum": "918d3568bebf352712bc2ef3d46a8bcf1a75b373be6539de198e9105cbbf9ce0",
       "feature_scope": "Features for pn-host alone with default features, including its own development targets, on the gate host; union of normal and build contexts, not workspace unification.",
       "features": [
-        "default",
         "std"
       ],
       "licence": "MIT OR Apache-2.0",

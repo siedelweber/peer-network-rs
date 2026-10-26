@@ -1,6 +1,8 @@
 # Explicit source-root paths, consuming gate steps and generated-file producer.
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
+  ['docs/datasets/org.peer-network.observe.secret-exposures.json', 'datasets,documents,fixed-point-write,claim-evidence', 'fixed-point-generate'],
+  ['docs/datasets/org.peer-network.http.dependencies.json', 'datasets,documents,fixed-point-write,hash-citations', 'fixed-point-generate'],
   ['ci/build-inputs/docs/datasets/meson.build', 'build-graph', ''],
   ['docs/datasets/org.peer-network.buildgraph.slices.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
   ['docs/datasets/org.peer-network.api.plan.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
