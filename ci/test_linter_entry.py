@@ -245,6 +245,22 @@ class Conformance(unittest.TestCase):
         from build_graph_witnesses import cargo_delegation
         cargo_delegation(self)
 
+    def test_runtime_delegation(self):
+        """Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; interrupted or graph-refused execution still reaches the shell stop and exit cleanup, and all eleven runtime roster commands retain their text.
+        ´claim:discipline:runtime-delegation-preserves-evidence´
+        ´test:integration:test-runtime-delegation´
+        """
+        from build_graph_runtime_witnesses import runtime_delegation
+        runtime_delegation(self)
+
+    def test_service_ownership(self):
+        """Claim: Concurrent startups in two isolated checkouts obtain distinct ports, directories and processes for each real PostgreSQL and Elements pair on both routes; stopping either owned instance leaves its sibling serving until its own stop, with both shut down before return.
+        ´claim:discipline:service-delegation-preserves-ownership´
+        ´test:integration:test-service-ownership´
+        """
+        from build_graph_runtime_witnesses import service_instances
+        service_instances(self)
+
     def test_build_graph_slice_assignment(self):
         """Claim: Every live gate step has exactly one delegation slice and the record roster agrees with that set; each record group stays in one slice unless its exceptional rows explicitly name the split, so missing, repeated, unknown, invalid or unexplained assignments refuse before final migration.
         ´claim:discipline:build-graph-slices-cover-roster´

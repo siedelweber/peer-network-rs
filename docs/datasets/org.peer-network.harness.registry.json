@@ -69,6 +69,13 @@
       "name": "ci-python"
     },
     {
+      "contract": "repository composition with PostgreSQL and Elements lifecycle evidence",
+      "edition": "0.1",
+      "evidence": "real",
+      "kind": "implementation",
+      "name": "ci-composition-services"
+    },
+    {
       "kind": "tier",
       "name": "fast",
       "reason": "per-change local and process evidence",
@@ -3080,13 +3087,15 @@
       "tier": "fast"
     },
     {
-      "budget": "pure-suite",
+      "budget": "combined-suite",
       "cases": [
         "ci::test_linter_entry.Conformance.test_asset_inventory",
         "ci::test_linter_entry.Conformance.test_build_graph_census",
         "ci::test_linter_entry.Conformance.test_build_graph_delegation",
         "ci::test_linter_entry.Conformance.test_build_graph_slice_assignment",
         "ci::test_linter_entry.Conformance.test_cargo_delegation",
+        "ci::test_linter_entry.Conformance.test_runtime_delegation",
+        "ci::test_linter_entry.Conformance.test_service_ownership",
         "ci::test_linter_entry.Conformance.test_duplicate_locations",
         "ci::test_linter_entry.Conformance.test_generated_citations",
         "ci::test_linter_entry.Conformance.test_import_forms",
@@ -3103,13 +3112,13 @@
         "ci::test_linter_entry.Conformance.test_unregistered_prefix",
         "ci::test_linter_entry.Conformance.test_warrant_species"
       ],
-      "implementation": "ci-python",
+      "implementation": "ci-composition-services",
       "kind": "suite",
       "level": "integration",
       "name": "ci::test_linter_entry",
       "runner": "ci",
       "status": "active",
-      "tier": "fast"
+      "tier": "service"
     },
     {
       "contract": "internal structural records slice",

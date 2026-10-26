@@ -99,10 +99,10 @@ run_graph member-lints python3 ci/discipline.py members
 run_graph fmt python3 ci/discipline.py fmt
 run_graph clippy python3 ci/discipline.py clippy
 run_graph nursery-advisory python3 ci/discipline.py nursery
-run_step host-postgresql-start python3 -B ci/host_postgresql.py start --root "$PN_HOST_TEST_ROOT"
-run_step wallet-elements-start python3 -B ci/wallet_elements.py start --root "$PN_WALLET_TEST_ROOT"
-run_step tests python3 -B ci/discipline.py tests
-run_step test-budgets python3 -B ci/devperf.py --input .lane/performance-events.jsonl --findings .lane/performance-findings.jsonl
+run_graph host-postgresql-start python3 -B ci/host_postgresql.py start --root "$PN_HOST_TEST_ROOT"
+run_graph wallet-elements-start python3 -B ci/wallet_elements.py start --root "$PN_WALLET_TEST_ROOT"
+run_graph tests python3 -B ci/discipline.py tests
+run_graph test-budgets python3 -B ci/devperf.py --input .lane/performance-events.jsonl --findings .lane/performance-findings.jsonl
 # Discover first-party members for feature-minimal builds and documentation.
 # Exclude regexml by name in discipline.py: it retains upstream feature and documentation policy.
 run_graph minimal python3 ci/discipline.py minimal
@@ -118,17 +118,17 @@ run_graph design-correspondence python3 -B ci/design.py
 run_graph design-tests python3 -B ci/run_ci.py test_design
 run_graph benchmarks python3 -B ci/benchmarks.py
 run_graph observation-build cargo build --offline --locked --profile gate -p execwrap -p pn-records -p pn-graph --features pn-records/test-support --examples
-run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
+run_graph observation-runtime python3 -B ci/run_ci.py test_observe_runtime
 run_graph host-observation-build python3 -B ci/host_evidence_build.py
-run_step host-observation-runtime python3 -B ci/run_ci.py test_host_runtime
-run_step wallet-conformance python3 -B ci/run_ci.py test_wallet_boundary
+run_graph host-observation-runtime python3 -B ci/run_ci.py test_host_runtime
+run_graph wallet-conformance python3 -B ci/run_ci.py test_wallet_boundary
 run_step wallet-elements-stop python3 -B ci/wallet_elements.py stop --root "$PN_WALLET_TEST_ROOT"
 run_step host-postgresql-stop python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"
 run_graph observation-parser python3 -B ci/run_ci.py test_observe_syntax
 run_graph observation-syntax python3 -B ci/observe.py
-run_step harness-matrix python3 -B ci/harness.py --matrix
+run_graph harness-matrix python3 -B ci/harness.py --matrix
 run_graph linter "$LINTER_BIN" check --root .
-run_step claim-evidence python3 -B ci/claims.py --fail-respellings
+run_graph claim-evidence python3 -B ci/claims.py --fail-respellings
 run_graph token python3 ci/discipline.py token
 run_graph hash-citations python3 -B ci/discipline.py hash-citations
 run_graph suppressions python3 ci/discipline.py suppressions

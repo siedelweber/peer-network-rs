@@ -244,7 +244,7 @@ def selected(root):
         raise ValueError('slice assignment differs from live roster')
     if any(type(row['slice']) is not int or row['slice'] not in {2, 3, 4, 5} for row in rows):
         raise ValueError('invalid delegation slice')
-    return [row['name'] for row in rows if row['slice'] in {2, 3}]
+    return [row['name'] for row in rows if row['slice'] in {2, 3, 4}]
 
 
 def identity(value):

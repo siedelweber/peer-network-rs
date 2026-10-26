@@ -34,7 +34,7 @@
 
 **Amendment (Foundation registry and join)** · `amend:harness:registry-join` This implements the registry and result-join portion of (`gate:harness:foundation`) and (`gate:design:harness-foundation`), refining (`dec:harness:levels`) and (`rule:harness:tiers`). The committed harness registry declares four levels, each active suite's complete case roster, implementation and evidence class, tier and case/suite budget references. It replaces the interim location rule in (`amend:devperf:foundation-reporting`). The support step re-declares the 73 cli-common and 25 execwrap internal-module cases as unit, and adds external public-surface witnesses under tests/; internal access is not public-surface evidence. Unknown cases, missing declarations, unregistered implementations, ignored or incomplete required cases, dropped cases, changed source/configuration and mock evidence labelled as real are structural errors. The nextest inventory must equal the declared roster before results join. Doctests join against their committed prior inventory, including cases that never start; CI unittest discovery and results use the same accounting. Every joined case retains its source, configuration, level, suite, implementation, evidence class, tier, applicable budgets, raw outcome and duration in milliseconds. A suite name is not an authored claim; the claim-site audit and obligation join remain under (`gate:testing:foundation`).
 
-**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 105 suites and 14 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
+**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 105 suites and 15 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
@@ -107,7 +107,7 @@
 | ci::test_observe | active | unit | ci-python | fast | 13 |
 | ci::test_observe_runtime | active | integration | ci-python | fast | 13 |
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
-| ci::test_linter_entry | active | integration | ci-python | fast | 20 |
+| ci::test_linter_entry | active | integration | ci-composition-services | service | 22 |
 | pn-records | active | unit | pn-records-rust | fast | 5 |
 | pn-records::public | active | public-surface | pn-records-rust | fast | 52 |
 | pn-records::integration | active | integration | pn-records-rust | fast | 2 |

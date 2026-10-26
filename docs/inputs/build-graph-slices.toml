@@ -203,13 +203,13 @@ reason = "Runtime, service lifetime or evidence join; preserve current-source re
 
 [[rows]]
 name = "wallet-elements-stop"
-slice = 4
-reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+slice = 5
+reason = "Split from services: keep unconditional shutdown on the shell route until final integration can run cleanup despite missing predecessor reports or refused graph configuration."
 
 [[rows]]
 name = "host-postgresql-stop"
-slice = 4
-reason = "Runtime, service lifetime or evidence join; preserve current-source results and unconditional cleanup."
+slice = 5
+reason = "Split from services: keep unconditional shutdown on the shell route until final integration can run cleanup despite missing predecessor reports or refused graph configuration."
 
 [[rows]]
 name = "observation-parser"
