@@ -11,6 +11,10 @@ import copy
 import re
 import base64
 import ipaddress
+import tempfile
+import io
+import contextlib
+from unittest.mock import patch
 
 from test_observe_runtime import expanded, distribution, witness
 
@@ -73,9 +77,9 @@ def capture_complete(status):
     return status['lost_records']==0 and status['undelivered_records']==0 and status['in_flight_records']==0, accounting
 
 
-def traced_capture(test, command, env, level, attempts=3, prefix='storage'):
+def traced_capture(test, command, env, level, validate, attempts=3, prefix='storage'):
     """The child writes observations to a file, so its delivery never waits on this reader; a capture that still
-    counts loss is retaken, at most three times, and each incomplete attempt prints its accounting."""
+    counts loss is retaken, at most three times. Every attempt is checked and reported before selection."""
     for attempt in range(1,attempts+1):
         sink=Path(f'.lane/{prefix}-{level}.stderr.jsonl')
         started=time.monotonic()
@@ -86,11 +90,93 @@ def traced_capture(test, command, env, level, attempts=3, prefix='storage'):
         test.assertEqual(result.returncode,0,stderr.decode())
         rows=[expanded(json.loads(line)) for line in stderr.splitlines()]
         status=next(row for row in rows if row.get('kind')=='observation_status')
+        witness(command,result.returncode,wall,stderr)
+        validate(result,rows)
         complete,accounting=capture_complete(status)
         if complete:
             return result,rows,status,wall
         print(f'{prefix.upper()}-RUNTIME level={level} attempt={attempt} incomplete={accounting} wall_seconds={wall:.3f}')
     test.fail(f'no complete {level} capture in {attempts} attempts: {accounting}')
+
+
+def capture_validator(test, configurations, outputs):
+    """Read each attempt's fixture configuration after its child has completed."""
+    def validate(result, rows):
+        text=decoded_content(rows)
+        test.assertNotIn('private_unread_input',text)
+        test.assertNotIn('private_unread_input',result.stdout.decode())
+        for config in configurations():
+            test.assertFalse(binary_reachability(config,rows),'binary private reachability')
+            for key,value in config.items():
+                if key!='transport':
+                    test.assertFalse(private_occurs(str(value),text),'private fixture content')
+                    test.assertFalse(private_occurs(str(value),result.stdout.decode()),'private result content')
+        public=[line for line in result.stdout.splitlines() if line.startswith(b'{')]
+        test.assertEqual(len(public),1)
+        if outputs:test.assertEqual(public,outputs[0],'public result differs between completed children')
+        outputs.append(public)
+    return validate
+
+
+def capture_regressions(test, prefix):
+    """Run both real test bodies against bad incomplete children followed by clean answers."""
+    from devperf import report_loss
+    module=sys.modules[__name__]
+    config=dict(endpoint='192.0.2.31',port='42617',user='private_role_probe',password='private_password_probe',transport='tcp')
+    public=b'{"store_link_case":"host-secured","persistence":"disabled","value":731}\n'
+    source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
+    statements=re.findall(r'Self::[A-Za-z]+\s*=>\s*(?:\{\s*)?"([^"\n]+)"',source)
+    method='test_storage_statements' if prefix=='storage' else 'test_public_transport'
+    with tempfile.TemporaryDirectory(dir='.lane') as directory:
+        root=Path(directory).resolve();(root/'.lane').mkdir()
+        (root/'.lane/host-test-binary.txt').write_text('synthetic-child')
+        for name in ('storage-trace-default','storage-trace-trace','tcp'):
+            (root/(name+'.json')).write_text(json.dumps(config))
+        path_type=Path
+        def path(value):
+            value=path_type(value)
+            return root/value if value.parts and value.parts[0]=='.lane' else value
+        for fault in ('role','password','binary','result','recovery'):
+            calls=[];trace_attempts=[];findings=root/'findings.jsonl';findings.unlink(missing_ok=True)
+            def child(command, **kwargs):
+                env=kwargs['env'];level=env['PN_OBSERVE_LEVEL']
+                control=env.get('PN_HOST_STORAGE_PRIVATE_CONTROL')=='1'
+                if level=='trace' and not control:trace_attempts.append(command)
+                incomplete=level=='trace' and len(trace_attempts)==1 and not control
+                rows=[dict(kind='public',value='public_storage_payload_731 public_result_sentinel_731 '+('public_row_'*3)+' SELECT division by zero',statements=statements)]
+                rows.extend(dict(kind='diagnostic',level='WARN',value='MissingCase HeldCase UnknownCase RepresentationLimit Transport Protocol PrivateDiagnostic') for _ in range(13))
+                rows.append(dict(kind='metric_summary',metrics=dict(counter_accuracy='exact',lost_counter_updates=0,
+                    instruments=[dict(name='host__started_operations',counter=1),dict(name='host__completed_operations',outcome='success',counter=1)])))
+                if control or incomplete and fault in ('role','password','binary'):
+                    value=config['user'].encode() if control or fault=='role' else (config['password'].encode() if fault=='password' else int(config['port']).to_bytes(4,'big'))
+                    rows.append(dict(kind='public',frame=dict(encoding='base64',data=base64.b64encode(value).decode())))
+                for row in rows:row['process_id']=731
+                lost=int(incomplete)
+                rows.append(dict(kind='observation_status',level=level,process_id=731,timestamp='2026-10-26T00:00:00Z',
+                    attempted_records=len(rows)+lost,delivered_records=len(rows),lost_records=lost,undelivered_records=0,in_flight_records=0,loss_causes={'queue_full':lost}))
+                stderr=b''.join(json.dumps(row).encode()+b'\n' for row in rows)
+                output=public.replace(b'731',b'732') if incomplete and fault=='result' else public
+                calls.append((level,control))
+                if not control:kwargs['stderr'].write(stderr)
+                return subprocess.CompletedProcess(command,0,stdout=output,stderr=stderr)
+            # Keep real loss reporting, but retain synthetic findings only in this fixture.
+            def loss_report(record, output):return report_loss(record,findings,warnings=io.StringIO())
+            with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(io.StringIO()):
+                operation=getattr(HostRuntime(method),method)
+                if fault=='recovery':
+                    operation()
+                    test.assertEqual(len(trace_attempts),2)
+                else:
+                    message='public result differs' if fault=='result' else ('binary private reachability' if fault=='binary' else 'private fixture content')
+                    with test.assertRaisesRegex(AssertionError,message):operation()
+                    test.assertEqual(len(trace_attempts),1,'a clean retake must not erase a delivered violation')
+                loss.assert_called_once()
+            recorded=[json.loads(line) for line in findings.read_text().splitlines()]
+            test.assertEqual(len(recorded),1)
+            test.assertEqual(recorded[0]['classification'],'observation-completeness')
+            test.assertEqual(recorded[0]['verdict_effect'],'none')
+            test.assertEqual(recorded[0]['lost_records'],1)
+    print(f'CAPTURE-REGRESSIONS surface={prefix} whole-test=True private=refused binary=refused result=refused recovered-loss=finding')
 
 
 class HostRuntime(unittest.TestCase):
@@ -153,23 +239,24 @@ class HostRuntime(unittest.TestCase):
         self.assertIn(b'forbidden_inline_sql',result.stderr)
 
     def test_storage_statements(self):
-        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; a capture that counts loss must name each loss's cause and is retaken at most three times; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.
+        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery; acquisition takes at most three attempts and default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.
         ´claim:discipline:storage-results-preserve-the-secret-boundary´
         ´test:integration:test-storage-statements´
         """
         target=Path('.lane/host-test-binary.txt').read_text().strip()
         root=Path(os.environ['PN_HOST_TEST_ROOT'])
+        capture_regressions(self,'storage')
         outputs=[]
         for level in ('default','trace'):
             env=dict(os.environ,PN_OBSERVE_LEVEL=level,PN_HOST_STORAGE_FIXTURE=f'storage-trace-{level}.json')
-            result,rows,status,wall=traced_capture(self,[target,'storage::tests::storage_runtime','--exact','--nocapture'],env,level)
+            validate=capture_validator(self,lambda:[json.loads((root/f'storage-trace-{level}.json').read_text())],outputs)
+            result,rows,status,wall=traced_capture(self,[target,'storage::tests::storage_runtime','--exact','--nocapture'],env,level,validate)
             text=decoded_content(rows)
             config=json.loads((root/f'storage-trace-{level}.json').read_text())
             self.assertFalse(binary_reachability(config,rows))
             for key,value in config.items():
                 if key!='transport':self.assertFalse(private_occurs(value,text))
             self.assertEqual(status['delivered_records'],len(rows)-1,'observation delivery: '+capture_complete(status)[1])
-            outputs.append([line for line in result.stdout.splitlines() if line.startswith(b'{')])
             if level=='trace':
                 self.assertIn('public_storage_payload_731',text)
                 source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
@@ -271,36 +358,31 @@ class HostRuntime(unittest.TestCase):
             manifest.write_bytes(original)
 
     def test_public_transport(self):
-        """Claim: After a successful-query drain barrier, complete default and trace captures against the real host-secured service retain identical public results and host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials; the child writes observations to a file, every counted loss names its cause and an incomplete capture is retaken at most three times.
+        """Claim: After a successful-query drain barrier, complete default and trace captures against the real host-secured service retain identical public results and host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials; the child writes observations to a file, every attempt checks private content and completed public bytes before any retake, counted trace loss retains its completeness finding after recovery, and acquisition takes at most three attempts.
         ´claim:discipline:host-transport-observation-retains-the-secret-boundary´
         ´test:integration:test-public-transport´
         """
         print(flush=True)
         target=Path('.lane/host-test-binary.txt').read_text().strip()
         root=Path(os.environ['PN_HOST_TEST_ROOT'])
-        configurations=[json.loads(path.read_text()) for path in root.glob('*.json')]
-        private={str(value) for config in configurations for key,value in config.items() if key!='transport'}
+        capture_regressions(self,'host')
         outputs=[];counts=[]
         self.assertTrue(private_occurs('42100','{"port":42100}'))
         self.assertFalse(private_occurs('42100','{"duration":0.42100}'))
         for level in ('default','trace'):
             env=dict(os.environ,PN_OBSERVE_LEVEL=level)
             command=[str(target), "transport_evidence::public_transport", "--exact", "--nocapture"]
-            result,rows,status,wall=traced_capture(self,command,env,level,prefix='host')
+            validate=capture_validator(self,lambda:[json.loads(path.read_text()) for path in root.glob('*.json')],outputs)
+            result,rows,status,wall=traced_capture(self,command,env,level,validate,prefix='host')
             stderr=Path(f'.lane/host-{level}.stderr.jsonl').read_bytes()
-            witness(command,result.returncode,wall,stderr)
             warnings=[line for line in stderr.splitlines() if json.loads(line).get('level') in ('WARN','ERROR')]
             self.assertEqual(len(warnings),13)
             for line in warnings:
                 print(line.decode(),flush=True)
             text=decoded_content(rows)
-            for config in configurations:self.assertFalse(binary_reachability(config,rows))
             for cause in ('MissingCase','HeldCase','UnknownCase','RepresentationLimit','Transport','Protocol','PrivateDiagnostic'):
                 self.assertIn(cause,text)
             self.assertNotIn('private_unread_input',text)
-            for value in private:
-                self.assertFalse(private_occurs(value,text))
-                self.assertFalse(private_occurs(value,result.stdout.decode()))
             self.assertEqual(status['delivered_records'],len(rows)-1,'observation delivery: '+capture_complete(status)[1])
             summary=next(row['metrics'] for row in rows if row['kind']=='metric_summary')
             host={key:value for key,value in distribution(summary).items() if key[0].startswith('host__')}
@@ -309,7 +391,6 @@ class HostRuntime(unittest.TestCase):
             counts.append(host)
             public=[line for line in result.stdout.splitlines() if line.startswith(b'{')]
             self.assertEqual(len(public),1)
-            outputs.append(public[0])
             record=json.loads(public[0])
             self.assertEqual(record['store_link_case'],'host-secured')
             self.assertEqual(record['persistence'],'disabled')

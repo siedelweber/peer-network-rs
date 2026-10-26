@@ -144,7 +144,9 @@ gate_ended=$(date -u +%s.%N)
 gate_resource_sample .lane/gate-resource-end.raw "$resource_root" 2>/dev/null || true
 times > .lane/gate-cpu-end.raw
 gate_wall=$(awk -v s="$gate_started" -v e="$gate_ended" 'BEGIN { printf "%.6f", e-s }')
-if ! python3 -B ci/gate_resources.py .lane "$gate_wall"; then
+if python3 -B ci/gate_resources.py .lane "$gate_wall" > .lane/gate-resource-lines.log; then
+    python3 -B ci/build_graph.py resource-lines .lane/gate-resource-lines.log
+else
     while IFS=$'\t' read -r name status started ended; do
         printf 'STEP=%s STATUS=%s WALL=unavailable own_user_s=unavailable own_sys_s=unavailable node_load=unavailable sampler=unavailable\n' "$name" "$status"
     done < .lane/gate-steps.tsv

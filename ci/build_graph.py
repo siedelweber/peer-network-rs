@@ -356,6 +356,29 @@ def delegate(root, step):
     return result['status']
 
 
+def resource_line(root, line):
+    """Enrich entry measurements, never the command's own comparison log."""
+    if not line.startswith('STEP=') or os.environ.get('PN_BUILDGRAPH_ROUTE')=='legacy':
+        return line
+    fields=dict(item.split('=',1) for item in line.split() if '=' in item)
+    step=fields['STEP']
+    declared={parts[1] for text in (root/'ci/gate.sh').read_text().splitlines()
+              if (parts:=text.split()) and parts[0]=='run_graph'}
+    if step not in declared:return line
+    suffix=' command_wall_s=unavailable delegation_overhead_s=unavailable'
+    try:
+        report=report_path(root/'.lane/build-graph',step)
+        data=json.loads(report.read_text());request=data['request']
+        result,_=read_result(report,request)
+        if request['context']['run']!=os.environ.get('PN_BUILDGRAPH_RUN') or request['context']['step']!=step or result['status']!=int(fields['STATUS']):
+            raise ValueError('measurement from another invocation')
+        inclusive=float(fields['WALL'].removesuffix('s'))
+        suffix=f" command_wall_s={result['wall']:.6f} delegation_overhead_s={inclusive-result['wall']:.6f}"
+    except (OSError,ValueError,KeyError,TypeError):
+        pass  # Structural refusal has no measured command; never borrow an old result.
+    return line.rstrip('\n')+suffix+'\n'
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='action', required=True)
@@ -370,6 +393,8 @@ def main():
     audit.add_argument('--graph', required=True)
     audit.add_argument('--report', required=True)
     sub.add_parser('gate')
+    measurements=sub.add_parser('resource-lines')
+    measurements.add_argument('path')
     targets = sub.add_parser('targets')
     targets.add_argument('--root', required=True)
     target = sub.add_parser('execute')
@@ -379,6 +404,10 @@ def main():
     invoke = sub.add_parser('delegate')
     invoke.add_argument('step')
     args = parser.parse_args()
+    if args.action == 'resource-lines':
+        for line in Path(args.path).read_text().splitlines(keepends=True):
+            print(resource_line(Path.cwd(),line),end='')
+        return 0
     if args.action == 'configure':
         configure(args)
         return 0

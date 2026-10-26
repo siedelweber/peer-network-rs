@@ -143,7 +143,7 @@ def exercise(case):
 def delegation(case):
     """Compare isolated legacy/graph executions and reject stale result envelopes."""
     import time
-    from build_graph import context, execute, identity, read_result
+    from build_graph import context, execute, identity, read_result, resource_line
     checker = Path(__file__).resolve().with_name('build_graph.py')
     meson = os.environ['PN_MESON_BIN']
     commands = [('before', 'python3 fixture.py read'),
@@ -206,6 +206,15 @@ else:
                         report=build/'ci/build-inputs/gate-repeat.json'
                         data=json.loads(report.read_text());request=data['request']
                         case.assertEqual(read_result(report,request)[0]['status'],0)
+                        line=f"STEP=repeat STATUS=0 WALL={data['wall']+2:.6f}s own_user_s=1\n"
+                        measured=resource_line(root,line)
+                        case.assertIn(f"command_wall_s={data['wall']:.6f}",measured)
+                        case.assertIn('delegation_overhead_s=2.000000',measured)
+                        case.assertEqual(resource_line(root,'GATE-RESOURCES unchanged\n'),'GATE-RESOURCES unchanged\n')
+                        with patch.dict(os.environ,PN_BUILDGRAPH_RUN='other-run'):
+                            case.assertIn('command_wall_s=unavailable',resource_line(root,line))
+                        with patch.dict(os.environ,PN_BUILDGRAPH_ROUTE='legacy'):
+                            case.assertEqual(resource_line(root,line),line)
                         reversed_clock=dict(data,ended=data['started']-1)
                         report.write_text(json.dumps(reversed_clock))
                         case.assertEqual(read_result(report,request)[0]['status'],0)
@@ -250,6 +259,32 @@ else:
                                 (root/'fixture.py').write_text(saved);reqpath.write_text(json.dumps(req))
                         history.write_text('wrong\t0\t1\t2\n')
                         with case.assertRaises(ValueError):context(root,graph,'before')
+                        if scenario=='clean':
+                            # Configuration is a prerequisite until the unified entry lands.
+                            # Ordinary command refusals above still allow independent commands.
+                            manifest=build/'gate-graph.json';saved_graph=manifest.read_text()
+                            slices=root/'docs/inputs/build-graph-slices.toml';saved_slices=slices.read_text()
+                            meson_file=root/'meson.build';saved_meson=meson_file.read_text()
+                            for fault in ('missing-slice','setup','regeneration'):
+                                history.write_text('')
+                                for name,_ in commands:
+                                    (build/f'ci/build-inputs/gate-{name}.json').unlink(missing_ok=True)
+                                if fault=='missing-slice':slices.write_text('[[rows]]\nname="before"\nslice=2\n')
+                                elif fault=='setup':
+                                    meson_file.write_text(saved_meson+"error('configuration witness')\n")
+                                    failed_setup=run_at(root,[meson,'setup',str(root/'.lane/failed-setup'),str(root)])
+                                    case.assertNotEqual(failed_setup.returncode,0)
+                                    manifest.unlink()
+                                else:meson_file.write_text(saved_meson+"error('regeneration witness')\n")
+                                for name,_ in commands:
+                                    refused=run_at(root,['python3','-B',str(checker),'delegate',name])
+                                    case.assertEqual(refused.returncode,2,refused.stdout)
+                                    case.assertIn(b'BUILD-GRAPH-ERROR',refused.stdout)
+                                    case.assertNotIn(b'READ current',refused.stdout)
+                                    with history.open('a') as output:output.write(f'{name}\t2\t1\t2\n')
+                                print(f'GRAPH-CONFIGURATION fault={fault} structurally-refused={len(commands)} command-verdicts=0')
+                                slices.write_text(saved_slices);manifest.write_text(saved_graph);meson_file.write_text(saved_meson)
+
                 diff=run_at(root,['git','diff','--','rendered.txt']).stdout
                 outcomes.append((results,diff))
                 print(f'GRAPH-COMPARISON scenario={scenario} route={route} statuses={[r[1] for r in results]} wall={sum(walls):.6f}')
