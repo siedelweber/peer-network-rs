@@ -319,6 +319,39 @@ pub struct ReferenceProjection {
     pub enthusiasm: Coordinate,
 }
 
+/// Constructor role of a Invitation edge, derived from one complete act.
+/// (´def:formation:invitation´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum InvitationRole {
+    /// Initiating Actor to Chat.
+    A,
+    /// Chat to invitee Profile.
+    T,
+}
+
+/// Complete Invitation tuple shared by both role-addressed projections.
+/// (´def:formation:invitation´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct InvitationProjection {
+    /// Initiating author shared by both legs.
+    pub author: String,
+    /// Author-local act sequence shared by both legs.
+    pub sequence: u64,
+    /// A or T constructor role, never a separately authored identity.
+    pub role: InvitationRole,
+    /// Retained published placement of the whole act.
+    pub position: Position,
+    /// One retained time shared by both projections.
+    pub logical_time: u64,
+    /// Signed urgency, directional on A.
+    pub urgency: Coordinate,
+    /// Signed formality, intensity on A.
+    pub formality: Coordinate,
+    /// Nonnegative relevance, directional on T; T intensity is fixed at one.
+    pub relevance: Coordinate,
+}
+
 /// Constructor role of a Send edge, derived from one complete act.
 /// (´def:formation:send´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -409,6 +442,8 @@ pub enum Projection {
     Tag(TagProjection),
     /// Reference cites a passive target through an author-fixed artifact.
     Reference(ReferenceProjection),
+    /// Invitation proposes Chat participation to a Profile.
+    Invitation(InvitationProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -508,7 +543,9 @@ pub fn validate_formation(
 }
 
 fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
-    if act.id().family == "Reference" {
+    if act.id().family == "Invitation" {
+        invitation(act, verifier)
+    } else if act.id().family == "Reference" {
         reference(act, verifier)
     } else if act.id().family == "Tag" {
         tag(act, verifier)
@@ -1177,5 +1214,63 @@ fn reference(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result
             Projection::Reference(a_weight),
         ),
         (middle, target, Projection::Reference(t_weight)),
+    ])
+}
+
+fn invitation(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    let [first, second] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let (a, t) = match (first.id().role, second.id().role) {
+        (Role::A, Role::T) => (first, second),
+        (Role::T, Role::A) => (second, first),
+        _ => return Err(RegistrationError::Incidence),
+    };
+    if act.body().layout != Layout::Paired
+        || a.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || a.target() != t.source()
+        || act.body().quantities.len() != 6
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let middle = chat(a.target())?;
+    let target = passive(t.target())?;
+    if !matches!(target, Node::Grounded(GroundedNode::Profile(_))) {
+        return Err(RegistrationError::Incidence);
+    }
+    let urgency = coordinate(act, "urgency.numerator", "urgency.denominator")?;
+    let formality = coordinate(act, "formality.numerator", "formality.denominator")?;
+    let relevance = coordinate(act, "relevance.numerator", "relevance.denominator")?;
+    if relevance.numerator < 0 || !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    let a_weight = InvitationProjection {
+        author: act.id().author.clone(),
+        sequence: act.id().sequence,
+        role: InvitationRole::A,
+        position: act.position(),
+        logical_time: act.logical_time(),
+        urgency,
+        formality,
+        relevance,
+    };
+    let t_weight = InvitationProjection {
+        role: InvitationRole::T,
+        ..a_weight.clone()
+    };
+    Ok(vec![
+        (
+            Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+            middle.clone(),
+            Projection::Invitation(a_weight),
+        ),
+        (middle, target, Projection::Invitation(t_weight)),
     ])
 }

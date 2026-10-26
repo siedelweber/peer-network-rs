@@ -29,43 +29,7 @@ fn main() {
             name: "fixture".into(),
         })
         .collect();
-    let act = affinity(&names);
-    let publication = publication(act.clone());
-    let mut ownership = publication.clone();
-    ownership.id.family = "Owner".into();
-    ownership.body.license = None;
-    ownership.id.sequence = 3;
-    ownership.legs[0].id.act = ownership.id.clone();
-    ownership.legs[0].target = PublicReference::Minted(ownership.id.clone());
-    ownership.authoritative_position = 3;
-    ownership.logical_time = 3;
-    let participant = participation(ownership.clone());
-    let review = review(participant.clone());
-    let tag = tagging(review.clone());
-    let reference = referencing(review.clone());
-    let send = sending(participant.clone());
-    let bid = bidding(ownership.clone());
-    let opinion = opinion(act.clone());
-    let join_request = join_request(act.clone(), participant.legs[0].target.clone());
-    let leave = leaving(join_request.clone());
-    let history = pn_records::validate_history(
-        &[
-            act,
-            publication,
-            ownership,
-            participant,
-            review,
-            send,
-            bid,
-            opinion,
-            join_request,
-            tag,
-            leave,
-            reference,
-        ],
-        &names,
-    )
-    .unwrap();
+    let history = pn_records::validate_history(&formation_inputs(&names), &names).unwrap();
     let auth = FixtureApproval(true);
     let projection = project_complete_act(&history.acts()[0], &auth);
     let publication = project_complete_act(&history.acts()[1], &auth);
@@ -79,6 +43,7 @@ fn main() {
     let tag = project_complete_act(&history.acts()[9], &auth);
     let leave = project_complete_act(&history.acts()[10], &auth);
     let reference = project_complete_act(&history.acts()[11], &auth);
+    let invitation = project_complete_act(&history.acts()[12], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -99,6 +64,7 @@ fn main() {
         "tag": format!("{tag:?}"),
         "leave": format!("{leave:?}"),
         "reference": format!("{reference:?}"),
+        "invitation": format!("{invitation:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -376,5 +342,68 @@ fn referencing(mut input: CandidateAct) -> CandidateAct {
     input.legs[1].target = input.legs[0].target.clone();
     input.authoritative_position = 12;
     input.logical_time = 12;
+    input
+}
+
+fn formation_inputs(names: &[PublicReference]) -> Vec<CandidateAct> {
+    let act = affinity(names);
+    let publication = publication(act.clone());
+    let mut ownership = publication.clone();
+    ownership.id.family = "Owner".into();
+    ownership.body.license = None;
+    ownership.id.sequence = 3;
+    ownership.legs[0].id.act = ownership.id.clone();
+    ownership.legs[0].target = PublicReference::Minted(ownership.id.clone());
+    ownership.authoritative_position = 3;
+    ownership.logical_time = 3;
+    let participant = participation(ownership.clone());
+    let review = review(participant.clone());
+    let tag = tagging(review.clone());
+    let reference = referencing(review.clone());
+    let invitation = invitation(participant.clone());
+    let send = sending(participant.clone());
+    let bid = bidding(ownership.clone());
+    let opinion = opinion(act.clone());
+    let join_request = join_request(act.clone(), participant.legs[0].target.clone());
+    let leave = leaving(join_request.clone());
+    vec![
+        act,
+        publication,
+        ownership,
+        participant,
+        review,
+        send,
+        bid,
+        opinion,
+        join_request,
+        tag,
+        leave,
+        reference,
+        invitation,
+    ]
+}
+
+fn invitation(mut input: CandidateAct) -> CandidateAct {
+    input.id.family = "Invitation".into();
+    input.id.sequence = 13;
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[1].target = PublicReference::Named {
+        namespace: "prof".into(),
+        name: "invitee".into(),
+    };
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "urgency.numerator",
+        "urgency.denominator",
+        "formality.numerator",
+        "formality.denominator",
+        "relevance.numerator",
+        "relevance.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input.authoritative_position = 13;
+    input.logical_time = 13;
     input
 }

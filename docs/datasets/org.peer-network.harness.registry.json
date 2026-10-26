@@ -3946,6 +3946,8 @@
         "pn-graph::formation::leave_reconstruction",
         "pn-graph::formation::reference_projection",
         "pn-graph::formation::reference_reconstruction",
+        "pn-graph::formation::invitation_projection",
+        "pn-graph::formation::invitation_reconstruction",
         "pn-graph::formation::formed_reference_conformance",
         "pn-graph::formation::minted_node_conformance"
       ],

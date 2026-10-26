@@ -2608,7 +2608,7 @@ fn leaving(sequence: u64, target: PublicReference) -> CandidateAct {
     input
 }
 
-/// Claim: Across the thirteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.
+/// Claim: Across the fourteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.
 /// ´claim:formation:formed-families-separate-protocol-resolution-from-incidence´
 /// ´test:integration:formed-reference-conformance´
 #[test]
@@ -2627,6 +2627,7 @@ fn formed_reference_conformance() {
         tagging(11, named("prof", "a")),
         leaving(12, PublicReference::Minted(inputs_chat())),
         referencing(13, named("prof", "a")),
+        invitation(14),
     ];
     for input in &inputs {
         let absent = ActId {
@@ -3108,4 +3109,224 @@ fn reference_cache(graph: &pn_graph::formation::FormationGraph, history: &pn_rec
         validate_formation(&changed, history, verifier),
         Err(RegistrationError::GraphMismatch)
     );
+}
+
+fn invitation(sequence: u64) -> CandidateAct {
+    let mut input = participation(sequence, 5, 5);
+    input.id.family = "Invitation".into();
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[1].target = named("prof", "b");
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "urgency.numerator",
+        "urgency.denominator",
+        "formality.numerator",
+        "formality.denominator",
+        "relevance.numerator",
+        "relevance.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input
+}
+
+/// Claim: Invitation requires one complete author Actor to Chat to Profile pair, with signed urgency and formality and nonnegative relevance. Every coordinate is bounded independently; neither endpoint needs an anchor or participation. Wrong endpoint classes, partial incidence, extra references and malformed coordinates refuse the complete result.
+/// # Panics
+/// Panics only if Invitation dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:invitation-requires-complete-chat-profile-incidence´
+/// ´test:integration:invitation-projection´
+#[test]
+fn invitation_projection() {
+    let input = invitation(14);
+    let edges = bundle(&input).unwrap();
+    assert_eq!(edges.len(), 2);
+    assert_eq!(edges[0].0, Node::Grounded(GroundedNode::Actor("a".into())));
+    assert_eq!(
+        edges[0].1,
+        Node::Chat {
+            author: "a".into(),
+            sequence: 5
+        }
+    );
+    assert_eq!(edges[1].0, edges[0].1);
+    assert_eq!(edges[1].1, Node::Grounded(GroundedNode::Profile("b".into())));
+    let (Projection::Invitation(a), Projection::Invitation(t)) = (&edges[0].2, &edges[1].2) else {
+        panic!("wrong family")
+    };
+    assert_eq!(a.role, pn_graph::formation::InvitationRole::A);
+    assert_eq!((a.urgency.numerator, a.urgency.denominator), (-1, 2));
+    assert_eq!((a.formality.numerator, a.formality.denominator), (2, 3));
+    assert_eq!((a.relevance.numerator, a.relevance.denominator), (1, 2));
+    assert_eq!(
+        (a.author.as_str(), a.sequence, a.position, a.logical_time),
+        ("a", 14, (1, 14), 14)
+    );
+    let mut expected = a.clone();
+    expected.role = pn_graph::formation::InvitationRole::T;
+    assert_eq!(t, &expected);
+    for n in [0, 2, 4] {
+        for denominator in 1..=8 {
+            for numerator in -denominator - 1..=denominator + 1 {
+                let mut changed = input.clone();
+                changed.body.quantities[n].1.value = numerator;
+                changed.body.quantities[n + 1].1.value = denominator;
+                let lower = if n == 4 { 0 } else { -denominator };
+                assert_eq!(
+                    bundle(&changed).map(|_| ()),
+                    if (lower..=denominator).contains(&numerator) {
+                        Ok(())
+                    } else {
+                        Err(FormationFailure::Graph(RegistrationError::Incidence))
+                    }
+                );
+            }
+        }
+    }
+    invitation_refusals(&input);
+}
+
+fn invitation_refusals(input: &CandidateAct) {
+    for index in 0..6 {
+        let mut changed = input.clone();
+        changed.body.quantities.remove(index);
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+        for (unit, vintage) in [("money", 0), ("one", 1)] {
+            let mut changed = input.clone();
+            changed.body.quantities[index].1.unit = unit.into();
+            changed.body.quantities[index].1.vintage = vintage;
+            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+        }
+    }
+    for index in [1, 3, 5] {
+        for value in [0, -1] {
+            let mut changed = input.clone();
+            changed.body.quantities[index].1.value = value;
+            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+        }
+    }
+    paired_control_refusals(input);
+}
+
+fn paired_control_refusals(input: &CandidateAct) {
+    for removed in [0, 1] {
+        let mut changed = input.clone();
+        let removed = changed.legs.remove(removed);
+        assert_eq!(
+            bundle(&changed),
+            Err(FormationFailure::Records(pn_records::ValidationError::MissingCoLeg {
+                act: changed.id.clone(),
+                role: removed.id.role
+            }))
+        );
+    }
+    for target in [
+        named("addr", "a"),
+        named("name", "topic"),
+        PublicReference::Minted(inputs_chat()),
+    ] {
+        let mut changed = input.clone();
+        changed.legs[1].target = target;
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    }
+    for middle in [
+        named("prof", "a"),
+        named("addr", "a"),
+        named("name", "topic"),
+        PublicReference::Minted(ownership(4).id),
+    ] {
+        let mut changed = input.clone();
+        changed.legs[0].target = middle.clone();
+        changed.legs[1].source = middle;
+        assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    }
+    let mut changed = input.clone();
+    changed.legs[0].source = named("addr", "b");
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input.clone();
+    changed.legs[1].source = named("prof", "other");
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input.clone();
+    changed.protocol_references.push(named("name", "topic"));
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input.clone();
+    changed.body.license = publication(1).body.license;
+    assert_eq!(
+        bundle(&changed),
+        Err(FormationFailure::Records(
+            pn_records::ValidationError::InvalidRepresentation {
+                act: changed.id.clone(),
+                cause: pn_records::InvalidCause::LicenseQualifiers
+            }
+        ))
+    );
+}
+
+/// Claim: Invitation uses the shared deterministic complete-act reconstruction and typed revalidation with parallel pairs, retained metadata, authorized removal and no partial result. Missing siblings, altered identity or coordinates and unapproved acts refuse; diagnostic decoding confers no validation.
+/// ´claim:formation:invitation-shares-whole-history-revalidation´
+/// ´test:integration:invitation-reconstruction´
+#[test]
+fn invitation_reconstruction() {
+    shared_family_reconstruction(invitation(14), invitation(15));
+}
+
+fn shared_family_reconstruction(first: CandidateAct, second: CandidateAct) {
+    let mut inputs = vec![candidate("Registration", 1), participation(5, 5, 5), first, second];
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &names()).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    let mut reversed = inputs.clone();
+    reversed.reverse();
+    for input in &mut reversed {
+        input.legs.reverse();
+    }
+    assert_eq!(
+        validate_formation(&graph, &validate_history(&reversed, &names()).unwrap(), &verifier),
+        Ok(())
+    );
+    let last = graph.edge_indices().next_back().unwrap();
+    for index in 3..graph.edge_count() {
+        let edge = petgraph::graph::EdgeIndex::new(index);
+        let mut partial = graph.clone();
+        partial.remove_edge(edge);
+        if edge != last {
+            assert_eq!(partial[last], graph[last]);
+        }
+        assert_eq!(
+            validate_formation(&partial, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+        let mut changed = graph.clone();
+        changed[edge] = graph[petgraph::graph::EdgeIndex::new(0)].clone();
+        assert_eq!(
+            validate_formation(&changed, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    for index in 0..inputs[2].body.quantities.len() {
+        let mut changed = inputs.clone();
+        changed[2].body.quantities[index].1.value += 1;
+        let alternate = validate_history(&changed, &names()).unwrap();
+        let approved = Verifier {
+            acts: changed,
+            removals: false,
+        };
+        assert!(validate_formation(&graph, &alternate, &approved).is_err());
+    }
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts.clone_from(&inputs);
+    inputs[2].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &names()).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
 }
