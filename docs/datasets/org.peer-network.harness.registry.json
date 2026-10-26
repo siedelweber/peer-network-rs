@@ -3952,6 +3952,8 @@
         "pn-graph::formation::deinvite_reconstruction",
         "pn-graph::formation::withdraw_projection",
         "pn-graph::formation::withdraw_reconstruction",
+        "pn-graph::formation::rescind_projection",
+        "pn-graph::formation::rescind_reconstruction",
         "pn-graph::formation::formed_reference_conformance",
         "pn-graph::formation::minted_node_conformance"
       ],

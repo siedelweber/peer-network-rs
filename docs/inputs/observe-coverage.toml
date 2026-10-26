@@ -31,7 +31,7 @@ operations = 7
 instrumented = 7
 exceptions = 0
 helpers = 0
-generators = 32
+generators = 33
 
 [[rows]]
 name = "pn-host"

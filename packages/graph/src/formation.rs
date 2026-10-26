@@ -160,6 +160,21 @@ pub struct WithdrawProjection {
     pub logical_time: u64,
 }
 
+/// Complete Rescind control weight; both parameter roles are fixed at one.
+/// (´def:formation:rescind´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RescindProjection {
+    /// Author atom shared with the initiating Actor endpoint.
+    pub author: String,
+    /// Author-local sequence, never host order.
+    pub sequence: u64,
+    /// Retained epoch-qualified published placement.
+    pub position: Position,
+    /// Retained host attachment; this operation gives no recurrence verdict.
+    pub logical_time: u64,
+}
+
 /// Exact Content genesis pair, retained structurally for typed revalidation.
 /// No license interpretation participates in formation or geometry.
 /// (´def:formation:publish´)
@@ -482,6 +497,8 @@ pub enum Projection {
     Leave(LeaveProjection),
     /// Withdraw retains an authored Offer cancellation record.
     Withdraw(WithdrawProjection),
+    /// Rescind retains an authored Offer consent-retraction record.
+    Rescind(RescindProjection),
     /// Tag classifies a Taggable passive node with a public Type.
     Tag(TagProjection),
     /// Reference cites a passive target through an author-fixed artifact.
@@ -617,6 +634,9 @@ fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Co
     }
     if act.id().family == "Publish" {
         return publish(act, verifier);
+    }
+    if act.id().family == "Rescind" {
+        return rescind(act, verifier);
     }
     if act.id().family == "Withdraw" {
         return withdraw(act, verifier);
@@ -1407,6 +1427,43 @@ fn withdraw(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<
         Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
         target,
         Projection::Withdraw(WithdrawProjection {
+            author: act.id().author.clone(),
+            sequence: act.id().sequence,
+            position: act.position(),
+            logical_time: act.logical_time(),
+        }),
+    ))
+}
+
+fn rescind(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+    let [leg] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let target = passive(leg.target())?;
+    if !matches!(target, Node::Offer { .. }) {
+        return Err(RegistrationError::Incidence);
+    }
+    if act.body().layout != Layout::Binary
+        || leg.id().role != Role::Binary
+        || leg.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || !act.body().quantities.is_empty()
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    Ok((
+        Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+        target,
+        Projection::Rescind(RescindProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
             position: act.position(),

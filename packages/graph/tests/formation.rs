@@ -2608,7 +2608,7 @@ fn leaving(sequence: u64, target: PublicReference) -> CandidateAct {
     input
 }
 
-/// Claim: Across the sixteen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.
+/// Claim: Across the seventeen formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.
 /// ´claim:formation:formed-families-separate-protocol-resolution-from-incidence´
 /// ´test:integration:formed-reference-conformance´
 #[test]
@@ -2630,6 +2630,7 @@ fn formed_reference_conformance() {
         invitation(14),
         deinvite(15),
         withdrawing(16, PublicReference::Minted(bidding(8, 4, 8).id)),
+        rescinding(17, PublicReference::Minted(bidding(8, 4, 8).id)),
     ];
     for input in &inputs {
         let absent = ActId {
@@ -3472,4 +3473,90 @@ fn withdraw_projection() {
 fn withdraw_reconstruction() {
     let offer = PublicReference::Minted(bidding(8, 4, 8).id);
     shared_family_reconstruction(withdrawing(16, offer.clone()), withdrawing(17, offer));
+}
+
+fn rescinding(sequence: u64, target: PublicReference) -> CandidateAct {
+    let mut input = leaving(sequence, target);
+    input.id.family = "Rescind".into();
+    input.legs[0].id.act = input.id.clone();
+    input
+}
+/// Claim: Rescind forms an approved author Actor to Offer control edge with no authored parameters, protocol references or license pair. A dangling Offer is admitted; wrong constructors, altered incidence and extra coordinates refuse at formation, while a license pair refuses at records validation. Formation decides no settlement, title or standing effect.
+/// # Panics
+/// Panics only if Rescind dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:rescind-requires-complete-offer-control-incidence´
+/// ´test:integration:rescind-projection´
+#[test]
+fn rescind_projection() {
+    let input = rescinding(3, PublicReference::Minted(bidding(8, 4, 8).id));
+    let (source, target, edge) = project(&input).unwrap();
+    assert_eq!(source, Node::Grounded(GroundedNode::Actor("a".into())));
+    assert_eq!(
+        target,
+        Node::Offer {
+            author: "a".into(),
+            sequence: 8
+        }
+    );
+    let Projection::Rescind(weight) = edge else {
+        panic!("wrong family")
+    };
+    assert_eq!(
+        (weight.author.as_str(), weight.sequence, weight.position, weight.logical_time),
+        ("a", 3, (1, 3), 3)
+    );
+    for target in [
+        named("addr", "a"),
+        named("prof", "a"),
+        named("name", "topic"),
+        PublicReference::Act(input.id.clone()),
+    ] {
+        let mut changed = input.clone();
+        changed.legs[0].target = target;
+        assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    }
+    for family in ["Publish", "Owner", "Review", "Send", "Participant", "Rescind"] {
+        let mut changed = input.clone();
+        changed.legs[0].target = PublicReference::Minted(ActId {
+            family: family.into(),
+            ..bidding(8, 4, 8).id
+        });
+        assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    }
+    let mut changed = input.clone();
+    changed.legs[0].source = named("addr", "b");
+    assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input.clone();
+    changed.protocol_references = vec![named("name", "topic")];
+    assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input.clone();
+    changed.body.quantities = join_request(3, named("name", "topic")).body.quantities;
+    assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input.clone();
+    changed.body.layout = Layout::Paired;
+    changed.legs[0].id.role = Role::A;
+    let mut terminal = changed.legs[0].clone();
+    terminal.id.role = Role::T;
+    changed.legs.push(terminal);
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input;
+    changed.body.license = publication(1).body.license;
+    assert_eq!(
+        project(&changed),
+        Err(FormationFailure::Records(
+            pn_records::ValidationError::InvalidRepresentation {
+                act: changed.id.clone(),
+                cause: pn_records::InvalidCause::LicenseQualifiers,
+            }
+        ))
+    );
+}
+
+/// Claim: Rescind uses shared deterministic reconstruction and typed revalidation with parallel Offer control records, retained metadata, authorized removal and no partial result. Missing or replaced projections and unapproved acts refuse after diagnostic decoding; settlement cancellation is not evaluated.
+/// ´claim:formation:rescind-shares-whole-history-revalidation´
+/// ´test:integration:rescind-reconstruction´
+#[test]
+fn rescind_reconstruction() {
+    let offer = PublicReference::Minted(bidding(8, 4, 8).id);
+    shared_family_reconstruction(rescinding(16, offer.clone()), rescinding(17, offer));
 }

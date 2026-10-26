@@ -46,6 +46,7 @@ fn main() {
     let invitation = project_complete_act(&history.acts()[12], &auth);
     let deinvite = project_complete_act(&history.acts()[13], &auth);
     let withdraw = project_complete_act(&history.acts()[14], &auth);
+    let rescind = project_complete_act(&history.acts()[15], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -69,6 +70,7 @@ fn main() {
         "invitation": format!("{invitation:?}"),
         "deinvite": format!("{deinvite:?}"),
         "withdraw": format!("{withdraw:?}"),
+        "rescind": format!("{rescind:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -369,6 +371,7 @@ fn formation_inputs(names: &[PublicReference]) -> Vec<CandidateAct> {
     let send = sending(participant.clone());
     let bid = bidding(ownership.clone());
     let withdraw = withdrawing(ownership.clone(), bid.legs[1].target.clone());
+    let rescind = rescinding(withdraw.clone());
     let opinion = opinion(act.clone());
     let join_request = join_request(act.clone(), participant.legs[0].target.clone());
     let leave = leaving(join_request.clone());
@@ -388,6 +391,7 @@ fn formation_inputs(names: &[PublicReference]) -> Vec<CandidateAct> {
         invitation,
         deinvite,
         withdraw,
+        rescind,
     ]
 }
 
@@ -436,5 +440,14 @@ fn withdrawing(mut input: CandidateAct, offer: PublicReference) -> CandidateAct 
     input.body.quantities.clear();
     input.authoritative_position = 15;
     input.logical_time = 15;
+    input
+}
+
+fn rescinding(mut input: CandidateAct) -> CandidateAct {
+    input.id.family = "Rescind".into();
+    input.id.sequence = 16;
+    input.legs[0].id.act = input.id.clone();
+    input.authoritative_position = 16;
+    input.logical_time = 16;
     input
 }
