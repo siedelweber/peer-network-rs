@@ -21,6 +21,10 @@ if [ -z "${PN_MESON_BIN:-}" ]; then
     echo "GATE-STRUCTURAL-ERROR: PN_MESON_BIN must name the Meson executable" >&2
     exit 2
 fi
+case "${PN_BUILDGRAPH_ROUTE:-meson}" in
+    meson|legacy) ;;
+    *) echo "GATE-STRUCTURAL-ERROR: unknown build graph route" >&2; exit 2 ;;
+esac
 failed=0
 statuses=()
 mkdir -p .lane
@@ -30,6 +34,7 @@ export PN_HOST_TEST_ROOT="$PWD/.lane/host-postgres"
 export PN_WALLET_TEST_ROOT="$PWD/.lane/wallet-elements"
 trap 'python3 -B ci/wallet_elements.py stop-all --root "$PN_WALLET_TEST_ROOT"; python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"' EXIT
 gate_started=$(date -u +%s.%N)
+export PN_BUILDGRAPH_RUN="${gate_started}-$$"
 source ci/gate_resources.sh
 resource_root=$(gate_cgroup_root 2>/dev/null) || resource_root=
 gate_resource_sample .lane/gate-resource-start.raw "$resource_root" 2>/dev/null || true
@@ -66,22 +71,30 @@ run_step() {
         --findings .lane/performance-findings.jsonl
     if [ "$?" -ne 0 ]; then failed=1; fi
 }
+run_graph() {
+    if [ "${PN_BUILDGRAPH_ROUTE:-meson}" = legacy ]; then
+        run_step "$@"
+    else
+        local name=$1
+        run_step "$name" python3 -B ci/build_graph.py delegate "$name"
+    fi
+}
 run_step build-graph python3 -B ci/build_graph.py gate
-run_step toolchain python3 ci/discipline.py toolchain
-run_step discipline-tests env FOUNDATION_COMPUTE_TESTS=1 python3 -B ci/run_ci.py test_discipline
-run_step harness-registry python3 -B ci/harness.py
-run_step harness-tests python3 -B ci/run_ci.py test_harness
-run_step testkit-guard python3 -B ci/testkit_guard.py
-run_step testkit-tests python3 -B ci/run_ci.py test_testkit
-run_step claim-tests python3 -B ci/run_ci.py test_claims
-run_step linter-entry-tests python3 -B ci/run_ci.py test_linter_entry
-run_step observation-tests python3 -B ci/run_ci.py test_observe
-run_step devperf-tests python3 -B ci/run_ci.py test_devperf
-run_step build-policy python3 ci/discipline.py build-policy
-run_step cargo-config python3 ci/discipline.py cargo-config
+run_graph toolchain python3 ci/discipline.py toolchain
+run_graph discipline-tests env FOUNDATION_COMPUTE_TESTS=1 python3 -B ci/run_ci.py test_discipline
+run_graph harness-registry python3 -B ci/harness.py
+run_graph harness-tests python3 -B ci/run_ci.py test_harness
+run_graph testkit-guard python3 -B ci/testkit_guard.py
+run_graph testkit-tests python3 -B ci/run_ci.py test_testkit
+run_graph claim-tests python3 -B ci/run_ci.py test_claims
+run_graph linter-entry-tests python3 -B ci/run_ci.py test_linter_entry
+run_graph observation-tests python3 -B ci/run_ci.py test_observe
+run_graph devperf-tests python3 -B ci/run_ci.py test_devperf
+run_graph build-policy python3 ci/discipline.py build-policy
+run_graph cargo-config python3 ci/discipline.py cargo-config
 run_step cargo-config-measurement python3 -B ci/measure_rustflags.py
-run_step vendor-set python3 ci/discipline.py vendor-set
-run_step member-lints python3 ci/discipline.py members
+run_graph vendor-set python3 ci/discipline.py vendor-set
+run_graph member-lints python3 ci/discipline.py members
 # Preserve the engine source layout; README rule:vendor:regexml records the local aliases and XSD repetition correction.
 run_step fmt python3 ci/discipline.py fmt
 run_step clippy python3 ci/discipline.py clippy
@@ -94,15 +107,15 @@ run_step test-budgets python3 -B ci/devperf.py --input .lane/performance-events.
 # Exclude regexml by name in discipline.py: it retains upstream feature and documentation policy.
 run_step minimal python3 ci/discipline.py minimal
 run_step rustdoc python3 ci/discipline.py rustdoc
-run_step fixed-point-generate cargo run -p documents --locked --profile gate -- generate
-run_step fixed-point-write cargo run -p documents --locked --profile gate -- write
-run_step fixed-point-clean python3 ci/discipline.py tree-clean
-run_step datasets cargo run -p documents --locked --profile gate -- generate --check
-run_step documents cargo run -p documents --locked --profile gate -- check
-run_step determinism-datasets cargo run -p documents --locked --profile gate -- generate --check
-run_step determinism-documents cargo run -p documents --locked --profile gate -- check
-run_step design-correspondence python3 -B ci/design.py
-run_step design-tests python3 -B ci/run_ci.py test_design
+run_graph fixed-point-generate cargo run -p documents --locked --profile gate -- generate
+run_graph fixed-point-write cargo run -p documents --locked --profile gate -- write
+run_graph fixed-point-clean python3 ci/discipline.py tree-clean
+run_graph datasets cargo run -p documents --locked --profile gate -- generate --check
+run_graph documents cargo run -p documents --locked --profile gate -- check
+run_graph determinism-datasets cargo run -p documents --locked --profile gate -- generate --check
+run_graph determinism-documents cargo run -p documents --locked --profile gate -- check
+run_graph design-correspondence python3 -B ci/design.py
+run_graph design-tests python3 -B ci/run_ci.py test_design
 run_step benchmarks python3 -B ci/benchmarks.py
 run_step observation-build cargo build --offline --locked --profile gate -p execwrap -p pn-records -p pn-graph --features pn-records/test-support --examples
 run_step observation-runtime python3 -B ci/run_ci.py test_observe_runtime
@@ -111,15 +124,15 @@ run_step host-observation-runtime python3 -B ci/run_ci.py test_host_runtime
 run_step wallet-conformance python3 -B ci/run_ci.py test_wallet_boundary
 run_step wallet-elements-stop python3 -B ci/wallet_elements.py stop --root "$PN_WALLET_TEST_ROOT"
 run_step host-postgresql-stop python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"
-run_step observation-parser python3 -B ci/run_ci.py test_observe_syntax
-run_step observation-syntax python3 -B ci/observe.py
+run_graph observation-parser python3 -B ci/run_ci.py test_observe_syntax
+run_graph observation-syntax python3 -B ci/observe.py
 run_step harness-matrix python3 -B ci/harness.py --matrix
-run_step linter "$LINTER_BIN" check --root .
+run_graph linter "$LINTER_BIN" check --root .
 run_step claim-evidence python3 -B ci/claims.py --fail-respellings
-run_step token python3 ci/discipline.py token
-run_step hash-citations python3 -B ci/discipline.py hash-citations
-run_step suppressions python3 ci/discipline.py suppressions
-run_step printing python3 ci/discipline.py printing
+run_graph token python3 ci/discipline.py token
+run_graph hash-citations python3 -B ci/discipline.py hash-citations
+run_graph suppressions python3 ci/discipline.py suppressions
+run_graph printing python3 ci/discipline.py printing
 grep 'Checking documents' .lane/gate-clippy.log || true
 grep '^SUITE=' .lane/gate-tests.log || true
 cat .lane/gate-toolchain.log

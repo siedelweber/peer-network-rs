@@ -8,8 +8,8 @@
   "rows": [
     {
       "name": "build-graph",
-      "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
-      "slice": 2
+      "reason": "The census already invokes Meson; retain its shell entry until final entry integration avoids recursively invoking the same build.",
+      "slice": 5
     },
     {
       "name": "toolchain",

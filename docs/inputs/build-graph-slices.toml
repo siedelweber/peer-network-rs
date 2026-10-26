@@ -3,8 +3,8 @@ version = [1, 0, 0]
 
 [[rows]]
 name = "build-graph"
-slice = 2
-reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+slice = 5
+reason = "The census already invokes Meson; retain its shell entry until final entry integration avoids recursively invoking the same build."
 
 [[rows]]
 name = "toolchain"

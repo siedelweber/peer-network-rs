@@ -2879,33 +2879,35 @@
     },
     {
       "claims": [
-        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs"
+        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs",
+        "ROOT::claim:discipline:build-graph-delegation-preserves-results"
       ],
       "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
       "closing_step": "Build graph slices 1 to 5",
-      "evidence_paragraph": "ROOT::amend:buildgraph:census-skeleton",
+      "evidence_paragraph": "ROOT::amend:buildgraph:delegation-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Step delegation, current-run result adapters, complete artifact joins, cleanup and command-equivalence witnesses for slices 2 to 5; slice 1 file and roster accounting is exercised.",
+      "missing": "Cargo/runtime delegation, complete artifact joins, cleanup and final entry comparison remain; file accounting and constructed slice-two adapter comparisons are exercised.",
       "name": "ROOT::dec:buildgraph:composition",
       "owner": "Build-graph implementer and independent gate-contract reviewer",
       "path": "adr/024-build-graph.md",
-      "premises": "The constructed tracked tree exercises the real Meson always-run target and deployed census, including additions without reconfiguration; faulted graph manifests exercise structural incidence. This does not prove semantic dependency completeness or the unmigrated command adapters.",
+      "premises": "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Semantic dependency completeness, remaining Cargo/runtime adapters and final integration remain held.",
       "realizers": [],
       "status": "held"
     },
     {
       "claims": [
-        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs"
+        "ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs",
+        "ROOT::claim:discipline:build-graph-delegation-preserves-results"
       ],
       "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
       "closing_step": "Build graph slices 1 to 5",
-      "evidence_paragraph": "ROOT::amend:buildgraph:census-skeleton",
+      "evidence_paragraph": "ROOT::amend:buildgraph:delegation-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Step delegation, current-run result adapters, complete artifact joins, cleanup and command-equivalence witnesses for slices 2 to 5; slice 1 file and roster accounting is exercised.",
+      "missing": "Cargo/runtime delegation, complete artifact joins, cleanup and final entry comparison remain; file accounting and constructed slice-two adapter comparisons are exercised.",
       "name": "ROOT::gate:buildgraph:implementation",
       "owner": "Build-graph implementer and independent gate-contract reviewer",
       "path": "adr/024-build-graph.md",
-      "premises": "The constructed tracked tree exercises the real Meson always-run target and deployed census, including additions without reconfiguration; faulted graph manifests exercise structural incidence. This does not prove semantic dependency completeness or the unmigrated command adapters.",
+      "premises": "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Semantic dependency completeness, remaining Cargo/runtime adapters and final integration remain held.",
       "realizers": [],
       "status": "held"
     }
