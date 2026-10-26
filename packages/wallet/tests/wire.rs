@@ -533,6 +533,11 @@ fn length_cases() -> Vec<Case> {
             Ok(7),
         ),
         case(
+            "overflowing length",
+            format!("HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{json}", "9".repeat(40)),
+            Err(RpcRefusal::ResponseBytes),
+        ),
+        case(
             "chunked with length",
             response("200 OK", "Transfer-Encoding: chunked\r\n", &json),
             http(),
@@ -650,9 +655,11 @@ fn acquisition_cases() -> Vec<Case> {
             limits: short,
             ..case("slow drip past the deadline", "", Err(RpcRefusal::Deadline))
         },
+        // A timed-out exchange closes its connection: the held server sees the close.
         Case {
             hold: true,
             limits: short,
+            peer: Some(Peer::Eof),
             ..case(
                 "held open after the head",
                 &full.as_bytes()[..head],
@@ -662,6 +669,7 @@ fn acquisition_cases() -> Vec<Case> {
         Case {
             hold: true,
             limits: short,
+            peer: Some(Peer::Eof),
             ..case("held open before any byte", "", Err(RpcRefusal::Deadline))
         },
     ]
@@ -705,7 +713,64 @@ fn request_findings(request: &[u8], secret: &str) -> Vec<String> {
     findings
 }
 
-/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined or conflicting lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
+/// Threads of this process carrying the wallet's exchange name.
+fn wallet_threads() -> usize {
+    std::fs::read_dir("/proc/self/task")
+        .unwrap()
+        .filter(|entry| {
+            std::fs::read_to_string(entry.as_ref().unwrap().path().join("comm")).is_ok_and(|name| name.trim() == "pn-wallet-rpc")
+        })
+        .count()
+}
+
+/// Run one case through a fresh reader and return its differences from the expectation.
+fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec<String> {
+    let mut findings = Vec::new();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let port = listener.local_addr().unwrap().port();
+    let cookie = Cookie::new();
+    let server = serve(listener, genesis.to_vec(), case.wire.clone(), case.hold);
+    let result = RpcClient::new(cookie.config(port), case.limits, decoder(), declaration, "wallet-genesis-1")
+        .and_then(|client| client.read(Read::BlockCount))
+        .map(|value| match value {
+            ReadResult::Count(count) => count,
+            other => panic!("count expected: {other:?}"),
+        });
+    let name = case.name;
+    // Each exchange joins its own thread before the read returns, timed out or not.
+    if wallet_threads() != 0 {
+        findings.push(format!("{name}: an exchange thread outlived its read"));
+    }
+    let exchange = server.join().unwrap();
+    if result != case.expected {
+        findings.push(format!("{name}: expected {:?}, got {result:?}", case.expected));
+    }
+    if case.peer.is_some_and(|peer| peer != exchange.peer) {
+        findings.push(format!("{name}: expected peer {:?}, got {:?}", case.peer, exchange.peer));
+    }
+    match exchange.requests.get(2) {
+        Some(request) => findings.extend(
+            request_findings(request, &cookie.secret)
+                .into_iter()
+                .map(|finding| format!("{name}: {finding}")),
+        ),
+        None => findings.push(format!("{name}: no case request reached the server")),
+    }
+    if let Err(error) = &result {
+        let formatted = format!("{error:?} {error}");
+        if formatted.contains(&cookie.secret)
+            || formatted.contains(&basic(cookie.secret.as_bytes()))
+            || formatted.contains("127.0.0.1")
+            || formatted.contains(&port.to_string())
+        {
+            findings.push(format!("{name}: refusal formats a private sentinel"));
+        }
+    }
+    findings
+}
+
+/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection and leaves no thread behind, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
 /// ´claim:wallet:rpc-wire-fixtures-keep-strict-framing´
 /// ´test:integration:wire-compatibility´
 #[test]
@@ -730,41 +795,21 @@ fn wire_compatibility() {
     cases.extend(length_cases());
     cases.extend(bound_cases(ceiling));
     cases.extend(acquisition_cases());
-    let mut findings = Vec::new();
-    for case in &cases {
-        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-        listener.set_nonblocking(true).unwrap();
-        let port = listener.local_addr().unwrap().port();
-        let cookie = Cookie::new();
-        let server = serve(listener, genesis.clone(), case.wire.clone(), case.hold);
-        let result = RpcClient::new(cookie.config(port), case.limits, decoder(), &declaration, "wallet-genesis-1")
-            .and_then(|client| client.read(Read::BlockCount))
-            .map(|value| match value {
-                ReadResult::Count(count) => count,
-                other => panic!("count expected: {other:?}"),
-            });
-        let exchange = server.join().unwrap();
-        let name = case.name;
-        if result != case.expected {
-            findings.push(format!("{name}: expected {:?}, got {result:?}", case.expected));
-        }
-        if case.peer.is_some_and(|peer| peer != exchange.peer) {
-            findings.push(format!("{name}: expected peer {:?}, got {:?}", case.peer, exchange.peer));
-        }
-        match exchange.requests.get(2) {
-            Some(request) => findings.extend(
-                request_findings(request, &cookie.secret)
-                    .into_iter()
-                    .map(|finding| format!("{name}: {finding}")),
-            ),
-            None => findings.push(format!("{name}: no case request reached the server")),
-        }
-        if let Err(error) = &result {
-            let formatted = format!("{error:?} {error}");
-            if formatted.contains(&cookie.secret) || formatted.contains("127.0.0.1") || formatted.contains(&port.to_string()) {
-                findings.push(format!("{name}: refusal formats a private sentinel"));
-            }
-        }
+    let threads = std::fs::read_dir("/proc/self/task").unwrap().count();
+    let mut findings: Vec<_> = cases.iter().flat_map(|case| run_case(case, &genesis, &declaration)).collect();
+    // A caller already inside a Tokio runtime: the reader runs its exchange on its own
+    // thread and runtime instead of nesting one, for a success and for a timed-out read.
+    let runtime = tokio::runtime::Builder::new_current_thread().build().unwrap();
+    for case in cases
+        .iter()
+        .filter(|case| matches!(case.name, "200 result" | "held open after the head"))
+    {
+        let inside = runtime.block_on(async { run_case(case, &genesis, &declaration) });
+        findings.extend(inside.into_iter().map(|finding| format!("inside a Tokio runtime: {finding}")));
+    }
+    drop(runtime);
+    if std::fs::read_dir("/proc/self/task").unwrap().count() != threads {
+        findings.push("threads remain after every exchange and server joined".to_owned());
     }
     assert!(
         findings.is_empty(),

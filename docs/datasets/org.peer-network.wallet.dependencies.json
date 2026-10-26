@@ -35,6 +35,15 @@
     },
     {
       "build": "none",
+      "checksum": "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0",
+      "license": "Apache-2.0 OR MIT",
+      "msrv": "1.36",
+      "name": "atomic-waker",
+      "role": "HTTP transport closure",
+      "version": "1.1.2"
+    },
+    {
+      "build": "none",
       "checksum": "bb531853791a215d7c62a30daf0dde835f381ab5de4589cfe7c649d2cbe92bd6",
       "license": "MIT OR Apache-2.0",
       "msrv": "1.82.0",
@@ -224,6 +233,51 @@
     },
     {
       "build": "none",
+      "checksum": "ca2a8f2913ee65f60facd6a5905613afaa448497a0230cc41ce022d93290bc2c",
+      "license": "MIT",
+      "msrv": "1.61",
+      "name": "http-body",
+      "role": "HTTP transport closure",
+      "version": "1.1.0"
+    },
+    {
+      "build": "none",
+      "checksum": "23169fe34a5fbcdd3f3862e78fb9b6fccd5f02a6dc6f732547005d45631ce71c",
+      "license": "MIT",
+      "msrv": "1.61",
+      "name": "http-body-util",
+      "role": "HTTP transport closure",
+      "version": "0.1.5"
+    },
+    {
+      "build": "build.rs",
+      "checksum": "6dbf3de79e51f3d586ab4cb9d5c3e2c14aa28ed23d180cf89b4df0454a69cc87",
+      "license": "MIT OR Apache-2.0",
+      "msrv": "not declared",
+      "name": "httparse",
+      "role": "HTTP transport closure",
+      "version": "1.10.1"
+    },
+    {
+      "build": "none",
+      "checksum": "2c3e324da4c95177d6291d4c8730197c0d1822f8a9766814a4a44fa5ab797c9c",
+      "license": "MIT",
+      "msrv": "1.63",
+      "name": "hyper",
+      "role": "HTTP transport closure",
+      "version": "1.12.0"
+    },
+    {
+      "build": "none",
+      "checksum": "ddc03d96684f9226b8a787cdb71488417b53ab5ea8fdb1dac946cb9431cc8bff",
+      "license": "MIT",
+      "msrv": "1.85",
+      "name": "hyper-util",
+      "role": "HTTP transport closure",
+      "version": "0.1.21"
+    },
+    {
+      "build": "none",
       "checksum": "1fa76a2c86f704bdb222d66965fb3d63269ce38518b83cb0575fca855ebb6316",
       "license": "MIT OR Zlib OR Apache-2.0",
       "msrv": "not declared",
@@ -347,6 +401,51 @@
       "name": "thousands",
       "role": "heap-test closure only",
       "version": "0.2.0"
+    },
+    {
+      "build": "none",
+      "checksum": "ebe5ef63511595f1344e2d5cfa636d973292adc0eec1f0ad45fae9f0851ab1d4",
+      "license": "MIT",
+      "msrv": "1.64.0",
+      "name": "tower",
+      "role": "HTTP transport closure",
+      "version": "0.5.3"
+    },
+    {
+      "build": "none",
+      "checksum": "121c2a6cda46980bb0fcd1647ffaf6cd3fc79a013de288782836f6df9c48780e",
+      "license": "MIT",
+      "msrv": "not declared",
+      "name": "tower-layer",
+      "role": "HTTP transport closure",
+      "version": "0.3.3"
+    },
+    {
+      "build": "none",
+      "checksum": "8df9b6e13f2d32c91b9bd719c00d1958837bc7dec474d94952798cc8e69eeec3",
+      "license": "MIT",
+      "msrv": "not declared",
+      "name": "tower-service",
+      "role": "HTTP transport closure",
+      "version": "0.3.3"
+    },
+    {
+      "build": "none",
+      "checksum": "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b",
+      "license": "MIT",
+      "msrv": "not declared",
+      "name": "try-lock",
+      "role": "HTTP transport closure",
+      "version": "0.2.5"
+    },
+    {
+      "build": "none",
+      "checksum": "ec4cdd0dd910afe868b7ef477227d8d538b46b3075031afee8a9f2acb0a2ed0b",
+      "license": "MIT",
+      "msrv": "not declared",
+      "name": "want",
+      "role": "HTTP transport closure",
+      "version": "0.3.2"
     }
   ]
 }

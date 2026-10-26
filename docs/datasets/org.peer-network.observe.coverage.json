@@ -63,12 +63,12 @@
       "operations": 103
     },
     {
-      "exceptions": 17,
-      "generators": 20,
+      "exceptions": 23,
+      "generators": 21,
       "helpers": 0,
       "instrumented": 6,
       "name": "pn-wallet",
-      "operations": 23
+      "operations": 29
     }
   ]
 }

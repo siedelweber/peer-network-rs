@@ -2,13 +2,9 @@
 use crate::{rpc::RpcRefusal, rpc_secret::Buffer};
 use std::{
     fs::{File, Metadata, OpenOptions},
-    io::Read as _,
     os::{
         fd::AsRawFd as _,
-        unix::{
-            ffi::OsStrExt as _,
-            fs::{MetadataExt as _, OpenOptionsExt as _},
-        },
+        unix::fs::{MetadataExt as _, OpenOptionsExt as _},
     },
     path::Path,
 };
@@ -19,7 +15,7 @@ const DIRECTORY: i32 = 0x1_0000;
 const NONBLOCK: i32 = 0x800;
 const COOKIE_BYTES: usize = 76;
 
-fn open(path: &Path, directory: bool) -> Result<File, RpcRefusal> {
+pub(crate) fn open(path: &Path, directory: bool) -> Result<File, RpcRefusal> {
     OpenOptions::new()
         .read(true)
         .custom_flags(NOFOLLOW | NONBLOCK | if directory { DIRECTORY } else { 0 })
@@ -111,7 +107,7 @@ pub(crate) fn acquire(root: &File, path: &[u8], uid: u32) -> Result<Buffer, RpcR
         let mut name = Buffer::new(prefix.len() + component.len());
         name.append(prefix.as_bytes())?;
         name.append(component)?;
-        let file = open(Path::new(std::ffi::OsStr::from_bytes(name.bytes())), !last)?;
+        let file = name.open(!last)?;
         if last {
             leaf = Some((file, name));
         } else {
@@ -125,13 +121,7 @@ pub(crate) fn acquire(root: &File, path: &[u8], uid: u32) -> Result<Buffer, RpcR
     let parent_before = metadata(&parent)?;
     regular(&before, uid)?;
     let mut content = Buffer::new(COOKIE_BYTES);
-    while !content.vacant().is_empty() {
-        let count = file.read(content.vacant()).map_err(|_| RpcRefusal::Cookie)?;
-        if count == 0 {
-            break;
-        }
-        content.advance(count);
-    }
+    content.read_cookie(&mut file)?;
     #[cfg(test)]
     tests::AFTER_READ.with(|hook| {
         if let Some(change) = hook.borrow_mut().take() {
@@ -140,8 +130,8 @@ pub(crate) fn acquire(root: &File, path: &[u8], uid: u32) -> Result<Buffer, RpcR
     });
     let after = metadata(&file)?;
     regular(&after, uid)?;
-    let current = open(Path::new(std::ffi::OsStr::from_bytes(name.bytes())), false)?;
-    if !same(&before, &after) || !same(&after, &metadata(&current)?) || content.bytes().len() as u64 != after.len() {
+    let current = name.open(false)?;
+    if !same(&before, &after) || !same(&after, &metadata(&current)?) || content.len() as u64 != after.len() {
         return Err(RpcRefusal::Cookie);
     }
     if !same(&parent_before, &metadata(&parent)?) {
@@ -151,13 +141,13 @@ pub(crate) fn acquire(root: &File, path: &[u8], uid: u32) -> Result<Buffer, RpcR
         if !same(before, &metadata(directory)?) {
             return Err(RpcRefusal::Cookie);
         }
-        let current = open(Path::new(std::ffi::OsStr::from_bytes(name.bytes())), true)?;
+        let current = name.open(true)?;
         let next = ancestors.get(index + 1).map_or(&parent, |entry| &entry.0);
         if !same(&metadata(&current)?, &metadata(next)?) {
             return Err(RpcRefusal::Cookie);
         }
     }
-    grammar(content.bytes())?;
+    content.cookie_grammar()?;
     Ok(content)
 }
 
@@ -242,7 +232,7 @@ mod tests {
         let root = Root::new();
         let valid = [b"__cookie__:".as_slice(), &[b'a'; 64]].concat();
         root.cookie(&valid);
-        assert_eq!(root.read().unwrap().bytes(), valid);
+        assert!(root.read().unwrap().equals(&valid));
         let file = root.0.join("cookie");
         for mode in [0o400, 0o600] {
             std::fs::set_permissions(&file, std::fs::Permissions::from_mode(mode)).unwrap();
@@ -286,8 +276,9 @@ mod tests {
         let saved = root.0.join("saved");
         AFTER_READ.with(|hook| *hook.borrow_mut() = Some(Box::new(move || std::fs::rename(saved, changed).unwrap())));
         assert!(matches!(root.read(), Err(RpcRefusal::Cookie)));
-        root.cookie(&[b"__cookie__:".as_slice(), &[b'b'; 64]].concat());
-        assert_eq!(&root.read().unwrap().bytes()[11..], &[b'b'; 64]);
+        let rotated = [b"__cookie__:".as_slice(), &[b'b'; 64]].concat();
+        root.cookie(&rotated);
+        assert!(root.read().unwrap().equals(&rotated));
         root.cookie(&[b'a'; 77]);
         assert!(matches!(root.read(), Err(RpcRefusal::Cookie)));
         root.cookie(b"partial");

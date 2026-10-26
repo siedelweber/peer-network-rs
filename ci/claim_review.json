@@ -3246,7 +3246,7 @@
       "path": "packages/wallet/src/rpc.rs",
       "claim": "WALLET::claim:wallet:rpc-secret-carriers-do-not-format-inputs",
       "before": "",
-      "after": "Claim: Basic encoding writes directly into an erasing buffer; configuration and client Debug retain only roles, and parser refusals retain public causes without private input bytes.",
+      "after": "Claim: Basic encoding writes directly into an erasing buffer and leaves it only as a sensitive header value whose request formats a placeholder; configuration and client Debug retain only roles, and header, wire and parser refusals retain public causes without private input bytes.",
       "review": "Read the named assertions and refusal variants in this source site. Parser witnesses operate on bounded byte fixtures; filesystem witnesses open real descriptors; service witnesses require the declared real genesis daemon. No signed fixture, recognition or settlement verdict is inferred from these assertions."
     },
     {
@@ -3326,7 +3326,7 @@
       "path": "packages/wallet/tests/wire.rs",
       "claim": "WALLET::claim:wallet:rpc-wire-fixtures-keep-strict-framing",
       "before": "",
-      "after": "Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined or conflicting lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.",
+      "after": "Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection and leaves no thread behind, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.",
       "review": "Read the named assertions and refusal variants in this source site. Wire witnesses answer the public reader through a scripted local server with exact bytes and observe the peer side of each closure; no Elements service, signed fixture, recognition or settlement verdict is inferred from these assertions."
     }
   ]

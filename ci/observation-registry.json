@@ -6518,6 +6518,114 @@
       }
     },
     {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "item": "rpc_http::<Wire as AsyncRead>::poll_read",
+      "owner": "WALLET",
+      "signature": "fn poll_read (self : Pin < & mut Self > , cx : & mut Context < '_ > , buf : & mut ReadBuf < '_ >) -> Poll < io :: Result < () > >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Connection plumbing inside the instrumented RPC read; per-read observation would record transport fragments rather than public outcomes.",
+        "witness": "WALLET::claim:wallet:rpc-wire-fixtures-keep-strict-framing",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "item": "rpc_http::<Wire as AsyncWrite>::poll_write",
+      "owner": "WALLET",
+      "signature": "fn poll_write (self : Pin < & mut Self > , cx : & mut Context < '_ > , buf : & [u8]) -> Poll < io :: Result < usize > >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Connection plumbing inside the instrumented RPC read; the request byte bound is accounted here without observing request bytes.",
+        "witness": "WALLET::claim:wallet:rpc-wire-fixtures-keep-strict-framing",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "item": "rpc_http::<Wire as AsyncWrite>::poll_flush",
+      "owner": "WALLET",
+      "signature": "fn poll_flush (self : Pin < & mut Self > , cx : & mut Context < '_ >) -> Poll < io :: Result < () > >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Connection plumbing inside the instrumented RPC read; flushing has no public payload.",
+        "witness": "WALLET::claim:wallet:rpc-wire-fixtures-keep-strict-framing",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "item": "rpc_http::<Wire as AsyncWrite>::poll_shutdown",
+      "owner": "WALLET",
+      "signature": "fn poll_shutdown (self : Pin < & mut Self > , cx : & mut Context < '_ >) -> Poll < io :: Result < () > >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Connection plumbing inside the instrumented RPC read; shutdown has no public payload.",
+        "witness": "WALLET::claim:wallet:rpc-wire-fixtures-keep-strict-framing",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "item": "rpc_http::<Exchange as tower :: Service < Request < Full < Bytes > > >>::poll_ready",
+      "owner": "WALLET",
+      "signature": "fn poll_ready (& mut self , cx : & mut Context < '_ >) -> Poll < Result < () , hyper :: Error > >",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Service plumbing inside the instrumented RPC read; readiness has no public payload.",
+        "witness": "WALLET::claim:wallet:rpc-http-acquisition-is-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "item": "rpc_http::<Exchange as tower :: Service < Request < Full < Bytes > > >>::call",
+      "owner": "WALLET",
+      "signature": "fn call (& mut self , request : Request < Full < Bytes > >) -> Reply",
+      "claim": "ROOT::sig:design:devnet",
+      "shape": "shape-wallet",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Service plumbing inside the instrumented RPC read, which records the public outcome.",
+        "witness": "WALLET::claim:wallet:rpc-http-acquisition-is-bounded",
+        "boundary": "pn-wallet::packages/wallet/src/rpc.rs::rpc::RpcClient::read",
+        "class_decision": "wallet-decoder"
+      }
+    },
+    {
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
       "item": "StructuralBody::causal_parents",
@@ -12586,6 +12694,72 @@
       "item_premise": "Pure matching of public constructors and the existing addr/prof/name namespaces returns only a class, never a validation or anchoring verdict. It has no mutation, secret input or accounting effect."
     },
     {
+      "operation": "pn-wallet::packages/wallet/src/rpc_http.rs::rpc_http::<Wire as AsyncRead>::poll_read",
+      "class_decision": "wallet-decoder",
+      "body": "{ let this = self . get_mut () ; let mut watch = this . watch . borrow_mut () ; if watch . refusal . is_some () { return Poll :: Ready (Err (refused ())) ; } match watch . phase { Phase :: Body => Pin :: new (& mut this . stream) . poll_read (cx , buf) , Phase :: Held => { watch . waker = Some (cx . waker () . clone ()) ; Poll :: Pending } Phase :: Head if buf . remaining () == 0 => Poll :: Ready (Ok (())) , Phase :: Head => { let mut bytes = [0 ; 4] ; let want = watch . want () . min (buf . remaining ()) ; let mut head = ReadBuf :: new (& mut bytes [.. want]) ; ready ! (Pin :: new (& mut this . stream) . poll_read (cx , & mut head)) ? ; for byte in head . filled () { match watch . admit (* byte) { Ok (false) => { } Ok (true) => watch . phase = Phase :: Held , Err (refusal) => { watch . refusal = Some (refusal) ; return Poll :: Ready (Err (refused ())) ; } } } buf . put_slice (head . filled ()) ; Poll :: Ready (Ok (())) } } }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body moves received response bytes, public service data under the rpc-bounds amendment, from the owned socket to the parser: head bytes pass only through the raw-wire watch, at most up to the head terminator, and body reads wait until the head is admitted. It holds no connection detail or credential, and its refusals are typed causes recorded by the enclosing read."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_http.rs::rpc_http::<Wire as AsyncWrite>::poll_write",
+      "class_decision": "wallet-decoder",
+      "body": "{ let this = self . get_mut () ; let mut watch = this . watch . borrow_mut () ; if watch . written + buf . len () > watch . limits . request_bytes { watch . refusal = Some (RpcRefusal :: RequestBytes) ; return Poll :: Ready (Err (refused ())) ; } let count = ready ! (Pin :: new (& mut this . stream) . poll_write (cx , buf)) ? ; watch . written += count ; Poll :: Ready (Ok (count)) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body passes hyper's serialized request, including the sensitive Basic field under its caveat, to the owned socket and counts bytes against the request ceiling; it neither formats nor retains the bytes, and its only state is the public count."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_http.rs::rpc_http::<Wire as AsyncWrite>::poll_flush",
+      "class_decision": "wallet-decoder",
+      "body": "{ Pin :: new (& mut self . get_mut () . stream) . poll_flush (cx) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body forwards a flush to the owned socket; it carries no payload and no connection detail."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_http.rs::rpc_http::<Wire as AsyncWrite>::poll_shutdown",
+      "class_decision": "wallet-decoder",
+      "body": "{ Pin :: new (& mut self . get_mut () . stream) . poll_shutdown (cx) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body forwards a write shutdown to the owned socket; it carries no payload and no connection detail."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_http.rs::rpc_http::<Exchange as tower :: Service < Request < Full < Bytes > > >>::poll_ready",
+      "class_decision": "wallet-decoder",
+      "body": "{ self . 0 . poll_ready (cx) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body reports readiness of the one connection's request sender to the tower layers; it carries no payload."
+    },
+    {
+      "operation": "pn-wallet::packages/wallet/src/rpc_http.rs::rpc_http::<Exchange as tower :: Service < Request < Full < Bytes > > >>::call",
+      "class_decision": "wallet-decoder",
+      "body": "{ Box :: pin (self . 0 . send_request (request)) }",
+      "assessments": {
+        "full_recording": "wallet-full_recording",
+        "secret_flow": "wallet-secret_flow",
+        "exposure_consumers": "wallet-exposure_consumers"
+      },
+      "item_premise": "This body hands the one request to hyper's sender for the owned connection; the request holds only public method, path, Host and body bytes plus the sensitive Basic field covered by its caveat, and nothing is retained after the exchange."
+    },
+    {
       "operation": "pn-records::packages/records/src/lib.rs::StructuralBody::causal_parents",
       "body": "{ let mut parents : BTreeSet < _ > = self . asserted_parents . iter () . collect () ; match & self . settlement { Some (SettlementReferences :: Accept { settles }) => { parents . insert (settles) ; } Some (SettlementReferences :: Ratify { settles , accepts }) => { parents . insert (settles) ; parents . insert (accepts) ; } None => { } } parents }",
       "class_decision": "public-records",
@@ -15290,6 +15464,15 @@
       "expansion_review": "Structural derives retain complete Rescind parameters and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
     },
     {
+      "item": "rpc_http::Phase",
+      "kind": "derive",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "syntax": "# [derive (Clone , Copy , PartialEq)]",
+      "class_decision": "wallet-decoder",
+      "expansion_review": "The derive copies and compares the exchange phase marker only; it carries no payload, connection detail or credential."
+    },
+    {
       "item": "SettlementReferences",
       "kind": "derive",
       "package": "pn-records",
@@ -17395,6 +17578,30 @@
       "syntax": "# [doc = \" One service reader, one concurrent exchange, one shared rolling attempt budget.\"] # [doc = \" (´def:wallet:rpc-client´)\"] pub struct RpcClient { config : RpcConfig , limits : RpcLimits , decode : crate :: Limits , state : Mutex < State > , }"
     },
     {
+      "item": "rpc_http::Phase",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "syntax": "# [derive (Clone , Copy , PartialEq)] enum Phase { Head , Held , Body , }"
+    },
+    {
+      "item": "rpc_http::Watch",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "syntax": "# [doc = \" Raw-wire state of one exchange, shared by the connection adapter and the exchange. The\"] # [doc = \" received head is public service data under (´[ROOT-amend:devnet:rpc-bounds]´), held as\"] # [doc = \" ordinary bytes within the head bound.\"] pub (crate) struct Watch { limits : RpcLimits , refusal : Option < RpcRefusal > , head : Vec < u8 > , line : usize , fields : usize , status : u16 , phase : Phase , waker : Option < Waker > , written : usize , }"
+    },
+    {
+      "item": "rpc_http::Wire",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "syntax": "# [doc = \" The connected stream as hyper sees it: head bytes pass only through the watch.\"] struct Wire { stream : tokio :: net :: TcpStream , watch : Rc < RefCell < Watch > > , }"
+    },
+    {
+      "item": "rpc_http::Exchange",
+      "package": "pn-wallet",
+      "path": "packages/wallet/src/rpc_http.rs",
+      "syntax": "# [doc = \" The one connection as a tower service, so timeout and concurrency limit compose around it.\"] struct Exchange (http1 :: SendRequest < Full < Bytes > >) ;"
+    },
+    {
       "item": "rpc_json::Seed",
       "package": "pn-wallet",
       "path": "packages/wallet/src/rpc_json.rs",
@@ -17410,7 +17617,7 @@
       "item": "rpc_secret::Buffer",
       "package": "pn-wallet",
       "path": "packages/wallet/src/rpc_secret.rs",
-      "syntax": "pub (crate) struct Buffer { bytes : SecretBox < [u8] > , length : usize , }"
+      "syntax": "pub (crate) struct Buffer { bytes : SecretBox < [u8] > , capacity : usize , length : usize , }"
     },
     {
       "item": "settlement::Evidence",
@@ -17561,7 +17768,7 @@
     {
       "name": "wallet-decoder",
       "status": "reviewer-confirmed",
-      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, cookie and wire buffers are secret-owned; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
+      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, connection details and cookie bytes are secret-owned, and the Basic field leaves its carrier only under its caveat; received heads and bodies are public service data held as ordinary bytes; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
       "membership": {
         "labelled_package": "pn-wallet"
       }
@@ -19371,17 +19578,17 @@
     },
     "wallet-full_recording": {
       "status": "reviewer-confirmed",
-      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, cookie and wire buffers are secret-owned; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
+      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, connection details and cookie bytes are secret-owned, and the Basic field leaves its carrier only under its caveat; received heads and bodies are public service data held as ordinary bytes; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
       "negative_probe": "WALLET::claim:wallet:rpc-observation-retains-public-results-only"
     },
     "wallet-secret_flow": {
       "status": "reviewer-confirmed",
-      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, cookie and wire buffers are secret-owned; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
+      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, connection details and cookie bytes are secret-owned, and the Basic field leaves its carrier only under its caveat; received heads and bodies are public service data held as ordinary bytes; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
       "negative_probe": "WALLET::claim:wallet:rpc-observation-retains-public-results-only"
     },
     "wallet-exposure_consumers": {
       "status": "reviewer-confirmed",
-      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, cookie and wire buffers are secret-owned; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
+      "premises": "Public layout operations and closed genesis RPC reads share the WALLET devnet owner. RPC configuration, connection details and cookie bytes are secret-owned, and the Basic field leaves its carrier only under its caveat; received heads and bodies are public service data held as ordinary bytes; role-only formatting and typed local failures expose no private fields. Under the host-secured path, Elements is a trusted service and parsed chain objects and diagnostics are public. Trace retains complete public input and result; default records outcomes and refusal diagnostics. No signing, verification, spending or recognition authority is admitted.",
       "negative_probe": "WALLET::claim:wallet:rpc-observation-retains-public-results-only"
     },
     "graph-full_recording": {

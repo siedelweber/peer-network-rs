@@ -17,6 +17,11 @@ tracing.workspace = true
 secrecy.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+hyper = { workspace = true, features = ["client", "http1"] }
+hyper-util = { workspace = true, features = ["tokio"] }
+http-body-util.workspace = true
+tower = { workspace = true, features = ["limit", "timeout"] }
+tokio = { version = "=1.54.1", default-features = false, features = ["rt", "net", "time"] }
 
 [dev-dependencies]
 dhat = "=0.3.3"

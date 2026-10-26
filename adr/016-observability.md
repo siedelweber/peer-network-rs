@@ -80,7 +80,7 @@
 | pn-host | 40 | 22 | 18 | 0 | 13 |
 | pn-interchange | 153 | 118 | 34 | 1 | 89 |
 | pn-records | 103 | 38 | 65 | 0 | 82 |
-| pn-wallet | 23 | 6 | 17 | 0 | 20 |
+| pn-wallet | 29 | 6 | 23 | 0 | 21 |
 
 
 **Amendment (Foundation observation scope)** · `amend:observe:foundation-evidence` The obligation register now attaches source-matched execution evidence for the implemented portions of (`gate:observe:foundation`) and (`gate:design:observability-foundation`) to the package-owned foundation observation evidence paragraph. Package claim citations remain in that register, where the linter permits their ownership direction; Python exhibits remain checked by the evidence join. Mechanical coverage, source-bound semantic admission, controlled local export and four-mode result comparisons support the current four-package surface. Real PostgreSQL and Elements services remain owned by the service implementer for the provisioning slice; domain suites by each domain implementer for the assigned domain bite; client harnesses and actual exporter transport admission by the client implementer for the client slice. Scoped support is not unrestricted gate closure.
@@ -262,9 +262,19 @@
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-exchange-4` In `packages/wallet/src/rpc.rs`, function `exchange`: The private port is copied into the ordinary socket address for connect; the socket API cannot accept the carrier and socket state retains private reachability until close. Source method: `expose_secret`. Production boundary.
 
-**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-bytes-1` In `packages/wallet/src/rpc_secret.rs`, function `bytes`: Borrowed private RPC bytes go to the reviewed cookie, encoding or socket consumer; those APIs require slices rather than the container. Source method: `expose_secret`. Production boundary.
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-append-1` In `packages/wallet/src/rpc_secret.rs`, function `append`: Ordinary path, prefix and encoding bytes are copied into the protected storage through its mutable slice; slice copying cannot accept the container. Source method: `expose_secret_mut`. Production boundary.
 
-**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-vacant-1` In `packages/wallet/src/rpc_secret.rs`, function `vacant`: The acquisition API writes directly into the protected buffer through its mutable slice; it cannot accept the container. Source method: `expose_secret_mut`. Production boundary.
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-read-cookie-1` In `packages/wallet/src/rpc_secret.rs`, function `read_cookie`: The opened cookie file reads directly into the protected storage through its mutable slice until the capacity or end of file; the file API cannot accept the container. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-open-1` In `packages/wallet/src/rpc_secret.rs`, function `open`: A private descriptor-relative cookie path is borrowed by the no-follow open until it returns; the filesystem API requires ordinary path bytes. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-grammar-1` In `packages/wallet/src/rpc_secret.rs`, function `cookie_grammar`: Cookie bytes are borrowed by the cookie grammar check, which returns only whether they conform; the byte-level grammar requires a slice. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-basic-1` In `packages/wallet/src/rpc_secret.rs`, function `encode_basic`: Conforming cookie bytes are borrowed by the Basic encoder, which writes its output only into the target carrier; the encoder requires a slice. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-header-1` In `packages/wallet/src/rpc_secret.rs`, function `header`: Basic authorization bytes leave the carrier as a sensitive header value, and from it pass through hyper's write buffer, for one exchange on the host-secured connection under the Basic authorization caveat; hyper's header and connection APIs cannot accept the carrier, and neither copy is zeroized. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-equals-1` In `packages/wallet/src/rpc_secret.rs`, function `equals`: Fixture carrier bytes are borrowed only for equality with the test's expected bytes; slice comparison cannot accept the container. Source method: `expose_secret`. Fixture-only boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-config-for-1` In `packages/wallet/tests/rpc.rs`, function `config_for`: The isolated harness bootstrap file is read directly into protected bytes until read returns; the file API requires a mutable slice. Source method: `expose_secret_mut`. Fixture-only boundary.
 

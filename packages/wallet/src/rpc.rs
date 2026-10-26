@@ -4,7 +4,6 @@ use secrecy::{ExposeSecret as _, SecretBox, SecretString};
 use std::{
     collections::VecDeque,
     fmt,
-    io::Write as _,
     net::{IpAddr, SocketAddr, TcpStream},
     sync::Mutex,
     time::{Duration, Instant},
@@ -450,20 +449,45 @@ impl RpcClient {
         rpc_http::remaining(deadline)?;
         let body = serde_json::to_vec(&serde_json::json!({"jsonrpc":"2.0", "id":id, "method":method, "params":params}))
             .map_err(|_| RpcRefusal::Json)?;
-        let mut wire = Buffer::new(self.limits.request_bytes);
-        wire.append(
-            b"POST / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\nContent-Type: application/json\r\nAuthorization: Basic ",
-        )?;
-        basic(rpc_cookie::grammar(cookie.bytes())?, &mut wire)?;
-        wire.append(format!("\r\nContent-Length: {}\r\n\r\n", body.len()).as_bytes())?;
-        wire.append(&body)?;
+        let mut credential = Buffer::new(self.limits.request_bytes);
+        credential.append(b"Basic ")?;
+        cookie.encode_basic(&mut credential)?;
+        drop(cookie);
+        let length = body.len().to_string();
+        // Account the exact serialized request before connecting: the request line,
+        // five lowercase `name: value` fields, the blank line and the body.
+        let fields = [
+            ("host", "localhost".len()),
+            ("connection", "close".len()),
+            ("content-type", "application/json".len()),
+            ("authorization", credential.len()),
+            ("content-length", length.len()),
+        ];
+        let size = "POST / HTTP/1.1\r\n".len()
+            + fields.iter().map(|(name, value)| name.len() + value + 4).sum::<usize>()
+            + 2
+            + body.len();
+        if size > self.limits.request_bytes {
+            return Err(RpcRefusal::RequestBytes);
+        }
+        let request = hyper::Request::builder()
+            .method(hyper::Method::POST)
+            .uri("/")
+            .header(hyper::header::HOST, "localhost")
+            .header(hyper::header::CONNECTION, "close")
+            .header(hyper::header::CONTENT_TYPE, "application/json")
+            .header(hyper::header::AUTHORIZATION, credential.header()?)
+            .header(hyper::header::CONTENT_LENGTH, length)
+            .body(http_body_util::Full::new(hyper::body::Bytes::from(body)))
+            .map_err(|_| RpcRefusal::Http)?;
+        drop(credential);
         let endpoint = self
             .config
             .endpoint
             .expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-exchange-3]´) */)
             .parse::<IpAddr>()
             .map_err(|_| RpcRefusal::Configuration)?;
-        let mut stream = TcpStream::connect_timeout(
+        let stream = TcpStream::connect_timeout(
             &SocketAddr::new(
                 endpoint,
                 *self.config.port.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-exchange-4]´) */),
@@ -471,20 +495,9 @@ impl RpcClient {
             rpc_http::remaining(deadline)?,
         )
         .map_err(|_| RpcRefusal::Transport)?;
-        let mut sent = 0;
-        while sent < wire.bytes().len() {
-            stream
-                .set_write_timeout(Some(rpc_http::remaining(deadline)?))
-                .map_err(|_| RpcRefusal::Transport)?;
-            let count = stream.write(&wire.bytes()[sent..]).map_err(|_| RpcRefusal::Transport)?;
-            if count == 0 {
-                return Err(RpcRefusal::Transport);
-            }
-            sent += count;
-        }
-        let (code, response) = rpc_http::response(&mut stream, self.limits, deadline, status)?;
+        let (code, response) = rpc_http::exchange(stream, request, self.limits, deadline, status)?;
         *status = Some(code);
-        let value = rpc_json::parse(response.bytes(), self.limits.json_depth, self.limits.json_items)?;
+        let value = rpc_json::parse(&response, self.limits.json_depth, self.limits.json_items)?;
         *result_bytes = value
             .get("result")
             .or_else(|| value.get("error"))
@@ -543,7 +556,7 @@ impl fmt::Debug for RpcClient {
     }
 }
 
-fn basic(bytes: &[u8], target: &mut Buffer) -> Result<(), RpcRefusal> {
+pub(crate) fn basic(bytes: &[u8], target: &mut Buffer) -> Result<(), RpcRefusal> {
     const DIGITS: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     for part in bytes.chunks(3) {
         let a = part[0];
@@ -714,7 +727,7 @@ mod tests {
         );
     }
 
-    /// Claim: Basic encoding writes directly into an erasing buffer; configuration and client Debug retain only roles, and parser refusals retain public causes without private input bytes.
+    /// Claim: Basic encoding writes directly into an erasing buffer and leaves it only as a sensitive header value whose request formats a placeholder; configuration and client Debug retain only roles, and header, wire and parser refusals retain public causes without private input bytes.
     /// ´claim:wallet:rpc-secret-carriers-do-not-format-inputs´
     /// ´test:unit:secret-carriers´
     #[test]
@@ -727,7 +740,7 @@ mod tests {
         ] {
             let mut encoded = Buffer::new(32);
             basic(bytes, &mut encoded).unwrap();
-            assert_eq!(encoded.bytes(), expected.as_bytes());
+            assert!(encoded.equals(expected.as_bytes()));
         }
         let mut encoded = Buffer::new(1);
         assert_eq!(basic(b"foo", &mut encoded), Err(RpcRefusal::RequestBytes));
@@ -738,10 +751,28 @@ mod tests {
             "RpcConfig { role: secret-bootstrap, link: host-secured }"
         );
         assert_eq!(format!("{encoded:?}"), "SecretRpcBuffer");
+        // The Basic exit of (´[ROOT-cav:devnet:basic-header-exposure]´): the header value is
+        // sensitive before any request holds it, the request formats only a placeholder, and
+        // a credential the header grammar refuses leaves a typed cause without its bytes.
+        let mut credential = Buffer::new(64);
+        credential.append(b"Basic ").unwrap();
+        basic(b"__cookie__:private", &mut credential).unwrap();
+        assert!(credential.equals(b"Basic X19jb29raWVfXzpwcml2YXRl"));
+        let header = credential.header().unwrap();
+        assert!(header.is_sensitive());
+        assert_eq!(format!("{header:?}"), "Sensitive");
+        let request = hyper::Request::builder()
+            .header(hyper::header::AUTHORIZATION, header)
+            .body(())
+            .unwrap();
+        assert!(!format!("{request:?}").contains("X19jb29raWVfXzpwcml2YXRl"));
+        let mut refused = Buffer::new(64);
+        refused.append(b"Basic X19jb29r\n").unwrap();
+        assert_eq!(refused.header().unwrap_err(), RpcRefusal::Cookie);
         assert_eq!(format!("{}", RpcRefusal::Cookie), "Cookie");
         assert!(std::error::Error::source(&RpcRefusal::Cookie).is_none());
-        let private = b"HTTP/1.1 200 private_endpoint_sentinel\r\nprivate_cookie_sentinel\r\n\r\n";
-        assert_eq!(crate::rpc_http::framing(private, RpcLimits::default()), Err(RpcRefusal::Http));
+        let private = b"HTTP/1.1 200 private_endpoint_sentinel\r\nprivate_cookie_sentinel\n\r\n";
+        assert_eq!(crate::rpc_http::head(private, RpcLimits::default()), Err(RpcRefusal::Http));
         assert_eq!(
             crate::rpc_json::parse(b"{\"private_path_sentinel\":", 16, 4096),
             Err(RpcRefusal::Json)
