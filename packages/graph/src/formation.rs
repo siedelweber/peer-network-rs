@@ -130,6 +130,21 @@ pub struct JoinRequestProjection {
     pub formality: Coordinate,
 }
 
+/// Complete Leave control weight; both parameter roles are fixed at one.
+/// (´def:formation:leave´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LeaveProjection {
+    /// Author atom shared with the initiating Actor endpoint.
+    pub author: String,
+    /// Author-local sequence, never host order.
+    pub sequence: u64,
+    /// Retained epoch-qualified published placement.
+    pub position: Position,
+    /// Retained host attachment; this operation gives no recurrence verdict.
+    pub logical_time: u64,
+}
+
 /// Exact Content genesis pair, retained structurally for typed revalidation.
 /// No license interpretation participates in formation or geometry.
 /// (´def:formation:publish´)
@@ -357,6 +372,8 @@ pub enum Projection {
     Opinion(OpinionProjection),
     /// Join Request is a Chat proposal, without a membership effect.
     JoinRequest(JoinRequestProjection),
+    /// Leave is unconditional Chat dissociation, with fixed control parameters.
+    Leave(LeaveProjection),
     /// Tag classifies a Taggable passive node with a public Type.
     Tag(TagProjection),
 }
@@ -480,6 +497,9 @@ fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Co
     }
     if act.id().family == "Publish" {
         return publish(act, verifier);
+    }
+    if act.id().family == "Leave" {
+        return leave(act, verifier);
     }
     if act.id().family == "Join Request" {
         return join_request(act, verifier);
@@ -1035,4 +1055,38 @@ fn tag(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<C
         ),
         (middle, target, Projection::Tag(t_weight)),
     ])
+}
+
+fn leave(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {
+    let [leg] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let target = chat(leg.target())?;
+    if act.body().layout != Layout::Binary
+        || leg.id().role != Role::Binary
+        || leg.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || !act.body().quantities.is_empty()
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    Ok((
+        Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+        target,
+        Projection::Leave(LeaveProjection {
+            author: act.id().author.clone(),
+            sequence: act.id().sequence,
+            position: act.position(),
+            logical_time: act.logical_time(),
+        }),
+    ))
 }

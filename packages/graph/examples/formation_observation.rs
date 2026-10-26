@@ -30,26 +30,7 @@ fn main() {
         })
         .collect();
     let act = affinity(&names);
-    let mut publication = act.clone();
-    publication.id.family = "Publish".into();
-    publication.id.sequence = 2;
-    publication.legs[0].id.act = publication.id.clone();
-    publication.legs[0].target = PublicReference::Minted(publication.id.clone());
-    publication.body.quantities.truncate(2);
-    publication.body.quantities[0].0 = "attachment.numerator".into();
-    publication.body.quantities[1].0 = "attachment.denominator".into();
-    publication.body.license = Some(pn_records::LicenseQualifiers {
-        attribution: pn_records::LicenseDegree {
-            numerator: 1,
-            denominator: 2,
-        },
-        provenance: pn_records::LicenseDegree {
-            numerator: 2,
-            denominator: 3,
-        },
-    });
-    publication.authoritative_position = 2;
-    publication.logical_time = 2;
+    let publication = publication(act.clone());
     let mut ownership = publication.clone();
     ownership.id.family = "Owner".into();
     ownership.body.license = None;
@@ -65,6 +46,7 @@ fn main() {
     let bid = bidding(ownership.clone());
     let opinion = opinion(act.clone());
     let join_request = join_request(act.clone(), participant.legs[0].target.clone());
+    let leave = leaving(join_request.clone());
     let history = pn_records::validate_history(
         &[
             act,
@@ -77,6 +59,7 @@ fn main() {
             opinion,
             join_request,
             tag,
+            leave,
         ],
         &names,
     )
@@ -92,6 +75,7 @@ fn main() {
     let opinion = project_complete_act(&history.acts()[7], &auth);
     let join_request = project_complete_act(&history.acts()[8], &auth);
     let tag = project_complete_act(&history.acts()[9], &auth);
+    let leave = project_complete_act(&history.acts()[10], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -110,6 +94,7 @@ fn main() {
         "opinion": format!("{opinion:?}"),
         "join_request": format!("{join_request:?}"),
         "tag": format!("{tag:?}"),
+        "leave": format!("{leave:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -343,4 +328,37 @@ fn tagging(mut input: CandidateAct) -> CandidateAct {
     input.authoritative_position = 10;
     input.logical_time = 10;
     input
+}
+
+fn leaving(mut input: CandidateAct) -> CandidateAct {
+    input.id.family = "Leave".into();
+    input.id.sequence = 11;
+    input.legs[0].id.act = input.id.clone();
+    input.authoritative_position = 11;
+    input.logical_time = 11;
+    input.body.quantities.clear();
+    input
+}
+
+fn publication(mut publication: CandidateAct) -> CandidateAct {
+    publication.id.family = "Publish".into();
+    publication.id.sequence = 2;
+    publication.legs[0].id.act = publication.id.clone();
+    publication.legs[0].target = PublicReference::Minted(publication.id.clone());
+    publication.body.quantities.truncate(2);
+    publication.body.quantities[0].0 = "attachment.numerator".into();
+    publication.body.quantities[1].0 = "attachment.denominator".into();
+    publication.body.license = Some(pn_records::LicenseQualifiers {
+        attribution: pn_records::LicenseDegree {
+            numerator: 1,
+            denominator: 2,
+        },
+        provenance: pn_records::LicenseDegree {
+            numerator: 2,
+            denominator: 3,
+        },
+    });
+    publication.authoritative_position = 2;
+    publication.logical_time = 2;
+    publication
 }

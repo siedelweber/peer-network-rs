@@ -213,9 +213,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion and Join Request projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eleven successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request and Tag projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the twelve successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Tag witnesses cover seven Taggable constructors and the Offer exclusion, signed relevance and nonnegative confidence grids, complete paired incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares fourteen operations with twelve successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request and Tag projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the twelve successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag and Leave projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the thirteen successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Leave witnesses cover unconditional typed Chat incidence with no authored parameters, whole-result twelve-family reconstruction, deterministic parallel edges and structural revalidation. Observation compares fifteen operations with thirteen successes and two refusals across disabled, default and trace. No membership fold, geometry, title or new ordering verdict is established."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1344,6 +1344,22 @@
       "before": "",
       "after": "Claim: Join Request joins the nine earlier families through shared deterministic reconstruction, retaining parallel binary edges and unrelated indices. Typed revalidation after decoding rejects altered coordinates or missing acts; approval and removal failures refuse the whole history without publishing a partial graph.",
       "review": "Join Request witnesses cover typed Chat incidence, independent signed-coordinate grids, complete binary incidence and exact public metadata through shared reconstruction and structural revalidation. Observation compares thirteen operations with eleven successes and two refusals across disabled, default and trace. No standing, geometry, title or new ordering verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::leave_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:leave-requires-complete-chat-control-incidence",
+      "before": "",
+      "after": "Claim: Leave forms an approved author Actor to Chat control edge with no authored parameters, protocol references or license pair. A dangling Chat and an author without participation are admitted; wrong constructors, altered incidence and extra coordinates refuse at formation, while a license pair refuses at records validation. Formation decides no membership or standing effect.",
+      "review": "Leave witnesses cover unconditional typed Chat incidence with no authored parameters, whole-result twelve-family reconstruction, deterministic parallel edges and structural revalidation. Observation compares fifteen operations with thirteen successes and two refusals across disabled, default and trace. No membership fold, geometry, title or new ordering verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::leave_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:leave-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: Leave joins the eleven earlier families through shared deterministic reconstruction, retaining parallel binary edges and unrelated indices. Typed revalidation after decoding rejects altered identity metadata or missing acts; approval and removal failures refuse the whole history without publishing a partial graph.",
+      "review": "Leave witnesses cover unconditional typed Chat incidence with no authored parameters, whole-result twelve-family reconstruction, deterministic parallel edges and structural revalidation. Observation compares fifteen operations with thirteen successes and two refusals across disabled, default and trace. No membership fold, geometry, title or new ordering verdict is established."
     },
     {
       "operation": "pn-graph::formation::mixed_reconstruction",

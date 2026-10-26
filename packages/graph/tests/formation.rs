@@ -2600,3 +2600,161 @@ fn tag_cache(graph: &pn_graph::formation::FormationGraph, history: &pn_records::
         Err(RegistrationError::GraphMismatch)
     );
 }
+
+fn leaving(sequence: u64, target: PublicReference) -> CandidateAct {
+    let mut input = candidate("Leave", sequence);
+    input.legs[0].target = target;
+    input.body.quantities.clear();
+    input
+}
+
+/// Claim: Leave forms an approved author Actor to Chat control edge with no authored parameters, protocol references or license pair. A dangling Chat and an author without participation are admitted; wrong constructors, altered incidence and extra coordinates refuse at formation, while a license pair refuses at records validation. Formation decides no membership or standing effect.
+/// # Panics
+/// Panics only if Leave dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:leave-requires-complete-chat-control-incidence´
+/// ´test:integration:leave-projection´
+#[test]
+fn leave_projection() {
+    let input = leaving(3, PublicReference::Minted(inputs_chat()));
+    let (source, target, edge) = project(&input).unwrap();
+    assert_eq!(source, Node::Grounded(GroundedNode::Actor("a".into())));
+    assert_eq!(
+        target,
+        Node::Chat {
+            author: "a".into(),
+            sequence: 5
+        }
+    );
+    let Projection::Leave(weight) = edge else {
+        panic!("wrong family")
+    };
+    assert_eq!(
+        (weight.author.as_str(), weight.sequence, weight.position, weight.logical_time),
+        ("a", 3, (1, 3), 3)
+    );
+    for target in [
+        named("addr", "a"),
+        named("prof", "a"),
+        named("name", "topic"),
+        PublicReference::Act(input.id.clone()),
+    ] {
+        let mut changed = input.clone();
+        changed.legs[0].target = target;
+        assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    }
+    for family in ["Publish", "Owner", "Review", "Send", "Bid", "Leave"] {
+        let mut changed = input.clone();
+        changed.legs[0].target = PublicReference::Minted(ActId {
+            family: family.into(),
+            ..inputs_chat()
+        });
+        assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    }
+    let mut changed = input.clone();
+    changed.legs[0].source = named("addr", "b");
+    assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input.clone();
+    changed.protocol_references = vec![named("name", "topic")];
+    assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input.clone();
+    changed.body.quantities = join_request(3, named("name", "topic")).body.quantities;
+    assert_eq!(project(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input.clone();
+    changed.body.layout = Layout::Paired;
+    changed.legs[0].id.role = Role::A;
+    let mut terminal = changed.legs[0].clone();
+    terminal.id.role = Role::T;
+    changed.legs.push(terminal);
+    assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+    let mut changed = input;
+    changed.body.license = publication(1).body.license;
+    assert_eq!(
+        project(&changed),
+        Err(FormationFailure::Records(
+            pn_records::ValidationError::InvalidRepresentation {
+                act: changed.id.clone(),
+                cause: pn_records::InvalidCause::LicenseQualifiers,
+            }
+        ))
+    );
+}
+
+/// Claim: Leave joins the eleven earlier families through shared deterministic reconstruction, retaining parallel binary edges and unrelated indices. Typed revalidation after decoding rejects altered identity metadata or missing acts; approval and removal failures refuse the whole history without publishing a partial graph.
+/// # Panics
+/// Panics only if the fixture's Leave edge has another family, which correct reconstruction cannot arrange.
+/// ´claim:formation:leave-shares-whole-history-revalidation´
+/// ´test:integration:leave-reconstruction´
+#[test]
+fn leave_reconstruction() {
+    let mut inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        review(6, named("name", "topic"), 6),
+        sending(7, 5, 7),
+        bidding(8, 4, 8),
+        opinion(9, named("prof", "a")),
+        join_request(10, PublicReference::Minted(inputs_chat())),
+        tagging(11, named("prof", "a")),
+        leaving(12, PublicReference::Minted(inputs_chat())),
+        leaving(13, PublicReference::Minted(inputs_chat())),
+    ];
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((graph.node_count(), graph.edge_count()), (9, 18));
+    for index in [16, 17] {
+        assert_eq!(
+            graph
+                .edge_endpoints(petgraph::graph::EdgeIndex::new(index))
+                .map(|(a, b)| (a.index(), b.index())),
+            Some((0, 5))
+        );
+    }
+    inputs.reverse();
+    let reversed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(validate_formation(&graph, &reversed, &verifier), Ok(()));
+    let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    let mut partial = graph.clone();
+    partial.remove_edge(petgraph::graph::EdgeIndex::new(16));
+    assert_eq!(
+        partial[petgraph::graph::EdgeIndex::new(17)],
+        graph[petgraph::graph::EdgeIndex::new(17)]
+    );
+    assert_eq!(
+        validate_formation(&partial, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    let mut changed = graph.clone();
+    let Projection::Leave(weight) = &mut changed[petgraph::graph::EdgeIndex::new(16)] else {
+        panic!("wrong family")
+    };
+    weight.author = "b".into();
+    assert_eq!(
+        validate_formation(&changed, &history, &verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts = inputs.clone();
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    inputs.push(candidate("Withdraw", 14));
+    let unsupported = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&unsupported, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
+    );
+}
