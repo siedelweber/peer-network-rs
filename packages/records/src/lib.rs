@@ -187,10 +187,34 @@ pub struct Quantity {
     pub vintage: u64,
 }
 
+/// Exact rational degree, checked in the nonnegative unit interval at validation.
+/// Structural equality preserves the authored pair without normalization.
+/// (´def:acts:body´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct LicenseDegree {
+    /// Authored nonnegative numerator.
+    pub numerator: i64,
+    /// Authored strictly positive denominator.
+    pub denominator: i64,
+}
+
+/// Attribution and provenance degrees fixed on a Content genesis record.
+/// These structural values are neither references nor removable payload.
+/// (´def:acts:body´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct LicenseQualifiers {
+    /// Attribution degree a.
+    pub attribution: LicenseDegree,
+    /// Provenance degree o.
+    pub provenance: LicenseDegree,
+}
+
 /// Structural content retained unchanged by local validation.
 /// (´def:acts:body´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StructuralBody {
+    /// Required only on self-minting Publish; retained across payload removal.
+    pub license: Option<LicenseQualifiers>,
     /// Non-removable asserted parents, sorted by derived `ActId` order.
     pub asserted_parents: Vec<ActId>,
     /// Required role set; endpoint and family semantics are later contracts.
@@ -426,6 +450,9 @@ pub enum InvalidCause {
     /// A reference contains an empty structural component.
     #[error("empty reference component")]
     ReferenceComponent,
+    /// Missing, misplaced or out-of-range Content genesis pair, or obsolete reference encoding.
+    #[error("invalid Content genesis license pair")]
+    LicenseQualifiers,
     /// An untrusted leg attempts to own a removal fact.
     #[error("removal fact on structural leg")]
     CoLegRemoval,
@@ -745,6 +772,7 @@ fn validate_act(
     if act.authentication_evidence.is_empty() {
         return Err(invalid(InvalidCause::EmptyAuthentication));
     }
+    validate_license(act)?;
     let mut fields = BTreeSet::new();
     for (name, quantity) in &act.body.quantities {
         if name.is_empty() {
@@ -807,15 +835,42 @@ fn validate_act(
         }
     }
     for reference in &act.protocol_references {
+        if matches!(reference, PublicReference::Named { namespace, .. } if namespace == "license") {
+            return Err(invalid(InvalidCause::LicenseQualifiers));
+        }
         if !valid_reference(reference) {
             return Err(invalid(InvalidCause::ReferenceComponent));
         }
-        let qualifier = matches!(reference, PublicReference::Named { namespace, .. } if namespace == "license");
-        if !qualifier && !references.contains(reference) && !history_references.contains(reference) {
+        if !references.contains(reference) && !history_references.contains(reference) {
             return Err(ValidationError::UnresolvedReference(reference.clone()));
         }
     }
     Ok(())
+}
+
+fn validate_license(act: &CandidateAct) -> Result<(), ValidationError> {
+    let genesis = act.id.family == "Publish"
+        && act
+            .legs
+            .iter()
+            .any(|leg| mints(&act.id, act.body.layout, leg.id.role, &leg.target));
+    let valid = match act.body.license {
+        Some(pair) => {
+            genesis
+                && [pair.attribution, pair.provenance]
+                    .iter()
+                    .all(|degree| degree.denominator > 0 && degree.numerator >= 0 && degree.numerator <= degree.denominator)
+        }
+        None => !genesis,
+    };
+    if valid {
+        Ok(())
+    } else {
+        Err(ValidationError::InvalidRepresentation {
+            act: act.id.clone(),
+            cause: InvalidCause::LicenseQualifiers,
+        })
+    }
 }
 
 fn validate_declarations(declarations: &[Declaration]) -> Result<(), ValidationError> {

@@ -26,6 +26,7 @@ pub fn act(sequence: u64, layout: Layout) -> CandidateAct {
     };
     CandidateAct {
         body: StructuralBody {
+            license: None,
             asserted_parents: Vec::new(),
             layout,
             quantities: vec![(

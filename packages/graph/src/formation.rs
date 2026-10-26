@@ -92,6 +92,18 @@ pub struct AffinityProjection {
     pub attraction: Coordinate,
 }
 
+/// Exact Content genesis pair, retained structurally for typed revalidation.
+/// No license interpretation participates in formation or geometry.
+/// (´def:formation:publish´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LicenseQualifiers {
+    /// Attribution degree a in the nonnegative unit interval.
+    pub attribution: Coordinate,
+    /// Provenance degree o in the nonnegative unit interval.
+    pub provenance: Coordinate,
+}
+
 /// Complete scoped Publish weight, retaining immutable license qualifiers.
 /// (´def:formation:publish´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -107,11 +119,11 @@ pub struct PublishProjection {
     pub logical_time: u64,
     /// Authored directional coordinate; intensity is fixed at one.
     pub attachment: Coordinate,
-    /// Exact public names in the internal license namespace, in authored order.
-    pub licenses: Vec<String>,
+    /// Pair fixed only on a self-minting Content genesis act.
+    pub license: Option<LicenseQualifiers>,
 }
 
-/// Complete scoped Owner weight, retaining immutable license qualifiers.
+/// Complete scoped Owner weight, with no license or protocol-reference field.
 /// (´def:formation:owner´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -126,8 +138,6 @@ pub struct OwnerProjection {
     pub logical_time: u64,
     /// Authored directional coordinate; intensity is fixed at one.
     pub attachment: Coordinate,
-    /// Exact public names in the internal license namespace, in authored order.
-    pub licenses: Vec<String>,
 }
 
 /// Constructor role of a Participant edge, derived from one complete act.
@@ -161,8 +171,6 @@ pub struct ParticipantProjection {
     pub responsibility: Coordinate,
     /// Nonnegative T-leg directional coordinate; intensity is fixed at one.
     pub continuity: Coordinate,
-    /// Immutable public license names, without policy interpretation.
-    pub licenses: Vec<String>,
 }
 
 /// Constructor role of a Review edge, derived from one complete act.
@@ -194,8 +202,6 @@ pub struct ReviewProjection {
     pub enthusiasm: Coordinate,
     /// Signed effort, intensity on A and directional on T.
     pub effort: Coordinate,
-    /// Immutable public license names without policy interpretation.
-    pub licenses: Vec<String>,
 }
 
 /// Distinct supported families, preserving each complete authored projection.
@@ -393,7 +399,9 @@ fn publish(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
         return Err(RegistrationError::Incidence);
     }
     let attachment = coordinate(act, "attachment.numerator", "attachment.denominator")?;
-    let licenses = licenses(act)?;
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
     if !verifier.approval(act) {
         return Err(RegistrationError::Unapproved);
     }
@@ -409,7 +417,16 @@ fn publish(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
             position: act.position(),
             logical_time: act.logical_time(),
             attachment,
-            licenses,
+            license: act.body().license.map(|pair| LicenseQualifiers {
+                attribution: Coordinate {
+                    numerator: pair.attribution.numerator,
+                    denominator: pair.attribution.denominator,
+                },
+                provenance: Coordinate {
+                    numerator: pair.provenance.numerator,
+                    denominator: pair.provenance.denominator,
+                },
+            }),
         }),
     ))
 }
@@ -434,7 +451,9 @@ fn owner(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
         return Err(RegistrationError::Incidence);
     }
     let attachment = coordinate(act, "attachment.numerator", "attachment.denominator")?;
-    let licenses = licenses(act)?;
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
     if !verifier.approval(act) {
         return Err(RegistrationError::Unapproved);
     }
@@ -450,7 +469,6 @@ fn owner(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
             position: act.position(),
             logical_time: act.logical_time(),
             attachment,
-            licenses,
         }),
     ))
 }
@@ -504,7 +522,9 @@ fn participant(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resu
     if continuity.numerator < 0 {
         return Err(RegistrationError::Incidence);
     }
-    let licenses = licenses(act)?;
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
     if !verifier.approval(act) {
         return Err(RegistrationError::Unapproved);
     }
@@ -517,7 +537,6 @@ fn participant(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resu
         interactivity,
         responsibility,
         continuity,
-        licenses,
     };
     let t_weight = ParticipantProjection {
         role: ParticipantRole::T,
@@ -541,16 +560,6 @@ fn chat(reference: &PublicReference) -> Result<Node, RegistrationError> {
         }),
         _ => Err(RegistrationError::Incidence),
     }
-}
-
-fn licenses(act: &ValidatedAct) -> Result<Vec<String>, RegistrationError> {
-    act.protocol_references()
-        .iter()
-        .map(|reference| match reference {
-            PublicReference::Named { namespace, name } if namespace == "license" => Ok(name.clone()),
-            _ => Err(RegistrationError::Incidence),
-        })
-        .collect()
 }
 
 fn review(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
@@ -580,7 +589,9 @@ fn review(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Ve
     }
     let enthusiasm = coordinate(act, "enthusiasm.numerator", "enthusiasm.denominator")?;
     let effort = coordinate(act, "effort.numerator", "effort.denominator")?;
-    let licenses = licenses(act)?;
+    if !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
     if !verifier.approval(act) {
         return Err(RegistrationError::Unapproved);
     }
@@ -592,7 +603,6 @@ fn review(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Ve
         logical_time: act.logical_time(),
         enthusiasm,
         effort,
-        licenses,
     };
     let t_weight = ReviewProjection {
         role: ReviewRole::T,

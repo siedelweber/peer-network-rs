@@ -12527,7 +12527,7 @@
       "operation": "pn-graph::packages/graph/src/formation.rs::formation::project_complete_act",
       "body": "{ let result = project (act , verifier) . and_then (| projection | { registration :: authorize_removals (& [act] , verifier) ? ; Ok (projection) }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-affinity",
-      "item_premise": "Binary and paired formation consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and immutable exact license-name qualifiers; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment and exact immutable license qualifiers, without title recognition. Participant extends the same entry points with a complete role-ordered A/T bundle, typed Chat incidence and a shared full tuple and retained time; origin membership and standing are not formation verdicts. Review adds complete A/T tuples over every passive constructor and a Comment terminal; declared act metadata and both coordinates remain public. The shared whole-result refusal and typed revalidation boundary also cover these tuples.",
+      "item_premise": "Binary and paired formation consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and the immutable bounded genesis-only attribution/provenance pair; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment without license qualifiers or protocol references, without title recognition. Participant extends the same entry points with a complete role-ordered A/T bundle, typed Chat incidence and a shared full tuple and retained time; origin membership and standing are not formation verdicts. Review adds complete A/T tuples over every passive constructor and a Comment terminal; declared act metadata and both coordinates remain public. The shared whole-result refusal and typed revalidation boundary also cover these tuples.",
       "assessments": {
         "full_recording": "graph-affinity-full_recording",
         "secret_flow": "graph-affinity-secret_flow",
@@ -12538,7 +12538,7 @@
       "operation": "pn-graph::packages/graph/src/formation.rs::formation::reconstruct",
       "body": "{ let result = registration :: reconstruct_with (history , verifier , | act | project (act , verifier)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-affinity",
-      "item_premise": "Binary and paired formation consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and immutable exact license-name qualifiers; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment and exact immutable license qualifiers, without title recognition. Participant extends the same entry points with a complete role-ordered A/T bundle, typed Chat incidence and a shared full tuple and retained time; origin membership and standing are not formation verdicts. Review adds complete A/T tuples over every passive constructor and a Comment terminal; declared act metadata and both coordinates remain public. The shared whole-result refusal and typed revalidation boundary also cover these tuples.",
+      "item_premise": "Binary and paired formation consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and the immutable bounded genesis-only attribution/provenance pair; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment without license qualifiers or protocol references, without title recognition. Participant extends the same entry points with a complete role-ordered A/T bundle, typed Chat incidence and a shared full tuple and retained time; origin membership and standing are not formation verdicts. Review adds complete A/T tuples over every passive constructor and a Comment terminal; declared act metadata and both coordinates remain public. The shared whole-result refusal and typed revalidation boundary also cover these tuples.",
       "assessments": {
         "full_recording": "graph-affinity-full_recording",
         "secret_flow": "graph-affinity-secret_flow",
@@ -12549,7 +12549,7 @@
       "operation": "pn-graph::packages/graph/src/formation.rs::formation::validate_formation",
       "body": "{ let result = registration :: reconstruct_with (history , verifier , | act | project (act , verifier)) . and_then (| expected | registration :: compare_graph (graph , & expected)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-affinity",
-      "item_premise": "Binary and paired formation consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and immutable exact license-name qualifiers; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment and exact immutable license qualifiers, without title recognition. Participant extends the same entry points with a complete role-ordered A/T bundle, typed Chat incidence and a shared full tuple and retained time; origin membership and standing are not formation verdicts. Review adds complete A/T tuples over every passive constructor and a Comment terminal; declared act metadata and both coordinates remain public. The shared whole-result refusal and typed revalidation boundary also cover these tuples.",
+      "item_premise": "Binary and paired formation consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation. Publish also retains the public minted Content constructor, bounded attachment and the immutable bounded genesis-only attribution/provenance pair; ordinary and dangling targets do not assert anchoring or title. Owner additionally retains typed minted Item identity, bounded attachment without license qualifiers or protocol references, without title recognition. Participant extends the same entry points with a complete role-ordered A/T bundle, typed Chat incidence and a shared full tuple and retained time; origin membership and standing are not formation verdicts. Review adds complete A/T tuples over every passive constructor and a Comment terminal; declared act metadata and both coordinates remain public. The shared whole-result refusal and typed revalidation boundary also cover these tuples.",
       "assessments": {
         "full_recording": "graph-affinity-full_recording",
         "secret_flow": "graph-affinity-secret_flow",
@@ -15033,7 +15033,7 @@
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
-      "expansion_review": "Clone, structural equality and full Debug retain public Publish attachment, finalization metadata and exact license-name qualifiers. Serde remains diagnostic; decoded values require typed reconstruction comparison and never establish canonical byte identity."
+      "expansion_review": "Clone, structural equality and full Debug retain public Publish attachment, finalization metadata and the genesis-only bounded attribution/provenance pair. Serde remains diagnostic; decoded values require typed reconstruction comparison and never establish canonical byte identity."
     },
     {
       "item": "formation::OwnerProjection",
@@ -15042,7 +15042,7 @@
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
-      "expansion_review": "Clone, structural equality and full Debug retain public Owner attachment, finalization metadata and exact license-name qualifiers. Serde is diagnostic and requires typed reconstruction comparison before binding use; it is not canonical publication."
+      "expansion_review": "Clone, structural equality and full Debug retain public Owner attachment, finalization metadata and no license qualifiers. Serde is diagnostic and requires typed reconstruction comparison before binding use; it is not canonical publication."
     },
     {
       "item": "formation::ParticipantRole",
@@ -15051,7 +15051,7 @@
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
-      "expansion_review": "Clone, role equality, structural full-tuple equality and full Debug retain public Participant incidence roles, coordinates, finalization metadata and license qualifiers. Serde is diagnostic only and requires whole-history typed revalidation."
+      "expansion_review": "Clone, role equality, structural full-tuple equality and full Debug retain public Participant incidence roles, coordinates, finalization metadata without license qualifiers. Serde is diagnostic only and requires whole-history typed revalidation."
     },
     {
       "item": "formation::ParticipantProjection",
@@ -15060,7 +15060,7 @@
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
-      "expansion_review": "Clone, role equality, structural full-tuple equality and full Debug retain public Participant incidence roles, coordinates, finalization metadata and license qualifiers. Serde is diagnostic only and requires whole-history typed revalidation."
+      "expansion_review": "Clone, role equality, structural full-tuple equality and full Debug retain public Participant incidence roles, coordinates, finalization metadata without license qualifiers. Serde is diagnostic only and requires whole-history typed revalidation."
     },
     {
       "item": "formation::ReviewRole",
@@ -15079,6 +15079,33 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Clone, full Debug and structural equality retain public Review coordinates, role and shared act metadata. Typed passive constructors retain the public genesis act identity. Serde is diagnostic and requires complete typed revalidation before binding use; no canonical graph bytes are defined."
+    },
+    {
+      "item": "LicenseDegree",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives retain the exact public attribution/provenance numerator and denominator pairs without normalization or interpretation. Records validates genesis placement and each bound; graph serde is diagnostic and requires typed revalidation."
+    },
+    {
+      "item": "LicenseQualifiers",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural derives retain the exact public attribution/provenance numerator and denominator pairs without normalization or interpretation. Records validates genesis placement and each bound; graph serde is diagnostic and requires typed revalidation."
+    },
+    {
+      "item": "formation::LicenseQualifiers",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Structural derives retain the exact public attribution/provenance numerator and denominator pairs without normalization or interpretation. Records validates genesis placement and each bound; graph serde is diagnostic and requires typed revalidation."
     }
   ],
   "reviewed_types": [
@@ -16517,10 +16544,22 @@
       "syntax": "# [doc = \" An exact integer with its declared unit and consummated vintage.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Quantity { # [doc = \" Exact integer; no floating conversion or valuation occurs here.\"] pub value : i64 , # [doc = \" Nonempty unit name, retained without conversion.\"] pub unit : String , # [doc = \" Declared epoch, never replaced with finalization time.\"] pub vintage : u64 , }"
     },
     {
+      "item": "LicenseDegree",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Exact rational degree, checked in the nonnegative unit interval at validation.\"] # [doc = \" Structural equality preserves the authored pair without normalization.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct LicenseDegree { # [doc = \" Authored nonnegative numerator.\"] pub numerator : i64 , # [doc = \" Authored strictly positive denominator.\"] pub denominator : i64 , }"
+    },
+    {
+      "item": "LicenseQualifiers",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Attribution and provenance degrees fixed on a Content genesis record.\"] # [doc = \" These structural values are neither references nor removable payload.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct LicenseQualifiers { # [doc = \" Attribution degree a.\"] pub attribution : LicenseDegree , # [doc = \" Provenance degree o.\"] pub provenance : LicenseDegree , }"
+    },
+    {
       "item": "StructuralBody",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Structural content retained unchanged by local validation.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StructuralBody { # [doc = \" Non-removable asserted parents, sorted by derived `ActId` order.\"] pub asserted_parents : Vec < ActId > , # [doc = \" Required role set; endpoint and family semantics are later contracts.\"] pub layout : Layout , # [doc = \" Named exact quantities; duplicate field names are ambiguous and refused.\"] pub quantities : Vec < (String , Quantity) > , }"
+      "syntax": "# [doc = \" Structural content retained unchanged by local validation.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StructuralBody { # [doc = \" Required only on self-minting Publish; retained across payload removal.\"] pub license : Option < LicenseQualifiers > , # [doc = \" Non-removable asserted parents, sorted by derived `ActId` order.\"] pub asserted_parents : Vec < ActId > , # [doc = \" Required role set; endpoint and family semantics are later contracts.\"] pub layout : Layout , # [doc = \" Named exact quantities; duplicate field names are ambiguous and refused.\"] pub quantities : Vec < (String , Quantity) > , }"
     },
     {
       "item": "CandidateAct",
@@ -16586,7 +16625,7 @@
       "item": "InvalidCause",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Finite local representation causes, suitable for exhaustive matching.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum InvalidCause { # [doc = \" The identity's author is empty.\"] # [error (\"empty author\")] EmptyAuthor , # [doc = \" The identity's family is empty.\"] # [error (\"empty family\")] EmptyFamily , # [doc = \" Authentication evidence is absent; nonempty evidence is not authenticated here.\"] # [error (\"empty authentication evidence\")] EmptyAuthentication , # [doc = \" A quantity field has no name.\"] # [error (\"empty quantity name\")] EmptyQuantityName , # [doc = \" Two quantity fields claim one name.\"] # [error (\"duplicate quantity name\")] DuplicateQuantityName , # [doc = \" A quantity has no unit.\"] # [error (\"empty quantity unit\")] EmptyUnit , # [doc = \" A leg names another act, including an inconsistent author or family.\"] # [error (\"wrong projection parent\")] ProjectionParent , # [doc = \" A role is outside the structural layout.\"] # [error (\"projection role outside layout\")] ProjectionRole , # [doc = \" A reference contains an empty structural component.\"] # [error (\"empty reference component\")] ReferenceComponent , # [doc = \" An untrusted leg attempts to own a removal fact.\"] # [error (\"removal fact on structural leg\")] CoLegRemoval , # [doc = \" An act's content or dependency tombstone does not follow acceptance.\"] # [error (\"tombstone at or before acceptance\")] TombstonePosition , }"
+      "syntax": "# [doc = \" Finite local representation causes, suitable for exhaustive matching.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum InvalidCause { # [doc = \" The identity's author is empty.\"] # [error (\"empty author\")] EmptyAuthor , # [doc = \" The identity's family is empty.\"] # [error (\"empty family\")] EmptyFamily , # [doc = \" Authentication evidence is absent; nonempty evidence is not authenticated here.\"] # [error (\"empty authentication evidence\")] EmptyAuthentication , # [doc = \" A quantity field has no name.\"] # [error (\"empty quantity name\")] EmptyQuantityName , # [doc = \" Two quantity fields claim one name.\"] # [error (\"duplicate quantity name\")] DuplicateQuantityName , # [doc = \" A quantity has no unit.\"] # [error (\"empty quantity unit\")] EmptyUnit , # [doc = \" A leg names another act, including an inconsistent author or family.\"] # [error (\"wrong projection parent\")] ProjectionParent , # [doc = \" A role is outside the structural layout.\"] # [error (\"projection role outside layout\")] ProjectionRole , # [doc = \" A reference contains an empty structural component.\"] # [error (\"empty reference component\")] ReferenceComponent , # [doc = \" Missing, misplaced or out-of-range Content genesis pair, or obsolete reference encoding.\"] # [error (\"invalid Content genesis license pair\")] LicenseQualifiers , # [doc = \" An untrusted leg attempts to own a removal fact.\"] # [error (\"removal fact on structural leg\")] CoLegRemoval , # [doc = \" An act's content or dependency tombstone does not follow acceptance.\"] # [error (\"tombstone at or before acceptance\")] TombstonePosition , }"
     },
     {
       "item": "ParentCause",
@@ -16685,16 +16724,22 @@
       "syntax": "# [doc = \" Complete Affinity binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct AffinityProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment; this operation gives no recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Association occupies the directional role `p_d`.\"] pub association : Coordinate , # [doc = \" Attraction occupies the intensity role `p_i`.\"] pub attraction : Coordinate , }"
     },
     {
+      "item": "formation::LicenseQualifiers",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "# [doc = \" Exact Content genesis pair, retained structurally for typed revalidation.\"] # [doc = \" No license interpretation participates in formation or geometry.\"] # [doc = \" (´def:formation:publish´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct LicenseQualifiers { # [doc = \" Attribution degree a in the nonnegative unit interval.\"] pub attribution : Coordinate , # [doc = \" Provenance degree o in the nonnegative unit interval.\"] pub provenance : Coordinate , }"
+    },
+    {
       "item": "formation::PublishProjection",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete scoped Publish weight, retaining immutable license qualifiers.\"] # [doc = \" (´def:formation:publish´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct PublishProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained published placement.\"] pub position : Position , # [doc = \" Retained host attachment, without a recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , # [doc = \" Exact public names in the internal license namespace, in authored order.\"] pub licenses : Vec < String > , }"
+      "syntax": "# [doc = \" Complete scoped Publish weight, retaining immutable license qualifiers.\"] # [doc = \" (´def:formation:publish´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct PublishProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained published placement.\"] pub position : Position , # [doc = \" Retained host attachment, without a recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , # [doc = \" Pair fixed only on a self-minting Content genesis act.\"] pub license : Option < LicenseQualifiers > , }"
     },
     {
       "item": "formation::OwnerProjection",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete scoped Owner weight, retaining immutable license qualifiers.\"] # [doc = \" (´def:formation:owner´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct OwnerProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained ownered placement.\"] pub position : Position , # [doc = \" Retained host attachment, without a recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , # [doc = \" Exact public names in the internal license namespace, in authored order.\"] pub licenses : Vec < String > , }"
+      "syntax": "# [doc = \" Complete scoped Owner weight, with no license or protocol-reference field.\"] # [doc = \" (´def:formation:owner´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct OwnerProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained ownered placement.\"] pub position : Position , # [doc = \" Retained host attachment, without a recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , }"
     },
     {
       "item": "formation::ParticipantRole",
@@ -16706,7 +16751,7 @@
       "item": "formation::ParticipantProjection",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Participant tuple shared by its two role-addressed projections.\"] # [doc = \" (´def:formation:participant´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct ParticipantProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ParticipantRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed A-leg directional coordinate.\"] pub interactivity : Coordinate , # [doc = \" Signed A-leg intensity coordinate.\"] pub responsibility : Coordinate , # [doc = \" Nonnegative T-leg directional coordinate; intensity is fixed at one.\"] pub continuity : Coordinate , # [doc = \" Immutable public license names, without policy interpretation.\"] pub licenses : Vec < String > , }"
+      "syntax": "# [doc = \" Complete Participant tuple shared by its two role-addressed projections.\"] # [doc = \" (´def:formation:participant´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct ParticipantProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ParticipantRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed A-leg directional coordinate.\"] pub interactivity : Coordinate , # [doc = \" Signed A-leg intensity coordinate.\"] pub responsibility : Coordinate , # [doc = \" Nonnegative T-leg directional coordinate; intensity is fixed at one.\"] pub continuity : Coordinate , }"
     },
     {
       "item": "formation::ReviewRole",
@@ -16718,7 +16763,7 @@
       "item": "formation::ReviewProjection",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Review tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:review´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct ReviewProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReviewRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed enthusiasm, directional on A and intensity on T.\"] pub enthusiasm : Coordinate , # [doc = \" Signed effort, intensity on A and directional on T.\"] pub effort : Coordinate , # [doc = \" Immutable public license names without policy interpretation.\"] pub licenses : Vec < String > , }"
+      "syntax": "# [doc = \" Complete Review tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:review´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct ReviewProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReviewRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed enthusiasm, directional on A and intensity on T.\"] pub enthusiasm : Coordinate , # [doc = \" Signed effort, intensity on A and directional on T.\"] pub effort : Coordinate , }"
     },
     {
       "item": "formation::Projection",

@@ -38,6 +38,7 @@ fn main() {
     let act = CandidateAct {
         id: id.clone(),
         body: StructuralBody {
+            license: None,
             asserted_parents: vec![],
             layout: Layout::Binary,
             quantities: vec![],

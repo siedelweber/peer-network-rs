@@ -1317,17 +1317,17 @@
       "operation": "pn-graph::formation::owner_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:owner-retains-typed-item-and-qualifiers",
-      "before": "",
-      "after": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
-      "review": "Read Owner typed Item and attachment refusals, qualifier retention, genesis and ordinary targets, mixed reconstruction, approval and removal refusal, structural cache mutation and diagnostic decoding. The process case compares complete outcomes across observation modes. This is scoped structural formation through the existing verifier, not title, geometry, cryptographic realization or full family conformance."
+      "before": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
+      "after": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
+      "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
     },
     {
       "operation": "pn-graph::formation::owner_reconstruction",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:owner-shares-whole-history-revalidation",
-      "before": "",
-      "after": "Claim: Owner genesis and subsequent ownership share one Item identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
-      "review": "Read Owner typed Item and attachment refusals, qualifier retention, genesis and ordinary targets, mixed reconstruction, approval and removal refusal, structural cache mutation and diagnostic decoding. The process case compares complete outcomes across observation modes. This is scoped structural formation through the existing verifier, not title, geometry, cryptographic realization or full family conformance."
+      "before": "Claim: Owner genesis and subsequent ownership share one Item identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
+      "after": "Claim: Owner genesis and subsequent ownership share one Item identity through mixed binary reconstruction, retain parallel edges without qualifiers across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
+      "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
     },
     {
       "operation": "pn-graph::formation::participant_projection",
@@ -1346,28 +1346,36 @@
       "review": "Read the four Participant incidence cases, separate signed and nonnegative coordinate grids, shared full tuple and metadata, missing-sibling refusal and mixed five-family reconstruction. Both binary and paired operations use the same whole-result authorization and typed cache comparison. Observation modes retain complete paired outcomes. Membership, standing, title, geometry and both ordering questions remain outside this scoped evidence."
     },
     {
+      "operation": "pn-graph::formation::publish_license_pair",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:publish-license-pair-survives-removal-and-revalidation",
+      "before": "",
+      "after": "Claim: Publish projects the exact genesis license pair at all corners and sampled interiors, preserves it across payload removal and rejects changed structural pairs during revalidation. Publish, Owner, Participant and Review reject the former license-reference encoding even when its name is supplied; non-genesis families carry no license pair.",
+      "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
+    },
+    {
       "operation": "pn-graph::formation::publish_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:publish-retains-typed-content-and-qualifiers",
-      "before": "",
-      "after": "Claim: Scoped Publish formation requires the author's Actor, a Content mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
-      "review": "Read Publish endpoint and coordinate refusals, exact license qualifier retention, ordinary versus self-mint targets, dangling incidence without anchoring, and mixed reconstruction with authorized removals and partial-cache refusal. The process witness compares complete Affinity and Publish outcomes and six operations across observation modes. This is the bounded internal structural carrier and declared authentication callback, not canonical encoding, license policy, full family conformance, geometry or title. The same Publish projects identically with an empty supplied-name inventory, including its license qualifier."
+      "before": "Claim: Scoped Publish formation requires the author's Actor, a Content mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
+      "after": "Claim: Scoped Publish formation requires the author's Actor, a Content mint term, one exact signed attachment coordinate and a bounded genesis-only license pair. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
+      "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
     },
     {
       "operation": "pn-graph::formation::publish_reconstruction",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:publish-shares-whole-history-revalidation",
-      "before": "",
-      "after": "Claim: Publish genesis and subsequent publication share one Content identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
-      "review": "Read Publish endpoint and coordinate refusals, exact license qualifier retention, ordinary versus self-mint targets, dangling incidence without anchoring, and mixed reconstruction with authorized removals and partial-cache refusal. The process witness compares complete Affinity and Publish outcomes and six operations across observation modes. This is the bounded internal structural carrier and declared authentication callback, not canonical encoding, license policy, full family conformance, geometry or title."
+      "before": "Claim: Publish genesis and subsequent publication share one Content identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
+      "after": "Claim: Publish genesis and subsequent publication share one Content identity through mixed binary reconstruction, retain the genesis pair and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.",
+      "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
     },
     {
       "operation": "pn-graph::formation::review_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:review-requires-complete-passive-comment-incidence",
-      "before": "",
-      "after": "Claim: Review forms an ordered Actor-to-passive-to-Comment bundle for every passive constructor, retaining both signed coordinates, qualifiers and one act time on each leg. Genesis, ordinary and dangling terminals are representable without an anchor verdict; wrong constructors, incomplete incidence and malformed coordinates refuse the whole bundle.",
-      "review": "Read the complete typed Review bundle and shared reconstruction witnesses: eight passive middle constructors, signed coordinate grids, whole-result refusal, shared act metadata, deterministic indices and diagnostic revalidation. Observation compares complete outputs and nine operation outcomes across disabled, default and trace. No geometry, title, anchor or cryptographic verdict follows."
+      "before": "Claim: Review forms an ordered Actor-to-passive-to-Comment bundle for every passive constructor, retaining both signed coordinates, qualifiers and one act time on each leg. Genesis, ordinary and dangling terminals are representable without an anchor verdict; wrong constructors, incomplete incidence and malformed coordinates refuse the whole bundle.",
+      "after": "Claim: Review forms an ordered Actor-to-passive-to-Comment bundle for every passive constructor, retaining both signed coordinates and one act time, with no qualifiers on each leg. Genesis, ordinary and dangling terminals are representable without an anchor verdict; wrong constructors, incomplete incidence and malformed coordinates refuse the whole bundle.",
+      "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
     },
     {
       "operation": "pn-graph::formation::review_reconstruction",
@@ -2538,6 +2546,14 @@
       "review": "Each of ten mutations is matched to an exact InvalidCause, including the two distinct parent mutations; the test also exercises Error display. It asserts no missing-role outcome."
     },
     {
+      "operation": "pn-records::public::minted::genesis_license_pair",
+      "path": "packages/records/tests/public/minted.rs",
+      "claim": "RECORDS::claim:acts:content-genesis-retains-bounded-license-pair",
+      "before": "",
+      "after": "Claim: Content genesis retains one exact attribution/provenance pair, with both degrees in the nonnegative unit interval and positive denominators. Missing genesis pairs, misplaced pairs and invalid bounds refuse; payload removal preserves the pair without interpreting its license meaning.",
+      "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
+    },
+    {
       "operation": "pn-records::public::minted::minted_identity",
       "path": "packages/records/tests/public/minted.rs",
       "claim": "RECORDS::claim:acts:minted-identity-is-a-distinct-structural-constructor",
@@ -2557,9 +2573,9 @@
       "operation": "pn-records::public::minted::reference_classes",
       "path": "packages/records/tests/public/minted.rs",
       "claim": "RECORDS::claim:acts:reference-admission-distinguishes-node-terms-and-protocol-targets",
-      "before": "",
-      "after": "Claim: Grounded and public-name endpoints need no supplied lookup entry, while act and edge protocol references require their complete target. License qualifiers require no lookup entry; supplied names assert lookup availability only, and malformed node terms and qualifiers still refuse.",
-      "review": "Finite candidate and replay fixtures admit grounded and public-name endpoints without a supplied lookup entry, retain explicitly supplied entries as lookup sources, refuse malformed terms, require act and edge protocol targets from the complete batch or history, and admit an unsupplied license qualifier. This is admission and source lookup evidence, not an anchoring or authentication verdict."
+      "before": "Claim: Grounded and public-name endpoints need no supplied lookup entry, while act and edge protocol references require their complete target. License qualifiers require no lookup entry; supplied names assert lookup availability only, and malformed node terms and qualifiers still refuse.",
+      "after": "Claim: Grounded and public-name endpoints need no supplied lookup entry, while act and edge protocol references require their complete target. There is no license namespace exemption; supplied names assert lookup availability only, and malformed node terms still refuse.",
+      "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
     },
     {
       "operation": "pn-records::public::missing_co_legs",

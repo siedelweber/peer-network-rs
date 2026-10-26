@@ -31,7 +31,7 @@ operations = 7
 instrumented = 7
 exceptions = 0
 helpers = 0
-generators = 15
+generators = 16
 
 [[rows]]
 name = "pn-host"
@@ -55,7 +55,7 @@ operations = 102
 instrumented = 38
 exceptions = 64
 helpers = 0
-generators = 79
+generators = 81
 
 [[rows]]
 name = "pn-wallet"

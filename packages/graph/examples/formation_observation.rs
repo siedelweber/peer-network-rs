@@ -22,7 +22,7 @@ impl RegistrationVerifier for FixtureApproval {
 fn main() {
     let enabled = std::env::args().nth(1).as_deref() != Some("disabled");
     let guard = cli_common::observation::bootstrap(enabled, false, tracing::Level::INFO).expect("configured observation");
-    let names: Vec<_> = ["addr", "name", "license"]
+    let names: Vec<_> = ["addr", "name"]
         .into_iter()
         .map(|namespace| PublicReference::Named {
             namespace: namespace.into(),
@@ -38,11 +38,21 @@ fn main() {
     publication.body.quantities.truncate(2);
     publication.body.quantities[0].0 = "attachment.numerator".into();
     publication.body.quantities[1].0 = "attachment.denominator".into();
-    publication.protocol_references = vec![names[2].clone()];
+    publication.body.license = Some(pn_records::LicenseQualifiers {
+        attribution: pn_records::LicenseDegree {
+            numerator: 1,
+            denominator: 2,
+        },
+        provenance: pn_records::LicenseDegree {
+            numerator: 2,
+            denominator: 3,
+        },
+    });
     publication.authoritative_position = 2;
     publication.logical_time = 2;
     let mut ownership = publication.clone();
     ownership.id.family = "Owner".into();
+    ownership.body.license = None;
     ownership.id.sequence = 3;
     ownership.legs[0].id.act = ownership.id.clone();
     ownership.legs[0].target = PublicReference::Minted(ownership.id.clone());
@@ -125,6 +135,7 @@ fn affinity(names: &[PublicReference]) -> CandidateAct {
     CandidateAct {
         id: id.clone(),
         body: StructuralBody {
+            license: None,
             asserted_parents: vec![],
             layout: Layout::Binary,
             quantities: [

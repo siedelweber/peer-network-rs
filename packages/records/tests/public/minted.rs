@@ -15,6 +15,18 @@ fn genesis(family: &str, layout: Layout) -> CandidateAct {
             leg.target = PublicReference::Minted(input.id.clone());
         }
     }
+    if family == "Publish" && layout == Layout::Binary {
+        input.body.license = Some(pn_records::LicenseQualifiers {
+            attribution: pn_records::LicenseDegree {
+                numerator: 1,
+                denominator: 2,
+            },
+            provenance: pn_records::LicenseDegree {
+                numerator: 2,
+                denominator: 3,
+            },
+        });
+    }
     input
 }
 
@@ -84,6 +96,7 @@ fn minted_resolution() {
         for leg in &mut input.legs {
             leg.target = named("right");
         }
+        input.body.license = None;
         let ordinary = validate_record(&[input], &resolved(), &[]).unwrap();
         assert_eq!(
             resolve_public_reference(&ordinary, &reference),
@@ -167,7 +180,7 @@ fn minted_identity() {
     assert_eq!(reference, PublicReference::Minted(moved.id));
 }
 
-/// Claim: Grounded and public-name endpoints need no supplied lookup entry, while act and edge protocol references require their complete target. License qualifiers require no lookup entry; supplied names assert lookup availability only, and malformed node terms and qualifiers still refuse.
+/// Claim: Grounded and public-name endpoints need no supplied lookup entry, while act and edge protocol references require their complete target. There is no license namespace exemption; supplied names assert lookup availability only, and malformed node terms still refuse.
 /// ´claim:acts:reference-admission-distinguishes-node-terms-and-protocol-targets´
 /// ´test:integration:reference-classes´
 #[test]
@@ -219,10 +232,87 @@ fn reference_classes() {
         namespace: "license".into(),
         name: "unlisted terms".into(),
     }];
-    assert!(validate_record(std::slice::from_ref(&input), &resolved(), &[]).is_ok());
+    assert!(validate_record(std::slice::from_ref(&input), &resolved(), &[]).is_err());
     input.protocol_references = vec![PublicReference::Named {
         namespace: "license".into(),
         name: String::new(),
     }];
     assert!(validate_record(&[input], &resolved(), &[]).is_err());
+}
+
+/// Claim: Content genesis retains one exact attribution/provenance pair, with both degrees in the nonnegative unit interval and positive denominators. Missing genesis pairs, misplaced pairs and invalid bounds refuse; payload removal preserves the pair without interpreting its license meaning.
+/// ´claim:acts:content-genesis-retains-bounded-license-pair´
+/// ´test:integration:genesis-license-pair´
+#[test]
+fn genesis_license_pair() {
+    use pn_records::{InvalidCause, LicenseDegree, LicenseQualifiers};
+    let base = genesis("Publish", Layout::Binary);
+    for (a, o) in [(0, 0), (0, 6), (6, 0), (6, 6), (1, 2), (3, 5)] {
+        let pair = LicenseQualifiers {
+            attribution: LicenseDegree {
+                numerator: a,
+                denominator: 6,
+            },
+            provenance: LicenseDegree {
+                numerator: o,
+                denominator: 6,
+            },
+        };
+        let mut input = base.clone();
+        input.body.license = Some(pair);
+        let batch = validate_record(std::slice::from_ref(&input), &resolved(), &[]).unwrap();
+        assert_eq!(batch.acts()[0].body().license, Some(pair));
+        input.projections.content = Removal::Tombstoned((6, 1));
+        let removed = validate_history(&[input], &[named("left"), named("right")]).unwrap();
+        assert_eq!(removed.acts()[0].body().license, Some(pair));
+    }
+    let mut invalid = Vec::new();
+    for attribution in [true, false] {
+        for (numerator, denominator) in [(-1, 2), (3, 2), (0, 0), (0, -1), (i64::MIN, 1), (i64::MAX, 1)] {
+            let mut input = base.clone();
+            let pair = input.body.license.as_mut().unwrap();
+            let degree = LicenseDegree { numerator, denominator };
+            if attribution {
+                pair.attribution = degree;
+            } else {
+                pair.provenance = degree;
+            }
+            invalid.push(input);
+        }
+    }
+    let mut missing = base.clone();
+    missing.body.license = None;
+    invalid.push(missing);
+    let mut ordinary = base.clone();
+    ordinary.legs[0].target = PublicReference::Minted(pn_records::ActId {
+        sequence: 99,
+        ..ordinary.id.clone()
+    });
+    invalid.push(ordinary);
+    for (family, layout) in [
+        ("Owner", Layout::Binary),
+        ("Participant", Layout::Paired),
+        ("Review", Layout::Paired),
+        ("Send", Layout::Paired),
+        ("Bid", Layout::Paired),
+        ("Affinity", Layout::Binary),
+    ] {
+        let mut input = genesis(family, layout);
+        input.body.license = base.body.license;
+        invalid.push(input);
+    }
+    for input in invalid {
+        let expected = ValidationError::InvalidRepresentation {
+            act: input.id.clone(),
+            cause: InvalidCause::LicenseQualifiers,
+        };
+        assert_eq!(
+            validate_record(std::slice::from_ref(&input), &resolved(), &[]).unwrap_err(),
+            expected
+        );
+        assert_eq!(
+            validate_history(&[input], &[named("left"), named("right")]).unwrap_err(),
+            expected
+        );
+    }
 }

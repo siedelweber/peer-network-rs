@@ -43,6 +43,7 @@ fn candidate(family: &str, sequence: u64) -> CandidateAct {
     CandidateAct {
         id: id.clone(),
         body: StructuralBody {
+            license: None,
             asserted_parents: vec![],
             layout: Layout::Binary,
             quantities,
@@ -78,7 +79,6 @@ fn names() -> Vec<PublicReference> {
         named("prof", "a"),
         named("name", "topic"),
         named("addr", "b"),
-        named("license", "fixture-terms"),
     ]
 }
 
@@ -98,7 +98,16 @@ fn publication(sequence: u64) -> CandidateAct {
             )
         })
         .collect();
-    input.protocol_references = vec![named("license", "fixture-terms")];
+    input.body.license = Some(pn_records::LicenseQualifiers {
+        attribution: pn_records::LicenseDegree {
+            numerator: 1,
+            denominator: 2,
+        },
+        provenance: pn_records::LicenseDegree {
+            numerator: 2,
+            denominator: 3,
+        },
+    });
     input
 }
 
@@ -159,7 +168,7 @@ fn malformed_publications(input: &CandidateAct) -> Vec<CandidateAct> {
     cases
 }
 
-/// Claim: Scoped Publish formation requires the author's Actor, a Content mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.
+/// Claim: Scoped Publish formation requires the author's Actor, a Content mint term, one exact signed attachment coordinate and a bounded genesis-only license pair. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.
 /// # Panics
 /// Panics only if Publish dispatch returns another family, which correct dispatch cannot arrange.
 /// ´claim:formation:publish-retains-typed-content-and-qualifiers´
@@ -180,7 +189,7 @@ fn publish_projection() {
         panic!("wrong family")
     };
     assert_eq!((weight.attachment.numerator, weight.attachment.denominator), (-1, 2));
-    assert_eq!(weight.licenses, vec!["fixture-terms"]);
+    assert!(weight.license.is_some());
     let unsupplied = validate_history(std::slice::from_ref(&input), &[]).unwrap();
     assert_eq!(
         project_complete_act(
@@ -205,6 +214,7 @@ fn publish_projection() {
     let mut absent = input.id.clone();
     absent.sequence = 99;
     dangling.legs[0].target = PublicReference::Minted(absent);
+    dangling.body.license = None;
     assert_eq!(
         project(&dangling).unwrap().1,
         Node::Content {
@@ -217,7 +227,7 @@ fn publish_projection() {
     }
 }
 
-/// Claim: Publish genesis and subsequent publication share one Content identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.
+/// Claim: Publish genesis and subsequent publication share one Content identity through mixed binary reconstruction, retain the genesis pair and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.
 /// # Panics
 /// Panics only if the fixture's Publish edge has another family, which correct reconstruction cannot arrange.
 /// ´claim:formation:publish-shares-whole-history-revalidation´
@@ -231,6 +241,7 @@ fn publish_reconstruction() {
         publication(4),
     ];
     inputs[3].legs[0].target = PublicReference::Minted(inputs[2].id.clone());
+    inputs[3].body.license = None;
     let mut verifier = Verifier {
         acts: inputs.clone(),
         removals: false,
@@ -280,7 +291,7 @@ fn publish_reconstruction() {
     let Projection::Publish(weight) = &mut changed[petgraph::graph::EdgeIndex::new(2)] else {
         panic!("wrong family")
     };
-    weight.licenses.clear();
+    weight.license = None;
     weight.attachment = pn_graph::formation::Coordinate {
         numerator: -1,
         denominator: 2,
@@ -336,7 +347,7 @@ impl RegistrationVerifier for Verifier {
 }
 
 fn project(input: &CandidateAct) -> Result<pn_graph::formation::CompleteProjection, RegistrationError> {
-    let history = validate_history(std::slice::from_ref(input), &names()).unwrap();
+    let history = validate_history(std::slice::from_ref(input), &names()).map_err(|_| RegistrationError::Incidence)?;
     project_complete_act(
         &history.acts()[0],
         &Verifier {
@@ -506,7 +517,7 @@ fn ownership(sequence: u64) -> CandidateAct {
             )
         })
         .collect();
-    input.protocol_references = vec![named("license", "fixture-terms")];
+
     input
 }
 
@@ -567,7 +578,7 @@ fn malformed_ownerships(input: &CandidateAct) -> Vec<CandidateAct> {
     cases
 }
 
-/// Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.
+/// Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.
 /// # Panics
 /// Panics only if Owner dispatch returns another family, which correct dispatch cannot arrange.
 /// ´claim:formation:owner-retains-typed-item-and-qualifiers´
@@ -588,7 +599,7 @@ fn owner_projection() {
         panic!("wrong family")
     };
     assert_eq!((weight.attachment.numerator, weight.attachment.denominator), (-1, 2));
-    assert_eq!(weight.licenses, vec!["fixture-terms"]);
+
     for denominator in 1..=8 {
         for numerator in -denominator - 1..=denominator + 1 {
             let mut changed = input.clone();
@@ -601,6 +612,7 @@ fn owner_projection() {
     let mut absent = input.id.clone();
     absent.sequence = 99;
     dangling.legs[0].target = PublicReference::Minted(absent);
+    dangling.body.license = None;
     assert_eq!(
         project(&dangling).unwrap().1,
         Node::Item {
@@ -613,7 +625,7 @@ fn owner_projection() {
     }
 }
 
-/// Claim: Owner genesis and subsequent ownership share one Item identity through mixed binary reconstruction, retain qualifiers and parallel edges across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.
+/// Claim: Owner genesis and subsequent ownership share one Item identity through mixed binary reconstruction, retain parallel edges without qualifiers across authorized removals, and reject partial, altered, unapproved or unsupported whole histories; typed revalidation distinguishes structurally different rational carriers even when their values agree.
 /// # Panics
 /// Panics only if the fixture's Owner edge has another family, which correct reconstruction cannot arrange.
 /// ´claim:formation:owner-shares-whole-history-revalidation´
@@ -622,6 +634,7 @@ fn owner_projection() {
 fn owner_reconstruction() {
     let mut inputs = vec![candidate("Registration", 1), publication(2), ownership(3), ownership(4)];
     inputs[3].legs[0].target = PublicReference::Minted(inputs[2].id.clone());
+    inputs[3].body.license = None;
     let mut verifier = Verifier {
         acts: inputs.clone(),
         removals: false,
@@ -671,7 +684,7 @@ fn owner_reconstruction() {
     let Projection::Owner(weight) = &mut changed[petgraph::graph::EdgeIndex::new(2)] else {
         panic!("wrong family")
     };
-    weight.licenses.clear();
+    weight.position = (2, 3);
     weight.attachment = pn_graph::formation::Coordinate {
         numerator: -1,
         denominator: 2,
@@ -744,7 +757,7 @@ fn participation(sequence: u64, origin: u64, destination: u64) -> CandidateAct {
 }
 
 fn bundle(input: &CandidateAct) -> Result<Vec<pn_graph::formation::CompleteProjection>, RegistrationError> {
-    let history = validate_history(std::slice::from_ref(input), &names()).unwrap();
+    let history = validate_history(std::slice::from_ref(input), &names()).map_err(|_| RegistrationError::Incidence)?;
     project_complete_act(
         &history.acts()[0],
         &Verifier {
@@ -1016,11 +1029,11 @@ fn review(sequence: u64, middle: PublicReference, terminal: u64) -> CandidateAct
     ]) {
         field.0 = name.into();
     }
-    input.protocol_references = vec![named("license", "unlisted")];
+
     input
 }
 
-/// Claim: Review forms an ordered Actor-to-passive-to-Comment bundle for every passive constructor, retaining both signed coordinates, qualifiers and one act time on each leg. Genesis, ordinary and dangling terminals are representable without an anchor verdict; wrong constructors, incomplete incidence and malformed coordinates refuse the whole bundle.
+/// Claim: Review forms an ordered Actor-to-passive-to-Comment bundle for every passive constructor, retaining both signed coordinates and one act time, with no qualifiers on each leg. Genesis, ordinary and dangling terminals are representable without an anchor verdict; wrong constructors, incomplete incidence and malformed coordinates refuse the whole bundle.
 /// # Panics
 /// Panics only if Review dispatch returns another family, which correct dispatch cannot arrange.
 /// ´claim:formation:review-requires-complete-passive-comment-incidence´
@@ -1107,7 +1120,7 @@ fn review_projection() {
             assert_eq!((a.sequence, a.position, a.logical_time), (3, (1, 3), 3));
             assert_eq!((a.enthusiasm.numerator, a.enthusiasm.denominator), (-1, 2));
             assert_eq!((a.effort.numerator, a.effort.denominator), (2, 3));
-            assert_eq!(a.licenses, vec!["unlisted"]);
+
             let mut expected = a.clone();
             expected.role = ReviewRole::T;
             assert_eq!(t, &expected);
@@ -1268,4 +1281,87 @@ fn review_reconstruction() {
         reconstruct(&unsupported, &verifier).unwrap_err(),
         RegistrationError::UnsupportedFamily
     );
+}
+
+/// Claim: Publish projects the exact genesis license pair at all corners and sampled interiors, preserves it across payload removal and rejects changed structural pairs during revalidation. Publish, Owner, Participant and Review reject the former license-reference encoding even when its name is supplied; non-genesis families carry no license pair.
+/// # Panics
+/// Panics only if Publish dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:publish-license-pair-survives-removal-and-revalidation´
+/// ´test:integration:publish-license-pair´
+#[test]
+fn publish_license_pair() {
+    for (a, o) in [(0, 0), (0, 6), (6, 0), (6, 6), (1, 2), (3, 5)] {
+        let mut input = publication(1);
+        let pair = pn_records::LicenseQualifiers {
+            attribution: pn_records::LicenseDegree {
+                numerator: a,
+                denominator: 6,
+            },
+            provenance: pn_records::LicenseDegree {
+                numerator: o,
+                denominator: 6,
+            },
+        };
+        input.body.license = Some(pair);
+        let verifier = Verifier {
+            acts: vec![input.clone()],
+            removals: true,
+        };
+        let history = validate_history(std::slice::from_ref(&input), &[]).unwrap();
+        let graph = reconstruct(&history, &verifier).unwrap();
+        let Projection::Publish(weight) = &graph[petgraph::graph::EdgeIndex::new(0)] else {
+            panic!("wrong family")
+        };
+        let expected = pn_graph::formation::LicenseQualifiers {
+            attribution: pn_graph::formation::Coordinate {
+                numerator: a,
+                denominator: 6,
+            },
+            provenance: pn_graph::formation::Coordinate {
+                numerator: o,
+                denominator: 6,
+            },
+        };
+        assert_eq!(weight.license, Some(expected));
+        input.projections.content = Removal::Tombstoned((2, 1));
+        let removed = validate_history(&[input], &[]).unwrap();
+        assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+        for attribution in [true, false] {
+            let mut changed = graph.clone();
+            let Projection::Publish(weight) = &mut changed[petgraph::graph::EdgeIndex::new(0)] else {
+                panic!("wrong family")
+            };
+            let pair = weight.license.as_mut().unwrap();
+            let degree = if attribution {
+                &mut pair.attribution
+            } else {
+                &mut pair.provenance
+            };
+            degree.numerator *= 2;
+            degree.denominator *= 2;
+            assert_eq!(
+                validate_formation(&changed, &removed, &verifier),
+                Err(RegistrationError::GraphMismatch)
+            );
+        }
+    }
+    let legacy = named("license", "fixture-terms");
+    let mut supplied = names();
+    supplied.push(legacy.clone());
+    for mut input in [
+        publication(1),
+        ownership(1),
+        participation(1, 1, 1),
+        review(1, named("name", "topic"), 1),
+    ] {
+        input.protocol_references = vec![legacy.clone()];
+        assert!(validate_history(std::slice::from_ref(&input), &supplied).is_err());
+        input.protocol_references = vec![named("name", "topic")];
+        let history = validate_history(std::slice::from_ref(&input), &supplied).unwrap();
+        let verifier = Verifier {
+            acts: vec![input],
+            removals: true,
+        };
+        assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Incidence);
+    }
 }

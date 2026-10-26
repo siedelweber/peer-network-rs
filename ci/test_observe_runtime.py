@@ -271,7 +271,7 @@ class Processes(unittest.TestCase):
             self.assertIn('role: T',values['review'])
             self.assertIn('role: A',values['participant'])
             self.assertIn('role: T',values['participant'])
-            self.assertIn('licenses',values['publication'])
+            self.assertIn('LicenseQualifiers',values['publication'])
             if mode=='disabled':continue
             rows=[json.loads(line) for line in result.stderr.splitlines()]
             summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
@@ -280,7 +280,7 @@ class Processes(unittest.TestCase):
             self.assertEqual(accounting[mode],{(stem+'started_operations',''):9,(stem+'completed_operations','success'):7,(stem+'completed_operations','refusal'):2})
             self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],9)
             if mode=='trace':
-                for marker in ('authentication_evidence','logical_time','AffinityProjection','PublishProjection','OwnerProjection','ParticipantProjection','ReviewProjection','licenses','validate_formation'):
+                for marker in ('authentication_evidence','logical_time','AffinityProjection','PublishProjection','OwnerProjection','ParticipantProjection','ReviewProjection','LicenseQualifiers','validate_formation'):
                     self.assertIn(marker,result.stderr.decode())
         self.assertEqual(samples['disabled'],samples['default'])
         self.assertEqual(samples['default'],samples['trace'])

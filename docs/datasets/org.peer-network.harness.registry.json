@@ -3182,6 +3182,7 @@
         "pn-records::public::minted::minted_resolution",
         "pn-records::public::minted::minted_identity",
         "pn-records::public::minted::reference_classes",
+        "pn-records::public::minted::genesis_license_pair",
         "pn-records::public::ordering::retained_time_evidence",
         "pn-records::public::whole_history",
         "pn-records::public::overlapping_closures",
@@ -3927,7 +3928,8 @@
         "pn-graph::formation::participant_projection",
         "pn-graph::formation::participant_reconstruction",
         "pn-graph::formation::review_projection",
-        "pn-graph::formation::review_reconstruction"
+        "pn-graph::formation::review_reconstruction",
+        "pn-graph::formation::publish_license_pair"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",
