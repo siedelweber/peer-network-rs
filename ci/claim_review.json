@@ -3320,6 +3320,14 @@
       "before": "",
       "after": "Claim: A replacement above the highest pinned event changes only pending evidence, even at or below the pinning cutoff, and evidence left on the replaced branch is refused as stale; a replacement of the floor block, or a chain shorter than its height, is a realization fault that retains the pinned total and is returned for every later observation.",
       "review": "Read the pure carrier over synthetic active-chain hashes: the asserted successor counts, pinned totals, retained floor, stale, alias, unavailable and overflow refusals, and the sticky fault. No marker recognition, accepted set, snapshot or signature verdict is inferred."
+    },
+    {
+      "operation": "pn-wallet::wire::wire_compatibility",
+      "path": "packages/wallet/tests/wire.rs",
+      "claim": "WALLET::claim:wallet:rpc-wire-fixtures-keep-strict-framing",
+      "before": "",
+      "after": "Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined or conflicting lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.",
+      "review": "Read the named assertions and refusal variants in this source site. Wire witnesses answer the public reader through a scripted local server with exact bytes and observe the peer side of each closure; no Elements service, signed fixture, recognition or settlement verdict is inferred from these assertions."
     }
   ]
 }

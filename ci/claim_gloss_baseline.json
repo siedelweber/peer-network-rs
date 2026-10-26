@@ -1051,6 +1051,7 @@
     "pn-wallet::rpc_json::tests::parser_cases": "",
     "pn-wallet::settlement::tests::outpoint_once": "",
     "pn-wallet::settlement::tests::pinning_depth": "",
-    "pn-wallet::settlement::tests::replacement_floor": ""
+    "pn-wallet::settlement::tests::replacement_floor": "",
+    "pn-wallet::wire::wire_compatibility": ""
   }
 }

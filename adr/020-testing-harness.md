@@ -34,7 +34,7 @@
 
 **Amendment (Foundation registry and join)** · `amend:harness:registry-join` This implements the registry and result-join portion of (`gate:harness:foundation`) and (`gate:design:harness-foundation`), refining (`dec:harness:levels`) and (`rule:harness:tiers`). The committed harness registry declares four levels, each active suite's complete case roster, implementation and evidence class, tier and case/suite budget references. It replaces the interim location rule in (`amend:devperf:foundation-reporting`). The support step re-declares the 73 cli-common and 25 execwrap internal-module cases as unit, and adds external public-surface witnesses under tests/; internal access is not public-surface evidence. Unknown cases, missing declarations, unregistered implementations, ignored or incomplete required cases, dropped cases, changed source/configuration and mock evidence labelled as real are structural errors. The nextest inventory must equal the declared roster before results join. Doctests join against their committed prior inventory, including cases that never start; CI unittest discovery and results use the same accounting. Every joined case retains its source, configuration, level, suite, implementation, evidence class, tier, applicable budgets, raw outcome and duration in milliseconds. A suite name is not an authored claim; the claim-site audit and obligation join remain under (`gate:testing:foundation`).
 
-**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 105 suites and 15 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
+**Table (Foundation suite declarations)** · `tab:harness:foundation-registry` The registry has 106 suites and 15 implementations. Counts below are declared executable cases, including explicitly identified vendor suites whose upstream policy remains unchanged. Planned domain suites have no implementation and no passing evidence.
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
@@ -132,6 +132,7 @@
 | pn-wallet | active | unit | pn-wallet-rust | fast | 13 |
 | pn-wallet::layout | active | integration | pn-wallet-rust | fast | 5 |
 | pn-wallet::allocation | active | integration | pn-wallet-rust | fast | 1 |
+| pn-wallet::wire | active | integration | pn-wallet-rust | fast | 1 |
 | ci::test_wallet_boundary | active | integration | pn-wallet-rust | fast | 7 |
 | pn-wallet::rpc | active | integration | pn-wallet-elements | service | 9 |
 | pn-graph | active | unit | pn-graph-rust | fast | 1 |

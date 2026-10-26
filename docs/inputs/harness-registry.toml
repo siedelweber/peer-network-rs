@@ -1199,6 +1199,17 @@ cases = ["pn-wallet::allocation::decoder_reservations"]
 
 [[rows]]
 kind = "suite"
+name = "pn-wallet::wire"
+status = "active"
+runner = "nextest"
+level = "integration"
+implementation = "pn-wallet-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-wallet::wire::wire_compatibility"]
+
+[[rows]]
+kind = "suite"
 name = "ci::test_wallet_boundary"
 status = "active"
 runner = "ci"
