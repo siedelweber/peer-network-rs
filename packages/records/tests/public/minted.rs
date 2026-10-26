@@ -55,6 +55,26 @@ fn minted_resolution() {
             validate_record(std::slice::from_ref(&input), &history, &[]).unwrap_err(),
             ValidationError::DuplicateAct(input.id.clone())
         );
+        if layout == Layout::Paired {
+            let mut a_only = input.clone();
+            for leg in &mut a_only.legs {
+                leg.target = if leg.id.role == Role::A {
+                    reference.clone()
+                } else {
+                    named("right")
+                };
+            }
+            let ordinary = validate_record(&[a_only.clone()], &resolved(), &[]).unwrap();
+            assert_eq!(
+                resolve_public_reference(&ordinary, &reference),
+                Err(ValidationError::UnresolvedReference(reference.clone()))
+            );
+            let history = validate_history(&[a_only], &[named("left"), named("right")]).unwrap();
+            assert_eq!(
+                resolve_public_reference(&validate_record(&[], &history, &[]).unwrap(), &reference),
+                Err(ValidationError::UnresolvedReference(reference.clone()))
+            );
+        }
         input.projections.content = Removal::Tombstoned((6, 1));
         let removed = validate_history(std::slice::from_ref(&input), &[named("left"), named("right")]).unwrap();
         assert_eq!(
@@ -145,4 +165,64 @@ fn minted_identity() {
     moved.authoritative_position += 1;
     moved.logical_time += 1;
     assert_eq!(reference, PublicReference::Minted(moved.id));
+}
+
+/// Claim: Grounded and public-name endpoints need no supplied lookup entry, while act and edge protocol references require their complete target. License qualifiers require no lookup entry; supplied names assert lookup availability only, and malformed node terms and qualifiers still refuse.
+/// ´claim:acts:reference-admission-distinguishes-node-terms-and-protocol-targets´
+/// ´test:integration:reference-classes´
+#[test]
+fn reference_classes() {
+    for namespace in ["addr", "prof", "name"] {
+        let reference = PublicReference::Named {
+            namespace: namespace.into(),
+            name: "unregistered".into(),
+        };
+        let mut input = act(1, Layout::Binary);
+        input.protocol_references.clear();
+        input.legs[0].source = reference.clone();
+        input.legs[0].target = reference.clone();
+        let empty = validate_history(&[], &[]).unwrap();
+        let batch = validate_record(std::slice::from_ref(&input), &empty, &[]).unwrap();
+        assert_eq!(
+            resolve_public_reference(&batch, &reference),
+            Err(ValidationError::UnresolvedReference(reference.clone()))
+        );
+        assert!(validate_history(std::slice::from_ref(&input), &[]).is_ok());
+        let supplied = validate_history(&[], std::slice::from_ref(&reference)).unwrap();
+        let batch = validate_record(std::slice::from_ref(&input), &supplied, &[]).unwrap();
+        assert_eq!(resolve_public_reference(&batch, &reference), Ok(ReferenceOrigin::History));
+        input.legs[0].target = PublicReference::Named {
+            namespace: namespace.into(),
+            name: String::new(),
+        };
+        assert!(validate_record(&[input], &empty, &[]).is_err());
+    }
+    let target = act(1, Layout::Binary);
+    for reference in [
+        PublicReference::Act(target.id.clone()),
+        PublicReference::Edge(target.legs[0].id.clone()),
+    ] {
+        let mut consumer = act(2, Layout::Binary);
+        consumer.protocol_references = vec![reference.clone()];
+        assert_eq!(
+            validate_record(std::slice::from_ref(&consumer), &resolved(), &[]).unwrap_err(),
+            ValidationError::UnresolvedReference(reference.clone())
+        );
+        let batch = validate_record(&[target.clone(), consumer.clone()], &resolved(), &[]).unwrap();
+        assert_eq!(resolve_public_reference(&batch, &reference), Ok(ReferenceOrigin::Batch));
+        let history = validate_history(std::slice::from_ref(&target), &[named("left"), named("right")]).unwrap();
+        let batch = validate_record(&[consumer], &history, &[]).unwrap();
+        assert_eq!(resolve_public_reference(&batch, &reference), Ok(ReferenceOrigin::History));
+    }
+    let mut input = genesis("Publish", Layout::Binary);
+    input.protocol_references = vec![PublicReference::Named {
+        namespace: "license".into(),
+        name: "unlisted terms".into(),
+    }];
+    assert!(validate_record(std::slice::from_ref(&input), &resolved(), &[]).is_ok());
+    input.protocol_references = vec![PublicReference::Named {
+        namespace: "license".into(),
+        name: String::new(),
+    }];
+    assert!(validate_record(&[input], &resolved(), &[]).is_err());
 }

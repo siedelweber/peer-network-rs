@@ -779,9 +779,9 @@ fn validate_act(
             if !valid_reference(reference) {
                 return Err(invalid(InvalidCause::ReferenceComponent));
             }
-            // A syntactically valid minted endpoint may dangle; resolution
-            // below still requires its anchor for mandatory protocol references.
-            if !matches!(reference, PublicReference::Minted(_))
+            // Node terms are representable without an anchor or a supplied name.
+            // Act, edge and external protocol identities still require lookup.
+            if reference.identifier_class().is_none()
                 && !references.contains(reference)
                 && !history_references.contains(reference)
             {
@@ -810,7 +810,8 @@ fn validate_act(
         if !valid_reference(reference) {
             return Err(invalid(InvalidCause::ReferenceComponent));
         }
-        if !references.contains(reference) && !history_references.contains(reference) {
+        let qualifier = matches!(reference, PublicReference::Named { namespace, .. } if namespace == "license");
+        if !qualifier && !references.contains(reference) && !history_references.contains(reference) {
             return Err(ValidationError::UnresolvedReference(reference.clone()));
         }
     }

@@ -3181,6 +3181,7 @@
         "pn-records::public::ordering::parent_replay",
         "pn-records::public::minted::minted_resolution",
         "pn-records::public::minted::minted_identity",
+        "pn-records::public::minted::reference_classes",
         "pn-records::public::ordering::retained_time_evidence",
         "pn-records::public::whole_history",
         "pn-records::public::overlapping_closures",

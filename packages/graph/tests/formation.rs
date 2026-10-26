@@ -181,6 +181,18 @@ fn publish_projection() {
     };
     assert_eq!((weight.attachment.numerator, weight.attachment.denominator), (-1, 2));
     assert_eq!(weight.licenses, vec!["fixture-terms"]);
+    let unsupplied = validate_history(std::slice::from_ref(&input), &[]).unwrap();
+    assert_eq!(
+        project_complete_act(
+            &unsupplied.acts()[0],
+            &Verifier {
+                acts: vec![input.clone()],
+                removals: false
+            }
+        )
+        .unwrap(),
+        vec![(source, target, Projection::Publish(weight))]
+    );
     for denominator in 1..=8 {
         for numerator in -denominator - 1..=denominator + 1 {
             let mut changed = input.clone();

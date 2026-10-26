@@ -943,6 +943,7 @@
     "pn-records::public::invalid_local_fields": "Claim: Empty identity or unit fields, conflicting author, wrong projection parent and removal of a mandatory leg each refuse as a typed local representation error, without claiming cryptographic authentication or family formation.",
     "pn-records::public::minted::minted_identity": "",
     "pn-records::public::minted::minted_resolution": "",
+    "pn-records::public::minted::reference_classes": "",
     "pn-records::public::missing_co_legs": "Claim: Removing either required paired role refuses that exact missing co-leg through the public validator, so a half act cannot become an accounting unit.",
     "pn-records::public::numerics::charged_vintages": "",
     "pn-records::public::numerics::constant_correspondence": "",

@@ -1335,7 +1335,7 @@
       "claim": "GRAPH::claim:formation:publish-retains-typed-content-and-qualifiers",
       "before": "",
       "after": "Claim: Scoped Publish formation requires the author's Actor, a Content mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
-      "review": "Read Publish endpoint and coordinate refusals, exact license qualifier retention, ordinary versus self-mint targets, dangling incidence without anchoring, and mixed reconstruction with authorized removals and partial-cache refusal. The process witness compares complete Affinity and Publish outcomes and six operations across observation modes. This is the bounded internal structural carrier and declared authentication callback, not canonical encoding, license policy, full family conformance, geometry or title."
+      "review": "Read Publish endpoint and coordinate refusals, exact license qualifier retention, ordinary versus self-mint targets, dangling incidence without anchoring, and mixed reconstruction with authorized removals and partial-cache refusal. The process witness compares complete Affinity and Publish outcomes and six operations across observation modes. This is the bounded internal structural carrier and declared authentication callback, not canonical encoding, license policy, full family conformance, geometry or title. The same Publish projects identically with an empty supplied-name inventory, including its license qualifier."
     },
     {
       "operation": "pn-graph::formation::publish_reconstruction",
@@ -2519,7 +2519,15 @@
       "claim": "RECORDS::claim:acts:minted-references-require-self-minting-genesis",
       "before": "",
       "after": "Claim: Minted references resolve from complete self-minting terminal targets in the six genesis families, including their own batch act; missing genesis, ordinary acts, wrong families, wrong layout and externally injected minted names cannot supply a node. Opening removal preserves resolution and duplicate act identity cannot mint again.",
-      "review": "Read the six-family terminal-role table, batch self-mint and history resolution, ordinary-act and absent-genesis refusals, duplicate identity refusal, removal retention and disjoint constructor/order probes. These establish structural reference carriage, not full graph family formation, authentication, canonical bytes or a verdict on the open ordering questions."
+      "review": "Read the six-family terminal-role table, batch self-mint and history resolution, ordinary-act and absent-genesis refusals, duplicate identity refusal, removal retention and disjoint constructor/order probes. These establish structural reference carriage, not full graph family formation, authentication, canonical bytes or a verdict on the open ordering questions. Each paired genesis family also has an A-only self-target, which refuses node resolution in batch and replay."
+    },
+    {
+      "operation": "pn-records::public::minted::reference_classes",
+      "path": "packages/records/tests/public/minted.rs",
+      "claim": "RECORDS::claim:acts:reference-admission-distinguishes-node-terms-and-protocol-targets",
+      "before": "",
+      "after": "Claim: Grounded and public-name endpoints need no supplied lookup entry, while act and edge protocol references require their complete target. License qualifiers require no lookup entry; supplied names assert lookup availability only, and malformed node terms and qualifiers still refuse.",
+      "review": "Finite candidate and replay fixtures admit grounded and public-name endpoints without a supplied lookup entry, retain explicitly supplied entries as lookup sources, refuse malformed terms, require act and edge protocol targets from the complete batch or history, and admit an unsupplied license qualifier. This is admission and source lookup evidence, not an anchoring or authentication verdict."
     },
     {
       "operation": "pn-records::public::missing_co_legs",
