@@ -3198,7 +3198,11 @@
         "pn-records::public::whole_history",
         "pn-records::public::overlapping_closures",
         "pn-records::public::boundary_refusals",
-        "pn-records::public::asserted_parents"
+        "pn-records::public::asserted_parents",
+        "pn-records::public::settlement::settlement_closures",
+        "pn-records::public::settlement::settlement_targets",
+        "pn-records::public::settlement::settlement_order",
+        "pn-records::public::settlement::settlement_time"
       ],
       "implementation": "pn-records-rust",
       "kind": "suite",

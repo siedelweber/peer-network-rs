@@ -25,6 +25,7 @@ fn candidate(author: &str, sequence: u64, position: u64) -> CandidateAct {
     CandidateAct {
         id: id.clone(),
         body: StructuralBody {
+            settlement: None,
             license: None,
             asserted_parents: vec![],
             layout: Layout::Binary,

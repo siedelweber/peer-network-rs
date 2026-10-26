@@ -109,7 +109,7 @@
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
 | ci::test_linter_entry | active | integration | ci-composition-services | service | 22 |
 | pn-records | active | unit | pn-records-rust | fast | 5 |
-| pn-records::public | active | public-surface | pn-records-rust | fast | 52 |
+| pn-records::public | active | public-surface | pn-records-rust | fast | 56 |
 | pn-records::integration | active | integration | pn-records-rust | fast | 2 |
 | pn-records::properties | active | public-surface | pn-records-rust | fast | 4 |
 | pn-records::conformance | active | integration | pn-records-rust | fast | 3 |

@@ -209,10 +209,22 @@ pub struct LicenseQualifiers {
     pub provenance: LicenseDegree,
 }
 
+/// Act-owned settlement metadata, never an endpoint or removable projection.
+/// (´def:acts:body´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SettlementReferences {
+    /// Accept names the Bid that opened the negotiated Offer.
+    Accept { settles: ActId },
+    /// Ratify names that Bid and the exact Accept confirming it.
+    Ratify { settles: ActId, accepts: ActId },
+}
+
 /// Structural content retained unchanged by local validation.
 /// (´def:acts:body´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StructuralBody {
+    /// Required on Accept and Ratify only; retained across projection removal.
+    pub settlement: Option<SettlementReferences>,
     /// Required only on self-minting Publish; retained across payload removal.
     pub license: Option<LicenseQualifiers>,
     /// Non-removable asserted parents, sorted by derived `ActId` order.
@@ -221,6 +233,28 @@ pub struct StructuralBody {
     pub layout: Layout,
     /// Named exact quantities; duplicate field names are ambiguous and refused.
     pub quantities: Vec<(String, Quantity)>,
+}
+
+impl StructuralBody {
+    /// Return the distinct structural parents, including settlement metadata.
+    /// Repeating a settlement target in the asserted list contributes once.
+    /// (´def:acts:dependencies´)
+    #[must_use]
+    /// Justified: This pure structural projection inherits its caller's records operation and performs no validation or external work.
+    pub fn causal_parents(&self) -> BTreeSet<&ActId> {
+        let mut parents: BTreeSet<_> = self.asserted_parents.iter().collect();
+        match &self.settlement {
+            Some(SettlementReferences::Accept { settles }) => {
+                parents.insert(settles);
+            }
+            Some(SettlementReferences::Ratify { settles, accepts }) => {
+                parents.insert(settles);
+                parents.insert(accepts);
+            }
+            None => {}
+        }
+        parents
+    }
 }
 
 /// An unchecked act candidate; downstream operations require `ValidatedRecords`.
@@ -453,6 +487,9 @@ pub enum InvalidCause {
     /// Missing, misplaced or out-of-range Content genesis pair, or obsolete reference encoding.
     #[error("invalid Content genesis license pair")]
     LicenseQualifiers,
+    /// Missing, misplaced, mistyped or inconsistent settlement metadata.
+    #[error("invalid settlement references")]
+    SettlementReferences,
     /// An untrusted leg attempts to own a removal fact.
     #[error("removal fact on structural leg")]
     CoLegRemoval,
@@ -727,6 +764,9 @@ fn validate(
         .collect();
     for act in acts {
         validate_act(act, &references, &history.references)?;
+    }
+    validate_settlement_targets(acts, &history.acts)?;
+    for act in acts {
         validate_dependencies(act, &available)?;
         validate_parents(act, &available)?;
     }
@@ -736,6 +776,79 @@ fn validate(
         history: history.clone(),
         declarations: declarations.to_vec(),
     })
+}
+
+fn validate_settlement_shape(act: &CandidateAct) -> Result<(), ValidationError> {
+    let valid = match (act.id.family.as_str(), &act.body.settlement) {
+        ("Accept", Some(SettlementReferences::Accept { settles })) => valid_id(settles) && settles.family == "Bid",
+        ("Ratify", Some(SettlementReferences::Ratify { settles, accepts })) => {
+            valid_id(settles) && settles.family == "Bid" && valid_id(accepts) && accepts.family == "Accept"
+        }
+        ("Accept" | "Ratify", _) | (_, Some(_)) => false,
+        (_, None) => true,
+    };
+    if valid {
+        Ok(())
+    } else {
+        Err(ValidationError::InvalidRepresentation {
+            act: act.id.clone(),
+            cause: InvalidCause::SettlementReferences,
+        })
+    }
+}
+
+fn validate_settlement_targets(acts: &[CandidateAct], history: &[ValidatedAct]) -> Result<(), ValidationError> {
+    let bodies: BTreeMap<_, _> = history
+        .iter()
+        .map(|act| (&act.id, &act.body))
+        .chain(acts.iter().map(|act| (&act.id, &act.body)))
+        .collect();
+    let minted: BTreeSet<_> = history
+        .iter()
+        .filter(|act| {
+            act.legs
+                .iter()
+                .any(|leg| mints(&act.id, act.body.layout, leg.id.role, &leg.target))
+        })
+        .map(|act| &act.id)
+        .chain(
+            acts.iter()
+                .filter(|act| {
+                    act.legs
+                        .iter()
+                        .any(|leg| mints(&act.id, act.body.layout, leg.id.role, &leg.target))
+                })
+                .map(|act| &act.id),
+        )
+        .collect();
+    for act in acts {
+        let Some(references) = &act.body.settlement else {
+            continue;
+        };
+        let (SettlementReferences::Accept { settles } | SettlementReferences::Ratify { settles, .. }) = references;
+        for parent in act.body.causal_parents() {
+            if !bodies.contains_key(parent) {
+                // Explicit-only parents retain their established typed parent refusal.
+                if parent == settles || matches!(references, SettlementReferences::Ratify { accepts, .. } if parent == accepts) {
+                    return Err(ValidationError::UnresolvedReference(PublicReference::Act(parent.clone())));
+                }
+            }
+        }
+        let matching = match references {
+            SettlementReferences::Accept { .. } => true,
+            SettlementReferences::Ratify { accepts, .. } => {
+                matches!(bodies.get(accepts).and_then(|body| body.settlement.as_ref()),
+                Some(SettlementReferences::Accept { settles: bid }) if bid == settles)
+            }
+        };
+        if !minted.contains(settles) || !matching {
+            return Err(ValidationError::InvalidRepresentation {
+                act: act.id.clone(),
+                cause: InvalidCause::SettlementReferences,
+            });
+        }
+    }
+    Ok(())
 }
 
 fn local_references(acts: &[CandidateAct], history: &ValidatedHistory) -> Result<BTreeSet<PublicReference>, ValidationError> {
@@ -773,6 +886,7 @@ fn validate_act(
         return Err(invalid(InvalidCause::EmptyAuthentication));
     }
     validate_license(act)?;
+    validate_settlement_shape(act)?;
     let mut fields = BTreeSet::new();
     for (name, quantity) in &act.body.quantities {
         if name.is_empty() {
@@ -1067,8 +1181,8 @@ fn check_times(
                 .unwrap_or(0);
             let predecessor_max = act
                 .body
-                .asserted_parents
-                .iter()
+                .causal_parents()
+                .into_iter()
                 .chain(dependencies)
                 .filter_map(|id| available.get(id))
                 .map(|(_, time)| *time)
@@ -1161,7 +1275,7 @@ fn validate_parents_with(
     if parents.windows(2).any(|pair| pair[0] >= pair[1]) {
         return Err(error(None, ParentCause::NonCanonical));
     }
-    for parent in parents {
+    for parent in act.body.causal_parents() {
         if parent == &act.id {
             return Err(error(Some(parent), ParentCause::SelfParent));
         }
@@ -1221,6 +1335,7 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
     for act in acts {
         validate_act(act, &references, &BTreeSet::new())?;
     }
+    validate_settlement_targets(acts, &[])?;
     let available: BTreeMap<_, _> = acts.iter().map(|act| (&act.id, order(act))).collect();
     let mut ordered: Vec<_> = acts.iter().collect();
     ordered.sort_by_key(|act| (order(act).0, &act.id));
@@ -1359,7 +1474,7 @@ fn assemble(records: &ValidatedRecords, boundary: Position) -> Result<BoundaryIn
     for root in &roots {
         count();
         let mut members = BTreeSet::from([&root.id]);
-        for parent in &root.body.asserted_parents {
+        for parent in root.body.causal_parents() {
             count();
             if let Some(ancestors) = visited.get(parent) {
                 for ancestor in ancestors {

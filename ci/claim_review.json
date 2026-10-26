@@ -2914,6 +2914,38 @@
       "review": "The five proposals cover a shared in-epoch paired parent, a transitive chain and a history-only parent. Exact closure lists, whole-act union equality and reverse input order distinguish causal closure from placement dependencies."
     },
     {
+      "operation": "pn-records::public::settlement::settlement_closures",
+      "path": "packages/records/tests/public/settlement.rs",
+      "claim": "RECORDS::claim:acts:settlement-references-join-distinct-causal-parents",
+      "before": "",
+      "after": "Claim: Typed settlement metadata contributes distinct Bid and Accept parents to principal closures without a repeated asserted declaration; explicit repetition, input order and payload removal preserve the same parent set and closure work, while fixed history stays outside membership.",
+      "review": "Scoped records witnesses establish typed settlement resolution and a distinct causal-parent union for closure, candidate placement and retained-time checks. Complete graph formation and authentication of the targets remain separate obligations; neither ordering question or title recognition is discharged."
+    },
+    {
+      "operation": "pn-records::public::settlement::settlement_order",
+      "path": "packages/records/tests/public/settlement.rs",
+      "claim": "RECORDS::claim:acts:settlement-parents-obey-candidate-order",
+      "before": "",
+      "after": "Claim: Candidate admission orders settlement parents before their children within a batch and across epoch-qualified history cuts, without requiring an additional asserted-parent declaration; reversed Bid/Accept and Accept/Ratify placement refuses.",
+      "review": "Scoped records witnesses establish typed settlement resolution and a distinct causal-parent union for closure, candidate placement and retained-time checks. Complete graph formation and authentication of the targets remain separate obligations; neither ordering question or title recognition is discharged."
+    },
+    {
+      "operation": "pn-records::public::settlement::settlement_targets",
+      "path": "packages/records/tests/public/settlement.rs",
+      "claim": "RECORDS::claim:acts:settlement-targets-resolve-by-family-and-bid",
+      "before": "",
+      "after": "Claim: Settlement metadata is required only in its matching Accept or Ratify variant, resolves an Offer-minting Bid and the exact Accept naming that Bid, and refuses missing, mistyped, mismatched or misplaced metadata independently of graph formation.",
+      "review": "Scoped records witnesses establish typed settlement resolution and a distinct causal-parent union for closure, candidate placement and retained-time checks. Complete graph formation and authentication of the targets remain separate obligations; neither ordering question or title recognition is discharged."
+    },
+    {
+      "operation": "pn-records::public::settlement::settlement_time",
+      "path": "packages/records/tests/public/settlement.rs",
+      "claim": "RECORDS::claim:acts:settlement-parents-enter-retained-time-checks",
+      "before": "",
+      "after": "Claim: Attached-time checking reads settlement parents even on disjoint endpoints, retains a mismatching published stamp unchanged, and reads the same parent relation after explicit repetition without deriving a replacement time.",
+      "review": "Scoped records witnesses establish typed settlement resolution and a distinct causal-parent union for closure, candidate placement and retained-time checks. Complete graph formation and authentication of the targets remain separate obligations; neither ordering question or title recognition is discharged."
+    },
+    {
       "operation": "pn-records::tests::deployment_announcement_guard",
       "path": "packages/records/src/lib.rs",
       "claim": "RECORDS::claim:burn:binding-defends-genesis-announcement",

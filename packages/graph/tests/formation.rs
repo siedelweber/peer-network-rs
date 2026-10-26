@@ -43,6 +43,7 @@ fn candidate(family: &str, sequence: u64) -> CandidateAct {
     CandidateAct {
         id: id.clone(),
         body: StructuralBody {
+            settlement: None,
             license: None,
             asserted_parents: vec![],
             layout: Layout::Binary,

@@ -79,7 +79,7 @@
 | pn-graph | 7 | 7 | 0 | 0 | 33 |
 | pn-host | 40 | 22 | 18 | 0 | 13 |
 | pn-interchange | 153 | 118 | 34 | 1 | 89 |
-| pn-records | 102 | 38 | 64 | 0 | 81 |
+| pn-records | 103 | 38 | 65 | 0 | 82 |
 | pn-wallet | 23 | 6 | 17 | 0 | 20 |
 
 

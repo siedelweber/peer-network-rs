@@ -6516,6 +6516,24 @@
         "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
         "class_decision": "public-records"
       }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "StructuralBody::causal_parents",
+      "owner": "RECORDS",
+      "signature": "fn causal_parents (& self) -> BTreeSet < & ActId >",
+      "claim": "ROOT::sig:design:records",
+      "mode": "exception",
+      "shape": "shape-records",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: This pure structural projection inherits its caller's records operation and performs no validation or external work.",
+        "witness": "ROOT::claim:discipline:records-replay-retains-observed-noncompliance",
+        "boundary": "pn-records::packages/records/src/lib.rs::validate_history",
+        "class_decision": "public-records"
+      }
     }
   ],
   "metrics": [
@@ -12566,6 +12584,17 @@
         "exposure_consumers": "records-exposure_consumers"
       },
       "item_premise": "Pure matching of public constructors and the existing addr/prof/name namespaces returns only a class, never a validation or anchoring verdict. It has no mutation, secret input or accounting effect."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::StructuralBody::causal_parents",
+      "body": "{ let mut parents : BTreeSet < _ > = self . asserted_parents . iter () . collect () ; match & self . settlement { Some (SettlementReferences :: Accept { settles }) => { parents . insert (settles) ; } Some (SettlementReferences :: Ratify { settles , accepts }) => { parents . insert (settles) ; parents . insert (accepts) ; } None => { } } parents }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "The pure distinct-set projection retains public asserted and typed settlement identities without validation, mutation or an additional act-level invocation. Validation and assembly callers retain their existing operation accounting."
     }
   ],
   "generators": [
@@ -15259,6 +15288,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Structural derives retain complete Rescind parameters and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
+    },
+    {
+      "item": "SettlementReferences",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Structural clone, equality and Debug retain public settlement act identities. No serialization, digest, authentication or graph formation verdict is generated."
     }
   ],
   "reviewed_types": [
@@ -16709,10 +16747,16 @@
       "syntax": "# [doc = \" Attribution and provenance degrees fixed on a Content genesis record.\"] # [doc = \" These structural values are neither references nor removable payload.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct LicenseQualifiers { # [doc = \" Attribution degree a.\"] pub attribution : LicenseDegree , # [doc = \" Provenance degree o.\"] pub provenance : LicenseDegree , }"
     },
     {
+      "item": "SettlementReferences",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Act-owned settlement metadata, never an endpoint or removable projection.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum SettlementReferences { # [doc = \" Accept names the Bid that opened the negotiated Offer.\"] Accept { settles : ActId } , # [doc = \" Ratify names that Bid and the exact Accept confirming it.\"] Ratify { settles : ActId , accepts : ActId } , }"
+    },
+    {
       "item": "StructuralBody",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Structural content retained unchanged by local validation.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StructuralBody { # [doc = \" Required only on self-minting Publish; retained across payload removal.\"] pub license : Option < LicenseQualifiers > , # [doc = \" Non-removable asserted parents, sorted by derived `ActId` order.\"] pub asserted_parents : Vec < ActId > , # [doc = \" Required role set; endpoint and family semantics are later contracts.\"] pub layout : Layout , # [doc = \" Named exact quantities; duplicate field names are ambiguous and refused.\"] pub quantities : Vec < (String , Quantity) > , }"
+      "syntax": "# [doc = \" Structural content retained unchanged by local validation.\"] # [doc = \" (´def:acts:body´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StructuralBody { # [doc = \" Required on Accept and Ratify only; retained across projection removal.\"] pub settlement : Option < SettlementReferences > , # [doc = \" Required only on self-minting Publish; retained across payload removal.\"] pub license : Option < LicenseQualifiers > , # [doc = \" Non-removable asserted parents, sorted by derived `ActId` order.\"] pub asserted_parents : Vec < ActId > , # [doc = \" Required role set; endpoint and family semantics are later contracts.\"] pub layout : Layout , # [doc = \" Named exact quantities; duplicate field names are ambiguous and refused.\"] pub quantities : Vec < (String , Quantity) > , }"
     },
     {
       "item": "CandidateAct",
@@ -16778,7 +16822,7 @@
       "item": "InvalidCause",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Finite local representation causes, suitable for exhaustive matching.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum InvalidCause { # [doc = \" The identity's author is empty.\"] # [error (\"empty author\")] EmptyAuthor , # [doc = \" The identity's family is empty.\"] # [error (\"empty family\")] EmptyFamily , # [doc = \" Authentication evidence is absent; nonempty evidence is not authenticated here.\"] # [error (\"empty authentication evidence\")] EmptyAuthentication , # [doc = \" A quantity field has no name.\"] # [error (\"empty quantity name\")] EmptyQuantityName , # [doc = \" Two quantity fields claim one name.\"] # [error (\"duplicate quantity name\")] DuplicateQuantityName , # [doc = \" A quantity has no unit.\"] # [error (\"empty quantity unit\")] EmptyUnit , # [doc = \" A leg names another act, including an inconsistent author or family.\"] # [error (\"wrong projection parent\")] ProjectionParent , # [doc = \" A role is outside the structural layout.\"] # [error (\"projection role outside layout\")] ProjectionRole , # [doc = \" A reference contains an empty structural component.\"] # [error (\"empty reference component\")] ReferenceComponent , # [doc = \" Missing, misplaced or out-of-range Content genesis pair, or obsolete reference encoding.\"] # [error (\"invalid Content genesis license pair\")] LicenseQualifiers , # [doc = \" An untrusted leg attempts to own a removal fact.\"] # [error (\"removal fact on structural leg\")] CoLegRemoval , # [doc = \" An act's content or dependency tombstone does not follow acceptance.\"] # [error (\"tombstone at or before acceptance\")] TombstonePosition , }"
+      "syntax": "# [doc = \" Finite local representation causes, suitable for exhaustive matching.\"] # [doc = \" (´def:acts:validation´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)] pub enum InvalidCause { # [doc = \" The identity's author is empty.\"] # [error (\"empty author\")] EmptyAuthor , # [doc = \" The identity's family is empty.\"] # [error (\"empty family\")] EmptyFamily , # [doc = \" Authentication evidence is absent; nonempty evidence is not authenticated here.\"] # [error (\"empty authentication evidence\")] EmptyAuthentication , # [doc = \" A quantity field has no name.\"] # [error (\"empty quantity name\")] EmptyQuantityName , # [doc = \" Two quantity fields claim one name.\"] # [error (\"duplicate quantity name\")] DuplicateQuantityName , # [doc = \" A quantity has no unit.\"] # [error (\"empty quantity unit\")] EmptyUnit , # [doc = \" A leg names another act, including an inconsistent author or family.\"] # [error (\"wrong projection parent\")] ProjectionParent , # [doc = \" A role is outside the structural layout.\"] # [error (\"projection role outside layout\")] ProjectionRole , # [doc = \" A reference contains an empty structural component.\"] # [error (\"empty reference component\")] ReferenceComponent , # [doc = \" Missing, misplaced or out-of-range Content genesis pair, or obsolete reference encoding.\"] # [error (\"invalid Content genesis license pair\")] LicenseQualifiers , # [doc = \" Missing, misplaced, mistyped or inconsistent settlement metadata.\"] # [error (\"invalid settlement references\")] SettlementReferences , # [doc = \" An untrusted leg attempts to own a removal fact.\"] # [error (\"removal fact on structural leg\")] CoLegRemoval , # [doc = \" An act's content or dependency tombstone does not follow acceptance.\"] # [error (\"tombstone at or before acceptance\")] TombstonePosition , }"
     },
     {
       "item": "ParentCause",

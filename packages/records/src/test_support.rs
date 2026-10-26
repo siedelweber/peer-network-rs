@@ -57,6 +57,7 @@ pub fn generate(words: &[u64]) -> Scenario {
         acts.push(CandidateAct {
             id: id.clone(),
             body: StructuralBody {
+                settlement: None,
                 license: None,
                 asserted_parents: parents,
                 layout: if paired { Layout::Paired } else { Layout::Binary },
