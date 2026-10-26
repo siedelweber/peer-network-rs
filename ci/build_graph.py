@@ -192,18 +192,38 @@ def check(root, graph_path, report_path):
     return status
 
 
+def prepare(meson, build, root):
+    """Bind reused configuration to the answering Meson once per gate."""
+    result = run([meson, '--version'], capture_output=True, text=True)
+    print(result.stdout, end='')
+    print(result.stderr, end='', file=sys.stderr)
+    if result.returncode:
+        return result.returncode
+    version = result.stdout.strip()
+    if not version or len(version.splitlines()) != 1:
+        raise ValueError('Meson returned no single version')
+    info = build/'meson-info/meson-info.json'
+    configured = json.loads(info.read_text())['meson_version']['full'] if info.exists() else None
+    exists = (build/'build.ninja').exists()
+    action = 'setup' if not exists else ('reuse' if configured == version else 'wipe-setup')
+    print(f'BUILD-MESON version={version} configured={configured} action={action}', flush=True)
+    if action != 'reuse':
+        command = [meson, 'setup', *(['--wipe'] if exists else []), str(build), str(root)]
+        if run(command).returncode:
+            return 1
+        if json.loads(info.read_text())['meson_version']['full'] != version:
+            raise ValueError('configured Meson version differs from answering binary')
+    return 0
+
+
 def gate():
     meson = os.environ.get('PN_MESON_BIN', '')
     if not meson:
         raise ValueError('PN_MESON_BIN must name the provisioned Meson executable')
     root = Path.cwd()
     build = root/'.lane/build-graph'
-    for command in ([meson, '--version'], ['ninja', '--version']):
-        if run(command).returncode:
-            return 1
-    if not (build/'build.ninja').exists():
-        if run([meson, 'setup', str(build), str(root)]).returncode:
-            return 1
+    if run(['ninja', '--version']).returncode or prepare(meson, build, root):
+        return 1
     # Ninja owns Meson's regeneration edge as well as always-run targets.
     # Avoid loading Meson's full introspection graph for each invocation.
     return run(['ninja', '-C', str(build), 'tracked-census.json']).returncode

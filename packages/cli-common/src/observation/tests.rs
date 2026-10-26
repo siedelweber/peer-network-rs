@@ -1125,6 +1125,18 @@ fn fixture() -> (Observation, Arc<ManualClock>, Capture) {
 }
 fn records(observation: &Observation, capture: &Capture) -> Vec<Value> {
     observation.flush();
+    captured_records(capture)
+}
+fn drained_records(observation: &Observation, capture: &Capture) -> Vec<Value> {
+    // Inspect only after the delivery thread acknowledges the requested drain.
+    // The production flush deadline is not evidence that this buffer is ready.
+    let (done, drained) = mpsc::sync_channel(1);
+    observation.flush_sender.send(done).unwrap();
+    observation.sender.send(Message::Wake).unwrap();
+    drained.recv().unwrap();
+    captured_records(capture)
+}
+fn captured_records(capture: &Capture) -> Vec<Value> {
     capture
         .0
         .lock()
@@ -1154,7 +1166,7 @@ fn inclusive_metering() {
     parent.resources(2, Accuracy::Exact, 20, Accuracy::Exact);
     clock.0.store(500, Ordering::Relaxed);
     parent.finish(Outcome::Success, json!("done"));
-    let rows = records(&observation, &capture);
+    let rows = drained_records(&observation, &capture);
     let completed: Vec<_> = rows.iter().filter(|r| r["event_kind"] == "completion").collect();
     assert_eq!(completed[0]["detail"]["duration_seconds"], 0.25);
     assert_eq!(completed[1]["detail"]["duration_seconds"], 0.5);
@@ -1172,7 +1184,7 @@ fn inclusive_metering() {
     overflow.work_bytes(u64::MAX);
     overflow.work_bytes(1);
     overflow.finish(Outcome::Success, Value::Null);
-    let rows = records(&observation, &capture);
+    let rows = drained_records(&observation, &capture);
     let detail = &rows.last().unwrap()["detail"];
     assert!(detail["work"]["value"].is_null());
     assert_eq!(detail["work"]["accuracy"], "unavailable; counter overflow");
@@ -1181,7 +1193,7 @@ fn inclusive_metering() {
     missing.resources(9, Accuracy::Exact, 12, Accuracy::Estimated);
     missing.resources(0, Accuracy::Unavailable, 15, Accuracy::Exact);
     missing.finish(Outcome::Success, Value::Null);
-    let rows = records(&observation, &capture);
+    let rows = drained_records(&observation, &capture);
     let resources = &rows.last().unwrap()["detail"]["resources"];
     assert!(resources["current"]["value"].is_null());
     assert_eq!(resources["current"]["accuracy"], "unavailable");
@@ -1301,7 +1313,7 @@ fn secret_representations() {
     let (observation, _, capture) = fixture();
     let subscriber = tracing_subscriber::registry().with(AccountingLayer(observation.clone(), None));
     tracing::subscriber::with_default(subscriber, || tracing::error!(error = ?error, "nested private field"));
-    let emitted = serde_json::to_string(&records(&observation, &capture)).unwrap();
+    let emitted = serde_json::to_string(&drained_records(&observation, &capture)).unwrap();
     assert!(!emitted.contains("private-sentinel"));
     assert!(emitted.contains("Authentication"));
     assert!(emitted.contains("[REDACTED]"));

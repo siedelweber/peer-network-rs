@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 from unittest.mock import patch
 
-from build_graph import gate, incidence, run
+from build_graph import gate, incidence, run, prepare
 
 
 def exercise(case):
@@ -64,6 +64,17 @@ def exercise(case):
         case.assertEqual(command(['git', 'init', '-q']).returncode, 0)
         case.assertEqual(command(['git', 'add', '-A']).returncode, 0)
         case.assertEqual(command([meson, 'setup', str(build), str(root)]).returncode, 0)
+        info = build/'meson-info/meson-info.json'
+        original_info = json.loads(info.read_text())
+        stamp = info.stat().st_mtime_ns
+        case.assertEqual(prepare(meson, build, root), 0)
+        case.assertEqual(info.stat().st_mtime_ns, stamp)
+        stale_info = copy.deepcopy(original_info)
+        stale_info['meson_version']['full'] = '0.0.0-version-witness'
+        info.write_text(json.dumps(stale_info))
+        case.assertEqual(prepare(meson, build, root), 0)
+        case.assertEqual(json.loads(info.read_text())['meson_version'], original_info['meson_version'])
+        print('GRAPH-WITNESS meson-version-match=reused meson-version-mismatch=setup')
 
         def compile_graph():
             return command(['ninja', '-C', str(build), 'tracked-census.json'])

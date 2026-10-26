@@ -222,7 +222,7 @@ class Conformance(unittest.TestCase):
         self.assertTrue(all('root/src/lib.rs' in json.dumps(f) for f in row['findings']))
 
     def test_build_graph_census(self):
-        """Claim: The Meson census and incidence checks refuse unaccounted, stale, duplicate, unconnected or excluded tracked inputs and incomplete step reports, including tracked additions without reconfiguration, while explicitly declared vendor and generated files pass.
+        """Claim: The Meson census and incidence checks refuse unaccounted, stale, duplicate, unconnected or excluded tracked inputs and incomplete step reports, including tracked additions without reconfiguration, while explicitly declared vendor and generated files pass; a matching configuring Meson version is reused and a mismatched version requires fresh setup.
         ´claim:discipline:build-graph-census-accounts-for-tracked-inputs´
         ´test:integration:test-build-graph-census´
         """

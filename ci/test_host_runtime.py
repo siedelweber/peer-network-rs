@@ -87,10 +87,10 @@ def traced_capture(test, command, env, level, validate, attempts=3, prefix='stor
             result=subprocess.run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=60,check=False)
         wall=time.monotonic()-started
         stderr=sink.read_bytes()
+        witness(command,result.returncode,wall,stderr)
         test.assertEqual(result.returncode,0,stderr.decode())
         rows=[expanded(json.loads(line)) for line in stderr.splitlines()]
         status=next(row for row in rows if row.get('kind')=='observation_status')
-        witness(command,result.returncode,wall,stderr)
         validate(result,rows)
         complete,accounting=capture_complete(status)
         if complete:
@@ -136,7 +136,7 @@ def capture_regressions(test, prefix):
         def path(value):
             value=path_type(value)
             return root/value if value.parts and value.parts[0]=='.lane' else value
-        for fault in ('role','password','binary','result','recovery'):
+        for fault in ('role','password','binary','result','exit','recovery'):
             calls=[];trace_attempts=[];findings=root/'findings.jsonl';findings.unlink(missing_ok=True)
             def child(command, **kwargs):
                 env=kwargs['env'];level=env['PN_OBSERVE_LEVEL']
@@ -158,16 +158,17 @@ def capture_regressions(test, prefix):
                 output=public.replace(b'731',b'732') if incomplete and fault=='result' else public
                 calls.append((level,control))
                 if not control:kwargs['stderr'].write(stderr)
-                return subprocess.CompletedProcess(command,0,stdout=output,stderr=stderr)
+                return subprocess.CompletedProcess(command,7 if incomplete and fault=='exit' else 0,stdout=output,stderr=stderr)
             # Keep real loss reporting, but retain synthetic findings only in this fixture.
             def loss_report(record, output):return report_loss(record,findings,warnings=io.StringIO())
-            with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(io.StringIO()):
+            transcript=io.StringIO()
+            with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(transcript):
                 operation=getattr(HostRuntime(method),method)
                 if fault=='recovery':
                     operation()
                     test.assertEqual(len(trace_attempts),2)
                 else:
-                    message='public result differs' if fault=='result' else ('binary private reachability' if fault=='binary' else 'private fixture content')
+                    message='7 != 0' if fault=='exit' else ('public result differs' if fault=='result' else ('binary private reachability' if fault=='binary' else 'private fixture content'))
                     with test.assertRaisesRegex(AssertionError,message):operation()
                     test.assertEqual(len(trace_attempts),1,'a clean retake must not erase a delivered violation')
                 loss.assert_called_once()
@@ -176,7 +177,12 @@ def capture_regressions(test, prefix):
             test.assertEqual(recorded[0]['classification'],'observation-completeness')
             test.assertEqual(recorded[0]['verdict_effect'],'none')
             test.assertEqual(recorded[0]['lost_records'],1)
-    print(f'CAPTURE-REGRESSIONS surface={prefix} whole-test=True private=refused binary=refused result=refused recovered-loss=finding')
+            test.assertEqual(recorded[0]['outcome'],'exit:7' if fault=='exit' else 'exit:0')
+            if fault=='exit':
+                lines=[line for line in transcript.getvalue().splitlines() if line.startswith('OBSERVATION-WITNESS ') and 'status=7 ' in line]
+                test.assertEqual(len(lines),1)
+                test.assertRegex(lines[0],r'delivered=\d+ lost=1 ')
+    print(f'CAPTURE-REGRESSIONS surface={prefix} whole-test=True private=refused binary=refused result=refused recovered-loss=finding failed-child=exit:7-finding-and-refusal')
 
 
 class HostRuntime(unittest.TestCase):
@@ -239,7 +245,7 @@ class HostRuntime(unittest.TestCase):
         self.assertIn(b'forbidden_inline_sql',result.stderr)
 
     def test_storage_statements(self):
-        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery; acquisition takes at most three attempts and default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.
+        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal; acquisition takes at most three attempts and default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.
         ´claim:discipline:storage-results-preserve-the-secret-boundary´
         ´test:integration:test-storage-statements´
         """
@@ -358,7 +364,7 @@ class HostRuntime(unittest.TestCase):
             manifest.write_bytes(original)
 
     def test_public_transport(self):
-        """Claim: After a successful-query drain barrier, complete default and trace captures against the real host-secured service retain identical public results and host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials; the child writes observations to a file, every attempt checks private content and completed public bytes before any retake, counted trace loss retains its completeness finding after recovery, and acquisition takes at most three attempts.
+        """Claim: After a successful-query drain barrier, complete default and trace captures against the real host-secured service retain identical public results and host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials; the child writes observations to a file, every attempt checks private content and completed public bytes before any retake, counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal, and acquisition takes at most three attempts.
         ´claim:discipline:host-transport-observation-retains-the-secret-boundary´
         ´test:integration:test-public-transport´
         """
