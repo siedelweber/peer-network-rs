@@ -199,6 +199,7 @@ pub(super) fn project(
     };
     if act.body().layout != Layout::Binary
         || !act.body().quantities.is_empty()
+        || !act.protocol_references().is_empty()
         || leg.id().role != Role::Binary
         || leg.source() != &named("addr")
         || leg.target() != &named("prof")

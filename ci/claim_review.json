@@ -1330,6 +1330,14 @@
       "review": "Bid witnesses cover complete Item-to-Offer incidence, fresh terminal identity including attempted reuse of an existing Offer, independent signed/nonnegative coordinate grids and zero values, shared A/T metadata, whole-history authorization and typed revalidation. Observation compares complete outputs and eleven calls with nine successes and two refusals across disabled, default and trace. No settlement, title, geometry or ordering verdict follows."
     },
     {
+      "operation": "pn-graph::formation::formed_reference_conformance",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:formed-families-separate-protocol-resolution-from-incidence",
+      "before": "",
+      "after": "Claim: Across the twelve formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.",
+      "review": "Scoped shared tests distinguish unresolved protocol targets from resolved but forbidden family fields across twelve families, and compare six typed genesis nodes with records lookup, dangling incidence and authorized removal. Complete mandatory settlement reference conformance, unimplemented families, geometry and title remain held."
+    },
+    {
       "operation": "pn-graph::formation::join_request_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:join-request-requires-complete-chat-coordinates",
@@ -1360,6 +1368,14 @@
       "before": "",
       "after": "Claim: Leave joins the eleven earlier families through shared deterministic reconstruction, retaining parallel binary edges and unrelated indices. Typed revalidation after decoding rejects altered identity metadata or missing acts; approval and removal failures refuse the whole history without publishing a partial graph.",
       "review": "Leave witnesses cover unconditional typed Chat incidence with no authored parameters, whole-result twelve-family reconstruction, deterministic parallel edges and structural revalidation. Observation compares fifteen operations with thirteen successes and two refusals across disabled, default and trace. No membership fold, geometry, title or new ordering verdict is established."
+    },
+    {
+      "operation": "pn-graph::formation::minted_node_conformance",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:minted-nodes-agree-with-records-genesis-resolution",
+      "before": "",
+      "after": "Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects that term identically with or without its genesis present, without asserting an anchor; permitted payload removal preserves the genesis lookup and the complete graph.",
+      "review": "Scoped shared tests distinguish unresolved protocol targets from resolved but forbidden family fields across twelve families, and compare six typed genesis nodes with records lookup, dangling incidence and authorized removal. Complete mandatory settlement reference conformance, unimplemented families, geometry and title remain held."
     },
     {
       "operation": "pn-graph::formation::mixed_reconstruction",
@@ -1541,9 +1557,9 @@
       "operation": "pn-graph::registration::complete_projection",
       "path": "packages/graph/tests/registration.rs",
       "claim": "GRAPH::claim:formation:registration-projection-requires-complete-approved-input",
-      "before": "",
-      "after": "Claim: Registration-only projection requires the complete binary act, the author's addr-to-prof pair, fixed-parameter carriage and declared verifier approval; another family, wrong incidence, changed approved content or unauthorized removal cannot publish a projection, and records refuse a missing leg first. Fixture authorization does not establish cryptographic soundness or title.",
-      "review": "Read the exact Registration projection, reconstruction, cache and process assertions. Fixture verifier decisions establish the explicit public approval/removal boundary, not cryptographic soundness. These tests retain all parallel edges and compare typed live indices and weights; no serde bytes establish binding equality. Complete outcomes and accounting agree across observation modes. Other families, epoch admission, geometry and title remain held."
+      "before": "Claim: Registration-only projection requires the complete binary act, the author's addr-to-prof pair, fixed-parameter carriage and declared verifier approval; another family, wrong incidence, changed approved content or unauthorized removal cannot publish a projection, and records refuse a missing leg first. Fixture authorization does not establish cryptographic soundness or title.",
+      "after": "Claim: Registration-only projection requires the complete binary act, the author's addr-to-prof pair, fixed-parameter carriage and declared verifier approval; another family, wrong incidence, undefined protocol references, changed approved content or unauthorized removal cannot publish a projection, and records refuse a missing leg first. Protocol references refuse at incidence before approval; changed authentication evidence remains an approval refusal. Fixture authorization does not establish cryptographic soundness or title.",
+      "review": "Registration has no protocol-reference slot. The scoped projection witness now requires incidence refusal before approval for an extra protocol field, while its independent changed-authentication case still requires Unapproved. The existing completeness, authorization and removal obligations are retained."
     },
     {
       "operation": "pn-graph::registration::reconstruction",

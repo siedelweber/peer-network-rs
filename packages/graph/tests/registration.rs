@@ -94,7 +94,7 @@ fn verifier(acts: &[CandidateAct]) -> FixtureVerifier {
     }
 }
 
-/// Claim: Registration-only projection requires the complete binary act, the author's addr-to-prof pair, fixed-parameter carriage and declared verifier approval; another family, wrong incidence, changed approved content or unauthorized removal cannot publish a projection, and records refuse a missing leg first. Fixture authorization does not establish cryptographic soundness or title.
+/// Claim: Registration-only projection requires the complete binary act, the author's addr-to-prof pair, fixed-parameter carriage and declared verifier approval; another family, wrong incidence, undefined protocol references, changed approved content or unauthorized removal cannot publish a projection, and records refuse a missing leg first. Protocol references refuse at incidence before approval; changed authentication evidence remains an approval refusal. Fixture authorization does not establish cryptographic soundness or title.
 /// ´claim:formation:registration-projection-requires-complete-approved-input´
 /// ´test:integration:complete-projection´
 #[test]
@@ -120,7 +120,7 @@ fn complete_projection() {
     let view = validate_history(&[changed], &names()).unwrap();
     assert_eq!(
         project_complete_registration(&view.acts()[0], &auth),
-        Err(RegistrationError::Unapproved)
+        Err(RegistrationError::Incidence)
     );
     let mut changed = original.clone();
     changed.body.quantities.push((

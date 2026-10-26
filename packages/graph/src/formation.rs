@@ -528,6 +528,7 @@ fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Co
             })
         || namespace != "name"
         || act.body().quantities.len() != 4
+        || !act.protocol_references().is_empty()
     {
         return Err(RegistrationError::Incidence);
     }

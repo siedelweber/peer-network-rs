@@ -2608,6 +2608,113 @@ fn leaving(sequence: u64, target: PublicReference) -> CandidateAct {
     input
 }
 
+/// Claim: Across the twelve formed families, missing act and edge protocol references refuse at records resolution, while resolved act, edge and supplied-name protocol references refuse at formation because these family blocks define none. Each refusal is typed and whole-history formation publishes no partial graph; endpoint lookup and anchoring are not inferred from this protocol-reference check.
+/// ´claim:formation:formed-families-separate-protocol-resolution-from-incidence´
+/// ´test:integration:formed-reference-conformance´
+#[test]
+fn formed_reference_conformance() {
+    let inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        review(6, named("name", "topic"), 6),
+        sending(7, 5, 7),
+        bidding(8, 4, 8),
+        opinion(9, named("prof", "a")),
+        join_request(10, PublicReference::Minted(inputs_chat())),
+        tagging(11, named("prof", "a")),
+        leaving(12, PublicReference::Minted(inputs_chat())),
+    ];
+    for input in &inputs {
+        let absent = ActId {
+            sequence: 99,
+            ..input.id.clone()
+        };
+        for reference in [
+            PublicReference::Act(absent.clone()),
+            PublicReference::Edge(EdgeId {
+                act: absent,
+                role: input.legs[0].id.role,
+            }),
+        ] {
+            let mut changed = input.clone();
+            changed.protocol_references = vec![reference.clone()];
+            assert_eq!(
+                bundle(&changed),
+                Err(FormationFailure::Records(pn_records::ValidationError::UnresolvedReference(
+                    reference
+                )))
+            );
+        }
+        for reference in [
+            PublicReference::Act(input.id.clone()),
+            PublicReference::Edge(input.legs[0].id.clone()),
+            named("name", "topic"),
+        ] {
+            let mut changed = input.clone();
+            changed.protocol_references = vec![reference];
+            assert_eq!(bundle(&changed), Err(FormationFailure::Graph(RegistrationError::Incidence)));
+            let mut batch = inputs.clone();
+            *batch.iter_mut().find(|act| act.id == input.id).unwrap() = changed;
+            let history = validate_history(&batch, &names()).unwrap();
+            let verifier = Verifier {
+                acts: batch,
+                removals: true,
+            };
+            assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Incidence);
+        }
+    }
+}
+
+/// Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects that term identically with or without its genesis present, without asserting an anchor; permitted payload removal preserves the genesis lookup and the complete graph.
+/// ´claim:formation:minted-nodes-agree-with-records-genesis-resolution´
+/// ´test:integration:minted-node-conformance´
+#[test]
+fn minted_node_conformance() {
+    for mut genesis in [
+        publication(1),
+        ownership(1),
+        participation(1, 1, 1),
+        review(1, named("name", "topic"), 1),
+        sending(1, 99, 1),
+        bidding(1, 99, 1),
+    ] {
+        let reference = PublicReference::Minted(genesis.id.clone());
+        let expected = bundle(&genesis).unwrap().last().unwrap().1.clone();
+        let consumer = opinion(2, reference.clone());
+        assert_eq!(project(&consumer).unwrap().1, expected);
+        let unanchored = validate_history(std::slice::from_ref(&consumer), &[]).unwrap();
+        let records = pn_records::validate_record(&[], &unanchored, &[]).unwrap();
+        assert_eq!(
+            pn_records::resolve_public_reference(&records, &reference),
+            Err(pn_records::ValidationError::UnresolvedReference(reference.clone()))
+        );
+        let inputs = vec![genesis.clone(), consumer.clone()];
+        let history = validate_history(&inputs, &[]).unwrap();
+        let records = pn_records::validate_record(&[], &history, &[]).unwrap();
+        assert_eq!(
+            pn_records::resolve_public_reference(&records, &reference),
+            Ok(pn_records::ReferenceOrigin::History)
+        );
+        let verifier = Verifier {
+            acts: inputs,
+            removals: true,
+        };
+        let graph = reconstruct(&history, &verifier).unwrap();
+        assert_eq!(graph.node_weights().filter(|node| *node == &expected).count(), 1);
+        genesis.projections.content = Removal::Tombstoned((2, 1));
+        let removed = validate_history(&[genesis, consumer], &[]).unwrap();
+        let records = pn_records::validate_record(&[], &removed, &[]).unwrap();
+        assert_eq!(
+            pn_records::resolve_public_reference(&records, &reference),
+            Ok(pn_records::ReferenceOrigin::History)
+        );
+        assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    }
+}
+
 /// Claim: Leave forms an approved author Actor to Chat control edge with no authored parameters, protocol references or license pair. A dangling Chat and an author without participation are admitted; wrong constructors, altered incidence and extra coordinates refuse at formation, while a license pair refuses at records validation. Formation decides no membership or standing effect.
 /// # Panics
 /// Panics only if Leave dispatch returns another family, which correct dispatch cannot arrange.
