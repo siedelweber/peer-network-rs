@@ -93,9 +93,13 @@ def installed_version(root):
     return result.stdout.splitlines()[0]
 
 
+RPC_TIMEOUT = 10
+
+
 def rpc(config, method, params=None, credential=None, refusal=False, detail=False):
-    connection = http.client.HTTPConnection('127.0.0.1', config['port'], timeout=10)
+    connection = http.client.HTTPConnection('127.0.0.1', config['port'], timeout=RPC_TIMEOUT)
     credential = credential if credential is not None else config['producer']
+    started = time.monotonic()
     try:
         connection.request('POST', '/', json.dumps(dict(jsonrpc='2.0', id=1, method=method, params=params or [])), {
             'Authorization': 'Basic ' + base64.b64encode(credential.encode()).decode(),
@@ -115,6 +119,10 @@ def rpc(config, method, params=None, credential=None, refusal=False, detail=Fals
         if 'error' in value:
             raise RuntimeError('Elements harness RPC refused: '+method)
         return value['result']
+    except TimeoutError:
+        # The bound applies to each socket operation, so a timeout names the
+        # public method it stalled and the exchange's elapsed time against it.
+        raise TimeoutError(f'{method} exceeded the {RPC_TIMEOUT} s socket bound after {time.monotonic() - started:.3f} s') from None
     finally:
         connection.close()
 

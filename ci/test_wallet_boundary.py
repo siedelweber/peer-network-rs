@@ -69,7 +69,7 @@ class WalletBoundary(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'build-script field'):
                 check_build_scripts([bad], [package])
     def test_fixture_ports(self):
-        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path.
+        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound.
         ´claim:discipline:wallet-fixture-ports-survive-time-wait´
         ´test:integration:test-fixture-ports´
         """
@@ -139,6 +139,17 @@ class WalletBoundary(unittest.TestCase):
         self.assertEqual(missing.returncode, 1)
         self.assertTrue(missing.stderr.startswith('Elements fixture unavailable: FileNotFoundError: '))
         self.assertIn('/nonexistent/elementsd', missing.stderr)
+        # A stalled producer exchange names its public method and elapsed time against the socket bound.
+        with socket.socket() as silent:
+            silent.bind(('127.0.0.1', 0))
+            silent.listen()
+            bound = wallet_elements.RPC_TIMEOUT
+            wallet_elements.RPC_TIMEOUT = 0.2
+            try:
+                with self.assertRaisesRegex(TimeoutError, r'^getblockcount exceeded the 0\.2 s socket bound after \d+\.\d{3} s$'):
+                    wallet_elements.rpc(dict(port=silent.getsockname()[1], producer='fixture:fixture'), 'getblockcount')
+            finally:
+                wallet_elements.RPC_TIMEOUT = bound
 
     def test_codec_pins(self):
         """Claim: Every registry package of the wallet's normal and build closure carries its reviewed archive checksum in the lockfile, and both built C archives export exactly the reviewed module families, with ECDH, SCHNORRSIG, EXTRAKEYS and ELLSWIFT in secp256k1-sys and SURJECTIONPROOF, GENERATOR, RANGEPROOF, ECDSA_ADAPTOR and WHITELIST in secp256k1-zkp-sys; a changed checksum, a missing module, an unreviewed module or an unknown family refuses.
