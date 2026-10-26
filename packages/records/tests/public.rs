@@ -1,4 +1,6 @@
 mod common;
+#[path = "public/minted.rs"]
+mod minted;
 #[path = "public/numerics.rs"]
 mod numerics;
 #[path = "public/ordering.rs"]

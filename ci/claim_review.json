@@ -2458,6 +2458,22 @@
       "review": "Each of ten mutations is matched to an exact InvalidCause, including the two distinct parent mutations; the test also exercises Error display. It asserts no missing-role outcome."
     },
     {
+      "operation": "pn-records::public::minted::minted_identity",
+      "path": "packages/records/tests/public/minted.rs",
+      "claim": "RECORDS::claim:acts:minted-identity-is-a-distinct-structural-constructor",
+      "before": "",
+      "after": "Claim: The minted constructor is distinct from act, edge and external-name references, ordered after those existing variants; its identity contains only the genesis act identifier. Node constructor classes distinguish grounded, named and minted terms without treating act, edge or foreign namespaces as nodes, and malformed minted identifiers refuse resolution.",
+      "review": "Read the six-family terminal-role table, batch self-mint and history resolution, ordinary-act and absent-genesis refusals, duplicate identity refusal, removal retention and disjoint constructor/order probes. These establish structural reference carriage, not full graph family formation, authentication, canonical bytes or a verdict on the open ordering questions."
+    },
+    {
+      "operation": "pn-records::public::minted::minted_resolution",
+      "path": "packages/records/tests/public/minted.rs",
+      "claim": "RECORDS::claim:acts:minted-references-require-self-minting-genesis",
+      "before": "",
+      "after": "Claim: Minted references resolve from complete self-minting terminal targets in the six genesis families, including their own batch act; missing genesis, ordinary acts, wrong families, wrong layout and externally injected minted names cannot supply a node. Opening removal preserves resolution and duplicate act identity cannot mint again.",
+      "review": "Read the six-family terminal-role table, batch self-mint and history resolution, ordinary-act and absent-genesis refusals, duplicate identity refusal, removal retention and disjoint constructor/order probes. These establish structural reference carriage, not full graph family formation, authentication, canonical bytes or a verdict on the open ordering questions."
+    },
+    {
       "operation": "pn-records::public::missing_co_legs",
       "path": "packages/records/tests/public.rs",
       "claim": "RECORDS::claim:acts:both-co-legs-are-required",

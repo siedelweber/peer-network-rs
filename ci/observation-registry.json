@@ -6498,6 +6498,24 @@
       "claim": "ROOT::alg:design:formation",
       "shape": "shape-graph-affinity",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "PublicReference::identifier_class",
+      "owner": "RECORDS",
+      "signature": "fn identifier_class (& self) -> Option < IdentifierClass >",
+      "claim": "ROOT::sig:design:records",
+      "mode": "exception",
+      "shape": "shape-records",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Pure constructor classification inherits its enclosing records or formation operation; it does not validate, resolve, authenticate or count an act.",
+        "witness": "ROOT::claim:discipline:records-entry-is-observed-without-changing-results",
+        "boundary": "pn-records::packages/records/src/lib.rs::ValidatedRecords::acts",
+        "class_decision": "public-records"
+      }
     }
   ],
   "metrics": [
@@ -10692,14 +10710,14 @@
     },
     {
       "operation": "pn-records::packages/records/src/lib.rs::resolve_public_reference",
-      "body": "{ let result = if ! valid_reference (reference) { Err (ValidationError :: InvalidReference (reference . clone ())) } else if records . history . references . contains (reference) { Ok (ReferenceOrigin :: History) } else if records . acts . iter () . any (| act | match reference { PublicReference :: Act (id) => id == & act . id , PublicReference :: Edge (id) => act . legs . iter () . any (| leg | & leg . id == id) , PublicReference :: Named { .. } => false , }) { Ok (ReferenceOrigin :: Batch) } else { Err (ValidationError :: UnresolvedReference (reference . clone ())) } ; if result . is_ok () { metrics :: counter ! (\"records__root__sig__design__records__resolved_references\") . increment (1) ; } else { refused () ; } result }",
+      "body": "{ let result = if ! valid_reference (reference) { Err (ValidationError :: InvalidReference (reference . clone ())) } else if records . history . references . contains (reference) { Ok (ReferenceOrigin :: History) } else if records . acts . iter () . any (| act | match reference { PublicReference :: Act (id) => id == & act . id , PublicReference :: Edge (id) => act . legs . iter () . any (| leg | & leg . id == id) , PublicReference :: Named { .. } => false , PublicReference :: Minted (id) => { id == & act . id && act . legs . iter () . any (| leg | mints (& act . id , act . body . layout , leg . id . role , & leg . target)) } }) { Ok (ReferenceOrigin :: Batch) } else { Err (ValidationError :: UnresolvedReference (reference . clone ())) } ; if result . is_ok () { metrics :: counter ! (\"records__root__sig__design__records__resolved_references\") . increment (1) ; } else { refused () ; } result }",
       "class_decision": "public-records",
       "assessments": {
         "full_recording": "records-full_recording",
         "secret_flow": "records-secret_flow",
         "exposure_consumers": "records-exposure_consumers"
       },
-      "item_premise": "Resolves act and leg identities derived from whole validated history or the batch; full query and typed origin or refusal are public."
+      "item_premise": "Resolves act and leg identities derived from whole validated history or the batch; full query and typed origin or refusal are public. Minted node queries resolve only a complete self-minting genesis anchor; the public constructor is distinct from act and external-name references."
     },
     {
       "operation": "pn-records::packages/records/src/lib.rs::select_effective_declaration",
@@ -12537,6 +12555,17 @@
         "secret_flow": "graph-affinity-secret_flow",
         "exposure_consumers": "graph-affinity-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::PublicReference::identifier_class",
+      "body": "{ match self { Self :: Named { namespace , .. } if namespace == \"addr\" || namespace == \"prof\" => Some (IdentifierClass :: Grounded) , Self :: Named { namespace , .. } if namespace == \"name\" => Some (IdentifierClass :: Named) , Self :: Minted (_) => Some (IdentifierClass :: Minted) , _ => None , } }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Pure matching of public constructors and the existing addr/prof/name namespaces returns only a class, never a validation or anchoring verdict. It has no mutation, secret input or accounting effect."
     }
   ],
   "generators": [
@@ -14987,6 +15016,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Derives clone, compare and format public typed endpoints, exact bounded coordinate pairs and binary projection metadata. Serde derives carry diagnostic public node and edge weights only; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
+    },
+    {
+      "item": "IdentifierClass",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Cloning, Debug and equality expose only the public node constructor class; no resolution, byte encoding, secret data or accounting is introduced."
     }
   ],
   "reviewed_types": [
@@ -16380,7 +16418,13 @@
       "item": "PublicReference",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Immutable protocol target; no removal or storage-position field exists here.\"] # [doc = \" (´def:acts:references´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum PublicReference { # [doc = \" An act's structural identity.\"] Act (ActId) , # [doc = \" An edge's structural identity.\"] Edge (EdgeId) , # [doc = \" An exact external structural name; resolution is supplied by the caller.\"] Named { # [doc = \" Exact namespace, nonempty.\"] namespace : String , # [doc = \" Exact name, nonempty.\"] name : String , } , }"
+      "syntax": "# [doc = \" Immutable protocol target; no removal or storage-position field exists here.\"] # [doc = \" (´def:acts:references´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum PublicReference { # [doc = \" An act's structural identity.\"] Act (ActId) , # [doc = \" An edge's structural identity.\"] Edge (EdgeId) , # [doc = \" An exact external structural name; resolution is supplied by the caller.\"] Named { # [doc = \" Exact namespace, nonempty.\"] namespace : String , # [doc = \" Exact name, nonempty.\"] name : String , } , # [doc = \" A node minted by the identified genesis act, distinct from that act.\"] Minted (ActId) , }"
+    },
+    {
+      "item": "IdentifierClass",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" The outer constructor class of a recognized structural node identifier.\"] # [doc = \" Act and edge references, and other external namespaces, are not node terms.\"] # [doc = \" (´def:acts:references´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum IdentifierClass { # [doc = \" Actor or Profile over one external address atom.\"] Grounded , # [doc = \" Type over an exact public string.\"] Named , # [doc = \" A node over its genesis act identifier.\"] Minted , }"
     },
     {
       "item": "Layout",

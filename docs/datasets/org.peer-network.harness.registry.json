@@ -3178,6 +3178,8 @@
         "pn-records::public::ordering::epoch_placement",
         "pn-records::public::ordering::attached_times",
         "pn-records::public::ordering::parent_replay",
+        "pn-records::public::minted::minted_resolution",
+        "pn-records::public::minted::minted_identity",
         "pn-records::public::ordering::retained_time_evidence",
         "pn-records::public::whole_history",
         "pn-records::public::overlapping_closures",

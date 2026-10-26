@@ -70,6 +70,37 @@ pub enum PublicReference {
         /// Exact name, nonempty.
         name: String,
     },
+    /// A node minted by the identified genesis act, distinct from that act.
+    Minted(ActId),
+}
+
+/// The outer constructor class of a recognized structural node identifier.
+/// Act and edge references, and other external namespaces, are not node terms.
+/// (´def:acts:references´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum IdentifierClass {
+    /// Actor or Profile over one external address atom.
+    Grounded,
+    /// Type over an exact public string.
+    Named,
+    /// A node over its genesis act identifier.
+    Minted,
+}
+
+impl PublicReference {
+    /// Read the node constructor class without claiming resolution or formation.
+    /// The existing internal addr/prof/name namespaces retain their graph spelling.
+    /// (´def:acts:references´)
+    #[must_use]
+    /// Justified: Pure constructor classification inherits its enclosing records or formation operation; it does not validate, resolve, authenticate or count an act.
+    pub fn identifier_class(&self) -> Option<IdentifierClass> {
+        match self {
+            Self::Named { namespace, .. } if namespace == "addr" || namespace == "prof" => Some(IdentifierClass::Grounded),
+            Self::Named { namespace, .. } if namespace == "name" => Some(IdentifierClass::Named),
+            Self::Minted(_) => Some(IdentifierClass::Minted),
+            _ => None,
+        }
+    }
 }
 
 /// Projection completeness declared by the structural body.
@@ -568,9 +599,28 @@ fn valid_id(id: &ActId) -> bool {
 }
 fn valid_reference(reference: &PublicReference) -> bool {
     match reference {
-        PublicReference::Act(id) => valid_id(id),
+        PublicReference::Act(id) | PublicReference::Minted(id) => valid_id(id),
         PublicReference::Edge(id) => valid_id(&id.act),
         PublicReference::Named { namespace, name } => !namespace.is_empty() && !name.is_empty(),
+    }
+}
+
+fn mints(id: &ActId, layout: Layout, role: Role, target: &PublicReference) -> bool {
+    let terminal = match id.family.as_str() {
+        "Publish" | "Owner" => Some((Layout::Binary, Role::Binary)),
+        "Participant" | "Review" | "Send" | "Bid" => Some((Layout::Paired, Role::T)),
+        _ => None,
+    };
+    terminal == Some((layout, role)) && target == &PublicReference::Minted(id.clone())
+}
+
+fn insert_minted_reference(act: &CandidateAct, references: &mut BTreeSet<PublicReference>) {
+    if act
+        .legs
+        .iter()
+        .any(|leg| mints(&act.id, act.body.layout, leg.id.role, &leg.target))
+    {
+        references.insert(PublicReference::Minted(act.id.clone()));
     }
 }
 
@@ -669,6 +719,7 @@ fn local_references(acts: &[CandidateAct], history: &ValidatedHistory) -> Result
             return Err(ValidationError::DuplicateAct(act.id.clone()));
         }
         references.insert(PublicReference::Act(act.id.clone()));
+        insert_minted_reference(act, &mut references);
         for leg in &act.legs {
             references.insert(PublicReference::Edge(leg.id.clone()));
         }
@@ -728,7 +779,12 @@ fn validate_act(
             if !valid_reference(reference) {
                 return Err(invalid(InvalidCause::ReferenceComponent));
             }
-            if !references.contains(reference) && !history_references.contains(reference) {
+            // A syntactically valid minted endpoint may dangle; resolution
+            // below still requires its anchor for mandatory protocol references.
+            if !matches!(reference, PublicReference::Minted(_))
+                && !references.contains(reference)
+                && !history_references.contains(reference)
+            {
                 return Err(ValidationError::UnresolvedReference(reference.clone()));
             }
         }
@@ -810,6 +866,13 @@ pub fn resolve_public_reference(
         PublicReference::Act(id) => id == &act.id,
         PublicReference::Edge(id) => act.legs.iter().any(|leg| &leg.id == id),
         PublicReference::Named { .. } => false,
+        PublicReference::Minted(id) => {
+            id == &act.id
+                && act
+                    .legs
+                    .iter()
+                    .any(|leg| mints(&act.id, act.body.layout, leg.id.role, &leg.target))
+        }
     }) {
         Ok(ReferenceOrigin::Batch)
     } else {
@@ -1094,6 +1157,7 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
         if !references.insert(PublicReference::Act(act.id.clone())) {
             return Err(ValidationError::DuplicateAct(act.id.clone()));
         }
+        insert_minted_reference(act, &mut references);
         for leg in &act.legs {
             references.insert(PublicReference::Edge(leg.id.clone()));
         }
