@@ -238,7 +238,7 @@ class Conformance(unittest.TestCase):
         delegation(self)
 
     def test_build_graph_slice_assignment(self):
-        """Claim: Every live gate step has exactly one delegation slice, and the record roster agrees with that set, so a missing, repeated, unknown or invalid assignment cannot hide until final migration.
+        """Claim: Every live gate step has exactly one delegation slice and the record roster agrees with that set; each record group stays in one slice unless its exceptional rows explicitly name the split, so missing, repeated, unknown, invalid or unexplained assignments refuse before final migration.
         ´claim:discipline:build-graph-slices-cover-roster´
         ´test:integration:test-build-graph-slice-assignment´
         """
@@ -253,10 +253,17 @@ class Conformance(unittest.TestCase):
         def check(assignments):
             self.assertEqual(Counter(row['name'] for row in assignments), Counter(steps))
             self.assertTrue(all(type(row['slice']) is int and row['slice'] in {2, 3, 4, 5} and row['reason'] for row in assignments))
+            by_name = {row['name']: row for row in assignments}
+            for group in record['step_groups']:
+                members = [by_name[name] for name in group['steps']]
+                ordinary = [row for row in members if not row['reason'].startswith('Split from '+group['name']+':')]
+                self.assertLessEqual(len({row['slice'] for row in ordinary}), 1, group['name'])
 
         check(rows)
         for fault in (rows[1:], rows+[rows[0]], rows+[dict(name='unknown', slice=2, reason='Unknown step')],
-                      [rows[0] | {'slice': 1}]+rows[1:]):
+                      [rows[0] | {'slice': 1}]+rows[1:],
+                      [row | {'reason': 'Generic checker reason'} if row['name'] == 'observation-syntax' else row for row in rows],
+                      [row | {'slice': 3} if row['name'] == 'toolchain' else row for row in rows]):
             with self.assertRaises(AssertionError):
                 check(fault)
         print(f'BUILD-SLICES steps={len(rows)} slice2={sum(r["slice"] == 2 for r in rows)} slice3={sum(r["slice"] == 3 for r in rows)} slice4={sum(r["slice"] == 4 for r in rows)} slice5={sum(r["slice"] == 5 for r in rows)}')

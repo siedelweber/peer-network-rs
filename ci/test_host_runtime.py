@@ -73,11 +73,11 @@ def capture_complete(status):
     return status['lost_records']==0 and status['undelivered_records']==0 and status['in_flight_records']==0, accounting
 
 
-def traced_capture(test, command, env, level, attempts=3):
+def traced_capture(test, command, env, level, attempts=3, prefix='storage'):
     """The child writes observations to a file, so its delivery never waits on this reader; a capture that still
     counts loss is retaken, at most three times, and each incomplete attempt prints its accounting."""
     for attempt in range(1,attempts+1):
-        sink=Path(f'.lane/storage-{level}.stderr.jsonl')
+        sink=Path(f'.lane/{prefix}-{level}.stderr.jsonl')
         started=time.monotonic()
         with sink.open('wb') as stream:
             result=subprocess.run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=60,check=False)
@@ -89,7 +89,7 @@ def traced_capture(test, command, env, level, attempts=3):
         complete,accounting=capture_complete(status)
         if complete:
             return result,rows,status,wall
-        print(f'STORAGE-RUNTIME level={level} attempt={attempt} incomplete={accounting} wall_seconds={wall:.3f}')
+        print(f'{prefix.upper()}-RUNTIME level={level} attempt={attempt} incomplete={accounting} wall_seconds={wall:.3f}')
     test.fail(f'no complete {level} capture in {attempts} attempts: {accounting}')
 
 
@@ -271,7 +271,7 @@ class HostRuntime(unittest.TestCase):
             manifest.write_bytes(original)
 
     def test_public_transport(self):
-        """Claim: After a successful-query drain barrier, default and trace runs against the real host-secured service retain identical public results and lossless host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials.
+        """Claim: After a successful-query drain barrier, complete default and trace captures against the real host-secured service retain identical public results and host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials; the child writes observations to a file, every counted loss names its cause and an incomplete capture is retaken at most three times.
         ´claim:discipline:host-transport-observation-retains-the-secret-boundary´
         ´test:integration:test-public-transport´
         """
@@ -284,15 +284,12 @@ class HostRuntime(unittest.TestCase):
         self.assertTrue(private_occurs('42100','{"port":42100}'))
         self.assertFalse(private_occurs('42100','{"duration":0.42100}'))
         for level in ('default','trace'):
-            started=time.monotonic()
             env=dict(os.environ,PN_OBSERVE_LEVEL=level)
-            result=subprocess.run([str(target), "transport_evidence::public_transport", "--exact", "--nocapture"],env=env,capture_output=True,timeout=60,check=False)
-            wall=time.monotonic()-started
-            Path(f'.lane/host-{level}.stderr.jsonl').write_bytes(result.stderr)
-            witness([str(target), "transport_evidence::public_transport", "--exact", "--nocapture"],result.returncode,wall,result.stderr)
-            self.assertEqual(result.returncode,0,result.stderr.decode())
-            rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
-            warnings=[line for line in result.stderr.splitlines() if json.loads(line).get('level') in ('WARN','ERROR')]
+            command=[str(target), "transport_evidence::public_transport", "--exact", "--nocapture"]
+            result,rows,status,wall=traced_capture(self,command,env,level,prefix='host')
+            stderr=Path(f'.lane/host-{level}.stderr.jsonl').read_bytes()
+            witness(command,result.returncode,wall,stderr)
+            warnings=[line for line in stderr.splitlines() if json.loads(line).get('level') in ('WARN','ERROR')]
             self.assertEqual(len(warnings),13)
             for line in warnings:
                 print(line.decode(),flush=True)
@@ -304,10 +301,7 @@ class HostRuntime(unittest.TestCase):
             for value in private:
                 self.assertFalse(private_occurs(value,text))
                 self.assertFalse(private_occurs(value,result.stdout.decode()))
-            status=next(row for row in rows if row['kind']=='observation_status')
-            self.assertEqual(status['lost_records'],0)
-            self.assertEqual(status['undelivered_records'],0)
-            self.assertEqual(status['delivered_records'],len(rows)-1)
+            self.assertEqual(status['delivered_records'],len(rows)-1,'observation delivery: '+capture_complete(status)[1])
             summary=next(row['metrics'] for row in rows if row['kind']=='metric_summary')
             host={key:value for key,value in distribution(summary).items() if key[0].startswith('host__')}
             self.assertGreater(sum(value for key,value in host.items() if key[0].endswith('started_operations')),0)

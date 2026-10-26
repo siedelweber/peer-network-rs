@@ -94,8 +94,8 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:host-transport-observation-retains-the-secret-boundary",
       "before": "",
-      "after": "Claim: After a successful-query drain barrier, default and trace runs against the real host-secured service retain identical public results and lossless host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials.",
-      "review": "Read decoded-content scanning after recursive artifact expansion; private reachability is searched inside base64 frames as well as ordinary JSON, with exact mode outcomes retained."
+      "after": "Claim: After a successful-query drain barrier, complete default and trace captures against the real host-secured service retain identical public results and host operation totals, expose the declared store case, record public protocol content at trace and contain none of the fixture's private reachability or credentials; the child writes observations to a file, every counted loss names its cause and an incomplete capture is retaken at most three times.",
+      "review": "Read the shared file-backed capture route: named loss accounting and bounded retakes precede unchanged private-content, public-result and complete-operation assertions."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory",
@@ -136,6 +136,14 @@
       "before": "",
       "after": "Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; a capture that counts loss must name each loss's cause and is retaken at most three times; default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.",
       "review": "Read all thirteen enum statement arms exercised under trace including the separate audit, and decoded DataRow scanning with the existing negative control."
+    },
+    {
+      "operation": "ci::test_linter_entry.Conformance.test_build_graph_slice_assignment",
+      "path": "ci/test_linter_entry.py",
+      "claim": "ROOT::claim:discipline:build-graph-slices-cover-roster",
+      "before": "Claim: Every live gate step has exactly one delegation slice, and the record roster agrees with that set, so a missing, repeated, unknown or invalid assignment cannot hide until final migration.",
+      "after": "Claim: Every live gate step has exactly one delegation slice and the record roster agrees with that set; each record group stays in one slice unless its exceptional rows explicitly name the split, so missing, repeated, unknown, invalid or unexplained assignments refuse before final migration.",
+      "review": "Read the grouped roster comparison: generic reasons and a cross-slice policy assignment refuse, while the explicitly named observation-runtime split passes."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_missing_tracked_source",
@@ -182,8 +190,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:graph-backend-retains-reviewed-identity",
       "before": "",
-      "after": "Claim: Graph rows match the workspace feature union, numeric serde matches pn-records alone and host rows distinguish its own resolved features from lock-only packages, so a dependency table cannot borrow another build's features or portray an unbuilt package as built.",
-      "review": "Read the owning-package cargo tree scopes, all host built/absent rows and negative feature substitutions; the numeric serde check exposes workspace-only alloc."
+      "after": "Claim: Every graph row matches the workspace feature union, every numeric row matches pn-records alone and every host row distinguishes its own resolved features from lock-only packages, so a dependency table cannot borrow another build's features or portray an unbuilt package as built.",
+      "review": "Read every numeric row against the pn-records feature tree, with a wrong-feature probe per row and the retained workspace serde negative."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",

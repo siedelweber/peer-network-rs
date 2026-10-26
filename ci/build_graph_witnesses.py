@@ -66,7 +66,7 @@ def exercise(case):
         case.assertEqual(command([meson, 'setup', str(build), str(root)]).returncode, 0)
 
         def compile_graph():
-            return command([meson, 'compile', '-C', str(build), 'tracked-census'])
+            return command(['ninja', '-C', str(build), 'tracked-census.json'])
 
         result = compile_graph()
         case.assertEqual(result.returncode, 0, result.stdout+result.stderr)
@@ -81,6 +81,17 @@ def exercise(case):
         case.assertGreater(report.stat().st_mtime_ns, first)
         case.assertEqual(manifest.stat().st_mtime_ns, before)
         print('GRAPH-WITNESS vendor=passed generated=passed fresh-repeat=passed')
+
+        # Direct Ninja invocation retains Meson's regeneration edge. Reusing
+        # the build directory must not mean reusing an old configuration.
+        meson_source = root/'meson.build'
+        meson_source.write_text(meson_source.read_text()+'\n# Changed configuration witness.\n')
+        case.assertEqual(compile_graph().returncode, 0)
+        case.assertGreater(manifest.stat().st_mtime_ns, before)
+        before = manifest.stat().st_mtime_ns
+        case.assertEqual(compile_graph().returncode, 0)
+        case.assertEqual(manifest.stat().st_mtime_ns, before)
+        print('GRAPH-WITNESS ninja-regeneration=passed unchanged-configuration=reused')
 
         # Only the Git index changes: neither the graph nor Meson is reconfigured.
         for path in ('src/new.rs', '.new-config', '.lane/ignored-source'):

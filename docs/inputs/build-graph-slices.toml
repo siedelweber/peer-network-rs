@@ -219,7 +219,7 @@ reason = "Policy, corpus, document or checker evidence; preserve the current com
 [[rows]]
 name = "observation-syntax"
 slice = 2
-reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+reason = "Split from observation-runtime: this syntax check runs the observe_census example with cargo run --profile gate; slice 2 preserves that command, while service-backed runtime checks remain in slice 4."
 
 [[rows]]
 name = "harness-matrix"

@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path, PurePosixPath
 import re
+import resource
 import subprocess
 import sys
 import time
@@ -203,7 +204,9 @@ def gate():
     if not (build/'build.ninja').exists():
         if run([meson, 'setup', str(build), str(root)]).returncode:
             return 1
-    return run([meson, 'compile', '-C', str(build), 'tracked-census']).returncode
+    # Ninja owns Meson's regeneration edge as well as always-run targets.
+    # Avoid loading Meson's full introspection graph for each invocation.
+    return run(['ninja', '-C', str(build), 'tracked-census.json']).returncode
 
 
 PUBLIC_CONFIGURATION = ('PATH', 'CARGO_HOME', 'CARGO_TARGET_DIR', 'RUSTUP_HOME',
@@ -289,12 +292,15 @@ def execute(root, graph_path, output):
     before = {path: hashlib.sha256((root/path).read_bytes()).hexdigest() for path in products}
     started = time.time()
     clock = time.monotonic()
+    cpu = resource.getrusage(resource.RUSAGE_CHILDREN)
     with Path(request['log']).open('wb') as log:
         status = subprocess.run(['bash', '-c', request['context']['command']], cwd=root,
                                 stdout=log, stderr=subprocess.STDOUT).returncode
     ended = time.time()
+    used = resource.getrusage(resource.RUSAGE_CHILDREN)
     status = 128-status if status < 0 else status
     result = dict(schema=1, request=request, status=status, started=started, ended=ended,
+                  cpu_user=used.ru_utime-cpu.ru_utime, cpu_system=used.ru_stime-cpu.ru_stime,
                   products=[dict(path=path, before=before[path], after=hashlib.sha256((root/path).read_bytes()).hexdigest()) for path in products],
                   wall=time.monotonic()-clock,
                   output=hashlib.sha256(Path(request['log']).read_bytes()).hexdigest())
@@ -308,13 +314,15 @@ def delegate(root, step):
     """Invoke exactly one fresh target, then return its command's actual status."""
     build = root/'.lane/build-graph'
     graph = json.loads((build/'gate-graph.json').read_text())
+    clock = time.monotonic()
     bound = context(root, graph, step)
+    delegated = set(selected(root))
     # Predecessor edges mean ordered completion, not success: the legacy entry
     # continues independent checks after refusal. A missing/stale report is
     # structural, and every raw refusal remains in the gate's aggregate.
     for line in (root/'.lane/gate-steps.tsv').read_text().splitlines():
         name, status, _, _ = line.split('\t')
-        if name not in selected(root):
+        if name not in delegated:
             continue
         prior = json.loads(report_path(build, name).read_text())
         request = prior['request']
@@ -331,8 +339,14 @@ def delegate(root, step):
     output = report_path(build, step)
     output.unlink(missing_ok=True)
     env = dict(os.environ, PN_BUILDGRAPH_REQUEST=str(request_path))
-    driver = subprocess.run([os.environ['PN_MESON_BIN'], 'compile', '-C', str(build), 'gate-'+step],
+    prepared = time.monotonic()
+    cpu = resource.getrusage(resource.RUSAGE_CHILDREN)
+    driver = subprocess.run(['ninja', '-C', str(build), str(output.relative_to(build))],
                             env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    used = resource.getrusage(resource.RUSAGE_CHILDREN)
+    (requests/(nonce+'.timing.json')).write_text(json.dumps(dict(
+        preparation_wall=prepared-clock, driver_wall=time.monotonic()-prepared,
+        driver_user=used.ru_utime-cpu.ru_utime, driver_system=used.ru_stime-cpu.ru_stime))+'\n')
     (requests/(nonce+'.driver.log')).write_bytes(driver.stdout)
     if driver.returncode:
         raise ValueError('Meson adapter failed for '+step+'; current driver log: '+str(requests/(nonce+'.driver.log')))

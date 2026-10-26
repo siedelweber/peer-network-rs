@@ -287,7 +287,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(accounting['default'],accounting['trace'])
 
     def test_graph_dependency(self):
-        """Claim: Graph rows match the workspace feature union, numeric serde matches pn-records alone and host rows distinguish its own resolved features from lock-only packages, so a dependency table cannot borrow another build's features or portray an unbuilt package as built.
+        """Claim: Every graph row matches the workspace feature union, every numeric row matches pn-records alone and every host row distinguishes its own resolved features from lock-only packages, so a dependency table cannot borrow another build's features or portray an unbuilt package as built.
         ´claim:discipline:graph-backend-retains-reviewed-identity´
         ´test:integration:test-graph-dependency´
         """
@@ -329,6 +329,8 @@ class Processes(unittest.TestCase):
             package = next(p for p in resolved['packages'] if p['name'] == row['name'] and p['version'] == row['version'])
             self.assertTrue(any(p['name'] == row['name'] and p['version'] == row['version'] for p in locked))
             features = row['features'].split(', ') if isinstance(row['features'], str) else row['features']
+            if features == ['none']:
+                features = []
             self.assertEqual(set(features), scopes[owner][(package['name'], package['version'])])
 
         for row in declarations:
@@ -338,8 +340,11 @@ class Processes(unittest.TestCase):
         self.assertEqual(set(serde['features']), {'alloc', 'default', 'derive', 'serde_derive', 'std'})
         numeric = tomllib.loads(Path('docs/inputs/numeric-dependencies.toml').read_text())['rows']
         numeric_serde = next(row for row in numeric if row['name'] == 'serde')
-        self.assertIn('pn-records built on its own', numeric_serde['feature_scope'])
-        check_row(numeric_serde, 'pn-records')
+        for row in numeric:
+            self.assertIn('pn-records built on its own', row['feature_scope'])
+            check_row(row, 'pn-records')
+            with self.assertRaises(AssertionError):
+                check_row(row | {'features': ['unresolved-feature']}, 'pn-records')
         host = tomllib.loads(Path('docs/inputs/host-dependencies.toml').read_text())['rows']
 
         def check_host(row):
