@@ -61,7 +61,8 @@ fn main() {
     let participant = participation(ownership.clone());
     let review = review(participant.clone());
     let send = sending(participant.clone());
-    let history = pn_records::validate_history(&[act, publication, ownership, participant, review, send], &names).unwrap();
+    let bid = bidding(ownership.clone());
+    let history = pn_records::validate_history(&[act, publication, ownership, participant, review, send, bid], &names).unwrap();
     let auth = FixtureApproval(true);
     let projection = project_complete_act(&history.acts()[0], &auth);
     let publication = project_complete_act(&history.acts()[1], &auth);
@@ -69,6 +70,7 @@ fn main() {
     let participant = project_complete_act(&history.acts()[3], &auth);
     let review = project_complete_act(&history.acts()[4], &auth);
     let send = project_complete_act(&history.acts()[5], &auth);
+    let bid = project_complete_act(&history.acts()[6], &auth);
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let denied = reconstruct(&history, &FixtureApproval(false));
@@ -83,6 +85,7 @@ fn main() {
         "participant": format!("{participant:?}"),
         "review": format!("{review:?}"),
         "send": format!("{send:?}"),
+        "bid": format!("{bid:?}"),
         "valid": format!("{valid:?}"), "denied": format!("{denied:?}"), "invalid": format!("{invalid:?}")
     }))
     .unwrap();
@@ -214,5 +217,44 @@ fn sending(mut input: CandidateAct) -> CandidateAct {
     input.body.quantities[1].0 = "importance.denominator".into();
     input.authoritative_position = 6;
     input.logical_time = 6;
+    input
+}
+
+fn bidding(mut input: CandidateAct) -> CandidateAct {
+    let item = input.legs[0].target.clone();
+    input.id.family = "Bid".into();
+    input.id.sequence = 7;
+    input.body.layout = Layout::Paired;
+    input.legs[0].id.act = input.id.clone();
+    input.legs[0].id.role = Role::A;
+    input.legs.push(CandidateLeg {
+        id: EdgeId {
+            act: input.id.clone(),
+            role: Role::T,
+        },
+        source: item,
+        target: PublicReference::Minted(input.id.clone()),
+        removal: None,
+    });
+    input.body.quantities = [
+        ("generosity.numerator", -1),
+        ("generosity.denominator", 2),
+        ("urgency.numerator", 2),
+        ("urgency.denominator", 3),
+    ]
+    .into_iter()
+    .map(|(name, value)| {
+        (
+            name.into(),
+            pn_records::Quantity {
+                value,
+                unit: "one".into(),
+                vintage: 0,
+            },
+        )
+    })
+    .collect();
+    input.authoritative_position = 7;
+    input.logical_time = 7;
     input
 }

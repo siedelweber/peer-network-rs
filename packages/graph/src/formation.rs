@@ -233,6 +233,37 @@ pub struct SendProjection {
     pub importance: Coordinate,
 }
 
+/// Constructor role of a Bid edge, derived from one complete act.
+/// (´def:formation:bid´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BidRole {
+    /// Initiating Actor to Item.
+    A,
+    /// Item to Offer.
+    T,
+}
+
+/// Complete Bid tuple shared by both role-addressed projections.
+/// (´def:formation:bid´)
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BidProjection {
+    /// Initiating author shared by both legs.
+    pub author: String,
+    /// Author-local act sequence shared by both legs.
+    pub sequence: u64,
+    /// A or T constructor role, never a separately authored identity.
+    pub role: BidRole,
+    /// Retained published placement of the whole act.
+    pub position: Position,
+    /// One retained time shared by both projections.
+    pub logical_time: u64,
+    /// Signed generosity, directional on A and intensity on T.
+    pub generosity: Coordinate,
+    /// Nonnegative urgency, intensity on A and directional on T.
+    pub urgency: Coordinate,
+}
+
 /// Distinct supported families, preserving each complete authored projection.
 /// (´def:formation:affinity´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -251,6 +282,8 @@ pub enum Projection {
     Review(ReviewProjection),
     /// Send retains importance and shared metadata on both legs.
     Send(SendProjection),
+    /// Bid creates one fresh Offer with both role-addressed projections.
+    Bid(BidProjection),
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -356,6 +389,8 @@ fn project(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<V
         review(act, verifier)
     } else if act.id().family == "Send" {
         send(act, verifier)
+    } else if act.id().family == "Bid" {
+        bid(act, verifier)
     } else {
         binary(act, verifier).map(|projection| vec![projection])
     }
@@ -725,5 +760,64 @@ fn send(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<
             Projection::Send(a_weight),
         ),
         (middle, target, Projection::Send(t_weight)),
+    ])
+}
+
+fn bid(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<CompleteProjection>, RegistrationError> {
+    let [first, second] = act.legs() else {
+        return Err(RegistrationError::Incidence);
+    };
+    let (a, t) = match (first.id().role, second.id().role) {
+        (Role::A, Role::T) => (first, second),
+        (Role::T, Role::A) => (second, first),
+        _ => return Err(RegistrationError::Incidence),
+    };
+    if act.body().layout != Layout::Paired
+        || a.source()
+            != &(PublicReference::Named {
+                namespace: "addr".into(),
+                name: act.id().author.clone(),
+            })
+        || a.target() != t.source()
+        || act.body().quantities.len() != 4
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let middle = passive(a.target())?;
+    let target = passive(t.target())?;
+    if !matches!(middle, Node::Item { .. })
+        || !matches!(target, Node::Offer { .. })
+        || t.target() != &PublicReference::Minted(act.id().clone())
+    {
+        return Err(RegistrationError::Incidence);
+    }
+    let generosity = coordinate(act, "generosity.numerator", "generosity.denominator")?;
+    let urgency = coordinate(act, "urgency.numerator", "urgency.denominator")?;
+    if urgency.numerator < 0 || !act.protocol_references().is_empty() {
+        return Err(RegistrationError::Incidence);
+    }
+    if !verifier.approval(act) {
+        return Err(RegistrationError::Unapproved);
+    }
+    let a_weight = BidProjection {
+        author: act.id().author.clone(),
+        sequence: act.id().sequence,
+        role: BidRole::A,
+        position: act.position(),
+        logical_time: act.logical_time(),
+        generosity,
+        urgency,
+    };
+    let t_weight = BidProjection {
+        role: BidRole::T,
+        ..a_weight.clone()
+    };
+    Ok(vec![
+        (
+            Node::Grounded(GroundedNode::Actor(act.id().author.clone())),
+            middle.clone(),
+            Projection::Bid(a_weight),
+        ),
+        (middle, target, Projection::Bid(t_weight)),
     ])
 }

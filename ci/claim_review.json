@@ -205,9 +205,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant and Review projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the seven successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review and Send projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eight successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Send witnesses cover complete Chat-to-Message incidence, signed importance, shared A/T metadata, whole-history authorization and typed revalidation alongside the six earlier families. Observation compares complete outputs and ten calls with eight successes and two refusals across disabled, default and trace. No membership, anchor, license interpretation, geometry or title verdict is established."
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review and Send projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the eight successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send and Bid projection, reconstruction and revalidation return identical complete public results with observation disabled, default and trace; the nine successful operations and two explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Bid witnesses cover complete Item-to-Offer incidence, fresh terminal identity including attempted reuse of an existing Offer, independent signed/nonnegative coordinate grids and zero values, shared A/T metadata, whole-history authorization and typed revalidation. Observation compares complete outputs and eleven calls with nine successes and two refusals across disabled, default and trace. No settlement, title, geometry or ordering verdict follows."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1304,6 +1304,22 @@
       "before": "",
       "after": "Claim: Affinity requires the author's Actor source, an exact public Type name and both signed rational coordinates within the unit interval; malformed units, vintage, missing or extra coordinates and wrong endpoint constructors refuse before projection. A finite independent numerator/denominator grid checks the bounded carrier without claiming real-valued geometry.",
       "review": "Read the same 96-case numerator/denominator grid independently applied to association and attraction, typed endpoint refusals, mixed reconstruction and process assertions. Registration and Affinity share insertion, removal authorization and typed cache comparison. Fixture verifiers establish the public callback boundary only, not cryptographic soundness. Complete outcomes and accounting agree across observation modes. Other families, arbitrary-precision geometry and title remain held; serde bytes are diagnostic only."
+    },
+    {
+      "operation": "pn-graph::formation::bid_projection",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:bid-requires-complete-fresh-offer-incidence",
+      "before": "",
+      "after": "Claim: Bid requires complete Actor-to-Item-to-Offer incidence and its own fresh minted Offer terminal. Both projections retain signed generosity, nonnegative urgency and shared act metadata; either zero coordinate remains formable. Ordinary Offer targets, malformed bounds, incomplete incidence and qualifiers refuse the complete bundle without a settlement or title verdict.",
+      "review": "Bid witnesses cover complete Item-to-Offer incidence, fresh terminal identity including attempted reuse of an existing Offer, independent signed/nonnegative coordinate grids and zero values, shared A/T metadata, whole-history authorization and typed revalidation. Observation compares complete outputs and eleven calls with nine successes and two refusals across disabled, default and trace. No settlement, title, geometry or ordering verdict follows."
+    },
+    {
+      "operation": "pn-graph::formation::bid_reconstruction",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:bid-shares-whole-history-revalidation",
+      "before": "",
+      "after": "Claim: Bid shares whole-history reconstruction with the seven earlier families, retaining deterministic A/T indices and parallel bids with distinct fresh Offers. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.",
+      "review": "Bid witnesses cover complete Item-to-Offer incidence, fresh terminal identity including attempted reuse of an existing Offer, independent signed/nonnegative coordinate grids and zero values, shared A/T metadata, whole-history authorization and typed revalidation. Observation compares complete outputs and eleven calls with nine successes and two refusals across disabled, default and trace. No settlement, title, geometry or ordering verdict follows."
     },
     {
       "operation": "pn-graph::formation::mixed_reconstruction",

@@ -1589,3 +1589,259 @@ fn send_reconstruction() {
         RegistrationError::UnsupportedFamily
     );
 }
+
+fn bidding(sequence: u64, item: u64, terminal: u64) -> CandidateAct {
+    let middle = PublicReference::Minted(ActId {
+        author: "a".into(),
+        sequence: item,
+        family: "Owner".into(),
+    });
+    let mut input = review(sequence, middle, terminal);
+    input.id.family = "Bid".into();
+    for leg in &mut input.legs {
+        leg.id.act = input.id.clone();
+    }
+    input.legs[1].target = PublicReference::Minted(ActId {
+        sequence: terminal,
+        ..input.id.clone()
+    });
+    for (field, name) in input.body.quantities.iter_mut().zip([
+        "generosity.numerator",
+        "generosity.denominator",
+        "urgency.numerator",
+        "urgency.denominator",
+    ]) {
+        field.0 = name.into();
+    }
+    input
+}
+
+/// Claim: Bid requires complete Actor-to-Item-to-Offer incidence and its own fresh minted Offer terminal. Both projections retain signed generosity, nonnegative urgency and shared act metadata; either zero coordinate remains formable. Ordinary Offer targets, malformed bounds, incomplete incidence and qualifiers refuse the complete bundle without a settlement or title verdict.
+/// # Panics
+/// Panics only if Bid dispatch returns another family, which correct dispatch cannot arrange.
+/// ´claim:formation:bid-requires-complete-fresh-offer-incidence´
+/// ´test:integration:bid-projection´
+#[test]
+fn bid_projection() {
+    use pn_graph::formation::BidRole;
+    let input = bidding(3, 1, 3);
+    let result = bundle(&input).unwrap();
+    assert_eq!(result.len(), 2);
+    assert_eq!(result[0].0, Node::Grounded(GroundedNode::Actor("a".into())));
+    assert_eq!(
+        result[0].1,
+        Node::Item {
+            author: "a".into(),
+            sequence: 1
+        }
+    );
+    assert_eq!(result[1].0, result[0].1);
+    assert_eq!(
+        result[1].1,
+        Node::Offer {
+            author: "a".into(),
+            sequence: 3
+        }
+    );
+    let (Projection::Bid(a), Projection::Bid(t)) = (&result[0].2, &result[1].2) else {
+        panic!("wrong family")
+    };
+    assert_eq!(a.role, BidRole::A);
+    assert_eq!((a.sequence, a.position, a.logical_time), (3, (1, 3), 3));
+    assert_eq!((a.generosity.numerator, a.generosity.denominator), (-1, 2));
+    assert_eq!((a.urgency.numerator, a.urgency.denominator), (2, 3));
+    let mut expected = a.clone();
+    expected.role = BidRole::T;
+    assert_eq!(t, &expected);
+    for terminal in [1, 99] {
+        assert_eq!(bundle(&bidding(3, 1, terminal)), Err(RegistrationError::Incidence));
+    }
+    for pair in [0, 2] {
+        for denominator in 1..=8 {
+            for numerator in -denominator - 1..=denominator + 1 {
+                let mut changed = input.clone();
+                changed.body.quantities[pair].1.value = numerator;
+                changed.body.quantities[pair + 1].1.value = denominator;
+                let lower = if pair == 0 { -denominator } else { 0 };
+                assert_eq!(bundle(&changed).is_ok(), (lower..=denominator).contains(&numerator));
+            }
+        }
+    }
+    let reused = vec![bidding(1, 1, 1), bidding(3, 1, 1)];
+    let history = validate_history(&reused, &[]).unwrap();
+    let verifier = Verifier {
+        acts: reused,
+        removals: true,
+    };
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Incidence);
+    bid_refusals(&input);
+}
+
+fn bid_refusals(input: &CandidateAct) {
+    for index in 0..4 {
+        let mut changed = input.clone();
+        changed.body.quantities.remove(index);
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.unit = "money".into();
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        let mut changed = input.clone();
+        changed.body.quantities[index].1.vintage = 1;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    for pair in [1, 3] {
+        for denominator in [0, -1] {
+            let mut changed = input.clone();
+            changed.body.quantities[pair].1.value = denominator;
+            assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+        }
+    }
+    for index in 0..2 {
+        let mut changed = input.clone();
+        changed.legs.remove(index);
+        assert!(validate_history(&[changed], &[]).is_err());
+    }
+    for family in ["Publish", "Participant", "Review", "Send", "Bid"] {
+        let wrong = PublicReference::Minted(ActId {
+            family: family.into(),
+            ..input.id.clone()
+        });
+        let mut changed = input.clone();
+        changed.legs[0].target = wrong.clone();
+        changed.legs[1].source = wrong;
+        assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    }
+    let mut changed = input.clone();
+    changed.legs[0].source = named("addr", "b");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.legs[1].source = named("name", "topic");
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.legs[1].target = PublicReference::Minted(ActId {
+        author: "b".into(),
+        ..input.id.clone()
+    });
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.protocol_references = vec![named("name", "topic")];
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+    let mut changed = input.clone();
+    changed.body.license = publication(1).body.license;
+    assert_eq!(bundle(&changed), Err(RegistrationError::Incidence));
+}
+
+/// Claim: Bid shares whole-history reconstruction with the seven earlier families, retaining deterministic A/T indices and parallel bids with distinct fresh Offers. Typed revalidation rejects missing siblings, changed coordinates and role metadata after decoding; approval, removal and unsupported-family refusals publish no partial graph.
+/// # Panics
+/// Panics only if the fixture's Bid edge has another family, which correct reconstruction cannot arrange.
+/// ´claim:formation:bid-shares-whole-history-revalidation´
+/// ´test:integration:bid-reconstruction´
+#[test]
+fn bid_reconstruction() {
+    let mut inputs = vec![
+        candidate("Registration", 1),
+        candidate("Affinity", 2),
+        publication(3),
+        ownership(4),
+        participation(5, 5, 5),
+        review(6, named("name", "topic"), 6),
+        sending(7, 5, 7),
+        bidding(8, 4, 8),
+        bidding(9, 4, 9),
+    ];
+    let mut verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!((graph.node_count(), graph.edge_count()), (10, 14));
+    let endpoints: Vec<_> = graph
+        .edge_indices()
+        .map(|i| graph.edge_endpoints(i).map(|(a, b)| (a.index(), b.index())).unwrap())
+        .collect();
+    assert_eq!(
+        endpoints,
+        vec![
+            (0, 1),
+            (0, 2),
+            (0, 3),
+            (0, 4),
+            (0, 5),
+            (5, 5),
+            (0, 2),
+            (2, 6),
+            (0, 5),
+            (5, 7),
+            (0, 4),
+            (4, 8),
+            (0, 4),
+            (4, 9)
+        ]
+    );
+    inputs.reverse();
+    for input in &mut inputs {
+        input.legs.reverse();
+    }
+    let reordered = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(validate_formation(&graph, &reordered, &verifier), Ok(()));
+    let bytes = serde_json::to_vec(&graph).unwrap();
+    let decoded = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
+    for removed in [10, 11] {
+        let mut partial = graph.clone();
+        partial.remove_edge(petgraph::graph::EdgeIndex::new(removed));
+        assert_eq!(
+            partial[petgraph::graph::EdgeIndex::new(13)],
+            graph[petgraph::graph::EdgeIndex::new(13)]
+        );
+        assert_eq!(
+            validate_formation(&partial, &history, &verifier),
+            Err(RegistrationError::GraphMismatch)
+        );
+    }
+    bid_cache(&graph, &history, &verifier);
+    verifier.acts.pop();
+    assert_eq!(reconstruct(&history, &verifier).unwrap_err(), RegistrationError::Unapproved);
+    verifier.acts = inputs.clone();
+    inputs[0].projections.content = Removal::Tombstoned((2, 1));
+    let removed = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&removed, &verifier).unwrap_err(),
+        RegistrationError::UnauthorizedRemoval
+    );
+    verifier.removals = true;
+    assert_eq!(validate_formation(&graph, &removed, &verifier), Ok(()));
+    inputs[0].id.family = "Withdraw".into();
+    let id = inputs[0].id.clone();
+    for leg in &mut inputs[0].legs {
+        leg.id.act = id.clone();
+    }
+    let unsupported = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&unsupported, &verifier).unwrap_err(),
+        RegistrationError::UnsupportedFamily
+    );
+}
+
+fn bid_cache(graph: &pn_graph::formation::FormationGraph, history: &pn_records::ValidatedHistory, verifier: &Verifier) {
+    let mut changed = graph.clone();
+    let Projection::Bid(weight) = &mut changed[petgraph::graph::EdgeIndex::new(10)] else {
+        panic!("wrong family")
+    };
+    weight.generosity.numerator *= 2;
+    weight.generosity.denominator *= 2;
+    assert_eq!(
+        validate_formation(&changed, history, verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+    let mut changed = graph.clone();
+    let Projection::Bid(weight) = &mut changed[petgraph::graph::EdgeIndex::new(11)] else {
+        panic!("wrong family")
+    };
+    weight.role = pn_graph::formation::BidRole::A;
+    assert_eq!(
+        validate_formation(&changed, history, verifier),
+        Err(RegistrationError::GraphMismatch)
+    );
+}

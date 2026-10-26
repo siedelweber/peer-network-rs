@@ -3931,7 +3931,9 @@
         "pn-graph::formation::review_reconstruction",
         "pn-graph::formation::publish_license_pair",
         "pn-graph::formation::send_projection",
-        "pn-graph::formation::send_reconstruction"
+        "pn-graph::formation::send_reconstruction",
+        "pn-graph::formation::bid_projection",
+        "pn-graph::formation::bid_reconstruction"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",
