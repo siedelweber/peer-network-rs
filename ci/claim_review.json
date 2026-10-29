@@ -290,6 +290,14 @@
       "review": "Read the exact epoch-qualified placement and retained-time assertions. Recurrence expectations use independently scanned prior incidence; the process witness compares complete results and accounting across observation modes. These are internal carrier checks, conditional on family-valid incidence, not cryptographic authentication or a resolution of the non-compliant time and cross-epoch paper holds."
     },
     {
+      "operation": "ci::test_observe_runtime.Processes.test_title_suite",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:title-suite-retains-observed-evidence",
+      "before": "",
+      "after": "Claim: Eight shared compliant title histories retain byte-identical complete boundary and event results with observation off, default and trace. Default and trace retain identical graph operation accounting, including consumed records, conflicts and persistent transfers; this does not close faulted replay or the held partner clause.",
+      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
+    },
+    {
       "operation": "ci::test_observe_syntax.Syntax.test_parsed_boundaries",
       "path": "ci/test_observe_syntax.py",
       "claim": "ROOT::claim:discipline:coverage-recognition-comes-from-rust-syntax",
@@ -1746,6 +1754,14 @@
       "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
     },
     {
+      "operation": "pn-graph::title::title_shared_cases",
+      "path": "packages/graph/tests/title.rs",
+      "claim": "GRAPH::claim:formation:shared-title-cases-retain-complete-results",
+      "before": "",
+      "after": "Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
+      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
+    },
+    {
       "operation": "pn-host::config::tests::secret_json_grammar",
       "path": "packages/host/src/config.rs",
       "claim": "HOST::claim:host:secret-json-has-one-field-interpretation",
@@ -3176,6 +3192,30 @@
       "before": "",
       "after": "Claim: Compliant title replay revalidates its complete graph, retains void for an unresolved Item genesis, introduces fresh genesis only at its boundary, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.",
       "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
+    },
+    {
+      "operation": "pn-verification::title::title_exhaustive",
+      "path": "packages/verification/tests/title.rs",
+      "claim": "VERIFICATION::claim:verification:small-title-histories-match-independent-table",
+      "before": "",
+      "after": "Claim: Every one of the 512 two-boundary histories in the declared title alphabet agrees with an independent boundary truth table for owner, consumption, derived premises and transfer or conflict events in both input orders. The bounded alphabet contains absence, consent, withdrawal, partner mismatch and original or prior buyer authorization; faulted histories remain outside scope.",
+      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
+    },
+    {
+      "operation": "pn-verification::title::title_generated",
+      "path": "packages/verification/tests/title.rs",
+      "claim": "VERIFICATION::claim:verification:recorded-title-cases-match-independent-table",
+      "before": "",
+      "after": "Claim: Consumer-qualified recorded word cases, including empty and single-boundary histories, agree with the independent title truth table in original and reversed presentations. Recorded generation exercises the shared compliant public suite without claiming faulted-chain coverage or a second implementation.",
+      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
+    },
+    {
+      "operation": "pn-verification::title::title_shared_cases",
+      "path": "packages/verification/tests/title.rs",
+      "claim": "VERIFICATION::claim:verification:shared-title-cases-retain-complete-results",
+      "before": "",
+      "after": "Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
+      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
     },
     {
       "operation": "pn-wallet::allocation::decoder_reservations",

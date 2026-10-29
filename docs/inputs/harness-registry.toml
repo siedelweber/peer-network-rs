@@ -840,7 +840,7 @@ level = "integration"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_graph_partition", "ci::test_observe_runtime.Processes.test_graph_registration", "ci::test_observe_runtime.Processes.test_graph_formation", "ci::test_observe_runtime.Processes.test_graph_dependency", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_records_replay", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
+cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_graph_partition", "ci::test_observe_runtime.Processes.test_graph_registration", "ci::test_observe_runtime.Processes.test_graph_formation", "ci::test_observe_runtime.Processes.test_title_suite", "ci::test_observe_runtime.Processes.test_graph_dependency", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_records_replay", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
 
 [[rows]]
 kind = "suite"
@@ -1354,3 +1354,55 @@ implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-verification::recognition::recognition_enumerator", "pn-verification::recognition::recognition_binding", "pn-verification::recognition::recognition_partners", "pn-verification::recognition::recognition_holds", "pn-verification::recognition::title_boundaries", "pn-verification::recognition::title_premises", "pn-verification::recognition::title_events"]
+
+[[rows]]
+kind = "suite"
+name = "pn-graph::title"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-graph::title::title_shared_cases"]
+
+[[rows]]
+kind = "suite"
+name = "graph-title-graph"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::graph-title-1::graph-title-graph::empty", "contract::graph-title-1::graph-title-graph::unique", "contract::graph-title-1::graph-title-graph::conflict", "contract::graph-title-1::graph-title-graph::fresh-retry", "contract::graph-title-1::graph-title-graph::resale", "contract::graph-title-1::graph-title-graph::stale-owner", "contract::graph-title-1::graph-title-graph::cancelled", "contract::graph-title-1::graph-title-graph::wrong-partner"]
+parent_case = "pn-graph::title::title_shared_cases"
+contract_edition = "graph-title-1"
+claim_owner = "GRAPH"
+claim = "claim:formation:shared-title-cases-retain-complete-results"
+
+[[rows]]
+kind = "suite"
+name = "pn-verification::title"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-verification::title::title_shared_cases", "pn-verification::title::title_exhaustive", "pn-verification::title::title_generated"]
+
+[[rows]]
+kind = "suite"
+name = "graph-title-verification"
+status = "active"
+runner = "contract"
+level = "integration"
+implementation = "pn-graph-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["contract::graph-title-1::graph-title-verification::empty", "contract::graph-title-1::graph-title-verification::unique", "contract::graph-title-1::graph-title-verification::conflict", "contract::graph-title-1::graph-title-verification::fresh-retry", "contract::graph-title-1::graph-title-verification::resale", "contract::graph-title-1::graph-title-verification::stale-owner", "contract::graph-title-1::graph-title-verification::cancelled", "contract::graph-title-1::graph-title-verification::wrong-partner"]
+parent_case = "pn-verification::title::title_shared_cases"
+contract_edition = "graph-title-1"
+claim_owner = "VERIFICATION"
+claim = "claim:verification:shared-title-cases-retain-complete-results"

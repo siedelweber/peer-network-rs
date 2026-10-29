@@ -157,6 +157,20 @@ pub const GRAPH_PARTITION_CASES: [(&str, &[u64]); 6] = [
     ("removals", &[(3 << 62) | 1, (3 << 62) | 31, 1, 127]),
 ];
 
+/// Shared compliant title alphabet: two two-bit attempt kinds per boundary,
+/// with bit four choosing the original seller at the second boundary.
+/// (´def:testkit:case´)
+pub const TITLE_CASES: [(&str, &[u64]); 8] = [
+    ("empty", &[0, 0]),
+    ("unique", &[1, 0]),
+    ("conflict", &[5, 0]),
+    ("fresh-retry", &[5, 17]),
+    ("resale", &[1, 4]),
+    ("stale-owner", &[1, 20]),
+    ("cancelled", &[2, 16]),
+    ("wrong-partner", &[3, 16]),
+];
+
 #[cfg(test)]
 mod tests {
     use super::*;

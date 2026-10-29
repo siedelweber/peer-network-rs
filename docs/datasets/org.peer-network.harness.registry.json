@@ -3058,6 +3058,7 @@
         "ci::test_observe_runtime.Processes.test_graph_partition",
         "ci::test_observe_runtime.Processes.test_graph_registration",
         "ci::test_observe_runtime.Processes.test_graph_formation",
+        "ci::test_observe_runtime.Processes.test_title_suite",
         "ci::test_observe_runtime.Processes.test_graph_dependency",
         "ci::test_observe_runtime.Processes.test_interchange_refusal",
         "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -4015,6 +4016,82 @@
       "level": "integration",
       "name": "pn-verification::recognition",
       "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::title::title_shared_cases"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-graph::title",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::graph-title-1::graph-title-graph::empty",
+        "contract::graph-title-1::graph-title-graph::unique",
+        "contract::graph-title-1::graph-title-graph::conflict",
+        "contract::graph-title-1::graph-title-graph::fresh-retry",
+        "contract::graph-title-1::graph-title-graph::resale",
+        "contract::graph-title-1::graph-title-graph::stale-owner",
+        "contract::graph-title-1::graph-title-graph::cancelled",
+        "contract::graph-title-1::graph-title-graph::wrong-partner"
+      ],
+      "claim": "claim:formation:shared-title-cases-retain-complete-results",
+      "claim_owner": "GRAPH",
+      "contract_edition": "graph-title-1",
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "graph-title-graph",
+      "parent_case": "pn-graph::title::title_shared_cases",
+      "runner": "contract",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-verification::title::title_shared_cases",
+        "pn-verification::title::title_exhaustive",
+        "pn-verification::title::title_generated"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-verification::title",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "contract::graph-title-1::graph-title-verification::empty",
+        "contract::graph-title-1::graph-title-verification::unique",
+        "contract::graph-title-1::graph-title-verification::conflict",
+        "contract::graph-title-1::graph-title-verification::fresh-retry",
+        "contract::graph-title-1::graph-title-verification::resale",
+        "contract::graph-title-1::graph-title-verification::stale-owner",
+        "contract::graph-title-1::graph-title-verification::cancelled",
+        "contract::graph-title-1::graph-title-verification::wrong-partner"
+      ],
+      "claim": "claim:verification:shared-title-cases-retain-complete-results",
+      "claim_owner": "VERIFICATION",
+      "contract_edition": "graph-title-1",
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "graph-title-verification",
+      "parent_case": "pn-verification::title::title_shared_cases",
+      "runner": "contract",
       "status": "active",
       "tier": "fast"
     }

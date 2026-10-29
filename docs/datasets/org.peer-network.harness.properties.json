@@ -384,6 +384,18 @@
       "name": "pn-verification::graph::generated_partitions",
       "regressions": "packages/verification/proptest-regressions",
       "seed_policy": "source-v1"
+    },
+    {
+      "algorithm": "cc",
+      "case_count_kind": "configured-successful-cases; persisted regressions run additionally",
+      "cases": 256,
+      "consumer": "pn-verification",
+      "dependency": "proptest 1.12.0",
+      "edition": "graph-title-1",
+      "generator": "packages/verification/tests/common/title_checks.rs",
+      "name": "pn-verification::title::title_generated",
+      "regressions": "packages/verification/proptest-regressions",
+      "seed_policy": "source-v1"
     }
   ]
 }

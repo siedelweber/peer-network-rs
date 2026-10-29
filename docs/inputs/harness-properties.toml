@@ -379,3 +379,15 @@ dependency = "proptest 1.12.0"
 regressions = "packages/verification/proptest-regressions"
 case_count_kind = "configured-successful-cases; persisted regressions run additionally"
 consumer = "pn-verification"
+
+[[rows]]
+name = "pn-verification::title::title_generated"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/verification/tests/common/title_checks.rs"
+edition = "graph-title-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/verification/proptest-regressions"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+consumer = "pn-verification"

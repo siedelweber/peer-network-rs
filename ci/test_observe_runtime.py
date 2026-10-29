@@ -313,6 +313,37 @@ class Processes(unittest.TestCase):
         self.assertEqual(samples['default'],samples['trace'])
         self.assertEqual(accounting['default'],accounting['trace'])
 
+    def test_title_suite(self):
+        """Claim: Eight shared compliant title histories retain byte-identical complete boundary and event results with observation off, default and trace. Default and trace retain identical graph operation accounting, including consumed records, conflicts and persistent transfers; this does not close faulted replay or the held partner clause.
+        ´claim:discipline:title-suite-retains-observed-evidence´
+        ´test:integration:test-title-suite´
+        """
+        samples={};accounting={}
+        for mode in ('disabled','default','trace'):
+            env=os.environ | {'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'}
+            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/title_observation'),mode],mode,env)
+            self.assertEqual(result.returncode,0,result.stderr.decode())
+            samples[mode]=result.stdout
+            values=dict(json.loads(result.stdout))
+            self.assertEqual(len(values),8)
+            self.assertIn('Conflict',values['conflict'])
+            self.assertIn('Transferred',values['resale'])
+            self.assertIn('consumed:',values['fresh-retry'])
+            self.assertIn('accept_target_is_buyer: false',values['wrong-partner'])
+            if mode=='disabled':continue
+            rows=[json.loads(line) for line in result.stderr.splitlines()]
+            summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
+            stem='graph__root__sig__design__graph__'
+            accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith(stem)}
+            self.assertGreater(accounting[mode][(stem+'started_operations','')],0)
+            self.assertEqual(accounting[mode][(stem+'started_operations','')],accounting[mode][(stem+'completed_operations','success')])
+            if mode=='trace':
+                for marker in ('TitleReplay','PartnerEvidence','consumed','Transferred','Conflict'):
+                    self.assertIn(marker,result.stderr.decode())
+        self.assertEqual(samples['disabled'],samples['default'])
+        self.assertEqual(samples['default'],samples['trace'])
+        self.assertEqual(accounting['default'],accounting['trace'])
+
     def test_graph_dependency(self):
         """Claim: Every graph row matches the workspace feature union, every numeric row matches pn-records alone and every host row distinguishes its own resolved features from lock-only packages, so a dependency table cannot borrow another build's features or portray an unbuilt package as built.
         ´claim:discipline:graph-backend-retains-reviewed-identity´
