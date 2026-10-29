@@ -58,6 +58,14 @@
       "review": "Read the positive digest resolution and the three independently mutated digest, payload and recipe cases. Each must be refused by the family reader; no library-formatted expected digest is used by the Rust witness."
     },
     {
+      "operation": "ci::test_discipline.HashCitations.test_public_git_locator",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:discipline:public-locators-identify-objects",
+      "before": "a provenance family requires the exact declared public Git commit locator.",
+      "after": "A provenance family requires its exact public Git locator or reachable reviewed revision; historical input fingerprints are recomputed from that revision and refuse missing declarations, missing files or a changed digest.",
+      "review": "Read the real reachable and unreachable Git controls and the historical-input controls: changed working bytes retain the historical result, while wrong digest, missing file and missing declaration refuse."
+    },
+    {
       "operation": "ci::test_discipline.SourceDiscipline.test_suppressions",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:test-lints-cannot-be-suppressed",
@@ -206,8 +214,8 @@
       "path": "ci/test_linter_entry.py",
       "claim": "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
       "before": "",
-      "after": "Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; unchanged inputs produce only a named hold, and another case, a stale input binding or a selected execution cannot reuse that hold.",
-      "review": "Read each changed-input and admission selection, named unexecuted hold and refusal of changed bindings. This is policy evidence, not execution of the daemon witness."
+      "after": "Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; unchanged inputs produce only a standing selection hold that holds the composition decision without reopening the admitted gate, while admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.",
+      "review": "Read the existing selection and refusal controls plus the real obligation rows evaluated with the service case held and passed. The composition decision is held only in the former; the admitted gate is scoped-passed in both."
     },
     {
       "operation": "ci::test_observe.Admission.test_resource_samples",

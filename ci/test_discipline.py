@@ -184,7 +184,7 @@ class HashCitations(unittest.TestCase):
         self.assertFalse(reader("hex-alphabet")(alphabet, 'digest = "' + alphabet + '"'))
 
     def test_public_git_locator(self):
-        """a provenance family requires the exact declared public Git commit locator.
+        """A provenance family requires its exact public Git locator or reachable reviewed revision; historical input fingerprints are recomputed from that revision and refuse missing declarations, missing files or a changed digest.
         ´claim:discipline:public-locators-identify-objects´
         ´test:integration:test-public-git-locator´
         """
@@ -212,6 +212,33 @@ class HashCitations(unittest.TestCase):
             git("config", "user.name", "Fixture")
             git("config", "user.email", "fixture@example.invalid")
             git("commit", "--allow-empty", "-m", "Initial fixture")
+            # Historical fingerprints read the admitted revision even after
+            # working bytes change; a wrong digest or missing input refuses.
+            (root / "inputs.py").write_text("INPUTS = ('payload',)\n")
+            (root / "payload").write_bytes(b"reviewed")
+            git("add", "inputs.py", "payload")
+            git("commit", "-m", "Historical inputs")
+            historical_commit = git("rev-parse", "HEAD")
+            import hashlib
+            projection = [("payload", hashlib.sha256(b"reviewed").hexdigest())]
+            digest = hashlib.sha256(json.dumps(projection, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+            historical = dict(reader="historical-inputs", establishment="recomputable", commit=historical_commit,
+                              source="inputs.py", symbol="INPUTS", digest=digest)
+            (root / "payload").write_bytes(b"unreviewed")
+            reader = establish(root, historical)
+            self.assertTrue(reader(digest, ""))
+            self.assertFalse(reader("f" * 64, ""))
+            with self.assertRaisesRegex(ValueError, "fingerprint differs"):
+                establish(root, dict(historical, digest="f" * 64))
+            with self.assertRaisesRegex(ValueError, "absent historical input"):
+                establish(root, dict(historical, source="missing.py"))
+            with self.assertRaisesRegex(ValueError, "not unique"):
+                establish(root, dict(historical, symbol="MISSING"))
+            (root / "inputs.py").write_text("INPUTS = ('payload', 'payload')\n")
+            git("add", "inputs.py")
+            git("commit", "-m", "Malformed historical declaration")
+            with self.assertRaisesRegex(ValueError, "malformed historical input declaration"):
+                establish(root, dict(historical, commit=git("rev-parse", "HEAD")))
             ancestor = git("rev-parse", "HEAD")
             git("commit", "--allow-empty", "-m", "Detached admission witness")
             unreachable = git("rev-parse", "HEAD")

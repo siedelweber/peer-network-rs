@@ -136,6 +136,32 @@ def establish(root, rule):
         if history.returncode or tree not in history.stdout.splitlines():
             raise ValueError("hash citations: campaign tree is not in HEAD history")
         return lambda value, _line: value == tree
+    if kind == "historical-inputs" and standing == "recomputable":
+        commit = rule["commit"]
+        establish(root, dict(reader="ancestor-commit", establishment="resolvable", commit=commit))
+        def historical(name):
+            path = pathlib.PurePosixPath(name)
+            if path.is_absolute() or any(part in {"", ".", ".."} for part in name.split("/")):
+                raise ValueError("hash citations: invalid historical input path")
+            started = time.monotonic()
+            result = subprocess.run(["git", "show", commit+":"+name], cwd=root, capture_output=True)
+            print(f"hash citations git show wall={time.monotonic()-started:.6f}s status={result.returncode}")
+            if result.returncode:
+                raise ValueError("hash citations: absent historical input")
+            return result.stdout
+        program = ast.parse(historical(rule["source"]))
+        assignments = [node for node in program.body if isinstance(node, ast.Assign)
+                       and any(isinstance(target, ast.Name) and target.id == rule["symbol"] for target in node.targets)]
+        if len(assignments) != 1:
+            raise ValueError("hash citations: historical input declaration is not unique")
+        names = ast.literal_eval(assignments[0].value)
+        if not isinstance(names, (tuple, list)) or not names or any(not isinstance(name, str) for name in names) or len(names) != len(set(names)):
+            raise ValueError("hash citations: malformed historical input declaration")
+        projection = [(name, hashlib.sha256(historical(name)).hexdigest()) for name in names]
+        expected = hashlib.sha256(json.dumps(projection, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+        if rule["digest"] != expected:
+            raise ValueError("hash citations: historical input fingerprint differs")
+        return lambda value, _line: value == expected
     if kind == "public-git" and standing == "resolvable":
         locator = rule["locator"]
         commit = rule["commit"]

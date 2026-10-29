@@ -446,3 +446,29 @@ establishment = "defined"
 reader = "null-hash"
 definition = "The node requires a null parent genesis hash beside con_has_parent_chain=0; the all-zero value names no block and declares that the fixture chain has no parent from which a peg-in could be claimed."
 paths = ["packages/wallet/provisioning.json"]
+
+[[rows]]
+family = "build-graph-admission-tree"
+group = "build graph admission"
+measures = "Reviewed public commit and its admitted tree"
+producer = "Git"
+establishment = "resolvable"
+reader = "imported-commit"
+commit = "4a65f65c016c18cfa497ad65eb03ba182128d06b"
+tree = "0a2f0495bf0cc8c8e306129fb326cf24b537ba55"
+definition = "The public reviewed commit is reachable from HEAD and holds the stated tree; this does not establish a separate pair commit's public availability."
+paths = ["ci/hash-citation-families.toml", "adr/024-build-graph.md", "docs/templates/adr/024-build-graph.md.j2"]
+
+[[rows]]
+family = "build-graph-admission-inputs"
+group = "build graph admission"
+measures = "The historical service-input fingerprint bound by the admission pair"
+producer = "SHA-256 of compact sorted-key JSON of ordered path and SHA-256 byte-digest pairs"
+establishment = "recomputable"
+reader = "historical-inputs"
+commit = "4a65f65c016c18cfa497ad65eb03ba182128d06b"
+source = "ci/build_graph_evidence.py"
+symbol = "SERVICE_INPUTS"
+digest = "fae1c0f5e78137dfc48f4352e2901af20b6810230426d705c5efdb0a8586de89"
+definition = "Read the literal SERVICE_INPUTS tuple and each named file from the reachable reviewed commit, never from current working bytes; recompute the ordered projection and its SHA-256 fingerprint. Only the declared matching digest is accounted."
+paths = ["ci/hash-citation-families.toml", "adr/024-build-graph.md", "docs/templates/adr/024-build-graph.md.j2"]

@@ -14,7 +14,7 @@ from build_graph import SHELL_STEPS, identity, read_result, report_path, roster,
 # These are execution measurements in harness/claim artifacts, not document data.
 MEASUREMENTS = {'duration_ms', 'duration_s', 'utc', 'wall_s', 'duration', 'wall', 'started', 'ended', 'invocation_ms'}
 SERVICE_CASE = 'ci::test_linter_entry.Conformance.test_service_ownership'
-SERVICE_HOLD = 'ROOT::gate:buildgraph:implementation'
+SERVICE_HOLD = 'ROOT::rule:buildgraph:service-selection'
 # Four execution files plus the fixture, declaration helper, selection policy,
 # provisioning declaration and registry that decide what the witness exercises.
 SERVICE_INPUTS = ('ci/host_postgresql.py', 'ci/wallet_elements.py', 'ci/build_graph.py', 'ci/gate.sh',
@@ -33,7 +33,7 @@ def service_selection(root, admission=False):
             changed.append(name)
     return dict(run=bool(admission or changed), inputs=fingerprint, changed=changed,
                 reason='admission requested' if admission else ('service inputs changed' if changed else
-                'service ownership held: unchanged inputs; execute before build-graph admission'), hold=SERVICE_HOLD)
+                'service ownership held: unchanged inputs; execute on input change or explicit admission request'), hold=SERVICE_HOLD)
 
 
 def held_service(record, root):

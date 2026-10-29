@@ -270,7 +270,7 @@ class Conformance(unittest.TestCase):
         completion(self)
 
     def test_service_selection(self):
-        """Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; unchanged inputs produce only a named hold, and another case, a stale input binding or a selected execution cannot reuse that hold.
+        """Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; unchanged inputs produce only a standing selection hold that holds the composition decision without reopening the admitted gate, while admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.
         ´claim:discipline:service-selection-keeps-unexecuted-evidence-held´
         ´test:integration:test-service-selection´
         """
@@ -341,6 +341,39 @@ class Conformance(unittest.TestCase):
                 registry.matrix([record], 'current')
             with self.assertRaises(StructuralError):
                 evaluate(**data)
+
+        # Exercise the actual registered edges, not a duplicate of their policy.
+        import copy
+        import tomllib
+        from build_graph_evidence import SERVICE_HOLD
+        self.assertEqual(SERVICE_HOLD, 'ROOT::rule:buildgraph:service-selection')
+        names = ('ROOT::dec:buildgraph:composition', 'ROOT::gate:buildgraph:implementation')
+        rows = [row for row in tomllib.loads(Path('docs/inputs/claim-obligations.toml').read_text())['rows'] if row['name'] in names]
+        self.assertEqual(len(rows), 2)
+        self.assertTrue(all(row['status'] == 'scoped-supported' for row in rows))
+        self.assertTrue(all(row['hold'] == 'ROOT::open:testing:obligation-evidence' for row in rows))
+        service_claim = 'ROOT::claim:discipline:service-delegation-preserves-ownership'
+        self.assertIn(service_claim, next(row['claims'] for row in rows if row['name'] == names[0]))
+        self.assertNotIn(service_claim, next(row['claims'] for row in rows if row['name'] == names[1]))
+        graph = claim_fixture()
+        graph['paragraphs'].pop('ROOT::amend:testing:fixture-evidence')
+        all_claims = sorted({claim for row in rows for claim in row['claims']})
+        graph['sites'] = [dict(operation=SERVICE_CASE if claim == service_claim else 'fixture-'+str(i), owner='ROOT', area='testing', claim=claim, mint=True, language='python') for i, claim in enumerate(all_claims)]
+        graph['expected_sites'] = {site['operation'] for site in graph['sites']}
+        graph['declared'] = rows
+        graph['obligations'] = {row['name']: dict(path=row['path'], citations=set()) for row in rows}
+        for row in rows:
+            paragraph = graph['paragraphs'].setdefault(row['evidence_paragraph'], dict(text='', citations=set()))
+            paragraph['citations'].update([row['name'], *row['claims']])
+        for admission in (False, True):
+            observed = copy.deepcopy(graph)
+            observed['results'] = [dict(operation=site['operation'], source='current', configuration='fixture', outcome='passed') for site in observed['sites']]
+            if not admission:
+                next(result for result in observed['results'] if result['operation'] == SERVICE_CASE).update(outcome='held', hold=selection['hold'], reason=selection['reason'], selection_inputs=selection['inputs'])
+            with patch('build_graph_evidence.service_selection', return_value=selection | dict(run=admission)):
+                states = {row['name']: row['status'] for row in evaluate(**observed)['obligations']}
+            self.assertEqual(states[names[0]], 'scoped-passed' if admission else 'held')
+            self.assertEqual(states[names[1]], 'scoped-passed')
 
     def test_retained_gate_equivalence(self):
         """Claim: Retained fresh and reused gate evidence must match source, full roster, features, case inventory, document digests, claims and statuses; changed fields, missing reports, repeated completions, reused nonces or run identities and a replaced setup refuse rather than disappearing under measurement exclusions.
