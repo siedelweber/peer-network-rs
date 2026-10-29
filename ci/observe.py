@@ -12,7 +12,7 @@ from collections import Counter
 from devperf import StructuralError
 from harness import source_id
 
-OWNERS={'cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','graph': 'GRAPH', 'wallet':'WALLET','host':'HOST','records':'RECORDS'}
+OWNERS={'cli-common':'CLICOMMON','documents':'DOCUMENTS','execwrap':'EXECWRAP','interchange':'INTERCHANGE','testkit':'TESTKIT','epoch': 'EPOCH', 'graph': 'GRAPH', 'wallet':'WALLET','host':'HOST','records':'RECORDS'}
 HELPERS={
     'cli-common::packages/cli-common/src/observation.rs::observation::scope',
     'cli-common::packages/cli-common/src/observation.rs::observation::Observation::operation',

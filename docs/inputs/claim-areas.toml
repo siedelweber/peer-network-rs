@@ -323,3 +323,10 @@ area = "formation"
 stake = "An unapproved, incomplete or mis-typed projection can falsely anchor an Actor/Profile pair, while stale mutable graph state can omit or alter accepted records."
 register = "GRAPH::sec:formation:area-formation"
 contract = "GRAPH::def:formation:registration"
+
+[[rows]]
+owner = "EPOCH"
+area = "compiler"
+stake = "A mixed boundary or malformed parameter interpretation can compile a different final state from the accepted public inputs."
+register = "EPOCH::sec:compiler:area-compiler"
+contract = "EPOCH::def:compiler:boundary-inputs"

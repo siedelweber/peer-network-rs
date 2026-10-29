@@ -1,0 +1,21 @@
+[package]
+name = "pn-epoch"
+description = "Boundary-bound compiler inputs and final ledger derivation"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+version.workspace = true
+
+[dependencies]
+pn-records = { path = "../records" }
+nrz-cas.workspace = true
+tracing.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+cli-common.workspace = true
+pn-testkit.workspace = true
+
+[lints]
+workspace = true

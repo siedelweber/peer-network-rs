@@ -10,6 +10,7 @@ endforeach
 subdir('cli-common')
 subdir('documents')
 subdir('execwrap')
+subdir('epoch')
 subdir('graph')
 subdir('host')
 subdir('interchange')

@@ -411,3 +411,39 @@ allowances = []
 
 [GRAPH."profile.claims-conform"]
 allowances = []
+
+[EPOCH."labels.citations-import-form"]
+allowances = []
+
+[EPOCH."labels.citations-imported-resolve"]
+allowances = []
+
+[EPOCH."labels.citations-layer-conform"]
+allowances = []
+
+[EPOCH."labels.citations-local-resolve"]
+allowances = []
+
+[EPOCH."labels.generated-regions-conform"]
+allowances = []
+
+[EPOCH."labels.heads-conform"]
+allowances = []
+
+[EPOCH."labels.mints-kind-conform"]
+allowances = []
+
+[EPOCH."labels.mints-unique"]
+allowances = []
+
+[EPOCH."labels.mints-well-formed"]
+allowances = []
+
+[EPOCH."labels.outlines-conform"]
+allowances = []
+
+[EPOCH."profile.tests-conform"]
+allowances = []
+
+[EPOCH."profile.claims-conform"]
+allowances = []

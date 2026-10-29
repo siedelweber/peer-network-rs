@@ -59,7 +59,7 @@ gate_steps = [
   ['design-correspondence', 'python3 -B ci/design.py', 'determinism-documents'],
   ['design-tests', 'python3 -B ci/run_ci.py test_design', 'design-correspondence'],
   ['benchmarks', 'python3 -B ci/benchmarks.py', 'design-tests'],
-  ['observation-build', 'cargo build --offline --locked --profile gate -p execwrap -p pn-records -p pn-graph --features pn-records/test-support --examples', 'benchmarks'],
+  ['observation-build', 'cargo build --offline --locked --profile gate -p execwrap -p pn-records -p pn-graph -p pn-epoch --features pn-records/test-support --examples', 'benchmarks'],
   ['observation-runtime', 'python3 -B ci/run_ci.py test_observe_runtime', 'observation-build'],
   ['host-observation-build', 'python3 -B ci/host_evidence_build.py', 'observation-runtime'],
   ['host-observation-runtime', 'python3 -B ci/run_ci.py test_host_runtime', 'host-observation-build'],

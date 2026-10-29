@@ -10,6 +10,22 @@
       "imports": [],
       "may_cite": [
         {
+          "owner": "EPOCH",
+          "target": "ROOT"
+        },
+        {
+          "owner": "EPOCH",
+          "target": "RECORDS"
+        },
+        {
+          "owner": "EPOCH",
+          "target": "TESTKIT"
+        },
+        {
+          "owner": "EPOCH",
+          "target": "CLICOMMON"
+        },
+        {
           "owner": "GRAPH",
           "target": "ROOT"
         },
@@ -163,9 +179,15 @@
         "HOST",
         "WALLET",
         "GRAPH",
+        "EPOCH",
         "VENDOR"
       ],
       "partitions": [
+        {
+          "name": "epoch-package",
+          "owner": "EPOCH",
+          "pattern": "%s\"packages/epoch/\" *VCHAR"
+        },
         {
           "name": "graph-package",
           "owner": "GRAPH",

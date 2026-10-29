@@ -187,6 +187,33 @@ class Processes(unittest.TestCase):
         self.assertEqual(outputs['default'],outputs['trace'])
         self.assertEqual(outcomes['default'],outcomes['trace'])
 
+    def test_epoch_inputs(self):
+        """Claim: The real compiler parameter boundary preserves exact successful inputs and missing-profile refusals with observation disabled, default and trace; enabled observation retains both epoch invocations and trace carries the public constants and results.
+        ´claim:discipline:epoch-inputs-retain-observed-results´
+        ´test:integration:test-epoch-inputs´
+        """
+        samples = {}
+        for mode in ('disabled', 'default', 'trace'):
+            env = os.environ | {'PN_OBSERVE_LEVEL': 'trace' if mode == 'trace' else 'default'}
+            result = compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/epoch_observation'), mode], mode, env)
+            self.assertEqual(result.returncode, 0, result.stderr.decode())
+            samples[mode] = result.stdout
+            self.assertIn(b'MissingProfile', result.stdout)
+            self.assertIn(b'CompilerInputs', result.stdout)
+            if mode == 'disabled': continue
+            rows = [json.loads(line) for line in result.stderr.splitlines()]
+            summary = expanded(next(row['metrics'] for row in rows if row.get('kind') == 'metric_summary'))
+            stem = 'epoch__root__sig__design__epoch__'
+            accounting = distribution(summary)
+            self.assertEqual(accounting[stem+'started_operations', ''], 2)
+            instruments = {row['name']: row for row in summary['instruments'] if row['name'].startswith(stem)}
+            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 2)
+            if mode == 'trace':
+                for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass'):
+                    self.assertIn(marker, result.stderr)
+        self.assertEqual(samples['disabled'], samples['default'])
+        self.assertEqual(samples['default'], samples['trace'])
+
     def test_graph_partition(self):
         """Claim: The real public partition operation returns identical whole-act blocks with observation disabled, default and trace; default and trace retain two graph invocations and elapsed samples, while trace records the complete public input and graph result.
         ´claim:discipline:graph-partition-is-observed-without-changing-results´

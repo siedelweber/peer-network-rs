@@ -745,6 +745,8 @@ pub enum OperationKind {
     Wallet,
     /// Graph formation and dependency partition operations.
     Graph,
+    /// Epoch compiler parameter and ledger operations.
+    Epoch,
 }
 impl OperationKind {
     const fn stem(self) -> &'static str {
@@ -760,6 +762,7 @@ impl OperationKind {
             Self::Host => "host__root__sig__design__storage",
             Self::Wallet => "wallet__root__sig__design__devnet",
             Self::Graph => "graph__root__sig__design__graph",
+            Self::Epoch => "epoch__root__sig__design__epoch",
         }
     }
     const fn label(self) -> &'static str {
@@ -772,6 +775,7 @@ impl OperationKind {
             Self::Host => "sig:design:storage",
             Self::Wallet => "sig:design:devnet",
             Self::Graph => "sig:design:graph",
+            Self::Epoch => "sig:design:epoch",
         }
     }
     const fn owner(self) -> &'static str {
@@ -783,6 +787,7 @@ impl OperationKind {
             Self::Host => "HOST",
             Self::Wallet => "WALLET",
             Self::Graph => "GRAPH",
+            Self::Epoch => "EPOCH",
             _ => "CLICOMMON",
         }
     }
@@ -1165,6 +1170,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                     Some("HOST") => Some(OperationKind::Host),
                     Some("WALLET") => Some(OperationKind::Wallet),
                     Some("GRAPH") => Some(OperationKind::Graph),
+                    Some("EPOCH") => Some(OperationKind::Epoch),
                     Some("CLICOMMON") => Some(OperationKind::PublicCli),
                     Some("EXECWRAP") => Some(OperationKind::PublicExec),
                     _ => None,

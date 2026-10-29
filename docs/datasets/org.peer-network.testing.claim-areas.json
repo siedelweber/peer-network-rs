@@ -327,6 +327,13 @@
       "owner": "GRAPH",
       "register": "GRAPH::sec:formation:area-formation",
       "stake": "An unapproved, incomplete or mis-typed projection can falsely anchor an Actor/Profile pair, while stale mutable graph state can omit or alter accepted records."
+    },
+    {
+      "area": "compiler",
+      "contract": "EPOCH::def:compiler:boundary-inputs",
+      "owner": "EPOCH",
+      "register": "EPOCH::sec:compiler:area-compiler",
+      "stake": "A mixed boundary or malformed parameter interpretation can compile a different final state from the accepted public inputs."
     }
   ]
 }

@@ -250,6 +250,14 @@
       "review": "Read each injected status and capture count: both endpoints pass for one reservation, counts outside the interval fail, and no reservation requires equality. Attempted totals still reconcile independently. This checks the reporter contract, not transport completion."
     },
     {
+      "operation": "ci::test_observe_runtime.Processes.test_epoch_inputs",
+      "path": "ci/test_observe_runtime.py",
+      "claim": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+      "before": "",
+      "after": "Claim: The real compiler parameter boundary preserves exact successful inputs and missing-profile refusals with observation disabled, default and trace; enabled observation retains both epoch invocations and trace carries the public constants and results.",
+      "review": "Runs actual parameter validation in three observation modes and compares exact result bytes, invocation totals, elapsed samples and trace public fields."
+    },
+    {
       "operation": "ci::test_observe_runtime.Processes.test_four_mode_results",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:four-observation-modes-preserve-command-results",
@@ -504,6 +512,14 @@
       "before": "Claim: An injected drain timeout and an occupied drain-request slot report their own counters without inventing a lost record, preserving the distinction between delivery loss and a failed wait.",
       "after": "Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue.",
       "review": "Read the batch-end rendezvous and one-record and full-queue prefixes, acknowledgement counts and successful close disclosure; existing timeout and unavailable accounting remains."
+    },
+    {
+      "operation": "cli-common::observation::tests::epoch_owner_accounting",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:epoch-operations-retain-owner-accounting",
+      "before": "",
+      "after": "Claim: A EPOCH-labelled compiler operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.",
+      "review": "Read the epoch owner span and its own stem counters, independently of other owner totals."
     },
     {
       "operation": "cli-common::observation::tests::exit_reports_pending_delivery",
@@ -1376,6 +1392,14 @@
       "before": "typesetter preserves arbitrary bytes.",
       "after": "Claim: Raw stdout and stderr preserve invalid UTF-8, NUL, control bytes and a 64 `KiB` payload exactly, protecting binary child output.",
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
+    },
+    {
+      "operation": "pn-epoch::inputs::parameter_binding",
+      "path": "packages/epoch/tests/inputs.rs",
+      "claim": "EPOCH::claim:compiler:boundary-inputs-bind-complete-declared-parameters",
+      "before": "",
+      "after": "Claim: A compiler input retains its effective constants and exact declared unequal profile, refuses foreign and mixed editions, unit mismatch, missing or invalid family profiles, nonpositive self-base and invalid depth mass distinctly, and never substitutes equal weights or rounded literals.",
+      "review": "Independent expected parameter values and typed negative causes exercise every family profile and retained effective edition; no standing or authentication verdict is inferred."
     },
     {
       "operation": "pn-graph::formation::affinity_coordinates",

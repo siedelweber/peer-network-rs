@@ -6728,6 +6728,52 @@
       "claim": "ROOT::alg:design:formation",
       "shape": "shape-graph-affinity",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "item": "bind_inputs",
+      "owner": "EPOCH",
+      "signature": "fn bind_inputs (history : & ConstantsHistory < '_ > , input : ParameterInput , limits : Limits) -> Result < CompilerInputs , InputError >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "item": "CompilerInputs::parameters",
+      "owner": "EPOCH",
+      "signature": "fn parameters (& self) -> & ParameterInput",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable carrier access inherits the enclosing validation operation.",
+        "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+        "boundary": "pn-epoch::packages/epoch/src/lib.rs::bind_inputs",
+        "class_decision": "epoch-inputs"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "item": "CompilerInputs::constants",
+      "owner": "EPOCH",
+      "signature": "fn constants (& self) -> & ConstantsEdition",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable carrier access inherits the enclosing validation operation.",
+        "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+        "boundary": "pn-epoch::packages/epoch/src/lib.rs::bind_inputs",
+        "class_decision": "epoch-inputs"
+      }
     }
   ],
   "metrics": [
@@ -7625,6 +7671,69 @@
     },
     {
       "name": "graph__root__sig__design__graph__workload_operations",
+      "kind": "histogram",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "epoch__root__sig__design__epoch__started_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "epoch__root__sig__design__epoch__completed_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {
+        "outcome": [
+          "success",
+          "refusal",
+          "error",
+          "cancelled",
+          "unwinding",
+          "incomplete"
+        ]
+      }
+    },
+    {
+      "name": "epoch__root__sig__design__epoch__work_bytes",
+      "kind": "counter",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "epoch__root__sig__design__epoch__work_operations",
+      "kind": "counter",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "epoch__root__sig__design__epoch__active_operations",
+      "kind": "gauge",
+      "unit": "operations",
+      "attributes": {}
+    },
+    {
+      "name": "epoch__root__sig__design__epoch__resource_current_bytes",
+      "kind": "gauge",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "epoch__root__sig__design__epoch__elapsed_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "attributes": {}
+    },
+    {
+      "name": "epoch__root__sig__design__epoch__workload_bytes",
+      "kind": "histogram",
+      "unit": "bytes",
+      "attributes": {}
+    },
+    {
+      "name": "epoch__root__sig__design__epoch__workload_operations",
       "kind": "histogram",
       "unit": "operations",
       "attributes": {}
@@ -9855,9 +9964,9 @@
     },
     {
       "operation": "cli-common::packages/cli-common/src/observation.rs::observation::<AccountingLayer as Layer < S >>::on_new_span",
-      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"HOST\") => Some (OperationKind :: Host) , Some (\"WALLET\") => Some (OperationKind :: Wallet) , Some (\"GRAPH\") => Some (OperationKind :: Graph) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
+      "body": "{ let Some (_observing) = Observing :: enter (& self . 0) else { return ; } ; if let Some (span) = context . span (id) { let mut fields = Fields :: default () ; if self . 0 . full_trace { attributes . record (& mut fields) ; } else { let mut summary = SummaryFields :: default () ; attributes . record (& mut summary) ; fields = summary . 0 ; } if fields . 2 { self . 0 . attempted . fetch_add (1 , Ordering :: Relaxed) ; self . 0 . loss_causes . note (& self . 0 . lost , 3) ; return ; } let command = matches ! (fields . 0 . get (\"source_item\") . and_then (Value :: as_str) , Some (\"run_stdout_json_command\" | \"run_no_stdout_command\" | \"run_no_stdout_command_async\" | \"run_check_command\" | \"execute\")) ; let kind = if command { Some (OperationKind :: Command) } else { match fields . 0 . get (\"execution_owner\") . and_then (Value :: as_str) { Some (\"DOCUMENTS\") => Some (OperationKind :: Document) , Some (\"INTERCHANGE\") => Some (OperationKind :: Interchange) , Some (\"RECORDS\") => Some (OperationKind :: Records) , Some (\"HOST\") => Some (OperationKind :: Host) , Some (\"WALLET\") => Some (OperationKind :: Wallet) , Some (\"GRAPH\") => Some (OperationKind :: Graph) , Some (\"EPOCH\") => Some (OperationKind :: Epoch) , Some (\"CLICOMMON\") => Some (OperationKind :: PublicCli) , Some (\"EXECWRAP\") => Some (OperationKind :: PublicExec) , _ => None , } } ; let parent = span . parent () . and_then (| parent | { parent . extensions () . get :: < SpanAccount > () . and_then (| account | account . operation . as_ref () . map (| operation | operation . id)) }) ; let operation = kind . map (| kind | self . 0 . operation_with_parent (kind , json ! (fields . 0) , parent)) ; span . extensions_mut () . insert (SpanAccount { fields , started : self . 0 . clock . elapsed () , operation , result : None , outcome : None , explicit_outcome : false , }) ; } }",
       "class_decision": "delivery",
-      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure. The authorized HOST dispatch selects its own storage stem; host-owner-accounting checks it independently of the other owners. The authorized WALLET dispatch selects its own devnet stem; wallet-owner-accounting checks default and trace counters and duration independently of the other owners. The GRAPH dispatch selects its own graph stem; graph_owner_accounting checks default and trace counters and duration independently of the other owners.",
+      "item_premise": "Public values remain structured through the queue, with bounded byte charge and loss causes. Artifact chunks bound JSON nesting. Exit reports delivered, lost and undelivered records synchronously after its byte-scaled drain deadline. These delivery changes do not affect results or secret exposure. The authorized HOST dispatch selects its own storage stem; host-owner-accounting checks it independently of the other owners. The authorized WALLET dispatch selects its own devnet stem; wallet-owner-accounting checks default and trace counters and duration independently of the other owners. The GRAPH dispatch selects its own graph stem; graph_owner_accounting checks default and trace counters and duration independently of the other owners. The EPOCH dispatch selects its own compiler stem; epoch_owner_accounting independently checks its default and trace counters and duration.",
       "assessments": {
         "full_recording": "review-204",
         "secret_flow": "review-002",
@@ -12932,6 +13041,39 @@
         "secret_flow": "graph-affinity-secret_flow",
         "exposure_consumers": "graph-affinity-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/lib.rs::bind_inputs",
+      "body": "{ if input . boundary == 0 { return Err (InputError :: Boundary) ; } let constants = history . resolve (\"numeric\" , \"constants\" , input . boundary) ? ; let edition = constants . content () ; if input . edition != edition . id { return Err (InputError :: Edition) ; } if input . numeraire != edition . numeraire { return Err (InputError :: Units) ; } let mut budget = Budget :: new (limits) ? ; let mut families = BTreeSet :: new () ; for profile in & input . profiles { if profile . edition != input . edition { return Err (InputError :: MixedEdition) ; } let domains = projection_domains (& profile . family) . ok_or (InputError :: ProfileIdentity) ? ; if ! families . insert (profile . family . as_str ()) || ! edition . domain_profiles . contains (& profile . name) { return Err (InputError :: ProfileIdentity) ; } let mut sum = Rational :: parse (\"0\" , & mut budget) ? ; for (domain , spelling) in & profile . weights { let weight = constant (constants , spelling , & mut budget) ? ; if weight . is_negative () { return Err (InputError :: NegativeProfile) ; } if ! weight . is_zero () && ! domains . contains (& domain . as_str ()) { return Err (InputError :: ProfileSupport) ; } sum = sum . add (& weight , & mut budget) ? ; } if sum . exact_string (& mut budget) ? != \"1\" { return Err (InputError :: ProfileSum) ; } } if families . len () != 19 { return Err (InputError :: MissingProfile) ; } let base = constant (constants , & input . self_base , & mut budget) ? ; if base . is_negative () || base . is_zero () { return Err (InputError :: SelfBase) ; } let mut sum = Rational :: parse (\"0\" , & mut budget) ? ; for spelling in & input . depth_mass { let mass = constant (constants , spelling , & mut budget) ? ; if mass . is_negative () { return Err (InputError :: DepthMass) ; } sum = sum . add (& mass , & mut budget) ? ; } if sum . exact_string (& mut budget) ? != \"1\" { return Err (InputError :: DepthMass) ; } Ok (CompilerInputs { parameters : input , constants : constants . clone () , }) }",
+      "class_decision": "epoch-inputs",
+      "item_premise": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals.",
+      "assessments": {
+        "full_recording": "epoch-full_recording",
+        "secret_flow": "epoch-secret_flow",
+        "exposure_consumers": "epoch-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/lib.rs::CompilerInputs::parameters",
+      "body": "{ & self . parameters }",
+      "class_decision": "epoch-inputs",
+      "item_premise": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals.",
+      "assessments": {
+        "full_recording": "epoch-full_recording",
+        "secret_flow": "epoch-secret_flow",
+        "exposure_consumers": "epoch-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/lib.rs::CompilerInputs::constants",
+      "body": "{ & self . constants }",
+      "class_decision": "epoch-inputs",
+      "item_premise": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals.",
+      "assessments": {
+        "full_recording": "epoch-full_recording",
+        "secret_flow": "epoch-secret_flow",
+        "exposure_consumers": "epoch-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -15814,6 +15956,42 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "public-records",
       "expansion_review": "Clone, Debug and equality preserve only public identities, exact recomputed values, unavailable-opening sets and local fault causes. No cryptographic verdict, encoding or rewrite is introduced."
+    },
+    {
+      "item": "FamilyProfile",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-inputs",
+      "expansion_review": "Derived structural cloning, equality and complete Debug retain public fields; typed Error messages contain no secret data. Generated methods inherit parameter validation."
+    },
+    {
+      "item": "ParameterInput",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-inputs",
+      "expansion_review": "Derived structural cloning, equality and complete Debug retain public fields; typed Error messages contain no secret data. Generated methods inherit parameter validation."
+    },
+    {
+      "item": "CompilerInputs",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-inputs",
+      "expansion_review": "Derived structural cloning, equality and complete Debug retain public fields; typed Error messages contain no secret data. Generated methods inherit parameter validation."
+    },
+    {
+      "item": "InputError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-inputs",
+      "expansion_review": "Derived structural cloning, equality and complete Debug retain public fields; typed Error messages contain no secret data. Generated methods inherit parameter validation."
     }
   ],
   "reviewed_types": [
@@ -16523,7 +16701,7 @@
       "item": "observation::OperationKind",
       "package": "cli-common",
       "path": "packages/cli-common/src/observation.rs",
-      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , # [doc = \" Host service transport and storage boundary operations.\"] Host , # [doc = \" Public Elements layout and evidence operations.\"] Wallet , # [doc = \" Graph formation and dependency partition operations.\"] Graph , }"
+      "syntax": "# [doc = \" The finite core operation registry; later instrumentation extends this set.\"] # [derive (Clone , Copy , Debug)] pub enum OperationKind { # [doc = \" Shared command work.\"] Command , # [doc = \" Public child-process execution and byte relay.\"] Child , # [doc = \" Executable-owned subscriber/recorder installation.\"] Bootstrap , # [doc = \" Document projection, rendering and checks.\"] Document , # [doc = \" Interchange coding, theory evaluation and acceptance.\"] Interchange , # [doc = \" Shared CLI public operation.\"] PublicCli , # [doc = \" Execution wrapper public operation.\"] PublicExec , # [doc = \" Internal records validation and complete-act access.\"] Records , # [doc = \" Host service transport and storage boundary operations.\"] Host , # [doc = \" Public Elements layout and evidence operations.\"] Wallet , # [doc = \" Graph formation and dependency partition operations.\"] Graph , # [doc = \" Epoch compiler parameter and ledger operations.\"] Epoch , }"
     },
     {
       "item": "observation::Outcome",
@@ -17922,6 +18100,30 @@
       "package": "pn-wallet",
       "path": "packages/wallet/src/settlement.rs",
       "syntax": "# [doc = \" Pinned evidence and any fault for one run; pending evidence is never stored.\"] # [doc = \" (´def:wallet:settlement´)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Settlement { pinned : BTreeMap < ([u8 ; 32] , u32) , Evidence > , fault : Option < SettlementRefusal > , }"
+    },
+    {
+      "item": "FamilyProfile",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "syntax": "# [doc = \" One family's explicitly published domain weights, bound to a constants edition.\"] # [doc = \" (´def:compiler:boundary-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FamilyProfile { # [doc = \" Exact family name from the authored census.\"] pub family : String , # [doc = \" Declared profile name; no inferred equal split.\"] pub name : String , # [doc = \" Edition publishing this interpretation.\"] pub edition : DeclarationId , # [doc = \" Literal constant names by domain; omitted domains have weight zero.\"] pub weights : BTreeMap < String , String > , }"
+    },
+    {
+      "item": "ParameterInput",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "syntax": "# [doc = \" Untrusted structural parameter interpretation, not a canonical document.\"] # [doc = \" (´def:compiler:boundary-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ParameterInput { pub boundary : u64 , pub edition : DeclarationId , pub numeraire : Numeraire , pub profiles : Vec < FamilyProfile > , # [doc = \" Name of the positive self-retention literal in the effective edition.\"] pub self_base : String , # [doc = \" Literal constant names for depths one through the vector length.\"] pub depth_mass : Vec < String > , }"
+    },
+    {
+      "item": "CompilerInputs",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "syntax": "# [doc = \" Immutable checked parameters; callers cannot replace an edition or profile after validation.\"] # [doc = \" (´def:compiler:boundary-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CompilerInputs { parameters : ParameterInput , constants : ConstantsEdition , }"
+    },
+    {
+      "item": "InputError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/lib.rs",
+      "syntax": "# [doc = \" Distinct structural and bounded-arithmetic refusals.\"] # [doc = \" (´def:compiler:boundary-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum InputError { # [error (\"constants selection: {0}\")] Constants (# [from] ConstantsError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"boundary zero is not a compiling epoch\")] Boundary , # [error (\"input edition differs from the effective edition\")] Edition , # [error (\"profile mixes constants editions\")] MixedEdition , # [error (\"unit or numeraire differs from the effective edition\")] Units , # [error (\"missing or unsupported literal constant\")] Constant , # [error (\"family profile missing\")] MissingProfile , # [error (\"duplicate or unknown family or undeclared profile\")] ProfileIdentity , # [error (\"negative profile weight\")] NegativeProfile , # [error (\"profile does not sum to one\")] ProfileSum , # [error (\"profile supported outside the family's projection domains\")] ProfileSupport , # [error (\"self retention must be positive\")] SelfBase , # [error (\"depth mass must be nonempty, nonnegative and sum to one\")] DepthMass , }"
     }
   ],
   "class_decisions": [
@@ -18079,6 +18281,16 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Binary and paired formation consume immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation."
+    },
+    {
+      "name": "epoch-inputs",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/lib.rs::bind_inputs"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals."
     }
   ],
   "shapes": {
@@ -18315,6 +18527,27 @@
         "graph__root__sig__design__graph__elapsed_seconds",
         "graph__root__sig__design__graph__workload_bytes",
         "graph__root__sig__design__graph__workload_operations"
+      ]
+    },
+    "shape-epoch": {
+      "fields": [
+        "complete public constants history and parameter input at trace",
+        "complete validated parameters or typed refusal at trace",
+        "bounded outcome",
+        "inclusive duration_seconds",
+        "declared invocation work",
+        "qualified resource totals"
+      ],
+      "metrics": [
+        "epoch__root__sig__design__epoch__started_operations",
+        "epoch__root__sig__design__epoch__completed_operations",
+        "epoch__root__sig__design__epoch__work_bytes",
+        "epoch__root__sig__design__epoch__work_operations",
+        "epoch__root__sig__design__epoch__active_operations",
+        "epoch__root__sig__design__epoch__resource_current_bytes",
+        "epoch__root__sig__design__epoch__elapsed_seconds",
+        "epoch__root__sig__design__epoch__workload_bytes",
+        "epoch__root__sig__design__epoch__workload_operations"
       ]
     }
   },
@@ -19908,6 +20141,21 @@
       "status": "reviewer-confirmed",
       "premises": "Binary formation consumes immutable public records, diagnostic graph values and a declared deterministic public verifier. The verifier Debug and inputs contain public evidence only; no secret key or cryptographic implementation is admitted. Trace retains complete arguments and results, including refusals. Typed graph values are compared against reconstruction; serde bytes are diagnostic only and never canonical or binding equality. Observation supplies accounting only and never feeds computation.",
       "negative_probe": "ROOT::claim:discipline:affinity-formation-retains-observed-results"
+    },
+    "epoch-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
     }
   }
 }

@@ -1668,6 +1668,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
 
 [[package]]
+name = "pn-epoch"
+version = "0.1.0"
+dependencies = [
+ "cli-common",
+ "nrz-cas",
+ "pn-records",
+ "pn-testkit",
+ "thiserror",
+ "tracing",
+]
+
+[[package]]
 name = "pn-graph"
 version = "0.1.0"
 dependencies = [

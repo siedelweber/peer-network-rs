@@ -2948,6 +2948,18 @@
       "path": "docs/design/implementation.md",
       "realizers": [],
       "status": "held"
+    },
+    {
+      "claims": [],
+      "closing_condition": "Resolve the coefficient from the paper and establish independent cell and base witnesses without removing accepted acts from counts or debits.",
+      "closing_step": "Bite 5 cell and recipient compilation after the paper clarification",
+      "hold": "ROOT::open:design:suppressed-invitation-coefficient",
+      "missing": "Specified home coefficient for a suppressed Invitation",
+      "name": "ROOT::verif:design:suppressed-invitation-cases",
+      "owner": "Graph implementer",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held"
     }
   ]
 }
