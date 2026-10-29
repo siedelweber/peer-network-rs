@@ -50,6 +50,14 @@
       "review": "Read the structural-placeholder acceptance and condition, case and proposition refusal assertions beside the retained release-field pin probes. The assertions require the diagnostic to identify every refused label and retain the existing pin-drift checks; the gloss states those tested properties without claiming semantic review of inventory prose."
     },
     {
+      "operation": "ci::test_discipline.HashCitations.test_act_profile_vector_corruptions",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:hashcitations:act-profile-vector-corruptions-refuse",
+      "before": "",
+      "after": "The independent act-profile reader refuses each preimage, digest, role tag and recipe corruption, and missing or repeated vectors, including the original twenty-two controls.",
+      "review": "Read the exact vector comparisons and corruption refusals, redacting dependency Debug, complete capture accounting and public-route positive. Protected-input privacy is a construction property of secrecy types and labelled exits; no trace absence search is evidence. The independent reader shares neither the production projection nor encoder."
+    },
+    {
       "operation": "ci::test_discipline.HashCitations.test_artifact_vector",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:hashcitations:artifact-vector-binds-its-payload",
@@ -1404,10 +1412,10 @@
     {
       "operation": "pn-act-profile::tests::commitment_trace_privacy",
       "path": "packages/act-profile/src/tests.rs",
-      "claim": "ACTPROFILE::claim:profile:commitment-traces-retain-only-public-projection",
+      "claim": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
       "before": "",
-      "after": "Claim: Complete traced commitment computations retain the three fixed residues without emitting the nonce, salts, payload, dependency list or private pre-digests.",
-      "review": "Read the fixed recipe comparisons, exact authored-pair and malformed-input controls, full-trace secret-content negatives and nontrivial settlement replay fixture. These establish supplied-anchor equality and preserved structural verdicts, not entropy, custody, formation authority or signature authentication."
+      "after": "Claim: Secrecy-typed commitment inputs produce the three fixed residues in complete default and trace runs; bare dependency Debug is redacted. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.",
+      "review": "Read the exact vector comparisons and corruption refusals, redacting dependency Debug, complete capture accounting and public-route positive. Protected-input privacy is a construction property of secrecy types and labelled exits; no trace absence search is evidence. The independent reader shares neither the production projection nor encoder."
     },
     {
       "operation": "pn-act-profile::tests::fixed_recipes_and_controls",
@@ -1424,6 +1432,14 @@
       "before": "",
       "after": "Claim: Matching tombstone openings restore exact recurrence and retain placement faults without changing settlement verdicts or title; missing or refused evidence never authenticates anchors or replaces retained carriage.",
       "review": "Read the fixed recipe comparisons, exact authored-pair and malformed-input controls, full-trace secret-content negatives and nontrivial settlement replay fixture. These establish supplied-anchor equality and preserved structural verdicts, not entropy, custody, formation authority or signature authentication."
+    },
+    {
+      "operation": "pn-act-profile::tests::proposal_projection_vectors",
+      "path": "packages/act-profile/src/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:proposal-vectors-cover-projection-branches",
+      "before": "",
+      "after": "Claim: Independently authored proposal vectors bind both layouts, every reference constructor, signed and nonnegative exact pairs, both license states, all settlement states and all content and dependency request states.",
+      "review": "Read the exact vector comparisons and corruption refusals, redacting dependency Debug, complete capture accounting and public-route positive. Protected-input privacy is a construction property of secrecy types and labelled exits; no trace absence search is evidence. The independent reader shares neither the production projection nor encoder."
     },
     {
       "operation": "pn-epoch::cells::cell_incidence",
@@ -2588,10 +2604,10 @@
     {
       "operation": "pn-interchange::encode::secret_tests::protected_canonical_bytes",
       "path": "packages/interchange/src/encode.rs",
-      "claim": "INTERCHANGE::claim:encoding:protected-canonical-bytes-preserve-privacy",
+      "claim": "INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree",
       "before": "",
-      "after": "Claim: Protected canonical tuples match public canonical bytes while complete full-trace child captures record no protected field or encoded result; the public route still records its content and the private allocation bound refuses excess.",
-      "review": "Read the secret-aware encoding dependency edge and isolated complete trace children; public encoding remains unchanged, private fixed values are compared without recording their content, and the manifest admits only the declared production dependency."
+      "after": "Claim: Secrecy-typed protected tuples and output match the public canonical bytes under complete traced execution, with the private allocation bound enforced and public content still observed. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.",
+      "review": "Read the exact vector comparisons and corruption refusals, redacting dependency Debug, complete capture accounting and public-route positive. Protected-input privacy is a construction property of secrecy types and labelled exits; no trace absence search is evidence. The independent reader shares neither the production projection nor encoder."
     },
     {
       "operation": "pn-interchange::inclusion::a_reached_rule_chain_respelled_is_the_same_type",

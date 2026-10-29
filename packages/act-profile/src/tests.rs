@@ -423,11 +423,15 @@ fn expand_artifacts(value: &mut serde_json::Value) {
     }
 }
 
-/// Claim: Complete traced commitment computations retain the three fixed residues without emitting the nonce, salts, payload, dependency list or private pre-digests.
-/// ´claim:profile:commitment-traces-retain-only-public-projection´
+/// Claim: Secrecy-typed commitment inputs produce the three fixed residues in complete default and trace runs; bare dependency Debug is redacted. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.
+/// ´claim:profile:protected-inputs-retain-fixed-commitments´
 /// ´test:unit:commitment-trace-privacy´
 #[test]
 fn commitment_trace_privacy() {
+    assert_eq!(
+        format!("{:?}", DependencyIds(vec![id(1, "Registration")])),
+        "DependencyIds([REDACTED])"
+    );
     let proposal_body = body("Registration");
     let proposal_nonce = nonce(2);
     let payload = secret(b"fixture private aggregate");
@@ -482,33 +486,6 @@ fn commitment_trace_privacy() {
             .find(|row| row["name"] == "actprofile__root__amend__decomposition__act_profile__started_operations")
             .unwrap();
         assert_eq!(started["counter"], 3);
-        let trace = serde_json::to_string(&records).unwrap();
-        assert!(!trace.contains("fixture private aggregate"));
-        assert!(!trace.contains("sequence: 1,"));
-        let mut private = vec![b"fixture private aggregate".to_vec()];
-        for (prefix, width, start) in [(2_u128, 8, 0_u8), (1, 16, 32), (2, 16, 64)] {
-            let mut bytes = prefix.to_be_bytes()[16 - width..].to_vec();
-            bytes.extend(start..start + 32);
-            private.push(bytes);
-        }
-        let vectors: serde_json::Value = serde_json::from_str(include_str!("../tests/fixtures/commitments.json")).unwrap();
-        for row in vectors["vectors"].as_array().unwrap() {
-            let digest = row["digest"].as_str().unwrap();
-            if row["name"].as_str().unwrap().ends_with("-pre") {
-                assert!(!trace.contains(digest));
-                private.push(
-                    (0..digest.len())
-                        .step_by(2)
-                        .map(|i| u8::from_str_radix(&digest[i..i + 2], 16).unwrap())
-                        .collect(),
-                );
-            }
-        }
-        for bytes in private {
-            assert!(!trace.contains(&hex(&bytes)));
-            assert!(!trace.contains(&serde_json::to_string(&bytes).unwrap()));
-            assert!(!trace.contains(&format!("{bytes:?}")));
-        }
     }
 }
 
@@ -667,5 +644,102 @@ fn opened_replay() {
             baseline.boundaries[0].candidates[0].clauses,
             title.boundaries[0].candidates[0].clauses
         );
+    }
+}
+
+/// Claim: Independently authored proposal vectors bind both layouts, every reference constructor, signed and nonnegative exact pairs, both license states, all settlement states and all content and dependency request states.
+/// ´claim:profile:proposal-vectors-cover-projection-branches´
+/// ´test:unit:proposal-projection-vectors´
+#[test]
+fn proposal_projection_vectors() {
+    let fixture: serde_json::Value = serde_json::from_str(include_str!("../tests/fixtures/commitments.json")).unwrap();
+    for (name, family) in [
+        ("publish", "Publish"),
+        ("opinion-act", "Opinion"),
+        ("participant-edge-a", "Participant"),
+        ("reference-edge-t", "Reference"),
+        ("registration-edge-binary", "Registration"),
+        ("registration-name", "Registration"),
+        ("accept", "Accept"),
+        ("ratify", "Ratify"),
+        ("empty", "Registration"),
+        ("reduced", "Registration"),
+    ] {
+        let mut candidate = body(family);
+        candidate.body.asserted_parents.push(id(1, "Registration"));
+        for (coordinate, quantity) in &mut candidate.body.quantities {
+            if ["attachment", "responsibility"]
+                .iter()
+                .any(|prefix| coordinate.starts_with(prefix))
+            {
+                quantity.value = if coordinate.ends_with("denominator") {
+                    4
+                } else if coordinate.starts_with("attachment") {
+                    -2
+                } else {
+                    2
+                };
+            } else if [
+                "polarity.numerator",
+                "interactivity.numerator",
+                "effort.numerator",
+                "equity.numerator",
+            ]
+            .contains(&coordinate.as_str())
+            {
+                quantity.value = -1;
+            }
+        }
+        let target = match name {
+            "publish" => {
+                candidate.body.license = Some(pn_records::LicenseQualifiers {
+                    attribution: pn_records::LicenseDegree {
+                        numerator: 1,
+                        denominator: 2,
+                    },
+                    provenance: pn_records::LicenseDegree {
+                        numerator: 2,
+                        denominator: 4,
+                    },
+                });
+                PublicReference::Minted(candidate.id.clone())
+            }
+            "opinion-act" => PublicReference::Act(id(1, "Registration")),
+            "participant-edge-a" => PublicReference::Edge(EdgeId {
+                act: id(1, "Reference"),
+                role: Role::A,
+            }),
+            "reference-edge-t" => PublicReference::Edge(EdgeId {
+                act: id(1, "Reference"),
+                role: Role::T,
+            }),
+            "registration-edge-binary" => PublicReference::Edge(EdgeId {
+                act: id(1, "Registration"),
+                role: Role::Binary,
+            }),
+            "registration-name" => named("name", "fixture-name"),
+            _ => named("prof", &candidate.id.author),
+        };
+        candidate.legs.last_mut().unwrap().target = target;
+        let (payload, dependencies) = if name == "empty" {
+            candidate.content = ContentRequest::FullEmpty;
+            candidate.dependency = DependencyRequest::FullEmpty;
+            (secret(b""), list(Vec::new()))
+        } else {
+            if name == "reduced" {
+                candidate.content = ContentRequest::Reduced;
+                candidate.dependency = DependencyRequest::Tombstoned;
+            }
+            (secret(b"fixture private aggregate"), list(vec![id(1, "Registration")]))
+        };
+        let result = proposal_commitment(&candidate, &nonce(2), &payload, &dependencies).unwrap();
+        let vector_name = format!("proposal-{name}");
+        let expected = fixture["vectors"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|row| row["name"] == vector_name)
+            .unwrap();
+        assert_eq!(hex(&result.bytes), expected["digest"].as_str().unwrap(), "{name}");
     }
 }

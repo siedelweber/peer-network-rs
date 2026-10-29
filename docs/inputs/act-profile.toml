@@ -1,4 +1,4 @@
-namespace = "org.peer-network.act.profile"
+namespace = "org.peer-network.actprofile.profile"
 version = [1, 0, 0]
 
 [[rows]]

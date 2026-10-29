@@ -79,7 +79,7 @@ def literal_integer(value):
     return None
 
 
-def act_profile_vectors(path):
+def act_profile_vector_rows():
     """Rebuild fixed typed preimages independently of the Rust projection.
 
     This deliberately restricted reader uses Python hashlib SHA-256 and only
@@ -117,20 +117,14 @@ def act_profile_vectors(path):
     payload = b"fixture private aggregate"
     salts = [(1).to_bytes(16, "big") + bytes(range(32, 64)),
              (2).to_bytes(16, "big") + bytes(range(64, 96))]
-    fixture = json.loads(path.read_text())
-    rows = fixture.get("vectors", [])
-    if len(rows) != 5 or len({row.get("name") for row in rows}) != 5:
-        raise ValueError("act-profile vector census differs")
-    checked = {}
+    rows = []
 
     def verify(name, role, tag, fields):
         recipe = "pn-act-profile/act-" + role + "/v1"
         raw = recipe.encode() + bytes([0]) + encode([tag, fields])
         digest = hashlib.sha256(raw).digest()
         expected = dict(name=name, recipe=recipe, tag=tag, preimage=raw.hex(), digest=digest.hex())
-        if next((row for row in rows if row.get("name") == name), None) != expected:
-            raise ValueError(f"act-profile vector differs: {name}")
-        checked[name] = {raw.hex(), digest.hex()}
+        rows.append(expected)
         return digest
 
     content_pre = verify("content-pre", "proposal", "PN-content-pre-v1", [identity, nonce, payload])
@@ -138,6 +132,62 @@ def act_profile_vectors(path):
     proposal = verify("proposal", "proposal", "PN-act-proposal-v1", [body, content_pre, dependency_pre])
     verify("content", "content", "PN-content-v1", [identity, proposal, salts[0], payload])
     verify("dependency", "dependency", "PN-dependency-v1", [identity, proposal, salts[1], dependencies])
+    # These authored branches are independent of the production schema table.
+    # The exact integers distinguish authored pairs rather than rational values.
+    def act(family, sequence=2):
+        return ["act", author, sequence, family]
+
+    def quantities(pairs):
+        return sorted([[name + "." + part, value, "one", 0]
+                       for name, numerator, denominator in pairs
+                       for part, value in (("denominator", denominator), ("numerator", numerator))])
+
+    cases = [
+        ("publish", "Publish", "binary", [["attachment", -2, 4]], "mint", [[1, 2], [2, 4]], None, "full", "full"),
+        ("opinion-act", "Opinion", "binary", [["polarity", -1, 2], ["reaction", 1, 2]], "act", None, None, "full", "full"),
+        ("participant-edge-a", "Participant", "paired", [["continuity", 1, 2], ["interactivity", -1, 2], ["responsibility", 2, 4]], "A", None, None, "full", "full"),
+        ("reference-edge-t", "Reference", "paired", [["effort", -1, 2], ["enthusiasm", 1, 2]], "T", None, None, "full", "full"),
+        ("registration-edge-binary", "Registration", "binary", [], "binary", None, None, "full", "full"),
+        ("registration-name", "Registration", "binary", [], "name", None, None, "full", "full"),
+        ("accept", "Accept", "binary", [["comfort", 1, 2], ["equity", -1, 2]], "prof", None, ["Accept", act("Bid", 1)], "full", "full"),
+        ("ratify", "Ratify", "binary", [["comfort", 1, 2], ["equity", -1, 2]], "prof", None, ["Ratify", act("Bid", 1), act("Accept", 1)], "full", "full"),
+        ("empty", "Registration", "binary", [], "prof", None, None, "full-empty", "full-empty"),
+        ("reduced", "Registration", "binary", [], "prof", None, None, "reduced", "tombstoned"),
+    ]
+    for name, family, layout, pairs, reference, license_value, settlement, content, dependency in cases:
+        current = act(family)
+        target = {"mint": ["mint", current], "act": act("Registration", 1),
+                  "A": ["record", act("Reference", 1), "A"],
+                  "T": ["record", act("Reference", 1), "T"],
+                  "binary": ["record", act("Registration", 1), "binary"],
+                  "name": ["named", "name", "fixture-name"], "prof": ["named", "prof", author]}[reference]
+        legs = [["binary", ["named", "addr", author], target]] if layout == "binary" else [
+            ["A", ["named", "addr", author], ["named", "prof", author]],
+            ["T", ["named", "prof", author], target]]
+        projected = [current, layout, legs, quantities(pairs), license_value,
+                     [act("Registration", 1)], [], settlement, content, dependency]
+        y = b"" if content == "full-empty" else payload
+        d = [] if dependency == "full-empty" else dependencies
+        def pre(tag, fields):
+            return hashlib.sha256(b"pn-act-profile/act-proposal/v1\0" + encode([tag, fields])).digest()
+        verify("proposal-" + name, "proposal", "PN-act-proposal-v1",
+               [projected, pre("PN-content-pre-v1", [current, nonce, y]),
+                pre("PN-dependency-pre-v1", [current, nonce, d])])
+    return rows
+
+
+def act_profile_vectors(path):
+    """Refuse any fixture that differs from the independent fixed reader."""
+    rows = json.loads(path.read_text()).get("vectors", [])
+    expected = act_profile_vector_rows()
+    if len(rows) != len(expected) or len({row.get("name") for row in rows}) != len(expected):
+        raise ValueError("act-profile vector census differs")
+    checked = {}
+    for row in expected:
+        name = row["name"]
+        if next((item for item in rows if item.get("name") == name), None) != row:
+            raise ValueError(f"act-profile vector differs: {name}")
+        checked[name] = {row["preimage"], row["digest"]}
     return checked
 
 

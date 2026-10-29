@@ -75,7 +75,7 @@
 | regexml-doctests | active | doctest | regexml-rust | fast | 1 |
 | ci::test_design | active | integration | ci-python | fast | 6 |
 | ci::test_devperf | active | unit | ci-python | fast | 14 |
-| ci::test_discipline | active | integration | ci-python | fast | 28 |
+| ci::test_discipline | active | integration | ci-python | fast | 29 |
 | ci::test_harness | active | unit | ci-python | fast | 12 |
 | planned-burn | held | held | none | service | 0 |
 | planned-graph | held | held | none | fast | 0 |
@@ -151,7 +151,7 @@
 | graph-title-verification | active | integration | pn-graph-rust | fast | 8 |
 | pn-epoch::inputs | active | public-surface | pn-epoch-rust | fast | 1 |
 | pn-epoch::ledger | active | public-surface | pn-epoch-rust | fast | 4 |
-| pn-act-profile | active | unit | pn-act-profile-rust | fast | 3 |
+| pn-act-profile | active | unit | pn-act-profile-rust | fast | 4 |
 | pn-epoch::cells | active | public-surface | pn-epoch-rust | fast | 3 |
 | pn-epoch::coefficients | active | public-surface | pn-epoch-rust | fast | 3 |
 

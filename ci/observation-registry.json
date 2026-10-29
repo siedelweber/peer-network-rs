@@ -6808,7 +6808,7 @@
         "rule": "ROOT::rule:observe:spans",
         "kind": "recursion",
         "justification": "Justified: Iterative destruction preserves the container's erasure without recursive tracing or a nesting-dependent stack limit.",
-        "witness": "INTERCHANGE::claim:encoding:protected-canonical-bytes-preserve-privacy",
+        "witness": "INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree",
         "boundary": "pn-interchange::packages/interchange/src/encode.rs::encode::SecretValue::to_secret_canonical_bytes",
         "class_decision": "protected-interchange"
       }
@@ -6837,7 +6837,7 @@
         "rule": "ROOT::rule:observe:spans",
         "kind": "inherited",
         "justification": "Justified: Immutable carrier access inherits its enclosing records operation.",
-        "witness": "ACTPROFILE::claim:profile:commitment-traces-retain-only-public-projection",
+        "witness": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
         "boundary": "pn-records::packages/records/src/lib.rs::replay_openings",
         "class_decision": "act-profile-records"
       }
@@ -6855,7 +6855,7 @@
         "rule": "ROOT::rule:observe:spans",
         "kind": "recursion",
         "justification": "Justified: Container destruction erases private identifier fields without observation.",
-        "witness": "ACTPROFILE::claim:profile:commitment-traces-retain-only-public-projection",
+        "witness": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
         "boundary": "pn-act-profile::packages/act-profile/src/lib.rs::proposal_commitment",
         "class_decision": "act-profile-private"
       }
@@ -6933,7 +6933,7 @@
         "rule": "ROOT::rule:observe:spans",
         "kind": "inherited",
         "justification": "Justified: This target roster is public opening metadata and inherits the enclosing replay operation.",
-        "witness": "ACTPROFILE::claim:profile:commitment-traces-retain-only-public-projection",
+        "witness": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
         "boundary": "pn-act-profile::packages/act-profile/src/lib.rs::proposal_commitment",
         "class_decision": "act-profile-private"
       }
@@ -6977,6 +6977,24 @@
       "claim": "ROOT::sig:design:epoch",
       "shape": "shape-epoch",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-act-profile",
+      "path": "packages/act-profile/src/lib.rs",
+      "item": "<DependencyIds as std :: fmt :: Debug>::fmt",
+      "owner": "ACTPROFILE",
+      "signature": "fn fmt (& self , f : & mut std :: fmt :: Formatter < '_ >) -> std :: fmt :: Result",
+      "claim": "ROOT::amend:decomposition:act-profile",
+      "mode": "exception",
+      "shape": "shape-act-profile",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Private dependency formatting inherits the commitment boundary and emits only a fixed redaction, never identifiers.",
+        "witness": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments",
+        "boundary": "pn-act-profile::packages/act-profile/src/lib.rs::proposal_commitment",
+        "class_decision": "act-profile-private"
+      }
     }
   ],
   "metrics": [
@@ -13547,6 +13565,17 @@
         "secret_flow": "epoch-coefficients-secret_flow",
         "exposure_consumers": "epoch-coefficients-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyIds as std :: fmt :: Debug>::fmt",
+      "body": "{ f . write_str (\"DependencyIds([REDACTED])\") }",
+      "class_decision": "act-profile-private",
+      "item_premise": "Formatting does not read the dependency fields; it writes one constant redaction even outside SecretBox. The direct Debug assertion checks that constant.",
+      "assessments": {
+        "full_recording": "act-profile-review",
+        "secret_flow": "act-profile-review",
+        "exposure_consumers": "act-profile-review"
+      }
     }
   ],
   "generators": [
@@ -16563,7 +16592,7 @@
       "path": "packages/act-profile/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "act-profile-private",
-      "expansion_review": "Public residues and content-free errors have ordinary Debug. DependencyIds itself has structural Debug, but every commitment API accepts it only inside SecretBox, whose Debug redacts it; the raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
+      "expansion_review": "Public residues and content-free errors have ordinary Debug. All secret wrappers delegate to secrecy redaction, and DependencyIds has a constant redacting Debug itself. The raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
     },
     {
       "item": "DependencyRequest",
@@ -16572,7 +16601,7 @@
       "path": "packages/act-profile/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "act-profile-private",
-      "expansion_review": "Public residues and content-free errors have ordinary Debug. DependencyIds itself has structural Debug, but every commitment API accepts it only inside SecretBox, whose Debug redacts it; the raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
+      "expansion_review": "Public residues and content-free errors have ordinary Debug. All secret wrappers delegate to secrecy redaction, and DependencyIds has a constant redacting Debug itself. The raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
     },
     {
       "item": "ProposalBody",
@@ -16581,16 +16610,7 @@
       "path": "packages/act-profile/src/lib.rs",
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "act-profile-private",
-      "expansion_review": "Public residues and content-free errors have ordinary Debug. DependencyIds itself has structural Debug, but every commitment API accepts it only inside SecretBox, whose Debug redacts it; the raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
-    },
-    {
-      "item": "DependencyIds",
-      "kind": "derive",
-      "package": "pn-act-profile",
-      "path": "packages/act-profile/src/lib.rs",
-      "syntax": "# [derive (Debug)]",
-      "class_decision": "act-profile-private",
-      "expansion_review": "Public residues and content-free errors have ordinary Debug. DependencyIds itself has structural Debug, but every commitment API accepts it only inside SecretBox, whose Debug redacts it; the raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
+      "expansion_review": "Public residues and content-free errors have ordinary Debug. All secret wrappers delegate to secrecy redaction, and DependencyIds has a constant redacting Debug itself. The raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
     },
     {
       "item": "ProfileError",
@@ -16599,7 +16619,7 @@
       "path": "packages/act-profile/src/lib.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "act-profile-private",
-      "expansion_review": "Public residues and content-free errors have ordinary Debug. DependencyIds itself has structural Debug, but every commitment API accepts it only inside SecretBox, whose Debug redacts it; the raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
+      "expansion_review": "Public residues and content-free errors have ordinary Debug. All secret wrappers delegate to secrecy redaction, and DependencyIds has a constant redacting Debug itself. The raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
     },
     {
       "item": "DependencyOpening",
@@ -16608,7 +16628,7 @@
       "path": "packages/act-profile/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "act-profile-private",
-      "expansion_review": "Public residues and content-free errors have ordinary Debug. DependencyIds itself has structural Debug, but every commitment API accepts it only inside SecretBox, whose Debug redacts it; the raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
+      "expansion_review": "Public residues and content-free errors have ordinary Debug. All secret wrappers delegate to secrecy redaction, and DependencyIds has a constant redacting Debug itself. The raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
     },
     {
       "item": "DependencyOpenings",
@@ -16617,7 +16637,7 @@
       "path": "packages/act-profile/src/lib.rs",
       "syntax": "# [derive (Debug)]",
       "class_decision": "act-profile-private",
-      "expansion_review": "Public residues and content-free errors have ordinary Debug. DependencyIds itself has structural Debug, but every commitment API accepts it only inside SecretBox, whose Debug redacts it; the raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
+      "expansion_review": "Public residues and content-free errors have ordinary Debug. All secret wrappers delegate to secrecy redaction, and DependencyIds has a constant redacting Debug itself. The raw list is released only after an explicit matching check. Equality preserves authored pairs exactly. No derived encoder is introduced."
     },
     {
       "item": "cells::CellIdentity",
@@ -18899,7 +18919,7 @@
       "item": "DependencyIds",
       "package": "pn-act-profile",
       "path": "packages/act-profile/src/lib.rs",
-      "syntax": "# [doc = \" Dependency material intended to live inside `SecretBox` on commitment paths.\"] # [doc = \" Its list is opened publicly only after a successful explicit opening check.\"] # [doc = \" (\u00b4def:profile:private-inputs\u00b4)\"] # [derive (Debug)] pub struct DependencyIds (pub Vec < ActId >) ;"
+      "syntax": "# [doc = \" Dependency material intended to live inside `SecretBox` on commitment paths.\"] # [doc = \" Its list is opened publicly only after a successful explicit opening check.\"] # [doc = \" (\u00b4def:profile:private-inputs\u00b4)\"] pub struct DependencyIds (pub Vec < ActId >) ;"
     },
     {
       "item": "ProfileError",
@@ -19241,7 +19261,8 @@
           "pn-act-profile::packages/act-profile/src/lib.rs::proposal_matches_supplied_commitment",
           "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::targets",
           "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyOpenings as pn_records :: commitments :: DependencyOpener>::open",
-          "pn-act-profile::packages/act-profile/src/lib.rs::render_payload"
+          "pn-act-profile::packages/act-profile/src/lib.rs::render_payload",
+          "pn-act-profile::packages/act-profile/src/lib.rs::<DependencyIds as std :: fmt :: Debug>::fmt"
         ]
       }
     },
@@ -21180,12 +21201,12 @@
     "protected-canonical": {
       "status": "reviewer-confirmed",
       "premises": "Read SecretValue Debug, iterative destruction, allocation bound and all eight labelled exits. Public leaves retain ordinary tracing; protected leaves reach the shared framing core without ordinary observed accessors. Fixed-vector comparison and a full-recording subscriber cover protected and public routes; entropy and custody are not established.",
-      "negative_probe": "INTERCHANGE::claim:encoding:protected-canonical-bytes-preserve-privacy"
+      "negative_probe": "INTERCHANGE::claim:encoding:protected-and-public-canonical-bytes-agree"
     },
     "act-profile-review": {
       "status": "reviewer-confirmed",
-      "premises": "Read every protected leaf and borrow, fixed-width public residues, body fields, content-free refusal, and Debug derivation. SecretBox/SecretSlice redact private arguments; Zeroize erases dependency fields. The opening adapter intentionally publishes the whole matched list, not salt or nonce. A digest match gives no producer authority. The trace witness executes all three computations, and replay witnesses compare verdicts while time evidence changes.",
-      "negative_probe": "ACTPROFILE::claim:profile:commitment-traces-retain-only-public-projection"
+      "premises": "Read every protected leaf and borrow, fixed-width public residues, body fields and content-free refusal. SecretBox/SecretSlice redact private arguments; DependencyIds has a constant redacting Debug even outside its container. Zeroize erases dependency fields. Only the explicit matching adapter publishes a dependency list. Fixed traced computations witness outputs, not trace absence; representation-aware leakage controls remain held after v1.",
+      "negative_probe": "ACTPROFILE::claim:profile:protected-inputs-retain-fixed-commitments"
     },
     "epoch-cells-full_recording": {
       "status": "reviewer-confirmed",

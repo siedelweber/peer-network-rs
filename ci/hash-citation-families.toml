@@ -543,3 +543,123 @@ definition = "Restricted independently authored arrays and CBOR framing reconstr
 paths = ["packages/act-profile/tests/fixtures/commitments.json"]
 source = "packages/act-profile/tests/fixtures/commitments.json"
 vector = "dependency"
+
+[[rows]]
+family = "act-profile-proposal-publish-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-publish"
+
+[[rows]]
+family = "act-profile-proposal-opinion-act-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-opinion-act"
+
+[[rows]]
+family = "act-profile-proposal-participant-edge-a-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-participant-edge-a"
+
+[[rows]]
+family = "act-profile-proposal-reference-edge-t-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-reference-edge-t"
+
+[[rows]]
+family = "act-profile-proposal-registration-edge-binary-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-registration-edge-binary"
+
+[[rows]]
+family = "act-profile-proposal-registration-name-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-registration-name"
+
+[[rows]]
+family = "act-profile-proposal-accept-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-accept"
+
+[[rows]]
+family = "act-profile-proposal-ratify-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-ratify"
+
+[[rows]]
+family = "act-profile-proposal-empty-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-empty"
+
+[[rows]]
+family = "act-profile-proposal-reduced-vector"
+group = "first-party act commitments"
+measures = "Exact fixed preimage and SHA-256 residue"
+producer = "Independent restricted Python CBOR and hashlib reader"
+reader = "act-profile-vector"
+establishment = "recomputable"
+definition = "Restricted independently authored arrays and CBOR framing reconstruct the fixed preimage without the production encoder or projection; Python hashlib SHA-256 recomputes the digest. This fixture binds bytes, not entropy or authenticity."
+paths = ["packages/act-profile/tests/fixtures/commitments.json"]
+source = "packages/act-profile/tests/fixtures/commitments.json"
+vector = "proposal-reduced"

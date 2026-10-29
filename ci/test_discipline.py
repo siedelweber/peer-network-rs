@@ -137,6 +137,30 @@ class WorkspaceChecks(unittest.TestCase):
 
 
 class HashCitations(unittest.TestCase):
+    def test_act_profile_vector_corruptions(self):
+        """The independent act-profile reader refuses each preimage, digest, role tag and recipe corruption, and missing or repeated vectors, including the original twenty-two controls.
+        ´claim:hashcitations:act-profile-vector-corruptions-refuse´
+        ´test:integration:test-act-profile-vector-corruptions´
+        """
+        from hash_citations import act_profile_vectors
+        fixture = json.loads(Path('packages/act-profile/tests/fixtures/commitments.json').read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'vectors.json'
+            path.write_text(json.dumps(fixture))
+            self.assertEqual(len(act_profile_vectors(path)), len(fixture['vectors']))
+            for index, row in enumerate(fixture['vectors']):
+                for field in ('preimage', 'digest', 'tag', 'recipe'):
+                    with self.subTest(vector=row['name'], field=field):
+                        changed = json.loads(json.dumps(fixture))
+                        changed['vectors'][index][field] += '0'
+                        path.write_text(json.dumps(changed))
+                        with self.assertRaisesRegex(ValueError, 'act-profile vector differs'):
+                            act_profile_vectors(path)
+            for rows in (fixture['vectors'][:-1], fixture['vectors'] + [fixture['vectors'][0]]):
+                path.write_text(json.dumps(dict(fixture, vectors=rows)))
+                with self.assertRaisesRegex(ValueError, 'act-profile vector census differs'):
+                    act_profile_vectors(path)
+
     def test_artifact_vector(self):
         """The artifact address family recomputes its declared payload, refusing a substituted digest, changed payload or unknown recipe rather than accepting any identity-shaped literal.
         ´claim:hashcitations:artifact-vector-binds-its-payload´

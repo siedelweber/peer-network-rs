@@ -55,7 +55,7 @@ local_inputs = [
   ['docs/datasets/org.peer-network.vision.traces.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
   ['docs/datasets/org.peer-network.wallet.dependencies.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
   ['docs/datasets/org.peer-network.graph.families.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
-  ['docs/datasets/org.peer-network.act.profile.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
+  ['docs/datasets/org.peer-network.actprofile.profile.json', 'linter,design-correspondence,documents,datasets,fixed-point-generate,fixed-point-write,fixed-point-clean,determinism-datasets,determinism-documents,claim-evidence,token,hash-citations', 'fixed-point-generate'],
 ]
 foreach row : local_inputs
   graph_files += files(meson.project_source_root() / row[0])

@@ -31,12 +31,12 @@
       "operations": 12
     },
     {
-      "exceptions": 2,
-      "generators": 7,
+      "exceptions": 3,
+      "generators": 6,
       "helpers": 0,
       "instrumented": 8,
       "name": "pn-act-profile",
-      "operations": 10
+      "operations": 11
     },
     {
       "exceptions": 2,

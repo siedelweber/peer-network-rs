@@ -52,8 +52,13 @@ pub struct ProposalBody {
 /// Dependency material intended to live inside `SecretBox` on commitment paths.
 /// Its list is opened publicly only after a successful explicit opening check.
 /// (´def:profile:private-inputs´)
-#[derive(Debug)]
 pub struct DependencyIds(pub Vec<ActId>);
+impl std::fmt::Debug for DependencyIds {
+    /// Justified: Private dependency formatting inherits the commitment boundary and emits only a fixed redaction, never identifiers.
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("DependencyIds([REDACTED])")
+    }
+}
 
 impl Zeroize for DependencyIds {
     /// Justified: Container destruction erases private identifier fields without observation.
