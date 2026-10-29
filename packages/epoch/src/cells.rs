@@ -115,20 +115,11 @@ pub fn fold_cells(
         .collect()
 }
 
-pub(crate) fn mandatory(family: &str) -> &'static [&'static str] {
-    match family {
-        "Opinion" => &["polarity", "reaction"],
-        "Reference" | "Review" => &["enthusiasm", "effort"],
-        "Invitation" | "Join Request" => &["urgency", "formality"],
-        "Accept" | "Ratify" => &["comfort", "equity"],
-        "Publish" | "Owner" => &["attachment"],
-        "Affinity" => &["association", "attraction"],
-        "Tag" => &["relevance", "confidence"],
-        "Send" => &["importance"],
-        "Bid" => &["generosity", "urgency"],
-        "Participant" => &["interactivity", "responsibility"],
-        _ => &[],
-    }
+fn mandatory(family: &str) -> &'static [&'static str] {
+    crate::coefficients::MANDATORY_COORDINATES
+        .iter()
+        .find(|(name, _)| *name == family)
+        .map_or(&[], |(_, names)| *names)
 }
 
 fn coordinate(act: &ValidatedAct, name: &str, budget: &mut Budget) -> Result<Rational, CellError> {

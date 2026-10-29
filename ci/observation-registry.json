@@ -6967,6 +6967,16 @@
       "claim": "ROOT::sig:design:epoch",
       "shape": "shape-epoch",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/coefficients.rs",
+      "item": "coefficients::coefficient",
+      "owner": "EPOCH",
+      "signature": "fn coefficient (cell : & StandingCell , limits : Limits) -> Result < String , CoefficientError >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -13526,6 +13536,17 @@
         "secret_flow": "epoch-cells-secret_flow",
         "exposure_consumers": "epoch-cells-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/coefficients.rs::coefficients::coefficient",
+      "body": "{ if cell . identity . family == \"Invitation\" { return Err (CoefficientError :: InvitationEdition) ; } let names = MANDATORY_COORDINATES . iter () . find (| (family , _) | * family == cell . identity . family) . map (| (_ , names) | * names) . ok_or (CoefficientError :: Representation) ? ; if cell . coordinates . len () != names . len () { return Err (CoefficientError :: Representation) ; } let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; let mut product = one . clone () ; for name in names { let mut value = Rational :: parse (cell . coordinates . get (* name) . ok_or (CoefficientError :: Representation) ? , & mut budget ,) ? ; if value . is_negative () { value = value . negated (& mut budget) ? ; } if value . compare (& one , & mut budget) ? . is_gt () { return Err (CoefficientError :: Representation) ; } product = product . mul (& value , & mut budget) ? ; } let spelling = product . exact_string (& mut budget) ? ; if names . len () < 2 || product . is_zero () { return Ok (spelling) ; } let (numerator , denominator) = spelling . split_once ('/') . unwrap_or ((& spelling , \"1\")) ; let n = integer_root (numerator , & mut budget) ? ; let d = integer_root (denominator , & mut budget) ? ; match (n , d) { (Some (n) , Some (d)) => Ok (n . div (& d , & mut budget) ? . exact_string (& mut budget) ?) , _ => Err (CoefficientError :: Irrational { radicand : spelling }) , } }",
+      "class_decision": "epoch-coefficients",
+      "item_premise": "Coefficient evaluation reads a public folded cell and explicit exact arithmetic limits. Arguments, exact rational output and typed irrational or edition holds are public trace values. Mandatory magnitudes do not consume private openings or recipient evidence. Observation changes no coefficient.",
+      "assessments": {
+        "full_recording": "epoch-coefficients-full_recording",
+        "secret_flow": "epoch-coefficients-secret_flow",
+        "exposure_consumers": "epoch-coefficients-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -16624,6 +16645,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "epoch-cells",
       "expansion_review": "Structural Clone, Debug, order, equality and Error preserve public identities, rational spellings and typed refusals; no secret enters these carriers."
+    },
+    {
+      "item": "coefficients::CoefficientError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/coefficients.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-coefficients",
+      "expansion_review": "Clone, Debug, equality and Error preserve the public exact radicand, edition hold and typed arithmetic evidence; no secret enters this carrier."
     }
   ],
   "reviewed_types": [
@@ -18782,6 +18812,12 @@
       "syntax": "# [doc = \" Pinned evidence and any fault for one run; pending evidence is never stored.\"] # [doc = \" (\u00b4def:wallet:settlement\u00b4)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Settlement { pinned : BTreeMap < ([u8 ; 32] , u32) , Evidence > , fault : Option < SettlementRefusal > , }"
     },
     {
+      "item": "coefficients::CoefficientError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/coefficients.rs",
+      "syntax": "# [doc = \" Exact-only evidence boundary; no approximate coefficient can escape a hold.\"] # [doc = \" (´def:compiler:cell-coefficients´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CoefficientError { # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"Invitation withdrawal awaits the next minor edition\")] InvitationEdition , # [error (\"unknown family, wrong mandatory coordinates or out-of-range value\")] Representation , # [error (\"irrational coefficient needs numeric evidence: square root of {radicand}\")] Irrational { radicand : String } , }"
+    },
+    {
       "item": "ledger::BurnSnapshot",
       "package": "pn-epoch",
       "path": "packages/epoch/src/ledger.rs",
@@ -19229,6 +19265,16 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Cell compilation reads complete public act history, a public approval verifier, a boundary and exact arithmetic limits. Full arguments, typed holds and cell identities are public trace values. No payload opening, private witness or identity byte recipe enters this operation. Observation does not change folding."
+    },
+    {
+      "name": "epoch-coefficients",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/coefficients.rs::coefficients::coefficient"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Coefficient evaluation reads a public folded cell and explicit exact arithmetic limits. Arguments, exact rational output and typed irrational or edition holds are public trace values. Mandatory magnitudes do not consume private openings or recipient evidence. Observation changes no coefficient."
     }
   ],
   "shapes": {
@@ -19469,8 +19515,8 @@
     },
     "shape-epoch": {
       "fields": [
-        "complete public compiler parameters, recognized markers and act history at trace",
-        "complete validated parameters, derived ledger or typed refusal at trace",
+        "complete public compiler parameters, markers, act history, cells and arithmetic limits at trace",
+        "complete validated parameters, ledger, cells, exact coefficients or typed refusals and holds at trace",
         "bounded outcome",
         "inclusive duration_seconds",
         "declared invocation work",
@@ -21154,6 +21200,21 @@
     "epoch-cells-exposure_consumers": {
       "status": "reviewer-confirmed",
       "premises": "Cell compilation reads complete public act history, a public approval verifier, a boundary and exact arithmetic limits. Full arguments, typed holds and cell identities are public trace values. No payload opening, private witness or identity byte recipe enters this operation. Observation does not change folding.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-coefficients-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Coefficient evaluation reads a public folded cell and explicit exact arithmetic limits. Arguments, exact rational output and typed irrational or edition holds are public trace values. Mandatory magnitudes do not consume private openings or recipient evidence. Observation changes no coefficient.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-coefficients-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Coefficient evaluation reads a public folded cell and explicit exact arithmetic limits. Arguments, exact rational output and typed irrational or edition holds are public trace values. Mandatory magnitudes do not consume private openings or recipient evidence. Observation changes no coefficient.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-coefficients-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Coefficient evaluation reads a public folded cell and explicit exact arithmetic limits. Arguments, exact rational output and typed irrational or edition holds are public trace values. Mandatory magnitudes do not consume private openings or recipient evidence. Observation changes no coefficient.",
       "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
     }
   }

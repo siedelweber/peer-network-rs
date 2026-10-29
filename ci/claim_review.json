@@ -262,8 +262,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
       "before": "",
-      "after": "Claim: The real compiler parameter, ledger and cell boundaries preserve exact successful inputs, ledger values, empty cells and typed refusals with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.",
-      "review": "Runs actual parameter validation in three observation modes and compares exact result bytes, invocation totals, elapsed samples and trace public fields. Extended to exact ledger success and prefix refusal with recognized marker arguments and both operation stems. Extended to empty-cell success and boundary refusal."
+      "after": "Claim: The real compiler parameter, ledger, cell and coefficient boundaries preserve exact successful inputs, ledger values, empty cells, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.",
+      "review": "Runs actual parameter validation in three observation modes and compares exact result bytes, invocation totals, elapsed samples and trace public fields. Extended to exact ledger success and prefix refusal with recognized marker arguments and both operation stems. Extended to empty-cell success and boundary refusal. Extended to exact coefficient success and irrational evidence hold."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -1448,6 +1448,30 @@
       "before": "",
       "after": "Claim: A formed Invitation causes the entire cell result to hold for its withdrawal edition, without suppressing or discarding an accepted act.",
       "review": "Literal expected cell coordinates, identity sets and ledger assertions use complete public records; no implementation fold constructs the expected table. Invitation is a named edition hold."
+    },
+    {
+      "operation": "pn-epoch::coefficients::coefficient_census",
+      "path": "packages/epoch/tests/coefficients.rs",
+      "claim": "EPOCH::claim:compiler:mandatory-coordinate-census-covers-nineteen-families",
+      "before": "",
+      "after": "Claim: The mandatory-coordinate census names all nineteen families and agrees with an independent literal table; empty sets weigh one, single coordinates use their magnitude, and Invitation remains an edition hold.",
+      "review": "Independent literal coordinate and square tables, expected exact means and integer-squared probe bounds exercise the public exact-only boundary; no production root or folding function constructs the expected answers."
+    },
+    {
+      "operation": "pn-epoch::coefficients::coefficient_evidence",
+      "path": "packages/epoch/tests/coefficients.rs",
+      "claim": "EPOCH::claim:compiler:coefficients-are-exact-or-held-with-numeric-evidence",
+      "before": "",
+      "after": "Claim: Exact rational geometric means use mandatory magnitudes, including zero and hostile coordinates; nonsquare products return a typed irrational-evidence hold and never an approximation. Independent integer-square tables and rational probe bounds distinguish the held cases.",
+      "review": "Independent literal coordinate and square tables, expected exact means and integer-squared probe bounds exercise the public exact-only boundary; no production root or folding function constructs the expected answers."
+    },
+    {
+      "operation": "pn-epoch::coefficients::coefficient_refusals",
+      "path": "packages/epoch/tests/coefficients.rs",
+      "claim": "EPOCH::claim:compiler:coefficient-inputs-are-bounded-and-complete",
+      "before": "",
+      "after": "Claim: The coefficient boundary refuses unknown families, missing or extra mandatory coordinates and out-of-range inputs, without interpreting them as an irrational hold or returning partial evidence.",
+      "review": "Independent literal coordinate and square tables, expected exact means and integer-squared probe bounds exercise the public exact-only boundary; no production root or folding function constructs the expected answers."
     },
     {
       "operation": "pn-epoch::inputs::parameter_binding",

@@ -59,8 +59,23 @@ fn main() -> std::process::ExitCode {
     let cells = pn_epoch::cells::fold_cells(&empty, 1, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap();
     let cell_refusal =
         pn_epoch::cells::fold_cells(&empty, 0, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap_err();
+    let mut cell = pn_epoch::cells::StandingCell {
+        identity: pn_epoch::cells::CellIdentity {
+            author: "author".into(),
+            family: "Opinion".into(),
+            incidence: vec![],
+            singleton: None,
+        },
+        members: std::collections::BTreeSet::new(),
+        coordinates: [("polarity".into(), "1/4".into()), ("reaction".into(), "1".into())]
+            .into_iter()
+            .collect(),
+    };
+    let coefficient = pn_epoch::coefficients::coefficient(&cell, pn_records::numerics::ExactLimits::default()).unwrap();
+    cell.coordinates.insert("polarity".into(), "1/2".into());
+    let coefficient_hold = pn_epoch::coefficients::coefficient(&cell, pn_records::numerics::ExactLimits::default()).unwrap_err();
     let result = cli_common::emit(&format!(
-        "{good:?};{refused:?};{ledger:?};{ledger_refusal:?};{cells:?};{cell_refusal:?}"
+        "{good:?};{refused:?};{ledger:?};{ledger_refusal:?};{cells:?};{cell_refusal:?};{coefficient:?};{coefficient_hold:?}"
     ));
     drop(guard);
     if result.is_ok() {

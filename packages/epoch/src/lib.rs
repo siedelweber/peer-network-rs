@@ -2,6 +2,7 @@
 //! (´def:compiler:boundary-inputs´)
 
 pub mod cells;
+pub mod coefficients;
 pub mod ledger;
 
 use std::collections::{BTreeMap, BTreeSet};

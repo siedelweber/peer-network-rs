@@ -188,7 +188,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(outcomes['default'],outcomes['trace'])
 
     def test_epoch_inputs(self):
-        """Claim: The real compiler parameter, ledger and cell boundaries preserve exact successful inputs, ledger values, empty cells and typed refusals with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.
+        """Claim: The real compiler parameter, ledger, cell and coefficient boundaries preserve exact successful inputs, ledger values, empty cells, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.
         ´claim:discipline:epoch-inputs-retain-observed-results´
         ´test:integration:test-epoch-inputs´
         """
@@ -202,16 +202,17 @@ class Processes(unittest.TestCase):
             self.assertIn(b'CompilerInputs', result.stdout)
             self.assertIn(b'FinalLedger', result.stdout)
             self.assertIn(b'Boundary', result.stdout)
+            self.assertIn(b'Irrational', result.stdout)
             if mode == 'disabled': continue
             rows = [json.loads(line) for line in result.stderr.splitlines()]
             summary = expanded(next(row['metrics'] for row in rows if row.get('kind') == 'metric_summary'))
             stem = 'epoch__root__sig__design__epoch__'
             accounting = distribution(summary)
-            self.assertEqual(accounting[stem+'started_operations', ''], 6)
+            self.assertEqual(accounting[stem+'started_operations', ''], 8)
             instruments = {row['name']: row for row in summary['instruments'] if row['name'].startswith(stem)}
-            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 6)
+            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 8)
             if mode == 'trace':
-                for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass', b'compile_ledger', b'RecognizedMarkers', b'FinalLedger', b'fold_cells'):
+                for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass', b'compile_ledger', b'RecognizedMarkers', b'FinalLedger', b'fold_cells', b'coefficient', b'Irrational'):
                     self.assertIn(marker, result.stderr)
         self.assertEqual(samples['disabled'], samples['default'])
         self.assertEqual(samples['default'], samples['trace'])

@@ -4163,6 +4163,36 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-epoch::cells::cell_tables",
+        "pn-epoch::cells::cell_incidence",
+        "pn-epoch::cells::invitation_hold"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::cells",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-epoch::coefficients::coefficient_census",
+        "pn-epoch::coefficients::coefficient_evidence",
+        "pn-epoch::coefficients::coefficient_refusals"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::coefficients",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }
