@@ -4,7 +4,7 @@ use pn_records::{
     assemble_boundary_inputs, validate_history, validate_record,
 };
 
-/// Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.
+/// Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in published placement independently of its stamp while retaining dependency violations on replay.
 /// ´claim:acts:epoch-qualified-placement-retains-causal-checks´
 /// ´test:integration:epoch-placement´
 #[test]
@@ -47,7 +47,7 @@ fn epoch_placement() {
     parent.finalization_epoch = 2;
     child.body.asserted_parents.clear();
     let empty = validate_history(&[], &names).unwrap();
-    for (position, time) in [(2, 10), (0, 12)] {
+    for (position, time) in [(2, 10), (3, 12)] {
         parent.authoritative_position = position;
         parent.logical_time = time;
         let acts = [parent.clone(), child.clone()];
@@ -147,6 +147,8 @@ fn attached_times() {
     for (index, act) in acts.iter().enumerate() {
         assert_eq!(u128::from(act.logical_time), independent_time(&acts, index));
     }
+    let empty = validate_history(&[], &names).unwrap();
+    assert!(validate_record(&acts, &empty, &[]).is_ok());
     let global_expected = acts[..3].iter().map(|act| act.logical_time).max().unwrap() + 1;
     assert_eq!(global_expected, 4);
     assert_eq!(acts[3].logical_time, 1);
@@ -166,7 +168,7 @@ fn attached_times() {
     );
 }
 
-/// Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, equal-position and later parents still refuse, candidate causal-key refusal remains, and earlier epochs precede smaller current positions.
+/// Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, equal-position and later parents still refuse, candidate placement refusal remains, and earlier epochs precede smaller current positions.
 /// ´claim:acts:parent-replay-separates-placement-from-stamping´
 /// ´test:integration:parent-replay´
 #[test]
@@ -195,10 +197,7 @@ fn parent_replay() {
         parent: Some(parent.id.clone()),
         cause,
     };
-    assert_eq!(
-        validate_record(&inputs, &empty, &[]).unwrap_err(),
-        refusal(ParentCause::NotEarlier)
-    );
+    assert!(validate_record(&inputs, &empty, &[]).is_ok());
     assert_eq!(
         validate_history(&[child.clone()], &names).unwrap_err(),
         refusal(ParentCause::Missing)

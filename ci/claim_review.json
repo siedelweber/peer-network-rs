@@ -3013,17 +3013,17 @@
       "operation": "pn-records::public::ordering::epoch_placement",
       "path": "packages/records/tests/public/ordering.rs",
       "claim": "RECORDS::claim:acts:epoch-qualified-placement-retains-causal-checks",
-      "before": "Claim: Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.",
-      "after": "Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.",
-      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
+      "before": "Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.",
+      "after": "Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in published placement independently of its stamp while retaining dependency violations on replay.",
+      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
       "operation": "pn-records::public::ordering::parent_replay",
       "path": "packages/records/tests/public/ordering.rs",
       "claim": "RECORDS::claim:acts:parent-replay-separates-placement-from-stamping",
-      "before": "",
-      "after": "Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, equal-position and later parents still refuse, candidate causal-key refusal remains, and earlier epochs precede smaller current positions.",
-      "review": "The replay parent fixture retains all act fields across a time inversion, checks exact Mismatch evidence, and preserves missing/equal/later placement refusals and candidate causal-key refusal. The incidence fixture uses disjoint endpoints below the global maximum and reads an unaffected frontier, distinguishing both monotone-global and last-act clocks. These are local implementation witnesses; parent paper correspondence remains held."
+      "before": "Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, equal-position and later parents still refuse, candidate causal-key refusal remains, and earlier epochs precede smaller current positions.",
+      "after": "Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, equal-position and later parents still refuse, candidate placement refusal remains, and earlier epochs precede smaller current positions.",
+      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
       "operation": "pn-records::public::ordering::retained_time_evidence",

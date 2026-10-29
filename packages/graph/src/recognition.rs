@@ -249,7 +249,7 @@ fn candidate_evidence(
 }
 
 fn earlier(parent: &ValidatedAct, child: &ValidatedAct) -> bool {
-    parent.position() < child.position() && parent.logical_time() < child.logical_time()
+    parent.position() < child.position()
 }
 
 fn cancellations(history: &ValidatedHistory, family: &str, author: &str, offer: &PublicReference, epoch: u64) -> Vec<ActId> {

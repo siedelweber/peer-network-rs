@@ -1116,7 +1116,7 @@ fn order(act: &CandidateAct) -> (Position, u64) {
 }
 
 fn precedes(left: (Position, u64), right: (Position, u64)) -> bool {
-    left.0 < right.0 && (left.0.0, left.1, left.0.1) < (right.0.0, right.1, right.0.1)
+    left.0 < right.0
 }
 
 fn check_times(

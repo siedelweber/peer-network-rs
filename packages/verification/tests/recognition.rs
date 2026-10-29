@@ -221,7 +221,6 @@ fn oracle(inputs: &[CandidateAct], context: &RecognitionContext) -> BTreeMap<[Ac
                     chain.windows(2).all(|pair| {
                         (pair[0].finalization_epoch, pair[0].authoritative_position)
                             < (pair[1].finalization_epoch, pair[1].authoritative_position)
-                            && pair[0].logical_time < pair[1].logical_time
                     }),
                 ];
                 let ids = [bid.id.clone(), accept.id.clone(), ratify.id.clone()];
