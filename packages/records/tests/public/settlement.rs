@@ -85,7 +85,7 @@ fn settlement_closures() {
     }
 }
 
-/// Claim: Settlement metadata is required only in its matching Accept or Ratify variant, requires existing earlier act targets, and retains wrong-family or different-Bid references without a binding verdict. Missing targets, malformed variants and non-earlier placement still refuse; family and same-Bid binding belong to recognition.
+/// Claim: Candidate admission requires settlement metadata only in its matching Accept or Ratify variant, requires existing earlier act targets, and retains wrong-family or different-Bid references without a binding verdict. Missing targets, malformed variants and non-earlier placement still refuse; family and same-Bid binding belong to recognition.
 /// ´claim:acts:settlement-targets-require-existing-earlier-acts´
 /// ´test:integration:settlement-targets´
 #[test]

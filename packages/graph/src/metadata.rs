@@ -1,14 +1,15 @@
 //! Inherited act metadata and the fixed diagnostic projection presentation.
 //! (´def:formation:act-metadata´)
 
-use pn_records::{Position, ValidatedAct};
+use pn_records::{ActId, Position, TimeEvidence, ValidatedAct, ValidatedHistory};
 
 /// Shared finalization metadata copied from the owning validated act.
-/// This is the single future extension point for separating a published stamp,
-/// recomputed time and fault evidence. None of those future rules execute here.
+/// Projection metadata retains the published stamp; observer-specific recomputation
+/// and stamp evidence are joined here from the owning immutable history snapshot.
 /// Neither field is an authored identity or a canonical publication encoding.
 /// (´def:formation:act-metadata´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct ActMetadata {
     /// Retained epoch-qualified published placement.
     pub position: Position,
@@ -17,6 +18,14 @@ pub struct ActMetadata {
 }
 
 impl ActMetadata {
+    pub(crate) fn evidence<'a>(self, id: &ActId, history: &'a ValidatedHistory) -> Option<&'a TimeEvidence> {
+        let act = history.acts().iter().find(|act| act.id() == id)?;
+        if self != Self::from_act(act) {
+            return None;
+        }
+        history.time_evidence().iter().find(|row| &row.act == id)
+    }
+
     pub(crate) fn from_act(act: &ValidatedAct) -> Self {
         Self {
             position: act.position(),

@@ -27,8 +27,8 @@ generators = 11
 
 [[rows]]
 name = "pn-graph"
-operations = 11
-instrumented = 11
+operations = 12
+instrumented = 12
 exceptions = 0
 helpers = 0
 generators = 50

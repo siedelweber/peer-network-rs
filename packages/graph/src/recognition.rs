@@ -3,13 +3,12 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use pn_records::{
-    ActId, Position, PublicReference, SettlementReferences, TimeEvidence, TimeVerdict, ValidatedAct, ValidatedHistory,
-};
+use pn_records::{ActId, PublicReference, SettlementReferences, TimeEvidence, TimeVerdict, ValidatedAct, ValidatedHistory};
 
-use crate::formation::FormationGraph;
+use crate::formation::{FormationGraph, reconstruct_replay};
+use crate::metadata::ActMetadata;
 use crate::registration::{RegistrationError, RegistrationVerifier};
-use crate::title::{TitleInputs, title_inputs};
+use crate::title::{TitleInputs, indexed_inputs};
 
 /// Supplied preceding-boundary certificate and consumption premises.
 /// Deriving these premises by the title fold remains a separate operation.
@@ -40,7 +39,7 @@ pub enum RecognitionClause {
     BuyerConsent,
     /// No effective seller Rescind defeats this candidate.
     SellerConsent,
-    /// The referenced handshake chain is earlier in placement and time.
+    /// The referenced handshake chain is earlier in published placement.
     WellFormedness,
 }
 
@@ -71,7 +70,9 @@ pub struct SettlementEvidence {
     /// Party correspondence evidence, distinct from target binding failures.
     pub partners: PartnerEvidence,
     /// Published placement and retained time for the three chain witnesses.
-    pub chain: [(Position, u64); 3],
+    pub chain: [Option<ActMetadata>; 3],
+    /// Observer-specific recomputation and stamp evidence, never a replacement stamp.
+    pub times: [Option<TimeEvidence>; 3],
     /// Item named by a valid Bid; absent for a wrong-family settles target.
     pub item: Option<PublicReference>,
     /// Supplied prior owner, absent when the certificate resolves no owner.
@@ -98,9 +99,9 @@ pub enum RecognitionError {
     /// The supplied owner map names a different preceding boundary.
     #[error("recognition requires the immediately preceding certificate")]
     Boundary,
-    /// The prefix lacks the carried, matching recurrence evidence required here.
-    /// Faulted time and parent correspondence remain held by the design questions.
-    #[error("recognition held outside the compliant-history scope")]
+    /// The prefix lacks available recurrence evidence.
+    /// Tombstoned openings remain held by the dependency recipe obligation.
+    #[error("recognition held without available replay evidence")]
     Held(Vec<TimeEvidence>),
 }
 
@@ -112,7 +113,7 @@ pub enum RecognitionError {
 /// # Errors
 /// Refuses altered or unauthorized formation and mismatched certificate boundaries.
 /// Returns Held, with no candidate verdicts, unless every prefix act has carried,
-/// matching recurrence evidence. Neither open ordering question is resolved here.
+/// available recurrence evidence. Stamp faults do not determine recognition.
 #[tracing::instrument(
     name = "alg:design:recognition",
     fields(
@@ -129,9 +130,10 @@ pub fn recognize_settlements(
     verifier: &impl RegistrationVerifier,
     context: &RecognitionContext,
 ) -> Result<Vec<SettlementEvidence>, RecognitionError> {
-    let result = title_inputs(graph, history, verifier)
+    let result = reconstruct_replay(history, verifier)
+        .and_then(|expected| crate::registration::compare_graph(graph, &expected))
         .map_err(RecognitionError::Formation)
-        .and_then(|inputs| recognize(&inputs, history, context));
+        .and_then(|()| recognize(&indexed_inputs(history), history, context));
     if result.is_err() {
         tracing::event!(tracing::Level::TRACE, outcome = "refusal");
     }
@@ -153,7 +155,10 @@ fn recognize(
         .filter(|evidence| {
             acts.get(&evidence.act)
                 .is_some_and(|act| act.finalization_epoch() <= context.epoch)
-                && evidence.verdict != TimeVerdict::Matches
+                && matches!(
+                    evidence.verdict,
+                    TimeVerdict::UnavailableOpening | TimeVerdict::AmbiguousPlacement
+                )
         })
         .cloned()
         .collect();
@@ -163,11 +168,12 @@ fn recognize(
     let mut output = Vec::new();
     for (id, references) in &inputs.settlements {
         if let SettlementReferences::Ratify { settles, accepts } = references
-            && let (Some(bid), Some(accept), Some(ratify)) = (acts.get(settles), acts.get(accepts), acts.get(id))
+            && let Some(ratify) = acts.get(id)
             && ratify.finalization_epoch() == context.epoch
         {
             output.push(candidate_evidence(
-                [bid, accept, ratify],
+                [acts.get(settles).copied(), acts.get(accepts).copied(), Some(*ratify)],
+                [settles.clone(), accepts.clone(), id.clone()],
                 inputs.bids.get(settles),
                 history,
                 context,
@@ -178,38 +184,49 @@ fn recognize(
 }
 
 fn candidate_evidence(
-    [bid, accept, ratify]: [&ValidatedAct; 3],
+    [bid, accept, ratify]: [Option<&ValidatedAct>; 3],
+    acts: [ActId; 3],
     item: Option<&PublicReference>,
     history: &ValidatedHistory,
     context: &RecognitionContext,
 ) -> SettlementEvidence {
-    let offer = PublicReference::Minted(bid.id().clone());
-    let withdrawals = cancellations(history, "Withdraw", &bid.id().author, &offer, context.epoch);
-    let rescissions = cancellations(history, "Rescind", &accept.id().author, &offer, context.epoch);
+    let offer = PublicReference::Minted(acts[0].clone());
+    let withdrawals = cancellations(history, "Withdraw", &acts[0].author, &offer, context.epoch);
+    let rescissions = cancellations(history, "Rescind", &acts[1].author, &offer, context.epoch);
     let prior_owner = item.and_then(|item| context.owners.get(item)).cloned();
     let partners = PartnerEvidence {
-        ratify_author_is_buyer: ratify.id().author == bid.id().author,
-        accept_target_is_buyer: actor_target(accept, &bid.id().author),
-        ratify_target_is_seller: actor_target(ratify, &accept.id().author),
+        ratify_author_is_buyer: ratify
+            .zip(bid)
+            .is_some_and(|(ratify, bid)| ratify.id().author == bid.id().author),
+        accept_target_is_buyer: accept
+            .zip(bid)
+            .is_some_and(|(accept, bid)| actor_target(accept, &bid.id().author)),
+        ratify_target_is_seller: ratify
+            .zip(accept)
+            .is_some_and(|(ratify, accept)| actor_target(ratify, &accept.id().author)),
     };
     let targets_bind = item.is_some()
-        && bid.id().family == "Bid"
-        && accept.id().family == "Accept"
-        && accept.body().settlement.as_ref()
-            == Some(&SettlementReferences::Accept {
-                settles: bid.id().clone(),
-            })
-        && ratify.body().settlement.as_ref()
-            == Some(&SettlementReferences::Ratify {
-                settles: bid.id().clone(),
-                accepts: accept.id().clone(),
-            });
+        && bid.is_some_and(|bid| bid.id().family == "Bid")
+        && accept.is_some_and(|accept| {
+            accept.id().family == "Accept"
+                && accept.body().settlement
+                    == Some(SettlementReferences::Accept {
+                        settles: acts[0].clone(),
+                    })
+        })
+        && ratify.is_some_and(|ratify| {
+            ratify.body().settlement
+                == Some(SettlementReferences::Ratify {
+                    settles: acts[0].clone(),
+                    accepts: acts[1].clone(),
+                })
+        });
     let clauses = BTreeMap::from([
         (
             RecognitionClause::Completeness,
             [bid, accept, ratify]
                 .iter()
-                .all(|act| act.finalization_epoch() <= context.epoch),
+                .all(|act| act.is_some_and(|act| act.finalization_epoch() <= context.epoch)),
         ),
         (
             RecognitionClause::ReferenceBinding,
@@ -220,24 +237,31 @@ fn candidate_evidence(
         ),
         (
             RecognitionClause::Authorization,
-            prior_owner.as_ref() == Some(&accept.id().author),
+            accept.is_some_and(|accept| prior_owner.as_ref() == Some(&accept.id().author)),
         ),
         (RecognitionClause::BuyerConsent, withdrawals.is_empty()),
         (RecognitionClause::SellerConsent, rescissions.is_empty()),
         (
             RecognitionClause::WellFormedness,
-            earlier(bid, accept) && earlier(accept, ratify),
+            bid.zip(accept).is_some_and(|(bid, accept)| earlier(bid, accept))
+                && accept.zip(ratify).is_some_and(|(accept, ratify)| earlier(accept, ratify)),
         ),
     ]);
-    let acts = [bid.id().clone(), accept.id().clone(), ratify.id().clone()];
     let consumed: BTreeSet<_> = acts.iter().filter(|id| context.consumed.contains(*id)).cloned().collect();
     let recognized = clauses.values().all(|passed| *passed) && consumed.is_empty();
     SettlementEvidence {
         acts,
-        references: [accept.body().settlement.clone(), ratify.body().settlement.clone()],
+        references: [
+            accept.and_then(|act| act.body().settlement.clone()),
+            ratify.and_then(|act| act.body().settlement.clone()),
+        ],
         targets_bind,
         partners,
-        chain: [bid, accept, ratify].map(|act| (act.position(), act.logical_time())),
+        chain: [bid, accept, ratify].map(|act| act.map(ActMetadata::from_act)),
+        times: [bid, accept, ratify].map(|act| {
+            act.and_then(|act| ActMetadata::from_act(act).evidence(act.id(), history))
+                .cloned()
+        }),
         item: item.cloned(),
         prior_owner,
         clauses,
@@ -249,7 +273,7 @@ fn candidate_evidence(
 }
 
 fn earlier(parent: &ValidatedAct, child: &ValidatedAct) -> bool {
-    parent.position() < child.position()
+    ActMetadata::from_act(parent).position < ActMetadata::from_act(child).position
 }
 
 fn cancellations(history: &ValidatedHistory, family: &str, author: &str, offer: &PublicReference, epoch: u64) -> Vec<ActId> {

@@ -614,7 +614,7 @@ pub fn project_complete_act(
     verifier: &impl RegistrationVerifier,
 ) -> Result<Vec<CompleteProjection>, RegistrationError> {
     let acts = formation_context(history);
-    let result = checked_project(act, &acts, verifier).and_then(|projection| {
+    let result = checked_project(act, &acts, verifier, false).and_then(|projection| {
         registration::authorize_removals(&[act], verifier)?;
         Ok(projection)
     });
@@ -646,7 +646,36 @@ pub fn reconstruct(
     verifier: &impl RegistrationVerifier,
 ) -> Result<FormationGraph, RegistrationError> {
     let acts = formation_context(history);
-    let result = registration::reconstruct_with(history, verifier, |act| checked_project(act, &acts, verifier));
+    let result = registration::reconstruct_with(history, verifier, |act| checked_project(act, &acts, verifier, false));
+    if result.is_err() {
+        tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+    }
+    result
+}
+
+/// Reconstruct finalized projections while retaining public-parent placement faults.
+/// This checks family structure, approval and removal authority, not candidate
+/// admission. Missing or misplaced settlement targets remain actor-to-actor acts.
+/// (´[ROOT-alg:design:formation]´)
+///
+/// # Errors
+/// Refuses malformed projections, unauthorized records, ambiguous positions or capacity.
+#[tracing::instrument(
+    name = "alg:design:formation",
+    fields(
+        execution_owner = "GRAPH",
+        claim_owner = "ROOT",
+        claim_label = "alg:design:formation",
+        source_item = "formation::reconstruct_replay"
+    ),
+    ret
+)]
+pub fn reconstruct_replay(
+    history: &ValidatedHistory,
+    verifier: &impl RegistrationVerifier,
+) -> Result<FormationGraph, RegistrationError> {
+    let acts = formation_context(history);
+    let result = registration::reconstruct_with(history, verifier, |act| checked_project(act, &acts, verifier, true));
     if result.is_err() {
         tracing::event!(tracing::Level::TRACE, outcome = "refusal");
     }
@@ -675,7 +704,7 @@ pub fn validate_formation(
     verifier: &impl RegistrationVerifier,
 ) -> Result<(), RegistrationError> {
     let acts = formation_context(history);
-    let result = registration::reconstruct_with(history, verifier, |act| checked_project(act, &acts, verifier))
+    let result = registration::reconstruct_with(history, verifier, |act| checked_project(act, &acts, verifier, false))
         .and_then(|expected| registration::compare_graph(graph, &expected));
     if result.is_err() {
         tracing::event!(tracing::Level::TRACE, outcome = "refusal");
@@ -691,15 +720,25 @@ fn checked_project(
     act: &ValidatedAct,
     acts: &BTreeMap<&ActId, &ValidatedAct>,
     verifier: &impl RegistrationVerifier,
+    replay: bool,
 ) -> Result<Vec<CompleteProjection>, RegistrationError> {
     if acts.get(act.id()).copied() != Some(act) {
         return Err(RegistrationError::Incidence);
     }
+    if !replay
+        && act
+            .body()
+            .causal_parents()
+            .into_iter()
+            .any(|parent| acts.get(parent).is_none_or(|parent| parent.position() >= act.position()))
+    {
+        return Err(RegistrationError::Incidence);
+    }
     if let Some(references) = &act.body().settlement {
         let (SettlementReferences::Accept { settles } | SettlementReferences::Ratify { settles, .. }) = references;
-        settlement_target(settles, act.position(), acts, verifier)?;
+        settlement_target(settles, act.position(), acts, verifier, replay)?;
         if let SettlementReferences::Ratify { accepts, .. } = references {
-            settlement_target(accepts, act.position(), acts, verifier)?;
+            settlement_target(accepts, act.position(), acts, verifier, replay)?;
         }
     }
     let projections = project(act, verifier)?;
@@ -714,25 +753,30 @@ fn checked_project(
         if genesis.position() >= act.position() || !matches!(genesis.legs(), [leg] if leg.target() == reference) {
             return Err(RegistrationError::ItemEndpoint);
         }
-        checked_project(genesis, acts, verifier)?;
+        checked_project(genesis, acts, verifier, replay)?;
         registration::authorize_removals(&[genesis], verifier)?;
     }
     Ok(projections)
 }
 
-fn settlement_target<'a>(
+fn settlement_target(
     id: &ActId,
     before: pn_records::Position,
-    acts: &BTreeMap<&ActId, &'a ValidatedAct>,
+    acts: &BTreeMap<&ActId, &ValidatedAct>,
     verifier: &impl RegistrationVerifier,
-) -> Result<&'a ValidatedAct, RegistrationError> {
-    let target = acts.get(id).copied().ok_or(RegistrationError::Incidence)?;
+    replay: bool,
+) -> Result<(), RegistrationError> {
+    let target = acts.get(id).copied();
+    if replay && target.is_none_or(|target| target.position() >= before) {
+        return Ok(());
+    }
+    let target = target.ok_or(RegistrationError::Incidence)?;
     if target.position() >= before {
         return Err(RegistrationError::Incidence);
     }
-    checked_project(target, acts, verifier)?;
+    checked_project(target, acts, verifier, replay)?;
     registration::authorize_removals(&[target], verifier)?;
-    Ok(target)
+    Ok(())
 }
 
 fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<CompleteProjection, RegistrationError> {

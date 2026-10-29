@@ -269,9 +269,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition and compliant boundary title replay return identical complete public results with observation disabled, default and trace; the thirty-three successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty-five successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty-five successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -1421,9 +1421,9 @@
       "operation": "pn-graph::formation::formed_authorization_conformance",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:implemented-families-share-complete-authorization",
-      "before": "Claim: All nineteen authored families form together as twenty-seven projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; typed settlement metadata resolves to completely formed and authorized Bid and Accept records; geometry and title remain outside this scope.",
-      "after": "Claim: All nineteen authored families form together as twenty-seven projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; typed settlement metadata resolves to completely formed and authorized referenced acts; geometry and title remain outside this scope.",
-      "review": "Complete authorization applies to referenced acts regardless of family. Recognition decides settlement binding; this correction removes the obsolete family restriction without weakening the complete-act witness."
+      "before": "Claim: All nineteen authored families form together as twenty-seven projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; typed settlement metadata resolves to completely formed and authorized referenced acts; geometry and title remain outside this scope.",
+      "after": "Claim: Candidate formation admits all nineteen authored families together as twenty-seven projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; typed settlement metadata resolves to completely formed and authorized referenced acts; geometry and title remain outside this scope.",
+      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
       "operation": "pn-graph::formation::formed_reference_conformance",
@@ -1653,9 +1653,9 @@
       "operation": "pn-graph::formation::settlement_context",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:settlement-targets-require-complete-authorized-acts",
-      "before": "Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced Bid and Accept projections, including their permitted removals. Malformed referenced coordinates, withheld approval or removal authority refuse even when projecting only the dependent act; records still refuses dangling, mistyped and different-Bid targets before graph formation.",
-      "after": "Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced acts, including permitted removals. Missing or non-earlier targets, malformed referenced formation and withheld approval or removal authority refuse. Earlier wrong-family targets and different-Bid references retain their exact family and actor incidence without a binding verdict; recognition checks clause (ii).",
-      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
+      "before": "Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced acts, including permitted removals. Missing or non-earlier targets, malformed referenced formation and withheld approval or removal authority refuse. Earlier wrong-family targets and different-Bid references retain their exact family and actor incidence without a binding verdict; recognition checks clause (ii).",
+      "after": "Claim: Candidate settlement projection requires its exact supplied-history act and complete authorized referenced acts, including permitted removals. Missing or non-earlier targets, malformed referenced formation and withheld approval or removal authority refuse. Earlier wrong-family targets and different-Bid references retain their exact family and actor incidence without a binding verdict; recognition checks clause (ii).",
+      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
       "operation": "pn-graph::formation::settlement_partition",
@@ -3005,9 +3005,9 @@
       "operation": "pn-records::public::ordering::attached_times",
       "path": "packages/records/tests/public/ordering.rs",
       "claim": "RECORDS::claim:acts:attached-times-match-scoped-incidence-replay",
-      "before": "Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.",
-      "after": "Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search, including disjoint incidence below the global maximum and a later read of an unchanged frontier; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.",
-      "review": "The replay parent fixture retains all act fields across a time inversion, checks exact Mismatch evidence, and preserves missing/equal/later placement refusals and candidate causal-key refusal. The incidence fixture uses disjoint endpoints below the global maximum and reads an unaffected frontier, distinguishing both monotone-global and last-act clocks. These are local implementation witnesses; parent paper correspondence remains held."
+      "before": "Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search, including disjoint incidence below the global maximum and a later read of an unchanged frontier; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.",
+      "after": "Claim: Complete binary and three-endpoint paired fixtures recompute times matching an independent backward incidence search and retain matching published stamps, including disjoint incidence below the global maximum and a later read of an unchanged frontier; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.",
+      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
       "operation": "pn-records::public::ordering::epoch_placement",
@@ -3061,9 +3061,9 @@
       "operation": "pn-records::public::settlement::settlement_targets",
       "path": "packages/records/tests/public/settlement.rs",
       "claim": "RECORDS::claim:acts:settlement-targets-require-existing-earlier-acts",
-      "before": "Claim: Settlement metadata is required only in its matching Accept or Ratify variant, resolves an Offer-minting Bid and the exact Accept naming that Bid, and refuses missing, mistyped, mismatched or misplaced metadata independently of graph formation.",
-      "after": "Claim: Settlement metadata is required only in its matching Accept or Ratify variant, requires existing earlier act targets, and retains wrong-family or different-Bid references without a binding verdict. Missing targets, malformed variants and non-earlier placement still refuse; family and same-Bid binding belong to recognition.",
-      "review": "Retire claim:acts:settlement-targets-resolve-by-family-and-bid in favor of claim:acts:settlement-targets-require-existing-earlier-acts. The existing witness establishes target existence and earlier placement, retaining wrong-family and different-Bid targets for recognition. The gloss and behavior are unchanged; the retired slug has no surviving mint or citation."
+      "before": "Claim: Settlement metadata is required only in its matching Accept or Ratify variant, requires existing earlier act targets, and retains wrong-family or different-Bid references without a binding verdict. Missing targets, malformed variants and non-earlier placement still refuse; family and same-Bid binding belong to recognition.",
+      "after": "Claim: Candidate admission requires settlement metadata only in its matching Accept or Ratify variant, requires existing earlier act targets, and retains wrong-family or different-Bid references without a binding verdict. Missing targets, malformed variants and non-earlier placement still refuse; family and same-Bid binding belong to recognition.",
+      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
       "operation": "pn-records::public::settlement::settlement_time",
@@ -3212,10 +3212,10 @@
     {
       "operation": "pn-verification::recognition::recognition_holds",
       "path": "packages/verification/tests/recognition.rs",
-      "claim": "VERIFICATION::claim:verification:recognition-holds-faulted-or-unavailable-time",
-      "before": "",
-      "after": "Claim: Recognition gives no negative candidate verdict when compliant-history recurrence evidence is missing or mismatched, and refuses incomplete graph or boundary premises before returning clauses. Payload removal preserves recognized evidence; tombstoned dependency openings produce the named hold rather than recomputing time.",
-      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
+      "claim": "VERIFICATION::claim:verification:recognition-holds-unavailable-time",
+      "before": "Claim: Recognition gives no negative candidate verdict when compliant-history recurrence evidence is missing or mismatched, and refuses incomplete graph or boundary premises before returning clauses. Payload removal preserves recognized evidence; tombstoned dependency openings produce the named hold rather than recomputing time.",
+      "after": "Claim: Recognition holds when recurrence evidence is unavailable, and refuses incomplete graph or boundary premises before returning clauses. A changed published stamp remains mismatch evidence without changing clause verdicts; payload removal preserves evidence, while tombstoned dependencies retain their named unavailable-time hold.",
+      "review": "Retires claim:verification:recognition-holds-faulted-or-unavailable-time in favor of claim:verification:recognition-holds-unavailable-time. Available recomputation now retains stamp faults without making them recognition premises; missing openings still produce a named whole-result hold. Title replay outside compliant histories remains held."
     },
     {
       "operation": "pn-verification::recognition::recognition_partners",
@@ -3224,6 +3224,14 @@
       "before": "",
       "after": "Claim: On compliant histories, each isolated party mismatch retains exact target binding but fails the corresponding partner evidence and provisional reference-binding clause (ii). A third-party Ratify, a misdirected Accept and a misdirected Ratify form without rewriting incidence and never recognize; the paper's clause placement remains held.",
       "review": "Each party predicate is isolated while targets bind, and all other recognition clauses pass. The independent raw enumerator agrees. This witnesses existing behavior and exposes separate evidence; the clause assignment remains an explicit paper hold."
+    },
+    {
+      "operation": "pn-verification::recognition::settlement_replay_faults",
+      "path": "packages/verification/tests/recognition.rs",
+      "claim": "VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults",
+      "before": "",
+      "after": "Claim: Finalized settlement replay retains absent and misplaced targets with parent-placement evidence and unchanged actor projections. Missing Bid or Accept targets fail reference binding (ii), later targets fail well-formedness (vi), candidate formation still refuses each, and mutated replay graphs refuse before recognition evidence escapes.",
+      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {
       "operation": "pn-verification::recognition::title_boundaries",

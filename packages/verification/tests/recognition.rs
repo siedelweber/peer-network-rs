@@ -351,8 +351,9 @@ fn compare(inputs: &[CandidateAct], context: &RecognitionContext) {
             [raw[1].body.settlement.clone(), raw[2].body.settlement.clone()]
         );
         assert_eq!(
-            row.chain,
-            raw.map(|act| ((act.finalization_epoch, act.authoritative_position), act.logical_time))
+            row.chain
+                .map(|metadata| metadata.map(|metadata| (metadata.position, metadata.logical_time))),
+            raw.map(|act| Some(((act.finalization_epoch, act.authoritative_position), act.logical_time)))
         );
         assert_eq!(
             row.consumed,
@@ -540,8 +541,8 @@ fn recognition_partners() {
     }
 }
 
-/// Claim: Recognition gives no negative candidate verdict when compliant-history recurrence evidence is missing or mismatched, and refuses incomplete graph or boundary premises before returning clauses. Payload removal preserves recognized evidence; tombstoned dependency openings produce the named hold rather than recomputing time.
-/// ´claim:verification:recognition-holds-faulted-or-unavailable-time´
+/// Claim: Recognition holds when recurrence evidence is unavailable, and refuses incomplete graph or boundary premises before returning clauses. A changed published stamp remains mismatch evidence without changing clause verdicts; payload removal preserves evidence, while tombstoned dependencies retain their named unavailable-time hold.
+/// ´claim:verification:recognition-holds-unavailable-time´
 /// ´test:integration:recognition-holds´
 #[test]
 fn recognition_holds() {
@@ -574,9 +575,70 @@ fn recognition_holds() {
         let actual = recognize_settlements(&graph, &history, &Approval, &context());
         if kind == 2 {
             assert_eq!(actual.unwrap(), expected);
+        } else if kind == 0 {
+            let evidence = actual.unwrap();
+            assert_eq!(evidence[0].clauses, expected[0].clauses);
+            assert!(evidence[0].recognized);
+            assert!(matches!(
+                evidence[0].times[2].as_ref().unwrap().verdict,
+                pn_records::TimeVerdict::Mismatch { .. }
+            ));
         } else {
             assert!(matches!(actual, Err(RecognitionError::Held(evidence)) if !evidence.is_empty()));
         }
+    }
+}
+
+/// Claim: Finalized settlement replay retains absent and misplaced targets with parent-placement evidence and unchanged actor projections. Missing Bid or Accept targets fail reference binding (ii), later targets fail well-formedness (vi), candidate formation still refuses each, and mutated replay graphs refuse before recognition evidence escapes.
+/// ´claim:verification:settlement-replay-retains-target-placement-faults´
+/// ´test:integration:settlement-replay-faults´
+#[test]
+fn settlement_replay_faults() {
+    for kind in 0..4 {
+        let mut inputs = fixture(1, 0, 0);
+        match kind {
+            0 => {
+                inputs.remove(0);
+            }
+            1 => {
+                inputs.remove(1);
+            }
+            2 => {
+                inputs[1].finalization_epoch = 2;
+                inputs[1].authoritative_position = inputs[2].authoritative_position + 1;
+            }
+            _ => {
+                inputs[0].authoritative_position = inputs[1].authoritative_position + 1;
+            }
+        }
+        let history = validate_history(&inputs, &[]).unwrap();
+        assert_ne!(history.parent_faults(), []);
+        let empty = validate_history(&[], &[]).unwrap();
+        assert!(pn_records::validate_record(&inputs, &empty, &[]).is_err());
+        assert!(reconstruct(&history, &Approval).is_err());
+        let graph = pn_graph::formation::reconstruct_replay(&history, &Approval).unwrap();
+        assert_eq!(graph.edge_count(), inputs.iter().map(|act| act.legs.len()).sum::<usize>());
+        for (actual, input) in history.acts().iter().zip(&inputs) {
+            assert_eq!(actual.id(), &input.id);
+            assert_eq!(actual.position(), (input.finalization_epoch, input.authoritative_position));
+            assert_eq!(actual.logical_time(), input.logical_time);
+            assert_eq!(actual.body(), &input.body);
+        }
+        let evidence = recognize_settlements(&graph, &history, &Approval, &context()).unwrap();
+        assert_eq!(evidence.len(), 1);
+        let clause = if kind < 2 {
+            RecognitionClause::ReferenceBinding
+        } else {
+            RecognitionClause::WellFormedness
+        };
+        assert!(!evidence[0].clauses[&clause]);
+        assert!(!evidence[0].recognized);
+        let mut changed = graph;
+        changed.remove_edge(changed.edge_indices().next().unwrap());
+        assert!(matches!(
+            recognize_settlements(&changed, &history, &Approval, &context()),
+            Err(RecognitionError::Formation(_))
+        ));
     }
 }
 

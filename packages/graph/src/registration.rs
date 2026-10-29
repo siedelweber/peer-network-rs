@@ -273,8 +273,10 @@ pub(super) fn reconstruct_with<N: Ord + Clone, E>(
     project: impl Fn(&ValidatedAct) -> Result<Vec<(N, N, E)>, RegistrationError>,
 ) -> Result<StableDiGraph<N, E>, RegistrationError> {
     let mut acts: Vec<_> = history.acts().iter().collect();
-    acts.sort_by_key(|act| (act.position(), act.id()));
-    if acts.windows(2).any(|pair| pair[0].position() == pair[1].position()) {
+    acts.sort_by_key(|act| (crate::metadata::ActMetadata::from_act(act).position, act.id()));
+    if acts.windows(2).any(|pair| {
+        crate::metadata::ActMetadata::from_act(pair[0]).position == crate::metadata::ActMetadata::from_act(pair[1]).position
+    }) {
         return Err(RegistrationError::AmbiguousOrder);
     }
     let mut graph = StableDiGraph::new();

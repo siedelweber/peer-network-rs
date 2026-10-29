@@ -76,7 +76,7 @@
 | cli-common | 113 | 30 | 80 | 3 | 42 |
 | documents | 18 | 12 | 6 | 0 | 10 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
-| pn-graph | 11 | 11 | 0 | 0 | 50 |
+| pn-graph | 12 | 12 | 0 | 0 | 50 |
 | pn-host | 40 | 22 | 18 | 0 | 13 |
 | pn-interchange | 153 | 118 | 34 | 1 | 89 |
 | pn-records | 105 | 38 | 67 | 0 | 84 |

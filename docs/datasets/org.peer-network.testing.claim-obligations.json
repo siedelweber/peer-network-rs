@@ -2925,6 +2925,18 @@
       "premises": "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Final integration has scoped exactly-once and fresh/reused witnesses; complete semantic dependencies are not inferred from file incidence, and independent review has admitted the migration within these limits.",
       "realizers": [],
       "status": "scoped-supported"
+    },
+    {
+      "claims": [],
+      "closing_condition": "Admit the byte recipe under record 006 and establish authentication, refusal and unavailable-time recovery witnesses.",
+      "closing_step": "Dependency-opening implementation after identity admission",
+      "hold": "ROOT::open:design:dependency-opening-recipe",
+      "missing": "Admitted dependency-commitment recipe and authenticated reopening witnesses",
+      "name": "ROOT::verif:design:dependency-opening-cases",
+      "owner": "Records and identity implementers",
+      "path": "docs/design/implementation.md",
+      "realizers": [],
+      "status": "held"
     }
   ]
 }

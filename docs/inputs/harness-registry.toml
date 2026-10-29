@@ -1353,7 +1353,7 @@ level = "integration"
 implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-verification::recognition::recognition_enumerator", "pn-verification::recognition::paper_time_fixture", "pn-verification::recognition::recognition_binding", "pn-verification::recognition::recognition_partners", "pn-verification::recognition::recognition_holds", "pn-verification::recognition::title_boundaries", "pn-verification::recognition::title_premises", "pn-verification::recognition::title_events"]
+cases = ["pn-verification::recognition::recognition_enumerator", "pn-verification::recognition::paper_time_fixture", "pn-verification::recognition::settlement_replay_faults", "pn-verification::recognition::recognition_binding", "pn-verification::recognition::recognition_partners", "pn-verification::recognition::recognition_holds", "pn-verification::recognition::title_boundaries", "pn-verification::recognition::title_premises", "pn-verification::recognition::title_events"]
 
 [[rows]]
 kind = "suite"

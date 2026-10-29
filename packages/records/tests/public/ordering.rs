@@ -141,7 +141,7 @@ fn independent_time(acts: &[CandidateAct], index: usize) -> u128 {
     u128::from(endpoint_time.max(prior_time)) + 1
 }
 
-/// Claim: Complete binary and three-endpoint paired fixtures retain host-attached times matching an independent backward incidence search, including disjoint incidence below the global maximum and a later read of an unchanged frontier; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.
+/// Claim: Complete binary and three-endpoint paired fixtures recompute times matching an independent backward incidence search and retain matching published stamps, including disjoint incidence below the global maximum and a later read of an unchanged frontier; every paired projection reads its single owning act's time, and reversing input presentation preserves the ordered recurrence evidence.
 /// ´claim:acts:attached-times-match-scoped-incidence-replay´
 /// ´test:integration:attached-times´
 #[test]
@@ -160,6 +160,9 @@ fn attached_times() {
     assert_ne!(u128::from(acts[3].logical_time) + 1, independent_time(&acts, 4));
     let forward = validate_history(&acts, &names).unwrap();
     assert!(forward.time_evidence().iter().all(|row| row.verdict == TimeVerdict::Matches));
+    for (index, row) in forward.time_evidence().iter().enumerate() {
+        assert_eq!(row.recomputed, RecomputedTime::Available(independent_time(&acts, index)));
+    }
     for leg in forward.acts()[1].legs() {
         let owner = forward.acts().iter().find(|act| act.id() == &leg.id().act).unwrap();
         assert_eq!(owner.logical_time(), 2);
@@ -199,6 +202,12 @@ fn parent_replay() {
     let missing = validate_history(&[child.clone()], &names).unwrap();
     assert_eq!(missing.parent_faults()[0].cause, ParentCause::Missing);
     assert_eq!(missing.parent_faults()[0].parent, parent.id);
+    let mut self_parent = child.clone();
+    self_parent.body.asserted_parents = vec![self_parent.id.clone()];
+    let replay = validate_history(&[self_parent.clone()], &names).unwrap();
+    assert_eq!(replay.parent_faults()[0].cause, ParentCause::SelfParent);
+    assert_eq!(replay.time_evidence()[0].recomputed, RecomputedTime::Available(1));
+    assert_retained(&replay, &[self_parent]);
     for position in [2, 3] {
         parent.authoritative_position = position;
         let inputs = [parent.clone(), child.clone()];
@@ -295,7 +304,14 @@ fn five_one_six() {
     last.logical_time = 1;
     last.legs[0].source = named("separate-left");
     last.legs[0].target = named("separate-right");
-    let names = [named("left"), named("right"), named("separate-left"), named("separate-right")];
+    let names = [
+        named("left"),
+        named("right"),
+        named("separate-left"),
+        named("separate-right"),
+        named("dependent-left"),
+        named("dependent-right"),
+    ];
     chain.push(last);
     assert_eq!(
         validate_history(&chain, &names).unwrap().time_evidence()[5].recomputed,
@@ -315,4 +331,21 @@ fn five_one_six() {
     );
     assert_eq!(replay.time_evidence()[5].verdict, TimeVerdict::UnavailableOpening);
     assert_retained(&replay, &chain);
+    for declared in [false, true] {
+        let mut dependent = act(7, Layout::Binary);
+        dependent.authoritative_position = 7;
+        dependent.legs[0].source = named("dependent-left");
+        dependent.legs[0].target = named("dependent-right");
+        if declared {
+            dependent.projections.dependency = DependencyProjection::Full(vec![chain[5].id.clone()]);
+        } else {
+            dependent.body.asserted_parents = vec![chain[5].id.clone()];
+        }
+        let mut extended = chain.clone();
+        extended.push(dependent);
+        let replay = validate_history(&extended, &names).unwrap();
+        assert_eq!(replay.time_evidence()[6].recomputed, replay.time_evidence()[5].recomputed);
+        assert_eq!(replay.time_evidence()[6].verdict, TimeVerdict::UnavailableOpening);
+        assert_retained(&replay, &extended);
+    }
 }

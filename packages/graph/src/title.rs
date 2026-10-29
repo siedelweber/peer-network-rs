@@ -46,33 +46,35 @@ pub fn title_inputs(
     history: &ValidatedHistory,
     verifier: &impl RegistrationVerifier,
 ) -> Result<TitleInputs, RegistrationError> {
-    let result = validate_formation(graph, history, verifier).map(|()| {
-        let mut inputs = TitleInputs {
-            acts: BTreeSet::new(),
-            genesis: BTreeMap::new(),
-            bids: BTreeMap::new(),
-            settlements: BTreeMap::new(),
-        };
-        for act in history.acts() {
-            inputs.acts.insert(act.id().clone());
-            if let Some(references) = &act.body().settlement {
-                inputs.settlements.insert(act.id().clone(), references.clone());
-            }
-            for leg in act.legs() {
-                if act.id().family == "Owner" && leg.target() == &PublicReference::Minted(act.id().clone()) {
-                    inputs.genesis.insert(leg.target().clone(), act.id().clone());
-                }
-                if act.id().family == "Bid" && leg.id().role == pn_records::Role::A {
-                    inputs.bids.insert(act.id().clone(), leg.target().clone());
-                }
-            }
-        }
-        inputs
-    });
+    let result = validate_formation(graph, history, verifier).map(|()| indexed_inputs(history));
     if result.is_err() {
         tracing::event!(tracing::Level::TRACE, outcome = "refusal");
     }
     result
+}
+
+pub(crate) fn indexed_inputs(history: &ValidatedHistory) -> TitleInputs {
+    let mut inputs = TitleInputs {
+        acts: BTreeSet::new(),
+        genesis: BTreeMap::new(),
+        bids: BTreeMap::new(),
+        settlements: BTreeMap::new(),
+    };
+    for act in history.acts() {
+        inputs.acts.insert(act.id().clone());
+        if let Some(references) = &act.body().settlement {
+            inputs.settlements.insert(act.id().clone(), references.clone());
+        }
+        for leg in act.legs() {
+            if act.id().family == "Owner" && leg.target() == &PublicReference::Minted(act.id().clone()) {
+                inputs.genesis.insert(leg.target().clone(), act.id().clone());
+            }
+            if act.id().family == "Bid" && leg.id().role == pn_records::Role::A {
+                inputs.bids.insert(act.id().clone(), leg.target().clone());
+            }
+        }
+    }
+    inputs
 }
 
 /// One boundary's derived recognition premises and resulting title certificate.
