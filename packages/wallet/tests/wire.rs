@@ -9,7 +9,10 @@ use std::{
     net::{Shutdown, TcpListener, TcpStream},
     os::unix::fs::{DirBuilderExt as _, MetadataExt as _, OpenOptionsExt as _},
     path::PathBuf,
-    sync::atomic::{AtomicU64, AtomicUsize, Ordering},
+    sync::{
+        Arc,
+        atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering},
+    },
     thread,
     time::{Duration, Instant},
 };
@@ -23,9 +26,13 @@ const TIMEOUT: Duration = Duration::from_secs(1);
 const DRIP: u64 = 40;
 /// The server's observation window, well past the focused deadline.
 const OBSERVE: Duration = Duration::from_secs(5);
-/// Attempts per case. Provisioning runs under the case's own limits, so a timeout case whose
-/// attempt expires before its case request reaches the server has shown nothing about the
-/// case; that attempt is retried, and a case that never reaches its request fails.
+/// Attempts per case. Evidence is selected conditionally: provisioning shares the case's own
+/// per-read limit, so an attempt that expires before its case request reaches the server is
+/// inconclusive about the case and the next attempt is taken, while its invariant findings
+/// stand; a case that never reaches its request fails. The count also bounds the wall: the
+/// server stops waiting once the client has returned, so an attempt lasts at most its three
+/// reads, each within the case's per-read limit (one second for the timeout cases), plus a
+/// teardown wait that only a failing attempt reaches.
 const ATTEMPTS: usize = 5;
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
@@ -170,7 +177,10 @@ fn observe(stream: &mut TcpStream) -> Peer {
     }
 }
 
-fn accept(listener: &TcpListener) -> Option<TcpStream> {
+/// Accept the next connection within a fifteen-second guard, or stop once the client has
+/// returned and no connection it made is still queued: a connection is queued as soon as its
+/// connect completes, so one the client made is always drained before the stop.
+fn accept(listener: &TcpListener, finished: &AtomicBool) -> Option<TcpStream> {
     let deadline = Instant::now() + Duration::from_secs(15);
     while Instant::now() < deadline {
         match listener.accept() {
@@ -179,7 +189,12 @@ fn accept(listener: &TcpListener) -> Option<TcpStream> {
                 stream.set_read_timeout(Some(Duration::from_secs(10))).unwrap();
                 return Some(stream);
             }
-            Err(error) if error.kind() == ErrorKind::WouldBlock => thread::sleep(Duration::from_millis(2)),
+            Err(error) if error.kind() == ErrorKind::WouldBlock => {
+                if finished.load(Ordering::Acquire) {
+                    return None;
+                }
+                thread::sleep(Duration::from_millis(2));
+            }
             Err(error) => panic!("accept failed: {error}"),
         }
     }
@@ -187,11 +202,17 @@ fn accept(listener: &TcpListener) -> Option<TcpStream> {
 }
 
 /// Answer the two provisioning reads, then the case connection with its exact segments.
-fn serve(listener: TcpListener, genesis: Vec<Vec<u8>>, wire: Vec<(u64, Vec<u8>)>, hold: bool) -> thread::JoinHandle<Exchange> {
+fn serve(
+    listener: TcpListener,
+    genesis: Vec<Vec<u8>>,
+    wire: Vec<(u64, Vec<u8>)>,
+    hold: bool,
+    finished: Arc<AtomicBool>,
+) -> thread::JoinHandle<Exchange> {
     thread::spawn(move || {
         let mut requests = Vec::new();
         for answer in genesis {
-            let Some(mut stream) = accept(&listener) else {
+            let Some(mut stream) = accept(&listener, &finished) else {
                 return Exchange {
                     requests,
                     peer: Peer::Open,
@@ -202,7 +223,7 @@ fn serve(listener: TcpListener, genesis: Vec<Vec<u8>>, wire: Vec<(u64, Vec<u8>)>
             stream.shutdown(Shutdown::Write).unwrap();
             observe(&mut stream);
         }
-        let Some(mut stream) = accept(&listener) else {
+        let Some(mut stream) = accept(&listener, &finished) else {
             return Exchange {
                 requests,
                 peer: Peer::Open,
@@ -640,9 +661,10 @@ fn acquisition_cases() -> Vec<Case> {
     let full = valid();
     let head = full.len() - body(3, "\"result\":7").len();
     // The timeout cases run under the short focused deadline; the drip trickles across it and
-    // the held server waits past it. Their provisioning reads share those limits, so an
-    // attempt that expires before its case request reaches the server is retried rather than
-    // counted (see `run_case`); every other case keeps the contract maximum.
+    // the held server waits past it. Their provisioning reads share those limits, so which
+    // attempt counts as evidence is selected conditionally: one that expires before its case
+    // request reaches the server is inconclusive about the case and another is taken, its
+    // invariant findings kept (see `conclude`); every other case keeps the contract maximum.
     let timeout = RpcLimits {
         deadline: TIMEOUT,
         ..RpcLimits::default()
@@ -827,33 +849,57 @@ fn tasks() -> usize {
     std::fs::read_dir("/proc/self/task").unwrap().count()
 }
 
-/// Run one case through a fresh reader and return its differences from the expectation,
-/// retrying only an attempt that expired before its case request reached the server.
-fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec<String> {
-    (0..ATTEMPTS)
-        .find_map(|_| attempt(case, genesis, declaration))
-        .unwrap_or_else(|| {
-            vec![format!(
-                "{}: no attempt reached the case request in {ATTEMPTS} attempts",
-                case.name
-            )]
-        })
+/// What one attempt showed: whether its case request reached the server, and every finding
+/// it observed. Invariant findings (exchange teardown, refusal formatting) hold for any
+/// attempt; findings about the case's expectation are made only when the request reached.
+struct Attempt {
+    reached: bool,
+    findings: Vec<String>,
 }
 
-/// One attempt of a case; None when it expired before its case request reached the server.
-fn attempt(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Option<Vec<String>> {
+/// Combine a case's attempts: take attempts until one reaches its case request, at most
+/// `ATTEMPTS`. Every finding of every attempt taken survives into the result, so retrying an
+/// unreached attempt never discards an invariant it already broke, and a case none of whose
+/// attempts reached its request fails.
+fn conclude(name: &str, attempts: impl Iterator<Item = Attempt>) -> Vec<String> {
+    let mut findings = Vec::new();
+    for attempt in attempts.take(ATTEMPTS) {
+        findings.extend(attempt.findings);
+        if attempt.reached {
+            return findings;
+        }
+    }
+    findings.push(format!("{name}: no attempt reached the case request in {ATTEMPTS} attempts"));
+    findings
+}
+
+/// Run one case through fresh readers and return its differences from the expectation.
+fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec<String> {
+    conclude(case.name, std::iter::repeat_with(|| attempt(case, genesis, declaration)))
+}
+
+/// One attempt of a case through a fresh reader and server.
+fn attempt(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Attempt {
     let mut findings = Vec::new();
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     listener.set_nonblocking(true).unwrap();
     let port = listener.local_addr().unwrap().port();
     let cookie = Cookie::new();
-    let server = serve(listener, genesis.to_vec(), case.wire.clone(), case.hold);
+    let finished = Arc::new(AtomicBool::new(false));
+    let server = serve(
+        listener,
+        genesis.to_vec(),
+        case.wire.clone(),
+        case.hold,
+        Arc::clone(&finished),
+    );
     let result = RpcClient::new(cookie.config(port), case.limits, decoder(), declaration, "wallet-genesis-1")
         .and_then(|client| client.read(Read::BlockCount))
         .map(|value| match value {
             ReadResult::Count(count) => count,
             other => panic!("count expected: {other:?}"),
         });
+    finished.store(true, Ordering::Release);
     let name = case.name;
     // The reader joins its scoped exchange thread before returning, timed out or not; once
     // the kernel has torn the joined task down, no exchange task of this read remains.
@@ -862,9 +908,24 @@ fn attempt(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Opti
             "{name}: an exchange thread task remained {elapsed:?} after its read returned"
         ));
     }
+    if let Err(error) = &result {
+        let formatted = format!("{error:?} {error}");
+        if formatted.contains(&cookie.secret)
+            || formatted.contains(&basic(cookie.secret.as_bytes()))
+            || formatted.contains("127.0.0.1")
+            || formatted.contains(&port.to_string())
+        {
+            findings.push(format!("{name}: refusal formats a private sentinel"));
+        }
+    }
     let exchange = server.join().unwrap();
+    // An attempt that expired before its case request reached the server is inconclusive
+    // about the case; its invariant findings above stand.
     if result == Err(RpcRefusal::Deadline) && exchange.requests.len() < 3 {
-        return None;
+        return Attempt {
+            reached: false,
+            findings,
+        };
     }
     if result != case.expected {
         findings.push(format!("{name}: expected {:?}, got {result:?}", case.expected));
@@ -880,20 +941,64 @@ fn attempt(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Opti
         ),
         None => findings.push(format!("{name}: no case request reached the server")),
     }
-    if let Err(error) = &result {
-        let formatted = format!("{error:?} {error}");
-        if formatted.contains(&cookie.secret)
-            || formatted.contains(&basic(cookie.secret.as_bytes()))
-            || formatted.contains("127.0.0.1")
-            || formatted.contains(&port.to_string())
-        {
-            findings.push(format!("{name}: refusal formats a private sentinel"));
-        }
-    }
-    Some(findings)
+    Attempt { reached: true, findings }
 }
 
-/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline, each timeout case under a short focused deadline counting only an attempt whose case request reached the server; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
+/// The attempt combination on synthetic attempts: a broken invariant in an unreached attempt
+/// survives a later clean attempt; a clean inconclusive attempt followed by a clean reached
+/// one passes; a reached failure stands; five unreached attempts fail and no sixth is taken.
+fn conclude_cases() -> Vec<String> {
+    use std::cell::Cell;
+    let unreached = |findings: &[&str]| Attempt {
+        reached: false,
+        findings: findings.iter().map(|finding| (*finding).to_owned()).collect(),
+    };
+    let reached = |findings: &[&str]| Attempt {
+        reached: true,
+        findings: findings.iter().map(|finding| (*finding).to_owned()).collect(),
+    };
+    let mut findings = Vec::new();
+    let teardown = "case: an exchange thread task remained 6s after its read returned";
+    let outcomes = [
+        (
+            "unreached teardown failure, then a clean attempt",
+            conclude("case", [unreached(&[teardown]), reached(&[])].into_iter()),
+            vec![teardown.to_owned()],
+        ),
+        (
+            "clean inconclusive attempt, then a clean attempt",
+            conclude("case", [unreached(&[]), reached(&[])].into_iter()),
+            Vec::new(),
+        ),
+        (
+            "reached failure",
+            conclude("case", [reached(&["case: expected Http, got Deadline"])].into_iter()),
+            vec!["case: expected Http, got Deadline".to_owned()],
+        ),
+    ];
+    for (name, outcome, expected) in outcomes {
+        if outcome != expected {
+            findings.push(format!("attempt combination, {name}: expected {expected:?}, got {outcome:?}"));
+        }
+    }
+    let taken = Cell::new(0);
+    let exhausted = conclude(
+        "case",
+        std::iter::repeat_with(|| {
+            taken.set(taken.get() + 1);
+            unreached(&[])
+        }),
+    );
+    if exhausted != [format!("case: no attempt reached the case request in {ATTEMPTS} attempts")] || taken.get() != ATTEMPTS {
+        findings.push(format!(
+            "attempt combination, exhaustion: {exhausted:?} after {} attempts",
+            taken.get()
+        ));
+    }
+    findings
+}
+
+/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline, each timeout case under a short focused deadline counting as case evidence only an attempt whose case request reached the server while every attempt's invariant findings survive, as synthetic attempts witness; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
 /// ´claim:wallet:rpc-wire-fixtures-keep-strict-framing´
 /// ´test:integration:wire-compatibility´
 #[test]
@@ -921,6 +1026,7 @@ fn wire_compatibility() {
     let threads = tasks();
     let mut findings: Vec<_> = cases.iter().flat_map(|case| run_case(case, &genesis, &declaration)).collect();
     findings.extend(settle_cases());
+    findings.extend(conclude_cases());
     // A caller already inside a Tokio runtime: the reader runs its exchange on its own
     // thread and runtime instead of nesting one, for a success and for a timed-out read.
     let runtime = tokio::runtime::Builder::new_current_thread().build().unwrap();
