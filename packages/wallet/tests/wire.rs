@@ -730,21 +730,81 @@ const TEARDOWN: Duration = Duration::from_secs(5);
 /// Longest teardown wait observed, in microseconds, reported with any failure.
 static TEARDOWN_WAIT: AtomicU64 = AtomicU64::new(0);
 
-/// Wait within the teardown bound until `settled` holds: Ok with the wait, or Err with the
-/// elapsed time once the bound passes.
+/// Wait within `bound` until `settled` holds, on the given clock. Each observation is timed after
+/// the predicate returns, and the bound applies to successful observations too: Ok with the
+/// wait only when `settled` held within the bound, otherwise Err with the elapsed time.
+fn settle(
+    bound: Duration,
+    elapsed: impl Fn() -> Duration,
+    pause: impl Fn(),
+    settled: impl Fn() -> bool,
+) -> Result<Duration, Duration> {
+    loop {
+        let done = settled();
+        let waited = elapsed();
+        if waited > bound {
+            return Err(waited);
+        }
+        if done {
+            return Ok(waited);
+        }
+        pause();
+    }
+}
+
+/// The teardown wait on the real clock, recording the longest successful wait.
 fn after_teardown(settled: impl Fn() -> bool) -> Result<Duration, Duration> {
     let started = Instant::now();
-    loop {
-        let elapsed = started.elapsed();
-        if settled() {
-            TEARDOWN_WAIT.fetch_max(u64::try_from(elapsed.as_micros()).unwrap_or(u64::MAX), Ordering::Relaxed);
-            return Ok(elapsed);
+    let waited = settle(
+        TEARDOWN,
+        || started.elapsed(),
+        || thread::sleep(Duration::from_millis(1)),
+        settled,
+    )?;
+    TEARDOWN_WAIT.fetch_max(u64::try_from(waited.as_micros()).unwrap_or(u64::MAX), Ordering::Relaxed);
+    Ok(waited)
+}
+
+/// One controlled-clock case: its name, the clock at the first observation, the predicate and
+/// the expected outcome.
+type Settle<'a> = (&'static str, Duration, &'a dyn Fn() -> bool, Result<Duration, Duration>);
+
+/// The bounded wait on a controlled clock: a wake past the bound fails even when the predicate
+/// then holds, a predicate that itself runs past the bound fails with the time after it, and
+/// waits within the bound report their measured duration.
+fn settle_cases() -> Vec<String> {
+    use std::cell::Cell;
+    let mut findings = Vec::new();
+    let second = Duration::from_secs(1);
+    let clock = Cell::new(Duration::ZERO);
+    let now = || clock.get();
+    let tick = || clock.set(clock.get() + second);
+    let cases: [Settle<'_>; 4] = [
+        ("settled within the bound", Duration::ZERO, &|| true, Ok(Duration::ZERO)),
+        ("late wake", 6 * second, &|| true, Err(6 * second)),
+        (
+            "late success",
+            Duration::ZERO,
+            &|| {
+                clock.set(clock.get() + 6 * second);
+                true
+            },
+            Err(6 * second),
+        ),
+        ("never settled", Duration::ZERO, &|| false, Err(6 * second)),
+    ];
+    for (name, start, settled, expected) in cases {
+        clock.set(start);
+        let outcome = settle(5 * second, now, tick, settled);
+        if outcome != expected {
+            findings.push(format!("bounded wait, {name}: expected {expected:?}, got {outcome:?}"));
         }
-        if elapsed >= TEARDOWN {
-            return Err(elapsed);
-        }
-        thread::sleep(Duration::from_millis(1));
     }
+    clock.set(Duration::ZERO);
+    if settle(5 * second, now, tick, || clock.get() >= 2 * second) != Ok(2 * second) {
+        findings.push("bounded wait, settled after two ticks: wrong measured wait".to_owned());
+    }
+    findings
 }
 
 fn tasks() -> usize {
@@ -801,7 +861,7 @@ fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec
     findings
 }
 
-/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
+/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
 /// ´claim:wallet:rpc-wire-fixtures-keep-strict-framing´
 /// ´test:integration:wire-compatibility´
 #[test]
@@ -828,6 +888,7 @@ fn wire_compatibility() {
     cases.extend(acquisition_cases());
     let threads = tasks();
     let mut findings: Vec<_> = cases.iter().flat_map(|case| run_case(case, &genesis, &declaration)).collect();
+    findings.extend(settle_cases());
     // A caller already inside a Tokio runtime: the reader runs its exchange on its own
     // thread and runtime instead of nesting one, for a success and for a timed-out read.
     let runtime = tokio::runtime::Builder::new_current_thread().build().unwrap();

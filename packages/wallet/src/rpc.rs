@@ -441,12 +441,21 @@ impl RpcClient {
         status: &mut Option<u16>,
         result_bytes: &mut usize,
     ) -> Result<serde_json::Value, RpcRefusal> {
+        // The read's one deadline brackets each synchronous phase: it is checked on entry,
+        // after cookie acquisition whatever its outcome, before decoding and on every decoding
+        // outcome, so a late success or refusal becomes Deadline. The network phase between
+        // them runs on that same instant through the connect budget and the exchange's tokio
+        // deadline, and its refusals keep their own causes.
+        rpc_http::remaining(deadline)?;
         let cookie = rpc_cookie::acquire(
             &self.config.root,
             self.config.cookie.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-exchange-1]´) */).as_bytes(),
             *self.config.uid.expose_secret(/* (´[ROOT-cav:observe:secret-wallet-rpc-exchange-2]´) */),
-        )?;
+        );
+        #[cfg(test)]
+        rpc_http::clock::reach(rpc_http::clock::Stage::Cookie);
         rpc_http::remaining(deadline)?;
+        let cookie = cookie?;
         let body = serde_json::to_vec(&serde_json::json!({"jsonrpc":"2.0", "id":id, "method":method, "params":params}))
             .map_err(|_| RpcRefusal::Json)?;
         let mut credential = Buffer::new(self.limits.request_bytes);
@@ -497,15 +506,26 @@ impl RpcClient {
         .map_err(|_| RpcRefusal::Transport)?;
         let (code, response) = rpc_http::exchange(stream, request, self.limits, deadline, status)?;
         *status = Some(code);
-        let value = rpc_json::parse(&response, self.limits.json_depth, self.limits.json_items)?;
-        *result_bytes = value
-            .get("result")
-            .or_else(|| value.get("error"))
-            .map_or(0, |value| value.to_string().len());
-        rpc_json::envelope(value, code, id)
+        #[cfg(test)]
+        rpc_http::clock::reach(rpc_http::clock::Stage::Response);
+        rpc_http::remaining(deadline)?;
+        let decoded = rpc_json::parse(&response, self.limits.json_depth, self.limits.json_items).and_then(|value| {
+            *result_bytes = value
+                .get("result")
+                .or_else(|| value.get("error"))
+                .map_or(0, |value| value.to_string().len());
+            rpc_json::envelope(value, code, id)
+        });
+        #[cfg(test)]
+        rpc_http::clock::reach(rpc_http::clock::Stage::Decoded);
+        rpc_http::remaining(deadline).and(decoded)
     }
 
+    /// Typed projection starts within the read's deadline, checked as the exchange returns;
+    /// the reader checks it again on every projection outcome, after recording any hold.
     fn project(&self, request: &Read, value: &serde_json::Value) -> Result<ReadResult, RpcRefusal> {
+        #[cfg(test)]
+        rpc_http::clock::reach(rpc_http::clock::Stage::Projection);
         match request {
             Read::BlockCount => value.as_u64().map(ReadResult::Count).ok_or(RpcRefusal::Json),
             Read::BlockHash(_) => Ok(ReadResult::Hash(unhex(value, 32)?.try_into().map_err(|_| RpcRefusal::Json)?)),
@@ -603,7 +623,228 @@ mod tests {
         }
     }
 
-    /// Claim: A shared rolling budget permits exactly eight attempts before any cookie access, refuses simultaneous callers, expires at sixty seconds, and retains the named decoder-limit hold.
+    /// An accepted fixture cookie and a local listener that answers each connection with the
+    /// next scripted response; it records how many connections it served.
+    struct Fixture {
+        root: std::path::PathBuf,
+        listener: std::net::TcpListener,
+    }
+
+    impl Fixture {
+        fn new() -> Self {
+            use std::{
+                io::Write as _,
+                os::unix::fs::{DirBuilderExt as _, OpenOptionsExt as _},
+            };
+            static NEXT: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+            let root = std::env::temp_dir().join(format!(
+                "pn-wallet-deadline-{}-{}",
+                std::process::id(),
+                NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+            ));
+            std::fs::DirBuilder::new().mode(0o700).create(&root).unwrap();
+            std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .mode(0o600)
+                .open(root.join("cookie"))
+                .unwrap()
+                .write_all(format!("__cookie__:{}", "5e".repeat(32)).as_bytes())
+                .unwrap();
+            let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+            listener.set_nonblocking(true).unwrap();
+            Self { root, listener }
+        }
+
+        fn reader(&self) -> RpcClient {
+            use std::os::unix::fs::MetadataExt as _;
+            RpcClient {
+                config: RpcConfig::new(
+                    RpcLink::HostSecured,
+                    "127.0.0.1".into(),
+                    SecretBox::new(Box::new(self.listener.local_addr().unwrap().port())),
+                    std::fs::File::open(&self.root).unwrap(),
+                    "cookie".into(),
+                    SecretBox::new(Box::new(std::fs::metadata(&self.root).unwrap().uid())),
+                ),
+                limits: RpcLimits::default(),
+                decode: decoder_limits(),
+                state: Mutex::new(State::default()),
+            }
+        }
+
+        /// One read whose deadline expires when it reaches `stage`, on the controlled clock.
+        fn read(
+            &self,
+            reader: &RpcClient,
+            stage: Option<Stage>,
+            responses: &[String],
+            request: Read,
+        ) -> (Result<ReadResult, RpcRefusal>, usize) {
+            clock::expire_at(stage);
+            let outcome = std::thread::scope(|scope| {
+                let server = scope.spawn(|| self.serve(responses));
+                let result = reader.read(request);
+                (result, server.join().unwrap())
+            });
+            clock::expire_at(None);
+            outcome
+        }
+
+        fn serve(&self, responses: &[String]) -> usize {
+            use std::io::{Read as _, Write as _};
+            let mut served = 0;
+            for response in responses {
+                let deadline = Instant::now() + Duration::from_secs(10);
+                let mut stream = loop {
+                    match self.listener.accept() {
+                        Ok((stream, _)) => break stream,
+                        Err(_) if Instant::now() < deadline => std::thread::sleep(Duration::from_millis(2)),
+                        Err(_) => return served,
+                    }
+                };
+                stream.set_nonblocking(false).unwrap();
+                stream.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
+                let mut request = Vec::new();
+                let mut byte = [0; 1];
+                while !request.ends_with(b"\r\n\r\n") && stream.read(&mut byte).unwrap_or(0) == 1 {
+                    request.push(byte[0]);
+                }
+                let text = String::from_utf8_lossy(&request).to_ascii_lowercase();
+                let length = text
+                    .lines()
+                    .find_map(|line| line.strip_prefix("content-length:"))
+                    .map_or(0, |value| value.trim().parse().unwrap());
+                let mut body = vec![0; length];
+                stream.read_exact(&mut body).unwrap();
+                stream.write_all(response.as_bytes()).ok();
+                stream.shutdown(std::net::Shutdown::Write).ok();
+                while stream.read(&mut byte).is_ok_and(|count| count == 1) {}
+                served += 1;
+            }
+            served
+        }
+
+        /// No connection reached the listener.
+        fn untouched(&self) -> bool {
+            self.listener
+                .accept()
+                .is_err_and(|error| error.kind() == std::io::ErrorKind::WouldBlock)
+        }
+    }
+
+    impl Drop for Fixture {
+        fn drop(&mut self) {
+            std::fs::remove_dir_all(&self.root).unwrap();
+        }
+    }
+
+    use crate::rpc_http::clock::{self, Stage};
+
+    fn answer(id: u64, member: &str) -> String {
+        let body = format!("{{\"jsonrpc\":\"2.0\",\"id\":{id},{member}}}");
+        format!("HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{body}", body.len())
+    }
+
+    /// Each synchronous phase is bracketed by the one deadline, on success and refusal alike.
+    fn phase_brackets() {
+        let fixture = Fixture::new();
+        let count = [answer(1, "\"result\":7")];
+        let deadline = Err(RpcRefusal::Deadline);
+        assert!(matches!(
+            fixture.read(&fixture.reader(), None, &count, Read::BlockCount),
+            (Ok(ReadResult::Count(7)), 1)
+        ));
+        // Expired on entry: refused before cookie access, and no connection is opened.
+        clock::expire_now();
+        assert_eq!(fixture.reader().read(Read::BlockCount).map(drop), deadline);
+        clock::expire_at(None);
+        // Cookie acquisition that ends after expiry, whether it succeeds or fails.
+        assert_eq!(
+            fixture
+                .read(&fixture.reader(), Some(Stage::Cookie), &[], Read::BlockCount)
+                .0
+                .map(drop),
+            deadline
+        );
+        assert!(fixture.untouched());
+        assert_eq!(client().read(Read::BlockCount).unwrap_err(), RpcRefusal::Cookie);
+        clock::expire_at(Some(Stage::Cookie));
+        assert_eq!(client().read(Read::BlockCount).map(drop), deadline);
+        clock::expire_at(None);
+        // Decoding that starts after expiry, and decoding outcomes that end after it.
+        let remote = answer(1, "\"error\":{\"code\":-8,\"message\":\"m\"}");
+        let correlation = answer(9, "\"result\":7");
+        let malformed = "HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\n{]".to_owned();
+        for (stage, response) in [
+            (Stage::Response, &count[0]),
+            (Stage::Response, &malformed),
+            (Stage::Decoded, &count[0]),
+            (Stage::Decoded, &malformed),
+            (Stage::Decoded, &remote),
+            (Stage::Decoded, &correlation),
+            (Stage::Projection, &count[0]),
+        ] {
+            let (result, served) = fixture.read(
+                &fixture.reader(),
+                Some(stage),
+                std::slice::from_ref(response),
+                Read::BlockCount,
+            );
+            assert_eq!((result.map(drop), served), (deadline.clone(), 1), "{stage:?}");
+        }
+        // The same refusals on the real clock keep their own causes.
+        for (response, cause) in [(&remote, "Remote"), (&correlation, "Correlation"), (&malformed, "Json")] {
+            let (result, _) = fixture.read(&fixture.reader(), None, std::slice::from_ref(response), Read::BlockCount);
+            assert!(format!("{:?}", result.unwrap_err()).starts_with(cause));
+        }
+    }
+
+    /// A block hold is recorded before the closing deadline check and stays sticky after it.
+    fn hold_brackets() {
+        let fixture = Fixture::new();
+        let block = include_bytes!("../fuzz/seeds/dynafed-block");
+        let raw = [answer(1, &format!("\"result\":\"{}\"", hex(block)))];
+        let held = Err(RpcRefusal::Held {
+            block: [1; 32],
+            limit: crate::Refusal::Bytes,
+        });
+        let mut reader = fixture.reader();
+        reader.decode.bytes = 1;
+        assert_eq!(
+            fixture
+                .read(&reader, Some(Stage::Projection), &raw, Read::Block([1; 32]))
+                .0
+                .map(drop),
+            Err(RpcRefusal::Deadline)
+        );
+        assert_eq!(fixture.read(&reader, None, &[], Read::BlockCount).0.map(drop), held);
+        // A response-byte refusal belongs to the network phase: it keeps its cause and, for a
+        // block, its hold, and the decoding stage after it is never reached.
+        let mut reader = fixture.reader();
+        reader.limits.response_bytes = 64;
+        assert_eq!(
+            fixture
+                .read(&reader, Some(Stage::Decoded), &raw, Read::Block([1; 32]))
+                .0
+                .map(drop),
+            held
+        );
+        assert_eq!(fixture.read(&reader, None, &[], Read::BlockCount).0.map(drop), held);
+        let mut reader = fixture.reader();
+        reader.limits.response_bytes = 16;
+        let count = [answer(1, "\"result\":7")];
+        assert_eq!(
+            fixture
+                .read(&reader, Some(Stage::Decoded), &count, Read::BlockCount)
+                .0
+                .map(drop),
+            Err(RpcRefusal::ResponseBytes)
+        );
+        assert!(fixture.untouched());
+    }
+
+    /// Claim: A shared rolling budget permits exactly eight attempts before any cookie access, refuses simultaneous callers, expires at sixty seconds, and retains the named decoder-limit hold; on a controlled clock the read's one deadline refuses on entry, after cookie acquisition whether it succeeds or fails, before decoding, after decoding or a decoding refusal and after projection, while a block's decoder-limit hold is still recorded and stays sticky and network-phase refusals and holds keep their own causes.
     /// ´claim:wallet:rpc-attempts-and-holds-are-shared´
     /// ´test:unit:attempts-and-holds´
     #[test]
@@ -633,6 +874,8 @@ mod tests {
                 limit: crate::Refusal::Items
             }
         );
+        phase_brackets();
+        hold_brackets();
     }
 
     /// Claim: Closed read operations select only the five declared raw-mode methods; typed projections refuse null and malformed hex, preserve decoded transactions and blocks, and identify a limiting block, including a block refused at the response-byte ceiling, without accepting unsupported routes.

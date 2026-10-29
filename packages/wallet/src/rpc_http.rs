@@ -25,10 +25,54 @@ use std::{
 use tokio::io::{AsyncRead, AsyncWrite, ReadBuf};
 
 pub(crate) fn remaining(deadline: Instant) -> Result<Duration, RpcRefusal> {
+    let now = Instant::now();
+    #[cfg(test)]
+    let now = now + clock::SKEW.with(std::cell::Cell::get);
     deadline
-        .checked_duration_since(Instant::now())
+        .checked_duration_since(now)
         .filter(|duration| !duration.is_zero())
         .ok_or(RpcRefusal::Deadline)
+}
+
+/// A controlled clock for deadline regressions: a test names one synchronous stage, and when
+/// the read reaches it this thread's view of the time jumps past any admitted deadline.
+#[cfg(test)]
+pub(crate) mod clock {
+    use std::{cell::Cell, time::Duration};
+
+    #[derive(Clone, Copy, Debug, PartialEq)]
+    pub(crate) enum Stage {
+        /// After cookie acquisition returns, whatever its outcome.
+        Cookie,
+        /// After the HTTP exchange returns a response, before JSON decoding.
+        Response,
+        /// After JSON decoding and the envelope, on success or refusal, before the closing check.
+        Decoded,
+        /// At the start of typed projection.
+        Projection,
+    }
+
+    thread_local! {
+        pub(crate) static SKEW: Cell<Duration> = const { Cell::new(Duration::ZERO) };
+        static PAUSE: Cell<Option<Stage>> = const { Cell::new(None) };
+    }
+
+    /// Expire this thread's deadline at `stage`, or with `None`, run on the real clock.
+    pub(crate) fn expire_at(stage: Option<Stage>) {
+        PAUSE.with(|pause| pause.set(stage));
+        SKEW.with(|skew| skew.set(Duration::ZERO));
+    }
+
+    /// Expire every deadline on this thread now.
+    pub(crate) fn expire_now() {
+        SKEW.with(|skew| skew.set(Duration::from_secs(11)));
+    }
+
+    pub(crate) fn reach(stage: Stage) {
+        if PAUSE.with(Cell::get) == Some(stage) {
+            expire_now();
+        }
+    }
 }
 
 #[derive(Clone, Copy, PartialEq)]
