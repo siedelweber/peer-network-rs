@@ -487,7 +487,7 @@ pub enum InvalidCause {
     /// Missing, misplaced or out-of-range Content genesis pair, or obsolete reference encoding.
     #[error("invalid Content genesis license pair")]
     LicenseQualifiers,
-    /// Missing, misplaced, mistyped or inconsistent settlement metadata.
+    /// Missing or malformed settlement metadata, or a variant on the wrong family.
     #[error("invalid settlement references")]
     SettlementReferences,
     /// An untrusted leg attempts to own a removal fact.

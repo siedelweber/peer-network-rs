@@ -52,6 +52,15 @@ fn main() {
     let graph = reconstruct(&history, &auth).unwrap();
     let valid = validate_formation(&graph, &history, &auth);
     let title = pn_graph::title::title_inputs(&graph, &history, &auth);
+    let mut context = pn_graph::recognition::RecognitionContext {
+        epoch: 1,
+        prior_epoch: 0,
+        owners: std::collections::BTreeMap::new(),
+        consumed: std::collections::BTreeSet::new(),
+    };
+    let recognition = pn_graph::recognition::recognize_settlements(&graph, &history, &auth, &context);
+    context.prior_epoch = 1;
+    let wrong_boundary = pn_graph::recognition::recognize_settlements(&graph, &history, &auth, &context);
     let denied = reconstruct(&history, &FixtureApproval(false));
     let mut partial = graph.clone();
     let edge = partial.edge_indices().next().unwrap();
@@ -59,6 +68,7 @@ fn main() {
     let invalid = validate_formation(&partial, &history, &auth);
     let partial_title = pn_graph::title::title_inputs(&partial, &history, &auth);
     cli_common::emit(&serde_json::json!({
+        "recognition": format!("{recognition:?}"), "wrong_boundary": format!("{wrong_boundary:?}"),
         "title": format!("{title:?}"), "partial_title": format!("{partial_title:?}"),
         "projection": format!("{projection:?}"), "graph": format!("{graph:?}"),
         "publication": format!("{publication:?}"),

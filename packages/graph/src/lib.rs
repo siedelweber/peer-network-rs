@@ -146,3 +146,7 @@ mod tests {
         assert!(covers_once(&BTreeSet::new(), &[]));
     }
 }
+
+/// Compliant-history settlement recognition with explicit boundary premises.
+/// (´def:formation:settlement-recognition´)
+pub mod recognition;

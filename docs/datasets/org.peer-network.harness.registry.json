@@ -3997,6 +3997,21 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-verification::recognition::recognition_enumerator",
+        "pn-verification::recognition::recognition_binding",
+        "pn-verification::recognition::recognition_holds"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "integration",
+      "name": "pn-verification::recognition",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }
