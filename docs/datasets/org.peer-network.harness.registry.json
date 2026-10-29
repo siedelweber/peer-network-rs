@@ -360,6 +360,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-interchange::encode::secret_tests::protected_canonical_bytes",
         "pn-interchange::cddl::ast::tests::a_broken_unicode_escape_is_refused",
         "pn-interchange::cddl::ast::tests::a_doubled_backslash_denotes_one",
         "pn-interchange::cddl::ast::tests::a_surrogate_pair_denotes_one_character",

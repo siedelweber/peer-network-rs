@@ -683,6 +683,7 @@
     "pn-interchange::documents::key_1_holds_a_version_triple_or_nothing": "Claim: Key 1 holds a version triple and admits nothing else in its place.",
     "pn-interchange::documents::the_envelope_keys_are_refused_as_content_keys": "Claim: The two envelope keys cannot be built as content keys, so content can never claim them.",
     "pn-interchange::documents::the_name_of_a_document_is_the_map_of_its_parts": "Claim: A document's name is the canonical map of its envelope keys and its content.",
+    "pn-interchange::encode::secret_tests::protected_canonical_bytes": "",
     "pn-interchange::inclusion::a_breach_is_a_verdict_and_incomparability_is_an_error": "Claim: A breach travels as a verdict where incomparability is an error, the two told apart by type.",
     "pn-interchange::inclusion::a_break_in_the_middle_is_visible_at_the_endpoints": "Claim: A chain broken at one step reports the same breach between its endpoints.",
     "pn-interchange::inclusion::a_minor_that_changes_nothing_but_its_own_number_includes_its_predecessor": "Claim: A minor that changes nothing but its own number includes the minor before it.",

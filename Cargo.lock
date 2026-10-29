@@ -1719,10 +1719,12 @@ dependencies = [
 name = "pn-interchange"
 version = "0.1.0"
 dependencies = [
+ "cli-common",
  "criterion",
  "pn-testkit",
  "proptest",
  "regexml",
+ "secrecy",
  "serde_json",
  "thiserror",
  "tracing",

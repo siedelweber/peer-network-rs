@@ -24,6 +24,7 @@
     "quote 1.0.47",
     "r-efi 5.3.0",
     "regexml 0.2.2",
+    "secrecy 0.10.3",
     "serde 1.0.229",
     "serde_core 1.0.229",
     "serde_derive 1.0.229",
@@ -50,6 +51,7 @@
     "zerocopy-derive 0.8.63",
     "zerofrom 0.1.8",
     "zerofrom-derive 0.1.8",
+    "zeroize 1.9.1",
     "zerovec 0.10.4",
     "zerovec-derive 0.10.4"
   ],

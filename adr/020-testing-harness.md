@@ -44,7 +44,7 @@
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |
 | execwrap | active | unit | execwrap-rust | fast | 26 |
 | execwrap::integration | active | integration | execwrap-rust | fast | 20 |
-| pn-interchange | active | unit | pn-interchange-rust | fast | 233 |
+| pn-interchange | active | unit | pn-interchange-rust | fast | 234 |
 | pn-interchange::integration | active | integration | pn-interchange-rust | fast | 14 |
 | pn-interchange::companion | active | integration | pn-interchange-rust | fast | 11 |
 | pn-interchange::deterministic_encoding | active | integration | pn-interchange-rust | fast | 14 |
@@ -225,3 +225,5 @@
 **Amendment (Burn carrier conformance)** · `amend:harness:burn-carriers` records-burn-1 contains one valid history and thirty-nine controlled corruptions covering publication, fixed policy, succession, lineage, complete public openings, acceptance bounds and alias consistency. pn-records and pn-verification execute the same inputs: the inner tier uses an exact-cause table, while the outer tier derives per-marker accepted sets and destruction keys from the input and causes and retained-prefix cutoffs from the altered premise. Every corruption checks the retained names, accepted sets and destruction identities, or the absence of a prefix for validation refusals, in original and reversed presentations; recorded source-v1 seeds distinguish the two consumers. Properties inherit the environment-reading pn-testkit configuration, replay corpora and shrinking. The proof fixture is explicitly noncryptographic, so external realization and service evidence remain held under (`open:design:claim-evidence`).
 
 **Amendment (Graph partition tiers)** · `amend:harness:graph-partition` The records-level graph increment supplies a local publication-guard unit case, public exact and exhaustive five-proposal DAG cases, and graph-partition-1 shared inputs through pn-testkit. The inner tier enumerates ancestors and merges sets; pn-verification derives blocks from direct parent incidence. Both retain separate six-case conformance results and recorded 256-case properties, with the outer consumer-qualified seed and existing shrink/replay configuration. These observe one implementation, not two. Formation and boundary-selection obligations remain held; the ordinary pure-suite and case warning budgets apply.
+
+**Amendment (Shared client act profile)** · `amend:harness:act-profile-client` The client dependency graph includes pn-act-profile under (`amend:decomposition:act-profile`). Actor-side proposal computation and independent opening checks use that pure shared surface, not a pn-host or pn-graph dependency. This adds no client executable, transport, entropy allocator or signature operation.

@@ -2,7 +2,7 @@ namespace = "org.peer-network.vision.plan"
 version = [1, 0, 0]
 
 rows = [
-  { name = "responsibilities", crates = ["pn-records", "pn-graph", "pn-epoch", "pn-readouts", "pn-host", "pn-replay", "pn-verification"] },
+  { name = "responsibilities", crates = ["pn-records", "pn-act-profile", "pn-graph", "pn-epoch", "pn-readouts", "pn-host", "pn-replay", "pn-verification"] },
   { name = "inputs", bites = [1, 2] },
   { name = "structure", bites = [3, 4] },
   { name = "epoch", bites = [5, 6, 7] },

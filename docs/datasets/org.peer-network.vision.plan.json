@@ -9,6 +9,7 @@
     {
       "crates": [
         "pn-records",
+        "pn-act-profile",
         "pn-graph",
         "pn-epoch",
         "pn-readouts",

@@ -66,7 +66,7 @@ class Harness(unittest.TestCase):
         self.assertTrue((root/'packages/interchange/src/lib.rs').is_file())
         self.assertNotRegex((root/'packages/interchange/src/lib.rs').read_text(), r'\bno_std\b')
         self.assertFalse((root/'packages/interchange/src/main.rs').exists())
-        self.assertEqual(set(manifest['dependencies']),{'regexml','thiserror','tracing'})
+        self.assertEqual(set(manifest['dependencies']),{'regexml','thiserror','tracing','secrecy'})
         self.assertTrue(manifest['lints']['workspace'])
         self.assertNotIn('rust-version',manifest['package'])
         register=json.loads((root/'ci/observation-registry.json').read_text())

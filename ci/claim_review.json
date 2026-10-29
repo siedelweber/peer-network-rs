@@ -90,6 +90,14 @@
       "review": "Read the denied and allowed controls for each host configuration and authentication accessor alongside the existing Clippy controls."
     },
     {
+      "operation": "ci::test_harness.Harness.test_interchange_manifest",
+      "path": "ci/test_harness.py",
+      "claim": "ROOT::claim:harness:interchange-structure-is-declared",
+      "before": "Claim: The current shared interchange library has no feature or binary branch and no unreviewed production dependency; its source-bound Value enum remains exhaustive, keeping one declared public configuration.",
+      "after": "Claim: The current shared interchange library has no feature or binary branch and no unreviewed production dependency; its source-bound Value enum remains exhaustive, keeping one declared public configuration.",
+      "review": "Read the secret-aware encoding dependency edge and isolated complete trace children; public encoding remains unchanged, private fixed values are compared without recording their content, and the manifest admits only the declared production dependency."
+    },
+    {
       "operation": "ci::test_host_runtime.HostRuntime.test_binary_reachability_control",
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:binary-endpoint-results-are-detected",
@@ -2504,6 +2512,14 @@
       "before": "Claim: Float acquisition preserves the sole canonical NaN and refuses both signs and multiple quiet or signalling NaN payloads with NonCanonicalFloat, preventing acquisition from silently normalizing distinct input bits.",
       "after": "Claim: Float acquisition preserves the sole canonical NaN and refuses both signs and multiple quiet or signalling NaN payloads with `NonCanonicalFloat`, preventing acquisition from silently normalizing distinct input bits.",
       "review": "Reviewed the fixture assertions: level-independent accounting, refusal, artifact repair or byte relay is stated with its controlled premises; no timing verdict is introduced."
+    },
+    {
+      "operation": "pn-interchange::encode::secret_tests::protected_canonical_bytes",
+      "path": "packages/interchange/src/encode.rs",
+      "claim": "INTERCHANGE::claim:encoding:protected-canonical-bytes-preserve-privacy",
+      "before": "",
+      "after": "Claim: Protected canonical tuples match public canonical bytes while complete full-trace child captures record no protected field or encoded result; the public route still records its content and the private allocation bound refuses excess.",
+      "review": "Read the secret-aware encoding dependency edge and isolated complete trace children; public encoding remains unchanged, private fixed values are compared without recording their content, and the manifest admits only the declared production dependency."
     },
     {
       "operation": "pn-interchange::inclusion::a_reached_rule_chain_respelled_is_the_same_type",

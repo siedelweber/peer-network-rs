@@ -4,12 +4,13 @@
 
 **Setup (Context)** · `setup:decomposition:context` A crate boundary needs a mathematical responsibility and a public input or output that can be reviewed independently. The statement inventory (`reg:inventory:overview`) assigns proposed homes without turning unresolved paper claims into implementation promises. Crate boundaries, dependency edges, encodings and bite order are engineering judgements adopted here; paper labels remain owned by the paper.
 
-**Decision (Crates)** · `dec:decomposition:crates` The seven crates divide by computational responsibility. Records precede computation, publication has its own encoding boundary, and replay consumes public package bytes independently of the host's cached results. Independent replay orchestration does not claim an independently implemented numerical proof kernel. No domain crate is introduced by this record.
+**Decision (Crates)** · `dec:decomposition:crates` The eight registered crates divide by computational responsibility, including the shared act profile under (`amend:decomposition:act-profile`). Records precede computation, publication has its own encoding boundary, and replay consumes public package bytes independently of the host's cached results. Independent replay orchestration does not claim an independently implemented numerical proof kernel. No domain crate is introduced by this record.
 
 | Crate | Responsibility | Paper surfaces |
 | --- | --- | --- |
-| pn-records | Immutable public inputs: identities, acts, ledger/burn data and declared constants | ``def:graph:act-identifier`` ``def:graph:act-edge-projection`` ``def:comparator:burn-interface`` |
-| pn-graph | Structural formation, shared graph algebra and title folds | ``post:nodes:canonical-tensor-pipeline`` ``def:graph:verified-act`` ``thm:graph:epoch-title-fold`` |
+| pn-records | Immutable public inputs: identities, acts, typed opaque commitment residues, ledger/burn data and declared constants | ``def:graph:act-identifier`` ``def:graph:act-edge-projection`` ``def:comparator:burn-interface`` |
+| pn-act-profile | Shared pure act profile, canonical commitment recipes and supplied-opening comparison; no host or authentication dependency | ``def:graph:proposal-pre-commitment`` ``def:graph:verified-act`` ``def:graph:ordering-fraud-proof`` |
+| pn-graph | Structural formation, shared graph algebra and title folds | ``post:nodes:canonical-tensor-pipeline`` ``thm:graph:epoch-title-fold`` |
 | pn-epoch | Compile and certify one final epoch state and its admission result | ``alg:epoch:conserved-standing-computation`` ``post:epoch:final-act-sequence-write-rule`` |
 | pn-readouts | Expose published standing/title and optional exact raw views to terminal consumers | ``def:graph:raw-traversal-snapshot`` ``rem:network:taxonomy-subtleties`` |
 | pn-host | Encode the complete seven-part public package | ``post:network:host-contract`` |
@@ -19,6 +20,9 @@
 **Convention (Dependency graph)** · `conv:decomposition:dependencies` Each indented child is a direct dependency of its parent; the infrastructure edge follows (`amend:decomposition:publication`). The verification crate is a development-only consumer; its integrated fixtures never become a production dependency. Optional raw data may travel as nonbinding package data without making host encoding depend on the raw computation engine. The additional infrastructure dependencies and outer packages below follow (`amend:decomposition:infrastructure`); optional development edges are absent from non-development builds.
 
 - pn-records
+- pn-act-profile
+  - pn-records
+  - pn-interchange
 - pn-graph
   - pn-records
 - pn-epoch
@@ -29,6 +33,7 @@
   - pn-graph
   - pn-epoch
 - pn-host
+  - pn-act-profile
   - pn-records
   - pn-graph
   - pn-epoch
@@ -36,11 +41,13 @@
   - reviewed PostgreSQL client (infrastructure)
   - pn-wallet (optional development-network feature) (infrastructure)
 - pn-replay
+  - pn-act-profile
   - pn-records
   - pn-graph
   - pn-epoch
   - pn-host
 - pn-verification
+  - pn-act-profile
   - pn-records
   - pn-graph
   - pn-epoch
@@ -58,6 +65,7 @@
   - pn-wallet
   - pn-records
   - pn-interchange
+  - pn-act-profile
 - pn-command
   - pn-client
   - pn
@@ -104,7 +112,7 @@
 | --- | --- | --- | --- |
 | pn | Node schema, service and lifecycle | pn-host, pn-records, pn-interchange | pn-readouts |
 | pn-wallet | Only Elements integration; chain evidence and wallet spending/recovery | reviewed Elements RPC client | None |
-| pn-client | GraphQL node counterpart and client workflows | pn-wallet, pn-records, pn-interchange | None |
+| pn-client | GraphQL node counterpart and client workflows | pn-wallet, pn-records, pn-interchange, pn-act-profile | None |
 | pn-command | Node and client JSON command presentation | pn-client, pn, cli-common | None |
 | pn-testkit | Development-only generic runners, models and mocks; no production imports | None | None |
 
@@ -252,3 +260,5 @@
 | windows-sys | 0.61.2 | MIT OR Apache-2.0 |  | Wdk, Wdk_Foundation, Wdk_Storage, Wdk_Storage_FileSystem, Wdk_System, Wdk_System_IO, Win32, Win32_Foundation, Win32_Networking, Win32_Networking_WinSock, Win32_Security, Win32_Storage, Win32_Storage_FileSystem, Win32_System, Win32_System_Console, Win32_System_Diagnostics, Win32_System_Diagnostics_Debug, Win32_System_IO, Win32_System_Pipes, Win32_System_SystemInformation, Win32_System_SystemServices, Win32_System_Threading, Win32_System_WindowsProgramming, Win32_UI, Win32_UI_Input, Win32_UI_Input_KeyboardAndMouse, default | HTTP runtime closure plus existing unified workspace features; absent from minimal probe |
 
 
+
+**Amendment (Shared act profile)** · `amend:decomposition:act-profile` pn-act-profile sits above pn-records and pn-interchange and below pn-host, pn-replay, pn-verification and the planned pn-client. It owns the pure canonical act profile, the proposal and projection commitment recipes, and the supplied-opening comparison of ``def:graph:proposal-pre-commitment``, the commitment formulas of ``def:graph:verified-act`` and ``def:graph:ordering-fraud-proof`` at network-v0.30.0. Formation remains in pn-graph; salt generation and custody remain in pn-host. The Actor computes its proposal through the shared package without depending on the host or graph. pn-records owns the retained P, C_Y and C_D residues as distinct typed opaque recipe identifiers and 32-byte values, including when the dependency projection is tombstoned; pn-act-profile computes and interprets them. This direction preserves records' codec independence and the acyclic graph. The package has no host, database, network, random-generation or signature dependency. A matching opening establishes equality against supplied recorded bytes, not their authenticity. Namespace allocation, external envelopes, production entropy and custody, and signature and anchor authentication remain held separately.

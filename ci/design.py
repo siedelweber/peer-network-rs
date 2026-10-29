@@ -80,12 +80,12 @@ def validate():
     if not ({row['name']: row['count'] for row in summary if row['category'] == 'totals'} == {'inventory': len(inventory), 'constants': len(constants)}):
         raise ValueError('global totals')
 
-    # Claim: seven responsibility rows form an acyclic prerequisite graph and eleven slices retain their declared order.
+    # Claim: eight responsibility rows form an acyclic prerequisite graph and eleven slices retain their declared order.
     crates = data('crates')
-    expected = ['pn-records', 'pn-graph', 'pn-epoch', 'pn-readouts', 'pn-host', 'pn-replay', 'pn-verification']
+    expected = ['pn-records', 'pn-act-profile', 'pn-graph', 'pn-epoch', 'pn-readouts', 'pn-host', 'pn-replay', 'pn-verification']
     if not ([row['name'] for row in crates] == expected):
         raise ValueError('crate roster')
-    known = set()
+    known = {'pn-interchange'}
     labels = {row['label'] for row in inventory}
     for row in crates:
         if not (row['responsibility'] and set(row['dependencies']) <= known):
@@ -172,7 +172,7 @@ REFRESHED_CONSTANTS_PIN = '169e0b6187ae4080ff47a42bd70788e84ba59a0f744aa396a4c61
 RELEASE_QUESTIONS_PIN = '80605718e898106860948960cd9aaa4b49ccf94532a9b465d826f7c5eb2c1e81'
 
 
-CRATES_PIN = 'b8188551b1f51e6afa88329f46b4a5d82391fdba4ecefea489043ceca227e476'
+CRATES_PIN = '779ad51bb7a4a5d2047c0307a7bea589e3add012f8b1ceb5c79a2be3ddb1f5d5'
 BITES_PIN = 'feb1a8a28938cb9edc599ea0769c471e6a2c2c3cb31b915b1c450aced1cd9fdc'
 QUESTIONS_PIN = 'f764302dfe333160685cd47070335b7ab2bccec1151a45d96681947e61587a2b'
 

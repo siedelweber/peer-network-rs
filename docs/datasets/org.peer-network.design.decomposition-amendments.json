@@ -42,7 +42,8 @@
           "dependencies": [
             "pn-wallet",
             "pn-records",
-            "pn-interchange"
+            "pn-interchange",
+            "pn-act-profile"
           ],
           "name": "pn-client",
           "optional": [],

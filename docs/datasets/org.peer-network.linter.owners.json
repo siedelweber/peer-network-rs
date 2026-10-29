@@ -168,6 +168,10 @@
         {
           "owner": "INTERCHANGE",
           "target": "TESTKIT"
+        },
+        {
+          "owner": "INTERCHANGE",
+          "target": "CLICOMMON"
         }
       ],
       "name": "declaration",

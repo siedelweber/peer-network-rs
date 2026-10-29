@@ -55,12 +55,12 @@
       "operations": 40
     },
     {
-      "exceptions": 34,
-      "generators": 89,
+      "exceptions": 35,
+      "generators": 91,
       "helpers": 1,
-      "instrumented": 118,
+      "instrumented": 119,
       "name": "pn-interchange",
-      "operations": 153
+      "operations": 155
     },
     {
       "exceptions": 67,

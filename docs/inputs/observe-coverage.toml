@@ -50,11 +50,11 @@ generators = 13
 
 [[rows]]
 name = "pn-interchange"
-operations = 153
-instrumented = 118
-exceptions = 34
+operations = 155
+instrumented = 119
+exceptions = 35
 helpers = 1
-generators = 89
+generators = 91
 
 [[rows]]
 name = "pn-records"

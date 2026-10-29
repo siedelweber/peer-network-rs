@@ -2,11 +2,12 @@ namespace = "org.peer-network.design.crates"
 version = [1, 0, 0]
 
 rows = [
-  { name = "pn-records", responsibility = "Immutable public inputs: identities, acts, ledger/burn data and declared constants", dependencies = [], surfaces = ["def:graph:act-identifier", "def:graph:act-edge-projection", "def:comparator:burn-interface"] },
-  { name = "pn-graph", responsibility = "Structural formation, shared graph algebra and title folds", dependencies = ["pn-records"], surfaces = ["post:nodes:canonical-tensor-pipeline", "def:graph:verified-act", "thm:graph:epoch-title-fold"] },
+  { name = "pn-records", responsibility = "Immutable public inputs: identities, acts, typed opaque commitment residues, ledger/burn data and declared constants", dependencies = [], surfaces = ["def:graph:act-identifier", "def:graph:act-edge-projection", "def:comparator:burn-interface"] },
+  { name = "pn-act-profile", responsibility = "Shared pure act profile, canonical commitment recipes and supplied-opening comparison; no host or authentication dependency", dependencies = ["pn-records", "pn-interchange"], surfaces = ["def:graph:proposal-pre-commitment", "def:graph:verified-act", "def:graph:ordering-fraud-proof"] },
+  { name = "pn-graph", responsibility = "Structural formation, shared graph algebra and title folds", dependencies = ["pn-records"], surfaces = ["post:nodes:canonical-tensor-pipeline", "thm:graph:epoch-title-fold"] },
   { name = "pn-epoch", responsibility = "Compile and certify one final epoch state and its admission result", dependencies = ["pn-records", "pn-graph"], surfaces = ["alg:epoch:conserved-standing-computation", "post:epoch:final-act-sequence-write-rule"] },
   { name = "pn-readouts", responsibility = "Expose published standing/title and optional exact raw views to terminal consumers", dependencies = ["pn-records", "pn-graph", "pn-epoch"], surfaces = ["def:graph:raw-traversal-snapshot", "rem:network:taxonomy-subtleties"] },
-  { name = "pn-host", responsibility = "Encode the complete seven-part public package", dependencies = ["pn-records", "pn-graph", "pn-epoch"], surfaces = ["post:network:host-contract"] },
-  { name = "pn-replay", responsibility = "Reconstruct and compare the binding package from public inputs", dependencies = ["pn-records", "pn-graph", "pn-epoch", "pn-host"], surfaces = ["subsec:deployment:conserved-standing-reproducibility", "post:deployment:public-object-replay"] },
-  { name = "pn-verification", responsibility = "Maintain labelled integrated fixtures and independent public-surface checks", dependencies = ["pn-records", "pn-graph", "pn-epoch", "pn-readouts", "pn-host", "pn-replay"], surfaces = ["rem:verification:certificate-reproducibility"] },
+  { name = "pn-host", responsibility = "Encode the complete seven-part public package", dependencies = ["pn-act-profile", "pn-records", "pn-graph", "pn-epoch"], surfaces = ["post:network:host-contract"] },
+  { name = "pn-replay", responsibility = "Reconstruct and compare the binding package from public inputs", dependencies = ["pn-act-profile", "pn-records", "pn-graph", "pn-epoch", "pn-host"], surfaces = ["subsec:deployment:conserved-standing-reproducibility", "post:deployment:public-object-replay"] },
+  { name = "pn-verification", responsibility = "Maintain labelled integrated fixtures and independent public-surface checks", dependencies = ["pn-act-profile", "pn-records", "pn-graph", "pn-epoch", "pn-readouts", "pn-host", "pn-replay"], surfaces = ["rem:verification:certificate-reproducibility"] },
 ]

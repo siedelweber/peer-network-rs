@@ -16,6 +16,14 @@
     },
     {
       "labels": [
+        "amend:decomposition:act-profile"
+      ],
+      "metrics": "Counters: checked openings, matched commitments and refusals (count). Gauges: active checks (operations) and bounded working bytes. Histograms: opening sizes (bytes), dependency counts and inclusive elapsed seconds. Nonces, salts, private payloads and intermediate pre-digests remain secret; a match makes no authentication claim.",
+      "name": "pn-act-profile",
+      "operations": "check profile shape and bounds, project canonical values, recompute commitments and compare supplied openings with supplied recorded residues"
+    },
+    {
+      "labels": [
         "sig:design:graph",
         "alg:design:formation",
         "alg:design:dependency-partition",

@@ -79,7 +79,7 @@
 | pn-epoch | 4 | 2 | 2 | 0 | 7 |
 | pn-graph | 12 | 12 | 0 | 0 | 50 |
 | pn-host | 40 | 22 | 18 | 0 | 13 |
-| pn-interchange | 153 | 118 | 34 | 1 | 89 |
+| pn-interchange | 155 | 119 | 35 | 1 | 91 |
 | pn-records | 105 | 38 | 67 | 0 | 84 |
 | pn-wallet | 29 | 6 | 23 | 0 | 21 |
 
@@ -419,6 +419,24 @@
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-host-config-grammar-field-1` In `packages/host/src/config.rs`, function `secret_json_grammar`: The fixture user bytes go only to the Unicode-decoding equality assertion until that comparison ends; the assertion requires a byte slice and accepts no deployment configuration. Source method: `expose_field`. Fixture-only boundary.
 
+**Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-encode-output` In `packages/interchange/src/encode.rs`, function `encode_protected`: Protected output storage is lent to the canonical traversal only until that traversal returns; its existing writer requires a mutable vector and the preallocated capacity prevents relocation of private bytes. Source method: `expose_secret_mut`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-capacity-bytes` In `packages/interchange/src/encode.rs`, function `private_capacity`: Private bytes are borrowed only to measure their length for the protected output allocation; the borrow ends at len and no byte is read as a public value. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-capacity-text` In `packages/interchange/src/encode.rs`, function `private_capacity`: Private text is borrowed only to measure its UTF-8 length for protected output allocation; the borrow ends at len and the text is never formatted. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-write-bytes` In `packages/interchange/src/encode.rs`, function `write_private`: The private byte field is borrowed by canonical byte-string framing and copying into protected output; the borrow ends at extend_from_slice and no public Value is constructed. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-write-text` In `packages/interchange/src/encode.rs`, function `write_private`: The private text field is borrowed by canonical UTF-8 framing and copying into protected output; the borrow ends at extend_from_slice without invoking the public Text accessor. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-write-unsigned` In `packages/interchange/src/encode.rs`, function `write_private`: The private unsigned integer is borrowed only for canonical head emission into protected output; the borrow ends with write_head and no instrumented integer constructor runs. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-write-signed` In `packages/interchange/src/encode.rs`, function `write_private`: The private signed integer is borrowed for sign and magnitude selection and canonical head emission into protected output; the borrow ends at the signed arm and neither branch observes its numeric value. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-fixture-equality` In `packages/interchange/src/encode.rs`, function `fixture_equal`: The fixed-vector encoded result is borrowed solely for equality with the fixture's public expected encoding; the borrow ends at the comparison and no borrowed bytes enter tracing. Source method: `expose_secret`. Fixture-only boundary.
+
 
 
 **Amendment (Ordered reserved drain)** · `amend:observe:ordered-drain` Repository amendment: (`amend:observe:compact-content`) keeps the reserved drain-request slot so a full ordinary queue cannot reject the request. Before acknowledging a request, the worker drains up to the ordinary queue capacity after taking that request. Every ordinary record enqueued before the request lies in that FIFO prefix; later sends cannot overtake it. Reserved diagnostics and summaries are drained before acknowledgement too. The cli-common drain-timeout fixture pauses the worker after its batch ends, queues one record or a full backlog before requesting the drain, and checks delivery at acknowledgement and at guard close without a timing verdict. The close path does not join the worker: (`amend:observe:delivery-cause-and-exit`) retains its bounded drain and synchronous disjoint delivered, lost, queued-undelivered and in-flight disclosure, because joining a blocked writer would remove the exit bound. Successful drainage now obeys the same prefix ordering; deadline or disconnected paths still disclose outstanding work rather than asserting delivery. The cutoff and shared-transport witnesses retain the unstarted-publication refusal and in-flight accounting.
+
+**Amendment (Secret canonical encoding)** · `amend:observe:secret-canonical-encoding` The interchange library admits a protected canonical input tree for commitment computation. Private byte strings, text and integers enter in the workspace secrecy containers; arrays expose their structure, and explicitly public fields retain ordinary full observation. The protected and public routes share the canonical traversal and head-writing primitives. Protected encoding first checks a conservative allocation ceiling, allocates protected output once, and lends it only to the encoder; the next labelled borrower is the hash consumer. Nonces, salts, payloads, dependency fields and private pre-digests never enter ordinary observed Value fields. The original public API and its canonical bytes and full tracing remain unchanged. Every protected borrow has a separate reason and Caveat under (`rule:observe:secret-exceptions`); neither argument filtering nor subscriber replacement implements this boundary. Fixed-vector equality and full-trace leakage controls establish the scoped encoding property; they do not establish entropy, custody or commitment authenticity.

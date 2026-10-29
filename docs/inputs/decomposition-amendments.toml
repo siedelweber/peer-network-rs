@@ -16,7 +16,7 @@ host_dependencies = ["reviewed PostgreSQL client", "pn-wallet (optional developm
 added_crates = [
   { name = "pn", role = "Node schema, service and lifecycle", dependencies = ["pn-host", "pn-records", "pn-interchange"], optional = ["pn-readouts"] },
   { name = "pn-wallet", role = "Only Elements integration; chain evidence and wallet spending/recovery", dependencies = ["reviewed Elements RPC client"], optional = [] },
-  { name = "pn-client", role = "GraphQL node counterpart and client workflows", dependencies = ["pn-wallet", "pn-records", "pn-interchange"], optional = [] },
+  { name = "pn-client", role = "GraphQL node counterpart and client workflows", dependencies = ["pn-wallet", "pn-records", "pn-interchange", "pn-act-profile"], optional = [] },
   { name = "pn-command", role = "Node and client JSON command presentation", dependencies = ["pn-client", "pn", "cli-common"], optional = [] },
   { name = "pn-testkit", role = "Development-only generic runners, models and mocks; no production imports", dependencies = [], optional = [] },
 ]

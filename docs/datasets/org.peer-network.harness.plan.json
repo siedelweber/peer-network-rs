@@ -14,7 +14,8 @@
       "client_dependencies": [
         "pn-wallet",
         "pn-records",
-        "pn-interchange"
+        "pn-interchange",
+        "pn-act-profile"
       ],
       "client_replay_bite": 9,
       "command": "pn-command",

@@ -9,11 +9,24 @@
     {
       "dependencies": [],
       "name": "pn-records",
-      "responsibility": "Immutable public inputs: identities, acts, ledger/burn data and declared constants",
+      "responsibility": "Immutable public inputs: identities, acts, typed opaque commitment residues, ledger/burn data and declared constants",
       "surfaces": [
         "def:graph:act-identifier",
         "def:graph:act-edge-projection",
         "def:comparator:burn-interface"
+      ]
+    },
+    {
+      "dependencies": [
+        "pn-records",
+        "pn-interchange"
+      ],
+      "name": "pn-act-profile",
+      "responsibility": "Shared pure act profile, canonical commitment recipes and supplied-opening comparison; no host or authentication dependency",
+      "surfaces": [
+        "def:graph:proposal-pre-commitment",
+        "def:graph:verified-act",
+        "def:graph:ordering-fraud-proof"
       ]
     },
     {
@@ -24,7 +37,6 @@
       "responsibility": "Structural formation, shared graph algebra and title folds",
       "surfaces": [
         "post:nodes:canonical-tensor-pipeline",
-        "def:graph:verified-act",
         "thm:graph:epoch-title-fold"
       ]
     },
@@ -55,6 +67,7 @@
     },
     {
       "dependencies": [
+        "pn-act-profile",
         "pn-records",
         "pn-graph",
         "pn-epoch"
@@ -67,6 +80,7 @@
     },
     {
       "dependencies": [
+        "pn-act-profile",
         "pn-records",
         "pn-graph",
         "pn-epoch",
@@ -81,6 +95,7 @@
     },
     {
       "dependencies": [
+        "pn-act-profile",
         "pn-records",
         "pn-graph",
         "pn-epoch",
