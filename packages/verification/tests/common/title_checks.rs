@@ -185,7 +185,7 @@ fn inputs(words: &[u64]) -> Vec<CandidateAct> {
             },
         ),
     ];
-    genesis.authoritative_position = 0;
+    genesis.authoritative_position = 1;
     let mut inputs = vec![genesis];
     for (boundary, word) in words.iter().take(2).enumerate() {
         let epoch = u64::try_from(boundary).unwrap() + 1;

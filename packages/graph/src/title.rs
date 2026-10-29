@@ -114,8 +114,8 @@ pub struct TitleReplay {
 /// (´def:formation:boundary-title´)
 ///
 /// # Errors
-/// Returns whole-result formation refusal or the recognition hold for unavailable or
-/// mismatched recurrence evidence. No partial certificate escapes an unsuccessful replay.
+/// Returns whole-result formation refusal. Unavailable time and stamp faults do not
+/// determine title. No partial certificate escapes an unsuccessful replay.
 #[tracing::instrument(
     name = "alg:design:title",
     fields(
@@ -148,20 +148,7 @@ fn fold_title(
     inputs: &TitleInputs,
     epoch: u64,
 ) -> Result<TitleReplay, crate::recognition::RecognitionError> {
-    use crate::recognition::{RecognitionContext, RecognitionError, recognize_settlements};
-    let acts: BTreeMap<_, _> = history.acts().iter().map(|act| (act.id(), act)).collect();
-    let holds: Vec<_> = history
-        .time_evidence()
-        .iter()
-        .filter(|evidence| {
-            acts.get(&evidence.act).is_some_and(|act| act.finalization_epoch() <= epoch)
-                && evidence.verdict != pn_records::TimeVerdict::Matches
-        })
-        .cloned()
-        .collect();
-    if !holds.is_empty() {
-        return Err(RecognitionError::Held(holds));
-    }
+    use crate::recognition::{RecognitionContext, recognize_settlements};
     let mut replay = TitleReplay {
         epoch,
         certificate: BTreeMap::new(),
@@ -285,7 +272,7 @@ pub enum FinalSetDecision {
 /// (´def:formation:title-events´)
 ///
 /// # Errors
-/// Returns whole-result formation refusal or the scoped recurrence hold before
+/// Returns whole-result formation refusal before
 /// any candidate-set certificate is returned. Rejection does not bypass validation.
 #[tracing::instrument(
     name = "alg:design:title",

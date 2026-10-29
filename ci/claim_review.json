@@ -1452,10 +1452,10 @@
     {
       "operation": "pn-graph::formation::item_endpoints",
       "path": "packages/graph/tests/formation.rs",
-      "claim": "GRAPH::claim:formation:item-endpoints-require-earlier-formed-genesis",
-      "before": "",
-      "after": "Claim: Owner, Bid, Opinion, Review, Tag and both Reference endpoint positions refuse an absent, ordinary-only or non-earlier Item genesis with `ItemEndpoint`. A complete authorized self-minting Owner precedes each consumer in the same batch or an earlier epoch; reverse placement and a batch cycle refuse without a partial graph. Registration still forms its fresh grounded pair.",
-      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
+      "claim": "GRAPH::claim:formation:item-endpoints-admit-dangling-terms",
+      "before": "Claim: Owner, Bid, Opinion, Review, Tag and both Reference endpoint positions refuse an absent, ordinary-only or non-earlier Item genesis with `ItemEndpoint`. A complete authorized self-minting Owner precedes each consumer in the same batch or an earlier epoch; reverse placement and a batch cycle refuse without a partial graph. Registration still forms its fresh grounded pair.",
+      "after": "Claim: Owner, Bid, Opinion, Review, Tag and both Reference endpoint positions admit well-formed dangling Item terms independently of absent, ordinary-only or later genesis. Endpoint incidence creates no anchor; explicit causal parents still require earlier formed acts. Registration retains its fresh grounded pair.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces. Retires GRAPH::claim:formation:item-endpoints-require-earlier-formed-genesis in favor of GRAPH::claim:formation:item-endpoints-admit-dangling-terms at this witness site."
     },
     {
       "operation": "pn-graph::formation::join_request_projection",
@@ -1501,9 +1501,9 @@
       "operation": "pn-graph::formation::minted_node_conformance",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:minted-nodes-agree-with-records-genesis-resolution",
-      "before": "Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects that term identically with or without its genesis present, without asserting an anchor; permitted payload removal preserves the genesis lookup and the complete graph.",
-      "after": "Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects each term identically when its genesis is present; an absent Item genesis refuses at formation while the other five dangling classes retain their scoped behavior; permitted payload removal preserves the genesis lookup and the complete graph.",
-      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
+      "before": "Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects each term identically when its genesis is present; an absent Item genesis refuses at formation while the other five dangling classes retain their scoped behavior; permitted payload removal preserves the genesis lookup and the complete graph.",
+      "after": "Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects each term identically with or without its genesis, while a dangling term has no records genesis resolution; permitted payload removal preserves the genesis lookup and the complete graph.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "pn-graph::formation::mixed_reconstruction",
@@ -1533,9 +1533,9 @@
       "operation": "pn-graph::formation::owner_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:owner-retains-typed-item-and-qualifiers",
-      "before": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
-      "after": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities; ordinary Item endpoints require an earlier formed genesis. Missing genesis, wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
-      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
+      "before": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities; ordinary Item endpoints require an earlier formed genesis. Missing genesis, wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
+      "after": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities; ordinary Item endpoints may dangle without certifying an anchor. Wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "pn-graph::formation::owner_reconstruction",
@@ -3013,9 +3013,9 @@
       "operation": "pn-records::public::ordering::epoch_placement",
       "path": "packages/records/tests/public/ordering.rs",
       "claim": "RECORDS::claim:acts:epoch-qualified-placement-retains-causal-checks",
-      "before": "Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.",
-      "after": "Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in published placement independently of its stamp while retaining dependency violations on replay.",
-      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
+      "before": "Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in published placement independently of its stamp while retaining dependency violations on replay.",
+      "after": "Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, and position-zero placement refuses as `FinalizedPosition` on both paths, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in published placement independently of its stamp while retaining dependency violations on replay.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "pn-records::public::ordering::parent_replay",
@@ -3212,10 +3212,10 @@
     {
       "operation": "pn-verification::recognition::recognition_holds",
       "path": "packages/verification/tests/recognition.rs",
-      "claim": "VERIFICATION::claim:verification:recognition-holds-unavailable-time",
-      "before": "Claim: Recognition gives no negative candidate verdict when compliant-history recurrence evidence is missing or mismatched, and refuses incomplete graph or boundary premises before returning clauses. Payload removal preserves recognized evidence; tombstoned dependency openings produce the named hold rather than recomputing time.",
-      "after": "Claim: Recognition holds when recurrence evidence is unavailable, and refuses incomplete graph or boundary premises before returning clauses. A changed published stamp remains mismatch evidence without changing clause verdicts; payload removal preserves evidence, while tombstoned dependencies retain their named unavailable-time hold.",
-      "review": "Retires claim:verification:recognition-holds-faulted-or-unavailable-time in favor of claim:verification:recognition-holds-unavailable-time. Available recomputation now retains stamp faults without making them recognition premises; missing openings still produce a named whole-result hold. Title replay outside compliant histories remains held."
+      "claim": "VERIFICATION::claim:verification:recognition-preserves-unavailable-time-evidence",
+      "before": "Claim: Recognition holds when recurrence evidence is unavailable, and refuses incomplete graph or boundary premises before returning clauses. A changed published stamp remains mismatch evidence without changing clause verdicts; payload removal preserves evidence, while tombstoned dependencies retain their named unavailable-time hold.",
+      "after": "Claim: Recognition refuses incomplete graph or boundary premises before returning clauses. Changed published stamps and tombstoned dependencies retain mismatch or unavailable-time evidence without changing clause verdicts or recognition; payload removal preserves all evidence.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces. Retires VERIFICATION::claim:verification:recognition-holds-unavailable-time in favor of VERIFICATION::claim:verification:recognition-preserves-unavailable-time-evidence at this witness site."
     },
     {
       "operation": "pn-verification::recognition::recognition_partners",
@@ -3253,9 +3253,9 @@
       "operation": "pn-verification::recognition::title_premises",
       "path": "packages/verification/tests/recognition.rs",
       "claim": "VERIFICATION::claim:verification:title-requires-complete-compliant-genesis-evidence",
-      "before": "Claim: Compliant title replay revalidates its complete graph, retains void for an unresolved Item genesis, introduces fresh genesis only at its boundary, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.",
-      "after": "Claim: Compliant title replay revalidates its complete graph, refuses missing or later Item genesis at formation, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.",
-      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
+      "before": "Claim: Compliant title replay revalidates its complete graph, refuses missing or later Item genesis at formation, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.",
+      "after": "Claim: Title replay revalidates its complete graph, admits dangling Item endpoints with void title and failed owner authorization before genesis, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Stamp faults do not change the certificate.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "pn-verification::title::title_exhaustive",

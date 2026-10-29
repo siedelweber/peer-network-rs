@@ -160,7 +160,10 @@ fn settlement_targets() {
     let mut acts = original.to_vec();
     let mut other = acts[0].clone();
     other.id.sequence = 4;
-    other.authoritative_position = 0;
+    for act in &mut acts {
+        act.authoritative_position += 1;
+    }
+    other.authoritative_position = 1;
     other.logical_time = 0;
     for leg in &mut other.legs {
         leg.id.act = other.id.clone();

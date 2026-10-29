@@ -3,7 +3,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use pn_records::{ActId, PublicReference, SettlementReferences, TimeEvidence, TimeVerdict, ValidatedAct, ValidatedHistory};
+use pn_records::{ActId, PublicReference, SettlementReferences, TimeEvidence, ValidatedAct, ValidatedHistory};
 
 use crate::formation::{FormationGraph, reconstruct_replay};
 use crate::metadata::ActMetadata;
@@ -99,10 +99,6 @@ pub enum RecognitionError {
     /// The supplied owner map names a different preceding boundary.
     #[error("recognition requires the immediately preceding certificate")]
     Boundary,
-    /// The prefix lacks available recurrence evidence.
-    /// Tombstoned openings remain held by the dependency recipe obligation.
-    #[error("recognition held without available replay evidence")]
-    Held(Vec<TimeEvidence>),
 }
 
 /// Revalidate complete acts and enumerate exact settlement candidates at a boundary.
@@ -112,8 +108,7 @@ pub enum RecognitionError {
 ///
 /// # Errors
 /// Refuses altered or unauthorized formation and mismatched certificate boundaries.
-/// Returns Held, with no candidate verdicts, unless every prefix act has carried,
-/// available recurrence evidence. Stamp faults do not determine recognition.
+/// Unavailable time and stamp faults remain evidence, never recognition premises.
 #[tracing::instrument(
     name = "alg:design:recognition",
     fields(
@@ -149,22 +144,6 @@ fn recognize(
         return Err(RecognitionError::Boundary);
     }
     let acts: BTreeMap<_, _> = history.acts().iter().map(|act| (act.id(), act)).collect();
-    let holds: Vec<_> = history
-        .time_evidence()
-        .iter()
-        .filter(|evidence| {
-            acts.get(&evidence.act)
-                .is_some_and(|act| act.finalization_epoch() <= context.epoch)
-                && matches!(
-                    evidence.verdict,
-                    TimeVerdict::UnavailableOpening | TimeVerdict::AmbiguousPlacement
-                )
-        })
-        .cloned()
-        .collect();
-    if !holds.is_empty() {
-        return Err(RecognitionError::Held(holds));
-    }
     let mut output = Vec::new();
     for (id, references) in &inputs.settlements {
         if let SettlementReferences::Ratify { settles, accepts } = references

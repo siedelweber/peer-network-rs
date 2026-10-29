@@ -472,7 +472,8 @@ fn finalized_order() {
             .cause,
         DependencyCause::NotEarlier
     );
-    later.authoritative_position = 0;
+    later.authoritative_position = 1;
+    first.authoritative_position = 2;
     assert_eq!(
         validate_history(&[first.clone(), later.clone()], &names)
             .unwrap()

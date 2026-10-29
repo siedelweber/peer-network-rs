@@ -233,6 +233,9 @@ fn fixture(stance: i64, withdraw: u64, rescind: u64) -> Vec<CandidateAct> {
             inputs.push(act(family, author, sequence, epoch, offer.clone()));
         }
     }
+    for input in &mut inputs {
+        input.authoritative_position += 1;
+    }
     inputs.push(genesis());
     stamp(&mut inputs);
     inputs.rotate_left(1);
@@ -476,7 +479,7 @@ fn recognition_binding() {
         } else {
             act("Registration", "other", 0, 1, node("prof", "other"))
         };
-        other.authoritative_position = 1;
+        other.authoritative_position = 2;
         if kind == 0 || kind == 3 {
             inputs[1].body.settlement = Some(SettlementReferences::Accept {
                 settles: other.id.clone(),
@@ -541,8 +544,8 @@ fn recognition_partners() {
     }
 }
 
-/// Claim: Recognition holds when recurrence evidence is unavailable, and refuses incomplete graph or boundary premises before returning clauses. A changed published stamp remains mismatch evidence without changing clause verdicts; payload removal preserves evidence, while tombstoned dependencies retain their named unavailable-time hold.
-/// ´claim:verification:recognition-holds-unavailable-time´
+/// Claim: Recognition refuses incomplete graph or boundary premises before returning clauses. Changed published stamps and tombstoned dependencies retain mismatch or unavailable-time evidence without changing clause verdicts or recognition; payload removal preserves all evidence.
+/// ´claim:verification:recognition-preserves-unavailable-time-evidence´
 /// ´test:integration:recognition-holds´
 #[test]
 fn recognition_holds() {
@@ -584,7 +587,13 @@ fn recognition_holds() {
                 pn_records::TimeVerdict::Mismatch { .. }
             ));
         } else {
-            assert!(matches!(actual, Err(RecognitionError::Held(evidence)) if !evidence.is_empty()));
+            let evidence = actual.unwrap();
+            assert_eq!(evidence[0].clauses, expected[0].clauses);
+            assert!(evidence[0].recognized);
+            assert!(matches!(
+                evidence[0].times[0].as_ref().unwrap().recomputed,
+                pn_records::RecomputedTime::Unavailable(_)
+            ));
         }
     }
 }
@@ -683,7 +692,7 @@ fn genesis() -> CandidateAct {
             },
         ),
     ];
-    genesis.authoritative_position = 0;
+    genesis.authoritative_position = 1;
     genesis
 }
 
@@ -783,7 +792,7 @@ fn title_boundaries() {
     }
 }
 
-/// Claim: Compliant title replay revalidates its complete graph, refuses missing or later Item genesis at formation, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.
+/// Claim: Title replay revalidates its complete graph, admits dangling Item endpoints with void title and failed owner authorization before genesis, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Stamp faults do not change the certificate.
 /// ´claim:verification:title-requires-complete-compliant-genesis-evidence´
 /// ´test:integration:title-premises´
 #[test]
@@ -793,18 +802,28 @@ fn title_premises() {
     let genesis = inputs.remove(0);
     stamp(&mut inputs);
     let history = validate_history(&inputs, &[]).unwrap();
-    assert_eq!(
-        reconstruct(&history, &Approval).unwrap_err(),
-        pn_graph::registration::RegistrationError::ItemEndpoint
+    let graph = reconstruct(&history, &Approval).unwrap();
+    let dangling = replay_title(&graph, &history, &Approval, 2).unwrap();
+    assert_eq!(dangling.certificate[&item()], None);
+    assert!(
+        dangling.boundaries[1]
+            .candidates
+            .iter()
+            .all(|candidate| !candidate.clauses[&RecognitionClause::Authorization])
     );
     let mut late = genesis.clone();
     late.finalization_epoch = 3;
     inputs.push(late);
     stamp(&mut inputs);
     let history = validate_history(&inputs, &[]).unwrap();
-    assert_eq!(
-        reconstruct(&history, &Approval).unwrap_err(),
-        pn_graph::registration::RegistrationError::ItemEndpoint
+    let graph = reconstruct(&history, &Approval).unwrap();
+    let dangling = replay_title(&graph, &history, &Approval, 2).unwrap();
+    assert_eq!(dangling.certificate[&item()], None);
+    assert!(
+        dangling.boundaries[1]
+            .candidates
+            .iter()
+            .all(|candidate| !candidate.clauses[&RecognitionClause::Authorization])
     );
     inputs.retain(|act| act.id.family != "Owner");
     inputs.push(genesis.clone());
@@ -848,10 +867,9 @@ fn title_premises() {
     inputs.last_mut().unwrap().logical_time = 0;
     let history = validate_history(&inputs, &[]).unwrap();
     let graph = reconstruct(&history, &Approval).unwrap();
-    assert!(matches!(
-        replay_title(&graph, &history, &Approval, 6),
-        Err(RecognitionError::Held(_))
-    ));
+    let changed = replay_title(&graph, &history, &Approval, 6).unwrap();
+    assert_eq!(changed.certificate, replay.certificate);
+    assert_eq!(changed.events, replay.events);
 }
 
 /// Claim: On compliant histories, recognized conflicts and title-transferring events remain distinct, and successful transfer evidence survives later resale. Selected candidate sets use the identical title fold; rejected sets return no certificate or events and still undergo complete formation validation. Final-set admission remains an explicit caller premise.
