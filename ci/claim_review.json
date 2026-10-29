@@ -3146,6 +3146,14 @@
       "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
     },
     {
+      "operation": "pn-verification::recognition::recognition_partners",
+      "path": "packages/verification/tests/recognition.rs",
+      "claim": "VERIFICATION::claim:verification:partner-mismatches-retain-distinct-binding-evidence",
+      "before": "",
+      "after": "Claim: On compliant histories, each isolated party mismatch retains exact target binding but fails the corresponding partner evidence and provisional reference-binding clause (ii). A third-party Ratify, a misdirected Accept and a misdirected Ratify form without rewriting incidence and never recognize; the paper's clause placement remains held.",
+      "review": "Each party predicate is isolated while targets bind, and all other recognition clauses pass. The independent raw enumerator agrees. This witnesses existing behavior and exposes separate evidence; the clause assignment remains an explicit paper hold."
+    },
+    {
       "operation": "pn-verification::recognition::title_boundaries",
       "path": "packages/verification/tests/recognition.rs",
       "claim": "VERIFICATION::claim:verification:compliant-title-matches-independent-boundary-table",

@@ -4004,6 +4004,7 @@
       "cases": [
         "pn-verification::recognition::recognition_enumerator",
         "pn-verification::recognition::recognition_binding",
+        "pn-verification::recognition::recognition_partners",
         "pn-verification::recognition::recognition_holds",
         "pn-verification::recognition::title_boundaries",
         "pn-verification::recognition::title_premises",

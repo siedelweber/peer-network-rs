@@ -15690,6 +15690,15 @@
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Structural Clone, Debug and equality expose public settlement events and the caller supplied final-set decision. No serialization, authentication or publication is generated."
+    },
+    {
+      "item": "recognition::PartnerEvidence",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/recognition.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Clone, Debug and equality retain three public party-correspondence verdicts separately from exact reference binding. No authority, secret, serialization or publication is introduced; clause placement remains held."
     }
   ],
   "reviewed_types": [
@@ -17542,10 +17551,16 @@
       "syntax": "# [doc = \" The six named clauses, in the paper's order.\"] # [doc = \" (´def:formation:settlement-recognition´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum RecognitionClause { # [doc = \" Three complete acts belong to the cumulative boundary set.\"] Completeness , # [doc = \" Both settles pointers and the exact accepts pointer agree.\"] ReferenceBinding , # [doc = \" The Accept author is the preceding certified owner.\"] Authorization , # [doc = \" No effective buyer Withdraw defeats this candidate.\"] BuyerConsent , # [doc = \" No effective seller Rescind defeats this candidate.\"] SellerConsent , # [doc = \" The referenced handshake chain is earlier in placement and time.\"] WellFormedness , }"
     },
     {
+      "item": "recognition::PartnerEvidence",
+      "package": "pn-graph",
+      "path": "packages/graph/src/recognition.rs",
+      "syntax": "# [doc = \" Family party correspondence, provisionally filed under reference binding.\"] # [doc = \" The paper's choice of clause remains held.\"] # [doc = \" (´[ROOT-open:design:settlement-partner-clause]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PartnerEvidence { # [doc = \" The Ratify author is the Bid author.\"] pub ratify_author_is_buyer : bool , # [doc = \" The Accept targets the Bid author.\"] pub accept_target_is_buyer : bool , # [doc = \" The Ratify targets the Accept author.\"] pub ratify_target_is_seller : bool , }"
+    },
+    {
       "item": "recognition::SettlementEvidence",
       "package": "pn-graph",
       "path": "packages/graph/src/recognition.rs",
-      "syntax": "# [doc = \" One exact candidate, its clause verdicts and their structural witnesses.\"] # [doc = \" Recognition does not imply a unique winner or a title transfer.\"] # [doc = \" (´def:formation:settlement-recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct SettlementEvidence { # [doc = \" Bid, exact Accept and Ratify, in handshake order.\"] pub acts : [ActId ; 3] , # [doc = \" Accept-role and Ratify-role metadata, including the exact non-binding target.\"] pub references : [Option < SettlementReferences > ; 2] , # [doc = \" Published placement and retained time for the three chain witnesses.\"] pub chain : [(Position , u64) ; 3] , # [doc = \" Item named by a valid Bid; absent for a wrong-family settles target.\"] pub item : Option < PublicReference > , # [doc = \" Supplied prior owner, absent when the certificate resolves no owner.\"] pub prior_owner : Option < String > , # [doc = \" Six clause verdicts, without short-circuiting failed consent.\"] pub clauses : BTreeMap < RecognitionClause , bool > , # [doc = \" Buyer Withdraw identities at or before the Ratify boundary.\"] pub withdrawals : Vec < ActId > , # [doc = \" Seller Rescind identities at or before the Ratify boundary.\"] pub rescissions : Vec < ActId > , # [doc = \" Candidate records already consumed at an earlier boundary.\"] pub consumed : BTreeSet < ActId > , # [doc = \" All clauses hold and no candidate record was previously consumed.\"] pub recognized : bool , }"
+      "syntax": "# [doc = \" One exact candidate, its clause verdicts and their structural witnesses.\"] # [doc = \" Recognition does not imply a unique winner or a title transfer.\"] # [doc = \" (´def:formation:settlement-recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct SettlementEvidence { # [doc = \" Bid, exact Accept and Ratify, in handshake order.\"] pub acts : [ActId ; 3] , # [doc = \" Accept-role and Ratify-role metadata, including the exact non-binding target.\"] pub references : [Option < SettlementReferences > ; 2] , # [doc = \" Family and exact act-reference binding, independently of party correspondence.\"] pub targets_bind : bool , # [doc = \" Party correspondence evidence, distinct from target binding failures.\"] pub partners : PartnerEvidence , # [doc = \" Published placement and retained time for the three chain witnesses.\"] pub chain : [(Position , u64) ; 3] , # [doc = \" Item named by a valid Bid; absent for a wrong-family settles target.\"] pub item : Option < PublicReference > , # [doc = \" Supplied prior owner, absent when the certificate resolves no owner.\"] pub prior_owner : Option < String > , # [doc = \" Six clause verdicts, without short-circuiting failed consent.\"] pub clauses : BTreeMap < RecognitionClause , bool > , # [doc = \" Buyer Withdraw identities at or before the Ratify boundary.\"] pub withdrawals : Vec < ActId > , # [doc = \" Seller Rescind identities at or before the Ratify boundary.\"] pub rescissions : Vec < ActId > , # [doc = \" Candidate records already consumed at an earlier boundary.\"] pub consumed : BTreeSet < ActId > , # [doc = \" All clauses hold and no candidate record was previously consumed.\"] pub recognized : bool , }"
     },
     {
       "item": "recognition::RecognitionError",

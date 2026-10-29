@@ -387,8 +387,47 @@ fn recognition_binding() {
         let graph = reconstruct(&history, &Approval).unwrap();
         let evidence = recognize_settlements(&graph, &history, &Approval, &context()).unwrap();
         assert_eq!(evidence.len(), 1);
+        assert!(!evidence[0].targets_bind);
         assert!(!evidence[0].clauses[&RecognitionClause::ReferenceBinding]);
         assert!(!evidence[0].recognized);
+    }
+}
+
+/// Claim: On compliant histories, each isolated party mismatch retains exact target binding but fails the corresponding partner evidence and provisional reference-binding clause (ii). A third-party Ratify, a misdirected Accept and a misdirected Ratify form without rewriting incidence and never recognize; the paper's clause placement remains held.
+/// ´claim:verification:partner-mismatches-retain-distinct-binding-evidence´
+/// ´test:integration:recognition-partners´
+#[test]
+fn recognition_partners() {
+    for kind in 0..3 {
+        let mut inputs = fixture(1, 0, 0);
+        match kind {
+            0 => {
+                inputs[2].id.author = "outsider".into();
+                inputs[2].legs[0].id.act = inputs[2].id.clone();
+                inputs[2].legs[0].source = node("addr", "outsider");
+            }
+            1 => inputs[1].legs[0].target = node("addr", "outsider"),
+            _ => inputs[2].legs[0].target = node("addr", "outsider"),
+        }
+        stamp(&mut inputs);
+        compare(&inputs, &context());
+        let history = validate_history(&inputs, &[]).unwrap();
+        let graph = reconstruct(&history, &Approval).unwrap();
+        let evidence = recognize_settlements(&graph, &history, &Approval, &context()).unwrap();
+        assert_eq!(evidence.len(), 1);
+        let evidence = &evidence[0];
+        assert!(evidence.targets_bind);
+        assert_eq!(evidence.partners.ratify_author_is_buyer, kind != 0);
+        assert_eq!(evidence.partners.accept_target_is_buyer, kind != 1);
+        assert_eq!(evidence.partners.ratify_target_is_seller, kind != 2);
+        assert!(!evidence.clauses[&RecognitionClause::ReferenceBinding]);
+        assert!(
+            evidence
+                .clauses
+                .iter()
+                .all(|(clause, passed)| *clause == RecognitionClause::ReferenceBinding || *passed)
+        );
+        assert!(!evidence.recognized);
     }
 }
 

@@ -44,6 +44,19 @@ pub enum RecognitionClause {
     WellFormedness,
 }
 
+/// Family party correspondence, provisionally filed under reference binding.
+/// The paper's choice of clause remains held.
+/// (´[ROOT-open:design:settlement-partner-clause]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PartnerEvidence {
+    /// The Ratify author is the Bid author.
+    pub ratify_author_is_buyer: bool,
+    /// The Accept targets the Bid author.
+    pub accept_target_is_buyer: bool,
+    /// The Ratify targets the Accept author.
+    pub ratify_target_is_seller: bool,
+}
+
 /// One exact candidate, its clause verdicts and their structural witnesses.
 /// Recognition does not imply a unique winner or a title transfer.
 /// (´def:formation:settlement-recognition´)
@@ -53,6 +66,10 @@ pub struct SettlementEvidence {
     pub acts: [ActId; 3],
     /// Accept-role and Ratify-role metadata, including the exact non-binding target.
     pub references: [Option<SettlementReferences>; 2],
+    /// Family and exact act-reference binding, independently of party correspondence.
+    pub targets_bind: bool,
+    /// Party correspondence evidence, distinct from target binding failures.
+    pub partners: PartnerEvidence,
     /// Published placement and retained time for the three chain witnesses.
     pub chain: [(Position, u64); 3],
     /// Item named by a valid Bid; absent for a wrong-family settles target.
@@ -170,12 +187,14 @@ fn candidate_evidence(
     let withdrawals = cancellations(history, "Withdraw", &bid.id().author, &offer, context.epoch);
     let rescissions = cancellations(history, "Rescind", &accept.id().author, &offer, context.epoch);
     let prior_owner = item.and_then(|item| context.owners.get(item)).cloned();
-    let bound = item.is_some()
+    let partners = PartnerEvidence {
+        ratify_author_is_buyer: ratify.id().author == bid.id().author,
+        accept_target_is_buyer: actor_target(accept, &bid.id().author),
+        ratify_target_is_seller: actor_target(ratify, &accept.id().author),
+    };
+    let targets_bind = item.is_some()
         && bid.id().family == "Bid"
         && accept.id().family == "Accept"
-        && ratify.id().author == bid.id().author
-        && actor_target(accept, &bid.id().author)
-        && actor_target(ratify, &accept.id().author)
         && accept.body().settlement.as_ref()
             == Some(&SettlementReferences::Accept {
                 settles: bid.id().clone(),
@@ -192,7 +211,13 @@ fn candidate_evidence(
                 .iter()
                 .all(|act| act.finalization_epoch() <= context.epoch),
         ),
-        (RecognitionClause::ReferenceBinding, bound),
+        (
+            RecognitionClause::ReferenceBinding,
+            targets_bind
+                && partners.ratify_author_is_buyer
+                && partners.accept_target_is_buyer
+                && partners.ratify_target_is_seller,
+        ),
         (
             RecognitionClause::Authorization,
             prior_owner.as_ref() == Some(&accept.id().author),
@@ -210,6 +235,8 @@ fn candidate_evidence(
     SettlementEvidence {
         acts,
         references: [accept.body().settlement.clone(), ratify.body().settlement.clone()],
+        targets_bind,
+        partners,
         chain: [bid, accept, ratify].map(|act| (act.position(), act.logical_time())),
         item: item.cloned(),
         prior_owner,
