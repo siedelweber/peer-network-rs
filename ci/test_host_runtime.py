@@ -174,6 +174,101 @@ def storage_retake_control(test, command, env, validate, statements):
     print(f'STORAGE-RETAKE-CONTROL injected=capture-discard attempts={len(calls)} statements={len(statements)} catalogue=present finding=retained')
 
 
+def sentinel_control(test, command, env, found, prefix, attempts=3):
+    """A positive control reads its child's trace from a file, as every capture does, and selects its evidence
+    by the capture's own accounting. An attempt in which the sentinel is found detects it whatever its loss, since
+    a delivered record proves the value reached observation; a complete attempt without it is a detection failure;
+    an attempt that counts loss without it is inconclusive, because the record carrying the value may be the one
+    lost, and is reported and retaken as an independent child. Inconclusive attempts in all three report their
+    counted loss, never a missing detection."""
+    accounting=None
+    for attempt in range(1,attempts+1):
+        sink=Path(f'.lane/{prefix}.stderr.jsonl')
+        started=time.monotonic()
+        with sink.open('wb') as stream:
+            result=subprocess.run(command,env=env,stdout=subprocess.PIPE,stderr=stream,timeout=60,check=False)
+        wall=time.monotonic()-started
+        stderr=sink.read_bytes()
+        witness(command,result.returncode,wall,stderr)
+        test.assertEqual(result.returncode,0,stderr.decode())
+        rows=[expanded(json.loads(line)) for line in stderr.splitlines()]
+        status=next(row for row in rows if row.get('kind')=='observation_status')
+        complete,accounting=capture_complete(status)
+        if found(rows):
+            return rows,attempt,wall
+        if complete:
+            test.fail(f'{prefix}: sentinel not detected in a complete capture: {accounting}')
+        print(f'{prefix.upper()} attempt={attempt} inconclusive={accounting} wall_seconds={wall:.3f}')
+    test.fail(f'{prefix}: inconclusive, counted loss in all {attempts} attempts: {accounting}')
+
+
+def sentinel_selection(test):
+    """Synthetic children witness the selection without node load: loss without the value and then a complete
+    capture with it detects on the retake; loss with the value detects at once; a complete capture without it
+    fails as not detected; and three lossy captures without it fail as inconclusive loss, not as not detected."""
+    module=sys.modules[__name__]
+    found=lambda rows:'private_sentinel_probe' in decoded_content(rows)
+    cases=(('lossy then complete with the value',[(1,False),(0,True)],2,None),
+           ('lossy with the value',[(1,True)],1,None),
+           ('complete without the value',[(0,False)],1,'not detected in a complete capture'),
+           ('lossy without the value three times',[(1,False)]*3,3,'inconclusive, counted loss in all 3 attempts'))
+    for name,plan,expected_calls,failure in cases:
+        calls=[]
+        def child(argv, **kwargs):
+            lost,carries=plan[len(calls)]
+            calls.append(argv)
+            rows=[dict(kind='public',value='public_row')]+([dict(kind='public',value='private_sentinel_probe')] if carries else [])
+            for row in rows:row['process_id']=1
+            rows.append(dict(kind='observation_status',level='trace',process_id=1,timestamp='2026-10-29T00:00:00Z',attempted_records=len(rows)+lost,
+                delivered_records=len(rows),lost_records=lost,undelivered_records=0,in_flight_records=0,loss_causes={'queue_full':lost}))
+            kwargs['stderr'].write(b''.join(json.dumps(row).encode()+b'\n' for row in rows))
+            return subprocess.CompletedProcess(argv,0,stdout=b'',stderr=b'')
+        with patch('subprocess.run',side_effect=child),patch.object(module,'witness'),contextlib.redirect_stdout(io.StringIO()):
+            if failure is None:
+                _,attempt,_=sentinel_control(test,['synthetic-child'],{},found,'sentinel-selection')
+                test.assertEqual(attempt,expected_calls,name)
+            else:
+                with test.assertRaisesRegex(AssertionError,failure):
+                    sentinel_control(test,['synthetic-child'],{},found,'sentinel-selection')
+        test.assertEqual(len(calls),expected_calls,name)
+    print('SENTINEL-SELECTION lossy-then-complete=detected lossy-with-value=detected complete-without=not-detected lossy-thrice=inconclusive-loss')
+
+
+def sentinel_retake_control(test, command, env, value):
+    """Force the private control's first real capture to lose every record carrying the value, counted as capture
+    loss: that attempt must be inconclusive and an independent real retake must detect the value. The injected
+    attempt is witnessed with its child's original accounting, so the forced discard is not reported as node loss."""
+    module=sys.modules[__name__]
+    run=subprocess.run
+    observe=witness
+    calls=[]
+    original=[]
+    def child(argv, **kwargs):
+        calls.append(argv)
+        result=run(argv,**kwargs)
+        if len(calls)==1 and result.returncode==0:
+            stream=kwargs['stderr'];stream.flush()
+            raw=Path(stream.name).read_bytes();original.append(raw)
+            rows=[json.loads(line) for line in raw.splitlines()]
+            carrying={index for index,row in enumerate(rows) if row.get('kind')!='observation_status' and private_occurs(value,decoded_content([expanded(row)]))}
+            test.assertTrue(carrying,'the forced loss needs a record carrying the value')
+            status=next(row for row in rows if row.get('kind')=='observation_status')
+            status['delivered_records']-=len(carrying)
+            status['lost_records']+=len(carrying)
+            status['loss_causes']['capture_overflow']=status['loss_causes'].get('capture_overflow',0)+len(carrying)
+            stream.seek(0);stream.truncate()
+            stream.write(b''.join(json.dumps(row).encode()+b'\n' for index,row in enumerate(rows) if index not in carrying));stream.flush()
+        return result
+    def observed(argv, status, wall, stderr):
+        observe(argv,status,wall,original[0] if len(calls)==1 and original else stderr)
+    with patch('subprocess.run',side_effect=child),patch.object(module,'witness',side_effect=observed):
+        _,attempt,_=sentinel_control(test,command,env,lambda rows:private_occurs(value,decoded_content(rows)),'storage-sentinel-retake')
+    test.assertEqual(attempt,2)
+    test.assertEqual(len(calls),2)
+    test.assertTrue(all(argv==command for argv in calls))
+    print('STORAGE-SENTINEL-RETAKE injected=carrying-record-discard attempts=2 detected=retake')
+
+
 def capture_regressions(test, prefix):
     """Run both real test bodies against bad incomplete children followed by clean answers."""
     from devperf import report_loss
@@ -213,12 +308,12 @@ def capture_regressions(test, prefix):
                 stderr=b''.join(json.dumps(row).encode()+b'\n' for row in rows)
                 output=public.replace(b'731',b'732') if incomplete and fault=='result' else public
                 calls.append((level,control))
-                if not control:kwargs['stderr'].write(stderr)
+                kwargs['stderr'].write(stderr)
                 return subprocess.CompletedProcess(command,7 if incomplete and fault=='exit' else 0,stdout=output,stderr=stderr)
             # Keep real loss reporting, but retain synthetic findings only in this fixture.
             def loss_report(record, output):return report_loss(record,findings,warnings=io.StringIO())
             transcript=io.StringIO()
-            with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch.object(module,'storage_retake_control'), patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(transcript):
+            with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch.object(module,'storage_retake_control'), patch.object(module,'sentinel_retake_control'), patch.object(module,'sentinel_selection'), patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(transcript):
                 operation=getattr(HostRuntime(method),method)
                 if fault=='recovery':
                     operation()
@@ -301,7 +396,7 @@ class HostRuntime(unittest.TestCase):
         self.assertIn(b'forbidden_inline_sql',result.stderr)
 
     def test_storage_statements(self):
-        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal; acquisition takes at most three attempts and default and trace return identical bytes, while an injected capture loss forces real-child retaking with all statements including the catalogue query present, and a test-only metadata query is caught at the private role sentinel.
+        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal; acquisition takes at most three attempts and default and trace return identical bytes, while an injected capture loss forces real-child retaking with all statements including the catalogue query present, and a test-only metadata query is caught at the private role sentinel in a file-captured trace selected by its own accounting: an attempt that delivers the value detects it, an attempt that counts loss without it is inconclusive and retaken at most three times, and loss in every attempt is reported as loss rather than a missing detection, as a forced loss of the carrying record and synthetic selection cases witness.
         ´claim:discipline:storage-results-preserve-the-secret-boundary´
         ´test:integration:test-storage-statements´
         """
@@ -336,11 +431,11 @@ class HostRuntime(unittest.TestCase):
         self.assertFalse(capture_complete(dict(lossy,lost_records=0,loss_causes={'queue_full':0},undelivered_records=3))[0])
         storage_retake_control(self,[target,'storage::tests::storage_runtime','--exact','--nocapture'],env,validate,statements)
         env.update(PN_HOST_STORAGE_PRIVATE_CONTROL='1')
-        result=subprocess.run([target,'storage::tests::storage_runtime','--exact','--nocapture'],env=env,capture_output=True,timeout=60,check=False)
-        self.assertEqual(result.returncode,0)
-        text=decoded_content([expanded(json.loads(line)) for line in result.stderr.splitlines()])
-        self.assertTrue(private_occurs(config['user'],text))
-        print('STORAGE-SENSITIVE-CONTROL status=detected path=DataRow')
+        command=[target,'storage::tests::storage_runtime','--exact','--nocapture']
+        sentinel_selection(self)
+        sentinel_retake_control(self,command,env,config['user'])
+        _,attempt,wall=sentinel_control(self,command,env,lambda rows:private_occurs(config['user'],decoded_content(rows)),'storage-sensitive-control')
+        print(f'STORAGE-SENSITIVE-CONTROL status=detected path=DataRow attempt={attempt} wall_seconds={wall:.6f}')
 
     def test_storage_restart(self):
         """Claim: A real PostgreSQL restart preserves the committed public version byte for byte; the second probe reads without appending, so successful replay cannot hide lost durability by recreating the row.
@@ -466,34 +561,27 @@ class HostRuntime(unittest.TestCase):
         print(flush=True)
 
     def test_sensitive_result_control(self):
-        """Claim: A test-only metadata query returns the private role alongside a binary integer, forcing base64 recording; only decoded-content scanning finds the role, so the leakage control covers binary DataRows rather than outbound bind values.
+        """Claim: A test-only metadata query returns the private role alongside a binary integer, forcing base64 recording; only decoded-content scanning finds the role, so the leakage control covers binary DataRows rather than outbound bind values; its file-captured trace counts as a miss only when complete, and a capture that counts loss without the role is retaken as inconclusive.
         ´claim:discipline:result-row-control-detects-private-metadata´
         ´test:integration:test-sensitive-result-control´
         """
         target=Path('.lane/host-test-binary.txt').read_text().strip()
         env=dict(os.environ,PN_OBSERVE_LEVEL='trace',PN_HOST_SENSITIVE_ROW_CONTROL='1')
-        started=time.monotonic()
-        result=subprocess.run([target,'transport_evidence::public_transport','--exact','--nocapture'],env=env,capture_output=True,timeout=60,check=False)
-        wall=time.monotonic()-started
-        self.assertEqual(result.returncode,0)
-        rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
-        text=decoded_content(rows)
-        self.assertNotIn(json.loads((Path(os.environ['PN_HOST_TEST_ROOT'])/'unix.json').read_text())['user'], json.dumps(rows))
-        config=json.loads((Path(os.environ['PN_HOST_TEST_ROOT'])/'unix.json').read_text())
-        role=config['user']
-        self.assertTrue(private_occurs(role,text))
-        print(f'HOST-SENSITIVE-CONTROL status=detected path=DataRow wall_seconds={wall:.6f}')
+        role=json.loads((Path(os.environ['PN_HOST_TEST_ROOT'])/'unix.json').read_text())['user']
+        rows,attempt,wall=sentinel_control(self,[target,'transport_evidence::public_transport','--exact','--nocapture'],env,
+            lambda rows:private_occurs(role,decoded_content(rows)),'host-sensitive-control')
+        self.assertNotIn(role,json.dumps(rows))
+        print(f'HOST-SENSITIVE-CONTROL status=detected path=DataRow attempt={attempt} wall_seconds={wall:.6f}')
 
     def test_binary_reachability_control(self):
-        """Claim: A fixture-only binary DataRow containing the TCP server port and address is detected as four-byte port and address octets, so decoding without decimal text cannot conceal reachability.
+        """Claim: A fixture-only binary DataRow containing the TCP server port and address is detected as four-byte port and address octets, so decoding without decimal text cannot conceal reachability; its file-captured trace counts as a miss only when complete, and a capture that counts loss without both is retaken as inconclusive.
         ´claim:discipline:binary-endpoint-results-are-detected´
         ´test:integration:test-binary-reachability-control´
         """
         target=Path('.lane/host-test-binary.txt').read_text().strip()
         env=dict(os.environ,PN_OBSERVE_LEVEL='trace',PN_HOST_BINARY_ROW_CONTROL='1')
-        result=subprocess.run([target,'transport_evidence::public_transport','--exact','--nocapture'],env=env,capture_output=True,check=False,timeout=60)
-        self.assertEqual(result.returncode,0,result.stderr.decode())
-        rows=[expanded(json.loads(line)) for line in result.stderr.splitlines()]
         config=json.loads((Path(os.environ['PN_HOST_TEST_ROOT'])/'tcp.json').read_text())
+        rows,attempt,wall=sentinel_control(self,[target,'transport_evidence::public_transport','--exact','--nocapture'],env,
+            lambda rows:binary_reachability(config,rows)=={'port','endpoint'},'host-binary-control')
         self.assertEqual(binary_reachability(config,rows),{'port','endpoint'})
-        print('HOST-BINARY-CONTROL port=detected endpoint=detected path=DataRow',flush=True)
+        print(f'HOST-BINARY-CONTROL port=detected endpoint=detected path=DataRow attempt={attempt} wall_seconds={wall:.6f}',flush=True)
