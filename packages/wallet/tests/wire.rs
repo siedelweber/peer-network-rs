@@ -15,11 +15,18 @@ use std::{
 };
 
 const GENESIS: [u8; 32] = [7; 32];
-/// Milliseconds between dripped bytes: the 74-byte valid response then trickles for about
-/// eleven seconds, past the ten-second contract maximum deadline.
-const DRIP: u64 = 150;
-/// The server's observation window, longer than the contract maximum deadline.
-const OBSERVE: Duration = Duration::from_secs(15);
+/// The focused deadline of the timeout cases: far above the milliseconds a loopback exchange
+/// ordinarily takes on a loaded node, short enough that each case waits about a second.
+const TIMEOUT: Duration = Duration::from_secs(1);
+/// Milliseconds between dripped bytes: the 74-byte valid response trickles for about three
+/// seconds, so bytes keep arriving before and after the focused deadline.
+const DRIP: u64 = 40;
+/// The server's observation window, well past the focused deadline.
+const OBSERVE: Duration = Duration::from_secs(5);
+/// Attempts per case. Provisioning runs under the case's own limits, so a timeout case whose
+/// attempt expires before its case request reaches the server has shown nothing about the
+/// case; that attempt is retried, and a case that never reaches its request fails.
+const ATTEMPTS: usize = 5;
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
 fn decoder() -> Limits {
@@ -632,10 +639,14 @@ fn bound_cases(ceiling: usize) -> Vec<Case> {
 fn acquisition_cases() -> Vec<Case> {
     let full = valid();
     let head = full.len() - body(3, "\"result\":7").len();
-    // The deadline cases run under the contract maximum, like every other case: the two
-    // provisioning reads before each case must succeed within the same budget, so it must be
-    // one no scheduling delay reaches. The drip then trickles for longer than that budget and
-    // the held server waits longer than it, so only the case read can meet the deadline.
+    // The timeout cases run under the short focused deadline; the drip trickles across it and
+    // the held server waits past it. Their provisioning reads share those limits, so an
+    // attempt that expires before its case request reaches the server is retried rather than
+    // counted (see `run_case`); every other case keeps the contract maximum.
+    let timeout = RpcLimits {
+        deadline: TIMEOUT,
+        ..RpcLimits::default()
+    };
     vec![
         case("closed before any byte", "", Err(RpcRefusal::Http)),
         case("closed inside the status line", "HTTP/1.1 20", Err(RpcRefusal::Http)),
@@ -657,11 +668,13 @@ fn acquisition_cases() -> Vec<Case> {
         },
         Case {
             wire: full.bytes().map(|byte| (DRIP, vec![byte])).collect(),
+            limits: timeout,
             ..case("slow drip past the deadline", "", Err(RpcRefusal::Deadline))
         },
         // A timed-out exchange closes its connection: the held server sees the close.
         Case {
             hold: true,
+            limits: timeout,
             peer: Some(Peer::Eof),
             ..case(
                 "held open after the head",
@@ -671,6 +684,7 @@ fn acquisition_cases() -> Vec<Case> {
         },
         Case {
             hold: true,
+            limits: timeout,
             peer: Some(Peer::Eof),
             ..case("held open before any byte", "", Err(RpcRefusal::Deadline))
         },
@@ -813,8 +827,21 @@ fn tasks() -> usize {
     std::fs::read_dir("/proc/self/task").unwrap().count()
 }
 
-/// Run one case through a fresh reader and return its differences from the expectation.
+/// Run one case through a fresh reader and return its differences from the expectation,
+/// retrying only an attempt that expired before its case request reached the server.
 fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec<String> {
+    (0..ATTEMPTS)
+        .find_map(|_| attempt(case, genesis, declaration))
+        .unwrap_or_else(|| {
+            vec![format!(
+                "{}: no attempt reached the case request in {ATTEMPTS} attempts",
+                case.name
+            )]
+        })
+}
+
+/// One attempt of a case; None when it expired before its case request reached the server.
+fn attempt(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Option<Vec<String>> {
     let mut findings = Vec::new();
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     listener.set_nonblocking(true).unwrap();
@@ -836,6 +863,9 @@ fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec
         ));
     }
     let exchange = server.join().unwrap();
+    if result == Err(RpcRefusal::Deadline) && exchange.requests.len() < 3 {
+        return None;
+    }
     if result != case.expected {
         findings.push(format!("{name}: expected {:?}, got {result:?}", case.expected));
     }
@@ -860,10 +890,10 @@ fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec
             findings.push(format!("{name}: refusal formats a private sentinel"));
         }
     }
-    findings
+    Some(findings)
 }
 
-/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
+/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline, each timeout case under a short focused deadline counting only an attempt whose case request reached the server; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
 /// ´claim:wallet:rpc-wire-fixtures-keep-strict-framing´
 /// ´test:integration:wire-compatibility´
 #[test]
