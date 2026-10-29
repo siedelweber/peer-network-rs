@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -20,12 +21,15 @@ SERVICE_HOLD = 'ROOT::rule:buildgraph:service-selection'
 SERVICE_INPUTS = ('ci/host_postgresql.py', 'ci/wallet_elements.py', 'ci/build_graph.py', 'ci/gate.sh',
                   'ci/build_graph_runtime_witnesses.py', 'ci/build_graph_witnesses.py',
                   'ci/build_graph_evidence.py', 'ci/test_linter_entry.py',
-                  'packages/wallet/provisioning.json', 'docs/inputs/harness-registry.toml')
+                  'packages/wallet/provisioning.json', 'docs/inputs/harness-registry.toml',
+                  'packages/host/postgresql-target.txt', 'packages/host/Cargo.toml',
+                  'docs/inputs/numeric-dependencies.toml', 'Cargo.lock', 'docs/inputs/host-dependencies.toml')
 
 
 def service_selection(root, admission=False):
     """No cached pass: unchanged-input gates carry a named unexecuted hold."""
-    fingerprint = identity([(name, hashlib.sha256((root/name).read_bytes()).hexdigest()) for name in SERVICE_INPUTS])
+    tools = {name: os.environ.get(name) for name in ('PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN', 'PN_MESON_BIN')}
+    fingerprint = identity(dict(files=[(name, hashlib.sha256((root/name).read_bytes()).hexdigest()) for name in SERVICE_INPUTS], tools=tools))
     changed = []
     for name in SERVICE_INPUTS:
         parent = subprocess.run(['git', '-C', str(root), 'show', 'HEAD^:'+name], capture_output=True)
@@ -133,7 +137,7 @@ def capture(root, gate_log):
                 directory=str(setup.parent.parent), information=json.loads(setup.read_text())))
 
 
-def compare(first, second):
+def compare(first, second, admission=False):
     if first.get('schema') != 1 or second.get('schema') != 1:
         raise ValueError('unknown retained gate schema')
     for name in ('source', 'roster', 'statuses', 'verdict', 'configuration', 'documents', 'features', 'matrix', 'claims', 'cases'):
@@ -142,6 +146,13 @@ def compare(first, second):
             left, right = [case_projection(row) for row in left], [case_projection(row) for row in right]
         if name not in first or left != right:
             raise ValueError('retained gates differ: '+name)
+    if admission:
+        for snapshot in (first, second):
+            service = [row for row in snapshot['cases'] if row.get('operation') == SERVICE_CASE]
+            if (len(service) != 1 or service[0].get('outcome') != 'passed'
+                    or service[0].get('reason') != 'admission requested'
+                    or service[0].get('selection_admission') != '1'):
+                raise ValueError('admission comparison requires passed service evidence requested for admission')
     names = [row[0] for row in first['roster']]
     if len(names) != len(set(names)) or [row[0] for row in first['statuses']] != names:
         raise ValueError('retained roster is not exactly once')
@@ -162,7 +173,7 @@ def compare(first, second):
         right = {key: value for key, value in later['context'].items() if key not in ('run', 'history')}
         if left != right or report['status'] != later['status']:
             raise ValueError('delegated configuration or status differs: '+name)
-    return f'BUILD-EQUIVALENCE steps={len(names)} delegated={len(first["reports"])} roster=equal features=equal cases=equal documents=equal claims=equal statuses=equal verdict={first["verdict"]} fresh=true reused=true'
+    return f'BUILD-EQUIVALENCE steps={len(names)} delegated={len(first["reports"])} roster=equal features=equal cases=equal documents=equal claims=equal statuses=equal verdict={first["verdict"]} fresh=true reused=true'+(' admission=true service=passed' if admission else '')
 
 
 def main():
@@ -175,6 +186,7 @@ def main():
     pair = commands.add_parser('compare')
     pair.add_argument('fresh', type=Path)
     pair.add_argument('reused', type=Path)
+    pair.add_argument('--admission', action='store_true')
     args = parser.parse_args()
     started = time.monotonic()
     try:
@@ -183,7 +195,7 @@ def main():
             args.destination.write_text(json.dumps(snapshot, sort_keys=True, indent=2)+'\n')
             print(f'BUILD-RETAIN source={snapshot["source"]} steps={len(snapshot["roster"])} state={snapshot["setup"]["action"]} path={args.destination}')
         else:
-            print(compare(json.loads(args.fresh.read_text()), json.loads(args.reused.read_text())))
+            print(compare(json.loads(args.fresh.read_text()), json.loads(args.reused.read_text()), admission=args.admission))
         return 0
     except (KeyError, ValueError, OSError) as error:
         print('BUILD-EQUIVALENCE-REFUSAL '+str(error))

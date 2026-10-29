@@ -34,7 +34,7 @@ def main(module):
     from build_graph_evidence import SERVICE_CASE, service_selection
     if SERVICE_CASE in inventory:
         selection = service_selection(Path.cwd(), os.environ.get('PN_BUILDGRAPH_ADMISSION') == '1')
-        print('BUILD-SERVICE-SELECTION '+json.dumps(selection, sort_keys=True))
+        print('BUILD-SERVICE-SELECTION '+json.dumps(selection | dict(source=source, admission=os.environ.get('PN_BUILDGRAPH_ADMISSION', '0')), sort_keys=True), flush=True)
         if not selection['run']:
             raw = event(SERVICE_CASE, registry.levels[declared['level']]['budget'], None,
                         'held', source, CONFIGURATION)
@@ -77,6 +77,9 @@ def main(module):
             duration = (time.monotonic()-self.started)*1000
             raw = event('ci::'+test.id(), registry.levels[declared['level']]['budget'], duration,
                         self.outcome, source, CONFIGURATION)
+            if raw['operation'] == SERVICE_CASE:
+                raw.update(reason=selection['reason'], selection_inputs=selection['inputs'],
+                           selection_admission=os.environ.get('PN_BUILDGRAPH_ADMISSION', '0'))
             records.append(join_case(registry, raw, source, CONFIGURATION))
             super().stopTest(test)
 

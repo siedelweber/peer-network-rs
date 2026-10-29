@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import re
+import resource
 import shutil
 import signal
 import subprocess
@@ -185,6 +186,11 @@ def service_instances(case):
     """Two actual daemons of each kind coexist; stopping one preserves the other."""
     import socket
     from concurrent.futures import ThreadPoolExecutor
+    started = time.monotonic()
+    own = resource.getrusage(resource.RUSAGE_SELF)
+    children = resource.getrusage(resource.RUSAGE_CHILDREN)
+    daemon_cpu_control(case)
+    daemon_samples = []
     repository=Path(__file__).resolve().parent.parent
     checker=repository/'ci/build_graph.py'
     for service,script,variable in (('postgresql','host_postgresql.py','PN_HOST_TEST_ROOT'),('elements','wallet_elements.py','PN_WALLET_TEST_ROOT')):
@@ -225,10 +231,18 @@ def service_instances(case):
                     pids=[int(path.read_text().splitlines()[0]) for path in pidfiles]
                     case.assertNotEqual(pids[0],pids[1]);case.assertTrue(all(alive(port) for port in ports))
                     first,second=(0,1) if route=='legacy' else (1,0)
+                    first_cpu = daemon_cpu(pidfiles[first])
+                    case.assertEqual(first_cpu['pid'], pids[first])
+                    daemon_samples.append(first_cpu)
+                    print('SERVICE-DAEMON-CPU '+json.dumps(dict(kind=service, route=route, **first_cpu), sort_keys=True))
                     step(instances[first],'stop');case.assertFalse(pidfiles[first].exists());case.assertTrue(pidfiles[second].exists());case.assertTrue(alive(ports[second]))
                     case.assertEqual(int(pidfiles[second].read_text().splitlines()[0]),pids[second])
                     # An absent listener on the stopped port is not an ownership claim:
                     # another gate may already have reused it. The owned pidfile is gone.
+                    second_cpu = daemon_cpu(pidfiles[second])
+                    case.assertEqual(second_cpu['pid'], pids[second])
+                    daemon_samples.append(second_cpu)
+                    print('SERVICE-DAEMON-CPU '+json.dumps(dict(kind=service, route=route, **second_cpu), sort_keys=True))
                     step(instances[second],'stop');case.assertFalse(pidfiles[second].exists())
                     print(f'SERVICE-OWNERSHIP kind={service} route={route} ports={ports} concurrent-starts=true distinct-directories=true distinct-pids=true first-stop-preserves-sibling=true both-stopped=true')
                 finally:
@@ -237,6 +251,19 @@ def service_instances(case):
                         result=invoke(root,['python3','-B','ci/'+script,'stop','--root',str(path)],env)
                         cleanup.append((result.returncode,result.stdout))
                     for status,output in cleanup:case.assertEqual(status,0,output)
+
+
+    used = resource.getrusage(resource.RUSAGE_SELF)
+    waited = resource.getrusage(resource.RUSAGE_CHILDREN)
+    source = invoke(repository, ['git', 'rev-parse', 'HEAD']).stdout.decode().strip()
+    print('SERVICE-WITNESS-RESOURCES '+json.dumps(dict(source=source,
+          command='PYTHONPATH=ci python3 -B -m unittest test_linter_entry.Conformance.test_service_ownership',
+          own_user_s=used.ru_utime-own.ru_utime+waited.ru_utime-children.ru_utime,
+          own_system_s=used.ru_stime-own.ru_stime+waited.ru_stime-children.ru_stime,
+          daemon_user_s=sum(row['user_s'] for row in daemon_samples),
+          daemon_system_s=sum(row['system_s'] for row in daemon_samples),
+          wall_s=time.monotonic()-started, load=os.getloadavg(),
+          scope='witness-self-and-waited-descendants; daemon-tick-snapshots-separate-before-stop'), sort_keys=True))
 
 
 def interrupted_gate(case, repository):
@@ -376,3 +403,129 @@ print('FIXTURE '+action)
         case.assertEqual(result.returncode,2,result.stdout)
         case.assertFalse(report_path(build,'compile').exists())
         print('BUILD-COMPLETION missing-target=refused missing-report=refused duplicate=refused stale-run=refused stale-configuration=refused')
+
+
+def capture_evidence(case):
+    """Retain a real tracked fixture and refuse each damaged artifact boundary."""
+    import copy
+    import hashlib
+    from build_graph import identity, report_path
+    from build_graph_evidence import capture
+    repository = Path(__file__).resolve().parent.parent
+    checker = repository/'ci/build_graph.py'
+    commands = [('first', 'true'), ('last', 'true')]
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        (root/'README.md').write_text('rendered fixture\n')
+        (root/'Cargo.toml').write_text('[workspace]\nmembers=[]\n')
+        build = graph_tree(case, root, commands, set(), checker, dict(os.environ), ['README.md'], setup=False)
+        source = invoke(root, ['git', 'rev-parse', 'HEAD']).stdout.decode().strip()
+        graph = json.loads((build/'gate-graph.json').read_text())
+        lane = root/'.lane'
+        lines = [f'{name}\t0\t1\t2' for name, _ in commands]
+        (lane/'gate-steps.tsv').write_text('\n'.join(lines)+'\n')
+        (build/'meson-info').mkdir()
+        (build/'meson-info/meson-info.json').write_text('{"meson_version":{"full":"fixture"}}')
+        (lane/'gate-build-graph.log').write_text('BUILD-MESON source=fixture action=setup\n')
+        gate_log = lane/'complete.log'
+        gate_log.write_text(''.join(f'STEP={name} STATUS=0 WALL=1s\n' for name, _ in commands)+'BUILD-FINAL steps=2 exactly_once=true delegated=2 fresh=true\nGATE-EXIT=0\n')
+        for index, (name, command) in enumerate(commands):
+            output = lane/(name+'.log');output.write_bytes(b'public command result\n')
+            context = dict(source=source, run='fixture-run', configuration={'features': 'fixture'}, graph=identity(graph),
+                           history=identity(lines[:index]), step=name, command=command)
+            request = dict(context=context, nonce=name, log=str(output))
+            result = dict(schema=1, request=request, status=0, output=hashlib.sha256(output.read_bytes()).hexdigest(), started=1, ended=2, wall=1)
+            path = report_path(build, name);path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(result))
+        (lane/'harness-matrix.json').write_text(json.dumps(dict(rows=[dict(source=source, status='passed')])) )
+        (lane/'claim-evidence.json').write_text(json.dumps(dict(source=source, claims=[], obligations=[])))
+        (lane/'performance-events.jsonl').write_text('')
+        (lane/'harness-benchmarks.jsonl').write_text('')
+        event = dict(scope='case', operation='fixture', source=source, outcome='passed')
+        events = lane/'harness-ci-fixture.jsonl';events.write_text(json.dumps(event)+'\n')
+        snapshot = capture(root, gate_log)
+        case.assertEqual((len(snapshot['roster']), len(snapshot['reports']), len(snapshot['cases'])), (2, 2, 1))
+        case.assertIn('README.md', snapshot['documents'])
+        case.assertIn('Cargo.toml', snapshot['features'])
+        baseline = {path: path.read_bytes() for path in lane.rglob('*') if path.is_file()}
+        report = report_path(build, 'last')
+        original_report = json.loads(report.read_text())
+        faults = []
+        def fault(name, path, content, diagnostic):
+            faults.append((name, path, content.encode(), diagnostic))
+        fault('dirty-tree', root/'README.md', 'stale render\n', 'clean tracked tree')
+        fault('roster-order', lane/'gate-steps.tsv', '\n'.join(reversed(lines))+'\n', 'roster')
+        fault('roster-repeat', lane/'gate-steps.tsv', '\n'.join(lines+[lines[-1]])+'\n', 'roster')
+        changed_graph = copy.deepcopy(graph);changed_graph['steps'][1]['command']='false'
+        fault('configured-command', build/'gate-graph.json', json.dumps(changed_graph), 'configured commands')
+        fault('second-exit', gate_log, gate_log.read_text()+'GATE-EXIT=0\n', 'status roster')
+        fault('log-status', gate_log, gate_log.read_text().replace('STEP=last STATUS=0', 'STEP=last STATUS=1'), 'status roster')
+        fault('missing-final', gate_log, gate_log.read_text().replace('BUILD-FINAL steps=2 exactly_once=true delegated=2 fresh=true\n', ''), 'final join')
+        for field in ('source', 'run', 'configuration', 'graph', 'history', 'step', 'command'):
+            changed = copy.deepcopy(original_report);changed['request']['context'][field]='stale'
+            fault('report-'+field, report, json.dumps(changed), 'stale join')
+        changed = copy.deepcopy(original_report);changed['status']=1
+        fault('report-status', report, json.dumps(changed), 'stale join')
+        fault('report-integrity', lane/'last.log', 'tampered output\n', 'output differs')
+        fault('case-repeat', events, events.read_text()*2, 'duplicated or stale')
+        fault('case-source', events, json.dumps(event | dict(source='stale'))+'\n', 'duplicated or stale')
+        fault('claim-source', lane/'claim-evidence.json', json.dumps(dict(source='stale')), 'source differs')
+        fault('matrix-source', lane/'harness-matrix.json', json.dumps(dict(rows=[dict(source='stale')])), 'source differs')
+        fault('two-actions', lane/'gate-build-graph.log', 'BUILD-MESON action=setup\nBUILD-MESON action=reuse\n', 'one fresh setup')
+        fault('invalid-action', lane/'gate-build-graph.log', 'BUILD-MESON action=unknown\n', 'one fresh setup')
+        for name, path, content, diagnostic in faults:
+            original = path.read_bytes()
+            path.write_bytes(content)
+            try:
+                with case.subTest(fault=name), case.assertRaisesRegex(ValueError, diagnostic):
+                    capture(root, gate_log)
+            finally:
+                path.write_bytes(original)
+        case.assertEqual(baseline, {path: path.read_bytes() for path in lane.rglob('*') if path.is_file()})
+        case.assertEqual(capture(root, gate_log), snapshot)
+        print(f'BUILD-RETENTION controls={len(faults)} refused={len(faults)} clean=passed reconstructed-artifacts=true')
+
+
+def daemon_cpu(pidfile, proc=Path('/proc'), ticks=None):
+    """Sample daemon roots, live descendants and waited-child ticks before stop."""
+    pid = int(pidfile.read_text().splitlines()[0])
+    ticks = os.sysconf('SC_CLK_TCK') if ticks is None else ticks
+    rows = {}
+    for path in proc.glob('[0-9]*/stat'):
+        try:
+            fields = path.read_text().rsplit(')', 1)[1].split()
+            rows[int(path.parent.name)] = dict(parent=int(fields[1]), user=int(fields[11]), system=int(fields[12]),
+                                               waited_user=int(fields[13]), waited_system=int(fields[14]), start=int(fields[19]))
+        except (OSError, ValueError, IndexError):
+            if path.parent.name == str(pid):
+                raise
+    if pid not in rows:
+        raise ValueError('owned daemon vanished before CPU sample')
+    descendants = {pid}
+    while True:
+        expanded = descendants | {child for child, row in rows.items() if row['parent'] in descendants}
+        if expanded == descendants:
+            break
+        descendants = expanded
+    return dict(pid=pid, start_ticks=rows[pid]['start'], processes=len(descendants), ticks_per_second=ticks,
+                user_s=sum(rows[child]['user']+rows[child]['waited_user'] for child in descendants)/ticks,
+                system_s=sum(rows[child]['system']+rows[child]['waited_system'] for child in descendants)/ticks,
+                scope='daemon-tree-proc-snapshot-before-stop', shutdown='excluded', accuracy='non-atomic-tick-snapshot')
+
+
+def daemon_cpu_control(case):
+    """Known ticks include only the owned tree and its already waited children."""
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory);pidfile=root/'pid';pidfile.write_text('10\n')
+        for pid, parent, user, system, waited_user, waited_system in ((10,1,100,50,5,2),(11,10,20,10,0,0),(12,1,900,900,0,0)):
+            fields = ['0']*20
+            fields[0]='S';fields[1]=str(parent)
+            for index,value in ((11,user),(12,system),(13,waited_user),(14,waited_system),(19,1000+pid)):
+                fields[index]=str(value)
+            path=root/str(pid);path.mkdir()
+            (path/'stat').write_text(str(pid)+' (fixture process) '+' '.join(fields))
+        value=daemon_cpu(pidfile,root,100)
+        case.assertEqual((value['processes'],value['user_s'],value['system_s'],value['start_ticks']), (2,1.25,0.62,1010))
+        (root/'10/stat').unlink()
+        with case.assertRaisesRegex(ValueError, 'vanished'):
+            daemon_cpu(pidfile,root,100)

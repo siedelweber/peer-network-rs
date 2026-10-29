@@ -254,7 +254,7 @@ class Conformance(unittest.TestCase):
         runtime_delegation(self)
 
     def test_service_ownership(self):
-        """Claim: Concurrent startups in two isolated checkouts obtain distinct ports, directories and processes for each real PostgreSQL and Elements pair on both routes; stopping either owned instance leaves its sibling serving until its own stop, with both shut down before return.
+        """Claim: Concurrent startups in two isolated checkouts obtain distinct ports, directories and processes for each real PostgreSQL and Elements pair on both routes; stopping either owned instance leaves its sibling serving until its own stop, with both shut down before return; pre-stop CPU samples are rooted at their pidfiles and include only that process tree and already waited children, with known-tick and absent-root controls.
         ´claim:discipline:service-delegation-preserves-ownership´
         ´test:integration:test-service-ownership´
         """
@@ -270,11 +270,13 @@ class Conformance(unittest.TestCase):
         completion(self)
 
     def test_service_selection(self):
-        """Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; unchanged inputs produce only a standing selection hold that holds the composition decision without reopening the admitted gate, while admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.
+        """Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; configured service-tool paths bind the selection fingerprint and its single runner line names source and flag; unchanged inputs produce only a standing selection hold that holds the composition decision without reopening the admitted gate, while admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.
         ´claim:discipline:service-selection-keeps-unexecuted-evidence-held´
         ´test:integration:test-service-selection´
         """
         from unittest.mock import patch
+        from contextlib import redirect_stdout, redirect_stderr
+        import io
         from build_graph_evidence import SERVICE_INPUTS, SERVICE_CASE, service_selection, held_service
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -287,6 +289,9 @@ class Conformance(unittest.TestCase):
             with patch('build_graph_evidence.subprocess.run', side_effect=previous), patch.dict(os.environ, {'PN_BUILDGRAPH_ADMISSION': '0'}):
                 selection = service_selection(root)
                 self.assertFalse(selection['run'])
+                for tool in ('PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN', 'PN_MESON_BIN'):
+                    with patch.dict(os.environ, {tool: 'different-configured-tool'}):
+                        self.assertNotEqual(service_selection(root)['inputs'], selection['inputs'])
                 record = dict(operation=SERVICE_CASE, outcome='held', hold=selection['hold'], reason=selection['reason'], selection_inputs=selection['inputs'])
                 self.assertTrue(held_service(record, root))
                 self.assertTrue(service_selection(root, admission=True)['run'])
@@ -322,11 +327,33 @@ class Conformance(unittest.TestCase):
             with patch.object(run_ci, 'load', return_value=runner_registry), patch.object(run_ci, 'source_id', return_value='current'), \
                     patch.object(unittest.defaultTestLoader, 'loadTestsFromName', return_value=unittest.TestSuite([forbidden])), \
                     patch.object(Path, 'write_text') as written, patch.object(run_ci, 'report'):
-                self.assertEqual(run_ci.main('test_linter_entry'), 0)
+                captured = io.StringIO()
+                with redirect_stdout(captured), redirect_stderr(io.StringIO()):
+                    self.assertEqual(run_ci.main('test_linter_entry'), 0)
+                lines = [line for line in captured.getvalue().splitlines() if line.startswith('BUILD-SERVICE-SELECTION ')]
+                self.assertEqual(len(lines), 1)
+                decision = json.loads(lines[0].split(' ', 1)[1])
+                self.assertEqual(decision['source'], 'current')
+                self.assertFalse(decision['run'])
+                self.assertEqual(decision['admission'], os.environ.get('PN_BUILDGRAPH_ADMISSION', '0'))
                 emitted = [json.loads(line) for line in written.call_args.args[0].splitlines()]
                 self.assertEqual(emitted[0]['outcome'], 'held')
                 self.assertIsNone(emitted[0]['duration_ms'])
                 self.assertFalse(any(row['outcome']=='passed' for row in emitted))
+            passed = unittest.FunctionTestCase(lambda: None)
+            passed.id = lambda: SERVICE_CASE.removeprefix('ci::')
+            with patch('build_graph_evidence.service_selection', return_value=selection | dict(run=True, reason='admission requested')), \
+                    patch.dict(os.environ, {'PN_BUILDGRAPH_ADMISSION': '1'}), \
+                    patch.object(run_ci, 'load', return_value=runner_registry), patch.object(run_ci, 'source_id', return_value='current'), \
+                    patch.object(unittest.defaultTestLoader, 'loadTestsFromName', return_value=unittest.TestSuite([passed])), \
+                    patch.object(Path, 'write_text') as written, patch.object(run_ci, 'report'), \
+                    redirect_stdout(io.StringIO()) as captured, redirect_stderr(io.StringIO()):
+                self.assertEqual(run_ci.main('test_linter_entry'), 0)
+                emitted = [json.loads(line) for line in written.call_args.args[0].splitlines()]
+                service = next(row for row in emitted if row['operation'] == SERVICE_CASE)
+                self.assertEqual((service['outcome'], service['reason'], service['selection_admission']), ('passed', 'admission requested', '1'))
+                decision = json.loads(next(line for line in captured.getvalue().splitlines() if line.startswith('BUILD-SERVICE-SELECTION ')).split(' ', 1)[1])
+                self.assertEqual((decision['source'], decision['admission'], decision['run']), ('current', '1', True))
             for field in ('operation', 'hold', 'reason', 'selection_inputs'):
                 bad = record | {field: 'unknown-or-stale'}
                 with self.subTest(field=field), self.assertRaises(StructuralError):
@@ -376,12 +403,14 @@ class Conformance(unittest.TestCase):
             self.assertEqual(states[names[1]], 'scoped-passed')
 
     def test_retained_gate_equivalence(self):
-        """Claim: Retained fresh and reused gate evidence must match source, full roster, features, case inventory, document digests, claims and statuses; changed fields, missing reports, repeated completions, reused nonces or run identities and a replaced setup refuse rather than disappearing under measurement exclusions.
+        """Claim: Retention refuses dirty trees, inconsistent rosters and logs, missing final joins, stale or corrupt reports, duplicate or stale cases and multiple Meson actions; retained fresh and reused evidence compares full roster, features, cases, documents, claims and statuses, while checked admission additionally requires service passes explicitly requested for admission; changed fields, missing reports, repeated completions, reused nonces or runs and replaced setup refuse.
         ´claim:discipline:retained-gates-preserve-complete-evidence´
         ´test:integration:test-retained-gate-equivalence´
         """
         import copy
-        from build_graph_evidence import compare, stable, case_projection
+        from build_graph_evidence import compare, stable, case_projection, SERVICE_CASE
+        from build_graph_runtime_witnesses import capture_evidence
+        capture_evidence(self)
         first = dict(schema=1, source='fixture', roster=[['check', 'command']], statuses=[['check', '0']],
                      verdict=0, configuration={'features': 'default'}, documents={'README.md': 'bytes'},
                      features={'Cargo.toml': 'feature declarations'}, matrix={'cases': ['one']}, claims={'claim': 'passed'}, cases=[{'operation': 'one', 'outcome': 'passed'}],
@@ -391,6 +420,18 @@ class Conformance(unittest.TestCase):
         second['setup']['action'] = 'reuse'
         second['reports']['check'].update(nonce='second', context=dict(run='second', history='second-prefix', source='fixture', command='command'))
         self.assertIn('statuses=equal', compare(first, second))
+        with self.assertRaisesRegex(ValueError, 'admission comparison'):
+            compare(first, second, admission=True)
+        admitted = [copy.deepcopy(first), copy.deepcopy(second)]
+        for snapshot in admitted:
+            snapshot['cases'].append(dict(operation=SERVICE_CASE, outcome='passed', reason='admission requested', selection_admission='1'))
+        self.assertIn('admission=true service=passed', compare(*admitted, admission=True))
+        for field, value in (('outcome', 'held'), ('reason', 'service inputs changed'), ('selection_admission', '0')):
+            bad = copy.deepcopy(admitted)
+            for snapshot in bad:
+                snapshot['cases'][-1][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'admission comparison'):
+                compare(*bad, admission=True)
         for field in ('source', 'roster', 'statuses', 'verdict', 'configuration', 'documents', 'features', 'matrix', 'claims', 'cases'):
             bad = copy.deepcopy(second)
             bad[field] = None

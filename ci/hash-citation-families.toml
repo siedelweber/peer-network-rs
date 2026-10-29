@@ -472,3 +472,14 @@ symbol = "SERVICE_INPUTS"
 digest = "fae1c0f5e78137dfc48f4352e2901af20b6810230426d705c5efdb0a8586de89"
 definition = "Read the literal SERVICE_INPUTS tuple and each named file from the reachable reviewed commit, never from current working bytes; recompute the ordered projection and its SHA-256 fingerprint. Only the declared matching digest is accounted."
 paths = ["ci/hash-citation-families.toml", "adr/024-build-graph.md", "docs/templates/adr/024-build-graph.md.j2"]
+
+[[rows]]
+family = "build-graph-witness-baseline"
+group = "build graph witness measurement"
+measures = "Public commit at which the standalone witness CPU baselines were measured"
+producer = "Git"
+establishment = "resolvable"
+reader = "ancestor-commit"
+commit = "ccd2731945baa16e53b0d354c7269a11b35d6302"
+definition = "The witness baseline's full source commit must be reachable from HEAD; the record separately names each command, measurement scope and limitation."
+paths = ["ci/hash-citation-families.toml", "adr/024-build-graph.md", "docs/templates/adr/024-build-graph.md.j2"]

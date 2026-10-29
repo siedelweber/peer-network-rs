@@ -198,8 +198,8 @@
       "path": "ci/test_linter_entry.py",
       "claim": "ROOT::claim:discipline:retained-gates-preserve-complete-evidence",
       "before": "",
-      "after": "Claim: Retained fresh and reused gate evidence must match source, full roster, features, case inventory, document digests, claims and statuses; changed fields, missing reports, repeated completions, reused nonces or run identities and a replaced setup refuse rather than disappearing under measurement exclusions.",
-      "review": "Read equality and mutations for every retained projection, exact roster, new run and nonce and retained setup. The real gate pair remains required before admission."
+      "after": "Claim: Retention refuses dirty trees, inconsistent rosters and logs, missing final joins, stale or corrupt reports, duplicate or stale cases and multiple Meson actions; retained fresh and reused evidence compares full roster, features, cases, documents, claims and statuses, while checked admission additionally requires service passes explicitly requested for admission; changed fields, missing reports, repeated completions, reused nonces or runs and replaced setup refuse.",
+      "review": "Read capture on real tracked fixture files and each isolated retention corruption, followed by clean restoration; admission controls reject equal held, non-admission and unflagged service cases while ordinary comparison remains available."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_runtime_delegation",
@@ -210,12 +210,20 @@
       "review": "Read the socket readiness handshake, SIGTERM delivery to the shell carrying the real traps, process reaping and separate owned-root versus sibling-root assertions; the retained graph-refusal fixture checks explicit stops independently."
     },
     {
+      "operation": "ci::test_linter_entry.Conformance.test_service_ownership",
+      "path": "ci/test_linter_entry.py",
+      "claim": "ROOT::claim:discipline:service-delegation-preserves-ownership",
+      "before": "Claim: Concurrent startups in two isolated checkouts obtain distinct ports, directories and processes for each real PostgreSQL and Elements pair on both routes; stopping either owned instance leaves its sibling serving until its own stop, with both shut down before return.",
+      "after": "Claim: Concurrent startups in two isolated checkouts obtain distinct ports, directories and processes for each real PostgreSQL and Elements pair on both routes; stopping either owned instance leaves its sibling serving until its own stop, with both shut down before return; pre-stop CPU samples are rooted at their pidfiles and include only that process tree and already waited children, with known-tick and absent-root controls.",
+      "review": "Read known process tick values, descendant inclusion and unrelated-process exclusion, vanished-root refusal, and samples through actual owned daemon pidfiles before both stops. Samples explicitly exclude later shutdown and are separate from own waited CPU."
+    },
+    {
       "operation": "ci::test_linter_entry.Conformance.test_service_selection",
       "path": "ci/test_linter_entry.py",
       "claim": "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
       "before": "",
-      "after": "Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; unchanged inputs produce only a standing selection hold that holds the composition decision without reopening the admitted gate, while admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.",
-      "review": "Read the existing selection and refusal controls plus the real obligation rows evaluated with the service case held and passed. The composition decision is held only in the former; the admitted gate is scoped-passed in both."
+      "after": "Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; configured service-tool paths bind the selection fingerprint and its single runner line names source and flag; unchanged inputs produce only a standing selection hold that holds the composition decision without reopening the admitted gate, while admission execution supports both rows; another case, a stale input binding or a selected execution cannot reuse that hold.",
+      "review": "Read the configured-path fingerprint mutations, captured single source/flag line, actual runner pass metadata, current named-hold refusals and admitted-gate/decision status controls."
     },
     {
       "operation": "ci::test_observe.Admission.test_resource_samples",
