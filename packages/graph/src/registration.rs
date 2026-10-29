@@ -81,9 +81,6 @@ pub enum RegistrationError {
     /// A removal fact lacks the declared verifier's authorization.
     #[error("opening removal not authorized")]
     UnauthorizedRemoval,
-    /// Repeated published positions cannot determine reconstruction order.
-    #[error("ambiguous published order")]
-    AmbiguousOrder,
     /// The backend cannot represent another index.
     #[error("Registration graph capacity exhausted")]
     Capacity,
@@ -271,11 +268,6 @@ pub(super) fn reconstruct_with<N: Ord + Clone, E>(
 ) -> Result<StableDiGraph<N, E>, RegistrationError> {
     let mut acts: Vec<_> = history.acts().iter().collect();
     acts.sort_by_key(|act| (crate::metadata::ActMetadata::from_act(act).position, act.id()));
-    if acts.windows(2).any(|pair| {
-        crate::metadata::ActMetadata::from_act(pair[0]).position == crate::metadata::ActMetadata::from_act(pair[1]).position
-    }) {
-        return Err(RegistrationError::AmbiguousOrder);
-    }
     let mut graph = StableDiGraph::new();
     let mut nodes = BTreeMap::new();
     for act in &acts {

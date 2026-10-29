@@ -133,8 +133,9 @@ pub fn compile_ledger(
             let count = counts.entry(address.clone()).or_insert(ActionCount(0));
             count.0 = count.0.checked_add(1).ok_or(LedgerError::Count)?;
             let debit = numeric.consummate(price, ActionCount(1), boundary)?;
-            let negative = format!("-{}", debit.charged().exact());
-            add(&mut balances, &address, &negative, &mut budget)?;
+            let charged = Rational::parse(debit.charged().exact(), &mut budget)?;
+            let balance = balances.entry(address).or_insert(Rational::parse("0", &mut budget)?);
+            *balance = balance.sub(&charged, &mut budget)?;
             debits.insert(act.id().clone(), debit);
         }
         if let Some((address, _)) = balances.iter().find(|(_, balance)| balance.is_negative()) {

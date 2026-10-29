@@ -27,6 +27,7 @@ pub(crate) fn fixture() -> (Declaration, EditionInput, ParameterInput) {
         ("negative", "-1/3"),
         ("third", "1/3"),
         ("rest", "2/3"),
+        ("hops", "4"),
     ]
     .into_iter()
     .map(|(name, value)| ConstantDefinition::Literal {
@@ -82,6 +83,11 @@ pub(crate) fn fixture() -> (Declaration, EditionInput, ParameterInput) {
         edition: id,
         numeraire,
         profiles,
+        domain_weights: ["Identity", "Economic", "Tribal", "Epistemic", "Relational", "Minimal"]
+            .into_iter()
+            .map(|domain| (domain.into(), if domain == "Economic" { "rest" } else { "one" }.into()))
+            .collect(),
+        hop_limit: "hops".into(),
         self_base: "one".into(),
         depth_mass: vec!["third".into(), "rest".into()],
     };

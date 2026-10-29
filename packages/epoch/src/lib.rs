@@ -17,7 +17,7 @@ use pn_records::{
     numerics::Numeraire,
 };
 
-/// One family's explicitly published domain weights, bound to a constants edition.
+/// One family's explicitly published profile weights, bound to a constants edition.
 /// (´def:compiler:boundary-inputs´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FamilyProfile {
@@ -39,6 +39,10 @@ pub struct ParameterInput {
     pub edition: DeclarationId,
     pub numeraire: Numeraire,
     pub profiles: Vec<FamilyProfile>,
+    /// Published domain weights: literal constant names for every projection domain.
+    pub domain_weights: BTreeMap<String, String>,
+    /// Name of the positive integer `L_hop` literal in the effective edition.
+    pub hop_limit: String,
     /// Name of the positive self-retention literal in the effective edition.
     pub self_base: String,
     /// Literal constant names for depths one through the vector length.
@@ -81,6 +85,14 @@ pub enum InputError {
     ProfileSum,
     #[error("profile supported outside the family's projection domains")]
     ProfileSupport,
+    #[error("published domain weight missing")]
+    MissingDomainWeight,
+    #[error("negative published domain weight")]
+    NegativeDomainWeight,
+    #[error("unknown published domain")]
+    UnknownDomain,
+    #[error("hop limit must be a positive integer")]
+    HopLimit,
     #[error("self retention must be positive")]
     SelfBase,
     #[error("depth mass must be nonempty, nonnegative and sum to one")]
@@ -116,6 +128,26 @@ pub fn bind_inputs(history: &ConstantsHistory<'_>, input: ParameterInput, limits
         return Err(InputError::Units);
     }
     let mut budget = Budget::new(limits)?;
+    let domains = ["Identity", "Economic", "Tribal", "Epistemic", "Relational", "Minimal"];
+    for (domain, name) in &input.domain_weights {
+        if !domains.contains(&domain.as_str()) {
+            return Err(InputError::UnknownDomain);
+        }
+        if constant(constants, name, &mut budget)?.is_negative() {
+            return Err(InputError::NegativeDomainWeight);
+        }
+    }
+    if domains.iter().any(|domain| !input.domain_weights.contains_key(*domain)) {
+        return Err(InputError::MissingDomainWeight);
+    }
+    let hops = constant(constants, &input.hop_limit, &mut budget)?;
+    if hops.is_negative() || hops.is_zero() || !hops.is_integer() {
+        return Err(InputError::HopLimit);
+    }
+    let length = Rational::parse(&input.depth_mass.len().to_string(), &mut budget)?;
+    if length.compare(&hops, &mut budget)? == std::cmp::Ordering::Greater {
+        return Err(InputError::DepthMass);
+    }
     let mut families = BTreeSet::new();
     for profile in &input.profiles {
         if profile.edition != input.edition {

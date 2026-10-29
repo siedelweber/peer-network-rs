@@ -196,6 +196,113 @@ fn solvency_boundaries() {
     );
 }
 
+fn registration_for(author: &str, sequence: u64, position: u64) -> CandidateAct {
+    let mut act = acts().remove(0);
+    act.id.author = author.into();
+    act.id.sequence = sequence;
+    act.legs[0].id.act = act.id.clone();
+    act.legs[0].source = named("addr", author);
+    act.legs[0].target = named("prof", author);
+    act.authoritative_position = position;
+    act
+}
+
+fn fractional_own_balances() {
+    let mut c = context();
+    let (inputs, _) = parameters(&mut c);
+    let literal = c.literal("3/2").unwrap();
+    let wall = c.computed(&literal).unwrap();
+    let price = c
+        .charged_price(
+            &wall,
+            &inputs[0].parameters().numeraire,
+            inputs[0].constants().content().floor,
+        )
+        .unwrap();
+    let mut raw = burn::generate(&[9]);
+    raw.burn.read_addresses.insert(Address("address-3".into()));
+    for (address, amount) in [("address-2", "5/2"), ("address-3", "9/2")] {
+        let literal = c.literal(amount).unwrap();
+        raw.burn
+            .amounts
+            .insert(Address(address.into()), c.burn(&literal, "burn").unwrap());
+    }
+    for record in &mut raw.history.records {
+        record.address = Address(if record.identity == "r1" { "address-3" } else { "address-2" }.into());
+        record.amount = raw.burn.amounts[&record.address].clone();
+        record.evidence = format!(
+            "{}:{}:{}:{}",
+            record.destruction,
+            record.address.0,
+            record.amount.exact(),
+            record.amount.unit()
+        )
+        .into_bytes();
+    }
+    raw.history.markers[1].accepted = AcceptedSet::CompleteList(["r0".into(), "r1".into()].into_iter().collect());
+    let markers = burn::recognize(raw).unwrap();
+    let first = registration_for("address-2", 1, 1);
+    let second = registration_for("address-3", 1, 2);
+    let a = Address("address-2".into());
+    let b = Address("address-3".into());
+    let history = validate_history(&[first.clone(), second.clone()], &[]).unwrap();
+    let result = compile_ledger(
+        &inputs[..1],
+        std::slice::from_ref(&price),
+        &markers,
+        &history,
+        &Verifier,
+        &mut c,
+        ExactLimits::default(),
+    )
+    .unwrap();
+    assert_eq!(result.balances[&a].exact(), "1");
+    assert_eq!(result.balances[&b].exact(), "3");
+    assert_eq!(result.debits[&first.id].charged().exact(), "3/2");
+    assert_eq!(result.debits[&second.id].charged().exact(), "3/2");
+    for (author, address, balance) in [("address-2", &a, "1"), ("address-3", &b, "3")] {
+        let alone = validate_history(&[registration_for(author, 1, 1)], &[]).unwrap();
+        let alone = compile_ledger(
+            &inputs[..1],
+            std::slice::from_ref(&price),
+            &markers,
+            &alone,
+            &Verifier,
+            &mut c,
+            ExactLimits::default(),
+        )
+        .unwrap();
+        assert_eq!(alone.balances[address].exact(), balance);
+        assert_eq!(alone.balances[address], result.balances[address]);
+    }
+    let more_solvent = validate_history(&[first.clone(), second.clone(), registration_for("address-3", 2, 3)], &[]).unwrap();
+    let result = compile_ledger(
+        &inputs[..1],
+        std::slice::from_ref(&price),
+        &markers,
+        &more_solvent,
+        &Verifier,
+        &mut c,
+        ExactLimits::default(),
+    )
+    .unwrap();
+    assert_eq!(result.balances[&a].exact(), "1");
+    assert_eq!(result.balances[&b].exact(), "3/2");
+    let insolvent = validate_history(&[first, second, registration_for("address-2", 2, 3)], &[]).unwrap();
+    assert_eq!(
+        compile_ledger(
+            &inputs[..1],
+            &[price],
+            &markers,
+            &insolvent,
+            &Verifier,
+            &mut c,
+            ExactLimits::default()
+        ),
+        Err(LedgerError::InsufficientBalance { address: a, boundary: 1 })
+    );
+}
+
 /// Claim: Replaying one recognized marker prefix derives exact cumulative and first-accepted burn by destruction identity, including aliases, delayed acceptance and empty-act epochs; final balances subtract each complete act's writing-price debit once, retain prior vintages and refuse own-balance insolvency without returning a partial ledger.
 /// ´claim:compiler:recognized-prefix-derives-the-final-ledger´
 /// ´test:integration:ledger-derivation´
@@ -251,6 +358,7 @@ fn ledger_derivation() {
         result
     );
     solvency_boundaries();
+    fractional_own_balances();
     assert_eq!(
         compile_ledger(
             &inputs[1..],

@@ -7,7 +7,7 @@ use pn_records::numerics::{ComparisonLimits, ExactLimits, NumericContext};
 use pn_records::{validate_history, validate_record};
 use std::collections::BTreeMap;
 
-/// Claim: A compiler input retains its effective constants and exact declared unequal profile, refuses foreign and mixed editions, unit mismatch, missing or invalid family profiles, nonpositive self-base and invalid depth mass distinctly, and never substitutes equal weights or rounded literals.
+/// Claim: A compiler input binds its effective edition, units, complete family profile weights, all six published domain weights, positive self-base and depth mass bounded by the declared positive integer hop limit; unequal profile and domain weights remain exact, and missing, negative or unknown-domain weights and invalid parameters refuse without a partial input.
 /// ´claim:compiler:boundary-inputs-bind-complete-declared-parameters´
 /// ´test:integration:parameter-binding´
 #[test]
@@ -20,6 +20,37 @@ fn parameter_binding() {
     assert_eq!(checked.parameters(), &input);
     assert_eq!(checked.constants().content(), &edition);
     let refuse = |value, cause| assert_eq!(bind_inputs(&history, value, ExactLimits::default()), Err(cause));
+    assert_eq!(checked.parameters().domain_weights["Economic"], "rest");
+    assert_eq!(checked.parameters().domain_weights["Identity"], "one");
+    assert_eq!(checked.parameters().hop_limit, "hops");
+    let mut bad = input.clone();
+    bad.domain_weights.remove("Identity");
+    refuse(bad, InputError::MissingDomainWeight);
+    let mut bad = input.clone();
+    bad.domain_weights.insert("Identity".into(), "negative".into());
+    refuse(bad, InputError::NegativeDomainWeight);
+    let mut bad = input.clone();
+    bad.domain_weights.insert("unknown".into(), "one".into());
+    refuse(bad, InputError::UnknownDomain);
+    let mut bad = input.clone();
+    bad.domain_weights.insert("Identity".into(), "absent".into());
+    refuse(bad, InputError::Constant);
+    let mut zero_weight = input.clone();
+    zero_weight.domain_weights.insert("Identity".into(), "zero".into());
+    assert!(bind_inputs(&history, zero_weight, ExactLimits::default()).is_ok());
+    for limit in ["zero", "negative", "third"] {
+        let mut bad = input.clone();
+        bad.hop_limit = limit.into();
+        refuse(bad, InputError::HopLimit);
+    }
+    let mut bad = input.clone();
+    bad.hop_limit = "absent".into();
+    refuse(bad, InputError::Constant);
+    let mut padded = input.clone();
+    padded.depth_mass.extend(["zero".into(), "zero".into()]);
+    assert!(bind_inputs(&history, padded.clone(), ExactLimits::default()).is_ok());
+    padded.depth_mass.push("zero".into());
+    refuse(padded, InputError::DepthMass);
     let mut bad = input.clone();
     bad.boundary = 0;
     refuse(bad, InputError::Boundary);

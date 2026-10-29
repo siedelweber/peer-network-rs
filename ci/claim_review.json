@@ -1478,8 +1478,8 @@
       "path": "packages/epoch/tests/inputs.rs",
       "claim": "EPOCH::claim:compiler:boundary-inputs-bind-complete-declared-parameters",
       "before": "",
-      "after": "Claim: A compiler input retains its effective constants and exact declared unequal profile, refuses foreign and mixed editions, unit mismatch, missing or invalid family profiles, nonpositive self-base and invalid depth mass distinctly, and never substitutes equal weights or rounded literals.",
-      "review": "Independent expected parameter values and typed negative causes exercise every family profile and retained effective edition; no standing or authentication verdict is inferred."
+      "after": "Claim: A compiler input binds its effective edition, units, complete family profile weights, all six published domain weights, positive self-base and depth mass bounded by the declared positive integer hop limit; unequal profile and domain weights remain exact, and missing, negative or unknown-domain weights and invalid parameters refuse without a partial input.",
+      "review": "Read the effective-edition literals and separate profile/domain maps, all six domain entries, unequal and zero domain weights, every missing/negative/unknown refusal, and hop-limit boundary cases; this binds the listed structural parameters, not the later allocation or transport results."
     },
     {
       "operation": "pn-epoch::ledger::ledger_aliases",
