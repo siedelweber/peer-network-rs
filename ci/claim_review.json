@@ -186,12 +186,28 @@
       "review": "The traversal assertions still diagnose only a removed tracked source; the census now has its own claim and test identity."
     },
     {
+      "operation": "ci::test_linter_entry.Conformance.test_retained_gate_equivalence",
+      "path": "ci/test_linter_entry.py",
+      "claim": "ROOT::claim:discipline:retained-gates-preserve-complete-evidence",
+      "before": "",
+      "after": "Claim: Retained fresh and reused gate evidence must match source, full roster, features, case inventory, document digests, claims and statuses; changed fields, missing reports, repeated completions, reused nonces or run identities and a replaced setup refuse rather than disappearing under measurement exclusions.",
+      "review": "Read equality and mutations for every retained projection, exact roster, new run and nonce and retained setup. The real gate pair remains required before admission."
+    },
+    {
       "operation": "ci::test_linter_entry.Conformance.test_runtime_delegation",
       "path": "ci/test_linter_entry.py",
       "claim": "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
       "before": "Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; interrupted or graph-refused execution still reaches the shell stop and exit cleanup, and all eleven runtime roster commands retain their text.",
       "after": "Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; graph-refused execution still reaches shell stops, and SIGTERM during a Ninja command reaps its command tree and performs root-keyed exit cleanup without touching a sibling root; all eleven runtime roster commands retain their text.",
       "review": "Read the socket readiness handshake, SIGTERM delivery to the shell carrying the real traps, process reaping and separate owned-root versus sibling-root assertions; the retained graph-refusal fixture checks explicit stops independently."
+    },
+    {
+      "operation": "ci::test_linter_entry.Conformance.test_service_selection",
+      "path": "ci/test_linter_entry.py",
+      "claim": "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
+      "before": "",
+      "after": "Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; unchanged inputs produce only a named hold, and another case, a stale input binding or a selected execution cannot reuse that hold.",
+      "review": "Read each changed-input and admission selection, named unexecuted hold and refusal of changed bindings. This is policy evidence, not execution of the daemon witness."
     },
     {
       "operation": "ci::test_observe.Admission.test_resource_samples",

@@ -214,8 +214,9 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
     for site in sites:
         result = actual[site['operation']]
         if result.get('source') != source or result.get('configuration') != configuration: raise StructuralError('stale result')
-        if result.get('outcome') not in {'passed','failed'}: raise StructuralError('unexecuted or ignored result')
-    states = {claim: ('failed' if any(actual[s['operation']]['outcome']=='failed' for s in members) else 'passed') for claim,members in claims.items()}
+        from build_graph_evidence import held_service
+        if result.get('outcome') not in {'passed','failed'} and not held_service(result, Path.cwd()): raise StructuralError('unexecuted or ignored result')
+    states = {claim: ('failed' if any(actual[s['operation']]['outcome']=='failed' for s in members) else ('held' if any(actual[s['operation']]['outcome']=='held' for s in members) else 'passed')) for claim,members in claims.items()}
     if len(declared) != len({r['name'] for r in declared}) or {r['name'] for r in declared} != set(obligations):
         raise StructuralError('removed or extra source obligation')
     obligation_results = []
@@ -244,7 +245,7 @@ def evaluate(sites, expected_sites, areas, obligations, declared, paragraphs, re
             if not edges and row['status'] != 'held': raise StructuralError('requirement lacks realizing decision or plan')
         for target in row['realizers']:
             if target not in obligations: raise StructuralError('unresolved obligation edge')
-        state = 'failed' if any(states[c]=='failed' for c in row['claims']) else ('held' if row['status']=='held' else 'scoped-passed')
+        state = 'failed' if any(states[c]=='failed' for c in row['claims']) else ('held' if row['status']=='held' or any(states[c]=='held' for c in row['claims']) else 'scoped-passed')
         obligation_results.append({**row,'status':state})
     for name in {r.get('evidence_paragraph') for r in declared if r.get('evidence_paragraph')}:
         paragraph = paragraphs[name]

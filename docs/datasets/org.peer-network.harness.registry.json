@@ -3098,6 +3098,8 @@
         "ci::test_linter_entry.Conformance.test_cargo_delegation",
         "ci::test_linter_entry.Conformance.test_runtime_delegation",
         "ci::test_linter_entry.Conformance.test_service_ownership",
+        "ci::test_linter_entry.Conformance.test_service_selection",
+        "ci::test_linter_entry.Conformance.test_retained_gate_equivalence",
         "ci::test_linter_entry.Conformance.test_duplicate_locations",
         "ci::test_linter_entry.Conformance.test_generated_citations",
         "ci::test_linter_entry.Conformance.test_import_forms",

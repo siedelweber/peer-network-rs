@@ -2886,7 +2886,9 @@
         "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence",
         "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
         "ROOT::claim:discipline:service-delegation-preserves-ownership",
-        "ROOT::claim:discipline:build-graph-completion-is-current-and-exact"
+        "ROOT::claim:discipline:build-graph-completion-is-current-and-exact",
+        "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
+        "ROOT::claim:discipline:retained-gates-preserve-complete-evidence"
       ],
       "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
       "closing_step": "Build graph slices 1 to 5",
@@ -2907,7 +2909,9 @@
         "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence",
         "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
         "ROOT::claim:discipline:service-delegation-preserves-ownership",
-        "ROOT::claim:discipline:build-graph-completion-is-current-and-exact"
+        "ROOT::claim:discipline:build-graph-completion-is-current-and-exact",
+        "ROOT::claim:discipline:service-selection-keeps-unexecuted-evidence-held",
+        "ROOT::claim:discipline:retained-gates-preserve-complete-evidence"
       ],
       "closing_condition": "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins.",
       "closing_step": "Build graph slices 1 to 5",

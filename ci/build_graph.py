@@ -316,7 +316,7 @@ PUBLIC_CONFIGURATION = ('PATH', 'CARGO_HOME', 'CARGO_TARGET_DIR', 'RUSTUP_HOME',
                         'CARGO_ENCODED_RUSTFLAGS', 'LINTER_BIN', 'PN_MESON_BIN',
                         'PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN', 'TMPDIR',
                         'PN_OBSERVE_ARTIFACT_DIR', 'PN_OBSERVE_LEVEL',
-                        'PN_HOST_TEST_ROOT', 'PN_WALLET_TEST_ROOT')
+                        'PN_HOST_TEST_ROOT', 'PN_WALLET_TEST_ROOT', 'PN_BUILDGRAPH_ADMISSION')
 
 
 def selected(root):

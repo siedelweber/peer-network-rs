@@ -1,6 +1,7 @@
 """Inventory and meter unittest cases, preserving the unittest verdict."""
 
 import json
+import os
 from pathlib import Path
 import sys
 import time
@@ -30,6 +31,16 @@ def main(module):
     if len(inventory) != len(set(inventory)) or set(inventory) != set(declared['cases']):
         raise StructuralError('CI inventory differs from declared suite cases')
     records = []
+    from build_graph_evidence import SERVICE_CASE, service_selection
+    if SERVICE_CASE in inventory:
+        selection = service_selection(Path.cwd(), os.environ.get('PN_BUILDGRAPH_ADMISSION') == '1')
+        print('BUILD-SERVICE-SELECTION '+json.dumps(selection, sort_keys=True))
+        if not selection['run']:
+            raw = event(SERVICE_CASE, registry.levels[declared['level']]['budget'], None,
+                        'held', source, CONFIGURATION)
+            raw.update(hold=selection['hold'], reason=selection['reason'], selection_inputs=selection['inputs'])
+            records.append(join_case(registry, raw, source, CONFIGURATION))
+            suite = unittest.TestSuite(test for test in flatten(suite) if 'ci::'+test.id() != SERVICE_CASE)
 
     class Result(unittest.TextTestResult):
         def startTest(self, test):
@@ -72,7 +83,7 @@ def main(module):
     start = time.monotonic()
     result = unittest.TextTestRunner(resultclass=Result).run(suite)
     records.append(registry.suite_event(suite_name, (time.monotonic()-start)*1000,
-                                       'passed' if result.wasSuccessful() else 'failed', source))
+                                       ('held' if any(r['outcome']=='held' for r in records) else 'passed') if result.wasSuccessful() else 'failed', source))
     Path('.lane').mkdir(exist_ok=True)
     Path(f'.lane/harness-ci-{module}.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in records))
     admissions = tomllib.loads(Path('docs/inputs/devperf-registry.toml').read_text())['rows']

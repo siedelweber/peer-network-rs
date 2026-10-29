@@ -269,6 +269,116 @@ class Conformance(unittest.TestCase):
         from build_graph_runtime_witnesses import completion
         completion(self)
 
+    def test_service_selection(self):
+        """Claim: The real service ownership witness is selected when any declared input differs from its parent or admission is requested; unchanged inputs produce only a named hold, and another case, a stale input binding or a selected execution cannot reuse that hold.
+        ´claim:discipline:service-selection-keeps-unexecuted-evidence-held´
+        ´test:integration:test-service-selection´
+        """
+        from unittest.mock import patch
+        from build_graph_evidence import SERVICE_INPUTS, SERVICE_CASE, service_selection, held_service
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in SERVICE_INPUTS:
+                path = root/name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b'unchanged')
+            def previous(argv, **kwargs):
+                return subprocess.CompletedProcess(argv, 0, b'unchanged', b'')
+            with patch('build_graph_evidence.subprocess.run', side_effect=previous), patch.dict(os.environ, {'PN_BUILDGRAPH_ADMISSION': '0'}):
+                selection = service_selection(root)
+                self.assertFalse(selection['run'])
+                record = dict(operation=SERVICE_CASE, outcome='held', hold=selection['hold'], reason=selection['reason'], selection_inputs=selection['inputs'])
+                self.assertTrue(held_service(record, root))
+                self.assertTrue(service_selection(root, admission=True)['run'])
+                for field in ('operation', 'hold', 'reason', 'selection_inputs'):
+                    self.assertFalse(held_service(record | {field: 'other'}, root))
+                for name in SERVICE_INPUTS:
+                    (root/name).write_bytes(b'changed')
+                    self.assertEqual(service_selection(root)['changed'], [name])
+                    self.assertFalse(held_service(record, root))
+                    (root/name).write_bytes(b'unchanged')
+
+        from test_harness import fixture, result
+        from test_claims import fixture as claim_fixture
+        from claims import evaluate
+        from devperf import StructuralError
+        registry = fixture(case=SERVICE_CASE)
+        record = result(registry) | dict(outcome='held', hold=selection['hold'], reason=selection['reason'], selection_inputs=selection['inputs'])
+        with patch('build_graph_evidence.service_selection', return_value=selection):
+            matrix = registry.matrix([record], 'current')
+            self.assertEqual((matrix[0]['status'], matrix[0]['observed']), ('held', 0))
+            data = claim_fixture()
+            data['sites'][0]['operation'] = SERVICE_CASE
+            data['expected_sites'] = {SERVICE_CASE, 'sibling'}
+            data['results'][0] = record | dict(configuration='fixture')
+            evidence = evaluate(**data)
+            self.assertEqual(evidence['claims'][0]['status'], 'held')
+            self.assertEqual(evidence['obligations'][0]['status'], 'held')
+            import run_ci
+            runner_registry = fixture(case=SERVICE_CASE)
+            runner_registry.suites['ci::test_linter_entry'] = runner_registry.suites.pop('example')
+            forbidden = unittest.FunctionTestCase(lambda: self.fail('held service executed'))
+            forbidden.id = lambda: SERVICE_CASE.removeprefix('ci::')
+            with patch.object(run_ci, 'load', return_value=runner_registry), patch.object(run_ci, 'source_id', return_value='current'), \
+                    patch.object(unittest.defaultTestLoader, 'loadTestsFromName', return_value=unittest.TestSuite([forbidden])), \
+                    patch.object(Path, 'write_text') as written, patch.object(run_ci, 'report'):
+                self.assertEqual(run_ci.main('test_linter_entry'), 0)
+                emitted = [json.loads(line) for line in written.call_args.args[0].splitlines()]
+                self.assertEqual(emitted[0]['outcome'], 'held')
+                self.assertIsNone(emitted[0]['duration_ms'])
+                self.assertFalse(any(row['outcome']=='passed' for row in emitted))
+            for field in ('operation', 'hold', 'reason', 'selection_inputs'):
+                bad = record | {field: 'unknown-or-stale'}
+                with self.subTest(field=field), self.assertRaises(StructuralError):
+                    registry.matrix([bad], 'current')
+                invalid = dict(data, results=[bad | dict(configuration='fixture'), data['results'][1]])
+                with self.assertRaises(StructuralError):
+                    evaluate(**invalid)
+            data['results'][1]['outcome'] = 'failed'
+            self.assertEqual(evaluate(**data)['claims'][0]['status'], 'failed')
+        with patch('build_graph_evidence.service_selection', return_value=selection | dict(run=True)):
+            with self.assertRaises(StructuralError):
+                registry.matrix([record], 'current')
+            with self.assertRaises(StructuralError):
+                evaluate(**data)
+
+    def test_retained_gate_equivalence(self):
+        """Claim: Retained fresh and reused gate evidence must match source, full roster, features, case inventory, document digests, claims and statuses; changed fields, missing reports, repeated completions, reused nonces or run identities and a replaced setup refuse rather than disappearing under measurement exclusions.
+        ´claim:discipline:retained-gates-preserve-complete-evidence´
+        ´test:integration:test-retained-gate-equivalence´
+        """
+        import copy
+        from build_graph_evidence import compare, stable
+        first = dict(schema=1, source='fixture', roster=[['check', 'command']], statuses=[['check', '0']],
+                     verdict=0, configuration={'features': 'default'}, documents={'README.md': 'bytes'},
+                     features={'Cargo.toml': 'feature declarations'}, matrix={'cases': ['one']}, claims={'claim': 'passed'}, cases=[{'operation': 'one', 'outcome': 'passed'}],
+                     reports={'check': dict(nonce='first', status=0, context=dict(run='first', history='first-prefix', source='fixture', command='command'))},
+                     setup=dict(action='setup', stamp=1, directory='same-directory', information={'version': 'same'}))
+        second = copy.deepcopy(first)
+        second['setup']['action'] = 'reuse'
+        second['reports']['check'].update(nonce='second', context=dict(run='second', history='second-prefix', source='fixture', command='command'))
+        self.assertIn('statuses=equal', compare(first, second))
+        for field in ('source', 'roster', 'statuses', 'verdict', 'configuration', 'documents', 'features', 'matrix', 'claims', 'cases'):
+            bad = copy.deepcopy(second)
+            bad[field] = None
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, field):
+                compare(first, bad)
+        for fault in ('missing', 'nonce', 'run', 'command', 'status', 'setup', 'stamp'):
+            bad = copy.deepcopy(second)
+            if fault == 'missing': bad['reports'] = {}
+            elif fault == 'setup': bad['setup']['action'] = 'setup'
+            elif fault == 'stamp': bad['setup']['stamp'] = 2
+            elif fault in ('run', 'command'): bad['reports']['check']['context'][fault] = 'first' if fault == 'run' else 'different'
+            else: bad['reports']['check'][fault] = 'first' if fault == 'nonce' else 1
+            with self.subTest(fault=fault), self.assertRaises(ValueError): compare(first, bad)
+        repeated = copy.deepcopy(first)
+        repeated['roster'] *= 2
+        repeated['statuses'] *= 2
+        with self.assertRaisesRegex(ValueError, 'exactly once'): compare(repeated, repeated)
+        self.assertEqual(stable({'duration_ms': 1, 'utc': 'one', 'outcome': 'failed'}),
+                         stable({'duration_ms': 2, 'utc': 'two', 'outcome': 'failed'}))
+        self.assertNotEqual(stable({'outcome': 'failed'}), stable({'outcome': 'passed'}))
+
     def test_build_graph_slice_assignment(self):
         """Claim: Every live gate step has exactly one delegation slice and the record roster agrees with that set; each record group stays in one slice unless its exceptional rows explicitly name the split, so missing, repeated, unknown, invalid or unexplained assignments refuse before final migration.
         ´claim:discipline:build-graph-slices-cover-roster´

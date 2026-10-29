@@ -142,7 +142,8 @@ class Registry:
         if len(cases) != len(self.cases) or {r['operation'] for r in cases} != set(self.cases):
             raise StructuralError('dropped or duplicate suite case')
         joined = [self.join(r, source) for r in cases]
-        if any(r['outcome'] not in {'passed', 'failed'} for r in joined):
+        from build_graph_evidence import held_service
+        if any(r['outcome'] not in {'passed', 'failed'} and not held_service(r, Path.cwd()) for r in joined):
             raise StructuralError('ignored or incomplete required test')
         result = []
         for suite in self.suites.values():
@@ -156,8 +157,9 @@ class Registry:
                 result.append({**row, 'status': 'held', 'reason': suite['reason'], 'expected': 0, 'observed': 0})
             else:
                 outcomes = Counter(r['outcome'] for r in joined if r['suite'] == suite['name'])
-                result.append({**row, 'status': 'failed' if outcomes['failed'] else 'passed',
-                               'expected': len(suite['cases']), 'observed': sum(outcomes.values()), 'outcomes': dict(outcomes)})
+                result.append({**row, 'status': 'failed' if outcomes['failed'] else ('held' if outcomes['held'] else 'passed'),
+                               'expected': len(suite['cases']), 'observed': outcomes['passed']+outcomes['failed'], 'outcomes': dict(outcomes),
+                               'holds': [dict(operation=r['operation'], hold=r['hold'], reason=r['reason']) for r in joined if r['suite']==suite['name'] and r['outcome']=='held']})
         for tier in self.tiers.values():
             if tier['status'] == 'held':
                 result.append(dict(source=source, configuration=CONFIGURATION, suite=None, implementation=None,
