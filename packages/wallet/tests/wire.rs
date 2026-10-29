@@ -15,6 +15,11 @@ use std::{
 };
 
 const GENESIS: [u8; 32] = [7; 32];
+/// Milliseconds between dripped bytes: the 74-byte valid response then trickles for about
+/// eleven seconds, past the ten-second contract maximum deadline.
+const DRIP: u64 = 150;
+/// The server's observation window, longer than the contract maximum deadline.
+const OBSERVE: Duration = Duration::from_secs(15);
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
 fn decoder() -> Limits {
@@ -146,7 +151,7 @@ fn request(stream: &mut TcpStream) -> Vec<u8> {
 }
 
 fn observe(stream: &mut TcpStream) -> Peer {
-    stream.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
+    stream.set_read_timeout(Some(OBSERVE)).unwrap();
     let mut sink = [0; 256];
     loop {
         match stream.read(&mut sink) {
@@ -627,10 +632,10 @@ fn bound_cases(ceiling: usize) -> Vec<Case> {
 fn acquisition_cases() -> Vec<Case> {
     let full = valid();
     let head = full.len() - body(3, "\"result\":7").len();
-    let short = RpcLimits {
-        deadline: Duration::from_secs(2),
-        ..RpcLimits::default()
-    };
+    // The deadline cases run under the contract maximum, like every other case: the two
+    // provisioning reads before each case must succeed within the same budget, so it must be
+    // one no scheduling delay reaches. The drip then trickles for longer than that budget and
+    // the held server waits longer than it, so only the case read can meet the deadline.
     vec![
         case("closed before any byte", "", Err(RpcRefusal::Http)),
         case("closed inside the status line", "HTTP/1.1 20", Err(RpcRefusal::Http)),
@@ -651,14 +656,12 @@ fn acquisition_cases() -> Vec<Case> {
             ..case("delayed trailing byte", "", Err(RpcRefusal::Http))
         },
         Case {
-            wire: full.bytes().map(|byte| (40, vec![byte])).collect(),
-            limits: short,
+            wire: full.bytes().map(|byte| (DRIP, vec![byte])).collect(),
             ..case("slow drip past the deadline", "", Err(RpcRefusal::Deadline))
         },
         // A timed-out exchange closes its connection: the held server sees the close.
         Case {
             hold: true,
-            limits: short,
             peer: Some(Peer::Eof),
             ..case(
                 "held open after the head",
@@ -668,7 +671,6 @@ fn acquisition_cases() -> Vec<Case> {
         },
         Case {
             hold: true,
-            limits: short,
             peer: Some(Peer::Eof),
             ..case("held open before any byte", "", Err(RpcRefusal::Deadline))
         },

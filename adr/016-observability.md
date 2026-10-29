@@ -272,7 +272,7 @@
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-basic-1` In `packages/wallet/src/rpc_secret.rs`, function `encode_basic`: Conforming cookie bytes are borrowed by the Basic encoder, which writes its output only into the target carrier; the encoder requires a slice. Source method: `expose_secret`. Production boundary.
 
-**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-header-1` In `packages/wallet/src/rpc_secret.rs`, function `header`: Basic authorization bytes leave the carrier as a sensitive header value, and from it pass through hyper's write buffer, for one exchange on the host-secured connection under the Basic authorization caveat; hyper's header and connection APIs cannot accept the carrier, and neither copy is zeroized. Source method: `expose_secret`. Production boundary.
+**Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-header-1` In `packages/wallet/src/rpc_secret.rs`, function `header`: Basic authorization bytes leave the carrier as a sensitive header value and, from it, hyper's write buffer, both held only for one exchange on the host-secured connection and dropped with its request and connection when the exchange completes, under the Basic authorization caveat; hyper's header and connection APIs cannot accept the carrier, and neither copy is zeroized. Source method: `expose_secret`. Production boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-wallet-rpc-secret-equals-1` In `packages/wallet/src/rpc_secret.rs`, function `equals`: Fixture carrier bytes are borrowed only for equality with the test's expected bytes; slice comparison cannot accept the container. Source method: `expose_secret`. Fixture-only boundary.
 

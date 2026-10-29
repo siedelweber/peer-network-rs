@@ -546,13 +546,14 @@ mod tests {
             .header(header::CONNECTION, "close")
             .body(Full::new(Bytes::from_static(b"{}")))
             .unwrap();
-        let result = exchange(
-            stream,
-            request,
-            RpcLimits::default(),
-            Instant::now() + Duration::from_millis(100),
-            &mut None,
-        );
+        // Framing cases assert refusals, not timing, so their budget is one no scheduling delay
+        // reaches; only the drip runs against a short deadline, which its trickle always outlasts.
+        let budget = if drip {
+            Duration::from_millis(100)
+        } else {
+            Duration::from_secs(60)
+        };
+        let result = exchange(stream, request, RpcLimits::default(), Instant::now() + budget, &mut None);
         server.join().unwrap();
         result
     }

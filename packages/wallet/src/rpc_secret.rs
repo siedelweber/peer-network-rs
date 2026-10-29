@@ -88,9 +88,9 @@ impl Buffer {
         )?;
         crate::rpc::basic(cookie, target)
     }
-    // Caveat: Basic authorization bytes leave the carrier as a sensitive header value, and from it pass through hyper's write buffer, for one exchange on the host-secured connection (´[ROOT-cav:devnet:basic-header-exposure]´); hyper's header and connection APIs cannot accept the carrier, and neither copy is zeroized.
+    // Caveat: Basic authorization bytes leave the carrier as a sensitive header value and, from it, hyper's write buffer, both held only for one exchange on the host-secured connection and dropped with its request and connection when the exchange completes, under the Basic authorization caveat; hyper's header and connection APIs cannot accept the carrier, and neither copy is zeroized.
     // (´[ROOT-cav:observe:secret-wallet-rpc-secret-header-1]´)
-    // Justified: Basic authorization bytes leave the carrier only as a sensitive header value whose request and connection are dropped at exchange completion; hyper's header and connection APIs cannot accept the carrier.
+    // Justified: Basic authorization bytes leave the carrier only as a sensitive header value whose request and connection are dropped at exchange completion under (´[ROOT-cav:devnet:basic-header-exposure]´); hyper's header and connection APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
     pub(crate) fn header(&self) -> Result<hyper::header::HeaderValue, RpcRefusal> {
         let mut value = hyper::header::HeaderValue::from_bytes(

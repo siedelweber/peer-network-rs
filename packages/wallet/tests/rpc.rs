@@ -133,11 +133,10 @@ fn provisioning_refusals() {
         RpcRefusal::Transport
     );
     // TEST-NET-1 is never routed to a peer: the bounded connect spends at most
-    // the one exchange budget and returns the transport refusal.
-    let budget = RpcLimits {
-        deadline: std::time::Duration::from_secs(2),
-        ..RpcLimits::default()
-    };
+    // the one exchange budget and returns the transport refusal. The budget is
+    // the contract maximum, which no scheduling delay before the connect reaches,
+    // and the elapsed bound only separates it from the kernel's own connect timeout.
+    let budget = RpcLimits::default();
     let started = std::time::Instant::now();
     let unreachable = RpcClient::new(
         config_for("cookie", Some("192.0.2.1")),
@@ -147,7 +146,7 @@ fn provisioning_refusals() {
         "wallet-genesis-1",
     );
     assert_eq!(unreachable.unwrap_err(), RpcRefusal::Transport);
-    assert!(started.elapsed() < std::time::Duration::from_secs(3));
+    assert!(started.elapsed() < 3 * budget.deadline);
     let unset = std::process::Command::new("python3")
         .args(["-B", "ci/wallet_elements.py", "start", "--root"])
         .arg(root().with_file_name(format!("wallet-unset-{}", std::process::id())))
