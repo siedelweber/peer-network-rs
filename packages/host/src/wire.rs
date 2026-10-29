@@ -31,9 +31,19 @@ impl fmt::Debug for Socket {
     }
 }
 impl Socket {
+    // Caveat: The transport discriminant is lent to the Unix-or-TCP match; its borrow ends at selection because byte-pattern matching requires a slice.
+    // (´[ROOT-cav:observe:secret-host-wire-open-field-1]´)
+    // Caveat: The Unix socket endpoint is lent to UnixStream::connect; the borrow and its ordinary OS socket-address representation last through the awaited connect because the socket API cannot consume a carrier.
+    // (´[ROOT-cav:observe:secret-host-wire-open-text-1]´)
+    // Caveat: The numeric TCP endpoint text is lent to IpAddr parsing; the text borrow ends at parse return and the ordinary address lasts through the awaited connect because the network API requires an address value.
+    // (´[ROOT-cav:observe:secret-host-wire-open-text-2]´)
+    // Caveat: The private port leaves as an ordinary u16 in the TCP connect tuple until the awaited connect completes; the socket API cannot accept a protected port.
+    // (´[ROOT-cav:observe:secret-host-wire-open-port-1]´)
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
+    #[allow(clippy::disallowed_methods)]
     pub(crate) async fn open(config: &Configuration) -> Result<Self, Refusal> {
-        match config.field(0) {
-            b"unix" => UnixStream::connect(config.text(1)?)
+        match config.expose_field(/* (´[ROOT-cav:observe:secret-host-wire-open-field-1]´) */ 0) {
+            b"unix" => UnixStream::connect(config.expose_text(/* (´[ROOT-cav:observe:secret-host-wire-open-text-1]´) */ 1)?)
                 .await
                 .map(|s| Self(Transport::Unix(s)))
                 .map_err(|_| Refusal::Transport),
@@ -41,12 +51,15 @@ impl Socket {
                 // Name resolution would copy the private hostname into Tokio's
                 // blocking resolver. This first route accepts numeric endpoints.
                 let address = config
-                    .text(1)?
+                    .expose_text(/* (´[ROOT-cav:observe:secret-host-wire-open-text-2]´) */ 1)?
                     .parse::<IpAddr>()
                     .map_err(|_| Refusal::NumericEndpointRequired)?;
-                let socket = TcpStream::connect((address, config.port()?))
-                    .await
-                    .map_err(|_| Refusal::Transport)?;
+                let socket = TcpStream::connect((
+                    address,
+                    config.expose_port(/* (´[ROOT-cav:observe:secret-host-wire-open-port-1]´) */)?,
+                ))
+                .await
+                .map_err(|_| Refusal::Transport)?;
                 socket.set_nodelay(true).map_err(|_| Refusal::Transport)?;
                 Ok(Self(Transport::Tcp(socket)))
             }
@@ -93,7 +106,7 @@ pub(crate) struct Frame {
 }
 // Caveat: Incoming private frame bytes are acquired directly into protected storage until the socket read completes; the read API requires a mutable slice.
 // (´[ROOT-cav:observe:secret-host-wire-read-buffer-1]´)
-// Justified: Incoming private frame bytes are acquired directly into protected storage until the socket read completes; the read API requires a mutable slice.
+// Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
 #[allow(clippy::disallowed_methods)]
 pub(crate) async fn read(stream: &mut (impl AsyncRead + Unpin)) -> Result<Frame, Refusal> {
     let kind = stream.read_u8().await.map_err(|_| Refusal::Transport)?;
@@ -112,7 +125,7 @@ pub(crate) async fn read(stream: &mut (impl AsyncRead + Unpin)) -> Result<Frame,
 }
 // Caveat: Private encoded frame bytes are borrowed only for the socket write until it completes; the socket API requires a slice.
 // (´[ROOT-cav:observe:secret-host-wire-send-buffer-1]´)
-// Justified: Private encoded frame bytes are borrowed only for the socket write until it completes; the socket API requires a slice.
+// Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
 #[allow(clippy::disallowed_methods)]
 pub(crate) async fn send(stream: &mut (impl AsyncWrite + Unpin), kind: u8, payload: &[u8]) -> Result<(), Refusal> {
     if payload.len() > LIMIT {
@@ -129,18 +142,26 @@ pub(crate) async fn send(stream: &mut (impl AsyncWrite + Unpin), kind: u8, paylo
         .map_err(|_| Refusal::Transport)?;
     stream.flush().await.map_err(|_| Refusal::Transport)
 }
-// Caveat: Private startup packet bytes are borrowed for framing and socket writing until startup returns; those byte-oriented APIs require slices.
-// (´[ROOT-cav:observe:secret-host-wire-startup-buffer-1]´)
-// Caveat: Private startup packet bytes are borrowed for framing and socket writing until startup returns; those byte-oriented APIs require slices.
+// Caveat: The configured user is lent to the startup field loop and copied by payload.append into protected packet storage; the borrow ends with that loop because byte framing requires slices.
+// (´[ROOT-cav:observe:secret-host-wire-startup-field-3]´)
+// Caveat: The configured database is lent to the startup field loop and copied by payload.append into protected packet storage; the borrow ends with that loop because byte framing requires slices.
+// (´[ROOT-cav:observe:secret-host-wire-startup-field-5]´)
+// Caveat: The private startup packet is lent to Socket::write_all; the borrow ends when the awaited write completes because the socket API requires a byte slice.
 // (´[ROOT-cav:observe:secret-host-wire-startup-buffer-2]´)
-// Justified: Private startup packet bytes are borrowed for framing and socket writing until startup returns; those byte-oriented APIs require slices.
+// Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
 #[allow(clippy::disallowed_methods)]
 pub(crate) async fn startup(stream: &mut Socket, config: &Configuration) -> Result<(), Refusal> {
     let mut payload = Buffer::new();
     payload.append(&196_608_u32.to_be_bytes())?;
     for (name, value) in [
-        (b"user".as_slice(), config.field(3)),
-        (b"database", config.field(5)),
+        (
+            b"user".as_slice(),
+            config.expose_field(/* (´[ROOT-cav:observe:secret-host-wire-startup-field-3]´) */ 3),
+        ),
+        (
+            b"database",
+            config.expose_field(/* (´[ROOT-cav:observe:secret-host-wire-startup-field-5]´) */ 5),
+        ),
         (b"client_encoding", b"UTF8"),
         (b"TimeZone", b"UTC"),
         (b"DateStyle", b"ISO, MDY"),
@@ -155,10 +176,7 @@ pub(crate) async fn startup(stream: &mut Socket, config: &Configuration) -> Resu
     }
     payload.append(&[0])?;
     stream
-        .write_u32(
-            u32::try_from(payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-wire-startup-buffer-1]´) */).len() + 4)
-                .map_err(|_| Refusal::RepresentationLimit)?,
-        )
+        .write_u32(u32::try_from(payload.len() + 4).map_err(|_| Refusal::RepresentationLimit)?)
         .await
         .map_err(|_| Refusal::Transport)?;
     stream

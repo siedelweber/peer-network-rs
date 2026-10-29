@@ -62,8 +62,8 @@
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:test-lints-cannot-be-suppressed",
       "before": "inner, conditional and inline-test suppressions refuse, including nesting.",
-      "after": "Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels and justified smallest-function allows, with only declared fixture boundaries permitted in tests.",
-      "review": "Read host accessor method-value and call refusal probes with matching labelled controls; no semantic data-flow proof is asserted."
+      "after": "Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels, distinct per-consumer reasons and justified smallest-function allows, with only declared fixture boundaries permitted in tests.",
+      "review": "Read missing-reason and duplicate-source and duplicate-register reason controls, normalized duplicates and distinct-reason acceptance; semantics remain reviewed."
     },
     {
       "operation": "ci::test_discipline.SourceDiscipline.test_toolchain_versions",
@@ -78,8 +78,8 @@
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:secret-carriers-reject-printable-traits",
       "before": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles, preventing accidental output opt-in.",
-      "after": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer accessors until an item-local exception permits them.",
-      "review": "Read denied and allowed method-call, mutable method-call, method-value and private host accessor controls alongside the existing carrier controls."
+      "after": "Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer, configuration and authentication accessors until an item-local exception permits them.",
+      "review": "Read the denied and allowed controls for each host configuration and authentication accessor alongside the existing Clippy controls."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_binary_reachability_control",
@@ -1904,6 +1904,14 @@
       "before": "",
       "after": "Claim: Two blocking derivations hold the process permits even after their logins are cancelled; an excess login remains outside the blocking pool until a job finishes, and all permits return after completion.",
       "review": "Read the two blocking-job rendezvous controls and a third polled derivation. Both aborts cancel only awaiters; the permits remain unavailable until the jobs are released, and the queued future then completes with the full permit count restored."
+    },
+    {
+      "operation": "pn-host::secret::tests::length_metadata",
+      "path": "packages/host/src/secret.rs",
+      "claim": "HOST::claim:host:buffer-length-needs-no-secret-borrow",
+      "before": "",
+      "after": "Claim: Buffer length reports public bookkeeping after bounded append and explicit length changes; refused growth preserves that bookkeeping without borrowing the protected bytes.",
+      "review": "Read each bounded append and length assignment, including refused growth leaving length unchanged; this fixture never borrows protected bytes."
     },
     {
       "operation": "pn-host::storage::tests::storage_competing_writers",

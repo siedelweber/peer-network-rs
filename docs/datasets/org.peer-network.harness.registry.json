@@ -3629,6 +3629,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-host::secret::tests::length_metadata",
         "pn-host::config::tests::secret_json_grammar",
         "pn-host::tests::wire_filter_boundary",
         "pn-host::tests::relay_refusals",

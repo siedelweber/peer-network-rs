@@ -48,7 +48,7 @@ class WorkspaceChecks(unittest.TestCase):
             self.assertTrue(http_admission_findings(bad, rows)[0])
 
     def test_secret_carrier_traits(self):
-        """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer accessors until an item-local exception permits them.
+        """Secret-owned strings and bytes reject Display and serde serialization while their Debug-only control compiles; Clippy denies method calls, trait-qualified calls, method values, initializer exits and host buffer, configuration and authentication accessors until an item-local exception permits them.
         ´claim:discipline:secret-carriers-reject-printable-traits´
         ´test:integration:test-secret-carrier-traits´
         """
@@ -103,11 +103,13 @@ class WorkspaceChecks(unittest.TestCase):
             # The host accessors are private. Reproduce their exact crate/module
             # identities in a standalone control, including the mutable borrow.
             (fixture/'Cargo.toml').write_text('[package]\nname="pn-host"\nversion="0.0.0"\nedition="2024"\n[workspace]\n[profile.gate]\ninherits="dev"\nopt-level=1\ndebug=0\n')
-            for method in ['expose_bytes', 'expose_storage']:
+            for expression in ['secret::Buffer.expose_bytes()', 'secret::Buffer.expose_storage()', 'config::Configuration.expose_field(0)', 'config::Configuration.expose_text(0)', 'config::Configuration.expose_port()', 'scram::expose_auth()']:
                 for allowed in [False, True]:
                     source = 'mod secret { pub struct Buffer; impl Buffer { pub fn expose_bytes(&self) -> &[u8] { &[] } pub fn expose_storage(&mut self) -> &mut [u8] { &mut [] } } }\n'
+                    source += 'mod config { pub struct Configuration; impl Configuration { pub fn expose_field(&self, _: usize) -> &[u8] { &[] } pub fn expose_text(&self, _: usize) -> &str { \"\" } pub fn expose_port(&self) -> u16 { 1 } } }\n'
+                    source += "mod scram { pub fn expose_auth() -> &'static [u8] { &[] } }\n"
                     source += ('#[allow(clippy::disallowed_methods)]\n' if allowed else '')
-                    source += 'fn main() { let mut value = secret::Buffer; let _ = value.'+method+'(); }'
+                    source += 'fn main() { let _ = '+expression+'; }'
                     (fixture/'src/main.rs').write_text(source)
                     result=subprocess.run(['cargo','clippy','--offline','--profile','gate','--manifest-path',str(fixture/'Cargo.toml'),'--','-D','clippy::disallowed_methods'],capture_output=True,text=True)
                     if allowed:self.assertEqual(result.returncode,0,result.stderr)
@@ -549,7 +551,7 @@ class SourceDiscipline(unittest.TestCase):
                 self.assertTrue(source_findings(Path('src/lib.rs'), source, 'printing'))
 
     def test_suppressions(self):
-        """Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels and justified smallest-function allows, with only declared fixture boundaries permitted in tests.
+        """Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels, distinct per-consumer reasons and justified smallest-function allows, with only declared fixture boundaries permitted in tests.
         ´claim:discipline:test-lints-cannot-be-suppressed´
         ´test:integration:test-suppressions´
         """
@@ -586,11 +588,23 @@ class SourceDiscipline(unittest.TestCase):
             self.assertTrue(source_findings(Path('tests/probe.rs'), bad, 'suppressions'), bad)
         sites, findings = exposure_sites(Path('tests/probe.rs'), allowed)
         self.assertFalse(findings)
-        register = [{"label": "cav:observe:secret-fixture", "path": "tests/probe.rs", "function": "fixture", "method": "expose_secret"}]
+        register = [{"label": "cav:observe:secret-fixture", "path": "tests/probe.rs", "function": "fixture", "method": "expose_secret", "reason": "The fixture compares borrowed bytes"}]
         self.assertFalse(exposure_registry_findings(sites, register))
         for bad in [[], register + register, [dict(register[0], function="other")], [dict(register[0], method="expose_secret_mut")]]:
             self.assertTrue(exposure_registry_findings(sites, bad))
-        for exit in ['expose_secret', 'expose_secret_mut', 'init_with', 'try_init_with', 'init_with_mut', 'expose_bytes', 'expose_storage']:
+        other = dict(sites[0], label="cav:observe:secret-other", item="other", reason="The second fixture checks its own decoded field")
+        second = dict(register[0], label=other['label'], function=other['item'], reason=other['reason'])
+        self.assertFalse(exposure_registry_findings(sites + [other], register + [second]))
+        for bad_sites, bad_register in [
+            (sites + [dict(other, reason=sites[0]['reason'])], register + [second]),
+            (sites + [other], register + [dict(second, reason=register[0]['reason'])]),
+            (sites + [other], register + [dict(second, reason="  THE fixture   compares borrowed bytes. ")]),
+            (sites, [dict(register[0], reason="")]),
+        ]:
+            self.assertTrue(exposure_registry_findings(bad_sites, bad_register))
+        self.assertTrue(exposure_sites(Path('tests/probe.rs'), allowed.replace('// Caveat:', '// Description:'))[1])
+        self.assertEqual(exposure_sites(Path('src/lib.rs'), 'fn count(value: &Buffer) -> usize { value.len() }'), ([], []))
+        for exit in ['expose_secret', 'expose_secret_mut', 'init_with', 'try_init_with', 'init_with_mut', 'expose_bytes', 'expose_storage', 'expose_field', 'expose_text', 'expose_port', 'expose_auth']:
             self.assertTrue(exposure_sites(Path('src/lib.rs'), 'fn f() { let exit = Value::'+exit+'; }')[1])
             self.assertFalse(exposure_sites(Path('src/lib.rs'), allowed.replace('expose_secret', exit))[1])
             self.assertTrue(exposure_sites(Path('src/lib.rs'), 'fn f() { value.'+exit+'(); }')[1])

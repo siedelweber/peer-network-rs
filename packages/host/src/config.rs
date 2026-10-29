@@ -45,21 +45,29 @@ impl Configuration {
         operation.finish(&result);
         result
     }
-    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // Caveat: The connection input storage is lent to Read::read for the current bounded acquisition call; the mutable borrow ends when that call returns because Read requires a byte slice.
     // (´[ROOT-cav:observe:secret-host-config-read-buffer-1]´)
-    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // Caveat: The acquired connection JSON is lent to the Json cursor for field parsing; the borrow ends after the final cursor check before input is dropped because the parser requires a byte slice.
     // (´[ROOT-cav:observe:secret-host-config-read-buffer-2]´)
-    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // Caveat: The parsed configuration key is lent to the field-name match for this iteration; the borrow ends with that match because byte-pattern selection cannot inspect a carrier.
     // (´[ROOT-cav:observe:secret-host-config-read-buffer-3]´)
-    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // Caveat: The parsed configuration value is lent to the NUL-byte predicate; the borrow ends when contains returns because slice validation cannot inspect a carrier.
     // (´[ROOT-cav:observe:secret-host-config-read-buffer-4]´)
-    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
-    // (´[ROOT-cav:observe:secret-host-config-read-buffer-5]´)
-    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // Caveat: The parsed field value is lent to data.append for copying into protected configuration storage; the borrow ends when append returns because bounded append accepts a byte slice.
     // (´[ROOT-cav:observe:secret-host-config-read-buffer-6]´)
-    // Caveat: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
-    // (´[ROOT-cav:observe:secret-host-config-read-buffer-7]´)
-    // Justified: Private configuration bytes are borrowed for direct JSON parsing, field validation and copying into protected storage until acquisition returns; the reader and parser require slices.
+    // Caveat: The configured transport discriminant is lent to its acquisition validity predicate; the borrow ends when that predicate completes because byte validation requires a slice.
+    // (´[ROOT-cav:observe:secret-host-config-read-field-0]´)
+    // Caveat: The configured endpoint is lent to its acquisition validity predicate; the borrow ends when that predicate completes because byte validation requires a slice.
+    // (´[ROOT-cav:observe:secret-host-config-read-field-1]´)
+    // Caveat: The configured user is lent to its acquisition validity predicate; the borrow ends when that predicate completes because byte validation requires a slice.
+    // (´[ROOT-cav:observe:secret-host-config-read-field-3]´)
+    // Caveat: The configured database is lent to its acquisition validity predicate; the borrow ends when that predicate completes because byte validation requires a slice.
+    // (´[ROOT-cav:observe:secret-host-config-read-field-5]´)
+    // Caveat: The configured password is lent to its acquisition validity predicate; the borrow ends when that predicate completes because byte validation requires a slice.
+    // (´[ROOT-cav:observe:secret-host-config-read-field-4]´)
+    // Caveat: The parsed private port scalar is returned only for acquisition validation and immediately discarded; a nonzero u16 check requires an ordinary integer.
+    // (´[ROOT-cav:observe:secret-host-config-read-port-1]´)
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
     fn read(case: Option<&str>, reader: &mut impl Read) -> Result<Self, Refusal> {
         match case {
@@ -109,9 +117,9 @@ impl Configuration {
             if value.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-4]´) */).contains(&0) {
                 return Err(Refusal::ConfigurationSyntax);
             }
-            let start = data.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-5]´) */).len();
+            let start = data.len();
             data.append(value.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-6]´) */))?;
-            fields[index] = Some(start..data.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-read-buffer-7]´) */).len());
+            fields[index] = Some(start..data.len());
             cursor.space();
             if cursor.bytes.get(cursor.at) == Some(&b'}') {
                 cursor.at += 1;
@@ -125,29 +133,49 @@ impl Configuration {
         }
         let fields = fields.map(Option::unwrap);
         let result = Self { data, fields };
-        if !matches!(result.field(0), b"unix" | b"tcp")
-            || result.field(1).is_empty()
-            || result.field(3).is_empty()
-            || result.field(5).is_empty()
-            || !result.field(4).iter().all(|value| (0x20..=0x7e).contains(value))
+        if !matches!(
+            result.expose_field(/* (´[ROOT-cav:observe:secret-host-config-read-field-0]´) */ 0),
+            b"unix" | b"tcp"
+        ) || result
+            .expose_field(/* (´[ROOT-cav:observe:secret-host-config-read-field-1]´) */ 1)
+            .is_empty()
+            || result
+                .expose_field(/* (´[ROOT-cav:observe:secret-host-config-read-field-3]´) */ 3)
+                .is_empty()
+            || result
+                .expose_field(/* (´[ROOT-cav:observe:secret-host-config-read-field-5]´) */ 5)
+                .is_empty()
+            || !result
+                .expose_field(/* (´[ROOT-cav:observe:secret-host-config-read-field-4]´) */ 4)
+                .iter()
+                .all(|value| (0x20..=0x7e).contains(value))
         {
             return Err(Refusal::ConfigurationSyntax);
         }
-        result.port()?;
+        result.expose_port(/* (´[ROOT-cav:observe:secret-host-config-read-port-1]´) */)?;
         Ok(result)
     }
-    // Caveat: A private configuration field is borrowed for the declared connection or authentication consumer until that consumer returns; indexed slice selection cannot operate on the carrier.
+    // Caveat: The selected private configuration range is borrowed from its protected backing buffer and returned only through the denied expose_field accessor; the borrow ends with its separately labelled caller use because indexed selection requires a slice.
     // (´[ROOT-cav:observe:secret-host-config-field-buffer-1]´)
-    // Justified: A private configuration field is borrowed for the declared connection or authentication consumer until that consumer returns; indexed slice selection cannot operate on the carrier.
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
-    pub(crate) fn field(&self, index: usize) -> &[u8] {
+    pub(crate) fn expose_field(&self, index: usize) -> &[u8] {
         &self.data.expose_bytes(/* (´[ROOT-cav:observe:secret-host-config-field-buffer-1]´) */)[self.fields[index].clone()]
     }
-    pub(crate) fn text(&self, index: usize) -> Result<&str, Refusal> {
-        std::str::from_utf8(self.field(index)).map_err(|_| Refusal::ConfigurationSyntax)
+    // Caveat: The selected configuration bytes are lent to UTF-8 validation and returned through denied expose_text; the borrow ends with its separately labelled caller use because from_utf8 requires a slice.
+    // (´[ROOT-cav:observe:secret-host-config-text-field-1]´)
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
+    #[allow(clippy::disallowed_methods)]
+    pub(crate) fn expose_text(&self, index: usize) -> Result<&str, Refusal> {
+        std::str::from_utf8(self.expose_field(/* (´[ROOT-cav:observe:secret-host-config-text-field-1]´) */ index))
+            .map_err(|_| Refusal::ConfigurationSyntax)
     }
-    pub(crate) fn port(&self) -> Result<u16, Refusal> {
-        self.text(2)?
+    // Caveat: The configured port text is lent to u16 parsing; its borrow ends at parse return and the ordinary scalar leaves only through denied expose_port because numeric parsing requires text.
+    // (´[ROOT-cav:observe:secret-host-config-port-text-1]´)
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
+    #[allow(clippy::disallowed_methods)]
+    pub(crate) fn expose_port(&self) -> Result<u16, Refusal> {
+        self.expose_text(/* (´[ROOT-cav:observe:secret-host-config-port-text-1]´) */ 2)?
             .parse::<u16>()
             .ok()
             .filter(|port| *port != 0)
@@ -192,7 +220,7 @@ impl Json<'_> {
     // (´[ROOT-cav:observe:secret-host-config-string-buffer-1]´)
     // Caveat: The Unicode encoder writes private configuration text into protected storage; its API requires a mutable byte array.
     // (´[ROOT-cav:observe:secret-host-config-string-1]´)
-    // Justified: Private configuration text is borrowed only for UTF-8 validation before returning its carrier; the validator requires a slice.
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
     fn string(&mut self) -> Result<Buffer, Refusal> {
         self.token(b'"')?;
@@ -259,10 +287,18 @@ mod tests {
     /// ´claim:host:secret-json-has-one-field-interpretation´
     /// ´test:unit:secret-json-grammar´
     #[test]
+    // Fixture-only secret boundary: This test creates its own isolated configuration.
+    // Caveat: The fixture user bytes go only to the Unicode-decoding equality assertion until that comparison ends; the assertion requires a byte slice and accepts no deployment configuration.
+    // (´[ROOT-cav:observe:secret-host-config-grammar-field-1]´)
+    // Justified: The fixture assertion requires a borrowed byte slice for its exact decoding comparison.
+    #[allow(clippy::disallowed_methods)]
     fn secret_json_grammar() {
         let input = br#"{"transport":"unix","endpoint":"/socket","port":"42100","user":"a\u0062\uD83D\uDE00","password":"safe","database":"db"}"#;
         let config = Configuration::acquire(Some("host-secured"), &mut input.as_slice()).unwrap();
-        assert_eq!(config.field(3), "ab😀".as_bytes());
+        assert_eq!(
+            config.expose_field(/* (´[ROOT-cav:observe:secret-host-config-grammar-field-1]´) */ 3),
+            "ab😀".as_bytes()
+        );
         for invalid in [
             br#"{"transport":"unix","endpoint":"/socket","port":"42100","user":"\uD800","password":"safe","database":"db"}"#.as_slice(),
             br#"{"transport":"unix","endpoint":"/socket","port":"42100","user":"a","user":"b","password":"safe","database":"db"}"#,

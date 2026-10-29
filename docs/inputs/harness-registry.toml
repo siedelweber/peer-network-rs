@@ -1119,7 +1119,7 @@ level = "unit"
 implementation = "pn-host-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-host::config::tests::secret_json_grammar", "pn-host::tests::wire_filter_boundary", "pn-host::tests::relay_refusals", "pn-host::scram::tests::ceiling_login_progress", "pn-host::scram::tests::derivation_permits", "pn-host::scram::tests::derivation_cost"]
+cases = ["pn-host::secret::tests::length_metadata", "pn-host::config::tests::secret_json_grammar", "pn-host::tests::wire_filter_boundary", "pn-host::tests::relay_refusals", "pn-host::scram::tests::ceiling_login_progress", "pn-host::scram::tests::derivation_permits", "pn-host::scram::tests::derivation_cost"]
 
 [[rows]]
 kind = "suite"

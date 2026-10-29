@@ -1,5 +1,9 @@
 # Every secret exit is a reviewed, labelled smallest-item exception.
 disallowed-methods = [
+  { path = "pn_host::config::Configuration::expose_field", reason = "Requires a labelled configuration consumer." },
+  { path = "pn_host::config::Configuration::expose_text", reason = "Requires a labelled configuration text consumer." },
+  { path = "pn_host::config::Configuration::expose_port", reason = "Requires a labelled connection scalar consumer." },
+  { path = "pn_host::scram::expose_auth", reason = "Requires a labelled authentication payload consumer." },
   { path = "pn_host::secret::Buffer::expose_bytes", reason = "Requires a labelled consumer-specific secret borrow." },
   { path = "pn_host::secret::Buffer::expose_storage", reason = "Requires a labelled consumer-specific secret borrow." },
   { path = "secrecy::ExposeSecret::expose_secret", reason = "Requires a labelled secret-exposure exception." },

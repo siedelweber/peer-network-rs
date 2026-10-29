@@ -132,7 +132,7 @@ def test_sources(sources):
         marked.update(added)
 
 
-SECRET_EXITS = {"expose_bytes", "expose_storage", "expose_secret", "expose_secret_mut", "init_with_mut", "init_with", "try_init_with"}
+SECRET_EXITS = {"expose_bytes", "expose_storage", "expose_field", "expose_text", "expose_port", "expose_auth", "expose_secret", "expose_secret_mut", "init_with_mut", "init_with", "try_init_with"}
 
 
 def exposure_sites(path, source):
@@ -165,9 +165,11 @@ def exposure_sites(path, source):
         grouped.setdefault(owner, []).append(match)
     for (_, _, name, header), calls in grouped.items():
         labels = re.findall(r"\(´\[ROOT-(cav:observe:secret-[a-z0-9-]+)\]´\)", header)
+        reasons = dict((label, reason) for reason, label in re.findall(
+            r"// Caveat: ([^\n]+)\n\s*// \(´\[ROOT-(cav:observe:secret-[a-z0-9-]+)\]´\)", header))
         allowed = re.search(r"#\[allow\(clippy::disallowed_methods\)\]", header)
         justified = re.search(r"// Justified: [^\n]+\.\n\s*#\[allow\(clippy::disallowed_methods\)\]", header)
-        if not allowed or not justified or len(labels) != len(calls) or len(set(labels)) != len(labels):
+        if not allowed or not justified or len(labels) != len(calls) or len(set(labels)) != len(labels) or set(reasons) != set(labels):
             findings.append(f"secret exits in {name} require one unique Caveat label per exit and a justified item-local allow")
         for index, call in enumerate(calls):
             label = labels[index] if index < len(labels) else None
@@ -175,7 +177,7 @@ def exposure_sites(path, source):
             if not citation or citation.group(1) != label:
                 findings.append(f"secret exit in {name} lacks its own site citation")
             rows.append({"path": str(path), "item": name, "line": source[:call.start()].count("\n") + 1,
-                         "method": call.group(), "label": label})
+                         "method": call.group(), "label": label, "reason": reasons.get(label, '').rstrip('.')})
     if re.search(r"\bSerializableSecret\b", code):
         findings.append("secret serialization is not admitted; use a labelled explicit exposure boundary")
     return rows, findings
@@ -241,6 +243,15 @@ def exposure_registry_findings(sites, register):
     actual = {row["label"]: (row["path"], row["item"], row["method"]) for row in sites}
     if len(expected) != len(register) or len(actual) != len(sites) or expected != actual:
         return ["secret exposure register differs from sites: " + str(sorted(set(expected.items()) ^ set(actual.items()), key=str))]
+    for entries in (sites, register):
+        reasons = {}
+        for row in entries:
+            reason = ' '.join(row.get('reason', '').strip().rstrip('.').casefold().split())
+            if not reason:
+                return ['secret exposure lacks its per-exit reason: '+row['label']]
+            if reason in reasons:
+                return ['secret exposure reason reused across exits: '+reasons[reason]+' and '+row['label']]
+            reasons[reason] = row['label']
     return []
 
 
@@ -550,6 +561,7 @@ def main():
             failed = True
         config = tomllib.loads(pathlib.Path("clippy.toml").read_text())
         required = {"pn_host::secret::Buffer::expose_bytes", "pn_host::secret::Buffer::expose_storage", "secrecy::ExposeSecret::expose_secret", "secrecy::ExposeSecretMut::expose_secret_mut",
+                    "pn_host::config::Configuration::expose_field", "pn_host::config::Configuration::expose_text", "pn_host::config::Configuration::expose_port", "pn_host::scram::expose_auth",
                     "secrecy::SecretBox::init_with_mut", "secrecy::SecretBox::init_with", "secrecy::SecretBox::try_init_with"}
         manifest = tomllib.loads(pathlib.Path("Cargo.toml").read_text())
         if not required <= {row["path"] for row in config["disallowed-methods"]} or manifest["workspace"]["lints"]["clippy"].get("disallowed_methods") != "deny":

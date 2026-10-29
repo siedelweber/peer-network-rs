@@ -126,7 +126,7 @@
 | pn-host::postgresql | active | unit | pn-host-postgresql | service | 8 |
 | ci::test_host_runtime | active | integration | pn-host-postgresql | service | 9 |
 | pn-host-doctests | active | doctest | pn-host-rust | fast | 3 |
-| pn-host | active | unit | pn-host-rust | fast | 6 |
+| pn-host | active | unit | pn-host-rust | fast | 7 |
 | pn-host::transport-evidence | active | unit | pn-host-postgresql | service | 1 |
 | pn-host::storage | active | unit | pn-host-memory-and-postgresql | service | 12 |
 | pn-wallet | active | unit | pn-wallet-rust | fast | 13 |

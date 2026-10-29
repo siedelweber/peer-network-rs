@@ -169,7 +169,7 @@ impl Session {
     )]
     // Caveat: Private startup-frame bytes are borrowed only for the ready-state check until comparison returns; the protocol check requires a slice.
     // (´[ROOT-cav:observe:secret-host-lib-connect-buffer-1]´)
-    // Justified: Private startup-frame bytes are borrowed only for the ready-state check until comparison returns; the protocol check requires a slice.
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
     pub async fn connect(config: Configuration) -> Result<Self, Refusal> {
         let result = async {
@@ -277,11 +277,11 @@ impl Session {
         }
         result
     }
-    // Caveat: Private cancellation capability and packet bytes are borrowed for protected packet assembly and its socket write until cancellation returns; the socket API requires a slice.
+    // Caveat: The retained cancellation capability is lent to packet.append while its mutex guard is held; the borrow ends when append returns because protected packet assembly accepts bytes.
     // (´[ROOT-cav:observe:secret-host-lib-cancel-inner-buffer-1]´)
-    // Caveat: Private cancellation capability and packet bytes are borrowed for protected packet assembly and its socket write until cancellation returns; the socket API requires a slice.
+    // Caveat: The encoded cancellation packet is lent to Socket::write_all on the cancellation connection; the borrow ends when the awaited write completes because the socket API requires bytes.
     // (´[ROOT-cav:observe:secret-host-lib-cancel-inner-buffer-2]´)
-    // Justified: Private cancellation capability and packet bytes are borrowed for protected packet assembly and its socket write until cancellation returns; the socket API requires a slice.
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
     async fn cancel_inner(&self) -> Result<(), Refusal> {
         let mut packet = Buffer::new();
@@ -324,15 +324,15 @@ impl Session {
     }
 }
 
-// Caveat: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+// Caveat: The placeholder buffer storage is lent to the shim read_exact for the bounded startup read; the mutable borrow ends when that awaited read completes because the reader requires a slice.
 // (´[ROOT-cav:observe:secret-host-lib-forward-buffer-1]´)
-// Caveat: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+// Caveat: The captured startup placeholder is lent to the exact public-placeholder equality check; the borrow ends at comparison because validating the driver handoff requires bytes.
 // (´[ROOT-cav:observe:secret-host-lib-forward-buffer-2]´)
-// Caveat: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+// Caveat: The retained classified-public startup frame is lent to wire::send toward the shim; the borrow ends when that awaited startup-frame send completes because wire framing requires bytes.
 // (´[ROOT-cav:observe:secret-host-lib-forward-buffer-3]´)
-// Caveat: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+// Caveat: The classified-public inbound frame is lent to wire::send toward the client after filtering; the borrow ends when that awaited relay send completes because wire framing requires bytes.
 // (´[ROOT-cav:observe:secret-host-lib-forward-buffer-4]´)
-// Justified: Private relay-frame bytes are borrowed for the startup check, acquisition and socket forwarding until the corresponding operation returns; these byte-oriented interfaces require slices.
+// Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
 #[allow(clippy::disallowed_methods)]
 async fn forward(
     mut shim: tokio::io::DuplexStream,
@@ -481,7 +481,7 @@ async fn relay(state: Relay) -> Result<(), Refusal> {
 )]
 // Caveat: Private outbound frame storage is borrowed for the authenticated socket write until it completes; the socket API requires a slice.
 // (´[ROOT-cav:observe:secret-host-lib-relay-outbound-buffer-1]´)
-// Justified: Private outbound frame storage is borrowed for the authenticated socket write until it completes; the socket API requires a slice.
+// Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
 #[allow(clippy::disallowed_methods)]
 async fn relay_outbound(state: Outbound) -> Result<(), Refusal> {
     let Outbound {
@@ -515,7 +515,7 @@ async fn relay_outbound(state: Outbound) -> Result<(), Refusal> {
 
 // Caveat: Classified-public frame bytes are borrowed only to construct the full public observation after classification, ending when public_bytes returns; that representation API requires a slice.
 // (´[ROOT-cav:observe:secret-host-lib-observe-public-frame-buffer-1]´)
-// Justified: Classified-public frame bytes are borrowed only to construct the full public observation after classification, ending when public_bytes returns; that representation API requires a slice.
+// Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
 #[allow(clippy::disallowed_methods)]
 fn observe_public_frame(frame: &wire::Frame) {
     let operation = cli_common::observation::scope(
@@ -537,15 +537,13 @@ fn observe_public_frame(frame: &wire::Frame) {
     operation.finish(&result);
 }
 
-// Caveat: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
-// (´[ROOT-cav:observe:secret-host-lib-filter-buffer-1]´)
-// Caveat: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
+// Caveat: The parameter frame is lent to the session_authorization prefix predicate; the borrow ends when starts_with returns because private-role classification requires bytes.
 // (´[ROOT-cav:observe:secret-host-lib-filter-buffer-2]´)
-// Caveat: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
+// Caveat: The parameter frame is lent to public_parameter for classification against its declared public forms; the borrow ends when that predicate returns because classification requires bytes.
 // (´[ROOT-cav:observe:secret-host-lib-filter-buffer-3]´)
-// Caveat: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
+// Caveat: The diagnostic frame is lent to public_diagnostic for classification against its declared public fields; the borrow ends when that predicate returns because classification requires bytes.
 // (´[ROOT-cav:observe:secret-host-lib-filter-buffer-4]´)
-// Justified: Private incoming frame bytes are borrowed for the declared classification and capability checks until filtering returns; these protocol predicates require slices.
+// Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
 #[allow(clippy::disallowed_methods)]
 fn filter(
     mut frame: wire::Frame,
@@ -554,7 +552,7 @@ fn filter(
 ) -> Result<Option<wire::Frame>, Refusal> {
     match frame.kind {
         b'K' => {
-            if frame.payload.expose_bytes(/* (´[ROOT-cav:observe:secret-host-lib-filter-buffer-1]´) */).len() != 8 {
+            if frame.payload.len() != 8 {
                 return Err(Refusal::Protocol);
             }
             *key.lock().map_err(|_| Refusal::Cancellation)? = Some(frame.payload);
@@ -658,17 +656,17 @@ mod tests {
     /// ´test:unit:wire-filter-boundary´
     #[test]
     // Fixture-only secret boundary: Only this test constructs and consumes these fixture secrets.
-    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // Caveat: The replacement backend-key fixture is lent to the assertion against the fixed public dummy bytes; the borrow ends at that assertion because exact equality requires a slice.
     // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-1]´)
-    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // Caveat: The retained backend-key fixture is lent to the assertion against private! while its fixture mutex guard is held; the borrow ends at that assertion because exact equality requires a slice.
     // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-2]´)
-    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // Caveat: The retained application-name fixture is lent to its exact preservation assertion; the borrow ends at that assertion because equality requires a slice.
     // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-3]´)
-    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // Caveat: The retained error-message fixture is lent to its exact preservation assertion; the borrow ends at that assertion because equality requires a slice.
     // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-4]´)
-    // Caveat: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // Caveat: The classified-public error fixture is lent to the assertion against its original public packet; the borrow ends at that assertion because exact equality requires a slice.
     // (´[ROOT-cav:observe:secret-host-lib-wire-filter-boundary-buffer-5]´)
-    // Justified: Only the locally constructed frame, capability and diagnostic fixtures are borrowed for exact result comparisons until each assertion returns; equality requires slices.
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
     fn wire_filter_boundary() {
         let key = Mutex::new(None);

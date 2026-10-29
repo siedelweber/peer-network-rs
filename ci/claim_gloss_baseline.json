@@ -414,6 +414,7 @@
     "pn-host::scram::tests::ceiling_login_progress": "",
     "pn-host::scram::tests::derivation_cost": "",
     "pn-host::scram::tests::derivation_permits": "",
+    "pn-host::secret::tests::length_metadata": "",
     "pn-host::storage::tests::storage_competing_writers": "",
     "pn-host::storage::tests::storage_contract": "",
     "pn-host::storage::tests::storage_digest_vectors": "",

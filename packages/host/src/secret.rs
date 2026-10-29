@@ -25,17 +25,20 @@ impl Buffer {
     }
     // Caveat: The protocol-storage borrow is forwarded only through a separately labelled host consumer, including classified-public observation after classification; these reviewed consumers require slices rather than a secret container.
     // (´[ROOT-cav:observe:secret-host-secret-bytes-1]´)
-    // Justified: The protocol-storage borrow is forwarded only through a separately labelled host consumer, including classified-public observation after classification; these reviewed consumers require slices rather than a secret container.
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
     pub(crate) fn expose_bytes(&self) -> &[u8] {
         &self.bytes.expose_secret(/* (´[ROOT-cav:observe:secret-host-secret-bytes-1]´) */)[..self.length]
     }
     // Caveat: The mutable private buffer goes only to acquisition or encoding into protected storage; the byte-oriented APIs cannot accept the container.
     // (´[ROOT-cav:observe:secret-host-secret-storage-1]´)
-    // Justified: The mutable private buffer goes only to acquisition or encoding into protected storage; the byte-oriented APIs cannot accept the container.
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
     pub(crate) fn expose_storage(&mut self) -> &mut [u8] {
         self.bytes.expose_secret_mut(/* (´[ROOT-cav:observe:secret-host-secret-storage-1]´) */)
+    }
+    pub(crate) fn len(&self) -> usize {
+        self.length
     }
     pub(crate) fn set_length(&mut self, length: usize) -> Result<(), Refusal> {
         if length > self.capacity {
@@ -46,7 +49,7 @@ impl Buffer {
     }
     // Caveat: Incoming private bytes are copied directly into protected storage through a borrow ending when copying returns; the container has no bounded append operation.
     // (´[ROOT-cav:observe:secret-host-secret-append-2]´)
-    // Justified: Incoming private bytes are copied directly into protected storage; the container has no bounded append operation.
+    // Justified: Each labelled borrow below serves only its stated consumer until its stated endpoint; those byte-oriented APIs cannot accept the carrier.
     #[allow(clippy::disallowed_methods)]
     pub(crate) fn append(&mut self, bytes: &[u8]) -> Result<(), Refusal> {
         let end = self.length.checked_add(bytes.len()).ok_or(Refusal::RepresentationLimit)?;
@@ -69,5 +72,32 @@ impl fmt::Debug for Buffer {
     /// Justified: Protocol and secret-carrier trait plumbing inherits the enclosing host operation; re-observation would duplicate content or format secret state.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str("SecretBuffer { role: store-transport, value: [REDACTED] }")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Buffer;
+    use crate::Refusal;
+
+    /// Claim: Buffer length reports public bookkeeping after bounded append and explicit length changes; refused growth preserves that bookkeeping without borrowing the protected bytes.
+    /// ´claim:host:buffer-length-needs-no-secret-borrow´
+    /// ´test:unit:length-metadata´
+    #[test]
+    fn length_metadata() {
+        let mut value = Buffer::with_capacity(3);
+        assert_eq!(value.len(), 0);
+        value.append(b"ab").unwrap();
+        assert_eq!(value.len(), 2);
+        assert_eq!(value.append(b"cd"), Err(Refusal::RepresentationLimit));
+        assert_eq!(value.len(), 2);
+        assert_eq!(value.set_length(4), Err(Refusal::RepresentationLimit));
+        assert_eq!(value.len(), 2);
+        value.set_length(1).unwrap();
+        assert_eq!(value.len(), 1);
+        value.append(b"cd").unwrap();
+        assert_eq!(value.len(), 3);
+        value.set_length(0).unwrap();
+        assert_eq!(value.len(), 0);
     }
 }
