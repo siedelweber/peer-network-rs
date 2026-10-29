@@ -143,7 +143,7 @@
 | graph-partition-graph | active | integration | pn-graph-rust | fast | 6 |
 | graph-partition-verification | active | integration | pn-graph-rust | fast | 6 |
 | pn-graph::registration | active | public-surface | pn-graph-rust | fast | 3 |
-| pn-graph::formation | active | public-surface | pn-graph-rust | fast | 41 |
+| pn-graph::formation | active | public-surface | pn-graph-rust | fast | 42 |
 | pn-verification::recognition | active | integration | pn-graph-rust | fast | 7 |
 | pn-graph::title | active | public-surface | pn-graph-rust | fast | 1 |
 | graph-title-graph | active | integration | pn-graph-rust | fast | 8 |

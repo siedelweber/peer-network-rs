@@ -1450,6 +1450,14 @@
       "review": "Leave witnesses cover unconditional typed Chat incidence with no authored parameters, whole-result twelve-family reconstruction, deterministic parallel edges and structural revalidation. Observation compares fifteen operations with thirteen successes and two refusals across disabled, default and trace. No membership fold, geometry, title or new ordering verdict is established."
     },
     {
+      "operation": "pn-graph::formation::metadata_equivalence",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:shared-act-metadata-preserves-projection-presentation",
+      "before": "",
+      "after": "Claim: All nineteen families and twenty-seven projections retain the exact pre-carrier JSON bytes and compact and alternate Debug presentations. Each baseline decodes to the same complete weight; missing inherited fields or unknown fields still refuse. Inherited storage changes no revalidation authority or canonical publication identity.",
+      "review": "The pre-carrier nineteen-family fixture fixes exact JSON and both Debug presentations. The shared metadata adapter preserves them and retains strict decoding; existing authorization and revalidation suites remain unchanged in outcome."
+    },
+    {
       "operation": "pn-graph::formation::minted_node_conformance",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:minted-nodes-agree-with-records-genesis-resolution",

@@ -17,20 +17,19 @@ pub enum GroundedNode {
     Profile(String),
 }
 
-/// A cache of one Registration binary projection and inherited finalization fields.
-/// Family and role are fixed by this type; neither time nor position is identity.
-/// (´def:formation:registration´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct RegistrationProjection {
-    /// Public author atom, also the grounded pair's atom.
-    pub author: String,
-    /// Author-local sequence in the Registration act identity.
-    pub sequence: u64,
-    /// Inherited published epoch and position, never an independent edge stamp.
-    pub position: Position,
-    /// Inherited attachment, never recomputed or independently authoritative.
-    pub logical_time: u64,
+crate::metadata::projection! {
+    /// A cache of one Registration binary projection and inherited finalization fields.
+    /// Family and role are fixed by this type; neither time nor position is identity.
+    /// (´def:formation:registration´)
+    pub struct RegistrationProjection {
+        before {
+            /// Public author atom, also the grounded pair's atom.
+            pub author: String,
+            /// Author-local sequence in the Registration act identity.
+            pub sequence: u64,
+        }
+        after {}
+    }
 }
 
 /// Direct backend value with every parallel Registration retained.
@@ -215,8 +214,7 @@ pub(super) fn project(
         RegistrationProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
         },
     ))
 }

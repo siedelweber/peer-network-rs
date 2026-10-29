@@ -3990,7 +3990,8 @@
         "pn-graph::formation::settlement_context",
         "pn-graph::formation::settlement_reconstruction",
         "pn-graph::formation::settlement_partition",
-        "pn-graph::formation::title_inputs"
+        "pn-graph::formation::title_inputs",
+        "pn-graph::formation::metadata_equivalence"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",

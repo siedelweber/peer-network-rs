@@ -717,7 +717,7 @@ fn owner_reconstruction() {
     let Projection::Owner(weight) = &mut changed[petgraph::graph::EdgeIndex::new(2)] else {
         panic!("wrong family")
     };
-    weight.position = (2, 3);
+    weight.metadata.position = (2, 3);
     weight.attachment = pn_graph::formation::Coordinate {
         numerator: -1,
         denominator: 2,
@@ -835,7 +835,7 @@ fn participant_projection() {
         };
         assert_eq!(a.role, ParticipantRole::A);
         assert_eq!(t.role, ParticipantRole::T);
-        assert_eq!((a.sequence, a.logical_time, a.position), (3, 3, (1, 3)));
+        assert_eq!((a.sequence, a.metadata.logical_time, a.metadata.position), (3, 3, (1, 3)));
         let mut expected = a.clone();
         expected.role = ParticipantRole::T;
         assert_eq!(&expected, t);
@@ -1007,7 +1007,7 @@ fn participant_cache(graph: &pn_graph::formation::FormationGraph, history: &pn_r
     let Projection::Participant(weight) = &mut changed[petgraph::graph::EdgeIndex::new(5)] else {
         panic!("wrong family")
     };
-    weight.logical_time += 1;
+    weight.metadata.logical_time += 1;
     assert_eq!(
         validate_formation(&changed, history, verifier),
         Err(RegistrationError::GraphMismatch)
@@ -1165,7 +1165,7 @@ fn review_projection() {
                 panic!("wrong family")
             };
             assert_eq!(a.role, ReviewRole::A);
-            assert_eq!((a.sequence, a.position, a.logical_time), (3, (1, 3), 3));
+            assert_eq!((a.sequence, a.metadata.position, a.metadata.logical_time), (3, (1, 3), 3));
             assert_eq!((a.enthusiasm.numerator, a.enthusiasm.denominator), (-1, 2));
             assert_eq!((a.effort.numerator, a.effort.denominator), (2, 3));
 
@@ -1481,7 +1481,7 @@ fn send_projection() {
             panic!("wrong family")
         };
         assert_eq!(a.role, SendRole::A);
-        assert_eq!((a.sequence, a.position, a.logical_time), (3, (1, 3), 3));
+        assert_eq!((a.sequence, a.metadata.position, a.metadata.logical_time), (3, (1, 3), 3));
         assert_eq!((a.importance.numerator, a.importance.denominator), (-1, 2));
         let mut expected = a.clone();
         expected.role = SendRole::T;
@@ -1735,7 +1735,7 @@ fn bid_projection() {
         panic!("wrong family")
     };
     assert_eq!(a.role, BidRole::A);
-    assert_eq!((a.sequence, a.position, a.logical_time), (3, (1, 3), 3));
+    assert_eq!((a.sequence, a.metadata.position, a.metadata.logical_time), (3, (1, 3), 3));
     assert_eq!((a.generosity.numerator, a.generosity.denominator), (-1, 2));
     assert_eq!((a.urgency.numerator, a.urgency.denominator), (2, 3));
     let mut expected = a.clone();
@@ -2001,7 +2001,12 @@ fn opinion_projection() {
         assert_eq!((weight.polarity.numerator, weight.polarity.denominator), (-1, 2));
         assert_eq!((weight.reaction.numerator, weight.reaction.denominator), (2, 3));
         assert_eq!(
-            (weight.author.as_str(), weight.sequence, weight.position, weight.logical_time),
+            (
+                weight.author.as_str(),
+                weight.sequence,
+                weight.metadata.position,
+                weight.metadata.logical_time
+            ),
             ("a", 3, (1, 3), 3)
         );
     }
@@ -2212,7 +2217,12 @@ fn join_request_projection() {
     assert_eq!((weight.urgency.numerator, weight.urgency.denominator), (-1, 2));
     assert_eq!((weight.formality.numerator, weight.formality.denominator), (2, 3));
     assert_eq!(
-        (weight.author.as_str(), weight.sequence, weight.position, weight.logical_time),
+        (
+            weight.author.as_str(),
+            weight.sequence,
+            weight.metadata.position,
+            weight.metadata.logical_time
+        ),
         ("a", 3, (1, 3), 3)
     );
     for (n, d) in [(0, 1), (2, 3)] {
@@ -2400,7 +2410,7 @@ fn tag_projection() {
         assert_eq!((a.relevance.numerator, a.relevance.denominator), (-1, 2));
         assert_eq!((a.confidence.numerator, a.confidence.denominator), (2, 3));
         assert_eq!(
-            (a.author.as_str(), a.sequence, a.position, a.logical_time),
+            (a.author.as_str(), a.sequence, a.metadata.position, a.metadata.logical_time),
             ("a", 3, (1, 3), 3)
         );
         let mut expected = a.clone();
@@ -2730,7 +2740,12 @@ fn leave_projection() {
         panic!("wrong family")
     };
     assert_eq!(
-        (weight.author.as_str(), weight.sequence, weight.position, weight.logical_time),
+        (
+            weight.author.as_str(),
+            weight.sequence,
+            weight.metadata.position,
+            weight.metadata.logical_time
+        ),
         ("a", 3, (1, 3), 3)
     );
     for target in [
@@ -2908,7 +2923,7 @@ fn reference_projection() {
         assert_eq!((a.effort.numerator, a.effort.denominator), (-1, 2));
         assert_eq!((a.enthusiasm.numerator, a.enthusiasm.denominator), (2, 3));
         assert_eq!(
-            (a.author.as_str(), a.sequence, a.position, a.logical_time),
+            (a.author.as_str(), a.sequence, a.metadata.position, a.metadata.logical_time),
             ("a", 3, (1, 3), 3)
         );
         let mut expected = a.clone();
@@ -3151,7 +3166,7 @@ fn invitation_projection() {
     assert_eq!((a.formality.numerator, a.formality.denominator), (2, 3));
     assert_eq!((a.relevance.numerator, a.relevance.denominator), (1, 2));
     assert_eq!(
-        (a.author.as_str(), a.sequence, a.position, a.logical_time),
+        (a.author.as_str(), a.sequence, a.metadata.position, a.metadata.logical_time),
         ("a", 14, (1, 14), 14)
     );
     let mut expected = a.clone();
@@ -3358,7 +3373,7 @@ fn deinvite_projection() {
     };
     assert_eq!(a.role, pn_graph::formation::DeinviteRole::A);
     assert_eq!(
-        (a.author.as_str(), a.sequence, a.position, a.logical_time),
+        (a.author.as_str(), a.sequence, a.metadata.position, a.metadata.logical_time),
         ("a", 15, (1, 15), 15)
     );
     let mut expected = a.clone();
@@ -3405,7 +3420,12 @@ fn withdraw_projection() {
         panic!("wrong family")
     };
     assert_eq!(
-        (weight.author.as_str(), weight.sequence, weight.position, weight.logical_time),
+        (
+            weight.author.as_str(),
+            weight.sequence,
+            weight.metadata.position,
+            weight.metadata.logical_time
+        ),
         ("a", 3, (1, 3), 3)
     );
     for target in [
@@ -3491,7 +3511,12 @@ fn rescind_projection() {
         panic!("wrong family")
     };
     assert_eq!(
-        (weight.author.as_str(), weight.sequence, weight.position, weight.logical_time),
+        (
+            weight.author.as_str(),
+            weight.sequence,
+            weight.metadata.position,
+            weight.metadata.logical_time
+        ),
         ("a", 3, (1, 3), 3)
     );
     for target in [
@@ -4113,5 +4138,51 @@ fn settlement_partition() {
         );
         assert_eq!(boundary.acts()[7].legs().len(), 2);
         assert_eq!(blocks.iter().map(Vec::len).sum::<usize>(), 19);
+    }
+}
+
+/// Claim: All nineteen families and twenty-seven projections retain the exact pre-carrier JSON bytes and compact and alternate Debug presentations. Each baseline decodes to the same complete weight; missing inherited fields or unknown fields still refuse. Inherited storage changes no revalidation authority or canonical publication identity.
+/// ´claim:formation:shared-act-metadata-preserves-projection-presentation´
+/// ´test:integration:metadata-equivalence´
+#[test]
+fn metadata_equivalence() {
+    let inputs = formed_cases();
+    let families: std::collections::BTreeSet<_> = inputs.iter().map(|act| &act.id.family).collect();
+    assert_eq!(families.len(), 19);
+    let history = validate_history(&inputs, &names()).unwrap();
+    let graph = reconstruct(
+        &history,
+        &Verifier {
+            acts: inputs,
+            removals: true,
+        },
+    )
+    .unwrap();
+    let expected: Vec<(String, String, String)> = serde_json::from_str(include_str!("metadata-baseline.json")).unwrap();
+    assert_eq!(expected.len(), 27);
+    assert_eq!(graph.edge_count(), expected.len());
+    for (weight, (json, compact, alternate)) in graph.edge_weights().zip(expected) {
+        assert_eq!(serde_json::to_string(weight).unwrap(), json);
+        assert_eq!(format!("{weight:?}"), compact);
+        assert_eq!(format!("{weight:#?}"), alternate);
+        let decoded: Projection = serde_json::from_str(&json).unwrap();
+        assert_eq!(&decoded, weight);
+        for field in ["position", "logical_time", "unknown"] {
+            let mut altered: serde_json::Value = serde_json::from_str(&json).unwrap();
+            let body = altered
+                .as_object_mut()
+                .unwrap()
+                .values_mut()
+                .next()
+                .unwrap()
+                .as_object_mut()
+                .unwrap();
+            if field == "unknown" {
+                body.insert(field.into(), serde_json::json!(0));
+            } else {
+                body.remove(field);
+            }
+            assert!(serde_json::from_value::<Projection>(altered).is_err());
+        }
     }
 }

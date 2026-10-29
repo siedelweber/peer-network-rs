@@ -357,6 +357,7 @@
     "pn-graph::formation::join_request_reconstruction": "",
     "pn-graph::formation::leave_projection": "",
     "pn-graph::formation::leave_reconstruction": "",
+    "pn-graph::formation::metadata_equivalence": "",
     "pn-graph::formation::minted_node_conformance": "",
     "pn-graph::formation::mixed_reconstruction": "",
     "pn-graph::formation::opinion_projection": "",

@@ -15242,15 +15242,6 @@
       "expansion_review": "Derives clone, compare and format public grounded identifiers, Registration projection metadata and bounded refusal/opening variants. Serde derives carry only diagnostic public node and edge weights; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
     },
     {
-      "item": "registration::RegistrationProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/registration.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-registration",
-      "expansion_review": "Derives clone, compare and format public grounded identifiers, Registration projection metadata and bounded refusal/opening variants. Serde derives carry only diagnostic public node and edge weights; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
-    },
-    {
       "item": "registration::OpeningKind",
       "kind": "derive",
       "package": "pn-graph",
@@ -15287,15 +15278,6 @@
       "expansion_review": "Derives clone, compare and format public typed endpoints, exact bounded coordinate pairs and binary projection metadata. Serde derives carry diagnostic public node and edge weights only; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
     },
     {
-      "item": "formation::AffinityProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Derives clone, compare and format public typed endpoints, exact bounded coordinate pairs and binary projection metadata. Serde derives carry diagnostic public node and edge weights only; decoded graph values require complete typed revalidation and never establish canonical publication or binding equality."
-    },
-    {
       "item": "formation::Projection",
       "kind": "derive",
       "package": "pn-graph",
@@ -15314,24 +15296,6 @@
       "expansion_review": "Cloning, Debug and equality expose only the public node constructor class; no resolution, byte encoding, secret data or accounting is introduced."
     },
     {
-      "item": "formation::PublishProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Clone, structural equality and full Debug retain public Publish attachment, finalization metadata and the genesis-only bounded attribution/provenance pair. Serde remains diagnostic; decoded values require typed reconstruction comparison and never establish canonical byte identity."
-    },
-    {
-      "item": "formation::OwnerProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Clone, structural equality and full Debug retain public Owner attachment, finalization metadata and no license qualifiers. Serde is diagnostic and requires typed reconstruction comparison before binding use; it is not canonical publication."
-    },
-    {
       "item": "formation::ParticipantRole",
       "kind": "derive",
       "package": "pn-graph",
@@ -15341,29 +15305,11 @@
       "expansion_review": "Clone, role equality, structural full-tuple equality and full Debug retain public Participant incidence roles, coordinates, finalization metadata without license qualifiers. Serde is diagnostic only and requires whole-history typed revalidation."
     },
     {
-      "item": "formation::ParticipantProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Clone, role equality, structural full-tuple equality and full Debug retain public Participant incidence roles, coordinates, finalization metadata without license qualifiers. Serde is diagnostic only and requires whole-history typed revalidation."
-    },
-    {
       "item": "formation::ReviewRole",
       "kind": "derive",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Clone, full Debug and structural equality retain public Review coordinates, role and shared act metadata. Typed passive constructors retain the public genesis act identity. Serde is diagnostic and requires complete typed revalidation before binding use; no canonical graph bytes are defined."
-    },
-    {
-      "item": "formation::ReviewProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Clone, full Debug and structural equality retain public Review coordinates, role and shared act metadata. Typed passive constructors retain the public genesis act identity. Serde is diagnostic and requires complete typed revalidation before binding use; no canonical graph bytes are defined."
     },
@@ -15404,15 +15350,6 @@
       "expansion_review": "Structural derives retain the complete public Send importance coordinate, role and shared act metadata. Serde is diagnostic and requires whole-history typed revalidation before binding use; it establishes no canonical bytes or ordering verdict."
     },
     {
-      "item": "formation::SendProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain the complete public Send importance coordinate, role and shared act metadata. Serde is diagnostic and requires whole-history typed revalidation before binding use; it establishes no canonical bytes or ordering verdict."
-    },
-    {
       "item": "formation::BidRole",
       "kind": "derive",
       "package": "pn-graph",
@@ -15420,33 +15357,6 @@
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Structural derives retain the complete public Bid generosity and urgency coordinates, role and shared act metadata. Serde is diagnostic and requires whole-history typed revalidation before binding use; it establishes no canonical bytes or ordering verdict."
-    },
-    {
-      "item": "formation::BidProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain the complete public Bid generosity and urgency coordinates, role and shared act metadata. Serde is diagnostic and requires whole-history typed revalidation before binding use; it establishes no canonical bytes or ordering verdict."
-    },
-    {
-      "item": "formation::OpinionProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain exact Opinion polarity, reaction and public act metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
-    },
-    {
-      "item": "formation::JoinRequestProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain exact Join Request urgency, formality and public act metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
     },
     {
       "item": "formation::TagRole",
@@ -15458,38 +15368,11 @@
       "expansion_review": "Structural derives retain exact Tag relevance, confidence, role and public act metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
     },
     {
-      "item": "formation::TagProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain exact Tag relevance, confidence, role and public act metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
-    },
-    {
-      "item": "formation::LeaveProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain Leave public act identity and finalization metadata. Fixed control roles have no authored coordinate fields. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
-    },
-    {
       "item": "formation::ReferenceRole",
       "kind": "derive",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain complete Reference coordinates, role and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
-    },
-    {
-      "item": "formation::ReferenceProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Structural derives retain complete Reference coordinates, role and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
     },
@@ -15503,15 +15386,6 @@
       "expansion_review": "Structural derives retain complete Invitation parameters and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
     },
     {
-      "item": "formation::InvitationProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain complete Invitation parameters and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
-    },
-    {
       "item": "formation::DeinviteRole",
       "kind": "derive",
       "package": "pn-graph",
@@ -15519,33 +15393,6 @@
       "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Structural derives retain complete Deinvite parameters and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
-    },
-    {
-      "item": "formation::DeinviteProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain complete Deinvite parameters and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
-    },
-    {
-      "item": "formation::WithdrawProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain complete Withdraw parameters and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
-    },
-    {
-      "item": "formation::RescindProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain complete Rescind parameters and finalization metadata. Diagnostic serde grants no validation; whole-history typed comparison is required before binding use."
     },
     {
       "item": "rpc_http::Phase",
@@ -15576,24 +15423,6 @@
     },
     {
       "item": "formation::AcceptIdentity",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain settlement act identities, exact coordinates and finalization metadata. The identity family is fixed by the type; no digest or canonical byte profile is introduced. Diagnostic serde requires complete history-based revalidation before binding use."
-    },
-    {
-      "item": "formation::AcceptProjection",
-      "kind": "derive",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)]",
-      "class_decision": "graph-affinity",
-      "expansion_review": "Structural derives retain settlement act identities, exact coordinates and finalization metadata. The identity family is fixed by the type; no digest or canonical byte profile is introduced. Diagnostic serde requires complete history-based revalidation before binding use."
-    },
-    {
-      "item": "formation::RatifyProjection",
       "kind": "derive",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
@@ -15699,6 +15528,195 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Clone, Debug and equality retain three public party-correspondence verdicts separately from exact reference binding. No authority, secret, serialization or publication is introduced; clause placement remains held."
+    },
+    {
+      "item": "registration::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/registration.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" A cache of one Registration binary projection and inherited finalization fields.\"] # [doc = \" Family and role are fixed by this type; neither time nor position is identity.\"] # [doc = \" (´def:formation:registration´)\"] pub struct RegistrationProjection { before { # [doc = \" Public author atom, also the grounded pair's atom.\"] pub author : String , # [doc = \" Author-local sequence in the Registration act identity.\"] pub sequence : u64 , } after { } } }",
+      "class_decision": "graph-registration",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Affinity binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:affinity´)\"] pub struct AffinityProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Association occupies the directional role `p_d`.\"] pub association : Coordinate , # [doc = \" Attraction occupies the intensity role `p_i`.\"] pub attraction : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Opinion binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:opinion´)\"] pub struct OpinionProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Polarity occupies the directional role `p_d`.\"] pub polarity : Coordinate , # [doc = \" Reaction occupies the intensity role `p_i`.\"] pub reaction : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Join Request binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:join-request´)\"] pub struct JoinRequestProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Urgency occupies the directional role `p_d`.\"] pub urgency : Coordinate , # [doc = \" Formality occupies the intensity role `p_i`.\"] pub formality : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Leave control weight; both parameter roles are fixed at one.\"] # [doc = \" (´def:formation:leave´)\"] pub struct LeaveProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Withdraw control weight; both parameter roles are fixed at one.\"] # [doc = \" (´def:formation:withdraw´)\"] pub struct WithdrawProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Rescind control weight; both parameter roles are fixed at one.\"] # [doc = \" (´def:formation:rescind´)\"] pub struct RescindProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete scoped Publish weight, retaining immutable license qualifiers.\"] # [doc = \" (´def:formation:publish´)\"] pub struct PublishProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , } after { # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , # [doc = \" Pair fixed only on a self-minting Content genesis act.\"] pub license : Option < LicenseQualifiers >, } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete scoped Owner weight, with no license or protocol-reference field.\"] # [doc = \" (´def:formation:owner´)\"] pub struct OwnerProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , } after { # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Participant tuple shared by its two role-addressed projections.\"] # [doc = \" (´def:formation:participant´)\"] pub struct ParticipantProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ParticipantRole , } after { # [doc = \" Signed A-leg directional coordinate.\"] pub interactivity : Coordinate , # [doc = \" Signed A-leg intensity coordinate.\"] pub responsibility : Coordinate , # [doc = \" Nonnegative T-leg directional coordinate; intensity is fixed at one.\"] pub continuity : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Review tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:review´)\"] pub struct ReviewProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReviewRole , } after { # [doc = \" Signed enthusiasm, directional on A and intensity on T.\"] pub enthusiasm : Coordinate , # [doc = \" Signed effort, intensity on A and directional on T.\"] pub effort : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Tag tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:tag´)\"] pub struct TagProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : TagRole , } after { # [doc = \" Signed relevance, directional on A and intensity on T.\"] pub relevance : Coordinate , # [doc = \" Nonnegative confidence, intensity on A and directional on T.\"] pub confidence : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Reference tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:reference´)\"] pub struct ReferenceProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReferenceRole , } after { # [doc = \" Signed effort, directional on A and intensity on T.\"] pub effort : Coordinate , # [doc = \" Signed enthusiasm, intensity on A and directional on T.\"] pub enthusiasm : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Invitation tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:invitation´)\"] pub struct InvitationProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : InvitationRole , } after { # [doc = \" Signed urgency, directional on A.\"] pub urgency : Coordinate , # [doc = \" Signed formality, intensity on A.\"] pub formality : Coordinate , # [doc = \" Nonnegative relevance, directional on T; T intensity is fixed at one.\"] pub relevance : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Deinvite tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:deinvite´)\"] pub struct DeinviteProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : DeinviteRole , } after { } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Send tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:send´)\"] pub struct SendProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : SendRole , } after { # [doc = \" Signed importance, directional on A and intensity on T.\"] pub importance : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Bid tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:bid´)\"] pub struct BidProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : BidRole , } after { # [doc = \" Signed generosity, directional on A and intensity on T.\"] pub generosity : Coordinate , # [doc = \" Nonnegative urgency, intensity on A and directional on T.\"] pub urgency : Coordinate , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Accept binary projection and non-incidence settlement metadata.\"] # [doc = \" (´def:formation:settlement´)\"] pub struct AcceptProjection { before { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , } after { # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Asserted Bid target; metadata adds no Offer incidence.\"] pub settles : BidIdentity , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "formation::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/formation.rs",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Ratify binary projection and non-incidence settlement metadata.\"] # [doc = \" (´def:formation:settlement´)\"] pub struct RatifyProjection { before { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , } after { # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Asserted Bid target; metadata adds no Offer incidence.\"] pub settles : BidIdentity , # [doc = \" Asserted exact Accept target; recognition checks same-Bid binding.\"] pub accepts : AcceptIdentity , } } }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "metadata::ActMetadata",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/metadata.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "metadata::",
+      "kind": "item-macro",
+      "package": "pn-graph",
+      "path": "packages/graph/src/metadata.rs",
+      "syntax": "macro_rules ! projection { ($ (# [$ attr : meta]) * pub struct $ name : ident { before { $ ($ (# [$ before_attr : meta]) * pub $ before : ident : $ before_ty : ty ,) * } after { $ ($ (# [$ after_attr : meta]) * pub $ after : ident : $ after_ty : ty ,) * } }) => { $ (# [$ attr]) * # [derive (Clone , PartialEq , Eq)] pub struct $ name { $ ($ (# [$ before_attr]) * pub $ before : $ before_ty ,) * # [doc = \" Inherited finalization metadata; not an independent edge stamp.\"] pub metadata : $ crate :: metadata :: ActMetadata , $ ($ (# [$ after_attr]) * pub $ after : $ after_ty ,) * } impl std :: fmt :: Debug for $ name { fn fmt (& self , formatter : & mut std :: fmt :: Formatter <'_ >) -> std :: fmt :: Result { formatter . debug_struct (stringify ! ($ name)) $ (. field (stringify ! ($ before) , & self .$ before)) * . field (\"position\" , & self . metadata . position) . field (\"logical_time\" , & self . metadata . logical_time) $ (. field (stringify ! ($ after) , & self .$ after)) * . finish () } } impl serde :: Serialize for $ name { fn serialize < S : serde :: Serializer > (& self , serializer : S) -> Result < S :: Ok , S :: Error > { # [derive (serde :: Serialize)] struct $ name <'wire > { $ ($ before : &'wire $ before_ty ,) * position : &'wire pn_records :: Position , logical_time : &'wire u64 , $ ($ after : &'wire $ after_ty ,) * } let wire = $ name { $ ($ before : & self .$ before ,) * position : & self . metadata . position , logical_time : & self . metadata . logical_time , $ ($ after : & self .$ after ,) * } ; serde :: Serialize :: serialize (& wire , serializer) } } impl <'de > serde :: Deserialize <'de > for $ name { fn deserialize < D : serde :: Deserializer <'de >> (deserializer : D) -> Result < Self , D :: Error > { # [derive (serde :: Deserialize)] # [serde (deny_unknown_fields)] struct $ name { $ ($ before : $ before_ty ,) * position : pn_records :: Position , logical_time : u64 , $ ($ after : $ after_ty ,) * } let wire = <$ name as serde :: Deserialize >:: deserialize (deserializer) ?; Ok (Self { $ ($ before : wire .$ before ,) * metadata : $ crate :: metadata :: ActMetadata { position : wire . position , logical_time : wire . logical_time , } , $ ($ after : wire .$ after ,) * }) } } } ; }",
+      "class_decision": "graph-affinity",
+      "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     }
   ],
   "reviewed_types": [
@@ -17287,12 +17305,6 @@
       "syntax": "# [doc = \" Grounded identifiers; Registration anchors this existing pair and mints nothing.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord , Serialize , Deserialize)] pub enum GroundedNode { # [doc = \" The primitive address atom interpreted as its Actor.\"] Actor (String) , # [doc = \" The same address atom interpreted as its Profile.\"] Profile (String) , }"
     },
     {
-      "item": "registration::RegistrationProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/registration.rs",
-      "syntax": "# [doc = \" A cache of one Registration binary projection and inherited finalization fields.\"] # [doc = \" Family and role are fixed by this type; neither time nor position is identity.\"] # [doc = \" (´def:formation:registration´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct RegistrationProjection { # [doc = \" Public author atom, also the grounded pair's atom.\"] pub author : String , # [doc = \" Author-local sequence in the Registration act identity.\"] pub sequence : u64 , # [doc = \" Inherited published epoch and position, never an independent edge stamp.\"] pub position : Position , # [doc = \" Inherited attachment, never recomputed or independently authoritative.\"] pub logical_time : u64 , }"
-    },
-    {
       "item": "registration::OpeningKind",
       "package": "pn-graph",
       "path": "packages/graph/src/registration.rs",
@@ -17317,58 +17329,10 @@
       "syntax": "# [doc = \" An exact bounded carrier for a signed unit-interval coordinate.\"] # [doc = \" Construction and deserialization do not establish validity; formation checks\"] # [doc = \" a positive denominator and absolute numerator no greater than denominator.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct Coordinate { # [doc = \" Authored integer numerator, retained without rounding.\"] pub numerator : i64 , # [doc = \" Authored positive integer denominator, retained without normalization.\"] pub denominator : i64 , }"
     },
     {
-      "item": "formation::AffinityProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Affinity binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:affinity´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct AffinityProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment; this operation gives no recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Association occupies the directional role `p_d`.\"] pub association : Coordinate , # [doc = \" Attraction occupies the intensity role `p_i`.\"] pub attraction : Coordinate , }"
-    },
-    {
-      "item": "formation::OpinionProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Opinion binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:opinion´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct OpinionProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment; this operation gives no recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Polarity occupies the directional role `p_d`.\"] pub polarity : Coordinate , # [doc = \" Reaction occupies the intensity role `p_i`.\"] pub reaction : Coordinate , }"
-    },
-    {
-      "item": "formation::JoinRequestProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Join Request binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:join-request´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct JoinRequestProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment; this operation gives no recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Urgency occupies the directional role `p_d`.\"] pub urgency : Coordinate , # [doc = \" Formality occupies the intensity role `p_i`.\"] pub formality : Coordinate , }"
-    },
-    {
-      "item": "formation::LeaveProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Leave control weight; both parameter roles are fixed at one.\"] # [doc = \" (´def:formation:leave´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct LeaveProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment; this operation gives no recurrence verdict.\"] pub logical_time : u64 , }"
-    },
-    {
-      "item": "formation::WithdrawProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Withdraw control weight; both parameter roles are fixed at one.\"] # [doc = \" (´def:formation:withdraw´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct WithdrawProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment; this operation gives no recurrence verdict.\"] pub logical_time : u64 , }"
-    },
-    {
-      "item": "formation::RescindProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Rescind control weight; both parameter roles are fixed at one.\"] # [doc = \" (´def:formation:rescind´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct RescindProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment; this operation gives no recurrence verdict.\"] pub logical_time : u64 , }"
-    },
-    {
       "item": "formation::LicenseQualifiers",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [doc = \" Exact Content genesis pair, retained structurally for typed revalidation.\"] # [doc = \" No license interpretation participates in formation or geometry.\"] # [doc = \" (´def:formation:publish´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct LicenseQualifiers { # [doc = \" Attribution degree a in the nonnegative unit interval.\"] pub attribution : Coordinate , # [doc = \" Provenance degree o in the nonnegative unit interval.\"] pub provenance : Coordinate , }"
-    },
-    {
-      "item": "formation::PublishProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete scoped Publish weight, retaining immutable license qualifiers.\"] # [doc = \" (´def:formation:publish´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct PublishProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained published placement.\"] pub position : Position , # [doc = \" Retained host attachment, without a recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , # [doc = \" Pair fixed only on a self-minting Content genesis act.\"] pub license : Option < LicenseQualifiers > , }"
-    },
-    {
-      "item": "formation::OwnerProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete scoped Owner weight, with no license or protocol-reference field.\"] # [doc = \" (´def:formation:owner´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct OwnerProjection { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained ownered placement.\"] pub position : Position , # [doc = \" Retained host attachment, without a recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , }"
     },
     {
       "item": "formation::ParticipantRole",
@@ -17377,22 +17341,10 @@
       "syntax": "# [doc = \" Constructor role of a Participant edge, derived from one complete act.\"] # [doc = \" (´def:formation:participant´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum ParticipantRole { # [doc = \" Initiating Actor to origin Chat.\"] A , # [doc = \" Origin Chat to destination Chat.\"] T , }"
     },
     {
-      "item": "formation::ParticipantProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Participant tuple shared by its two role-addressed projections.\"] # [doc = \" (´def:formation:participant´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct ParticipantProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ParticipantRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed A-leg directional coordinate.\"] pub interactivity : Coordinate , # [doc = \" Signed A-leg intensity coordinate.\"] pub responsibility : Coordinate , # [doc = \" Nonnegative T-leg directional coordinate; intensity is fixed at one.\"] pub continuity : Coordinate , }"
-    },
-    {
       "item": "formation::ReviewRole",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [doc = \" Constructor role of a Review edge, derived from one complete act.\"] # [doc = \" (´def:formation:review´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum ReviewRole { # [doc = \" Initiating Actor to reviewed passive node.\"] A , # [doc = \" Reviewed passive node to Comment.\"] T , }"
-    },
-    {
-      "item": "formation::ReviewProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Review tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:review´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct ReviewProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReviewRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed enthusiasm, directional on A and intensity on T.\"] pub enthusiasm : Coordinate , # [doc = \" Signed effort, intensity on A and directional on T.\"] pub effort : Coordinate , }"
     },
     {
       "item": "formation::TagRole",
@@ -17401,22 +17353,10 @@
       "syntax": "# [doc = \" Constructor role of a Tag edge, derived from one complete act.\"] # [doc = \" (´def:formation:tag´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum TagRole { # [doc = \" Initiating Actor to taged passive node.\"] A , # [doc = \" Tagged passive node to Type.\"] T , }"
     },
     {
-      "item": "formation::TagProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Tag tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:tag´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct TagProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : TagRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed relevance, directional on A and intensity on T.\"] pub relevance : Coordinate , # [doc = \" Nonnegative confidence, intensity on A and directional on T.\"] pub confidence : Coordinate , }"
-    },
-    {
       "item": "formation::ReferenceRole",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [doc = \" Constructor role of a Reference edge, derived from one complete act.\"] # [doc = \" (´def:formation:reference´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum ReferenceRole { # [doc = \" Initiating Actor to anchoring artifact.\"] A , # [doc = \" Anchoring artifact to passive target.\"] T , }"
-    },
-    {
-      "item": "formation::ReferenceProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Reference tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:reference´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct ReferenceProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReferenceRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed effort, directional on A and intensity on T.\"] pub effort : Coordinate , # [doc = \" Signed enthusiasm, intensity on A and directional on T.\"] pub enthusiasm : Coordinate , }"
     },
     {
       "item": "formation::InvitationRole",
@@ -17425,22 +17365,10 @@
       "syntax": "# [doc = \" Constructor role of a Invitation edge, derived from one complete act.\"] # [doc = \" (´def:formation:invitation´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum InvitationRole { # [doc = \" Initiating Actor to Chat.\"] A , # [doc = \" Chat to invitee Profile.\"] T , }"
     },
     {
-      "item": "formation::InvitationProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Invitation tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:invitation´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct InvitationProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : InvitationRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed urgency, directional on A.\"] pub urgency : Coordinate , # [doc = \" Signed formality, intensity on A.\"] pub formality : Coordinate , # [doc = \" Nonnegative relevance, directional on T; T intensity is fixed at one.\"] pub relevance : Coordinate , }"
-    },
-    {
       "item": "formation::DeinviteRole",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [doc = \" Constructor role of a Deinvite edge, derived from one complete act.\"] # [doc = \" (´def:formation:deinvite´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum DeinviteRole { # [doc = \" Initiating Actor to Chat.\"] A , # [doc = \" Chat to departing Profile.\"] T , }"
-    },
-    {
-      "item": "formation::DeinviteProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Deinvite tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:deinvite´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct DeinviteProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : DeinviteRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , }"
     },
     {
       "item": "formation::SendRole",
@@ -17449,22 +17377,10 @@
       "syntax": "# [doc = \" Constructor role of a Send edge, derived from one complete act.\"] # [doc = \" (´def:formation:send´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum SendRole { # [doc = \" Initiating Actor to Chat.\"] A , # [doc = \" Chat to Message.\"] T , }"
     },
     {
-      "item": "formation::SendProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Send tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:send´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct SendProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : SendRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed importance, directional on A and intensity on T.\"] pub importance : Coordinate , }"
-    },
-    {
       "item": "formation::BidRole",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [doc = \" Constructor role of a Bid edge, derived from one complete act.\"] # [doc = \" (´def:formation:bid´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , Serialize , Deserialize)] pub enum BidRole { # [doc = \" Initiating Actor to Item.\"] A , # [doc = \" Item to Offer.\"] T , }"
-    },
-    {
-      "item": "formation::BidProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Bid tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:bid´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct BidProjection { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : BidRole , # [doc = \" Retained published placement of the whole act.\"] pub position : Position , # [doc = \" One retained time shared by both projections.\"] pub logical_time : u64 , # [doc = \" Signed generosity, directional on A and intensity on T.\"] pub generosity : Coordinate , # [doc = \" Nonnegative urgency, intensity on A and directional on T.\"] pub urgency : Coordinate , }"
     },
     {
       "item": "formation::Projection",
@@ -17483,18 +17399,6 @@
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
       "syntax": "# [doc = \" Structural accepts target identity, never a node or an edge key.\"] # [doc = \" The asserted family is retained without a binding verdict or byte encoding.\"] # [doc = \" (´def:formation:settlement´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct AcceptIdentity { # [doc = \" Authored actor atom.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , # [doc = \" Retained target family; recognition checks the expected settlement family.\"] pub family : String , }"
-    },
-    {
-      "item": "formation::AcceptProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Accept binary projection and non-incidence settlement metadata.\"] # [doc = \" (´def:formation:settlement´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct AcceptProjection { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , # [doc = \" Retained published placement.\"] pub position : Position , # [doc = \" Retained attached time, without a new recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Asserted Bid target; metadata adds no Offer incidence.\"] pub settles : BidIdentity , }"
-    },
-    {
-      "item": "formation::RatifyProjection",
-      "package": "pn-graph",
-      "path": "packages/graph/src/formation.rs",
-      "syntax": "# [doc = \" Complete Ratify binary projection and non-incidence settlement metadata.\"] # [doc = \" (´def:formation:settlement´)\"] # [derive (Clone , Debug , PartialEq , Eq , Serialize , Deserialize)] # [serde (deny_unknown_fields)] pub struct RatifyProjection { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , # [doc = \" Retained published placement.\"] pub position : Position , # [doc = \" Retained attached time, without a new recurrence verdict.\"] pub logical_time : u64 , # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Asserted Bid target; metadata adds no Offer incidence.\"] pub settles : BidIdentity , # [doc = \" Asserted exact Accept target; recognition checks same-Bid binding.\"] pub accepts : AcceptIdentity , }"
     },
     {
       "item": "title::TitleInputs",
@@ -17567,6 +17471,12 @@
       "package": "pn-graph",
       "path": "packages/graph/src/recognition.rs",
       "syntax": "# [doc = \" A structural refusal or an explicit absence of a scoped recognition verdict.\"] # [doc = \" (´def:formation:settlement-recognition´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RecognitionError { # [doc = \" Whole-history formation failed before any candidate evidence was emitted.\"] # [error (\"title input formation refused: {0}\")] Formation (RegistrationError) , # [doc = \" The supplied owner map names a different preceding boundary.\"] # [error (\"recognition requires the immediately preceding certificate\")] Boundary , # [doc = \" The prefix lacks the carried, matching recurrence evidence required here.\"] # [doc = \" Faulted time and parent correspondence remain held by the design questions.\"] # [error (\"recognition held outside the compliant-history scope\")] Held (Vec < TimeEvidence >) , }"
+    },
+    {
+      "item": "metadata::ActMetadata",
+      "package": "pn-graph",
+      "path": "packages/graph/src/metadata.rs",
+      "syntax": "# [doc = \" Shared finalization metadata copied from the owning validated act.\"] # [doc = \" This is the single future extension point for separating a published stamp,\"] # [doc = \" recomputed time and fault evidence. None of those future rules execute here.\"] # [doc = \" Neither field is an authored identity or a canonical publication encoding.\"] # [doc = \" (´def:formation:act-metadata´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub struct ActMetadata { # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment, never recomputed by formation.\"] pub logical_time : u64 , }"
     },
     {
       "item": "config::Configuration",

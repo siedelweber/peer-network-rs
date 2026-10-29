@@ -2,7 +2,7 @@
 //! (´def:formation:affinity´)
 
 use petgraph::stable_graph::StableDiGraph;
-use pn_records::{ActId, Layout, Position, PublicReference, Role, SettlementReferences, ValidatedAct, ValidatedHistory};
+use pn_records::{ActId, Layout, PublicReference, Role, SettlementReferences, ValidatedAct, ValidatedHistory};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -74,106 +74,103 @@ pub struct Coordinate {
     pub denominator: i64,
 }
 
-/// Complete Affinity binary weight; coordinates remain distinct directional roles.
-/// (´def:formation:affinity´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct AffinityProjection {
-    /// Author atom shared with the initiating Actor endpoint.
-    pub author: String,
-    /// Author-local sequence, never host order.
-    pub sequence: u64,
-    /// Retained epoch-qualified published placement.
-    pub position: Position,
-    /// Retained host attachment; this operation gives no recurrence verdict.
-    pub logical_time: u64,
-    /// Association occupies the directional role `p_d`.
-    pub association: Coordinate,
-    /// Attraction occupies the intensity role `p_i`.
-    pub attraction: Coordinate,
+crate::metadata::projection! {
+    /// Complete Affinity binary weight; coordinates remain distinct directional roles.
+    /// (´def:formation:affinity´)
+    pub struct AffinityProjection {
+        before {
+            /// Author atom shared with the initiating Actor endpoint.
+            pub author: String,
+            /// Author-local sequence, never host order.
+            pub sequence: u64,
+        }
+        after {
+            /// Association occupies the directional role `p_d`.
+            pub association: Coordinate,
+            /// Attraction occupies the intensity role `p_i`.
+            pub attraction: Coordinate,
+        }
+    }
 }
 
-/// Complete Opinion binary weight; coordinates remain distinct directional roles.
-/// (´def:formation:opinion´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct OpinionProjection {
-    /// Author atom shared with the initiating Actor endpoint.
-    pub author: String,
-    /// Author-local sequence, never host order.
-    pub sequence: u64,
-    /// Retained epoch-qualified published placement.
-    pub position: Position,
-    /// Retained host attachment; this operation gives no recurrence verdict.
-    pub logical_time: u64,
-    /// Polarity occupies the directional role `p_d`.
-    pub polarity: Coordinate,
-    /// Reaction occupies the intensity role `p_i`.
-    pub reaction: Coordinate,
+crate::metadata::projection! {
+    /// Complete Opinion binary weight; coordinates remain distinct directional roles.
+    /// (´def:formation:opinion´)
+    pub struct OpinionProjection {
+        before {
+            /// Author atom shared with the initiating Actor endpoint.
+            pub author: String,
+            /// Author-local sequence, never host order.
+            pub sequence: u64,
+        }
+        after {
+            /// Polarity occupies the directional role `p_d`.
+            pub polarity: Coordinate,
+            /// Reaction occupies the intensity role `p_i`.
+            pub reaction: Coordinate,
+        }
+    }
 }
 
-/// Complete Join Request binary weight; coordinates remain distinct directional roles.
-/// (´def:formation:join-request´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct JoinRequestProjection {
-    /// Author atom shared with the initiating Actor endpoint.
-    pub author: String,
-    /// Author-local sequence, never host order.
-    pub sequence: u64,
-    /// Retained epoch-qualified published placement.
-    pub position: Position,
-    /// Retained host attachment; this operation gives no recurrence verdict.
-    pub logical_time: u64,
-    /// Urgency occupies the directional role `p_d`.
-    pub urgency: Coordinate,
-    /// Formality occupies the intensity role `p_i`.
-    pub formality: Coordinate,
+crate::metadata::projection! {
+    /// Complete Join Request binary weight; coordinates remain distinct directional roles.
+    /// (´def:formation:join-request´)
+    pub struct JoinRequestProjection {
+        before {
+            /// Author atom shared with the initiating Actor endpoint.
+            pub author: String,
+            /// Author-local sequence, never host order.
+            pub sequence: u64,
+        }
+        after {
+            /// Urgency occupies the directional role `p_d`.
+            pub urgency: Coordinate,
+            /// Formality occupies the intensity role `p_i`.
+            pub formality: Coordinate,
+        }
+    }
 }
 
-/// Complete Leave control weight; both parameter roles are fixed at one.
-/// (´def:formation:leave´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct LeaveProjection {
-    /// Author atom shared with the initiating Actor endpoint.
-    pub author: String,
-    /// Author-local sequence, never host order.
-    pub sequence: u64,
-    /// Retained epoch-qualified published placement.
-    pub position: Position,
-    /// Retained host attachment; this operation gives no recurrence verdict.
-    pub logical_time: u64,
+crate::metadata::projection! {
+    /// Complete Leave control weight; both parameter roles are fixed at one.
+    /// (´def:formation:leave´)
+    pub struct LeaveProjection {
+        before {
+            /// Author atom shared with the initiating Actor endpoint.
+            pub author: String,
+            /// Author-local sequence, never host order.
+            pub sequence: u64,
+        }
+        after {}
+    }
 }
 
-/// Complete Withdraw control weight; both parameter roles are fixed at one.
-/// (´def:formation:withdraw´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct WithdrawProjection {
-    /// Author atom shared with the initiating Actor endpoint.
-    pub author: String,
-    /// Author-local sequence, never host order.
-    pub sequence: u64,
-    /// Retained epoch-qualified published placement.
-    pub position: Position,
-    /// Retained host attachment; this operation gives no recurrence verdict.
-    pub logical_time: u64,
+crate::metadata::projection! {
+    /// Complete Withdraw control weight; both parameter roles are fixed at one.
+    /// (´def:formation:withdraw´)
+    pub struct WithdrawProjection {
+        before {
+            /// Author atom shared with the initiating Actor endpoint.
+            pub author: String,
+            /// Author-local sequence, never host order.
+            pub sequence: u64,
+        }
+        after {}
+    }
 }
 
-/// Complete Rescind control weight; both parameter roles are fixed at one.
-/// (´def:formation:rescind´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct RescindProjection {
-    /// Author atom shared with the initiating Actor endpoint.
-    pub author: String,
-    /// Author-local sequence, never host order.
-    pub sequence: u64,
-    /// Retained epoch-qualified published placement.
-    pub position: Position,
-    /// Retained host attachment; this operation gives no recurrence verdict.
-    pub logical_time: u64,
+crate::metadata::projection! {
+    /// Complete Rescind control weight; both parameter roles are fixed at one.
+    /// (´def:formation:rescind´)
+    pub struct RescindProjection {
+        before {
+            /// Author atom shared with the initiating Actor endpoint.
+            pub author: String,
+            /// Author-local sequence, never host order.
+            pub sequence: u64,
+        }
+        after {}
+    }
 }
 
 /// Exact Content genesis pair, retained structurally for typed revalidation.
@@ -188,40 +185,40 @@ pub struct LicenseQualifiers {
     pub provenance: Coordinate,
 }
 
-/// Complete scoped Publish weight, retaining immutable license qualifiers.
-/// (´def:formation:publish´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct PublishProjection {
-    /// Author atom shared with the initiating Actor endpoint.
-    pub author: String,
-    /// Author-local act sequence.
-    pub sequence: u64,
-    /// Retained published placement.
-    pub position: Position,
-    /// Retained host attachment, without a recurrence verdict.
-    pub logical_time: u64,
-    /// Authored directional coordinate; intensity is fixed at one.
-    pub attachment: Coordinate,
-    /// Pair fixed only on a self-minting Content genesis act.
-    pub license: Option<LicenseQualifiers>,
+crate::metadata::projection! {
+    /// Complete scoped Publish weight, retaining immutable license qualifiers.
+    /// (´def:formation:publish´)
+    pub struct PublishProjection {
+        before {
+            /// Author atom shared with the initiating Actor endpoint.
+            pub author: String,
+            /// Author-local act sequence.
+            pub sequence: u64,
+        }
+        after {
+            /// Authored directional coordinate; intensity is fixed at one.
+            pub attachment: Coordinate,
+            /// Pair fixed only on a self-minting Content genesis act.
+            pub license: Option<LicenseQualifiers>,
+        }
+    }
 }
 
-/// Complete scoped Owner weight, with no license or protocol-reference field.
-/// (´def:formation:owner´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct OwnerProjection {
-    /// Author atom shared with the initiating Actor endpoint.
-    pub author: String,
-    /// Author-local act sequence.
-    pub sequence: u64,
-    /// Retained ownered placement.
-    pub position: Position,
-    /// Retained host attachment, without a recurrence verdict.
-    pub logical_time: u64,
-    /// Authored directional coordinate; intensity is fixed at one.
-    pub attachment: Coordinate,
+crate::metadata::projection! {
+    /// Complete scoped Owner weight, with no license or protocol-reference field.
+    /// (´def:formation:owner´)
+    pub struct OwnerProjection {
+        before {
+            /// Author atom shared with the initiating Actor endpoint.
+            pub author: String,
+            /// Author-local act sequence.
+            pub sequence: u64,
+        }
+        after {
+            /// Authored directional coordinate; intensity is fixed at one.
+            pub attachment: Coordinate,
+        }
+    }
 }
 
 /// Constructor role of a Participant edge, derived from one complete act.
@@ -234,27 +231,27 @@ pub enum ParticipantRole {
     T,
 }
 
-/// Complete Participant tuple shared by its two role-addressed projections.
-/// (´def:formation:participant´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ParticipantProjection {
-    /// Initiating author shared by both legs.
-    pub author: String,
-    /// Author-local act sequence shared by both legs.
-    pub sequence: u64,
-    /// A or T constructor role, never a separately authored identity.
-    pub role: ParticipantRole,
-    /// Retained published placement of the whole act.
-    pub position: Position,
-    /// One retained time shared by both projections.
-    pub logical_time: u64,
-    /// Signed A-leg directional coordinate.
-    pub interactivity: Coordinate,
-    /// Signed A-leg intensity coordinate.
-    pub responsibility: Coordinate,
-    /// Nonnegative T-leg directional coordinate; intensity is fixed at one.
-    pub continuity: Coordinate,
+crate::metadata::projection! {
+    /// Complete Participant tuple shared by its two role-addressed projections.
+    /// (´def:formation:participant´)
+    pub struct ParticipantProjection {
+        before {
+            /// Initiating author shared by both legs.
+            pub author: String,
+            /// Author-local act sequence shared by both legs.
+            pub sequence: u64,
+            /// A or T constructor role, never a separately authored identity.
+            pub role: ParticipantRole,
+        }
+        after {
+            /// Signed A-leg directional coordinate.
+            pub interactivity: Coordinate,
+            /// Signed A-leg intensity coordinate.
+            pub responsibility: Coordinate,
+            /// Nonnegative T-leg directional coordinate; intensity is fixed at one.
+            pub continuity: Coordinate,
+        }
+    }
 }
 
 /// Constructor role of a Review edge, derived from one complete act.
@@ -267,25 +264,25 @@ pub enum ReviewRole {
     T,
 }
 
-/// Complete Review tuple shared by both role-addressed projections.
-/// (´def:formation:review´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ReviewProjection {
-    /// Initiating author shared by both legs.
-    pub author: String,
-    /// Author-local act sequence shared by both legs.
-    pub sequence: u64,
-    /// A or T constructor role, never a separately authored identity.
-    pub role: ReviewRole,
-    /// Retained published placement of the whole act.
-    pub position: Position,
-    /// One retained time shared by both projections.
-    pub logical_time: u64,
-    /// Signed enthusiasm, directional on A and intensity on T.
-    pub enthusiasm: Coordinate,
-    /// Signed effort, intensity on A and directional on T.
-    pub effort: Coordinate,
+crate::metadata::projection! {
+    /// Complete Review tuple shared by both role-addressed projections.
+    /// (´def:formation:review´)
+    pub struct ReviewProjection {
+        before {
+            /// Initiating author shared by both legs.
+            pub author: String,
+            /// Author-local act sequence shared by both legs.
+            pub sequence: u64,
+            /// A or T constructor role, never a separately authored identity.
+            pub role: ReviewRole,
+        }
+        after {
+            /// Signed enthusiasm, directional on A and intensity on T.
+            pub enthusiasm: Coordinate,
+            /// Signed effort, intensity on A and directional on T.
+            pub effort: Coordinate,
+        }
+    }
 }
 
 /// Constructor role of a Tag edge, derived from one complete act.
@@ -298,25 +295,25 @@ pub enum TagRole {
     T,
 }
 
-/// Complete Tag tuple shared by both role-addressed projections.
-/// (´def:formation:tag´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct TagProjection {
-    /// Initiating author shared by both legs.
-    pub author: String,
-    /// Author-local act sequence shared by both legs.
-    pub sequence: u64,
-    /// A or T constructor role, never a separately authored identity.
-    pub role: TagRole,
-    /// Retained published placement of the whole act.
-    pub position: Position,
-    /// One retained time shared by both projections.
-    pub logical_time: u64,
-    /// Signed relevance, directional on A and intensity on T.
-    pub relevance: Coordinate,
-    /// Nonnegative confidence, intensity on A and directional on T.
-    pub confidence: Coordinate,
+crate::metadata::projection! {
+    /// Complete Tag tuple shared by both role-addressed projections.
+    /// (´def:formation:tag´)
+    pub struct TagProjection {
+        before {
+            /// Initiating author shared by both legs.
+            pub author: String,
+            /// Author-local act sequence shared by both legs.
+            pub sequence: u64,
+            /// A or T constructor role, never a separately authored identity.
+            pub role: TagRole,
+        }
+        after {
+            /// Signed relevance, directional on A and intensity on T.
+            pub relevance: Coordinate,
+            /// Nonnegative confidence, intensity on A and directional on T.
+            pub confidence: Coordinate,
+        }
+    }
 }
 
 /// Constructor role of a Reference edge, derived from one complete act.
@@ -329,25 +326,25 @@ pub enum ReferenceRole {
     T,
 }
 
-/// Complete Reference tuple shared by both role-addressed projections.
-/// (´def:formation:reference´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ReferenceProjection {
-    /// Initiating author shared by both legs.
-    pub author: String,
-    /// Author-local act sequence shared by both legs.
-    pub sequence: u64,
-    /// A or T constructor role, never a separately authored identity.
-    pub role: ReferenceRole,
-    /// Retained published placement of the whole act.
-    pub position: Position,
-    /// One retained time shared by both projections.
-    pub logical_time: u64,
-    /// Signed effort, directional on A and intensity on T.
-    pub effort: Coordinate,
-    /// Signed enthusiasm, intensity on A and directional on T.
-    pub enthusiasm: Coordinate,
+crate::metadata::projection! {
+    /// Complete Reference tuple shared by both role-addressed projections.
+    /// (´def:formation:reference´)
+    pub struct ReferenceProjection {
+        before {
+            /// Initiating author shared by both legs.
+            pub author: String,
+            /// Author-local act sequence shared by both legs.
+            pub sequence: u64,
+            /// A or T constructor role, never a separately authored identity.
+            pub role: ReferenceRole,
+        }
+        after {
+            /// Signed effort, directional on A and intensity on T.
+            pub effort: Coordinate,
+            /// Signed enthusiasm, intensity on A and directional on T.
+            pub enthusiasm: Coordinate,
+        }
+    }
 }
 
 /// Constructor role of a Invitation edge, derived from one complete act.
@@ -360,27 +357,27 @@ pub enum InvitationRole {
     T,
 }
 
-/// Complete Invitation tuple shared by both role-addressed projections.
-/// (´def:formation:invitation´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct InvitationProjection {
-    /// Initiating author shared by both legs.
-    pub author: String,
-    /// Author-local act sequence shared by both legs.
-    pub sequence: u64,
-    /// A or T constructor role, never a separately authored identity.
-    pub role: InvitationRole,
-    /// Retained published placement of the whole act.
-    pub position: Position,
-    /// One retained time shared by both projections.
-    pub logical_time: u64,
-    /// Signed urgency, directional on A.
-    pub urgency: Coordinate,
-    /// Signed formality, intensity on A.
-    pub formality: Coordinate,
-    /// Nonnegative relevance, directional on T; T intensity is fixed at one.
-    pub relevance: Coordinate,
+crate::metadata::projection! {
+    /// Complete Invitation tuple shared by both role-addressed projections.
+    /// (´def:formation:invitation´)
+    pub struct InvitationProjection {
+        before {
+            /// Initiating author shared by both legs.
+            pub author: String,
+            /// Author-local act sequence shared by both legs.
+            pub sequence: u64,
+            /// A or T constructor role, never a separately authored identity.
+            pub role: InvitationRole,
+        }
+        after {
+            /// Signed urgency, directional on A.
+            pub urgency: Coordinate,
+            /// Signed formality, intensity on A.
+            pub formality: Coordinate,
+            /// Nonnegative relevance, directional on T; T intensity is fixed at one.
+            pub relevance: Coordinate,
+        }
+    }
 }
 
 /// Constructor role of a Deinvite edge, derived from one complete act.
@@ -393,21 +390,20 @@ pub enum DeinviteRole {
     T,
 }
 
-/// Complete Deinvite tuple shared by both role-addressed projections.
-/// (´def:formation:deinvite´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct DeinviteProjection {
-    /// Initiating author shared by both legs.
-    pub author: String,
-    /// Author-local act sequence shared by both legs.
-    pub sequence: u64,
-    /// A or T constructor role, never a separately authored identity.
-    pub role: DeinviteRole,
-    /// Retained published placement of the whole act.
-    pub position: Position,
-    /// One retained time shared by both projections.
-    pub logical_time: u64,
+crate::metadata::projection! {
+    /// Complete Deinvite tuple shared by both role-addressed projections.
+    /// (´def:formation:deinvite´)
+    pub struct DeinviteProjection {
+        before {
+            /// Initiating author shared by both legs.
+            pub author: String,
+            /// Author-local act sequence shared by both legs.
+            pub sequence: u64,
+            /// A or T constructor role, never a separately authored identity.
+            pub role: DeinviteRole,
+        }
+        after {}
+    }
 }
 
 /// Constructor role of a Send edge, derived from one complete act.
@@ -420,23 +416,23 @@ pub enum SendRole {
     T,
 }
 
-/// Complete Send tuple shared by both role-addressed projections.
-/// (´def:formation:send´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct SendProjection {
-    /// Initiating author shared by both legs.
-    pub author: String,
-    /// Author-local act sequence shared by both legs.
-    pub sequence: u64,
-    /// A or T constructor role, never a separately authored identity.
-    pub role: SendRole,
-    /// Retained published placement of the whole act.
-    pub position: Position,
-    /// One retained time shared by both projections.
-    pub logical_time: u64,
-    /// Signed importance, directional on A and intensity on T.
-    pub importance: Coordinate,
+crate::metadata::projection! {
+    /// Complete Send tuple shared by both role-addressed projections.
+    /// (´def:formation:send´)
+    pub struct SendProjection {
+        before {
+            /// Initiating author shared by both legs.
+            pub author: String,
+            /// Author-local act sequence shared by both legs.
+            pub sequence: u64,
+            /// A or T constructor role, never a separately authored identity.
+            pub role: SendRole,
+        }
+        after {
+            /// Signed importance, directional on A and intensity on T.
+            pub importance: Coordinate,
+        }
+    }
 }
 
 /// Constructor role of a Bid edge, derived from one complete act.
@@ -449,25 +445,25 @@ pub enum BidRole {
     T,
 }
 
-/// Complete Bid tuple shared by both role-addressed projections.
-/// (´def:formation:bid´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct BidProjection {
-    /// Initiating author shared by both legs.
-    pub author: String,
-    /// Author-local act sequence shared by both legs.
-    pub sequence: u64,
-    /// A or T constructor role, never a separately authored identity.
-    pub role: BidRole,
-    /// Retained published placement of the whole act.
-    pub position: Position,
-    /// One retained time shared by both projections.
-    pub logical_time: u64,
-    /// Signed generosity, directional on A and intensity on T.
-    pub generosity: Coordinate,
-    /// Nonnegative urgency, intensity on A and directional on T.
-    pub urgency: Coordinate,
+crate::metadata::projection! {
+    /// Complete Bid tuple shared by both role-addressed projections.
+    /// (´def:formation:bid´)
+    pub struct BidProjection {
+        before {
+            /// Initiating author shared by both legs.
+            pub author: String,
+            /// Author-local act sequence shared by both legs.
+            pub sequence: u64,
+            /// A or T constructor role, never a separately authored identity.
+            pub role: BidRole,
+        }
+        after {
+            /// Signed generosity, directional on A and intensity on T.
+            pub generosity: Coordinate,
+            /// Nonnegative urgency, intensity on A and directional on T.
+            pub urgency: Coordinate,
+        }
+    }
 }
 
 /// Distinct supported families, preserving each complete authored projection.
@@ -542,48 +538,48 @@ pub struct AcceptIdentity {
     pub family: String,
 }
 
-/// Complete Accept binary projection and non-incidence settlement metadata.
-/// (´def:formation:settlement´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct AcceptProjection {
-    /// Initiating author, equal to the source Actor.
-    pub author: String,
-    /// Author-local sequence.
-    pub sequence: u64,
-    /// Retained published placement.
-    pub position: Position,
-    /// Retained attached time, without a new recurrence verdict.
-    pub logical_time: u64,
-    /// Signed comfort, the directional parameter.
-    pub comfort: Coordinate,
-    /// Signed equity, the intensity parameter.
-    pub equity: Coordinate,
-    /// Asserted Bid target; metadata adds no Offer incidence.
-    pub settles: BidIdentity,
+crate::metadata::projection! {
+    /// Complete Accept binary projection and non-incidence settlement metadata.
+    /// (´def:formation:settlement´)
+    pub struct AcceptProjection {
+        before {
+            /// Initiating author, equal to the source Actor.
+            pub author: String,
+            /// Author-local sequence.
+            pub sequence: u64,
+        }
+        after {
+            /// Signed comfort, the directional parameter.
+            pub comfort: Coordinate,
+            /// Signed equity, the intensity parameter.
+            pub equity: Coordinate,
+            /// Asserted Bid target; metadata adds no Offer incidence.
+            pub settles: BidIdentity,
+        }
+    }
 }
 
-/// Complete Ratify binary projection and non-incidence settlement metadata.
-/// (´def:formation:settlement´)
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct RatifyProjection {
-    /// Initiating author, equal to the source Actor.
-    pub author: String,
-    /// Author-local sequence.
-    pub sequence: u64,
-    /// Retained published placement.
-    pub position: Position,
-    /// Retained attached time, without a new recurrence verdict.
-    pub logical_time: u64,
-    /// Signed comfort, the directional parameter.
-    pub comfort: Coordinate,
-    /// Signed equity, the intensity parameter.
-    pub equity: Coordinate,
-    /// Asserted Bid target; metadata adds no Offer incidence.
-    pub settles: BidIdentity,
-    /// Asserted exact Accept target; recognition checks same-Bid binding.
-    pub accepts: AcceptIdentity,
+crate::metadata::projection! {
+    /// Complete Ratify binary projection and non-incidence settlement metadata.
+    /// (´def:formation:settlement´)
+    pub struct RatifyProjection {
+        before {
+            /// Initiating author, equal to the source Actor.
+            pub author: String,
+            /// Author-local sequence.
+            pub sequence: u64,
+        }
+        after {
+            /// Signed comfort, the directional parameter.
+            pub comfort: Coordinate,
+            /// Signed equity, the intensity parameter.
+            pub equity: Coordinate,
+            /// Asserted Bid target; metadata adds no Offer incidence.
+            pub settles: BidIdentity,
+            /// Asserted exact Accept target; recognition checks same-Bid binding.
+            pub accepts: AcceptIdentity,
+        }
+    }
 }
 
 /// Direct diagnostic backend, requiring revalidation after mutation or decoding.
@@ -746,8 +742,7 @@ fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
         Some(SettlementReferences::Accept { settles }) if act.id().family == "Accept" => Projection::Accept(AcceptProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
             comfort,
             equity,
             settles: BidIdentity {
@@ -760,8 +755,7 @@ fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
             Projection::Ratify(RatifyProjection {
                 author: act.id().author.clone(),
                 sequence: act.id().sequence,
-                position: act.position(),
-                logical_time: act.logical_time(),
+                metadata: crate::metadata::ActMetadata::from_act(act),
                 comfort,
                 equity,
                 settles: BidIdentity {
@@ -872,8 +866,7 @@ fn binary(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Co
         Projection::Affinity(AffinityProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
             association,
             attraction,
         }),
@@ -915,8 +908,7 @@ fn publish(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
         Projection::Publish(PublishProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
             attachment,
             license: act.body().license.map(|pair| LicenseQualifiers {
                 attribution: Coordinate {
@@ -967,8 +959,7 @@ fn owner(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
         Projection::Owner(OwnerProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
             attachment,
         }),
     ))
@@ -1033,8 +1024,7 @@ fn participant(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resu
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: ParticipantRole::A,
-        position: act.position(),
-        logical_time: act.logical_time(),
+        metadata: crate::metadata::ActMetadata::from_act(act),
         interactivity,
         responsibility,
         continuity,
@@ -1100,8 +1090,7 @@ fn review(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Ve
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: ReviewRole::A,
-        position: act.position(),
-        logical_time: act.logical_time(),
+        metadata: crate::metadata::ActMetadata::from_act(act),
         enthusiasm,
         effort,
     };
@@ -1178,8 +1167,7 @@ fn send(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: SendRole::A,
-        position: act.position(),
-        logical_time: act.logical_time(),
+        metadata: crate::metadata::ActMetadata::from_act(act),
         importance,
     };
     let t_weight = SendProjection {
@@ -1236,8 +1224,7 @@ fn bid(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<C
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: BidRole::A,
-        position: act.position(),
-        logical_time: act.logical_time(),
+        metadata: crate::metadata::ActMetadata::from_act(act),
         generosity,
         urgency,
     };
@@ -1285,8 +1272,7 @@ fn opinion(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
         Projection::Opinion(OpinionProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
             polarity,
             reaction,
         }),
@@ -1323,8 +1309,7 @@ fn join_request(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Res
         Projection::JoinRequest(JoinRequestProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
             urgency,
             formality,
         }),
@@ -1368,8 +1353,7 @@ fn tag(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Vec<C
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: TagRole::A,
-        position: act.position(),
-        logical_time: act.logical_time(),
+        metadata: crate::metadata::ActMetadata::from_act(act),
         relevance,
         confidence,
     };
@@ -1415,8 +1399,7 @@ fn leave(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<Com
         Projection::Leave(LeaveProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
         }),
     ))
 }
@@ -1455,8 +1438,7 @@ fn reference(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: ReferenceRole::A,
-        position: act.position(),
-        logical_time: act.logical_time(),
+        metadata: crate::metadata::ActMetadata::from_act(act),
         effort,
         enthusiasm,
     };
@@ -1512,8 +1494,7 @@ fn invitation(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: InvitationRole::A,
-        position: act.position(),
-        logical_time: act.logical_time(),
+        metadata: crate::metadata::ActMetadata::from_act(act),
         urgency,
         formality,
         relevance,
@@ -1567,8 +1548,7 @@ fn deinvite(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<
         author: act.id().author.clone(),
         sequence: act.id().sequence,
         role: DeinviteRole::A,
-        position: act.position(),
-        logical_time: act.logical_time(),
+        metadata: crate::metadata::ActMetadata::from_act(act),
     };
     let t_weight = DeinviteProjection {
         role: DeinviteRole::T,
@@ -1615,8 +1595,7 @@ fn withdraw(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<
         Projection::Withdraw(WithdrawProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
         }),
     ))
 }
@@ -1652,8 +1631,7 @@ fn rescind(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Result<C
         Projection::Rescind(RescindProjection {
             author: act.id().author.clone(),
             sequence: act.id().sequence,
-            position: act.position(),
-            logical_time: act.logical_time(),
+            metadata: crate::metadata::ActMetadata::from_act(act),
         }),
     ))
 }

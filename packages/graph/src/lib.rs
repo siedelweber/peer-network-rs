@@ -150,3 +150,7 @@ mod tests {
 /// Compliant-history settlement recognition with explicit boundary premises.
 /// (´def:formation:settlement-recognition´)
 pub mod recognition;
+
+/// Shared inherited act metadata and stable diagnostic presentation.
+/// (´def:formation:act-metadata´)
+pub mod metadata;

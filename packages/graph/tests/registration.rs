@@ -108,7 +108,10 @@ fn complete_projection() {
         (source, target),
         (GroundedNode::Actor("a".into()), GroundedNode::Profile("a".into()))
     );
-    assert_eq!((edge.sequence, edge.position, edge.logical_time), (1, (1, 1), 1));
+    assert_eq!(
+        (edge.sequence, edge.metadata.position, edge.metadata.logical_time),
+        (1, (1, 1), 1)
+    );
     let mut changed = original.clone();
     changed.authentication_evidence = vec![2];
     let view = validate_history(&[changed], &names()).unwrap();
@@ -255,7 +258,7 @@ fn revalidation() {
     );
     let mut changed = graph.clone();
     let edge = changed.edge_indices().next().unwrap();
-    changed[edge].logical_time = 99;
+    changed[edge].metadata.logical_time = 99;
     assert_eq!(
         validate_registration_graph(&changed, &history, &auth),
         Err(RegistrationError::GraphMismatch)
