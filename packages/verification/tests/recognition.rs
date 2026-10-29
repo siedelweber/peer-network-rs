@@ -431,3 +431,171 @@ fn recognition_holds() {
         }
     }
 }
+
+fn handshake(sequence: u64, epoch: u64, buyer: &str, seller: &str) -> Vec<CandidateAct> {
+    let mut bid = bid(sequence);
+    bid.id.author = buyer.into();
+    bid.finalization_epoch = epoch;
+    bid.legs[0].source = node("addr", buyer);
+    for leg in &mut bid.legs {
+        leg.id.act = bid.id.clone();
+    }
+    bid.legs[1].target = PublicReference::Minted(bid.id.clone());
+    let mut accept = act("Accept", seller, sequence + 1, epoch, node("addr", buyer));
+    quantities(&mut accept, ["comfort", "equity"], -1);
+    accept.body.settlement = Some(SettlementReferences::Accept { settles: bid.id.clone() });
+    let mut ratify = act("Ratify", buyer, sequence + 2, epoch, node("addr", seller));
+    quantities(&mut ratify, ["comfort", "equity"], -1);
+    ratify.body.settlement = Some(SettlementReferences::Ratify {
+        settles: bid.id.clone(),
+        accepts: accept.id.clone(),
+    });
+    vec![bid, accept, ratify]
+}
+
+fn title_history() -> Vec<CandidateAct> {
+    let mut genesis = act("Owner", "seller", 99, 0, item());
+    genesis.body.quantities = vec![
+        (
+            "attachment.numerator".into(),
+            Quantity {
+                value: 0,
+                unit: "one".into(),
+                vintage: 0,
+            },
+        ),
+        (
+            "attachment.denominator".into(),
+            Quantity {
+                value: 1,
+                unit: "one".into(),
+                vintage: 0,
+            },
+        ),
+    ];
+    let mut inputs = vec![genesis];
+    inputs.extend(handshake(10, 2, "first", "seller"));
+    // Shared Bid and Accept; two distinct co-epochal Ratify records conflict.
+    let mut twin = inputs.last().unwrap().clone();
+    twin.id.sequence = 13;
+    twin.authoritative_position = 13;
+    twin.legs[0].id.act = twin.id.clone();
+    inputs.push(twin);
+    inputs.extend(handshake(20, 3, "first", "seller"));
+    inputs.extend(handshake(30, 4, "intruder", "seller"));
+    inputs.extend(handshake(40, 5, "second", "first"));
+    // Reusing consumed Bid and Accept cannot revive recognition after conflict.
+    let mut reuse = inputs[3].clone();
+    reuse.id.sequence = 50;
+    reuse.authoritative_position = 50;
+    reuse.finalization_epoch = 6;
+    reuse.legs[0].id.act = reuse.id.clone();
+    inputs.push(reuse);
+    stamp(&mut inputs);
+    inputs
+}
+
+/// Claim: On compliant histories, full title replay matches an independently specified boundary table for genesis, empty boundaries, shared-record conflicts, fresh retry, prior-owner refusal, resale and consumed-record reuse. Each derived premise reproduces the separately invoked recognition evidence; consumption excludes individual records, not only repeated triples.
+/// ´claim:verification:compliant-title-matches-independent-boundary-table´
+/// ´test:integration:title-boundaries´
+#[test]
+fn title_boundaries() {
+    use pn_graph::title::replay_title;
+    let inputs = title_history();
+    // Literal specification table: epoch, owner, newly consumed authored sequences.
+    // Neither the fold nor the recognition oracle derives these expectations.
+    let table = [
+        (0, "seller", vec![]),
+        (1, "seller", vec![]),
+        (2, "seller", vec![10, 11, 12, 13]),
+        (3, "first", vec![20, 21, 22]),
+        (4, "first", vec![]),
+        (5, "second", vec![40, 41, 42]),
+        (6, "second", vec![]),
+    ];
+    for reversed in [false, true] {
+        let mut presented = inputs.clone();
+        if reversed {
+            presented.reverse();
+        }
+        let history = validate_history(&presented, &[]).unwrap();
+        let graph = reconstruct(&history, &Approval).unwrap();
+        let mut consumed = BTreeSet::new();
+        for (epoch, owner, added) in &table {
+            for sequence in added {
+                consumed.insert(inputs.iter().find(|act| act.id.sequence == *sequence).unwrap().id.clone());
+            }
+            let replay = replay_title(&graph, &history, &Approval, *epoch).unwrap();
+            assert_eq!(replay.certificate, BTreeMap::from([(item(), Some((*owner).into()))]));
+            assert_eq!(replay.consumed, consumed);
+            for boundary in &replay.boundaries {
+                assert_eq!(
+                    boundary.candidates,
+                    recognize_settlements(&graph, &history, &Approval, &boundary.premises).unwrap()
+                );
+                let previous = replay_title(&graph, &history, &Approval, boundary.premises.prior_epoch).unwrap();
+                assert_eq!(boundary.premises.consumed, previous.consumed);
+                assert_eq!(
+                    boundary.premises.owners,
+                    previous
+                        .certificate
+                        .into_iter()
+                        .filter_map(|(item, owner)| owner.map(|owner| (item, owner)))
+                        .collect()
+                );
+            }
+        }
+        let replay = replay_title(&graph, &history, &Approval, 6).unwrap();
+        assert_eq!(replay.boundaries[1].candidates.iter().filter(|c| c.recognized).count(), 2);
+        assert!(!replay.boundaries[3].candidates[0].clauses[&RecognitionClause::Authorization]);
+        assert_eq!(replay.boundaries[5].candidates[0].consumed.len(), 2);
+        assert!(!replay.boundaries[5].candidates[0].recognized);
+    }
+}
+
+/// Claim: Compliant title replay revalidates its complete graph, retains void for an unresolved Item genesis, introduces fresh genesis only at its boundary, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.
+/// ´claim:verification:title-requires-complete-compliant-genesis-evidence´
+/// ´test:integration:title-premises´
+#[test]
+fn title_premises() {
+    use pn_graph::title::replay_title;
+    let mut inputs = title_history();
+    let genesis = inputs.remove(0);
+    stamp(&mut inputs);
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &Approval).unwrap();
+    let void = replay_title(&graph, &history, &Approval, 6).unwrap();
+    assert_eq!(void.certificate[&item()], None);
+    assert!(void.consumed.is_empty());
+    let mut late = genesis.clone();
+    late.finalization_epoch = 1;
+    inputs.push(late);
+    let mut ordinary = genesis;
+    ordinary.id.author = "outsider".into();
+    ordinary.id.sequence = 100;
+    ordinary.finalization_epoch = 4;
+    ordinary.authoritative_position = 100;
+    ordinary.legs[0].id.act = ordinary.id.clone();
+    ordinary.legs[0].source = node("addr", "outsider");
+    inputs.push(ordinary);
+    stamp(&mut inputs);
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &Approval).unwrap();
+    assert!(replay_title(&graph, &history, &Approval, 0).unwrap().certificate.is_empty());
+    let replay = replay_title(&graph, &history, &Approval, 6).unwrap();
+    assert_eq!(replay.boundaries[0].premises.owners[&item()], "seller");
+    assert_eq!(replay.certificate[&item()], Some("second".into()));
+    let mut partial = graph.clone();
+    partial.remove_edge(partial.edge_indices().next().unwrap());
+    assert!(matches!(
+        replay_title(&partial, &history, &Approval, 6),
+        Err(RecognitionError::Formation(_))
+    ));
+    inputs.last_mut().unwrap().logical_time = 0;
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &Approval).unwrap();
+    assert!(matches!(
+        replay_title(&graph, &history, &Approval, 6),
+        Err(RecognitionError::Held(_))
+    ));
+}

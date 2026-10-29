@@ -61,14 +61,17 @@ fn main() {
     let recognition = pn_graph::recognition::recognize_settlements(&graph, &history, &auth, &context);
     context.prior_epoch = 1;
     let wrong_boundary = pn_graph::recognition::recognize_settlements(&graph, &history, &auth, &context);
+    let replay = pn_graph::title::replay_title(&graph, &history, &auth, 1);
     let denied = reconstruct(&history, &FixtureApproval(false));
     let mut partial = graph.clone();
     let edge = partial.edge_indices().next().unwrap();
     partial.remove_edge(edge);
     let invalid = validate_formation(&partial, &history, &auth);
     let partial_title = pn_graph::title::title_inputs(&partial, &history, &auth);
+    let partial_replay = pn_graph::title::replay_title(&partial, &history, &auth, 1);
     cli_common::emit(&serde_json::json!({
         "recognition": format!("{recognition:?}"), "wrong_boundary": format!("{wrong_boundary:?}"),
+        "replay": format!("{replay:?}"), "partial_replay": format!("{partial_replay:?}"),
         "title": format!("{title:?}"), "partial_title": format!("{partial_title:?}"),
         "projection": format!("{projection:?}"), "graph": format!("{graph:?}"),
         "publication": format!("{publication:?}"),

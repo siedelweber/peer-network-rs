@@ -4003,7 +4003,9 @@
       "cases": [
         "pn-verification::recognition::recognition_enumerator",
         "pn-verification::recognition::recognition_binding",
-        "pn-verification::recognition::recognition_holds"
+        "pn-verification::recognition::recognition_holds",
+        "pn-verification::recognition::title_boundaries",
+        "pn-verification::recognition::title_premises"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",

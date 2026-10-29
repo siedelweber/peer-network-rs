@@ -6662,6 +6662,16 @@
       "claim": "ROOT::alg:design:recognition",
       "shape": "shape-graph-affinity",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "item": "title::replay_title",
+      "owner": "GRAPH",
+      "signature": "fn replay_title (graph : & FormationGraph , history : & ValidatedHistory , verifier : & impl RegistrationVerifier , epoch : u64 ,) -> Result < TitleReplay , crate :: recognition :: RecognitionError >",
+      "claim": "ROOT::alg:design:title",
+      "shape": "shape-graph-affinity",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -12811,6 +12821,17 @@
         "secret_flow": "graph-affinity-secret_flow",
         "exposure_consumers": "graph-affinity-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/title.rs::title::replay_title",
+      "body": "{ let result = title_inputs (graph , history , verifier) . map_err (crate :: recognition :: RecognitionError :: Formation) . and_then (| inputs | fold_title (graph , history , verifier , & inputs , epoch)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "class_decision": "graph-affinity",
+      "item_premise": "Public graph, complete history and deterministic verifier are revalidated before a pure compliant boundary replay. Trace retains derived prior-owner and consumed-record premises, candidate evidence and complete certificates or whole-result hold/refusal. No secret, publication side effect, membership admission or title authentication is introduced; nested operations retain inclusive accounting.",
+      "assessments": {
+        "full_recording": "graph-affinity-full_recording",
+        "secret_flow": "graph-affinity-secret_flow",
+        "exposure_consumers": "graph-affinity-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -15603,6 +15624,24 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Structural Clone, Debug, equality, ordering and error formatting expose public caller premises and complete clause or hold evidence. These derives supply no serialization, authentication or title fold."
+    },
+    {
+      "item": "title::TitleBoundary",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Structural Clone, Debug and equality expose public boundary premises, complete title evidence and identity-based consumption. No serialization, authentication or publication is generated."
+    },
+    {
+      "item": "title::TitleReplay",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Structural Clone, Debug and equality expose public boundary premises, complete title evidence and identity-based consumption. No serialization, authentication or publication is generated."
     }
   ],
   "reviewed_types": [
@@ -17407,6 +17446,18 @@
       "syntax": "# [doc = \" Structural indexes derived after whole-history formation revalidation.\"] # [doc = \" These public values are evidence outputs, not a reusable validation token.\"] # [doc = \" (´def:formation:title-inputs´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleInputs { # [doc = \" Every complete authored identity, including parallel records.\"] pub acts : BTreeSet < ActId > , # [doc = \" Self-minting Item terms and their genesis Owner acts.\"] pub genesis : BTreeMap < PublicReference , ActId > , # [doc = \" Each Bid identity and the Item named by its A-leg.\"] pub bids : BTreeMap < ActId , PublicReference > , # [doc = \" Accept and Ratify identities with their exact structural references.\"] pub settlements : BTreeMap < ActId , SettlementReferences > , }"
     },
     {
+      "item": "title::TitleBoundary",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [doc = \" One boundary's derived recognition premises and resulting title certificate.\"] # [doc = \" Missing owners are represented explicitly by None for encountered Item terms.\"] # [doc = \" (´def:formation:boundary-title´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleBoundary { # [doc = \" Immediately preceding ownership and consumption, extended by fresh genesis.\"] pub premises : crate :: recognition :: RecognitionContext , # [doc = \" Complete attempted-candidate evidence, including non-binding attempts.\"] pub candidates : Vec < crate :: recognition :: SettlementEvidence > , # [doc = \" Certified owners after this boundary; unresolved genesis remains None.\"] pub certificate : BTreeMap < PublicReference , Option < String > > , # [doc = \" All records consumed through this boundary, not just whole-triple keys.\"] pub consumed : BTreeSet < ActId > , }"
+    },
+    {
+      "item": "title::TitleReplay",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [doc = \" Pure full replay; public evidence is not a token authorizing publication.\"] # [doc = \" (´def:formation:boundary-title´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleReplay { # [doc = \" Requested final boundary.\"] pub epoch : u64 , # [doc = \" Final certificate, including void entries for unresolved Item terms.\"] pub certificate : BTreeMap < PublicReference , Option < String > > , # [doc = \" Distinct records permanently excluded from later recognition.\"] pub consumed : BTreeSet < ActId > , # [doc = \" Boundary-by-boundary recognition premises and fold evidence.\"] pub boundaries : Vec < TitleBoundary > , }"
+    },
+    {
       "item": "PartitionError",
       "package": "pn-graph",
       "path": "packages/graph/src/lib.rs",
@@ -17920,7 +17971,8 @@
           "pn-graph::packages/graph/src/formation.rs::formation::reconstruct",
           "pn-graph::packages/graph/src/formation.rs::formation::validate_formation",
           "pn-graph::packages/graph/src/title.rs::title::title_inputs",
-          "pn-graph::packages/graph/src/recognition.rs::recognition::recognize_settlements"
+          "pn-graph::packages/graph/src/recognition.rs::recognition::recognize_settlements",
+          "pn-graph::packages/graph/src/title.rs::title::replay_title"
         ]
       },
       "status": "reviewer-confirmed",

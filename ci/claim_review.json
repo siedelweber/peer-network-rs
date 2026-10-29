@@ -237,8 +237,8 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation and complete-act title indexing return identical complete public results with observation disabled, default and trace; the twenty-two successful operations and four explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing and scoped six-clause recognition return identical complete public results with observation disabled, default and trace; the twenty-seven successful operations and five explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing and scoped six-clause recognition return identical complete public results with observation disabled, default and trace; the twenty-seven successful operations and five explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition and compliant boundary title replay return identical complete public results with observation disabled, default and trace; the thirty-three successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
       "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
     },
     {
@@ -3135,6 +3135,22 @@
       "claim": "VERIFICATION::claim:verification:recognition-holds-faulted-or-unavailable-time",
       "before": "",
       "after": "Claim: Recognition gives no negative candidate verdict when compliant-history recurrence evidence is missing or mismatched, and refuses incomplete graph or boundary premises before returning clauses. Payload removal preserves recognized evidence; tombstoned dependency openings produce the named hold rather than recomputing time.",
+      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
+    },
+    {
+      "operation": "pn-verification::recognition::title_boundaries",
+      "path": "packages/verification/tests/recognition.rs",
+      "claim": "VERIFICATION::claim:verification:compliant-title-matches-independent-boundary-table",
+      "before": "",
+      "after": "Claim: On compliant histories, full title replay matches an independently specified boundary table for genesis, empty boundaries, shared-record conflicts, fresh retry, prior-owner refusal, resale and consumed-record reuse. Each derived premise reproduces the separately invoked recognition evidence; consumption excludes individual records, not only repeated triples.",
+      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
+    },
+    {
+      "operation": "pn-verification::recognition::title_premises",
+      "path": "packages/verification/tests/recognition.rs",
+      "claim": "VERIFICATION::claim:verification:title-requires-complete-compliant-genesis-evidence",
+      "before": "",
+      "after": "Claim: Compliant title replay revalidates its complete graph, retains void for an unresolved Item genesis, introduces fresh genesis only at its boundary, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.",
       "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
     },
     {
