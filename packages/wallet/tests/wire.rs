@@ -9,7 +9,7 @@ use std::{
     net::{Shutdown, TcpListener, TcpStream},
     os::unix::fs::{DirBuilderExt as _, MetadataExt as _, OpenOptionsExt as _},
     path::PathBuf,
-    sync::atomic::{AtomicUsize, Ordering},
+    sync::atomic::{AtomicU64, AtomicUsize, Ordering},
     thread,
     time::{Duration, Instant},
 };
@@ -723,6 +723,34 @@ fn wallet_threads() -> usize {
         .count()
 }
 
+/// Bound on kernel teardown of a joined thread's task. A join returns once the exiting thread
+/// clears its thread identifier, which the kernel does before it unhashes the task from
+/// `/proc`, so a joined thread's entry may remain briefly; under load that window is visible.
+const TEARDOWN: Duration = Duration::from_secs(5);
+/// Longest teardown wait observed, in microseconds, reported with any failure.
+static TEARDOWN_WAIT: AtomicU64 = AtomicU64::new(0);
+
+/// Wait within the teardown bound until `settled` holds: Ok with the wait, or Err with the
+/// elapsed time once the bound passes.
+fn after_teardown(settled: impl Fn() -> bool) -> Result<Duration, Duration> {
+    let started = Instant::now();
+    loop {
+        let elapsed = started.elapsed();
+        if settled() {
+            TEARDOWN_WAIT.fetch_max(u64::try_from(elapsed.as_micros()).unwrap_or(u64::MAX), Ordering::Relaxed);
+            return Ok(elapsed);
+        }
+        if elapsed >= TEARDOWN {
+            return Err(elapsed);
+        }
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+
+fn tasks() -> usize {
+    std::fs::read_dir("/proc/self/task").unwrap().count()
+}
+
 /// Run one case through a fresh reader and return its differences from the expectation.
 fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec<String> {
     let mut findings = Vec::new();
@@ -738,9 +766,12 @@ fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec
             other => panic!("count expected: {other:?}"),
         });
     let name = case.name;
-    // Each exchange joins its own thread before the read returns, timed out or not.
-    if wallet_threads() != 0 {
-        findings.push(format!("{name}: an exchange thread outlived its read"));
+    // The reader joins its scoped exchange thread before returning, timed out or not; once
+    // the kernel has torn the joined task down, no exchange task of this read remains.
+    if let Err(elapsed) = after_teardown(|| wallet_threads() == 0) {
+        findings.push(format!(
+            "{name}: an exchange thread task remained {elapsed:?} after its read returned"
+        ));
     }
     let exchange = server.join().unwrap();
     if result != case.expected {
@@ -770,7 +801,7 @@ fn run_case(case: &Case, genesis: &[Vec<u8>], declaration: &Provisioning) -> Vec
     findings
 }
 
-/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection and leaves no thread behind, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
+/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
 /// ´claim:wallet:rpc-wire-fixtures-keep-strict-framing´
 /// ´test:integration:wire-compatibility´
 #[test]
@@ -795,7 +826,7 @@ fn wire_compatibility() {
     cases.extend(length_cases());
     cases.extend(bound_cases(ceiling));
     cases.extend(acquisition_cases());
-    let threads = std::fs::read_dir("/proc/self/task").unwrap().count();
+    let threads = tasks();
     let mut findings: Vec<_> = cases.iter().flat_map(|case| run_case(case, &genesis, &declaration)).collect();
     // A caller already inside a Tokio runtime: the reader runs its exchange on its own
     // thread and runtime instead of nesting one, for a success and for a timed-out read.
@@ -808,14 +839,20 @@ fn wire_compatibility() {
         findings.extend(inside.into_iter().map(|finding| format!("inside a Tokio runtime: {finding}")));
     }
     drop(runtime);
-    if std::fs::read_dir("/proc/self/task").unwrap().count() != threads {
-        findings.push("threads remain after every exchange and server joined".to_owned());
+    // Every exchange and server thread is joined by now; after teardown the process is back
+    // to the tasks it started with.
+    if let Err(elapsed) = after_teardown(|| tasks() == threads) {
+        findings.push(format!(
+            "{} tasks remain {elapsed:?} after every exchange and server joined; {threads} at the start",
+            tasks()
+        ));
     }
     assert!(
         findings.is_empty(),
-        "{} of {} wire cases differ:\n{}",
+        "{} of {} wire cases differ (longest teardown wait {} us):\n{}",
         findings.len(),
         cases.len(),
+        TEARDOWN_WAIT.load(Ordering::Relaxed),
         findings.join("\n")
     );
 }
