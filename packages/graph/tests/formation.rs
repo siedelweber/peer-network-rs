@@ -4302,7 +4302,7 @@ fn title_family_history() -> Vec<CandidateAct> {
     inputs
 }
 
-/// Claim: On the nineteen-family fixture, finalized title transfers only after every complete projection and declared approval/removal check succeeds; deleting or substituting any edge, denying any act, or denying any opening removal refuses the whole result. Authorized payload or dependency tombstones preserve the transfer and consumed identities despite unavailable time. This is conditional on the public verifier and the held partner correspondence under clause (ii); authenticated dependency openings remain held without bounding title, and no deployment authentication or unrestricted formation-to-title theorem is claimed.
+/// Claim: On the nineteen-family fixture, finalized title transfers only after every complete projection and declared approval/removal check succeeds; deleting or substituting any edge, denying any act, or denying any opening removal refuses the whole result. Authorized payload or dependency tombstones preserve the transfer and consumed identities despite unavailable time. This is conditional on the public verifier, with record-derived parties enforced under authorization clause (iii); authenticated dependency openings remain held without bounding title, and no deployment authentication or unrestricted formation-to-title theorem is claimed.
 /// ´claim:formation:scoped-title-requires-complete-authorized-history´
 /// ´test:integration:formed-title´
 #[test]

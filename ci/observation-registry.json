@@ -18449,13 +18449,13 @@
       "item": "recognition::RecognitionClause",
       "package": "pn-graph",
       "path": "packages/graph/src/recognition.rs",
-      "syntax": "# [doc = \" The six named clauses, in the paper's order.\"] # [doc = \" (\u00b4def:formation:settlement-recognition\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum RecognitionClause { # [doc = \" Three complete acts belong to the cumulative boundary set.\"] Completeness , # [doc = \" Both settles pointers and the exact accepts pointer agree.\"] ReferenceBinding , # [doc = \" The Accept author is the preceding certified owner.\"] Authorization , # [doc = \" No effective buyer Withdraw defeats this candidate.\"] BuyerConsent , # [doc = \" No effective seller Rescind defeats this candidate.\"] SellerConsent , # [doc = \" The referenced handshake chain is earlier in published placement.\"] WellFormedness , }"
+      "syntax": "# [doc = \" The six named clauses, in the paper's order.\"] # [doc = \" (\u00b4def:formation:settlement-recognition\u00b4)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum RecognitionClause { # [doc = \" Three complete acts belong to the cumulative boundary set.\"] Completeness , # [doc = \" Both settles pointers and the exact accepts pointer agree.\"] ReferenceBinding , # [doc = \" Record-derived seller and buyer authorize both actor projections.\"] Authorization , # [doc = \" No effective buyer Withdraw defeats this candidate.\"] BuyerConsent , # [doc = \" No effective seller Rescind defeats this candidate.\"] SellerConsent , # [doc = \" The referenced handshake chain is earlier in published placement.\"] WellFormedness , }"
     },
     {
       "item": "recognition::PartnerEvidence",
       "package": "pn-graph",
       "path": "packages/graph/src/recognition.rs",
-      "syntax": "# [doc = \" Family party correspondence, provisionally filed under reference binding.\"] # [doc = \" The paper's choice of clause remains held.\"] # [doc = \" (\u00b4[ROOT-open:design:settlement-partner-clause]\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PartnerEvidence { # [doc = \" The Ratify author is the Bid author.\"] pub ratify_author_is_buyer : bool , # [doc = \" The Accept targets the Bid author.\"] pub accept_target_is_buyer : bool , # [doc = \" The Ratify targets the Accept author.\"] pub ratify_target_is_seller : bool , }"
+      "syntax": "# [doc = \" Record-derived party correspondence under authorization clause (iii).\"] # [doc = \" (\u00b4def:formation:settlement-recognition\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PartnerEvidence { # [doc = \" The Ratify author is the Bid author.\"] pub ratify_author_is_buyer : bool , # [doc = \" The Accept targets the Bid author.\"] pub accept_target_is_buyer : bool , # [doc = \" The Ratify targets the certified or fresh-thread genesis owner.\"] pub ratify_target_is_seller : bool , }"
     },
     {
       "item": "recognition::SettlementEvidence",

@@ -310,24 +310,26 @@ fn oracle(inputs: &[CandidateAct], context: &RecognitionContext) -> BTreeMap<[Ac
                 };
                 let reference_binding = bid.id.family == "Bid"
                     && accept.id.family == "Accept"
-                    && accept.body.settlement == Some(SettlementReferences::Accept { settles: bid.id.clone() })
+                    && accept.body.settlement == Some(SettlementReferences::Accept { settles: bid.id.clone() });
+                let seller = item.and_then(|item| context.owners.get(item));
+                let parties = seller == Some(&accept.id.author)
                     && ratify.id.author == bid.id.author
                     && accept.legs[0].target == node("addr", &bid.id.author)
-                    && ratify.legs[0].target == node("addr", &accept.id.author);
+                    && seller.is_some_and(|seller| ratify.legs[0].target == node("addr", seller));
                 let mut cancelled = [false; 2];
                 for control in inputs {
                     if control.finalization_epoch <= context.epoch
                         && control.legs[0].target == PublicReference::Minted(bid.id.clone())
                     {
                         cancelled[0] |= control.id.family == "Withdraw" && control.id.author == bid.id.author;
-                        cancelled[1] |= control.id.family == "Rescind" && control.id.author == accept.id.author;
+                        cancelled[1] |= control.id.family == "Rescind" && seller == Some(&control.id.author);
                     }
                 }
                 let chain = [bid, accept, ratify];
                 let clauses = [
                     chain.iter().all(|act| act.finalization_epoch <= context.epoch),
                     reference_binding,
-                    item.and_then(|item| context.owners.get(item)) == Some(&accept.id.author),
+                    parties,
                     !cancelled[0],
                     !cancelled[1],
                     chain.windows(2).all(|pair| {
@@ -370,14 +372,14 @@ fn compare(inputs: &[CandidateAct], context: &RecognitionContext) {
             row.acts.iter().filter(|id| context.consumed.contains(*id)).cloned().collect()
         );
         for (family, author, witnessed) in [
-            ("Withdraw", &raw[0].id.author, &row.withdrawals),
-            ("Rescind", &raw[1].id.author, &row.rescissions),
+            ("Withdraw", Some(&raw[0].id.author), &row.withdrawals),
+            ("Rescind", context.owners.get(&raw[0].legs[0].target), &row.rescissions),
         ] {
             let mut expected: Vec<_> = inputs
                 .iter()
                 .filter(|act| {
                     act.id.family == family
-                        && &act.id.author == author
+                        && Some(&act.id.author) == author
                         && act.finalization_epoch <= context.epoch
                         && act.legs[0].target == PublicReference::Minted(raw[0].id.clone())
                 })
@@ -513,8 +515,8 @@ fn recognition_binding() {
     }
 }
 
-/// Claim: On compliant histories, each isolated party mismatch retains exact target binding but fails the corresponding partner evidence and provisional reference-binding clause (ii). A third-party Ratify, a misdirected Accept and a misdirected Ratify form without rewriting incidence and never recognize; the paper's clause placement remains held.
-/// ´claim:verification:partner-mismatches-retain-distinct-binding-evidence´
+/// Claim: On compliant histories, record-derived buyer and certified or fresh-thread seller determine authorization clause (iii), separately from reference binding (ii). A third-party Ratify, a misdirected Accept and a misdirected Ratify retain written incidence and exact binding but fail only (iii), preserve the owner and consume no records, with no host fault. The independent enumerator checks every clause and the wrong-party fixture.
+/// ´claim:verification:partner-mismatches-fail-record-derived-authorization´
 /// ´test:integration:recognition-partners´
 #[test]
 fn recognition_partners() {
@@ -540,14 +542,27 @@ fn recognition_partners() {
         assert_eq!(evidence.partners.ratify_author_is_buyer, kind != 0);
         assert_eq!(evidence.partners.accept_target_is_buyer, kind != 1);
         assert_eq!(evidence.partners.ratify_target_is_seller, kind != 2);
-        assert!(!evidence.clauses[&RecognitionClause::ReferenceBinding]);
+        assert!(!evidence.clauses[&RecognitionClause::Authorization]);
         assert!(
             evidence
                 .clauses
                 .iter()
-                .all(|(clause, passed)| *clause == RecognitionClause::ReferenceBinding || *passed)
+                .all(|(clause, passed)| *clause == RecognitionClause::Authorization || *passed)
         );
         assert!(!evidence.recognized);
+        // network-v0.30.1, ver:settlement:wrong-party: seller, buyer and
+        // outsider play Bob, Carol and Dave; the third case also misdirects Ratify.
+        let title = pn_graph::title::replay_title(&graph, &history, &Approval, 2).unwrap();
+        assert_eq!(title.certificate[&item()], Some("seller".into()));
+        assert_eq!(title.events, []);
+        assert!(title.consumed.is_empty());
+        assert_eq!(history.parent_faults(), []);
+        assert!(
+            history
+                .time_evidence()
+                .iter()
+                .all(|row| row.verdict == pn_records::TimeVerdict::Matches)
+        );
     }
 }
 

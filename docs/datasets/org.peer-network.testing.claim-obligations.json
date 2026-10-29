@@ -1114,11 +1114,11 @@
       "closing_step": "Bite 4 scoped close; unrestricted evidence remains bite 11",
       "evidence_paragraph": "VERIFICATION::amend:verification:bite-four-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Outside scope: deployment authentication, authenticated dependency openings and unrestricted history coverage. The paper settles partner correspondence in clause (iii). The graph step still owes record-derived parties, reassignment of partner evidence from (ii) to (iii), mismatch non-recognition and the wrong-party fixture under open:design:settlement-partner-clause; once witnessed, the title result loses its conditional paper-clause premise. Authenticated dependency openings do not limit or defer that result because no title path reads them.",
+      "missing": "Outside scope: deployment authentication, authenticated dependency openings and unrestricted history coverage. Released record-derived parties and clause-(iii) evidence are established; the supported title result has no conditional paper-clause premise. Authenticated dependency openings do not limit or defer that result because no title path reads them.",
       "name": "ROOT::gate:design:bite-4",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
-      "premises": "Declared public verifier and complete nineteen-family fixture; independent bounded candidate and boundary tables, recorded properties, shared public consumers and observed results. Parent and stamp faults are retained, unavailable time never bounds title, and the implemented partner relation is established but its evidence still needs the released clause-(iii) assignment and wrong-party witness; this is an implementation hold, not an unanswered paper question.",
+      "premises": "Declared public verifier and complete nineteen-family fixture; independent bounded candidate and boundary tables, recorded properties, shared public consumers and observed results. Parent and stamp faults are retained, unavailable time never bounds title, and record-derived partners are established under released clause (iii), including the wrong-party fixture.",
       "realizers": [],
       "status": "scoped-supported"
     },
@@ -2968,16 +2968,20 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization"
+      ],
       "closing_condition": "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan.",
       "closing_step": "Bite 4 follow-up, recipient evidence in bite 5 and integrated replay in bite 11",
+      "evidence_paragraph": "VERIFICATION::amend:verification:bite-four-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Record-derived parties, clause-(iii) reassignment, wrong-party non-recognition and independent title/self-recipient evidence.",
+      "missing": "Recipient compilation and integrated deployment replay remain with bites 5 and 11.",
       "name": "ROOT::verif:design:settlement-party-cases",
       "owner": "Graph implementer and verification reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "Declared public verifier, independent raw-carrier enumerator and three isolated party mismatches; no deployment authentication theorem. Reference binding remains separate from authorization.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],

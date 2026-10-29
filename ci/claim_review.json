@@ -1574,8 +1574,8 @@
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:scoped-title-requires-complete-authorized-history",
       "before": "",
-      "after": "Claim: On the nineteen-family fixture, finalized title transfers only after every complete projection and declared approval/removal check succeeds; deleting or substituting any edge, denying any act, or denying any opening removal refuses the whole result. Authorized payload or dependency tombstones preserve the transfer and consumed identities despite unavailable time. This is conditional on the public verifier and the held partner correspondence under clause (ii); authenticated dependency openings remain held without bounding title, and no deployment authentication or unrestricted formation-to-title theorem is claimed.",
-      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
+      "after": "Claim: On the nineteen-family fixture, finalized title transfers only after every complete projection and declared approval/removal check succeeds; deleting or substituting any edge, denying any act, or denying any opening removal refuses the whole result. Authorized payload or dependency tombstones preserve the transfer and consumed identities despite unavailable time. This is conditional on the public verifier, with record-derived parties enforced under authorization clause (iii); authenticated dependency openings remain held without bounding title, and no deployment authentication or unrestricted formation-to-title theorem is claimed.",
+      "review": "The released party predicate is implemented under clause (iii) and independently witnessed. The declared public verifier remains an explicit premise; dependency-opening authentication bounds no title result."
     },
     {
       "operation": "pn-graph::formation::invitation_projection",
@@ -3372,10 +3372,10 @@
     {
       "operation": "pn-verification::recognition::recognition_partners",
       "path": "packages/verification/tests/recognition.rs",
-      "claim": "VERIFICATION::claim:verification:partner-mismatches-retain-distinct-binding-evidence",
+      "claim": "VERIFICATION::claim:verification:partner-mismatches-fail-record-derived-authorization",
       "before": "",
-      "after": "Claim: On compliant histories, each isolated party mismatch retains exact target binding but fails the corresponding partner evidence and provisional reference-binding clause (ii). A third-party Ratify, a misdirected Accept and a misdirected Ratify form without rewriting incidence and never recognize; the paper's clause placement remains held.",
-      "review": "Each party predicate is isolated while targets bind, and all other recognition clauses pass. The independent raw enumerator agrees. This witnesses existing behavior and exposes separate evidence; the clause assignment remains an explicit paper hold."
+      "after": "Claim: On compliant histories, record-derived buyer and certified or fresh-thread seller determine authorization clause (iii), separately from reference binding (ii). A third-party Ratify, a misdirected Accept and a misdirected Ratify retain written incidence and exact binding but fail only (iii), preserve the owner and consume no records, with no host fault. The independent enumerator checks every clause and the wrong-party fixture.",
+      "review": "Retires VERIFICATION::claim:verification:partner-mismatches-retain-distinct-binding-evidence. Released record-derived parties belong to authorization (iii), not binding (ii); the full clause map and unchanged owner, consumption and host-fault evidence establish the wrong-party fixture."
     },
     {
       "operation": "pn-verification::recognition::settlement_replay_faults",

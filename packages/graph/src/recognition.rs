@@ -33,7 +33,7 @@ pub enum RecognitionClause {
     Completeness,
     /// Both settles pointers and the exact accepts pointer agree.
     ReferenceBinding,
-    /// The Accept author is the preceding certified owner.
+    /// Record-derived seller and buyer authorize both actor projections.
     Authorization,
     /// No effective buyer Withdraw defeats this candidate.
     BuyerConsent,
@@ -43,16 +43,15 @@ pub enum RecognitionClause {
     WellFormedness,
 }
 
-/// Family party correspondence, provisionally filed under reference binding.
-/// The paper's choice of clause remains held.
-/// (´[ROOT-open:design:settlement-partner-clause]´)
+/// Record-derived party correspondence under authorization clause (iii).
+/// (´def:formation:settlement-recognition´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PartnerEvidence {
     /// The Ratify author is the Bid author.
     pub ratify_author_is_buyer: bool,
     /// The Accept targets the Bid author.
     pub accept_target_is_buyer: bool,
-    /// The Ratify targets the Accept author.
+    /// The Ratify targets the certified or fresh-thread genesis owner.
     pub ratify_target_is_seller: bool,
 }
 
@@ -171,8 +170,10 @@ fn candidate_evidence(
 ) -> SettlementEvidence {
     let offer = PublicReference::Minted(acts[0].clone());
     let withdrawals = cancellations(history, "Withdraw", &acts[0].author, &offer, context.epoch);
-    let rescissions = cancellations(history, "Rescind", &acts[1].author, &offer, context.epoch);
     let prior_owner = item.and_then(|item| context.owners.get(item)).cloned();
+    let rescissions = prior_owner.as_ref().map_or_else(Vec::new, |seller| {
+        cancellations(history, "Rescind", seller, &offer, context.epoch)
+    });
     let partners = PartnerEvidence {
         ratify_author_is_buyer: ratify
             .zip(bid)
@@ -181,8 +182,8 @@ fn candidate_evidence(
             .zip(bid)
             .is_some_and(|(accept, bid)| actor_target(accept, &bid.id().author)),
         ratify_target_is_seller: ratify
-            .zip(accept)
-            .is_some_and(|(ratify, accept)| actor_target(ratify, &accept.id().author)),
+            .zip(prior_owner.as_ref())
+            .is_some_and(|(ratify, seller)| actor_target(ratify, seller)),
     };
     let targets_bind = item.is_some()
         && bid.is_some_and(|bid| bid.id().family == "Bid")
@@ -207,16 +208,13 @@ fn candidate_evidence(
                 .iter()
                 .all(|act| act.is_some_and(|act| act.finalization_epoch() <= context.epoch)),
         ),
+        (RecognitionClause::ReferenceBinding, targets_bind),
         (
-            RecognitionClause::ReferenceBinding,
-            targets_bind
+            RecognitionClause::Authorization,
+            accept.is_some_and(|accept| prior_owner.as_ref() == Some(&accept.id().author))
                 && partners.ratify_author_is_buyer
                 && partners.accept_target_is_buyer
                 && partners.ratify_target_is_seller,
-        ),
-        (
-            RecognitionClause::Authorization,
-            accept.is_some_and(|accept| prior_owner.as_ref() == Some(&accept.id().author)),
         ),
         (RecognitionClause::BuyerConsent, withdrawals.is_empty()),
         (RecognitionClause::SellerConsent, rescissions.is_empty()),
