@@ -5,6 +5,140 @@ use pn_records::{
     RemovableProjections, Removal, Role, StructuralBody, ValidatedAct, validate_history,
 };
 
+fn item_consumers() -> Vec<CandidateAct> {
+    let item = PublicReference::Minted(ownership(99).id);
+    let mut owner = ownership(2);
+    owner.legs[0].target = item.clone();
+    let mut target = referencing(2, named("name", "topic"));
+    target.legs[1].target = item.clone();
+    vec![
+        owner,
+        bidding(2, 99, 2),
+        opinion(2, item.clone()),
+        review(2, item.clone(), 2),
+        tagging(2, item.clone()),
+        referencing(2, item),
+        target,
+    ]
+}
+
+/// Claim: Owner, Bid, Opinion, Review, Tag and both Reference endpoint positions refuse an absent, ordinary-only or non-earlier Item genesis with `ItemEndpoint`. A complete authorized self-minting Owner precedes each consumer in the same batch or an earlier epoch; reverse placement and a batch cycle refuse without a partial graph. Registration still forms its fresh grounded pair.
+/// ´claim:formation:item-endpoints-require-earlier-formed-genesis´
+/// ´test:integration:item-endpoints´
+#[test]
+fn item_endpoints() {
+    for mut input in item_consumers() {
+        input.finalization_epoch = 2;
+        assert_eq!(
+            raw_bundle(&input, &[input.clone()]),
+            Err(FormationFailure::Graph(RegistrationError::ItemEndpoint))
+        );
+        let mut genesis = ownership(99);
+        genesis.authoritative_position = 1;
+        genesis.logical_time = 1;
+        for epoch in [1, 2] {
+            genesis.finalization_epoch = epoch;
+            let context = vec![genesis.clone(), input.clone()];
+            assert!(raw_bundle(&input, &context).is_ok());
+            let history = validate_history(&context, &[]).unwrap();
+            let empty = validate_history(&[], &[]).unwrap();
+            assert!(pn_records::validate_record(&context, &empty, &[]).is_ok());
+            let graph = reconstruct(
+                &history,
+                &Verifier {
+                    acts: context,
+                    removals: false,
+                },
+            )
+            .unwrap();
+            assert_eq!(graph.edge_count(), input.legs.len() + 1);
+        }
+        genesis.authoritative_position = 3;
+        let context = vec![input.clone(), genesis.clone()];
+        assert_eq!(
+            raw_bundle(&input, &context),
+            Err(FormationFailure::Graph(RegistrationError::ItemEndpoint))
+        );
+        let history = validate_history(&context, &[]).unwrap();
+        assert_eq!(
+            reconstruct(
+                &history,
+                &Verifier {
+                    acts: context,
+                    removals: false
+                }
+            )
+            .unwrap_err(),
+            RegistrationError::ItemEndpoint
+        );
+        genesis.authoritative_position = 1;
+        genesis.legs[0].target = PublicReference::Minted(ownership(98).id);
+        assert_eq!(
+            raw_bundle(&input, &[genesis, input.clone()]),
+            Err(FormationFailure::Graph(RegistrationError::ItemEndpoint))
+        );
+    }
+    let bid = bidding(2, 99, 2);
+    let mut genesis = ownership(99);
+    genesis.authoritative_position = 3;
+    genesis.body.asserted_parents = vec![bid.id.clone()];
+    let inputs = vec![bid, genesis];
+    let history = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(
+            &history,
+            &Verifier {
+                acts: inputs,
+                removals: false
+            }
+        )
+        .unwrap_err(),
+        RegistrationError::ItemEndpoint
+    );
+    assert!(bundle(&candidate("Registration", 1)).is_ok());
+}
+
+// Typed-coordinate fixtures supply an explicit earlier Owner for each external
+// Item term. Endpoint refusal witnesses use raw_bundle without this completion.
+fn item_context(inputs: &[CandidateAct]) -> Vec<CandidateAct> {
+    let mut context = inputs.to_vec();
+    for input in inputs {
+        for reference in input.legs.iter().flat_map(|leg| [&leg.source, &leg.target]) {
+            if let PublicReference::Minted(id) = reference
+                && id.family == "Owner"
+                && !context.iter().any(|act| &act.id == id)
+            {
+                let mut genesis = ownership(id.sequence);
+                genesis.id = id.clone();
+                genesis.legs[0].id.act = id.clone();
+                genesis.legs[0].source = named("addr", &id.author);
+                genesis.legs[0].target = reference.clone();
+                genesis.finalization_epoch = 1;
+                genesis.authoritative_position = 0;
+                context.push(genesis);
+            }
+        }
+    }
+    context
+}
+
+fn raw_bundle(
+    input: &CandidateAct,
+    context: &[CandidateAct],
+) -> Result<Vec<pn_graph::formation::CompleteProjection>, FormationFailure> {
+    let history = validate_history(context, &names()).map_err(FormationFailure::Records)?;
+    let act = history.acts().iter().find(|act| act.id() == &input.id).unwrap();
+    project_complete_act(
+        act,
+        &history,
+        &Verifier {
+            acts: context.to_vec(),
+            removals: false,
+        },
+    )
+    .map_err(FormationFailure::Graph)
+}
+
 fn named(namespace: &str, name: &str) -> PublicReference {
     PublicReference::Named {
         namespace: namespace.into(),
@@ -364,17 +498,7 @@ enum FormationFailure {
 }
 
 fn project(input: &CandidateAct) -> Result<pn_graph::formation::CompleteProjection, FormationFailure> {
-    let history = validate_history(std::slice::from_ref(input), &names()).map_err(FormationFailure::Records)?;
-    project_complete_act(
-        &history.acts()[0],
-        &history,
-        &Verifier {
-            acts: vec![input.clone()],
-            removals: false,
-        },
-    )
-    .map_err(FormationFailure::Graph)
-    .map(|mut projections| {
+    bundle(input).map(|mut projections| {
         assert_eq!(projections.len(), 1);
         projections.remove(0)
     })
@@ -604,7 +728,7 @@ fn malformed_ownerships(input: &CandidateAct) -> Vec<CandidateAct> {
     cases
 }
 
-/// Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.
+/// Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities; ordinary Item endpoints require an earlier formed genesis. Missing genesis, wrong coordinates, constructors or protocol-reference kinds refuse before projection.
 /// # Panics
 /// Panics only if Owner dispatch returns another family, which correct dispatch cannot arrange.
 /// ´claim:formation:owner-retains-typed-item-and-qualifiers´
@@ -647,11 +771,8 @@ fn owner_projection() {
     dangling.legs[0].target = PublicReference::Minted(absent);
     dangling.body.license = None;
     assert_eq!(
-        project(&dangling).unwrap().1,
-        Node::Item {
-            author: "a".into(),
-            sequence: 99
-        }
+        raw_bundle(&dangling, &[dangling.clone()]),
+        Err(FormationFailure::Graph(RegistrationError::ItemEndpoint))
     );
     for c in malformed_ownerships(&input) {
         assert_eq!(project(&c), Err(FormationFailure::Graph(RegistrationError::Incidence)));
@@ -790,16 +911,7 @@ fn participation(sequence: u64, origin: u64, destination: u64) -> CandidateAct {
 }
 
 fn bundle(input: &CandidateAct) -> Result<Vec<pn_graph::formation::CompleteProjection>, FormationFailure> {
-    let history = validate_history(std::slice::from_ref(input), &names()).map_err(FormationFailure::Records)?;
-    project_complete_act(
-        &history.acts()[0],
-        &history,
-        &Verifier {
-            acts: vec![input.clone()],
-            removals: false,
-        },
-    )
-    .map_err(FormationFailure::Graph)
+    raw_bundle(input, &item_context(std::slice::from_ref(input)))
 }
 
 /// Claim: Participant forms one ordered A/T bundle for found, join, found-successor and move, requiring Actor-to-Chat-to-Chat incidence, signed interactivity and responsibility and nonnegative continuity. Both projections retain one act identity, attached time and full parameter tuple; malformed coordinates or endpoints refuse the whole bundle without membership or ordering verdicts.
@@ -1765,7 +1877,7 @@ fn bid_projection() {
             }
         }
     }
-    let reused = vec![bidding(1, 1, 1), bidding(3, 1, 1)];
+    let reused = item_context(&[bidding(1, 1, 1), bidding(3, 1, 1)]);
     let history = validate_history(&reused, &[]).unwrap();
     let verifier = Verifier {
         acts: reused,
@@ -2672,7 +2784,7 @@ fn formed_reference_conformance() {
     }
 }
 
-/// Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects that term identically with or without its genesis present, without asserting an anchor; permitted payload removal preserves the genesis lookup and the complete graph.
+/// Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects each term identically when its genesis is present; an absent Item genesis refuses at formation while the other five dangling classes retain their scoped behavior; permitted payload removal preserves the genesis lookup and the complete graph.
 /// ´claim:formation:minted-nodes-agree-with-records-genesis-resolution´
 /// ´test:integration:minted-node-conformance´
 #[test]
@@ -2688,14 +2800,21 @@ fn minted_node_conformance() {
         let reference = PublicReference::Minted(genesis.id.clone());
         let expected = bundle(&genesis).unwrap().last().unwrap().1.clone();
         let consumer = opinion(2, reference.clone());
-        assert_eq!(project(&consumer).unwrap().1, expected);
+        if genesis.id.family == "Owner" {
+            assert_eq!(
+                raw_bundle(&consumer, std::slice::from_ref(&consumer)),
+                Err(FormationFailure::Graph(RegistrationError::ItemEndpoint))
+            );
+        } else {
+            assert_eq!(project(&consumer).unwrap().1, expected);
+        }
         let unanchored = validate_history(std::slice::from_ref(&consumer), &[]).unwrap();
         let records = pn_records::validate_record(&[], &unanchored, &[]).unwrap();
         assert_eq!(
             pn_records::resolve_public_reference(&records, &reference),
             Err(pn_records::ValidationError::UnresolvedReference(reference.clone()))
         );
-        let inputs = vec![genesis.clone(), consumer.clone()];
+        let inputs = item_context(&[genesis.clone(), consumer.clone()]);
         let history = validate_history(&inputs, &[]).unwrap();
         let records = pn_records::validate_record(&[], &history, &[]).unwrap();
         assert_eq!(
@@ -2709,7 +2828,7 @@ fn minted_node_conformance() {
         let graph = reconstruct(&history, &verifier).unwrap();
         assert_eq!(graph.node_weights().filter(|node| *node == &expected).count(), 1);
         genesis.projections.content = Removal::Tombstoned((2, 1));
-        let removed = validate_history(&[genesis, consumer], &[]).unwrap();
+        let removed = validate_history(&item_context(&[genesis, consumer]), &[]).unwrap();
         let records = pn_records::validate_record(&[], &removed, &[]).unwrap();
         assert_eq!(
             pn_records::resolve_public_reference(&records, &reference),
@@ -3832,7 +3951,7 @@ fn settlement_inputs() -> Vec<CandidateAct> {
     let bid = bidding(8, 4, 8);
     let accept = accepting(18, &bid, "b");
     let ratify = ratifying(19, &bid, &accept);
-    vec![bid, accept, ratify]
+    vec![bid, accept, ratify, ownership(4)]
 }
 
 fn bundle_in(
@@ -3860,7 +3979,7 @@ fn bundle_in(
 #[test]
 fn settlement_projections() {
     let inputs = settlement_inputs();
-    for input in &inputs[1..] {
+    for input in &inputs[1..3] {
         let result = bundle_in(input, &inputs).unwrap();
         assert_eq!(result.len(), 1);
         assert_eq!(result[0].0, Node::Grounded(GroundedNode::Actor(input.id.author.clone())));
@@ -4005,7 +4124,7 @@ fn settlement_context() {
             removals: false,
         };
         let graph = reconstruct(&history, &verifier).unwrap();
-        assert_eq!(graph.edge_count(), if kind == 2 { 6 } else { 5 });
+        assert_eq!(graph.edge_count(), if kind == 2 { 7 } else { 6 });
         assert!(project_complete_act(&history.acts()[2], &history, &verifier).is_ok());
     }
     let history = validate_history(&inputs, &names()).unwrap();
@@ -4040,7 +4159,7 @@ fn settlement_reconstruction() {
         removals: true,
     };
     let graph = reconstruct(&history, &verifier).unwrap();
-    assert_eq!(graph.edge_count(), 6);
+    assert_eq!(graph.edge_count(), 7);
     let decoded = serde_json::from_slice(&serde_json::to_vec(&graph).unwrap()).unwrap();
     assert_eq!(validate_formation(&decoded, &history, &verifier), Ok(()));
     inputs.reverse();
@@ -4048,7 +4167,7 @@ fn settlement_reconstruction() {
         validate_formation(&graph, &validate_history(&inputs, &names()).unwrap(), &verifier),
         Ok(())
     );
-    for index in [2, 3] {
+    for index in [3, 4] {
         let edge = petgraph::graph::EdgeIndex::new(index);
         let mut changed = graph.clone();
         match &mut changed[edge] {
@@ -4080,8 +4199,8 @@ fn settlement_candidate_order() {
     for cross_epoch in [false, true] {
         let mut inputs = settlement_inputs();
         if cross_epoch {
-            for (index, act) in inputs.iter_mut().enumerate() {
-                act.finalization_epoch = u64::try_from(index).unwrap() + 1;
+            for (index, act) in inputs[..3].iter_mut().enumerate() {
+                act.finalization_epoch = u64::try_from(index).unwrap() + 2;
                 act.authoritative_position = 1;
             }
         }

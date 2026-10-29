@@ -702,7 +702,22 @@ fn checked_project(
             settlement_target(accepts, acts, verifier)?;
         }
     }
-    project(act, verifier)
+    let projections = project(act, verifier)?;
+    for reference in act.legs().iter().flat_map(|leg| [leg.source(), leg.target()]) {
+        let PublicReference::Minted(id) = reference else {
+            continue;
+        };
+        if id.family != "Owner" || id == act.id() {
+            continue;
+        }
+        let genesis = acts.get(id).copied().ok_or(RegistrationError::ItemEndpoint)?;
+        if genesis.position() >= act.position() || !matches!(genesis.legs(), [leg] if leg.target() == reference) {
+            return Err(RegistrationError::ItemEndpoint);
+        }
+        checked_project(genesis, acts, verifier)?;
+        registration::authorize_removals(&[genesis], verifier)?;
+    }
+    Ok(projections)
 }
 
 fn settlement_target<'a>(

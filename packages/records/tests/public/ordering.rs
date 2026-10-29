@@ -4,12 +4,25 @@ use pn_records::{
     assemble_boundary_inputs, validate_history, validate_record,
 };
 
-/// Claim: Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.
+/// Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.
 /// ´claim:acts:epoch-qualified-placement-retains-causal-checks´
 /// ´test:integration:epoch-placement´
 #[test]
 fn epoch_placement() {
     let names = [named("left"), named("right")];
+    let mut zero = act(1, Layout::Binary);
+    zero.finalization_epoch = 0;
+    let empty = validate_history(&[], &names).unwrap();
+    let expected = ValidationError::InvalidRepresentation {
+        act: zero.id.clone(),
+        cause: pn_records::InvalidCause::FinalizationEpoch,
+    };
+    assert_eq!(validate_history(&[zero.clone()], &names).unwrap_err(), expected);
+    assert_eq!(validate_record(&[zero], &empty, &[]).unwrap_err(), expected);
+    let records = validate_record(&[], &empty, &[]).unwrap();
+    let no_acts: &[&pn_records::ValidatedAct] = &[];
+    assert_eq!(assemble_boundary_inputs(&records, (0, 0)).unwrap().acts(), no_acts);
+
     let mut parent = act(1, Layout::Binary);
     parent.finalization_epoch = 1;
     parent.authoritative_position = 2;

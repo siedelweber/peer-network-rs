@@ -167,7 +167,6 @@ fn fold_title(
         boundaries: vec![],
         events: vec![],
     };
-    introduce_items(&mut replay.certificate, history, inputs, 0);
     for boundary in 1..=epoch {
         introduce_items(&mut replay.certificate, history, inputs, boundary);
         let premises = RecognitionContext {

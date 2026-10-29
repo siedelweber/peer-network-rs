@@ -32,7 +32,7 @@ fn partition_cases() {
     }
     case.proposals[1].projections.dependency = pn_records::DependencyProjection::Full(vec![case.proposals[0].id.clone()]);
     common::check(&case);
-    case.proposals[1].projections.dependency = pn_records::DependencyProjection::Tombstoned((1, 20));
+    case.proposals[1].projections.dependency = pn_records::DependencyProjection::Tombstoned((2, 20));
     common::check(&case);
 }
 

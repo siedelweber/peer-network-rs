@@ -457,6 +457,9 @@ pub enum DependencyCause {
 /// (´def:acts:validation´)
 #[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum InvalidCause {
+    /// Finalized act epochs start at one; boundary zero is the empty initial state.
+    #[error("finalization epoch must be positive")]
+    FinalizationEpoch,
     /// The identity's author is empty.
     #[error("empty author")]
     EmptyAuthor,
@@ -843,6 +846,9 @@ fn validate_act(
         act: act.id.clone(),
         cause,
     };
+    if act.finalization_epoch == 0 {
+        return Err(invalid(InvalidCause::FinalizationEpoch));
+    }
     if act.id.author.is_empty() {
         return Err(invalid(InvalidCause::EmptyAuthor));
     }

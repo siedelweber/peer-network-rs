@@ -75,6 +75,9 @@ pub enum RegistrationError {
     /// Layout, endpoints or fixed parameter carriage differs from Registration.
     #[error("invalid Registration incidence or body")]
     Incidence,
+    /// An Item endpoint lacks an earlier formed self-minting Owner genesis.
+    #[error("Item endpoint genesis is absent, unformed or not earlier")]
+    ItemEndpoint,
     /// The declared verifier did not establish complete author approval.
     #[error("Registration approval not established")]
     Unapproved,

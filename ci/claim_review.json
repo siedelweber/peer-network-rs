@@ -1434,6 +1434,14 @@
       "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
     {
+      "operation": "pn-graph::formation::item_endpoints",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:item-endpoints-require-earlier-formed-genesis",
+      "before": "",
+      "after": "Claim: Owner, Bid, Opinion, Review, Tag and both Reference endpoint positions refuse an absent, ordinary-only or non-earlier Item genesis with `ItemEndpoint`. A complete authorized self-minting Owner precedes each consumer in the same batch or an earlier epoch; reverse placement and a batch cycle refuse without a partial graph. Registration still forms its fresh grounded pair.",
+      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
+    },
+    {
       "operation": "pn-graph::formation::join_request_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:join-request-requires-complete-chat-coordinates",
@@ -1477,9 +1485,9 @@
       "operation": "pn-graph::formation::minted_node_conformance",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:minted-nodes-agree-with-records-genesis-resolution",
-      "before": "",
-      "after": "Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects that term identically with or without its genesis present, without asserting an anchor; permitted payload removal preserves the genesis lookup and the complete graph.",
-      "review": "Scoped shared tests distinguish unresolved protocol targets from resolved but forbidden family fields across twelve families, and compare six typed genesis nodes with records lookup, dangling incidence and authorized removal. Complete mandatory settlement reference conformance, unimplemented families, geometry and title remain held."
+      "before": "Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects that term identically with or without its genesis present, without asserting an anchor; permitted payload removal preserves the genesis lookup and the complete graph.",
+      "after": "Claim: The six formed genesis families produce the same typed minted node that records resolves from their self-minting act. Opinion projects each term identically when its genesis is present; an absent Item genesis refuses at formation while the other five dangling classes retain their scoped behavior; permitted payload removal preserves the genesis lookup and the complete graph.",
+      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
     },
     {
       "operation": "pn-graph::formation::mixed_reconstruction",
@@ -1509,9 +1517,9 @@
       "operation": "pn-graph::formation::owner_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:owner-retains-typed-item-and-qualifiers",
-      "before": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate and retained license-name qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
-      "after": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
-      "review": "The bounded attribution/provenance pair belongs only to self-minting Publish genesis, survives payload removal and is compared structurally during graph revalidation. Owner, Participant and Review carry no license pair or protocol-reference qualifiers. Node representability remains separate from source lookup, with no license namespace exemption. Tests establish structural carriage and refusal, not license interpretation, geometry or title."
+      "before": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities, dangling endpoints do not certify anchors, and wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
+      "after": "Claim: Scoped Owner formation requires the author's Actor, a Item mint term, one exact signed attachment coordinate with no license or protocol-reference qualifiers. Genesis and ordinary targets remain distinct structural identities; ordinary Item endpoints require an earlier formed genesis. Missing genesis, wrong coordinates, constructors or protocol-reference kinds refuse before projection.",
+      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
     },
     {
       "operation": "pn-graph::formation::owner_reconstruction",
@@ -2989,9 +2997,9 @@
       "operation": "pn-records::public::ordering::epoch_placement",
       "path": "packages/records/tests/public/ordering.rs",
       "claim": "RECORDS::claim:acts:epoch-qualified-placement-retains-causal-checks",
-      "before": "",
-      "after": "Claim: Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.",
-      "review": "Read the exact epoch-qualified placement and retained-time assertions. Recurrence expectations use independently scanned prior incidence; the process witness compares complete results and accounting across observation modes. These are internal carrier checks, conditional on family-valid incidence, not cryptographic authentication or a resolution of the non-compliant time and cross-epoch paper holds."
+      "before": "Claim: Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.",
+      "after": "Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in either published placement or the within-epoch causal key while retaining dependency violations on replay.",
+      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
     },
     {
       "operation": "pn-records::public::ordering::parent_replay",
@@ -3213,9 +3221,9 @@
       "operation": "pn-verification::recognition::title_premises",
       "path": "packages/verification/tests/recognition.rs",
       "claim": "VERIFICATION::claim:verification:title-requires-complete-compliant-genesis-evidence",
-      "before": "",
-      "after": "Claim: Compliant title replay revalidates its complete graph, retains void for an unresolved Item genesis, introduces fresh genesis only at its boundary, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.",
-      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
+      "before": "Claim: Compliant title replay revalidates its complete graph, retains void for an unresolved Item genesis, introduces fresh genesis only at its boundary, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.",
+      "after": "Claim: Compliant title replay revalidates its complete graph, refuses missing or later Item genesis at formation, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.",
+      "review": "Finalized act epochs are positive; boundary zero is the empty initial state. Item incidence requires a self-minting or earlier formed Owner genesis before recognition. Witnesses distinguish structural epoch refusal, Item endpoint refusal, same-batch fresh-thread authorization and existing ordering holds. Other endpoint constructors retain their existing scoped checks."
     },
     {
       "operation": "pn-verification::title::title_exhaustive",

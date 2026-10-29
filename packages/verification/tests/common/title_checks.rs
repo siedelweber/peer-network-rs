@@ -166,7 +166,7 @@ fn handshake(sequence: u64, epoch: u64, buyer: &str, seller: &str) -> Vec<Candid
 }
 
 fn inputs(words: &[u64]) -> Vec<CandidateAct> {
-    let mut genesis = act("Owner", "seller", 99, 0, item());
+    let mut genesis = act("Owner", "seller", 99, 1, item());
     genesis.body.quantities = vec![
         (
             "attachment.numerator".into(),
@@ -185,6 +185,7 @@ fn inputs(words: &[u64]) -> Vec<CandidateAct> {
             },
         ),
     ];
+    genesis.authoritative_position = 0;
     let mut inputs = vec![genesis];
     for (boundary, word) in words.iter().take(2).enumerate() {
         let epoch = u64::try_from(boundary).unwrap() + 1;
@@ -287,7 +288,14 @@ pub(crate) fn check(words: &[u64]) -> pn_graph::title::TitleReplay {
             prior_owner = owner;
         }
         assert_eq!(replay.consumed, consumed);
-        assert_eq!(replay.certificate, BTreeMap::from([(item(), Some(prior_owner.to_owned()))]));
+        assert_eq!(
+            replay.certificate,
+            if table.is_empty() {
+                BTreeMap::new()
+            } else {
+                BTreeMap::from([(item(), Some(prior_owner.to_owned()))])
+            }
+        );
         let actual: Vec<_> = replay
             .events
             .iter()

@@ -76,10 +76,10 @@ pub fn generate(words: &[u64]) -> Scenario {
                 content: if word & (1 << 62) == 0 {
                     Removal::Live
                 } else {
-                    Removal::Tombstoned((u64::from(index >= 2), sequence + 2))
+                    Removal::Tombstoned((1 + u64::from(index >= 2), sequence + 2))
                 },
                 dependency: if word & (1 << 63) != 0 {
-                    DependencyProjection::Tombstoned((u64::from(index >= 2), sequence + 2))
+                    DependencyProjection::Tombstoned((1 + u64::from(index >= 2), sequence + 2))
                 } else if dependencies.is_empty() {
                     DependencyProjection::FullEmpty
                 } else {
@@ -88,7 +88,7 @@ pub fn generate(words: &[u64]) -> Scenario {
             },
             protocol_references: vec![name.clone()],
             authentication_evidence: vec![1],
-            finalization_epoch: u64::from(index >= 2),
+            finalization_epoch: 1 + u64::from(index >= 2),
             authoritative_position: sequence + 1,
             logical_time: 1,
         });
@@ -98,7 +98,7 @@ pub fn generate(words: &[u64]) -> Scenario {
         history: acts,
         proposals,
         names: vec![name],
-        boundary: (1, 3),
+        boundary: (2, 3),
     }
 }
 

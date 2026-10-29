@@ -131,7 +131,9 @@ fn fixture(stance: i64, withdraw: u64, rescind: u64) -> Vec<CandidateAct> {
             inputs.push(act(family, author, sequence, epoch, offer.clone()));
         }
     }
+    inputs.push(genesis());
     stamp(&mut inputs);
+    inputs.rotate_left(1);
     inputs
 }
 
@@ -362,11 +364,17 @@ fn recognition_enumerator() {
 fn recognition_binding() {
     for kind in 0..4 {
         let mut inputs = fixture(1, 0, 0);
-        let other = if kind == 2 {
+        for input in &mut inputs {
+            if input.id.family != "Owner" {
+                input.authoritative_position += 1;
+            }
+        }
+        let mut other = if kind == 2 {
             bid(0)
         } else {
             act("Registration", "other", 0, 1, node("prof", "other"))
         };
+        other.authoritative_position = 1;
         if kind == 0 || kind == 3 {
             inputs[1].body.settlement = Some(SettlementReferences::Accept {
                 settles: other.id.clone(),
@@ -492,8 +500,8 @@ fn handshake(sequence: u64, epoch: u64, buyer: &str, seller: &str) -> Vec<Candid
     vec![bid, accept, ratify]
 }
 
-fn title_history() -> Vec<CandidateAct> {
-    let mut genesis = act("Owner", "seller", 99, 0, item());
+fn genesis() -> CandidateAct {
+    let mut genesis = act("Owner", "seller", 99, 1, item());
     genesis.body.quantities = vec![
         (
             "attachment.numerator".into(),
@@ -512,6 +520,12 @@ fn title_history() -> Vec<CandidateAct> {
             },
         ),
     ];
+    genesis.authoritative_position = 0;
+    genesis
+}
+
+fn title_history() -> Vec<CandidateAct> {
+    let genesis = genesis();
     let mut inputs = vec![genesis];
     inputs.extend(handshake(10, 2, "first", "seller"));
     // Shared Bid and Accept; two distinct co-epochal Ratify records conflict.
@@ -544,7 +558,7 @@ fn title_boundaries() {
     // Literal specification table: epoch, owner, newly consumed authored sequences.
     // Neither the fold nor the recognition oracle derives these expectations.
     let table = [
-        (0, "seller", vec![]),
+        (0, "", vec![]),
         (1, "seller", vec![]),
         (2, "seller", vec![10, 11, 12, 13]),
         (3, "first", vec![20, 21, 22]),
@@ -565,7 +579,14 @@ fn title_boundaries() {
                 consumed.insert(inputs.iter().find(|act| act.id.sequence == *sequence).unwrap().id.clone());
             }
             let replay = replay_title(&graph, &history, &Approval, *epoch).unwrap();
-            assert_eq!(replay.certificate, BTreeMap::from([(item(), Some((*owner).into()))]));
+            assert_eq!(
+                replay.certificate,
+                if *epoch == 0 {
+                    BTreeMap::new()
+                } else {
+                    BTreeMap::from([(item(), Some((*owner).into()))])
+                }
+            );
             assert_eq!(replay.consumed, consumed);
             for boundary in &replay.boundaries {
                 assert_eq!(
@@ -574,14 +595,15 @@ fn title_boundaries() {
                 );
                 let previous = replay_title(&graph, &history, &Approval, boundary.premises.prior_epoch).unwrap();
                 assert_eq!(boundary.premises.consumed, previous.consumed);
-                assert_eq!(
-                    boundary.premises.owners,
-                    previous
-                        .certificate
-                        .into_iter()
-                        .filter_map(|(item, owner)| owner.map(|owner| (item, owner)))
-                        .collect()
-                );
+                let mut owners: BTreeMap<_, _> = previous
+                    .certificate
+                    .into_iter()
+                    .filter_map(|(item, owner)| owner.map(|owner| (item, owner)))
+                    .collect();
+                if boundary.premises.epoch == 1 {
+                    owners.insert(item(), "seller".into());
+                }
+                assert_eq!(boundary.premises.owners, owners);
             }
         }
         let replay = replay_title(&graph, &history, &Approval, 6).unwrap();
@@ -598,7 +620,7 @@ fn title_boundaries() {
     }
 }
 
-/// Claim: Compliant title replay revalidates its complete graph, retains void for an unresolved Item genesis, introduces fresh genesis only at its boundary, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.
+/// Claim: Compliant title replay revalidates its complete graph, refuses missing or later Item genesis at formation, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.
 /// ´claim:verification:title-requires-complete-compliant-genesis-evidence´
 /// ´test:integration:title-premises´
 #[test]
@@ -608,13 +630,37 @@ fn title_premises() {
     let genesis = inputs.remove(0);
     stamp(&mut inputs);
     let history = validate_history(&inputs, &[]).unwrap();
-    let graph = reconstruct(&history, &Approval).unwrap();
-    let void = replay_title(&graph, &history, &Approval, 6).unwrap();
-    assert_eq!(void.certificate[&item()], None);
-    assert!(void.consumed.is_empty());
+    assert_eq!(
+        reconstruct(&history, &Approval).unwrap_err(),
+        pn_graph::registration::RegistrationError::ItemEndpoint
+    );
     let mut late = genesis.clone();
-    late.finalization_epoch = 1;
+    late.finalization_epoch = 3;
     inputs.push(late);
+    stamp(&mut inputs);
+    let history = validate_history(&inputs, &[]).unwrap();
+    assert_eq!(
+        reconstruct(&history, &Approval).unwrap_err(),
+        pn_graph::registration::RegistrationError::ItemEndpoint
+    );
+    inputs.retain(|act| act.id.family != "Owner");
+    inputs.push(genesis.clone());
+    let mut fresh = vec![genesis.clone()];
+    fresh.extend(handshake(10, 1, "first", "seller"));
+    stamp(&mut fresh);
+    let fresh_history = validate_history(&fresh, &[]).unwrap();
+    let fresh_graph = reconstruct(&fresh_history, &Approval).unwrap();
+    assert!(
+        replay_title(&fresh_graph, &fresh_history, &Approval, 0)
+            .unwrap()
+            .certificate
+            .is_empty()
+    );
+    let entered = replay_title(&fresh_graph, &fresh_history, &Approval, 1).unwrap();
+    assert_eq!(entered.boundaries[0].premises.prior_epoch, 0);
+    assert_eq!(entered.boundaries[0].premises.owners[&item()], "seller");
+    assert!(entered.boundaries[0].candidates[0].clauses[&RecognitionClause::Authorization]);
+    assert_eq!(entered.certificate[&item()], Some("first".into()));
     let mut ordinary = genesis;
     ordinary.id.author = "outsider".into();
     ordinary.id.sequence = 100;
