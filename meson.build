@@ -22,7 +22,7 @@ foreach row : local_inputs
 endforeach
 subdir('ci')
 
-# Skeleton report dependencies follow the existing serial entry. No step is delegated.
+# Single serial command declaration, read by both Meson and the gate entry.
 gate_steps = [
   ['build-graph', 'python3 -B ci/build_graph.py gate', ''],
   ['toolchain', 'python3 ci/discipline.py toolchain', 'build-graph'],

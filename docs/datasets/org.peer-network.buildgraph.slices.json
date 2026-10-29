@@ -8,7 +8,7 @@
   "rows": [
     {
       "name": "build-graph",
-      "reason": "The census already invokes Meson; retain its shell entry until final entry integration avoids recursively invoking the same build.",
+      "reason": "The census configures and invokes Meson; retain direct execution permanently to avoid recursively invoking the same build. The single Meson declaration still owns its serial position.",
       "slice": 5
     },
     {
@@ -208,12 +208,12 @@
     },
     {
       "name": "wallet-elements-stop",
-      "reason": "Split from services: keep unconditional shutdown on the shell route until final integration can run cleanup despite missing predecessor reports or refused graph configuration.",
+      "reason": "Split from services: retain unconditional shutdown on the shell route permanently; a missing predecessor report or refused graph configuration must not prevent cleanup. The single Meson declaration still owns its serial position.",
       "slice": 5
     },
     {
       "name": "host-postgresql-stop",
-      "reason": "Split from services: keep unconditional shutdown on the shell route until final integration can run cleanup despite missing predecessor reports or refused graph configuration.",
+      "reason": "Split from services: retain unconditional shutdown on the shell route permanently; a missing predecessor report or refused graph configuration must not prevent cleanup. The single Meson declaration still owns its serial position.",
       "slice": 5
     },
     {

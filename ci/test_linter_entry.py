@@ -246,7 +246,7 @@ class Conformance(unittest.TestCase):
         cargo_delegation(self)
 
     def test_runtime_delegation(self):
-        """Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; interrupted or graph-refused execution still reaches the shell stop and exit cleanup, and all eleven runtime roster commands retain their text.
+        """Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; graph-refused execution still reaches shell stops, and SIGTERM during a Ninja command reaps its command tree and performs root-keyed exit cleanup without touching a sibling root; all eleven runtime roster commands retain their text.
         ´claim:discipline:runtime-delegation-preserves-evidence´
         ´test:integration:test-runtime-delegation´
         """
@@ -260,6 +260,14 @@ class Conformance(unittest.TestCase):
         """
         from build_graph_runtime_witnesses import service_instances
         service_instances(self)
+
+    def test_build_graph_completion(self):
+        """Claim: The entry takes its complete serial roster from Meson, retaining only census and service shutdown outside delegation; fresh and reused target executions preserve fixture cases, features, document bytes and statuses, execute each step once, and refuse missing targets, missing final reports, duplicate completions and stale run or configuration joins.
+        ´claim:discipline:build-graph-completion-is-current-and-exact´
+        ´test:integration:test-build-graph-completion´
+        """
+        from build_graph_runtime_witnesses import completion
+        completion(self)
 
     def test_build_graph_slice_assignment(self):
         """Claim: Every live gate step has exactly one delegation slice and the record roster agrees with that set; each record group stays in one slice unless its exceptional rows explicitly name the split, so missing, repeated, unknown, invalid or unexplained assignments refuse before final migration.

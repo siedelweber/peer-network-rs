@@ -2255,29 +2255,29 @@ evidence_paragraph = "WALLET::amend:wallet:genesis-rpc"
 name = "ROOT::dec:buildgraph:composition"
 path = "adr/024-build-graph.md"
 status = "held"
-claims = ["ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs", "ROOT::claim:discipline:build-graph-delegation-preserves-results", "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence", "ROOT::claim:discipline:runtime-delegation-preserves-evidence", "ROOT::claim:discipline:service-delegation-preserves-ownership"]
+claims = ["ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs", "ROOT::claim:discipline:build-graph-delegation-preserves-results", "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence", "ROOT::claim:discipline:runtime-delegation-preserves-evidence", "ROOT::claim:discipline:service-delegation-preserves-ownership", "ROOT::claim:discipline:build-graph-completion-is-current-and-exact"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Build-graph implementer and independent gate-contract reviewer"
-missing = "Final entry integration, complete semantic artifact joins and independent migration admission remain; scoped runtime equivalence and service ownership now supplement the earlier slices, with unconditional stop commands retained on the shell route."
+missing = "Independent gate-contract review of the completed migration remains; the entry and its fresh/reused report joins now have scoped witnesses, with census and both service stops deliberately retained outside delegation."
 closing_condition = "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins."
 closing_step = "Build graph slices 1 to 5"
 
 
-premises = "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Semantic dependency completeness and final integration remain held."
-evidence_paragraph = "ROOT::amend:buildgraph:runtime-evidence"
+premises = "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Final integration has scoped exactly-once and fresh/reused witnesses; complete semantic dependencies are not inferred from file incidence, and independent admission remains held."
+evidence_paragraph = "ROOT::amend:buildgraph:entry-completion"
 
 [[rows]]
 name = "ROOT::gate:buildgraph:implementation"
 path = "adr/024-build-graph.md"
 status = "held"
-claims = ["ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs", "ROOT::claim:discipline:build-graph-delegation-preserves-results", "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence", "ROOT::claim:discipline:runtime-delegation-preserves-evidence", "ROOT::claim:discipline:service-delegation-preserves-ownership"]
+claims = ["ROOT::claim:discipline:build-graph-census-accounts-for-tracked-inputs", "ROOT::claim:discipline:build-graph-delegation-preserves-results", "ROOT::claim:discipline:cargo-delegation-preserves-build-evidence", "ROOT::claim:discipline:runtime-delegation-preserves-evidence", "ROOT::claim:discipline:service-delegation-preserves-ownership", "ROOT::claim:discipline:build-graph-completion-is-current-and-exact"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Build-graph implementer and independent gate-contract reviewer"
-missing = "Final entry integration, complete semantic artifact joins and independent migration admission remain; scoped runtime equivalence and service ownership now supplement the earlier slices, with unconditional stop commands retained on the shell route."
+missing = "Independent gate-contract review of the completed migration remains; the entry and its fresh/reused report joins now have scoped witnesses, with census and both service stops deliberately retained outside delegation."
 closing_condition = "Execute each migration slice's positive and negative witnesses with current source and configuration results; preserve all command verdicts and evidence joins."
 closing_step = "Build graph slices 1 to 5"
 
-premises = "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Semantic dependency completeness and final integration remain held."
-evidence_paragraph = "ROOT::amend:buildgraph:runtime-evidence"
+premises = "Constructed tracked trees exercise the real census and Meson adapters. Clean, stale-render and failing-check sequences compare statuses, diagnostics and byte effects with direct execution; stale result envelopes refuse. Serial Cargo fixtures additionally compare artifact and test inventories, compiler refusal, advisory findings and nonverdict timing, with a separate doctest command. Runtime fixtures additionally retain evidence joins, sibling failures, holds and nonverdict unavailable measurements; real paired service instances establish independent allocation and shutdown. Final integration has scoped exactly-once and fresh/reused witnesses; complete semantic dependencies are not inferred from file incidence, and independent admission remains held."
+evidence_paragraph = "ROOT::amend:buildgraph:entry-completion"

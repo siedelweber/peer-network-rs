@@ -296,7 +296,7 @@
         "rec:testing:decision",
         "rec:devperf:decision"
       ],
-      "does_not_establish": "Completed migration: slice one accounts for files and the roster, and slice two delegates thirty policy and document steps; Cargo/runtime delegation, complete artifact joins and final entry integration remain. File accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established.",
+      "does_not_establish": "Independent admission of the completed migration remains held. Forty-eight steps are delegated; the declared census setup and both service stops deliberately execute outside delegation. Entry sequencing and final report checks use the declared graph. File accounting proves neither complete semantic dependencies nor claim truth, and no speedup, hermetic build, installation policy or universal artifact reproducibility is established.",
       "label": "rec:buildgraph:decision",
       "path": "adr/024-build-graph.md",
       "scope": "Meson composition of the existing gate, declared file coverage and verdict-preserving migration slices.",

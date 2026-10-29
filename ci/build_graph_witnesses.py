@@ -11,6 +11,16 @@ from unittest.mock import patch
 from build_graph import gate, incidence, run, prepare
 
 
+def declaration(commands):
+    previous = ''
+    rows = []
+    for name, command in commands:
+        rows.append([name, command, previous])
+        previous = name
+    quote = lambda value: "'"+value.replace('\\', '\\\\').replace("'", "\\'")+"'"
+    return 'gate_steps = [\n'+''.join('  ['+', '.join(map(quote,row))+'],\n' for row in rows)+']\n'
+
+
 def exercise(case):
     """Exercise the real Meson target and deployed census, then isolated graph faults."""
     source = Path(__file__).resolve().parent.parent
@@ -57,6 +67,7 @@ def exercise(case):
             arguments.extend(['--input', name+'\tverify\t'+producer])
         quote = lambda value: "'"+str(value).replace('\\', '\\\\').replace("'", "\\'").replace('\t', '\\t')+"'"
         script = "project('census-witness', meson_version: '>=1.12.1')\npython=find_program('python3')\n"
+        script += declaration([('verify', 'true')])
         script += "manifest=meson.project_build_root() / 'gate-graph.json'\n"
         script += "run_command(python, "+quote(checker)+", 'configure', '--graph', manifest, '--pattern', 'a^', '--step', 'verify\\ttrue\\t', "+', '.join(map(quote, arguments))+", check:true)\n"
         script += "custom_target('tracked-census', output:'tracked-census.json', command:[python, "+quote(checker)+", 'check', '--root', meson.project_source_root(), '--graph', manifest, '--report', '@OUTPUT@'], build_always_stale:true, console:true)\n"
@@ -186,7 +197,7 @@ else:
             (source/'.gitignore').write_text('.lane/\n')
             (source/'ci/gate.sh').write_text(''.join('run_graph '+name+' '+command+'\n' for name,command in commands))
             (source/'docs/inputs/build-graph-slices.toml').write_text(''.join('[[rows]]\nname="'+name+'"\nslice=2\n' for name,_ in commands))
-            (source/'meson.build').write_text("project('delegation-witness')\nsubdir('ci')\n")
+            (source/'meson.build').write_text("project('delegation-witness')\n"+declaration(commands)+"subdir('ci')\n")
             (source/'ci/meson.build').write_text("subdir('build-inputs')\n")
             (source/'ci/build-inputs').mkdir()
             script = "python=find_program('python3')\n"
@@ -368,7 +379,7 @@ sys.exit(result.returncode)
         (source/'.gitignore').write_text('.lane/\n')
         (source/'ci/gate.sh').write_text(''.join(f'run_graph {n} {c}\n' for n,c in commands))
         (source/'docs/inputs/build-graph-slices.toml').write_text(''.join(f'[[rows]]\nname="{n}"\nslice=3\n' for n,_ in commands))
-        (source/'meson.build').write_text("project('cargo-delegation')\nsubdir('ci/build-inputs')\n")
+        (source/'meson.build').write_text("project('cargo-delegation')\n"+declaration(commands)+"subdir('ci/build-inputs')\n")
         (source/'ci/build-inputs/meson.build').write_text("python=find_program('python3')\n"+''.join("custom_target('gate-"+n+"', output:'gate-"+n+".json', command:[python, '"+str(checker)+"', 'execute', '--root', meson.project_source_root(), '--graph', meson.project_build_root() / 'gate-graph.json', '--report', '@OUTPUT@'], build_always_stale:true)\n" for n,_ in commands))
         def invoke(root,argv,env=None):
             return subprocess.run(argv,cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)

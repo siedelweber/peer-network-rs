@@ -107,7 +107,7 @@
 | ci::test_observe | active | unit | ci-python | fast | 13 |
 | ci::test_observe_runtime | active | integration | ci-python | fast | 13 |
 | ci::test_observe_syntax | active | integration | ci-python | fast | 1 |
-| ci::test_linter_entry | active | integration | ci-composition-services | service | 22 |
+| ci::test_linter_entry | active | integration | ci-composition-services | service | 23 |
 | pn-records | active | unit | pn-records-rust | fast | 5 |
 | pn-records::public | active | public-surface | pn-records-rust | fast | 56 |
 | pn-records::integration | active | integration | pn-records-rust | fast | 2 |

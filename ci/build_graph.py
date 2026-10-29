@@ -1,6 +1,7 @@
 """Fresh tracked-file and step incidence checks for the Meson gate skeleton."""
 
 import argparse
+import ast
 from collections import Counter
 import hashlib
 import math
@@ -9,6 +10,7 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import resource
+import signal
 import subprocess
 import sys
 import time
@@ -18,6 +20,7 @@ import uuid
 
 PATTERN = r'a^'
 SPECIAL = {'entry', 'finalize'}
+SHELL_STEPS = {'build-graph', 'wallet-elements-stop', 'host-postgresql-stop'}
 
 
 def run(argv, **kwargs):
@@ -44,18 +47,97 @@ def tracked(root):
 
 
 def roster(root):
-    lines = (root/'ci/gate.sh').read_text().splitlines()
+    """Read the single literal command declaration consumed by Meson and entry."""
+    source = (root/'meson.build').read_text()
+    match = re.search(r'^gate_steps = (\[.*?^\])', source, re.M | re.S)
+    if not match:
+        raise ValueError('missing literal Meson gate_steps declaration')
+    rows = ast.literal_eval(match[1])
     result = []
-    for line in lines:
-        if not line.startswith(('run_step ', 'run_graph ')):
-            continue
-        match = re.fullmatch(r'run_(?:step|graph) ([a-z0-9-]+) (.+)', line)
-        if not match:
-            raise ValueError('unreadable gate step: '+line)
-        result.append((match[1], match[2]))
+    previous = ''
+    for row in rows:
+        if (not isinstance(row, list) or len(row) != 3 or
+                not all(isinstance(value, str) for value in row)):
+            raise ValueError('invalid Meson gate step')
+        name, command, predecessor = row
+        if not re.fullmatch('[a-z0-9-]+', name) or not command or '\n' in command or predecessor != previous:
+            raise ValueError('invalid Meson command or predecessor: '+name)
+        result.append((name, command))
+        previous = name
     if not result or len({name for name, _ in result}) != len(result):
         raise ValueError('empty or duplicate gate roster')
     return result
+
+
+def plan(root):
+    """Emit the serial entry from the same declaration, never a second roster."""
+    # Planning must survive a bad slice assignment: configuration then refuses
+    # delegated commands individually, while the explicit shutdown still runs.
+    return ''.join(('run_step ' if name in SHELL_STEPS else 'run_graph ')+name+' '+command+'\n'
+                   for name, command in roster(root))
+
+
+def cancellable(argv, **kwargs):
+    """Forward termination through each adapter boundary and reap its child."""
+    child = None
+    pending = []
+    def terminate(number, frame):
+        if not pending:
+            pending.extend((number, time.monotonic()))
+        if child is not None:
+            try:
+                os.killpg(child.pid, number)
+            except ProcessLookupError:
+                pass
+    old = {number: signal.signal(number, terminate) for number in (signal.SIGTERM, signal.SIGINT)}
+    try:
+        child = subprocess.Popen(argv, start_new_session=True, **kwargs)
+        if pending:
+            terminate(pending[0], None)
+        while True:
+            try:
+                output, errors = child.communicate(timeout=0.25)
+                break
+            except subprocess.TimeoutExpired:
+                if pending and time.monotonic()-pending[1] >= 5:
+                    try:os.killpg(child.pid, signal.SIGKILL)
+                    except ProcessLookupError:pass
+        return subprocess.CompletedProcess(argv, -pending[0] if pending else child.returncode, output, errors)
+    finally:
+        for number, handler in old.items():
+            signal.signal(number, handler)
+
+
+def finish(root):
+    """Require one current completion per declared step, including the final one."""
+    names = [name for name, _ in roster(root)]
+    history = (root/'.lane/gate-steps.tsv').read_text().splitlines()
+    fields = [line.split('\t') for line in history]
+    if any(len(row) != 4 for row in fields) or [row[0] for row in fields] != names:
+        raise ValueError('final roster is missing, duplicated or out of order')
+    graph = json.loads((root/'.lane/build-graph/gate-graph.json').read_text())
+    if [(row['name'], row['command']) for row in graph['steps']] != roster(root):
+        raise ValueError('final configured roster differs')
+    delegated = set(selected(root))
+    source = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
+    configuration = {name: os.environ.get(name) for name in PUBLIC_CONFIGURATION}
+    for index, row in enumerate(fields):
+        name, status, _, _ = row
+        if not (root/f'.lane/gate-{name}.log').is_file():
+            raise ValueError('missing final log: '+name)
+        if name in delegated and os.environ.get('PN_BUILDGRAPH_ROUTE') != 'legacy':
+            path = report_path(root/'.lane/build-graph', name)
+            data = json.loads(path.read_text()); request = data['request']
+            result, _ = read_result(path, request)
+            bound = request['context']
+            expected = dict(run=os.environ.get('PN_BUILDGRAPH_RUN'), source=source,
+                            configuration=configuration, graph=identity(graph),
+                            history=identity(history[:index]), step=name,
+                            command=dict(roster(root))[name])
+            if any(bound[key] != value for key, value in expected.items()) or result['status'] != int(status):
+                raise ValueError('stale final report: '+name)
+    print(f'BUILD-FINAL steps={len(names)} exactly_once=true delegated={len(delegated)} fresh=true')
+    return 0
 
 
 def list_for(path):
@@ -111,7 +193,7 @@ def incidence(root, graph):
     expected = roster(root)
     steps = graph['steps']
     if [(s['name'], s['command']) for s in steps] != expected:
-        findings.append('step roster or command differs from ci/gate.sh')
+        findings.append('step roster or command differs from Meson declaration')
     names = {name for name, _ in expected}
     previous = ''
     reports = []
@@ -314,7 +396,7 @@ def execute(root, graph_path, output):
     clock = time.monotonic()
     cpu = resource.getrusage(resource.RUSAGE_CHILDREN)
     with Path(request['log']).open('wb') as log:
-        status = subprocess.run(['bash', '-c', request['context']['command']], cwd=root,
+        status = cancellable(['bash', '-c', request['context']['command']], cwd=root,
                                 stdout=log, stderr=subprocess.STDOUT).returncode
     ended = time.time()
     used = resource.getrusage(resource.RUSAGE_CHILDREN)
@@ -361,7 +443,7 @@ def delegate(root, step):
     env = dict(os.environ, PN_BUILDGRAPH_REQUEST=str(request_path))
     prepared = time.monotonic()
     cpu = resource.getrusage(resource.RUSAGE_CHILDREN)
-    driver = subprocess.run(['ninja', '-C', str(build), str(output.relative_to(build))],
+    driver = cancellable(['ninja', '-C', str(build), str(output.relative_to(build))],
                             env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     used = resource.getrusage(resource.RUSAGE_CHILDREN)
     (requests/(nonce+'.timing.json')).write_text(json.dumps(dict(
@@ -382,8 +464,7 @@ def resource_line(root, line):
         return line
     fields=dict(item.split('=',1) for item in line.split() if '=' in item)
     step=fields['STEP']
-    declared={parts[1] for text in (root/'ci/gate.sh').read_text().splitlines()
-              if (parts:=text.split()) and parts[0]=='run_graph'}
+    declared={name for name, _ in roster(root)}-SHELL_STEPS
     if step not in declared:return line
     suffix=' command_wall_s=unavailable delegation_overhead_s=unavailable'
     try:
@@ -413,6 +494,10 @@ def main():
     audit.add_argument('--graph', required=True)
     audit.add_argument('--report', required=True)
     sub.add_parser('gate')
+    sub.add_parser('plan')
+    sub.add_parser('finish')
+    supervisor = sub.add_parser('supervise')
+    supervisor.add_argument('command', nargs=argparse.REMAINDER)
     measurements=sub.add_parser('resource-lines')
     measurements.add_argument('path')
     targets = sub.add_parser('targets')
@@ -424,6 +509,14 @@ def main():
     invoke = sub.add_parser('delegate')
     invoke.add_argument('step')
     args = parser.parse_args()
+    if args.action == 'plan':
+        print(plan(Path.cwd()), end='')
+        return 0
+    if args.action == 'finish':
+        return finish(Path.cwd())
+    if args.action == 'supervise':
+        result = cancellable(args.command)
+        return 128-result.returncode if result.returncode < 0 else result.returncode
     if args.action == 'resource-lines':
         for line in Path(args.path).read_text().splitlines(keepends=True):
             print(resource_line(Path.cwd(),line),end='')
