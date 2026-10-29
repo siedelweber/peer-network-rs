@@ -132,23 +132,22 @@ pub enum TimeVerdict {
         /// Exact locally expected value, never written back.
         expected: u128,
     },
-    /// The dependency opening is absent; no recurrence verdict follows.
+    /// This replay has not established a recurrence verdict without an opening.
+    /// It does not attempt interval proofs, including out-of-interval stamp faults.
     UnavailableOpening,
-    /// Repeated published positions do not supply a unique replay order.
-    AmbiguousPlacement,
 }
 
 /// Observer evidence for the time defined by finalized incidence replay.
-/// Unavailable names every concealed opening on which this value depends.
+/// Unavailable means not established by this replay, not unestablishable.
+/// It conservatively records traversed tombstones without interval or dominance proofs.
 /// (´def:acts:history´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RecomputedTime {
     /// Exact finite time; never copied into the published stamp.
     Available(u128),
-    /// Missing dependency openings, including propagated frontier dependencies.
+    /// Tombstones traversed by this replay, including propagated frontier inputs.
+    /// The retained data may still determine the value through bounds not computed here.
     Unavailable(BTreeSet<ActId>),
-    /// Duplicate placements do not define a total published sequence.
-    AmbiguousPlacement,
 }
 
 /// One recurrence observation associated with its immutable act identity.
@@ -508,6 +507,15 @@ pub enum InvalidCause {
     /// Published positions within each epoch start at one.
     #[error("finalized position must be positive")]
     FinalizedPosition,
+    /// Two distinct acts occupy the same published epoch-position key.
+    #[error("repeated finalized position")]
+    RepeatedPosition,
+    /// An epoch's published sequence skips an internal position.
+    #[error("missing finalized position")]
+    MissingPosition,
+    /// A published position exceeds the number of acts in its epoch.
+    #[error("finalized position exceeds epoch size")]
+    PositionOutsideEpoch,
     /// The identity's author is empty.
     #[error("empty author")]
     EmptyAuthor,
@@ -816,6 +824,13 @@ fn validate(
     for act in acts {
         validate_act(act, &references, &history.references)?;
     }
+    validate_order(
+        history
+            .acts
+            .iter()
+            .map(|act| (&act.id, act.position()))
+            .chain(acts.iter().map(|act| (&act.id, order(act).0))),
+    )?;
     validate_settlement_targets(acts, &history.acts)?;
     for act in acts {
         validate_dependencies(act, &available)?;
@@ -1170,17 +1185,37 @@ fn precedes(left: (Position, u64), right: (Position, u64)) -> bool {
     left.0 < right.0
 }
 
-fn check_times(ordered: &[&CandidateAct]) -> Vec<TimeEvidence> {
-    if ordered.windows(2).any(|pair| order(pair[0]).0 == order(pair[1]).0) {
-        return ordered
-            .iter()
-            .map(|act| TimeEvidence {
-                act: act.id.clone(),
-                verdict: TimeVerdict::AmbiguousPlacement,
-                recomputed: RecomputedTime::AmbiguousPlacement,
-            })
-            .collect();
+// The complete written set (history plus proposals on admission) must define
+// each epoch's permutation of 1..=m before fault evidence can be replayed.
+fn validate_order<'a>(acts: impl Iterator<Item = (&'a ActId, Position)>) -> Result<(), ValidationError> {
+    let mut epochs: BTreeMap<u64, Vec<(u64, &ActId)>> = BTreeMap::new();
+    for (id, (epoch, position)) in acts {
+        epochs.entry(epoch).or_default().push((position, id));
     }
+    for positions in epochs.values_mut() {
+        positions.sort_unstable();
+        let invalid = |act: &ActId, cause| ValidationError::InvalidRepresentation { act: act.clone(), cause };
+        for pair in positions.windows(2) {
+            if pair[0].0 == pair[1].0 {
+                return Err(invalid(pair[1].1, InvalidCause::RepeatedPosition));
+            }
+        }
+        let size = positions.len() as u128;
+        for (index, &(position, act)) in positions.iter().enumerate() {
+            if u128::from(position) != index as u128 + 1 {
+                let cause = if u128::from(position) > size {
+                    InvalidCause::PositionOutsideEpoch
+                } else {
+                    InvalidCause::MissingPosition
+                };
+                return Err(invalid(act, cause));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn check_times(ordered: &[&CandidateAct]) -> Vec<TimeEvidence> {
     let mut frontiers: BTreeMap<&PublicReference, RecomputedTime> = BTreeMap::new();
     let mut times: BTreeMap<&ActId, RecomputedTime> = BTreeMap::new();
     let mut evidence = Vec::new();
@@ -1209,7 +1244,6 @@ fn check_times(ordered: &[&CandidateAct]) -> Vec<TimeEvidence> {
             match input {
                 RecomputedTime::Available(value) => maximum = maximum.max(*value),
                 RecomputedTime::Unavailable(openings) => missing.extend(openings.iter().cloned()),
-                RecomputedTime::AmbiguousPlacement => unreachable!("duplicate placements returned before replay"),
             }
         }
         // A finite in-memory act slice cannot have u128::MAX predecessors.
@@ -1225,7 +1259,6 @@ fn check_times(ordered: &[&CandidateAct]) -> Vec<TimeEvidence> {
                 expected: *expected,
             },
             RecomputedTime::Unavailable(_) => TimeVerdict::UnavailableOpening,
-            RecomputedTime::AmbiguousPlacement => unreachable!("duplicate placements returned before replay"),
         };
         for endpoint in endpoints {
             frontiers.insert(endpoint, recomputed.clone());
@@ -1380,6 +1413,7 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
     for act in acts {
         validate_act(act, &references, &BTreeSet::new())?;
     }
+    validate_order(acts.iter().map(|act| (&act.id, order(act).0)))?;
     let available: BTreeMap<_, _> = acts.iter().map(|act| (&act.id, order(act))).collect();
     let mut ordered: Vec<_> = acts.iter().collect();
     ordered.sort_by_key(|act| (order(act).0, &act.id));

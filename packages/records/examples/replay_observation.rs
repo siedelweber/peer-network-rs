@@ -36,7 +36,7 @@ fn main() {
             }
             5 => {
                 root.finalization_epoch = 1;
-                root.authoritative_position = 2;
+                root.authoritative_position = 1;
                 later.finalization_epoch = 2;
                 later.authoritative_position = 1;
                 later.projections.dependency = DependencyProjection::Full(vec![root.id.clone()]);

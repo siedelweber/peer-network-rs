@@ -53,6 +53,7 @@ fn minted_resolution() {
         let mut consumer = act(2, Layout::Binary);
         consumer.legs[0].target = reference.clone();
         assert!(validate_record(&[consumer.clone()], &history, &[]).is_ok());
+        consumer.authoritative_position = 1;
         let dangling = validate_record(&[consumer.clone()], &resolved(), &[]).unwrap();
         assert_eq!(
             resolve_public_reference(&dangling, &reference),

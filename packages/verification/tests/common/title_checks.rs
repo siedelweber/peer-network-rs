@@ -115,6 +115,12 @@ fn bid(sequence: u64) -> CandidateAct {
 // Fixture preparation only: a raw-carrier recurrence, not used by the predicate oracle.
 fn stamp(inputs: &mut [CandidateAct]) {
     inputs.sort_by_key(|act| (act.finalization_epoch, act.authoritative_position));
+    let mut positions = BTreeMap::new();
+    for input in inputs.iter_mut() {
+        let next = positions.entry(input.finalization_epoch).or_insert(0);
+        *next += 1;
+        input.authoritative_position = *next;
+    }
     let mut endpoints = BTreeMap::new();
     let mut times = BTreeMap::new();
     for input in inputs {

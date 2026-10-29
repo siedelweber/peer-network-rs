@@ -89,7 +89,7 @@ pub fn generate(words: &[u64]) -> Scenario {
             protocol_references: vec![name.clone()],
             authentication_evidence: vec![1],
             finalization_epoch: 1 + u64::from(index >= 2),
-            authoritative_position: sequence + 1,
+            authoritative_position: if index < 2 { sequence + 1 } else { sequence - 1 },
             logical_time: 1,
         });
     }
@@ -98,7 +98,7 @@ pub fn generate(words: &[u64]) -> Scenario {
         history: acts,
         proposals,
         names: vec![name],
-        boundary: (2, 3),
+        boundary: (2, 1),
     }
 }
 
@@ -212,7 +212,8 @@ fn corrupt_parent(case: &mut Scenario, mutation: &str) -> Option<crate::Validati
             Some(parent(Some(missing), ParentCause::Missing))
         }
         "parent-late" => {
-            last.authoritative_position = first.authoritative_position;
+            last.finalization_epoch = 1;
+            last.authoritative_position = u64::try_from(case.history.len()).ok()? + 1;
             last.projections.dependency = DependencyProjection::FullEmpty;
             last.body.asserted_parents = vec![first.id.clone()];
             Some(parent(Some(first.id), ParentCause::NotEarlier))
@@ -258,7 +259,8 @@ fn corrupt_dependency(case: &mut Scenario, mutation: &str) -> Option<crate::Vali
             Some(dependency(Some(missing), DependencyCause::Missing))
         }
         "dependency-late" => {
-            last.authoritative_position = first.authoritative_position;
+            last.finalization_epoch = 1;
+            last.authoritative_position = u64::try_from(case.history.len()).ok()? + 1;
             last.body.asserted_parents.clear();
             last.projections.dependency = DependencyProjection::Full(vec![first.id.clone()]);
             Some(dependency(Some(first.id), DependencyCause::NotEarlier))

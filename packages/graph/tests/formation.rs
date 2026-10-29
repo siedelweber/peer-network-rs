@@ -47,17 +47,31 @@ fn item_endpoints() {
     assert!(bundle(&candidate("Registration", 1)).is_ok());
 }
 
+// Fixture numbering only; malformed-order witnesses call records directly.
+fn number_fixture(inputs: &mut [CandidateAct]) {
+    let mut ordered: Vec<_> = inputs.iter_mut().collect();
+    ordered.sort_by_key(|act| (act.finalization_epoch, act.authoritative_position));
+    let mut positions = std::collections::BTreeMap::new();
+    for act in ordered {
+        let next = positions.entry(act.finalization_epoch).or_insert(0);
+        *next += 1;
+        act.authoritative_position = *next;
+    }
+}
+
 fn raw_bundle(
     input: &CandidateAct,
     context: &[CandidateAct],
 ) -> Result<Vec<pn_graph::formation::CompleteProjection>, FormationFailure> {
-    let history = validate_history(context, &names()).map_err(FormationFailure::Records)?;
+    let mut context = context.to_vec();
+    number_fixture(&mut context);
+    let history = validate_history(&context, &names()).map_err(FormationFailure::Records)?;
     let act = history.acts().iter().find(|act| act.id() == &input.id).unwrap();
     project_complete_act(
         act,
         &history,
         &Verifier {
-            acts: context.to_vec(),
+            acts: context,
             removals: false,
         },
     )
@@ -869,7 +883,7 @@ fn participant_projection() {
         };
         assert_eq!(a.role, ParticipantRole::A);
         assert_eq!(t.role, ParticipantRole::T);
-        assert_eq!((a.sequence, a.metadata.logical_time, a.metadata.position), (3, 3, (1, 3)));
+        assert_eq!((a.sequence, a.metadata.logical_time, a.metadata.position), (3, 3, (1, 1)));
         let mut expected = a.clone();
         expected.role = ParticipantRole::T;
         assert_eq!(&expected, t);
@@ -1199,7 +1213,7 @@ fn review_projection() {
                 panic!("wrong family")
             };
             assert_eq!(a.role, ReviewRole::A);
-            assert_eq!((a.sequence, a.metadata.position, a.metadata.logical_time), (3, (1, 3), 3));
+            assert_eq!((a.sequence, a.metadata.position, a.metadata.logical_time), (3, (1, 1), 3));
             assert_eq!((a.enthusiasm.numerator, a.enthusiasm.denominator), (-1, 2));
             assert_eq!((a.effort.numerator, a.effort.denominator), (2, 3));
 
@@ -1515,7 +1529,7 @@ fn send_projection() {
             panic!("wrong family")
         };
         assert_eq!(a.role, SendRole::A);
-        assert_eq!((a.sequence, a.metadata.position, a.metadata.logical_time), (3, (1, 3), 3));
+        assert_eq!((a.sequence, a.metadata.position, a.metadata.logical_time), (3, (1, 1), 3));
         assert_eq!((a.importance.numerator, a.importance.denominator), (-1, 2));
         let mut expected = a.clone();
         expected.role = SendRole::T;
@@ -1769,7 +1783,7 @@ fn bid_projection() {
         panic!("wrong family")
     };
     assert_eq!(a.role, BidRole::A);
-    assert_eq!((a.sequence, a.metadata.position, a.metadata.logical_time), (3, (1, 3), 3));
+    assert_eq!((a.sequence, a.metadata.position, a.metadata.logical_time), (3, (1, 1), 3));
     assert_eq!((a.generosity.numerator, a.generosity.denominator), (-1, 2));
     assert_eq!((a.urgency.numerator, a.urgency.denominator), (2, 3));
     let mut expected = a.clone();
@@ -1799,7 +1813,8 @@ fn bid_projection() {
             }
         }
     }
-    let reused = vec![bidding(1, 1, 1), bidding(3, 1, 1)];
+    let mut reused = vec![bidding(1, 1, 1), bidding(3, 1, 1)];
+    number_fixture(&mut reused);
     let history = validate_history(&reused, &[]).unwrap();
     let verifier = Verifier {
         acts: reused,
@@ -2041,7 +2056,7 @@ fn opinion_projection() {
                 weight.metadata.position,
                 weight.metadata.logical_time
             ),
-            ("a", 3, (1, 3), 3)
+            ("a", 3, (1, 1), 3)
         );
     }
     let input = opinion(3, named("prof", "a"));
@@ -2257,7 +2272,7 @@ fn join_request_projection() {
             weight.metadata.position,
             weight.metadata.logical_time
         ),
-        ("a", 3, (1, 3), 3)
+        ("a", 3, (1, 1), 3)
     );
     for (n, d) in [(0, 1), (2, 3)] {
         for denominator in 1..=8 {
@@ -2445,7 +2460,7 @@ fn tag_projection() {
         assert_eq!((a.confidence.numerator, a.confidence.denominator), (2, 3));
         assert_eq!(
             (a.author.as_str(), a.sequence, a.metadata.position, a.metadata.logical_time),
-            ("a", 3, (1, 3), 3)
+            ("a", 3, (1, 1), 3)
         );
         let mut expected = a.clone();
         expected.role = pn_graph::formation::TagRole::T;
@@ -2721,7 +2736,8 @@ fn minted_node_conformance() {
     ] {
         let reference = PublicReference::Minted(genesis.id.clone());
         let expected = bundle(&genesis).unwrap().last().unwrap().1.clone();
-        let consumer = opinion(2, reference.clone());
+        let mut consumer = opinion(2, reference.clone());
+        consumer.authoritative_position = 1;
         assert_eq!(project(&consumer).unwrap().1, expected);
         let unanchored = validate_history(std::slice::from_ref(&consumer), &[]).unwrap();
         let records = pn_records::validate_record(&[], &unanchored, &[]).unwrap();
@@ -2729,6 +2745,7 @@ fn minted_node_conformance() {
             pn_records::resolve_public_reference(&records, &reference),
             Err(pn_records::ValidationError::UnresolvedReference(reference.clone()))
         );
+        consumer.authoritative_position = 2;
         let inputs = vec![genesis.clone(), consumer.clone()];
         let history = validate_history(&inputs, &[]).unwrap();
         let records = pn_records::validate_record(&[], &history, &[]).unwrap();
@@ -2780,7 +2797,7 @@ fn leave_projection() {
             weight.metadata.position,
             weight.metadata.logical_time
         ),
-        ("a", 3, (1, 3), 3)
+        ("a", 3, (1, 1), 3)
     );
     for target in [
         named("addr", "a"),
@@ -2958,7 +2975,7 @@ fn reference_projection() {
         assert_eq!((a.enthusiasm.numerator, a.enthusiasm.denominator), (2, 3));
         assert_eq!(
             (a.author.as_str(), a.sequence, a.metadata.position, a.metadata.logical_time),
-            ("a", 3, (1, 3), 3)
+            ("a", 3, (1, 1), 3)
         );
         let mut expected = a.clone();
         expected.role = pn_graph::formation::ReferenceRole::T;
@@ -3201,7 +3218,7 @@ fn invitation_projection() {
     assert_eq!((a.relevance.numerator, a.relevance.denominator), (1, 2));
     assert_eq!(
         (a.author.as_str(), a.sequence, a.metadata.position, a.metadata.logical_time),
-        ("a", 14, (1, 14), 14)
+        ("a", 14, (1, 1), 14)
     );
     let mut expected = a.clone();
     expected.role = pn_graph::formation::InvitationRole::T;
@@ -3313,6 +3330,7 @@ fn invitation_reconstruction() {
 
 fn shared_family_reconstruction(first: CandidateAct, second: CandidateAct) {
     let mut inputs = vec![candidate("Registration", 1), participation(5, 5, 5), first, second];
+    number_fixture(&mut inputs);
     let mut verifier = Verifier {
         acts: inputs.clone(),
         removals: false,
@@ -3408,7 +3426,7 @@ fn deinvite_projection() {
     assert_eq!(a.role, pn_graph::formation::DeinviteRole::A);
     assert_eq!(
         (a.author.as_str(), a.sequence, a.metadata.position, a.metadata.logical_time),
-        ("a", 15, (1, 15), 15)
+        ("a", 15, (1, 1), 15)
     );
     let mut expected = a.clone();
     expected.role = pn_graph::formation::DeinviteRole::T;
@@ -3460,7 +3478,7 @@ fn withdraw_projection() {
             weight.metadata.position,
             weight.metadata.logical_time
         ),
-        ("a", 3, (1, 3), 3)
+        ("a", 3, (1, 1), 3)
     );
     for target in [
         named("addr", "a"),
@@ -3551,7 +3569,7 @@ fn rescind_projection() {
             weight.metadata.position,
             weight.metadata.logical_time
         ),
-        ("a", 3, (1, 3), 3)
+        ("a", 3, (1, 1), 3)
     );
     for target in [
         named("addr", "a"),
@@ -3866,7 +3884,9 @@ fn settlement_inputs() -> Vec<CandidateAct> {
     let bid = bidding(8, 4, 8);
     let accept = accepting(18, &bid, "b");
     let ratify = ratifying(19, &bid, &accept);
-    vec![bid, accept, ratify, ownership(4)]
+    let mut inputs = vec![bid, accept, ratify, ownership(4)];
+    number_fixture(&mut inputs);
+    inputs
 }
 
 fn bundle_in(
@@ -3875,6 +3895,7 @@ fn bundle_in(
 ) -> Result<Vec<pn_graph::formation::CompleteProjection>, FormationFailure> {
     let mut inputs = context.to_vec();
     *inputs.iter_mut().find(|act| act.id == input.id).unwrap() = input.clone();
+    number_fixture(&mut inputs);
     let history = validate_history(&inputs, &names()).map_err(FormationFailure::Records)?;
     let act = history.acts().iter().find(|act| act.id() == &input.id).unwrap();
     project_complete_act(
@@ -3999,6 +4020,7 @@ fn settlement_context() {
         assert!(project_complete_act(&history.acts()[2], &history, &verifier).is_ok());
         let mut absent = inputs.clone();
         let id = absent.remove(target).id;
+        number_fixture(&mut absent);
         let replay = validate_history(&absent, &names()).unwrap();
         assert!(replay.parent_faults().iter().any(|fault| fault.parent == id));
         assert_eq!(
@@ -4016,11 +4038,16 @@ fn settlement_context() {
     misplaced_settlement(&inputs);
     for kind in 0..3 {
         let mut wrong = inputs.clone();
-        let other = if kind == 2 {
+        let mut other = if kind == 2 {
             bidding(7, 4, 7)
         } else {
             candidate("Registration", 7)
         };
+        other.finalization_epoch = 1;
+        other.authoritative_position = 1;
+        for act in &mut wrong {
+            act.authoritative_position += 1;
+        }
         if kind == 0 {
             wrong[1].body.settlement = Some(pn_records::SettlementReferences::Accept {
                 settles: other.id.clone(),
@@ -4032,6 +4059,7 @@ fn settlement_context() {
             });
         }
         wrong.push(other);
+        number_fixture(&mut wrong);
         let history = validate_history(&wrong, &names()).unwrap();
         let verifier = Verifier {
             acts: wrong,
@@ -4092,6 +4120,7 @@ fn settlement_reconstruction() {
     let accept = accepting(20, &inputs[0], "b");
     let ratify = ratifying(21, &inputs[0], &accept);
     inputs.extend([accept, ratify]);
+    number_fixture(&mut inputs);
     let history = validate_history(&inputs, &names()).unwrap();
     let verifier = Verifier {
         acts: inputs.clone(),
@@ -4146,26 +4175,37 @@ fn settlement_candidate_order() {
         for child in [1, 2] {
             for split in [false, true] {
                 let cut = if split { child } else { 0 };
-                let accepted = validate_history(&inputs[..cut], &names()).unwrap();
-                assert!(pn_records::validate_record(&inputs[cut..], &accepted, &[]).is_ok());
-                for before in [false, true] {
+                let mut prefix = inputs[..cut].to_vec();
+                prefix.push(inputs[3].clone());
+                let accepted = validate_history(&prefix, &names()).unwrap();
+                assert!(pn_records::validate_record(&inputs[cut..3], &accepted, &[]).is_ok());
+                for swap in [false, true] {
                     let mut wrong = inputs.clone();
+                    let key = (wrong[child].finalization_epoch, wrong[child].authoritative_position);
                     wrong[child].finalization_epoch = wrong[child - 1].finalization_epoch;
                     wrong[child].authoritative_position = wrong[child - 1].authoritative_position;
-                    if before {
-                        if cross_epoch {
-                            wrong[child].finalization_epoch -= 1;
-                        } else {
-                            wrong[child].authoritative_position -= 1;
-                        }
+                    let reversed = swap && !split;
+                    if reversed {
+                        (wrong[child - 1].finalization_epoch, wrong[child - 1].authoritative_position) = key;
                     }
-                    assert!(matches!(
-                        pn_records::validate_record(&wrong[cut..], &accepted, &[]),
-                        Err(pn_records::ValidationError::Parent {
-                            cause: pn_records::ParentCause::NotEarlier,
-                            ..
-                        })
-                    ));
+                    let failure = pn_records::validate_record(&wrong[cut..3], &accepted, &[]).unwrap_err();
+                    if reversed {
+                        assert!(matches!(
+                            failure,
+                            pn_records::ValidationError::Parent {
+                                cause: pn_records::ParentCause::NotEarlier,
+                                ..
+                            }
+                        ));
+                    } else {
+                        assert!(matches!(
+                            failure,
+                            pn_records::ValidationError::InvalidRepresentation {
+                                cause: pn_records::InvalidCause::RepeatedPosition,
+                                ..
+                            }
+                        ));
+                    }
                 }
             }
         }

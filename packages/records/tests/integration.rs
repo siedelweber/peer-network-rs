@@ -34,15 +34,14 @@ fn complete_acts_count_once() {
 #[test]
 fn shared_ancestor_counts_once() {
     let mut shared = act(1, Layout::Paired);
-    shared.authoritative_position = 8;
+    shared.authoritative_position = 1;
     let mut roots = [act(2, Layout::Binary), act(3, Layout::Paired)];
     for root in &mut roots {
-        root.authoritative_position = 9;
         root.body.asserted_parents = vec![shared.id.clone()];
     }
     let proposals = [shared.clone(), roots[0].clone(), roots[1].clone()];
     let view = validate_record(&proposals, &resolved(), &[]).unwrap();
-    let inputs = assemble_boundary_inputs(&view, (5, 8)).unwrap();
+    let inputs = assemble_boundary_inputs(&view, (5, 1)).unwrap();
     assert_eq!(inputs.closures().len(), 3);
     assert!(inputs.closures().iter().all(|closure| closure.members().contains(&shared.id)));
     assert_eq!(inputs.acts().len(), 3);
@@ -50,7 +49,7 @@ fn shared_ancestor_counts_once() {
     assert_eq!(inputs.acts().iter().map(|act| act.legs().len()).sum::<usize>(), 5);
     let history = validate_history(&[shared], &[named("left"), named("right")]).unwrap();
     let view = validate_record(&roots, &history, &[]).unwrap();
-    let inputs = assemble_boundary_inputs(&view, (5, 9)).unwrap();
+    let inputs = assemble_boundary_inputs(&view, (5, 2)).unwrap();
     assert_eq!(inputs.acts().len(), 2);
     assert!(
         inputs

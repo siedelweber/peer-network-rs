@@ -18,7 +18,7 @@ fn whole_act_boundary() {
         common::act(2, pn_records::Layout::Paired),
     ];
     let records = pn_records::validate_record(&candidates, &common::resolved(), &[]).unwrap();
-    let boundary = pn_records::assemble_boundary_inputs(&records, (5, 8)).unwrap();
+    let boundary = pn_records::assemble_boundary_inputs(&records, (5, 1)).unwrap();
     assert_eq!(boundary.acts().len(), 2);
     assert_eq!(boundary.acts().iter().map(|act| act.legs().len()).sum::<usize>(), 4);
     assert_ne!(boundary.acts()[0].id(), boundary.acts()[1].id());
@@ -156,7 +156,7 @@ fn projection_removal() {
             assert_eq!(validate_record(&[record], &resolved(), &[]).unwrap_err(), expected);
         }
     }
-    for position in [0, 7, 8] {
+    for position in [0, 1] {
         for content in [false, true] {
             let mut record = act(1, Layout::Paired);
             if content {
@@ -374,6 +374,7 @@ fn dependency_placement() {
     let parent = act(1, Layout::Binary);
     let mut root = act(2, Layout::Binary);
     root.projections.dependency = DependencyProjection::Full(vec![parent.id.clone()]);
+    root.authoritative_position = 1;
     assert_eq!(
         validate_record(std::slice::from_ref(&root), &resolved(), &[]).unwrap_err(),
         ValidationError::Dependency {
@@ -383,18 +384,17 @@ fn dependency_placement() {
         }
     );
     let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
-    for position in [7, 8] {
-        root.authoritative_position = position;
-        assert_eq!(
-            validate_record(std::slice::from_ref(&root), &history, &[]).unwrap_err(),
-            ValidationError::Dependency {
-                act: root.id.clone(),
-                dependency: Some(parent.id.clone()),
-                cause: DependencyCause::NotEarlier
-            }
-        );
-    }
-    root.authoritative_position = 9;
+    let mut late_parent = parent.clone();
+    late_parent.authoritative_position = 2;
+    assert_eq!(
+        validate_record(&[root.clone(), late_parent], &resolved(), &[]).unwrap_err(),
+        ValidationError::Dependency {
+            act: root.id.clone(),
+            dependency: Some(parent.id.clone()),
+            cause: DependencyCause::NotEarlier
+        }
+    );
+    root.authoritative_position = 2;
     assert!(validate_record(std::slice::from_ref(&root), &history, &[]).is_ok());
     for proposed in [[root.clone(), parent.clone()], [parent.clone(), root.clone()]] {
         assert!(validate_record(&proposed, &resolved(), &[]).is_ok());
@@ -464,7 +464,7 @@ fn finalized_order() {
         );
     }
     first.projections.dependency = DependencyProjection::Full(vec![later.id.clone()]);
-    later.authoritative_position = 1;
+    later.authoritative_position = 2;
     assert_eq!(
         validate_history(&[first.clone(), later.clone()], &names)
             .unwrap()
@@ -482,6 +482,7 @@ fn finalized_order() {
     );
     assert!(validate_record(&[first.clone(), later.clone()], &empty, &[]).is_ok());
     first.projections.dependency = DependencyProjection::Tombstoned((5, 3));
+    first.authoritative_position = 1;
     assert_eq!(validate_history(&[first.clone()], &names).unwrap().non_compliance(), []);
     first.projections.dependency = DependencyProjection::Full(vec![]);
     assert_eq!(
@@ -563,19 +564,19 @@ fn overlapping_closures() {
     history_parent.projections.dependency = DependencyProjection::Tombstoned((5, 2));
     let history = validate_history(std::slice::from_ref(&history_parent), &[named("left"), named("right")]).unwrap();
     let mut shared = act(2, Layout::Paired);
-    shared.authoritative_position = 10;
+    shared.authoritative_position = 2;
     shared.body.asserted_parents = vec![history_parent.id.clone()];
     let mut left = act(3, Layout::Paired);
-    left.authoritative_position = 11;
+    left.authoritative_position = 3;
     left.body.asserted_parents = vec![shared.id.clone()];
     let mut right = act(4, Layout::Binary);
-    right.authoritative_position = 12;
+    right.authoritative_position = 4;
     right.body.asserted_parents = vec![shared.id.clone()];
     let mut chain = act(5, Layout::Binary);
-    chain.authoritative_position = 13;
+    chain.authoritative_position = 5;
     chain.body.asserted_parents = vec![left.id.clone()];
     let mut separate = act(6, Layout::Binary);
-    separate.authoritative_position = 14;
+    separate.authoritative_position = 6;
     separate.body.asserted_parents = vec![history_parent.id.clone()];
     separate.projections.dependency = DependencyProjection::Full(vec![left.id.clone()]);
     for reversed in [false, true] {
@@ -584,8 +585,8 @@ fn overlapping_closures() {
             proposals.reverse();
         }
         let view = validate_record(&proposals, &history, &[]).unwrap();
-        let inputs = assemble_boundary_inputs(&view, (5, 10)).unwrap();
-        assert_eq!(inputs.boundary(), (5, 10));
+        let inputs = assemble_boundary_inputs(&view, (5, 2)).unwrap();
+        assert_eq!(inputs.boundary(), (5, 2));
         let expected = [vec![2], vec![2, 3], vec![2, 4], vec![2, 3, 5], vec![6]];
         for (closure, ids) in inputs.closures().iter().zip(expected) {
             assert_eq!(closure.members().iter().map(|id| id.sequence).collect::<Vec<_>>(), ids);
@@ -617,7 +618,7 @@ fn boundary_refusals() {
     let mut parent = act(1, Layout::Binary);
     parent.authoritative_position = 1;
     let mut root = act(2, Layout::Paired);
-    root.authoritative_position = 10;
+    root.authoritative_position = 2;
     root.body.asserted_parents = vec![parent.id.clone()];
     root.projections.dependency = DependencyProjection::Full(vec![parent.id.clone()]);
     let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
@@ -635,7 +636,7 @@ fn boundary_refusals() {
     parent.projections.dependency = DependencyProjection::Tombstoned((5, 2));
     let history = validate_history(std::slice::from_ref(&parent), &[named("left"), named("right")]).unwrap();
     let view = validate_record(std::slice::from_ref(&root), &history, &[]).unwrap();
-    let inputs = assemble_boundary_inputs(&view, (5, 10)).unwrap();
+    let inputs = assemble_boundary_inputs(&view, (5, 2)).unwrap();
     assert_eq!(inputs.acts().len(), 1);
     assert_eq!(inputs.closures()[0].members(), vec![root.id]);
 }
@@ -647,9 +648,9 @@ fn boundary_refusals() {
 fn asserted_parents() {
     use pn_records::{MAX_ASSERTED_PARENTS, ParentCause};
     let mut parent = act(1, Layout::Binary);
-    parent.authoritative_position = 10;
+    parent.authoritative_position = 1;
     let mut root = act(2, Layout::Paired);
-    root.authoritative_position = 11;
+    root.authoritative_position = 2;
     let other = act(3, Layout::Binary);
     let cases = [
         (vec![other.id.clone()], Some(other.id.clone()), ParentCause::Missing),
@@ -670,7 +671,9 @@ fn asserted_parents() {
         );
     }
     root.body.asserted_parents = vec![parent.id.clone()];
-    for position in [11, 12] {
+    root.authoritative_position = 1;
+    {
+        let position = 2;
         parent.authoritative_position = position;
         assert_eq!(
             validate_record(&[root.clone(), parent.clone()], &resolved(), &[]).unwrap_err(),
@@ -681,7 +684,8 @@ fn asserted_parents() {
             }
         );
     }
-    parent.authoritative_position = 10;
+    parent.authoritative_position = 1;
+    root.authoritative_position = 2;
     assert!(validate_record(&[root, parent], &resolved(), &[]).is_ok());
 }
 

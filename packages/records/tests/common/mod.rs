@@ -58,7 +58,7 @@ pub fn act(sequence: u64, layout: Layout) -> CandidateAct {
         protocol_references: vec![named("left")],
         authentication_evidence: vec![1, 2, 3],
         finalization_epoch: 5,
-        authoritative_position: 8,
+        authoritative_position: sequence,
         logical_time: 1,
         id,
     }

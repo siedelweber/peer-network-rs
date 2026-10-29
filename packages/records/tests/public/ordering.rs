@@ -4,11 +4,12 @@ use pn_records::{
     ValidationError, assemble_boundary_inputs, validate_history, validate_record,
 };
 
-/// Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, and position-zero placement refuses as `FinalizedPosition` on both paths, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in published placement independently of its stamp while retaining dependency violations on replay.
+/// Claim: Repeated epoch-position keys, internal gaps and positions above the epoch size refuse structurally before replay; both candidate admission (including its fixed history) and finalized replay require each epoch to be a permutation of 1 through its act count. Valid orders retain placement and stamp faults. Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, and position-zero placement refuses as `FinalizedPosition` on both paths, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in published placement independently of its stamp while retaining dependency violations on replay.
 /// ´claim:acts:epoch-qualified-placement-retains-causal-checks´
 /// ´test:integration:epoch-placement´
 #[test]
 fn epoch_placement() {
+    malformed_orders();
     let names = [named("left"), named("right")];
     let mut zero = act(1, Layout::Binary);
     zero.finalization_epoch = 0;
@@ -42,7 +43,10 @@ fn epoch_placement() {
     child.body.asserted_parents = vec![parent.id.clone()];
     child.projections.dependency = DependencyProjection::Full(vec![parent.id.clone()]);
     parent.projections.content = Removal::Tombstoned((2, 1));
-    let history = validate_history(&[parent.clone()], &names).unwrap();
+    let mut filler = act(3, Layout::Binary);
+    filler.finalization_epoch = 1;
+    filler.authoritative_position = 1;
+    let history = validate_history(&[filler.clone(), parent.clone()], &names).unwrap();
     let records = validate_record(&[child.clone()], &history, &[]).unwrap();
     assert_eq!(
         assemble_boundary_inputs(&records, (2, 1)).unwrap().acts()[0].position(),
@@ -55,7 +59,7 @@ fn epoch_placement() {
     parent.finalization_epoch = 2;
     child.body.asserted_parents.clear();
     let empty = validate_history(&[], &names).unwrap();
-    for (position, time) in [(2, 10), (3, 12)] {
+    for (position, time) in [(2, 10), (2, 12)] {
         parent.authoritative_position = position;
         parent.logical_time = time;
         let acts = [parent.clone(), child.clone()];
@@ -78,6 +82,57 @@ fn epoch_placement() {
             }
         );
     }
+}
+
+fn malformed_orders() {
+    use pn_records::InvalidCause;
+    let names = [named("left"), named("right")];
+    let empty = validate_history(&[], &names).unwrap();
+    for (positions, cause) in [
+        (vec![1, 1], InvalidCause::RepeatedPosition),
+        (vec![1, 4], InvalidCause::PositionOutsideEpoch),
+        (vec![1, 3, 4], InvalidCause::MissingPosition),
+    ] {
+        let inputs: Vec<_> = positions
+            .into_iter()
+            .enumerate()
+            .map(|(index, position)| {
+                let mut input = act(u64::try_from(index).unwrap() + 1, Layout::Binary);
+                input.authoritative_position = position;
+                input
+            })
+            .collect();
+        let expected = ValidationError::InvalidRepresentation {
+            act: inputs[1].id.clone(),
+            cause,
+        };
+        for reversed in [false, true] {
+            let mut presented = inputs.clone();
+            if reversed {
+                presented.reverse();
+            }
+            assert_eq!(validate_history(&presented, &names).unwrap_err(), expected);
+            assert_eq!(validate_record(&presented, &empty, &[]).unwrap_err(), expected);
+        }
+        let history = validate_history(&inputs[..1], &names).unwrap();
+        assert_eq!(validate_record(&inputs[1..], &history, &[]).unwrap_err(), expected);
+    }
+    let mut first = act(1, Layout::Binary);
+    let second = act(2, Layout::Paired);
+    first.body.asserted_parents = vec![second.id.clone()];
+    first.logical_time = 99;
+    let inputs = [second, first];
+    let replay = validate_history(&inputs, &names).unwrap();
+    assert_retained(&replay, &inputs);
+    assert_eq!(replay.parent_faults().len(), 1);
+    assert_eq!(replay.parent_faults()[0].cause, ParentCause::NotEarlier);
+    assert!(matches!(
+        replay.time_evidence()[0].verdict,
+        TimeVerdict::Mismatch {
+            attached: 99,
+            expected: 1
+        }
+    ));
 }
 
 fn history_case() -> (Vec<CandidateAct>, Vec<pn_records::PublicReference>) {
@@ -207,16 +262,20 @@ fn parent_replay() {
         }
     );
     assert!(validate_record(&inputs, &empty, &[]).is_ok());
-    let missing = validate_history(&[child.clone()], &names).unwrap();
+    let mut lone_child = child.clone();
+    lone_child.authoritative_position = 1;
+    let missing = validate_history(&[lone_child.clone()], &names).unwrap();
     assert_eq!(missing.parent_faults()[0].cause, ParentCause::Missing);
     assert_eq!(missing.parent_faults()[0].parent, parent.id);
-    let mut self_parent = child.clone();
+    let mut self_parent = lone_child;
     self_parent.body.asserted_parents = vec![self_parent.id.clone()];
     let replay = validate_history(&[self_parent.clone()], &names).unwrap();
     assert_eq!(replay.parent_faults()[0].cause, ParentCause::SelfParent);
     assert_eq!(replay.time_evidence()[0].recomputed, RecomputedTime::Available(1));
     assert_retained(&replay, &[self_parent]);
-    for position in [2, 3] {
+    child.authoritative_position = 1;
+    {
+        let position = 2;
         parent.authoritative_position = position;
         let inputs = [parent.clone(), child.clone()];
         let replay = validate_history(&inputs, &names).unwrap();
@@ -232,7 +291,7 @@ fn parent_replay() {
         );
     }
     parent.finalization_epoch = 1;
-    parent.authoritative_position = 2;
+    parent.authoritative_position = 1;
     child.finalization_epoch = 2;
     child.authoritative_position = 1;
     child.logical_time = 2;
@@ -243,7 +302,7 @@ fn parent_replay() {
     assert!(validate_record(&inputs, &empty, &[]).is_ok());
 }
 
-/// Claim: Recurrence mismatches retain the attached time and exact expected value, without trusting even a maximal published stamp; tombstoned openings propagate their missing identities through incidence and causal predecessors, independent acts remain available, non-compliant dependencies still permit recomputation, and ambiguous placement yields no time verdict, and none rewrites finalization metadata.
+/// Claim: Recurrence mismatches retain the attached time and exact expected value, without trusting even a maximal published stamp; tombstoned openings propagate their missing identities through incidence and causal predecessors, independent acts remain available, non-compliant dependencies still permit recomputation, repeated positions refuse structurally before time replay, and no evidence rewrites finalization metadata. Unavailable means not established by this replay, not unestablishable: this conservative implementation does not compute interval bounds, dominance proofs or out-of-interval stamp faults, as witnessed by a tombstoned first act and a dominated successor.
 /// ´claim:acts:time-evidence-never-rewrites-finalization´
 /// ´test:integration:retained-time-evidence´
 #[test]
@@ -273,6 +332,7 @@ fn retained_time_evidence() {
     );
     assert_retained(&replay, &acts);
     five_one_six();
+    conservative_time_evidence();
     assert_eq!(replay.acts()[1].logical_time(), 7);
     acts[0].logical_time = u64::MAX;
     acts[1].projections.dependency = DependencyProjection::FullEmpty;
@@ -289,13 +349,13 @@ fn retained_time_evidence() {
     let replay = validate_history(&acts, &names).unwrap();
     assert_eq!(replay.time_evidence()[1].recomputed, RecomputedTime::Available(2));
     acts[1].authoritative_position = 1;
-    let replay = validate_history(&acts, &names).unwrap();
-    assert!(
-        replay
-            .time_evidence()
-            .iter()
-            .all(|row| row.verdict == TimeVerdict::AmbiguousPlacement)
-    );
+    assert!(matches!(
+        validate_history(&acts, &names),
+        Err(ValidationError::InvalidRepresentation {
+            cause: pn_records::InvalidCause::RepeatedPosition,
+            ..
+        })
+    ));
 }
 
 fn five_one_six() {
@@ -356,4 +416,55 @@ fn five_one_six() {
         assert_eq!(replay.time_evidence()[6].verdict, TimeVerdict::UnavailableOpening);
         assert_retained(&replay, &extended);
     }
+}
+
+// The evidence API deliberately makes no interval-completeness promise.
+fn conservative_time_evidence() {
+    let names = [named("left"), named("right"), named("remote-left"), named("remote-right")];
+    let mut first = act(1, Layout::Binary);
+    first.projections.dependency = DependencyProjection::Tombstoned((6, 1));
+    first.logical_time = 99;
+    let replay = validate_history(&[first.clone()], &names).unwrap();
+    assert!(matches!(replay.time_evidence()[0].recomputed, RecomputedTime::Unavailable(_)));
+    assert_eq!(replay.time_evidence()[0].verdict, TimeVerdict::UnavailableOpening);
+    // With no earlier key, the empty and self-list possibilities both give one.
+    for projection in [
+        DependencyProjection::FullEmpty,
+        DependencyProjection::Full(vec![first.id.clone()]),
+    ] {
+        first.projections.dependency = projection;
+        let replay = validate_history(&[first.clone()], &names).unwrap();
+        assert_eq!(replay.time_evidence()[0].recomputed, RecomputedTime::Available(1));
+        assert_eq!(
+            replay.time_evidence()[0].verdict,
+            TimeVerdict::Mismatch {
+                attached: 99,
+                expected: 1
+            }
+        );
+    }
+    let mut inputs: Vec<_> = (1..=8).map(|id| act(id, Layout::Binary)).collect();
+    inputs[5].legs[0].source = named("remote-left");
+    inputs[5].legs[0].target = named("remote-right");
+    inputs[7].body.asserted_parents = vec![inputs[5].id.clone()];
+    // Every single earlier dependency choice is dominated by act seven's frontier.
+    for dependency in 0..=5 {
+        inputs[5].projections.dependency = if dependency == 0 {
+            DependencyProjection::FullEmpty
+        } else {
+            DependencyProjection::Full(vec![inputs[dependency - 1].id.clone()])
+        };
+        let replay = validate_history(&inputs, &names).unwrap();
+        assert_eq!(replay.time_evidence()[6].recomputed, RecomputedTime::Available(6));
+        assert_eq!(replay.time_evidence()[7].recomputed, RecomputedTime::Available(7));
+    }
+    inputs[5].projections.dependency = DependencyProjection::Tombstoned((6, 1));
+    let replay = validate_history(&inputs, &names).unwrap();
+    assert_eq!(replay.time_evidence()[6].recomputed, RecomputedTime::Available(6));
+    assert_eq!(
+        replay.time_evidence()[7].recomputed,
+        RecomputedTime::Unavailable(std::collections::BTreeSet::from([inputs[5].id.clone()]))
+    );
+    assert_eq!(replay.time_evidence()[7].verdict, TimeVerdict::UnavailableOpening);
+    assert_retained(&replay, &inputs);
 }

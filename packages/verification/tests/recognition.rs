@@ -245,6 +245,12 @@ fn fixture(stance: i64, withdraw: u64, rescind: u64) -> Vec<CandidateAct> {
 // Fixture preparation only: a raw-carrier recurrence, not used by the predicate oracle.
 fn stamp(inputs: &mut [CandidateAct]) {
     inputs.sort_by_key(|act| (act.finalization_epoch, act.authoritative_position));
+    let mut positions = BTreeMap::new();
+    for input in inputs.iter_mut() {
+        let next = positions.entry(input.finalization_epoch).or_insert(0);
+        *next += 1;
+        input.authoritative_position = *next;
+    }
     let mut endpoints = BTreeMap::new();
     let mut times = BTreeMap::new();
     for input in inputs {
@@ -598,12 +604,12 @@ fn recognition_holds() {
     }
 }
 
-/// Claim: Finalized settlement replay retains absent and misplaced targets with parent-placement evidence and unchanged actor projections. Missing Bid or Accept targets fail reference binding (ii), later targets fail well-formedness (vi), candidate formation still refuses each, title retains the incumbent without consuming these attempts, and mutated replay graphs refuse before recognition evidence escapes.
+/// Claim: Finalized settlement replay retains absent and misplaced targets with parent-placement evidence and unchanged actor projections. All six clauses are asserted: missing Bid or Accept gives false/false/false/true/true/false, an otherwise valid later target in the boundary gives true/true/true/true/true/false, and a future Accept additionally fails (i). Absent chains have false (vi), never an unevaluated clause; candidate formation still refuses each, title retains the incumbent without consuming these attempts, and mutated replay graphs refuse before recognition evidence escapes.
 /// ´claim:verification:settlement-replay-retains-target-placement-faults´
 /// ´test:integration:settlement-replay-faults´
 #[test]
 fn settlement_replay_faults() {
-    for kind in 0..4 {
+    for kind in 0..5 {
         let mut inputs = fixture(1, 0, 0);
         match kind {
             0 => {
@@ -616,10 +622,16 @@ fn settlement_replay_faults() {
                 inputs[1].finalization_epoch = 2;
                 inputs[1].authoritative_position = inputs[2].authoritative_position + 1;
             }
+            3 => {
+                let key = inputs[0].authoritative_position;
+                inputs[0].authoritative_position = inputs[1].authoritative_position;
+                inputs[1].authoritative_position = key;
+            }
             _ => {
-                inputs[0].authoritative_position = inputs[1].authoritative_position + 1;
+                inputs[1].finalization_epoch = 3;
             }
         }
+        stamp(&mut inputs);
         let history = validate_history(&inputs, &[]).unwrap();
         assert_ne!(history.parent_faults(), []);
         let empty = validate_history(&[], &[]).unwrap();
@@ -635,12 +647,22 @@ fn settlement_replay_faults() {
         }
         let evidence = recognize_settlements(&graph, &history, &Approval, &context()).unwrap();
         assert_eq!(evidence.len(), 1);
-        let clause = if kind < 2 {
-            RecognitionClause::ReferenceBinding
-        } else {
-            RecognitionClause::WellFormedness
+        let expected = match kind {
+            0 | 1 => [false, false, false, true, true, false],
+            2 | 3 => [true, true, true, true, true, false],
+            _ => [false, true, true, true, true, false],
         };
-        assert!(!evidence[0].clauses[&clause]);
+        assert_eq!(
+            evidence[0].clauses,
+            BTreeMap::from([
+                (RecognitionClause::Completeness, expected[0]),
+                (RecognitionClause::ReferenceBinding, expected[1]),
+                (RecognitionClause::Authorization, expected[2]),
+                (RecognitionClause::BuyerConsent, expected[3]),
+                (RecognitionClause::SellerConsent, expected[4]),
+                (RecognitionClause::WellFormedness, expected[5]),
+            ])
+        );
         assert!(!evidence[0].recognized);
         let title = pn_graph::title::replay_title(&graph, &history, &Approval, 2).unwrap();
         assert_eq!(title.certificate[&item()], Some("seller".into()));

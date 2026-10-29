@@ -130,6 +130,9 @@ fn settlement_targets() {
     for missing in [0, 1] {
         let mut acts = original.to_vec();
         let id = acts.remove(missing).id;
+        for (index, act) in acts.iter_mut().enumerate() {
+            act.authoritative_position = u64::try_from(index).unwrap() + 1;
+        }
         assert_eq!(
             validate_record(&acts, &resolved(), &[]).unwrap_err(),
             ValidationError::UnresolvedReference(PublicReference::Act(id))
@@ -197,8 +200,10 @@ fn settlement_order() {
         for child in [1, 2] {
             let mut acts = original.clone();
             let parent = child - 1;
-            acts[child].finalization_epoch = acts[parent].finalization_epoch;
-            acts[child].authoritative_position = acts[parent].authoritative_position;
+            let child_key = (acts[child].finalization_epoch, acts[child].authoritative_position);
+            (acts[child].finalization_epoch, acts[child].authoritative_position) =
+                (acts[parent].finalization_epoch, acts[parent].authoritative_position);
+            (acts[parent].finalization_epoch, acts[parent].authoritative_position) = child_key;
             assert_eq!(
                 validate_record(&acts, &resolved(), &[]).unwrap_err(),
                 ValidationError::Parent {

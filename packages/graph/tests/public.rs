@@ -110,7 +110,7 @@ fn chain_storage() {
         for index in 0..count {
             let mut act = template.clone();
             act.id.sequence = index + 1000;
-            act.authoritative_position = index + 10;
+            act.authoritative_position = index + 1;
             act.body.asserted_parents = case
                 .proposals
                 .last()
