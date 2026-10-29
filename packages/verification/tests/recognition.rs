@@ -26,7 +26,7 @@ fn node(namespace: &str, name: &str) -> PublicReference {
     }
 }
 
-/// Claim: The seven fully carried acts of network-v0.30.0's ``ver:boundary:act-time-recomputation`` match all 31 declared result fields against an independent literal boundary table, retaining two parent-placement faults, one dependency violation and one stamp mismatch without changing any published placement or stamp. Reversing presentation preserves the evidence.
+/// Claim: The seven fully carried acts of network-v0.30.1's ``ver:boundary:act-time-recomputation`` match all 31 declared result fields against an independent literal boundary table, retaining two parent-placement faults, one dependency violation and one stamp mismatch without changing any published placement or stamp. Reversing presentation preserves the evidence.
 /// ´claim:verification:carried-time-replay-matches-paper-fixture´
 /// ´test:integration:paper-time-fixture´
 #[test]

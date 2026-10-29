@@ -3341,8 +3341,8 @@
       "operation": "pn-verification::recognition::paper_time_fixture",
       "path": "packages/verification/tests/recognition.rs",
       "claim": "VERIFICATION::claim:verification:carried-time-replay-matches-paper-fixture",
-      "before": "Claim: The seven fully carried acts of network-v0.30.0's `ver:boundary:act-time-recomputation` match all 31 declared result fields against an independent literal boundary table, retaining two parent-placement faults, one dependency violation and one stamp mismatch without changing any published placement or stamp. Reversing presentation preserves the evidence.",
-      "after": "Claim: The seven fully carried acts of network-v0.30.0's ``ver:boundary:act-time-recomputation`` match all 31 declared result fields against an independent literal boundary table, retaining two parent-placement faults, one dependency violation and one stamp mismatch without changing any published placement or stamp. Reversing presentation preserves the evidence.",
+      "before": "Claim: The seven fully carried acts of network-v0.30.1's `ver:boundary:act-time-recomputation` match all 31 declared result fields against an independent literal boundary table, retaining two parent-placement faults, one dependency violation and one stamp mismatch without changing any published placement or stamp. Reversing presentation preserves the evidence.",
+      "after": "Claim: The seven fully carried acts of network-v0.30.1's ``ver:boundary:act-time-recomputation`` match all 31 declared result fields against an independent literal boundary table, retaining two parent-placement faults, one dependency violation and one stamp mismatch without changing any published placement or stamp. Reversing presentation preserves the evidence.",
       "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
     },
     {

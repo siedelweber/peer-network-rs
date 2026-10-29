@@ -50,7 +50,7 @@ def validate():
     # Claim: nonempty release pins cover every current inventory and constants field.
     inventory = data('inventory')
     constants = data('constants')
-    if not (len(inventory) == 1659 and len({row['label'] for row in inventory}) == 1659):
+    if not (len(inventory) == 1676 and len({row['label'] for row in inventory}) == 1676):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -166,9 +166,9 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.30.0'
-CURRENT_INVENTORY_PIN = '363c21e4f98cb205732c05d5ba1c91109c43bbb0215460ccd38ceb8a3efcaba1'
-REFRESHED_CONSTANTS_PIN = '169e0b6187ae4080ff47a42bd70788e84ba59a0f744aa396a4c617ce3a0e5641'
+PAPER_TAG = 'network-v0.30.1'
+CURRENT_INVENTORY_PIN = '94148c45c30af697861f457b52809175ef3a66385a73a13e8481d7cbd95068d2'
+REFRESHED_CONSTANTS_PIN = 'dd08cfbe1d3086b09affa179d00ce635c8b1c6473b93f6593eeb8bd6031eaab5'
 RELEASE_QUESTIONS_PIN = '80605718e898106860948960cd9aaa4b49ccf94532a9b465d826f7c5eb2c1e81'
 
 

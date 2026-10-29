@@ -967,11 +967,11 @@ claims = ["VERIFICATION::claim:verification:title-voids-dangling-items-and-keeps
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Outside scope: deployment authentication, authenticated dependency openings and unrestricted history coverage. The supported title result is conditional on the clause placement of the implemented partner correspondence under open:design:settlement-partner-clause. Authenticated dependency openings do not limit or defer that result because no title path reads them."
+missing = "Outside scope: deployment authentication, authenticated dependency openings and unrestricted history coverage. The paper settles partner correspondence in clause (iii). The graph step still owes record-derived parties, reassignment of partner evidence from (ii) to (iii), mismatch non-recognition and the wrong-party fixture under open:design:settlement-partner-clause; once witnessed, the title result loses its conditional paper-clause premise. Authenticated dependency openings do not limit or defer that result because no title path reads them."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Bite 4 scoped close; unrestricted evidence remains bite 11"
 
-premises = "Declared public verifier and complete nineteen-family fixture; independent bounded candidate and boundary tables, recorded properties, shared public consumers and observed results. Parent and stamp faults are retained, unavailable time never bounds title, and the implemented partner relation remains explicitly conditional on its held clause placement."
+premises = "Declared public verifier and complete nineteen-family fixture; independent bounded candidate and boundary tables, recorded properties, shared public consumers and observed results. Parent and stamp faults are retained, unavailable time never bounds title, and the implemented partner relation is established but its evidence still needs the released clause-(iii) assignment and wrong-party witness; this is an implementation hold, not an unanswered paper question."
 evidence_paragraph = "VERIFICATION::amend:verification:bite-four-evidence"
 
 [[rows]]
@@ -2310,3 +2310,54 @@ owner = "Graph implementer"
 missing = "Staged edition defining Invitation withdrawal by author-bundle netting"
 closing_condition = "Stage the next minor edition and establish independent Invitation netting and De-invite singleton witnesses without removing accepted acts from counts or debits."
 closing_step = "Bite 5 Invitation cells after the next minor edition is staged"
+
+[[rows]]
+name = "ROOT::verif:design:settlement-party-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Graph implementer and verification reviewer"
+missing = "Record-derived parties, clause-(iii) reassignment, wrong-party non-recognition and independent title/self-recipient evidence."
+closing_condition = "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan."
+closing_step = "Bite 4 follow-up, recipient evidence in bite 5 and integrated replay in bite 11"
+
+
+[[rows]]
+name = "ROOT::verif:design:title-certificate-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Records and verification implementers; host and deployment for publication"
+missing = "Published/recomputed title comparison, retained authenticated fault inputs, tentative/final agreement and per-boundary monitoring with unchanged finalized history."
+closing_condition = "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan."
+closing_step = "Bites 4, 5, 8, 9 and 11"
+
+
+[[rows]]
+name = "ROOT::verif:design:marker-registration-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Records and epoch implementers; host and deployment for realized history"
+missing = "Complete marker-registration fixture including silent accumulators, pending markers, missing or repeated closures and realized lineage evidence beyond local prefix checks."
+closing_condition = "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan."
+closing_step = "Bites 2, 5, 7, 8, 9 and 11"
+
+
+[[rows]]
+name = "ROOT::verif:design:finality-breach-cases"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:testing:obligation-evidence"
+owner = "Host implementer and deployment; offline replay reviewer"
+missing = "Halt at the last closed epoch after lineage loss, immutable closed results and separately witnessed published re-anchor and follow responses with ledger continuity."
+closing_condition = "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan."
+closing_step = "Bites 8, 9 and 11"
