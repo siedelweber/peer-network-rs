@@ -262,8 +262,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
       "before": "",
-      "after": "Claim: The real compiler parameter and ledger boundaries preserve exact successful inputs, ledger values and typed refusals with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.",
-      "review": "Runs actual parameter validation in three observation modes and compares exact result bytes, invocation totals, elapsed samples and trace public fields. Extended to exact ledger success and prefix refusal with recognized marker arguments and both operation stems."
+      "after": "Claim: The real compiler parameter, ledger and cell boundaries preserve exact successful inputs, ledger values, empty cells and typed refusals with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.",
+      "review": "Runs actual parameter validation in three observation modes and compares exact result bytes, invocation totals, elapsed samples and trace public fields. Extended to exact ledger success and prefix refusal with recognized marker arguments and both operation stems. Extended to empty-cell success and boundary refusal."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -1424,6 +1424,30 @@
       "before": "",
       "after": "Claim: Matching tombstone openings restore exact recurrence and retain placement faults without changing settlement verdicts or title; missing or refused evidence never authenticates anchors or replaces retained carriage.",
       "review": "Read the fixed recipe comparisons, exact authored-pair and malformed-input controls, full-trace secret-content negatives and nontrivial settlement replay fixture. These establish supplied-anchor equality and preserved structural verdicts, not entropy, custody, formation authority or signature authentication."
+    },
+    {
+      "operation": "pn-epoch::cells::cell_incidence",
+      "path": "packages/epoch/tests/cells.rs",
+      "claim": "EPOCH::claim:compiler:cells-key-full-incidence-and-excluded-identities",
+      "before": "",
+      "after": "Claim: Cell equivalence includes author, family and every role's source and target; complete paired Reference acts stay atomic, distinct middle incidence does not merge, and home-only Affinity acts remain singletons.",
+      "review": "Literal expected cell coordinates, identity sets and ledger assertions use complete public records; no implementation fold constructs the expected table. Invitation is a named edition hold."
+    },
+    {
+      "operation": "pn-epoch::cells::cell_tables",
+      "path": "packages/epoch/tests/cells.rs",
+      "claim": "EPOCH::claim:compiler:cells-retain-members-and-sum-before-clipping",
+      "before": "",
+      "after": "Claim: Complete Opinion bundles retain all member identities while exact rational coordinates sum before clipping; literal tables distinguish sequential clipping, exact cancellation and parallel identities, and each member retains its ledger count and debit.",
+      "review": "Literal expected cell coordinates, identity sets and ledger assertions use complete public records; no implementation fold constructs the expected table. Invitation is a named edition hold."
+    },
+    {
+      "operation": "pn-epoch::cells::invitation_hold",
+      "path": "packages/epoch/tests/cells.rs",
+      "claim": "EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition",
+      "before": "",
+      "after": "Claim: A formed Invitation causes the entire cell result to hold for its withdrawal edition, without suppressing or discarding an accepted act.",
+      "review": "Literal expected cell coordinates, identity sets and ledger assertions use complete public records; no implementation fold constructs the expected table. Invitation is a named edition hold."
     },
     {
       "operation": "pn-epoch::inputs::parameter_binding",

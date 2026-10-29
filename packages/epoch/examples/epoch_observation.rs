@@ -56,7 +56,12 @@ fn main() -> std::process::ExitCode {
         pn_records::numerics::ExactLimits::default(),
     )
     .unwrap_err();
-    let result = cli_common::emit(&format!("{good:?};{refused:?};{ledger:?};{ledger_refusal:?}"));
+    let cells = pn_epoch::cells::fold_cells(&empty, 1, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap();
+    let cell_refusal =
+        pn_epoch::cells::fold_cells(&empty, 0, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap_err();
+    let result = cli_common::emit(&format!(
+        "{good:?};{refused:?};{ledger:?};{ledger_refusal:?};{cells:?};{cell_refusal:?}"
+    ));
     drop(guard);
     if result.is_ok() {
         std::process::ExitCode::SUCCESS

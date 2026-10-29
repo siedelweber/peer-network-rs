@@ -1,6 +1,7 @@
 //! Exact structural compiler inputs; no publication encoding or standing solve.
 //! (´def:compiler:boundary-inputs´)
 
+pub mod cells;
 pub mod ledger;
 
 use std::collections::{BTreeMap, BTreeSet};

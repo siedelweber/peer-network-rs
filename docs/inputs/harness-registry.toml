@@ -1454,3 +1454,14 @@ implementation = "pn-act-profile-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-act-profile::tests::commitment_trace_privacy", "pn-act-profile::tests::fixed_recipes_and_controls", "pn-act-profile::tests::opened_replay"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::cells"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::cells::cell_tables", "pn-epoch::cells::cell_incidence", "pn-epoch::cells::invitation_hold"]

@@ -188,7 +188,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(outcomes['default'],outcomes['trace'])
 
     def test_epoch_inputs(self):
-        """Claim: The real compiler parameter and ledger boundaries preserve exact successful inputs, ledger values and typed refusals with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.
+        """Claim: The real compiler parameter, ledger and cell boundaries preserve exact successful inputs, ledger values, empty cells and typed refusals with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.
         ´claim:discipline:epoch-inputs-retain-observed-results´
         ´test:integration:test-epoch-inputs´
         """
@@ -207,11 +207,11 @@ class Processes(unittest.TestCase):
             summary = expanded(next(row['metrics'] for row in rows if row.get('kind') == 'metric_summary'))
             stem = 'epoch__root__sig__design__epoch__'
             accounting = distribution(summary)
-            self.assertEqual(accounting[stem+'started_operations', ''], 4)
+            self.assertEqual(accounting[stem+'started_operations', ''], 6)
             instruments = {row['name']: row for row in summary['instruments'] if row['name'].startswith(stem)}
-            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 4)
+            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 6)
             if mode == 'trace':
-                for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass', b'compile_ledger', b'RecognizedMarkers', b'FinalLedger'):
+                for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass', b'compile_ledger', b'RecognizedMarkers', b'FinalLedger', b'fold_cells'):
                     self.assertIn(marker, result.stderr)
         self.assertEqual(samples['disabled'], samples['default'])
         self.assertEqual(samples['default'], samples['trace'])
