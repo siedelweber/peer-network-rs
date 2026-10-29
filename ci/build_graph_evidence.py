@@ -12,7 +12,7 @@ from build_graph import SHELL_STEPS, identity, read_result, report_path, roster,
 
 
 # These are execution measurements in harness/claim artifacts, not document data.
-MEASUREMENTS = {'duration_ms', 'duration_s', 'utc', 'wall_s', 'duration', 'wall', 'started', 'ended'}
+MEASUREMENTS = {'duration_ms', 'duration_s', 'utc', 'wall_s', 'duration', 'wall', 'started', 'ended', 'invocation_ms'}
 SERVICE_CASE = 'ci::test_linter_entry.Conformance.test_service_ownership'
 SERVICE_HOLD = 'ROOT::gate:buildgraph:implementation'
 # Four execution files plus the fixture, declaration helper, selection policy,
@@ -51,6 +51,15 @@ def stable(value):
         return {key: stable(item) for key, item in value.items() if key not in MEASUREMENTS}
     if isinstance(value, list):
         return [stable(item) for item in value]
+    return value
+
+
+def case_projection(row):
+    value = stable(row)
+    if value.get('operation', '').startswith('benchmark::'):
+        # Retained in the snapshot; these are adaptive measurement observations.
+        for key in ('iterations', 'throughput_operations_per_s'):
+            value.pop(key, None)
     return value
 
 
@@ -128,7 +137,10 @@ def compare(first, second):
     if first.get('schema') != 1 or second.get('schema') != 1:
         raise ValueError('unknown retained gate schema')
     for name in ('source', 'roster', 'statuses', 'verdict', 'configuration', 'documents', 'features', 'matrix', 'claims', 'cases'):
-        if name not in first or first[name] != second.get(name):
+        left, right = first.get(name), second.get(name)
+        if name == 'cases' and isinstance(left, list) and isinstance(right, list):
+            left, right = [case_projection(row) for row in left], [case_projection(row) for row in right]
+        if name not in first or left != right:
             raise ValueError('retained gates differ: '+name)
     names = [row[0] for row in first['roster']]
     if len(names) != len(set(names)) or [row[0] for row in first['statuses']] != names:

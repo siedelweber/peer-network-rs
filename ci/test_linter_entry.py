@@ -348,7 +348,7 @@ class Conformance(unittest.TestCase):
         ´test:integration:test-retained-gate-equivalence´
         """
         import copy
-        from build_graph_evidence import compare, stable
+        from build_graph_evidence import compare, stable, case_projection
         first = dict(schema=1, source='fixture', roster=[['check', 'command']], statuses=[['check', '0']],
                      verdict=0, configuration={'features': 'default'}, documents={'README.md': 'bytes'},
                      features={'Cargo.toml': 'feature declarations'}, matrix={'cases': ['one']}, claims={'claim': 'passed'}, cases=[{'operation': 'one', 'outcome': 'passed'}],
@@ -378,6 +378,11 @@ class Conformance(unittest.TestCase):
         self.assertEqual(stable({'duration_ms': 1, 'utc': 'one', 'outcome': 'failed'}),
                          stable({'duration_ms': 2, 'utc': 'two', 'outcome': 'failed'}))
         self.assertNotEqual(stable({'outcome': 'failed'}), stable({'outcome': 'passed'}))
+        measured = dict(operation='benchmark::fixture', outcome='passed', iterations=10, throughput_operations_per_s=5, invocation_ms=2)
+        later = measured | dict(iterations=20, throughput_operations_per_s=6, invocation_ms=3)
+        self.assertEqual(case_projection(measured), case_projection(later))
+        self.assertNotEqual(case_projection(measured), case_projection(later | dict(outcome='failed')))
+        self.assertNotEqual(case_projection(measured | dict(operation='test::fixture')), case_projection(later | dict(operation='test::fixture')))
 
     def test_build_graph_slice_assignment(self):
         """Claim: Every live gate step has exactly one delegation slice and the record roster agrees with that set; each record group stays in one slice unless its exceptional rows explicitly name the split, so missing, repeated, unknown, invalid or unexplained assignments refuse before final migration.
