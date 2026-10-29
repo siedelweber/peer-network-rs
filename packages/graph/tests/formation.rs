@@ -3656,7 +3656,7 @@ fn title_inputs() {
     assert_eq!(title_inputs(&graph, &history, &verifier).unwrap(), expected);
 }
 
-/// Claim: All nineteen authored families form together as twenty-seven projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; typed settlement metadata resolves to completely formed and authorized Bid and Accept records; geometry and title remain outside this scope.
+/// Claim: All nineteen authored families form together as twenty-seven projections with complete authorization and typed revalidation. Every family refuses a passive initiating source or a different Actor author. Reversed input and leg order preserve indices, diagnostic decoding gains no authority, every missing or substituted projection refuses, and unauthorized removal or an unapproved act in any family refuses the whole result. Authorized content removal preserves the complete graph for each family; typed settlement metadata resolves to completely formed and authorized referenced acts; geometry and title remain outside this scope.
 /// ´claim:formation:implemented-families-share-complete-authorization´
 /// ´test:integration:formed-authorization-conformance´
 #[test]
