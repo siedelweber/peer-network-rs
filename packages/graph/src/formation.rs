@@ -697,9 +697,9 @@ fn checked_project(
     }
     if let Some(references) = &act.body().settlement {
         let (SettlementReferences::Accept { settles } | SettlementReferences::Ratify { settles, .. }) = references;
-        settlement_target(settles, acts, verifier)?;
+        settlement_target(settles, act.position(), acts, verifier)?;
         if let SettlementReferences::Ratify { accepts, .. } = references {
-            settlement_target(accepts, acts, verifier)?;
+            settlement_target(accepts, act.position(), acts, verifier)?;
         }
     }
     let projections = project(act, verifier)?;
@@ -722,10 +722,14 @@ fn checked_project(
 
 fn settlement_target<'a>(
     id: &ActId,
+    before: pn_records::Position,
     acts: &BTreeMap<&ActId, &'a ValidatedAct>,
     verifier: &impl RegistrationVerifier,
 ) -> Result<&'a ValidatedAct, RegistrationError> {
     let target = acts.get(id).copied().ok_or(RegistrationError::Incidence)?;
+    if target.position() >= before {
+        return Err(RegistrationError::Incidence);
+    }
     checked_project(target, acts, verifier)?;
     registration::authorize_removals(&[target], verifier)?;
     Ok(target)

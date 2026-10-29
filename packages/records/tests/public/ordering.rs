@@ -1,7 +1,7 @@
 use super::{act, assert_retained, named};
 use pn_records::{
-    CandidateAct, DependencyCause, DependencyProjection, Layout, ParentCause, Removal, TimeVerdict, ValidationError,
-    assemble_boundary_inputs, validate_history, validate_record,
+    CandidateAct, DependencyCause, DependencyProjection, Layout, ParentCause, RecomputedTime, Removal, TimeVerdict,
+    ValidationError, assemble_boundary_inputs, validate_history, validate_record,
 };
 
 /// Claim: Epoch-zero act placement refuses structurally as `FinalizationEpoch` on candidate admission and finalized replay, while boundary zero remains an empty cut. Epoch-major placement admits a prior-epoch parent despite a smaller current position, uses epoch-qualified cuts and removal facts, and refuses a candidate predecessor that is late in published placement independently of its stamp while retaining dependency violations on replay.
@@ -64,7 +64,10 @@ fn epoch_placement() {
         assert_eq!(replay.acts()[1].logical_time(), 11);
         assert_eq!(
             replay.time_evidence().iter().find(|row| row.act == child.id).unwrap().verdict,
-            TimeVerdict::NonCompliant
+            TimeVerdict::Mismatch {
+                attached: 11,
+                expected: 1
+            }
         );
     }
 }
@@ -168,7 +171,7 @@ fn attached_times() {
     );
 }
 
-/// Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, equal-position and later parents still refuse, candidate placement refusal remains, and earlier epochs precede smaller current positions.
+/// Claim: Finalized replay checks asserted-parent placement independently of attached time, retaining a correctly placed time inversion as an exact recurrence mismatch without rewriting acts; missing, self and later parents become retained placement faults, candidate placement refusal remains, and earlier epochs precede smaller current positions.
 /// ´claim:acts:parent-replay-separates-placement-from-stamping´
 /// ´test:integration:parent-replay´
 #[test]
@@ -189,31 +192,33 @@ fn parent_replay() {
         replay.time_evidence()[1].verdict,
         TimeVerdict::Mismatch {
             attached: 3,
-            expected: 6
+            expected: 2
         }
     );
-    let refusal = |cause| ValidationError::Parent {
-        act: child.id.clone(),
-        parent: Some(parent.id.clone()),
-        cause,
-    };
     assert!(validate_record(&inputs, &empty, &[]).is_ok());
-    assert_eq!(
-        validate_history(&[child.clone()], &names).unwrap_err(),
-        refusal(ParentCause::Missing)
-    );
+    let missing = validate_history(&[child.clone()], &names).unwrap();
+    assert_eq!(missing.parent_faults()[0].cause, ParentCause::Missing);
+    assert_eq!(missing.parent_faults()[0].parent, parent.id);
     for position in [2, 3] {
         parent.authoritative_position = position;
+        let inputs = [parent.clone(), child.clone()];
+        let replay = validate_history(&inputs, &names).unwrap();
+        assert_retained(&replay, &inputs);
+        assert_eq!(replay.parent_faults()[0].cause, ParentCause::NotEarlier);
         assert_eq!(
-            validate_history(&[parent.clone(), child.clone()], &names).unwrap_err(),
-            refusal(ParentCause::NotEarlier)
+            validate_record(&inputs, &empty, &[]).unwrap_err(),
+            ValidationError::Parent {
+                act: child.id.clone(),
+                parent: Some(parent.id.clone()),
+                cause: ParentCause::NotEarlier,
+            }
         );
     }
     parent.finalization_epoch = 1;
     parent.authoritative_position = 2;
     child.finalization_epoch = 2;
     child.authoritative_position = 1;
-    child.logical_time = 6;
+    child.logical_time = 2;
     let inputs = [parent, child];
     let replay = validate_history(&inputs, &names).unwrap();
     assert_retained(&replay, &inputs);
@@ -221,7 +226,7 @@ fn parent_replay() {
     assert!(validate_record(&inputs, &empty, &[]).is_ok());
 }
 
-/// Claim: Recurrence mismatches retain the attached time and exact expected value, including a value beyond u64; tombstoned openings, non-compliant dependencies and ambiguous placement yield no time verdict, and none rewrites finalization metadata.
+/// Claim: Recurrence mismatches retain the attached time and exact expected value, without trusting even a maximal published stamp; tombstoned openings propagate their missing identities through incidence and causal predecessors, independent acts remain available, non-compliant dependencies still permit recomputation, and ambiguous placement yields no time verdict, and none rewrites finalization metadata.
 /// ´claim:acts:time-evidence-never-rewrites-finalization´
 /// ´test:integration:retained-time-evidence´
 #[test]
@@ -240,6 +245,17 @@ fn retained_time_evidence() {
     acts[1].projections.dependency = DependencyProjection::Tombstoned((6, 1));
     let replay = validate_history(&acts, &names).unwrap();
     assert_eq!(replay.time_evidence()[1].verdict, TimeVerdict::UnavailableOpening);
+    let missing = RecomputedTime::Unavailable(std::collections::BTreeSet::from([acts[1].id.clone()]));
+    assert_eq!(replay.time_evidence()[1].recomputed, missing);
+    assert_eq!(replay.time_evidence()[2].recomputed, missing);
+    assert_eq!(replay.time_evidence()[3].recomputed, RecomputedTime::Available(1));
+    assert_eq!(replay.time_evidence()[4].recomputed, missing);
+    assert_eq!(
+        replay.unavailable_dependencies(),
+        &std::collections::BTreeSet::from([acts[1].id.clone()])
+    );
+    assert_retained(&replay, &acts);
+    five_one_six();
     assert_eq!(replay.acts()[1].logical_time(), 7);
     acts[0].logical_time = u64::MAX;
     acts[1].projections.dependency = DependencyProjection::FullEmpty;
@@ -249,12 +265,12 @@ fn retained_time_evidence() {
         replay.time_evidence()[1].verdict,
         TimeVerdict::Mismatch {
             attached: 7,
-            expected: u128::from(u64::MAX) + 1
+            expected: 2
         }
     );
     acts[1].projections.dependency = DependencyProjection::Full(vec![acts[1].id.clone()]);
     let replay = validate_history(&acts, &names).unwrap();
-    assert_eq!(replay.time_evidence()[1].verdict, TimeVerdict::NonCompliant);
+    assert_eq!(replay.time_evidence()[1].recomputed, RecomputedTime::Available(2));
     acts[1].authoritative_position = 1;
     let replay = validate_history(&acts, &names).unwrap();
     assert!(
@@ -263,4 +279,40 @@ fn retained_time_evidence() {
             .iter()
             .all(|row| row.verdict == TimeVerdict::AmbiguousPlacement)
     );
+}
+
+fn five_one_six() {
+    let mut chain: Vec<_> = (1..=5)
+        .map(|id| {
+            let mut value = act(id, Layout::Binary);
+            value.authoritative_position = id;
+            value.logical_time = id;
+            value
+        })
+        .collect();
+    let mut last = act(6, Layout::Binary);
+    last.authoritative_position = 6;
+    last.logical_time = 1;
+    last.legs[0].source = named("separate-left");
+    last.legs[0].target = named("separate-right");
+    let names = [named("left"), named("right"), named("separate-left"), named("separate-right")];
+    chain.push(last);
+    assert_eq!(
+        validate_history(&chain, &names).unwrap().time_evidence()[5].recomputed,
+        RecomputedTime::Available(1)
+    );
+    chain[5].projections.dependency = DependencyProjection::Full(vec![chain[4].id.clone()]);
+    assert_eq!(
+        validate_history(&chain, &names).unwrap().time_evidence()[5].recomputed,
+        RecomputedTime::Available(6)
+    );
+    chain[5].projections.dependency = DependencyProjection::Tombstoned((6, 10));
+    let replay = validate_history(&chain, &names).unwrap();
+    assert_eq!(replay.time_evidence()[4].recomputed, RecomputedTime::Available(5));
+    assert_eq!(
+        replay.time_evidence()[5].recomputed,
+        RecomputedTime::Unavailable(std::collections::BTreeSet::from([chain[5].id.clone()]))
+    );
+    assert_eq!(replay.time_evidence()[5].verdict, TimeVerdict::UnavailableOpening);
+    assert_retained(&replay, &chain);
 }

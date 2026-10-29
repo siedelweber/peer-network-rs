@@ -4008,6 +4008,7 @@
       "budget": "pure-suite",
       "cases": [
         "pn-verification::recognition::recognition_enumerator",
+        "pn-verification::recognition::paper_time_fixture",
         "pn-verification::recognition::recognition_binding",
         "pn-verification::recognition::recognition_partners",
         "pn-verification::recognition::recognition_holds",

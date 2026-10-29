@@ -55,12 +55,12 @@
       "operations": 153
     },
     {
-      "exceptions": 65,
-      "generators": 82,
+      "exceptions": 67,
+      "generators": 84,
       "helpers": 0,
       "instrumented": 38,
       "name": "pn-records",
-      "operations": 103
+      "operations": 105
     },
     {
       "exceptions": 23,

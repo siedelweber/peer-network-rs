@@ -123,9 +123,9 @@ pub type Position = (u64, u64);
 /// (´def:acts:history´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TimeVerdict {
-    /// Attached time equals the recurrence over retained predecessor times.
+    /// Published stamp equals the recurrence over recomputed predecessor times.
     Matches,
-    /// The exact recurrence result differs; u128 also represents `u64::MAX` + 1.
+    /// The exact recomputed result differs from the published stamp.
     Mismatch {
         /// Retained host-attached value.
         attached: u64,
@@ -134,9 +134,20 @@ pub enum TimeVerdict {
     },
     /// The dependency opening is absent; no recurrence verdict follows.
     UnavailableOpening,
-    /// Dependency placement is non-compliant; its time rule remains unspecified.
-    NonCompliant,
     /// Repeated published positions do not supply a unique replay order.
+    AmbiguousPlacement,
+}
+
+/// Observer evidence for the time defined by finalized incidence replay.
+/// Unavailable names every concealed opening on which this value depends.
+/// (´def:acts:history´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum RecomputedTime {
+    /// Exact finite time; never copied into the published stamp.
+    Available(u128),
+    /// Missing dependency openings, including propagated frontier dependencies.
+    Unavailable(BTreeSet<ActId>),
+    /// Duplicate placements do not define a total published sequence.
     AmbiguousPlacement,
 }
 
@@ -148,6 +159,8 @@ pub struct TimeEvidence {
     pub act: ActId,
     /// Scoped equality, mismatch or explicit absence of a verdict.
     pub verdict: TimeVerdict,
+    /// Recomputed value or its precise evidence limitation.
+    pub recomputed: RecomputedTime,
 }
 
 /// A dependency projection's versioned removal fact, distinct from identity.
@@ -369,6 +382,8 @@ pub struct ValidatedHistory {
     references: Arc<BTreeSet<PublicReference>>,
     non_compliance: Arc<Vec<DependencyViolation>>,
     time_evidence: Arc<Vec<TimeEvidence>>,
+    parent_faults: Arc<Vec<ParentPlacementFault>>,
+    unavailable_dependencies: Arc<BTreeSet<ActId>>,
 }
 
 /// A committed-dependency violation retained without rewriting finalized history.
@@ -384,7 +399,37 @@ pub struct DependencyViolation {
     pub cause: DependencyCause,
 }
 
+/// A public causal parent absent from, or misplaced in, finalized history.
+/// Evidence attributes placement to the host without changing the authored act.
+/// (´def:acts:history´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ParentPlacementFault {
+    /// Finalized child.
+    pub act: ActId,
+    /// Exact public causal parent, including settlement metadata.
+    pub parent: ActId,
+    /// Missing, self or non-earlier placement; never a representation error.
+    pub cause: ParentCause,
+}
+
 impl ValidatedHistory {
+    /// Read retained host parent-placement faults without changing finalization.
+    /// (´def:acts:history´)
+    #[must_use]
+    /// Justified: Immutable evidence access inherits the validating records operation.
+    pub fn parent_faults(&self) -> &[ParentPlacementFault] {
+        &self.parent_faults
+    }
+
+    /// Dependency-list placement evidence is unestablished for these tombstones.
+    /// Public causal parents remain observable independently of this list.
+    /// (´def:acts:history´)
+    #[must_use]
+    /// Justified: Immutable evidence access inherits the validating records operation.
+    pub fn unavailable_dependencies(&self) -> &BTreeSet<ActId> {
+        &self.unavailable_dependencies
+    }
+
     /// Read recurrence evidence without replacing retained finalization metadata.
     /// (´def:acts:history´)
     #[must_use]
@@ -1119,64 +1164,71 @@ fn precedes(left: (Position, u64), right: (Position, u64)) -> bool {
     left.0 < right.0
 }
 
-fn check_times(
-    ordered: &[&CandidateAct],
-    available: &BTreeMap<&ActId, (Position, u64)>,
-    violations: &[DependencyViolation],
-) -> Vec<TimeEvidence> {
+fn check_times(ordered: &[&CandidateAct]) -> Vec<TimeEvidence> {
     if ordered.windows(2).any(|pair| order(pair[0]).0 == order(pair[1]).0) {
         return ordered
             .iter()
             .map(|act| TimeEvidence {
                 act: act.id.clone(),
                 verdict: TimeVerdict::AmbiguousPlacement,
+                recomputed: RecomputedTime::AmbiguousPlacement,
             })
             .collect();
     }
-    let mut frontiers = BTreeMap::new();
+    let mut frontiers: BTreeMap<&PublicReference, RecomputedTime> = BTreeMap::new();
+    let mut times: BTreeMap<&ActId, RecomputedTime> = BTreeMap::new();
     let mut evidence = Vec::new();
     for act in ordered {
         let endpoints: BTreeSet<_> = act.legs.iter().flat_map(|leg| [&leg.source, &leg.target]).collect();
-        let verdict = if violations.iter().any(|violation| violation.act == act.id) {
-            TimeVerdict::NonCompliant
-        } else if matches!(act.projections.dependency, DependencyProjection::Tombstoned(_)) {
-            TimeVerdict::UnavailableOpening
-        } else {
-            let dependencies = match &act.projections.dependency {
-                DependencyProjection::Full(ids) => ids.as_slice(),
-                DependencyProjection::FullEmpty | DependencyProjection::Tombstoned(_) => &[],
-            };
-            let endpoint_max = endpoints
-                .iter()
-                .filter_map(|endpoint| frontiers.get(endpoint))
-                .copied()
-                .max()
-                .unwrap_or(0);
-            let predecessor_max = act
-                .body
+        let mut missing = BTreeSet::new();
+        let dependencies = match &act.projections.dependency {
+            DependencyProjection::Full(ids) => ids.as_slice(),
+            DependencyProjection::FullEmpty => &[],
+            DependencyProjection::Tombstoned(_) => {
+                missing.insert(act.id.clone());
+                &[]
+            }
+        };
+        // Only already replayed acts enter this map, hence absent, self and
+        // later parents never enter the maximum. Frontiers survive epoch cuts.
+        let inputs = endpoints.iter().filter_map(|endpoint| frontiers.get(endpoint)).chain(
+            act.body
                 .causal_parents()
                 .into_iter()
                 .chain(dependencies)
-                .filter_map(|id| available.get(id))
-                .map(|(_, time)| *time)
-                .max()
-                .unwrap_or(0);
-            let expected = u128::from(endpoint_max.max(predecessor_max)) + 1;
-            if expected == u128::from(act.logical_time) {
-                TimeVerdict::Matches
-            } else {
-                TimeVerdict::Mismatch {
-                    attached: act.logical_time,
-                    expected,
-                }
+                .filter_map(|id| times.get(id)),
+        );
+        let mut maximum = 0;
+        for input in inputs {
+            match input {
+                RecomputedTime::Available(value) => maximum = maximum.max(*value),
+                RecomputedTime::Unavailable(openings) => missing.extend(openings.iter().cloned()),
+                RecomputedTime::AmbiguousPlacement => unreachable!("duplicate placements returned before replay"),
             }
+        }
+        // A finite in-memory act slice cannot have u128::MAX predecessors.
+        let recomputed = if missing.is_empty() {
+            RecomputedTime::Available(maximum + 1)
+        } else {
+            RecomputedTime::Unavailable(missing)
+        };
+        let verdict = match &recomputed {
+            RecomputedTime::Available(expected) if *expected == u128::from(act.logical_time) => TimeVerdict::Matches,
+            RecomputedTime::Available(expected) => TimeVerdict::Mismatch {
+                attached: act.logical_time,
+                expected: *expected,
+            },
+            RecomputedTime::Unavailable(_) => TimeVerdict::UnavailableOpening,
+            RecomputedTime::AmbiguousPlacement => unreachable!("duplicate placements returned before replay"),
         };
         for endpoint in endpoints {
-            frontiers.insert(endpoint, act.logical_time);
+            frontiers.insert(endpoint, recomputed.clone());
         }
+        times.insert(&act.id, recomputed.clone());
         evidence.push(TimeEvidence {
             act: act.id.clone(),
             verdict,
+            recomputed,
         });
     }
     evidence
@@ -1228,38 +1280,52 @@ fn dependency_violations(
 }
 
 fn validate_parents(act: &CandidateAct, available: &BTreeMap<&ActId, (Position, u64)>) -> Result<(), ValidationError> {
-    validate_parents_with(act, available, precedes)
+    if let Some(fault) = parent_faults(act, available)?.first() {
+        return Err(ValidationError::Parent {
+            act: fault.act.clone(),
+            parent: Some(fault.parent.clone()),
+            cause: fault.cause,
+        });
+    }
+    Ok(())
 }
 
-fn validate_parents_with(
+fn parent_faults(
     act: &CandidateAct,
     available: &BTreeMap<&ActId, (Position, u64)>,
-    earlier: impl Fn((Position, u64), (Position, u64)) -> bool,
-) -> Result<(), ValidationError> {
-    let error = |parent: Option<&ActId>, cause| ValidationError::Parent {
+) -> Result<Vec<ParentPlacementFault>, ValidationError> {
+    let error = |cause| ValidationError::Parent {
         act: act.id.clone(),
-        parent: parent.cloned(),
+        parent: None,
         cause,
     };
     let parents = &act.body.asserted_parents;
     if parents.len() > MAX_ASSERTED_PARENTS {
-        return Err(error(None, ParentCause::TooMany));
+        return Err(error(ParentCause::TooMany));
     }
     if parents.windows(2).any(|pair| pair[0] >= pair[1]) {
-        return Err(error(None, ParentCause::NonCanonical));
+        return Err(error(ParentCause::NonCanonical));
     }
+    let mut faults = Vec::new();
     for parent in act.body.causal_parents() {
-        if parent == &act.id {
-            return Err(error(Some(parent), ParentCause::SelfParent));
-        }
-        let target = available
-            .get(parent)
-            .ok_or_else(|| error(Some(parent), ParentCause::Missing))?;
-        if !earlier(*target, order(act)) {
-            return Err(error(Some(parent), ParentCause::NotEarlier));
+        let cause = if parent == &act.id {
+            Some(ParentCause::SelfParent)
+        } else {
+            match available.get(parent) {
+                None => Some(ParentCause::Missing),
+                Some(target) if !precedes(*target, order(act)) => Some(ParentCause::NotEarlier),
+                Some(_) => None,
+            }
+        };
+        if let Some(cause) = cause {
+            faults.push(ParentPlacementFault {
+                act: act.id.clone(),
+                parent: parent.clone(),
+                cause,
+            });
         }
     }
-    Ok(())
+    Ok(faults)
 }
 
 /// Check caller-supplied accepted whole history and separately supplied external names.
@@ -1308,19 +1374,26 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
     for act in acts {
         validate_act(act, &references, &BTreeSet::new())?;
     }
-    validate_settlement_targets(acts, &[])?;
     let available: BTreeMap<_, _> = acts.iter().map(|act| (&act.id, order(act))).collect();
     let mut ordered: Vec<_> = acts.iter().collect();
     ordered.sort_by_key(|act| (order(act).0, &act.id));
     let mut non_compliance = Vec::new();
+    let mut placement_faults = Vec::new();
     for act in &ordered {
         non_compliance.extend(dependency_violations(act, &available)?);
-        validate_parents_with(act, &available, |parent, child| parent.0 < child.0)?;
+        placement_faults.extend(parent_faults(act, &available)?);
     }
     Ok(ValidatedHistory {
         acts: Arc::new(acts.iter().map(validated_act).collect()),
         references: Arc::new(references),
-        time_evidence: Arc::new(check_times(&ordered, &available, &non_compliance)),
+        time_evidence: Arc::new(check_times(&ordered)),
+        parent_faults: Arc::new(placement_faults),
+        unavailable_dependencies: Arc::new(
+            acts.iter()
+                .filter(|act| matches!(act.projections.dependency, DependencyProjection::Tombstoned(_)))
+                .map(|act| act.id.clone())
+                .collect(),
+        ),
         non_compliance: Arc::new(non_compliance),
     })
 }

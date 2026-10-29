@@ -6682,6 +6682,42 @@
       "claim": "ROOT::alg:design:title",
       "shape": "shape-graph-affinity",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedHistory::parent_faults",
+      "owner": "RECORDS",
+      "signature": "fn parent_faults (& self) -> & [ParentPlacementFault]",
+      "claim": "ROOT::sig:design:records",
+      "mode": "exception",
+      "shape": "shape-records",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable evidence access inherits the validating records operation.",
+        "witness": "ROOT::claim:discipline:records-replay-retains-observed-noncompliance",
+        "boundary": "pn-records::packages/records/src/lib.rs::validate_history",
+        "class_decision": "public-records"
+      }
+    },
+    {
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "item": "ValidatedHistory::unavailable_dependencies",
+      "owner": "RECORDS",
+      "signature": "fn unavailable_dependencies (& self) -> & BTreeSet < ActId >",
+      "claim": "ROOT::sig:design:records",
+      "mode": "exception",
+      "shape": "shape-records",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable evidence access inherits the validating records operation.",
+        "witness": "ROOT::claim:discipline:records-replay-retains-observed-noncompliance",
+        "boundary": "pn-records::packages/records/src/lib.rs::validate_history",
+        "class_decision": "public-records"
+      }
     }
   ],
   "metrics": [
@@ -12853,6 +12889,28 @@
         "secret_flow": "graph-affinity-secret_flow",
         "exposure_consumers": "graph-affinity-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedHistory::parent_faults",
+      "body": "{ & self . parent_faults }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Immutable public evidence access preserves parent-placement faults or unavailable dependency identities without influencing any records outcome. No private input, codec or cryptographic verdict is introduced."
+    },
+    {
+      "operation": "pn-records::packages/records/src/lib.rs::ValidatedHistory::unavailable_dependencies",
+      "body": "{ & self . unavailable_dependencies }",
+      "class_decision": "public-records",
+      "assessments": {
+        "full_recording": "records-full_recording",
+        "secret_flow": "records-secret_flow",
+        "exposure_consumers": "records-exposure_consumers"
+      },
+      "item_premise": "Immutable public evidence access preserves parent-placement faults or unavailable dependency identities without influencing any records outcome. No private input, codec or cryptographic verdict is introduced."
     }
   ],
   "generators": [
@@ -15717,6 +15775,24 @@
       "syntax": "macro_rules ! projection { ($ (# [$ attr : meta]) * pub struct $ name : ident { before { $ ($ (# [$ before_attr : meta]) * pub $ before : ident : $ before_ty : ty ,) * } after { $ ($ (# [$ after_attr : meta]) * pub $ after : ident : $ after_ty : ty ,) * } }) => { $ (# [$ attr]) * # [derive (Clone , PartialEq , Eq)] pub struct $ name { $ ($ (# [$ before_attr]) * pub $ before : $ before_ty ,) * # [doc = \" Inherited finalization metadata; not an independent edge stamp.\"] pub metadata : $ crate :: metadata :: ActMetadata , $ ($ (# [$ after_attr]) * pub $ after : $ after_ty ,) * } impl std :: fmt :: Debug for $ name { fn fmt (& self , formatter : & mut std :: fmt :: Formatter <'_ >) -> std :: fmt :: Result { formatter . debug_struct (stringify ! ($ name)) $ (. field (stringify ! ($ before) , & self .$ before)) * . field (\"position\" , & self . metadata . position) . field (\"logical_time\" , & self . metadata . logical_time) $ (. field (stringify ! ($ after) , & self .$ after)) * . finish () } } impl serde :: Serialize for $ name { fn serialize < S : serde :: Serializer > (& self , serializer : S) -> Result < S :: Ok , S :: Error > { # [derive (serde :: Serialize)] struct $ name <'wire > { $ ($ before : &'wire $ before_ty ,) * position : &'wire pn_records :: Position , logical_time : &'wire u64 , $ ($ after : &'wire $ after_ty ,) * } let wire = $ name { $ ($ before : & self .$ before ,) * position : & self . metadata . position , logical_time : & self . metadata . logical_time , $ ($ after : & self .$ after ,) * } ; serde :: Serialize :: serialize (& wire , serializer) } } impl <'de > serde :: Deserialize <'de > for $ name { fn deserialize < D : serde :: Deserializer <'de >> (deserializer : D) -> Result < Self , D :: Error > { # [derive (serde :: Deserialize)] # [serde (deny_unknown_fields)] struct $ name { $ ($ before : $ before_ty ,) * position : pn_records :: Position , logical_time : u64 , $ ($ after : $ after_ty ,) * } let wire = <$ name as serde :: Deserialize >:: deserialize (deserializer) ?; Ok (Self { $ ($ before : wire .$ before ,) * metadata : $ crate :: metadata :: ActMetadata { position : wire . position , logical_time : wire . logical_time , } , $ ($ after : wire .$ after ,) * }) } } } ; }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
+    },
+    {
+      "item": "RecomputedTime",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Clone, Debug and equality preserve only public identities, exact recomputed values, unavailable-opening sets and local fault causes. No cryptographic verdict, encoding or rewrite is introduced."
+    },
+    {
+      "item": "ParentPlacementFault",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "public-records",
+      "expansion_review": "Clone, Debug and equality preserve only public identities, exact recomputed values, unavailable-opening sets and local fault causes. No cryptographic verdict, encoding or rewrite is introduced."
     }
   ],
   "reviewed_types": [
@@ -17128,13 +17204,19 @@
       "item": "TimeVerdict",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Local comparison of retained time with the complete available recurrence inputs.\"] # [doc = \" This never replaces the attached time or certifies family formation.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum TimeVerdict { # [doc = \" Attached time equals the recurrence over retained predecessor times.\"] Matches , # [doc = \" The exact recurrence result differs; u128 also represents `u64::MAX` + 1.\"] Mismatch { # [doc = \" Retained host-attached value.\"] attached : u64 , # [doc = \" Exact locally expected value, never written back.\"] expected : u128 , } , # [doc = \" The dependency opening is absent; no recurrence verdict follows.\"] UnavailableOpening , # [doc = \" Dependency placement is non-compliant; its time rule remains unspecified.\"] NonCompliant , # [doc = \" Repeated published positions do not supply a unique replay order.\"] AmbiguousPlacement , }"
+      "syntax": "# [doc = \" Local comparison of retained time with the complete available recurrence inputs.\"] # [doc = \" This never replaces the attached time or certifies family formation.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum TimeVerdict { # [doc = \" Published stamp equals the recurrence over recomputed predecessor times.\"] Matches , # [doc = \" The exact recomputed result differs from the published stamp.\"] Mismatch { # [doc = \" Retained host-attached value.\"] attached : u64 , # [doc = \" Exact locally expected value, never written back.\"] expected : u128 , } , # [doc = \" The dependency opening is absent; no recurrence verdict follows.\"] UnavailableOpening , # [doc = \" Repeated published positions do not supply a unique replay order.\"] AmbiguousPlacement , }"
+    },
+    {
+      "item": "RecomputedTime",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" Observer evidence for the time defined by finalized incidence replay.\"] # [doc = \" Unavailable names every concealed opening on which this value depends.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum RecomputedTime { # [doc = \" Exact finite time; never copied into the published stamp.\"] Available (u128) , # [doc = \" Missing dependency openings, including propagated frontier dependencies.\"] Unavailable (BTreeSet < ActId >) , # [doc = \" Duplicate placements do not define a total published sequence.\"] AmbiguousPlacement , }"
     },
     {
       "item": "TimeEvidence",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" One recurrence observation associated with its immutable act identity.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TimeEvidence { # [doc = \" Act whose attached time was read.\"] pub act : ActId , # [doc = \" Scoped equality, mismatch or explicit absence of a verdict.\"] pub verdict : TimeVerdict , }"
+      "syntax": "# [doc = \" One recurrence observation associated with its immutable act identity.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TimeEvidence { # [doc = \" Act whose attached time was read.\"] pub act : ActId , # [doc = \" Scoped equality, mismatch or explicit absence of a verdict.\"] pub verdict : TimeVerdict , # [doc = \" Recomputed value or its precise evidence limitation.\"] pub recomputed : RecomputedTime , }"
     },
     {
       "item": "Removal",
@@ -17218,13 +17300,19 @@
       "item": "ValidatedHistory",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
-      "syntax": "# [doc = \" Previously accepted whole acts and external names, checked locally before use.\"] # [doc = \" The constructor checks representation, not host admission or authentication.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug)] pub struct ValidatedHistory { acts : Arc < Vec < ValidatedAct > > , references : Arc < BTreeSet < PublicReference > > , non_compliance : Arc < Vec < DependencyViolation > > , time_evidence : Arc < Vec < TimeEvidence > > , }"
+      "syntax": "# [doc = \" Previously accepted whole acts and external names, checked locally before use.\"] # [doc = \" The constructor checks representation, not host admission or authentication.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug)] pub struct ValidatedHistory { acts : Arc < Vec < ValidatedAct > > , references : Arc < BTreeSet < PublicReference > > , non_compliance : Arc < Vec < DependencyViolation > > , time_evidence : Arc < Vec < TimeEvidence > > , parent_faults : Arc < Vec < ParentPlacementFault > > , unavailable_dependencies : Arc < BTreeSet < ActId > > , }"
     },
     {
       "item": "DependencyViolation",
       "package": "pn-records",
       "path": "packages/records/src/lib.rs",
       "syntax": "# [doc = \" A committed-dependency violation retained without rewriting finalized history.\"] # [doc = \" This is local evidence, not cryptographic verification of an opening.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct DependencyViolation { # [doc = \" Finalized act whose declared dependency fails compliance.\"] pub act : ActId , # [doc = \" Exact dependency identity retained in the opening.\"] pub dependency : ActId , # [doc = \" Missing, non-earlier or self dependency; representation errors still refuse.\"] pub cause : DependencyCause , }"
+    },
+    {
+      "item": "ParentPlacementFault",
+      "package": "pn-records",
+      "path": "packages/records/src/lib.rs",
+      "syntax": "# [doc = \" A public causal parent absent from, or misplaced in, finalized history.\"] # [doc = \" Evidence attributes placement to the host without changing the authored act.\"] # [doc = \" (´def:acts:history´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ParentPlacementFault { # [doc = \" Finalized child.\"] pub act : ActId , # [doc = \" Exact public causal parent, including settlement metadata.\"] pub parent : ActId , # [doc = \" Missing, self or non-earlier placement; never a representation error.\"] pub cause : ParentCause , }"
     },
     {
       "item": "DeclarationCause",

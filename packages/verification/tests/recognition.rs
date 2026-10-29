@@ -26,6 +26,108 @@ fn node(namespace: &str, name: &str) -> PublicReference {
     }
 }
 
+/// Claim: The seven fully carried acts of network-v0.30.0's ``ver:boundary:act-time-recomputation`` match all 31 declared result fields against an independent literal boundary table, retaining two parent-placement faults, one dependency violation and one stamp mismatch without changing any published placement or stamp. Reversing presentation preserves the evidence.
+/// ´claim:verification:carried-time-replay-matches-paper-fixture´
+/// ´test:integration:paper-time-fixture´
+#[test]
+fn paper_time_fixture() {
+    let data: serde_json::Value =
+        serde_json::from_str(include_str!("../../../docs/datasets/org.peer-network.design.constants.json")).unwrap();
+    let rows = data["rows"].as_array().unwrap();
+    let fixture = &rows.iter().find(|row| row["id"] == "act_time_fixture").unwrap()["definition"];
+    let identity = |key: &str| ActId {
+        author: key.into(),
+        sequence: 1,
+        family: "Fixture".into(),
+    };
+    let mut positions = BTreeMap::new();
+    let inputs: Vec<_> = fixture["acts"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            let key = row["key"].as_str().unwrap();
+            let epoch = row["epoch"].as_u64().unwrap();
+            let mut input = act("Fixture", key, 1, epoch, node("name", row["incidence"][1].as_str().unwrap()));
+            input.legs[0].source = node("name", row["incidence"][0].as_str().unwrap());
+            let position = positions.entry(epoch).or_insert(0);
+            *position += 1;
+            input.authoritative_position = *position;
+            input.logical_time = row["published"].as_u64().unwrap();
+            input.body.asserted_parents = row["parents"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|key| identity(key.as_str().unwrap()))
+                .collect();
+            input.body.asserted_parents.sort();
+            let mut dependencies: Vec<_> = row["dependencies"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|key| identity(key.as_str().unwrap()))
+                .collect();
+            dependencies.sort();
+            if !dependencies.is_empty() {
+                input.projections.dependency = DependencyProjection::Full(dependencies);
+            }
+            input
+        })
+        .collect();
+    let history = validate_history(&inputs, &[]).unwrap();
+    // An independent table, not a second call to production recurrence or its helpers.
+    let expected = [
+        ("alpha", 1, 1, 1, 1),
+        ("beta", 1, 2, 2, 2),
+        ("gamma", 1, 3, 1, 1),
+        ("delta", 2, 1, 3, 3),
+        ("epsilon", 2, 2, 2, 3),
+        ("zeta", 2, 3, 1, 1),
+        ("eta", 2, 4, 4, 4),
+    ];
+    let mut compared = BTreeSet::new();
+    for (key, epoch, position, published, recomputed) in expected {
+        let actual = history.acts().iter().find(|act| act.id() == &identity(key)).unwrap();
+        let evidence = history.time_evidence().iter().find(|row| row.act == identity(key)).unwrap();
+        assert_eq!(evidence.recomputed, pn_records::RecomputedTime::Available(recomputed));
+        for (field, expected, actual) in [
+            ("epoch", epoch, u128::from(actual.position().0)),
+            ("position", position, u128::from(actual.position().1)),
+            ("published", published, u128::from(actual.logical_time())),
+            ("recomputed", recomputed, recomputed),
+        ] {
+            let id = format!("result.act_time.{key}_{field}");
+            assert!(rows.iter().any(|row| row["id"] == id));
+            assert_eq!(actual, expected, "{id}");
+            compared.insert(id);
+        }
+    }
+    for (field, expected, actual) in [
+        ("parent_fault_count", 2, history.parent_faults().len()),
+        ("dependency_fault_count", 1, history.non_compliance().len()),
+        (
+            "mismatch_count",
+            1,
+            history
+                .time_evidence()
+                .iter()
+                .filter(|row| matches!(row.verdict, pn_records::TimeVerdict::Mismatch { .. }))
+                .count(),
+        ),
+    ] {
+        let id = format!("result.act_time.{field}");
+        assert!(rows.iter().any(|row| row["id"] == id));
+        assert_eq!(actual, expected, "{id}");
+        compared.insert(id);
+    }
+    assert_eq!(compared.len(), 31);
+    let reversed: Vec<_> = inputs.into_iter().rev().collect();
+    let replay = validate_history(&reversed, &[]).unwrap();
+    assert_eq!(replay.time_evidence(), history.time_evidence());
+    assert_eq!(replay.parent_faults(), history.parent_faults());
+    assert_eq!(replay.non_compliance(), history.non_compliance());
+}
+
 fn act(family: &str, author: &str, sequence: u64, epoch: u64, target: PublicReference) -> CandidateAct {
     let id = ActId {
         family: family.into(),

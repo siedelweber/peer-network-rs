@@ -4084,22 +4084,21 @@ fn settlement_context() {
         assert!(project_complete_act(&history.acts()[2], &history, &verifier).is_ok());
         let mut absent = inputs.clone();
         let id = absent.remove(target).id;
+        let replay = validate_history(&absent, &names()).unwrap();
+        assert!(replay.parent_faults().iter().any(|fault| fault.parent == id));
         assert_eq!(
-            validate_history(&absent, &names()).unwrap_err(),
-            pn_records::ValidationError::UnresolvedReference(PublicReference::Act(id))
+            reconstruct(
+                &replay,
+                &Verifier {
+                    acts: absent,
+                    removals: true
+                }
+            )
+            .unwrap_err(),
+            RegistrationError::Incidence
         );
     }
-    let mut wrong = inputs.clone();
-    wrong[1].body.settlement = Some(pn_records::SettlementReferences::Accept {
-        settles: wrong[2].id.clone(),
-    });
-    assert!(matches!(
-        validate_history(&wrong, &names()),
-        Err(pn_records::ValidationError::Parent {
-            cause: pn_records::ParentCause::NotEarlier,
-            ..
-        })
-    ));
+    misplaced_settlement(&inputs);
     for kind in 0..3 {
         let mut wrong = inputs.clone();
         let other = if kind == 2 {
@@ -4139,6 +4138,31 @@ fn settlement_context() {
             }
         ),
         Err(RegistrationError::Incidence)
+    );
+}
+
+fn misplaced_settlement(inputs: &[CandidateAct]) {
+    let mut wrong = inputs.to_vec();
+    wrong[1].body.settlement = Some(pn_records::SettlementReferences::Accept {
+        settles: wrong[2].id.clone(),
+    });
+    let replay = validate_history(&wrong, &names()).unwrap();
+    assert!(
+        replay
+            .parent_faults()
+            .iter()
+            .any(|fault| fault.cause == pn_records::ParentCause::NotEarlier)
+    );
+    assert_eq!(
+        reconstruct(
+            &replay,
+            &Verifier {
+                acts: wrong,
+                removals: true
+            }
+        )
+        .unwrap_err(),
+        RegistrationError::Incidence
     );
 }
 

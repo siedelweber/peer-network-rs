@@ -208,15 +208,15 @@ fn settlement_order() {
     }
 }
 
-/// Claim: Attached-time checking reads settlement parents even on disjoint endpoints, retains a mismatching published stamp unchanged, and reads the same parent relation after explicit repetition without deriving a replacement time.
+/// Claim: Time recomputation reads settlement parents even on disjoint endpoints, retains a mismatching published stamp unchanged, and reads the same parent relation after explicit repetition without rewriting the published stamp.
 /// ´claim:acts:settlement-parents-enter-retained-time-checks´
 /// ´test:integration:settlement-time´
 #[test]
 fn settlement_time() {
     let mut acts = chain();
-    acts[0].logical_time = 9;
-    acts[1].logical_time = 10;
-    acts[2].logical_time = 11;
+    acts[0].logical_time = 1;
+    acts[1].logical_time = 2;
+    acts[2].logical_time = 3;
     let mut names = vec![named("left"), named("right")];
     for act in &mut acts[1..] {
         let endpoint = named(&act.id.family);
@@ -240,7 +240,7 @@ fn settlement_time() {
         history.time_evidence()[1].verdict,
         TimeVerdict::Mismatch {
             attached: 7,
-            expected: 10
+            expected: 2
         }
     );
     assert_eq!(history.acts()[1].logical_time(), 7);

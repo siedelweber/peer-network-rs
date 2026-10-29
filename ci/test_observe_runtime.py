@@ -467,7 +467,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(distributions['default'],distributions['trace'])
 
     def test_records_replay(self):
-        """Claim: Finalized dependency violations, attached times and recurrence evidence agree with observation disabled, at default and at trace, including mismatches, unavailable openings and a cross-epoch predecessor; candidate refusals remain refusals while replay is accounted as success.
+        """Claim: Finalized dependency and parent-placement faults, unchanged published stamps and recomputed-time evidence agree with observation disabled, at default and at trace, including stamp mismatches, propagated unavailable openings and cross-epoch frontier carry; candidate refusals remain refusals while replay is accounted as success.
         ´claim:discipline:records-replay-retains-observed-noncompliance´
         ´test:integration:test-records-replay´
         """
@@ -479,22 +479,25 @@ class Processes(unittest.TestCase):
             self.assertEqual(result.returncode,0,result.stderr.decode())
             samples[mode]=result.stdout
             values=json.loads(result.stdout)
-            self.assertEqual([row['violations'] for row in values],[0,1,1,0,0,0])
-            self.assertEqual([row['admitted'] for row in values],[True,False,False,True,True,True])
+            self.assertEqual([row['violations'] for row in values],[0,1,1,0,0,0,0,0])
+            self.assertEqual([row['admitted'] for row in values],[True,False,False,True,True,True,False,False])
             self.assertIn('NotEarlier',values[1]['evidence'])
             self.assertIn('Missing',values[2]['evidence'])
             self.assertIn('Matches',values[0]['time_evidence'])
-            self.assertIn('NonCompliant',values[1]['time_evidence'])
+            self.assertIn('Matches',values[1]['time_evidence'])
             self.assertIn('Mismatch',values[3]['time_evidence'])
             self.assertIn('UnavailableOpening',values[4]['time_evidence'])
+            self.assertEqual(values[4]['time_evidence'].count('UnavailableOpening'),2)
+            self.assertIn('NotEarlier',values[6]['parent_faults'])
+            self.assertIn('Missing',values[7]['parent_faults'])
             self.assertNotIn('Mismatch',values[5]['time_evidence'])
             if mode=='disabled':continue
             rows=[json.loads(line) for line in result.stderr.splitlines()]
             summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
             stem='records__root__sig__design__records__'
             accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith(stem)}
-            self.assertEqual(accounting[mode],{(stem+'started_operations',''):13,(stem+'completed_operations','success'):11,(stem+'completed_operations','refusal'):2})
-            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],13)
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):17,(stem+'completed_operations','success'):13,(stem+'completed_operations','refusal'):4})
+            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],17)
             if mode=='trace':
                 self.assertIn('non_compliance',result.stderr.decode())
                 self.assertIn('NotEarlier',result.stderr.decode())

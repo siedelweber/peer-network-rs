@@ -18,7 +18,7 @@ fn main() {
     later.authoritative_position = 2;
     later.logical_time = 2;
     let mut results = Vec::new();
-    for case in 0..6 {
+    for case in 0..8 {
         let mut root = root.clone();
         let mut later = later.clone();
         let dependency = match case {
@@ -41,6 +41,8 @@ fn main() {
                 later.authoritative_position = 1;
                 later.projections.dependency = DependencyProjection::Full(vec![root.id.clone()]);
             }
+            6 => root.body.asserted_parents = vec![later.id.clone()],
+            7 => root.body.asserted_parents = vec![common::act(3, Layout::Binary).id],
             _ => {}
         }
         let sequence = [root.clone(), later.clone()];
@@ -53,6 +55,8 @@ fn main() {
             "acts": format!("{:?}", replay.acts()),
             "evidence": format!("{:?}", replay.non_compliance()),
             "time_evidence": format!("{:?}", replay.time_evidence()),
+            "parent_faults": format!("{:?}", replay.parent_faults()),
+            "unavailable_dependencies": format!("{:?}", replay.unavailable_dependencies()),
             "candidate": format!("{candidate:?}"),
             "violations": replay.non_compliance().len(),
             "admitted": candidate.is_ok(),
