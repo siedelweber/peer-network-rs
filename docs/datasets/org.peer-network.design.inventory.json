@@ -18302,7 +18302,7 @@
     {
       "chapter": "04 Graph",
       "citable": true,
-      "crate": "pn-records",
+      "crate": "pn-graph",
       "current_at": "network-v0.31.0",
       "environment": "definition",
       "kind": "data type",
