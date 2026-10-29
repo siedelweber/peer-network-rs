@@ -488,7 +488,7 @@ fn title_history() -> Vec<CandidateAct> {
     let mut reuse = inputs[3].clone();
     reuse.id.sequence = 50;
     reuse.authoritative_position = 50;
-    reuse.finalization_epoch = 6;
+    reuse.finalization_epoch = 3;
     reuse.legs[0].id.act = reuse.id.clone();
     inputs.push(reuse);
     stamp(&mut inputs);
@@ -548,8 +548,14 @@ fn title_boundaries() {
         let replay = replay_title(&graph, &history, &Approval, 6).unwrap();
         assert_eq!(replay.boundaries[1].candidates.iter().filter(|c| c.recognized).count(), 2);
         assert!(!replay.boundaries[3].candidates[0].clauses[&RecognitionClause::Authorization]);
-        assert_eq!(replay.boundaries[5].candidates[0].consumed.len(), 2);
-        assert!(!replay.boundaries[5].candidates[0].recognized);
+        let reuse = replay.boundaries[2]
+            .candidates
+            .iter()
+            .find(|candidate| candidate.acts[2].sequence == 50)
+            .unwrap();
+        assert_eq!(reuse.consumed.len(), 2);
+        assert!(reuse.clauses.values().all(|passed| *passed));
+        assert!(!reuse.recognized);
     }
 }
 
@@ -598,4 +604,57 @@ fn title_premises() {
         replay_title(&graph, &history, &Approval, 6),
         Err(RecognitionError::Held(_))
     ));
+}
+
+/// Claim: On compliant histories, recognized conflicts and title-transferring events remain distinct, and successful transfer evidence survives later resale. Selected candidate sets use the identical title fold; rejected sets return no certificate or events and still undergo complete formation validation. Final-set admission remains an explicit caller premise.
+/// ´claim:verification:title-events-persist-without-publishing-rejected-sets´
+/// ´test:integration:title-events´
+#[test]
+fn title_events() {
+    use pn_graph::title::{FinalSetDecision, TitleOutcome, evaluate_candidate_title, replay_title};
+    let inputs = title_history();
+    let history = validate_history(&inputs, &[]).unwrap();
+    let graph = reconstruct(&history, &Approval).unwrap();
+    let replay = replay_title(&graph, &history, &Approval, 6).unwrap();
+    let actual: Vec<_> = replay
+        .events
+        .iter()
+        .map(|event| {
+            (
+                event.epoch,
+                event.acts.each_ref().map(|id| id.sequence),
+                event.buyer.as_str(),
+                event.seller.as_str(),
+                event.outcome,
+            )
+        })
+        .collect();
+    assert_eq!(
+        actual,
+        vec![
+            (2, [10, 11, 12], "first", "seller", TitleOutcome::Conflict),
+            (2, [10, 11, 13], "first", "seller", TitleOutcome::Conflict),
+            (3, [20, 21, 22], "first", "seller", TitleOutcome::Transferred),
+            (5, [40, 41, 42], "second", "first", TitleOutcome::Transferred),
+        ]
+    );
+    assert!(replay.events.iter().all(|event| event.item == item()));
+    let before_resale = replay_title(&graph, &history, &Approval, 3).unwrap();
+    assert_eq!(&replay.events[..3], before_resale.events);
+    assert_eq!(
+        evaluate_candidate_title(&graph, &history, &Approval, 6, FinalSetDecision::Selected).unwrap(),
+        Some(replay)
+    );
+    assert_eq!(
+        evaluate_candidate_title(&graph, &history, &Approval, 6, FinalSetDecision::Rejected).unwrap(),
+        None
+    );
+    let mut partial = graph;
+    partial.remove_edge(partial.edge_indices().next().unwrap());
+    for decision in [FinalSetDecision::Selected, FinalSetDecision::Rejected] {
+        assert!(matches!(
+            evaluate_candidate_title(&partial, &history, &Approval, 6, decision),
+            Err(RecognitionError::Formation(_))
+        ));
+    }
 }

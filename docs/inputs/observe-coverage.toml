@@ -27,11 +27,11 @@ generators = 11
 
 [[rows]]
 name = "pn-graph"
-operations = 10
-instrumented = 10
+operations = 11
+instrumented = 11
 exceptions = 0
 helpers = 0
-generators = 44
+generators = 47
 
 [[rows]]
 name = "pn-host"

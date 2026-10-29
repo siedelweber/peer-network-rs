@@ -248,7 +248,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(accounting['default'],accounting['trace'])
 
     def test_graph_formation(self):
-        """Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition and compliant boundary title replay return identical complete public results with observation disabled, default and trace; the thirty-three successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.
+        """Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty-five successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.
         ´claim:discipline:affinity-formation-retains-observed-results´
         ´test:integration:test-graph-formation´
         """
@@ -284,6 +284,8 @@ class Processes(unittest.TestCase):
             self.assertIn('SettlementEvidence',values['recognition'])
             self.assertIn('Boundary',values['wrong_boundary'])
             self.assertIn('TitleReplay',values['replay'])
+            self.assertIn('Ok(Some(TitleReplay',values['selected_title'])
+            self.assertEqual(values['rejected_title'],'Ok(None)')
             self.assertIn('GraphMismatch',values['partial_replay'])
             self.assertIn('GraphMismatch',values['partial_title'])
             self.assertIn('role: A',values['tag'])
@@ -302,8 +304,8 @@ class Processes(unittest.TestCase):
             summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
             stem='graph__root__sig__design__graph__'
             accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith(stem)}
-            self.assertEqual(accounting[mode],{(stem+'started_operations',''):41,(stem+'completed_operations','success'):33,(stem+'completed_operations','refusal'):8})
-            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],41)
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):53,(stem+'completed_operations','success'):45,(stem+'completed_operations','refusal'):8})
+            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],53)
             if mode=='trace':
                 for marker in ('authentication_evidence','logical_time','AffinityProjection','PublishProjection','OwnerProjection','ParticipantProjection','ReviewProjection','SendProjection','BidProjection','OpinionProjection','JoinRequestProjection','TagProjection','LeaveProjection','ReferenceProjection','InvitationProjection','DeinviteProjection','WithdrawProjection','RescindProjection','AcceptProjection','RatifyProjection','settles','accepts','LicenseQualifiers','validate_formation'):
                     self.assertIn(marker,result.stderr.decode())

@@ -102,6 +102,8 @@ pub struct TitleReplay {
     pub consumed: BTreeSet<ActId>,
     /// Boundary-by-boundary recognition premises and fold evidence.
     pub boundaries: Vec<TitleBoundary>,
+    /// Persistent recognized-event evidence, independent of the final owner.
+    pub events: Vec<TitleEvent>,
 }
 
 /// Revalidate complete formation and replay compliant boundary title and consumption.
@@ -163,6 +165,7 @@ fn fold_title(
         certificate: BTreeMap::new(),
         consumed: BTreeSet::new(),
         boundaries: vec![],
+        events: vec![],
     };
     introduce_items(&mut replay.certificate, history, inputs, 0);
     for boundary in 1..=epoch {
@@ -188,9 +191,22 @@ fn fold_title(
         }
         for (item, members) in groups {
             if let [sole] = members.as_slice() {
-                replay.certificate.insert(item, Some(sole.acts[0].author.clone()));
+                replay.certificate.insert(item.clone(), Some(sole.acts[0].author.clone()));
             }
+            let outcome = if members.len() == 1 {
+                TitleOutcome::Transferred
+            } else {
+                TitleOutcome::Conflict
+            };
             for member in members {
+                replay.events.push(TitleEvent {
+                    epoch: boundary,
+                    item: item.clone(),
+                    acts: member.acts.clone(),
+                    buyer: member.acts[0].author.clone(),
+                    seller: member.acts[1].author.clone(),
+                    outcome,
+                });
                 replay.consumed.extend(member.acts.iter().cloned());
             }
         }
@@ -221,4 +237,81 @@ fn introduce_items(
             certificate.insert(minted, Some(act.id().author.clone()));
         }
     }
+}
+
+/// Outcome of a recognized, unchallenged candidate at its Ratify boundary.
+/// (´def:formation:title-events´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TitleOutcome {
+    /// The sole candidate transferred title at that boundary.
+    Transferred,
+    /// Two or more candidates consumed their records without a transfer.
+    Conflict,
+}
+
+/// Event-persistent input for a later epoch compiler, never a standing value.
+/// (´def:formation:title-events´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct TitleEvent {
+    /// Boundary that consumed the candidate.
+    pub epoch: u64,
+    /// Item whose title was considered.
+    pub item: PublicReference,
+    /// Exact Bid, Accept and Ratify identities.
+    pub acts: [ActId; 3],
+    /// Candidate's buyer, including in a conflicting event.
+    pub buyer: String,
+    /// Candidate's seller, authorized by the preceding boundary.
+    pub seller: String,
+    /// Whether recognition actually transferred title.
+    pub outcome: TitleOutcome,
+}
+
+/// Caller-supplied final-set decision; graph establishes no admission verdict.
+/// (´def:formation:title-events´)
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FinalSetDecision {
+    /// Caller selected this final set; return its pure fold evidence.
+    Selected,
+    /// Caller rejected this final set; discard its computed certificate and events.
+    Rejected,
+}
+
+/// Evaluate a proposed final history through the same compliant title fold.
+/// Admission is an explicit caller premise, not a result of this function.
+/// A rejected set returns None and publishes no certificate or transfer event.
+/// The operation performs no publication, including for a selected set.
+/// (´def:formation:title-events´)
+///
+/// # Errors
+/// Returns whole-result formation refusal or the scoped recurrence hold before
+/// any candidate-set certificate is returned. Rejection does not bypass validation.
+#[tracing::instrument(
+    name = "alg:design:title",
+    fields(
+        execution_owner = "GRAPH",
+        claim_owner = "ROOT",
+        claim_label = "alg:design:title",
+        source_item = "title::evaluate_candidate_title"
+    ),
+    ret
+)]
+pub fn evaluate_candidate_title(
+    graph: &FormationGraph,
+    history: &ValidatedHistory,
+    verifier: &impl RegistrationVerifier,
+    epoch: u64,
+    decision: FinalSetDecision,
+) -> Result<Option<TitleReplay>, crate::recognition::RecognitionError> {
+    let result = title_inputs(graph, history, verifier)
+        .map_err(crate::recognition::RecognitionError::Formation)
+        .and_then(|inputs| fold_title(graph, history, verifier, &inputs, epoch))
+        .map(|replay| match decision {
+            FinalSetDecision::Selected => Some(replay),
+            FinalSetDecision::Rejected => None,
+        });
+    if result.is_err() {
+        tracing::event!(tracing::Level::TRACE, outcome = "refusal");
+    }
+    result
 }

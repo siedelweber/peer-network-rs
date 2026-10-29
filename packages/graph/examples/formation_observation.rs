@@ -62,6 +62,10 @@ fn main() {
     context.prior_epoch = 1;
     let wrong_boundary = pn_graph::recognition::recognize_settlements(&graph, &history, &auth, &context);
     let replay = pn_graph::title::replay_title(&graph, &history, &auth, 1);
+    let selected_title =
+        pn_graph::title::evaluate_candidate_title(&graph, &history, &auth, 1, pn_graph::title::FinalSetDecision::Selected);
+    let rejected_title =
+        pn_graph::title::evaluate_candidate_title(&graph, &history, &auth, 1, pn_graph::title::FinalSetDecision::Rejected);
     let denied = reconstruct(&history, &FixtureApproval(false));
     let mut partial = graph.clone();
     let edge = partial.edge_indices().next().unwrap();
@@ -71,6 +75,7 @@ fn main() {
     let partial_replay = pn_graph::title::replay_title(&partial, &history, &auth, 1);
     cli_common::emit(&serde_json::json!({
         "recognition": format!("{recognition:?}"), "wrong_boundary": format!("{wrong_boundary:?}"),
+        "selected_title": format!("{selected_title:?}"), "rejected_title": format!("{rejected_title:?}"),
         "replay": format!("{replay:?}"), "partial_replay": format!("{partial_replay:?}"),
         "title": format!("{title:?}"), "partial_title": format!("{partial_title:?}"),
         "projection": format!("{projection:?}"), "graph": format!("{graph:?}"),

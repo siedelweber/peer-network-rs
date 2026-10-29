@@ -1353,4 +1353,4 @@ level = "integration"
 implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-verification::recognition::recognition_enumerator", "pn-verification::recognition::recognition_binding", "pn-verification::recognition::recognition_holds", "pn-verification::recognition::title_boundaries", "pn-verification::recognition::title_premises"]
+cases = ["pn-verification::recognition::recognition_enumerator", "pn-verification::recognition::recognition_binding", "pn-verification::recognition::recognition_holds", "pn-verification::recognition::title_boundaries", "pn-verification::recognition::title_premises", "pn-verification::recognition::title_events"]

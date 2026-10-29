@@ -237,8 +237,8 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing and scoped six-clause recognition return identical complete public results with observation disabled, default and trace; the twenty-seven successful operations and five explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition and compliant boundary title replay return identical complete public results with observation disabled, default and trace; the thirty-three successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition and compliant boundary title replay return identical complete public results with observation disabled, default and trace; the thirty-three successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty-five successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
       "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
     },
     {
@@ -3143,6 +3143,14 @@
       "claim": "VERIFICATION::claim:verification:compliant-title-matches-independent-boundary-table",
       "before": "",
       "after": "Claim: On compliant histories, full title replay matches an independently specified boundary table for genesis, empty boundaries, shared-record conflicts, fresh retry, prior-owner refusal, resale and consumed-record reuse. Each derived premise reproduces the separately invoked recognition evidence; consumption excludes individual records, not only repeated triples.",
+      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
+    },
+    {
+      "operation": "pn-verification::recognition::title_events",
+      "path": "packages/verification/tests/recognition.rs",
+      "claim": "VERIFICATION::claim:verification:title-events-persist-without-publishing-rejected-sets",
+      "before": "",
+      "after": "Claim: On compliant histories, recognized conflicts and title-transferring events remain distinct, and successful transfer evidence survives later resale. Selected candidate sets use the identical title fold; rejected sets return no certificate or events and still undergo complete formation validation. Final-set admission remains an explicit caller premise.",
       "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
     },
     {

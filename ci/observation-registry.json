@@ -6672,6 +6672,16 @@
       "claim": "ROOT::alg:design:title",
       "shape": "shape-graph-affinity",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "item": "title::evaluate_candidate_title",
+      "owner": "GRAPH",
+      "signature": "fn evaluate_candidate_title (graph : & FormationGraph , history : & ValidatedHistory , verifier : & impl RegistrationVerifier , epoch : u64 , decision : FinalSetDecision ,) -> Result < Option < TitleReplay > , crate :: recognition :: RecognitionError >",
+      "claim": "ROOT::alg:design:title",
+      "shape": "shape-graph-affinity",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -12832,6 +12842,17 @@
         "secret_flow": "graph-affinity-secret_flow",
         "exposure_consumers": "graph-affinity-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/title.rs::title::evaluate_candidate_title",
+      "body": "{ let result = title_inputs (graph , history , verifier) . map_err (crate :: recognition :: RecognitionError :: Formation) . and_then (| inputs | fold_title (graph , history , verifier , & inputs , epoch)) . map (| replay | match decision { FinalSetDecision :: Selected => Some (replay) , FinalSetDecision :: Rejected => None , }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "class_decision": "graph-affinity",
+      "item_premise": "Public graph, complete history and deterministic verifier are revalidated before a pure compliant boundary replay. Trace retains derived prior-owner and consumed-record premises, candidate evidence and complete certificates or whole-result hold/refusal. No secret, publication side effect, membership admission or title authentication is introduced; nested operations retain inclusive accounting.",
+      "assessments": {
+        "full_recording": "graph-affinity-full_recording",
+        "secret_flow": "graph-affinity-secret_flow",
+        "exposure_consumers": "graph-affinity-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -15642,6 +15663,33 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "graph-affinity",
       "expansion_review": "Structural Clone, Debug and equality expose public boundary premises, complete title evidence and identity-based consumption. No serialization, authentication or publication is generated."
+    },
+    {
+      "item": "title::TitleOutcome",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Structural Clone, Debug and equality expose public settlement events and the caller supplied final-set decision. No serialization, authentication or publication is generated."
+    },
+    {
+      "item": "title::TitleEvent",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Structural Clone, Debug and equality expose public settlement events and the caller supplied final-set decision. No serialization, authentication or publication is generated."
+    },
+    {
+      "item": "title::FinalSetDecision",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "graph-affinity",
+      "expansion_review": "Structural Clone, Debug and equality expose public settlement events and the caller supplied final-set decision. No serialization, authentication or publication is generated."
     }
   ],
   "reviewed_types": [
@@ -17455,7 +17503,25 @@
       "item": "title::TitleReplay",
       "package": "pn-graph",
       "path": "packages/graph/src/title.rs",
-      "syntax": "# [doc = \" Pure full replay; public evidence is not a token authorizing publication.\"] # [doc = \" (´def:formation:boundary-title´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleReplay { # [doc = \" Requested final boundary.\"] pub epoch : u64 , # [doc = \" Final certificate, including void entries for unresolved Item terms.\"] pub certificate : BTreeMap < PublicReference , Option < String > > , # [doc = \" Distinct records permanently excluded from later recognition.\"] pub consumed : BTreeSet < ActId > , # [doc = \" Boundary-by-boundary recognition premises and fold evidence.\"] pub boundaries : Vec < TitleBoundary > , }"
+      "syntax": "# [doc = \" Pure full replay; public evidence is not a token authorizing publication.\"] # [doc = \" (´def:formation:boundary-title´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleReplay { # [doc = \" Requested final boundary.\"] pub epoch : u64 , # [doc = \" Final certificate, including void entries for unresolved Item terms.\"] pub certificate : BTreeMap < PublicReference , Option < String > > , # [doc = \" Distinct records permanently excluded from later recognition.\"] pub consumed : BTreeSet < ActId > , # [doc = \" Boundary-by-boundary recognition premises and fold evidence.\"] pub boundaries : Vec < TitleBoundary > , # [doc = \" Persistent recognized-event evidence, independent of the final owner.\"] pub events : Vec < TitleEvent > , }"
+    },
+    {
+      "item": "title::TitleOutcome",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [doc = \" Outcome of a recognized, unchallenged candidate at its Ratify boundary.\"] # [doc = \" (´def:formation:title-events´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum TitleOutcome { # [doc = \" The sole candidate transferred title at that boundary.\"] Transferred , # [doc = \" Two or more candidates consumed their records without a transfer.\"] Conflict , }"
+    },
+    {
+      "item": "title::TitleEvent",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [doc = \" Event-persistent input for a later epoch compiler, never a standing value.\"] # [doc = \" (´def:formation:title-events´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TitleEvent { # [doc = \" Boundary that consumed the candidate.\"] pub epoch : u64 , # [doc = \" Item whose title was considered.\"] pub item : PublicReference , # [doc = \" Exact Bid, Accept and Ratify identities.\"] pub acts : [ActId ; 3] , # [doc = \" Candidate's buyer, including in a conflicting event.\"] pub buyer : String , # [doc = \" Candidate's seller, authorized by the preceding boundary.\"] pub seller : String , # [doc = \" Whether recognition actually transferred title.\"] pub outcome : TitleOutcome , }"
+    },
+    {
+      "item": "title::FinalSetDecision",
+      "package": "pn-graph",
+      "path": "packages/graph/src/title.rs",
+      "syntax": "# [doc = \" Caller-supplied final-set decision; graph establishes no admission verdict.\"] # [doc = \" (´def:formation:title-events´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum FinalSetDecision { # [doc = \" Caller selected this final set; return its pure fold evidence.\"] Selected , # [doc = \" Caller rejected this final set; discard its computed certificate and events.\"] Rejected , }"
     },
     {
       "item": "PartitionError",
@@ -17972,7 +18038,8 @@
           "pn-graph::packages/graph/src/formation.rs::formation::validate_formation",
           "pn-graph::packages/graph/src/title.rs::title::title_inputs",
           "pn-graph::packages/graph/src/recognition.rs::recognition::recognize_settlements",
-          "pn-graph::packages/graph/src/title.rs::title::replay_title"
+          "pn-graph::packages/graph/src/title.rs::title::replay_title",
+          "pn-graph::packages/graph/src/title.rs::title::evaluate_candidate_title"
         ]
       },
       "status": "reviewer-confirmed",
