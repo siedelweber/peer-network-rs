@@ -133,6 +133,10 @@ def storage_retake_control(test, command, env, validate, statements):
     findings=Path('.lane/storage-retake-control-findings.jsonl')
     findings.unlink(missing_ok=True)
     def child(argv, **kwargs):
+        # Only the control's own children count; any other subprocess, such as the witness's own
+        # loss reporting, passes through uncounted and unaltered.
+        if argv!=command:
+            return run(argv,**kwargs)
         calls.append(argv)
         result=run(argv,**kwargs)
         if len(calls)==1 and result.returncode==0:
@@ -279,6 +283,10 @@ def forced_loss_control(test, command, env, value, prefix, preparations=3):
     injected=b''.join(json.dumps(row).encode()+b'\n' for index,row in enumerate(rows) if index not in carrying)
     calls=[]
     def child(argv, **kwargs):
+        # Only the control's own children count; any other subprocess, such as a real witness's own
+        # loss reporting on a lossy detecting attempt, passes through uncounted and unaltered.
+        if argv!=command:
+            return run(argv,**kwargs)
         calls.append(argv)
         if len(calls)==1:
             kwargs['stderr'].write(injected)
@@ -295,36 +303,80 @@ def forced_loss_control(test, command, env, value, prefix, preparations=3):
     return attempt
 
 
+def synthetic_children(plan, command, statements=()):
+    """Synthetic children for calls whose argv is `command`, one per plan entry of exit code, counted loss and
+    whether the capture carries the value; any other subprocess passes through as a successful no-op, recorded
+    apart, so a test can see that it happened without it consuming a child's plan entry."""
+    children=[]
+    others=[]
+    def child(argv, **kwargs):
+        if argv!=command:
+            others.append(argv)
+            return subprocess.CompletedProcess(argv,0,stdout=b'',stderr=b'')
+        code,lost,carrying=plan[len(children)]
+        children.append(argv)
+        rows=[dict(kind='public',value=' '.join(('public_row',)+tuple(statements)))]
+        rows.extend([dict(kind='public',value='private_sentinel_probe')] if carrying else [])
+        for row in rows:row['process_id']=1
+        rows.append(dict(kind='observation_status',level='trace',process_id=1,timestamp='2026-10-29T00:00:00Z',attempted_records=len(rows)+lost,
+            delivered_records=len(rows),lost_records=lost,undelivered_records=0,in_flight_records=0,loss_causes={'queue_full':lost}))
+        kwargs['stderr'].write(b''.join(json.dumps(row).encode()+b'\n' for row in rows))
+        return subprocess.CompletedProcess(argv,code,stdout=b'',stderr=b'')
+    return child,children,others
+
+
+def reporting_witness(argv, status, wall, stderr, **kwargs):
+    """A stand-in witness that, like the real one on its loss-reporting path, makes its own subprocess call when
+    a capture counts loss."""
+    row=next(json.loads(line) for line in stderr.splitlines() if json.loads(line).get('kind')=='observation_status')
+    if row['lost_records']:
+        subprocess.run(['git','rev-parse','HEAD'],capture_output=True,check=False)
+
+
 def forced_loss_cases(test):
-    """Synthetic children witness the forced-loss control without node load: natural loss before injection and
-    natural loss on the retake still end in detection, while a complete miss, in preparation or on the retake, and a
-    failed child stay failures."""
+    """Synthetic children witness the forced-loss control without node load: natural loss before injection, natural
+    loss on the retake, and a lossy detecting attempt whose witness makes its own subprocess call all end in
+    detection on the right attempt with the right child count, while a complete miss, in preparation or on the
+    retake, and a failed child stay failures."""
     module=sys.modules[__name__]
-    cases=(('natural loss before injection',[(0,1,False),(0,0,True),(0,0,True)],3,None),
-           ('natural loss on the retake',[(0,0,True),(0,1,False),(0,0,True)],3,None),
-           ('complete miss in preparation',[(0,0,False)],1,'not detected in a complete capture'),
-           ('complete miss on the retake',[(0,0,True),(0,0,False)],2,'not detected in a complete capture'),
-           ('failed child',[(7,0,True)],1,'7 != 0'))
-    for name,plan,expected_children,failure in cases:
-        children=[]
-        def child(argv, **kwargs):
-            code,lost,carrying=plan[len(children)]
-            children.append(argv)
-            rows=[dict(kind='public',value='public_row')]+([dict(kind='public',value='private_sentinel_probe')] if carrying else [])
-            for row in rows:row['process_id']=1
-            rows.append(dict(kind='observation_status',level='trace',process_id=1,timestamp='2026-10-29T00:00:00Z',attempted_records=len(rows)+lost,
-                delivered_records=len(rows),lost_records=lost,undelivered_records=0,in_flight_records=0,loss_causes={'queue_full':lost}))
-            kwargs['stderr'].write(b''.join(json.dumps(row).encode()+b'\n' for row in rows))
-            return subprocess.CompletedProcess(argv,code,stdout=b'',stderr=b'')
-        with patch('subprocess.run',side_effect=child),patch.object(module,'witness'),contextlib.redirect_stdout(io.StringIO()):
+    command=['synthetic-child']
+    cases=(('natural loss before injection',[(0,1,False),(0,0,True),(0,0,True)],3,2,None),
+           ('natural loss on the retake',[(0,0,True),(0,1,False),(0,0,True)],3,3,None),
+           ('lossy detecting attempt with a witness subprocess',[(0,0,True),(0,1,True)],2,2,None),
+           ('complete miss in preparation',[(0,0,False)],1,None,'not detected in a complete capture'),
+           ('complete miss on the retake',[(0,0,True),(0,0,False)],2,None,'not detected in a complete capture'),
+           ('failed child',[(7,0,True)],1,None,'7 != 0'))
+    for name,plan,expected_children,expected_attempt,failure in cases:
+        child,children,others=synthetic_children(plan,command)
+        with patch('subprocess.run',side_effect=child),patch.object(module,'witness',side_effect=reporting_witness),contextlib.redirect_stdout(io.StringIO()):
             if failure is None:
-                attempt=forced_loss_control(test,['synthetic-child'],{},'private_sentinel_probe','forced-loss-cases')
-                test.assertEqual(attempt,2 if name=='natural loss before injection' else 3,name)
+                attempt=forced_loss_control(test,command,{},'private_sentinel_probe','forced-loss-cases')
+                test.assertEqual(attempt,expected_attempt,name)
             else:
                 with test.assertRaisesRegex(AssertionError,failure):
-                    forced_loss_control(test,['synthetic-child'],{},'private_sentinel_probe','forced-loss-cases')
+                    forced_loss_control(test,command,{},'private_sentinel_probe','forced-loss-cases')
         test.assertEqual(len(children),expected_children,name)
-    print('FORCED-LOSS-CASES loss-before-injection=detected loss-on-retake=detected complete-miss=failure retake-miss=failure failed-child=failure')
+        if name=='lossy detecting attempt with a witness subprocess':
+            test.assertTrue(others,'the witness made no subprocess call of its own')
+    print('FORCED-LOSS-CASES loss-before-injection=detected loss-on-retake=detected lossy-detection-with-witness-subprocess=detected '
+          'complete-miss=failure retake-miss=failure failed-child=failure')
+
+
+def retake_counting_cases(test):
+    """The storage retake control against synthetic children: an injected first capture, a naturally lossy retake
+    whose witness makes its own subprocess call and a complete third capture still select the third child, and
+    only the control's three children are counted."""
+    module=sys.modules[__name__]
+    command=['synthetic-child']
+    statements=['SELECT synthetic_statement']
+    child,children,others=synthetic_children([(0,0,False),(0,1,False),(0,0,False)],command,statements)
+    def report(record, findings, warnings=None):
+        findings.write_text(json.dumps(dict(classification='observation-completeness',outcome=record['outcome'],verdict_effect='none'))+'\n')
+    with patch('subprocess.run',side_effect=child),patch.object(module,'witness',side_effect=reporting_witness),patch('devperf.report_loss',side_effect=report),contextlib.redirect_stdout(io.StringIO()):
+        storage_retake_control(test,command,{},lambda result,rows:None,statements)
+    test.assertEqual(len(children),3)
+    test.assertTrue(others,'the witness made no subprocess call of its own')
+    print('RETAKE-COUNTING-CASES injected-then-lossy-retake-with-witness-subprocess=third-child children=3')
 
 
 def sentinel_retake_control(test, command, env, value):
@@ -337,6 +389,7 @@ def capture_regressions(test, prefix):
     """Run both real test bodies against bad incomplete children followed by clean answers."""
     from devperf import report_loss
     module=sys.modules[__name__]
+    run=subprocess.run
     config=dict(endpoint='192.0.2.31',port='42617',user='private_role_probe',password='private_password_probe',transport='tcp')
     public=b'{"store_link_case":"host-secured","persistence":"disabled","value":731}\n'
     source=Path('packages/host/src/storage.rs').read_text().split('impl Statement {',1)[1].split('// The raw driver',1)[0]
@@ -354,6 +407,9 @@ def capture_regressions(test, prefix):
         for fault in ('role','password','binary','result','exit','recovery'):
             calls=[];trace_attempts=[];findings=root/'findings.jsonl';findings.unlink(missing_ok=True)
             def child(command, **kwargs):
+                # Only the synthetic test binary is a child; any other subprocess passes through unaltered.
+                if command[0]!='synthetic-child':
+                    return run(command,**kwargs)
                 env=kwargs['env'];level=env['PN_OBSERVE_LEVEL']
                 control=env.get('PN_HOST_STORAGE_PRIVATE_CONTROL')=='1'
                 if level=='trace' and not control:trace_attempts.append(command)
@@ -377,7 +433,7 @@ def capture_regressions(test, prefix):
             # Keep real loss reporting, but retain synthetic findings only in this fixture.
             def loss_report(record, output):return report_loss(record,findings,warnings=io.StringIO())
             transcript=io.StringIO()
-            with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch.object(module,'storage_retake_control'), patch.object(module,'sentinel_retake_control'), patch.object(module,'sentinel_selection'), patch.object(module,'forced_loss_cases'),patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(transcript):
+            with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch.object(module,'storage_retake_control'), patch.object(module,'sentinel_retake_control'), patch.object(module,'sentinel_selection'), patch.object(module,'forced_loss_cases'), patch.object(module,'retake_counting_cases'), patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(transcript):
                 operation=getattr(HostRuntime(method),method)
                 if fault=='recovery':
                     operation()
@@ -493,6 +549,7 @@ class HostRuntime(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError,'without a named cause'):
             capture_complete(dict(lossy,loss_causes={'queue_full':1,'writer':0}))
         self.assertFalse(capture_complete(dict(lossy,lost_records=0,loss_causes={'queue_full':0},undelivered_records=3))[0])
+        retake_counting_cases(self)
         storage_retake_control(self,[target,'storage::tests::storage_runtime','--exact','--nocapture'],env,validate,statements)
         env.update(PN_HOST_STORAGE_PRIVATE_CONTROL='1')
         command=[target,'storage::tests::storage_runtime','--exact','--nocapture']
