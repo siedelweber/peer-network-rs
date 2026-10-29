@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use pn_records::{ActId, PublicReference, SettlementReferences, ValidatedHistory};
 
-use crate::formation::{FormationGraph, validate_formation};
+use crate::formation::{FormationGraph, reconstruct_replay, validate_formation};
 use crate::registration::{RegistrationError, RegistrationVerifier};
 
 /// Structural indexes derived after whole-history formation revalidation.
@@ -108,7 +108,7 @@ pub struct TitleReplay {
     pub events: Vec<TitleEvent>,
 }
 
-/// Revalidate complete formation and replay compliant boundary title and consumption.
+/// Revalidate finalized formation and replay boundary title and consumption.
 /// New genesis supplies the fresh-thread owner when its epoch first enters history;
 /// ordinary Owner acts never replace title. No certificate is published by this API.
 /// (´def:formation:boundary-title´)
@@ -132,9 +132,10 @@ pub fn replay_title(
     verifier: &impl RegistrationVerifier,
     epoch: u64,
 ) -> Result<TitleReplay, crate::recognition::RecognitionError> {
-    let result = title_inputs(graph, history, verifier)
+    let result = reconstruct_replay(history, verifier)
+        .and_then(|expected| crate::registration::compare_graph(graph, &expected))
         .map_err(crate::recognition::RecognitionError::Formation)
-        .and_then(|inputs| fold_title(graph, history, verifier, &inputs, epoch));
+        .and_then(|()| fold_title(graph, history, verifier, &indexed_inputs(history), epoch));
     if result.is_err() {
         tracing::event!(tracing::Level::TRACE, outcome = "refusal");
     }

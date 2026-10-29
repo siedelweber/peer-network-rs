@@ -1,7 +1,7 @@
 #[path = "common/title_checks.rs"]
 mod title_checks;
 
-/// Claim: Every one of the 512 two-boundary histories in the declared title alphabet agrees with an independent boundary truth table for owner, consumption, derived premises and transfer or conflict events in both input orders. The bounded alphabet contains absence, consent, withdrawal, partner mismatch and original or prior buyer authorization; faulted histories remain outside scope.
+/// Claim: Every one of the 512 two-boundary histories in the declared title alphabet agrees with an independent boundary truth table for owner, consumption, derived premises and transfer or conflict events in both input orders. The bounded alphabet contains absence, consent, withdrawal, partner mismatch and original or prior buyer authorization; each history also runs missing, later-or-self and self parent, wrong-stamp and tombstoned-dependency variants with unchanged clause, ownership, consumption and event outcomes.
 /// ´claim:verification:small-title-histories-match-independent-table´
 /// ´test:integration:title-exhaustive´
 #[test]
@@ -30,14 +30,14 @@ fn configuration() -> proptest::test_runner::Config {
 
 proptest! {
     #![proptest_config(configuration())]
-    /// Claim: Consumer-qualified recorded word cases, including empty and single-boundary histories, agree with the independent title truth table in original and reversed presentations. Recorded generation exercises the shared compliant public suite without claiming faulted-chain coverage or a second implementation.
+    /// Claim: Consumer-qualified recorded word cases, including empty and single-boundary histories, agree with the independent title truth table in original and reversed presentations. Recorded generation exercises the same shared public suite with retained parent faults, stamp faults and unavailable time, without sharing fold code with the independent table.
     /// ´claim:verification:recorded-title-cases-match-independent-table´
     /// ´test:integration:title-generated´
     #[test]
     fn title_generated(words in proptest::collection::vec(any::<u64>(), 0..3)) { title_checks::check(&words); }
 }
 
-/// Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.
+/// Claim: Eight named title cases and their five replay variations execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.
 /// ´claim:verification:shared-title-cases-retain-complete-results´
 /// ´test:integration:title-shared-cases´
 #[test]

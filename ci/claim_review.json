@@ -269,9 +269,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_graph_formation",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:affinity-formation-retains-observed-results",
-      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty-five successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
-      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
+      "before": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "after": "Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty successful operations and six explicit refusals retain their own graph accounting, and trace includes the full public history and graph.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_graph_partition",
@@ -325,9 +325,9 @@
       "operation": "ci::test_observe_runtime.Processes.test_title_suite",
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:title-suite-retains-observed-evidence",
-      "before": "",
-      "after": "Claim: Eight shared compliant title histories retain byte-identical complete boundary and event results with observation off, default and trace. Default and trace retain identical graph operation accounting, including consumed records, conflicts and persistent transfers; this does not close faulted replay or the held partner clause.",
-      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
+      "before": "Claim: Eight shared compliant title histories retain byte-identical complete boundary and event results with observation off, default and trace. Default and trace retain identical graph operation accounting, including consumed records, conflicts and persistent transfers; this does not close faulted replay or the held partner clause.",
+      "after": "Claim: Eight shared title histories and their five replay variations retain byte-identical complete boundary, event, parent-fault and time-evidence results with observation off, default and trace. Default and trace retain identical graph operation accounting; unavailable time and stamp faults change no title clause or event. The held partner-clause placement remains explicit.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "ci::test_observe_syntax.Syntax.test_parsed_boundaries",
@@ -1805,9 +1805,9 @@
       "operation": "pn-graph::title::title_shared_cases",
       "path": "packages/graph/tests/title.rs",
       "claim": "GRAPH::claim:formation:shared-title-cases-retain-complete-results",
-      "before": "",
-      "after": "Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
-      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
+      "before": "Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
+      "after": "Claim: Eight named title cases and their five replay variations execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "pn-host::config::tests::secret_json_grammar",
@@ -3229,9 +3229,9 @@
       "operation": "pn-verification::recognition::settlement_replay_faults",
       "path": "packages/verification/tests/recognition.rs",
       "claim": "VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults",
-      "before": "",
-      "after": "Claim: Finalized settlement replay retains absent and misplaced targets with parent-placement evidence and unchanged actor projections. Missing Bid or Accept targets fail reference binding (ii), later targets fail well-formedness (vi), candidate formation still refuses each, and mutated replay graphs refuse before recognition evidence escapes.",
-      "review": "Published epoch-position pairs determine precedence independently of attached stamps. Scoped witnesses retain structural input refusals and separate candidate admission from finalized evidence; no canonical encoding or authentication recipe is introduced."
+      "before": "Claim: Finalized settlement replay retains absent and misplaced targets with parent-placement evidence and unchanged actor projections. Missing Bid or Accept targets fail reference binding (ii), later targets fail well-formedness (vi), candidate formation still refuses each, and mutated replay graphs refuse before recognition evidence escapes.",
+      "after": "Claim: Finalized settlement replay retains absent and misplaced targets with parent-placement evidence and unchanged actor projections. Missing Bid or Accept targets fail reference binding (ii), later targets fail well-formedness (vi), candidate formation still refuses each, title retains the incumbent without consuming these attempts, and mutated replay graphs refuse before recognition evidence escapes.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "pn-verification::recognition::title_boundaries",
@@ -3258,28 +3258,36 @@
       "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
+      "operation": "pn-verification::recognition::title_replay_edges",
+      "path": "packages/verification/tests/recognition.rs",
+      "claim": "VERIFICATION::claim:verification:title-replay-preserves-epoch-and-dangling-semantics",
+      "before": "",
+      "after": "Claim: Finalized title uses the epoch-major settlement chain even when positions restart, preserves both Bid projections, and agrees between complete-history replay and each epoch prefix. Dangling Item title stays void and authorization fails before genesis; genesis in the Ratify epoch supplies the fresh owner and earlier genesis supplies the certified owner. No time-evidence premise or future genesis supplies title.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
+    },
+    {
       "operation": "pn-verification::title::title_exhaustive",
       "path": "packages/verification/tests/title.rs",
       "claim": "VERIFICATION::claim:verification:small-title-histories-match-independent-table",
-      "before": "",
-      "after": "Claim: Every one of the 512 two-boundary histories in the declared title alphabet agrees with an independent boundary truth table for owner, consumption, derived premises and transfer or conflict events in both input orders. The bounded alphabet contains absence, consent, withdrawal, partner mismatch and original or prior buyer authorization; faulted histories remain outside scope.",
-      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
+      "before": "Claim: Every one of the 512 two-boundary histories in the declared title alphabet agrees with an independent boundary truth table for owner, consumption, derived premises and transfer or conflict events in both input orders. The bounded alphabet contains absence, consent, withdrawal, partner mismatch and original or prior buyer authorization; faulted histories remain outside scope.",
+      "after": "Claim: Every one of the 512 two-boundary histories in the declared title alphabet agrees with an independent boundary truth table for owner, consumption, derived premises and transfer or conflict events in both input orders. The bounded alphabet contains absence, consent, withdrawal, partner mismatch and original or prior buyer authorization; each history also runs missing, later-or-self and self parent, wrong-stamp and tombstoned-dependency variants with unchanged clause, ownership, consumption and event outcomes.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "pn-verification::title::title_generated",
       "path": "packages/verification/tests/title.rs",
       "claim": "VERIFICATION::claim:verification:recorded-title-cases-match-independent-table",
-      "before": "",
-      "after": "Claim: Consumer-qualified recorded word cases, including empty and single-boundary histories, agree with the independent title truth table in original and reversed presentations. Recorded generation exercises the shared compliant public suite without claiming faulted-chain coverage or a second implementation.",
-      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
+      "before": "Claim: Consumer-qualified recorded word cases, including empty and single-boundary histories, agree with the independent title truth table in original and reversed presentations. Recorded generation exercises the shared compliant public suite without claiming faulted-chain coverage or a second implementation.",
+      "after": "Claim: Consumer-qualified recorded word cases, including empty and single-boundary histories, agree with the independent title truth table in original and reversed presentations. Recorded generation exercises the same shared public suite with retained parent faults, stamp faults and unavailable time, without sharing fold code with the independent table.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "pn-verification::title::title_shared_cases",
       "path": "packages/verification/tests/title.rs",
       "claim": "VERIFICATION::claim:verification:shared-title-cases-retain-complete-results",
-      "before": "",
-      "after": "Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
-      "review": "The bounded compliant title alphabet has independently specified boundary expectations. Shared consumers deliberately exercise one implementation; exhaustive and recorded cases compare full owner, consumption, premise and event results in both presentations. Observation preserves complete results. This begins infrastructure without closing ordering, partner-clause or broad title premises."
+      "before": "Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
+      "after": "Claim: Eight named title cases and their five replay variations execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
     },
     {
       "operation": "pn-wallet::allocation::decoder_reservations",

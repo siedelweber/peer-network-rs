@@ -1,4 +1,4 @@
-//! Compliant title suite observation witness (´[ROOT-inv:observe:noninterference]´).
+//! Released title suite observation witness (´[ROOT-inv:observe:noninterference]´).
 
 #[path = "../../verification/tests/common/title_checks.rs"]
 mod title_checks;

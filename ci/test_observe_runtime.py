@@ -248,7 +248,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(accounting['default'],accounting['trace'])
 
     def test_graph_formation(self):
-        """Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty successful operations and eight explicit refusals retain their own graph accounting, and trace includes the full public history and graph.
+        """Claim: Affinity, Publish, Owner, Participant, Review, Send, Bid, Opinion, Join Request, Tag, Leave, Reference, Invitation, De-invite, Withdraw, Rescind, Accept and Ratify projection, reconstruction, revalidation complete-act title indexing scoped six-clause recognition compliant boundary title replay and selected/rejected candidate evaluation return identical complete public results with observation disabled, default and trace; the forty successful operations and six explicit refusals retain their own graph accounting, and trace includes the full public history and graph.
         ´claim:discipline:affinity-formation-retains-observed-results´
         ´test:integration:test-graph-formation´
         """
@@ -304,8 +304,8 @@ class Processes(unittest.TestCase):
             summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
             stem='graph__root__sig__design__graph__'
             accounting[mode]={key:value for key,value in distribution(summary).items() if key[0].startswith(stem)}
-            self.assertEqual(accounting[mode],{(stem+'started_operations',''):48,(stem+'completed_operations','success'):40,(stem+'completed_operations','refusal'):8})
-            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],48)
+            self.assertEqual(accounting[mode],{(stem+'started_operations',''):46,(stem+'completed_operations','success'):40,(stem+'completed_operations','refusal'):6})
+            self.assertEqual(next(row for row in summary['instruments'] if row['name']==stem+'elapsed_seconds')['count'],46)
             if mode=='trace':
                 for marker in ('authentication_evidence','logical_time','AffinityProjection','PublishProjection','OwnerProjection','ParticipantProjection','ReviewProjection','SendProjection','BidProjection','OpinionProjection','JoinRequestProjection','TagProjection','LeaveProjection','ReferenceProjection','InvitationProjection','DeinviteProjection','WithdrawProjection','RescindProjection','AcceptProjection','RatifyProjection','settles','accepts','LicenseQualifiers','validate_formation'):
                     self.assertIn(marker,result.stderr.decode())
@@ -314,7 +314,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(accounting['default'],accounting['trace'])
 
     def test_title_suite(self):
-        """Claim: Eight shared compliant title histories retain byte-identical complete boundary and event results with observation off, default and trace. Default and trace retain identical graph operation accounting, including consumed records, conflicts and persistent transfers; this does not close faulted replay or the held partner clause.
+        """Claim: Eight shared title histories and their five replay variations retain byte-identical complete boundary, event, parent-fault and time-evidence results with observation off, default and trace. Default and trace retain identical graph operation accounting; unavailable time and stamp faults change no title clause or event. The held partner-clause placement remains explicit.
         ´claim:discipline:title-suite-retains-observed-evidence´
         ´test:integration:test-title-suite´
         """

@@ -12871,7 +12871,7 @@
       "operation": "pn-graph::packages/graph/src/recognition.rs::recognition::recognize_settlements",
       "body": "{ let result = reconstruct_replay (history , verifier) . and_then (| expected | crate :: registration :: compare_graph (graph , & expected)) . map_err (RecognitionError :: Formation) . and_then (| () | recognize (& indexed_inputs (history) , history , context)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-affinity",
-      "item_premise": "Complete public history, graph, deterministic public verifier and caller-supplied preceding certificate and consumed identities are revalidated before six-clause recognition. Complete clause evidence, success and named hold or refusal remain observable. Inputs contain no secret material, no title fold executes, and observation supplies accounting only. Nested formation, indexing and recognition retain distinct inclusive operation accounting.",
+      "item_premise": "Complete public history, graph, public verifier and caller-supplied preceding owner and consumed maps are revalidated before six-clause recognition. Trace retains complete clause and time evidence, including unavailable summaries, without making time a premise. Inputs contain no secret material; no title fold or publication executes. Nested finalized reconstruction and recognition retain inclusive accounting.",
       "assessments": {
         "full_recording": "graph-affinity-full_recording",
         "secret_flow": "graph-affinity-secret_flow",
@@ -12880,9 +12880,9 @@
     },
     {
       "operation": "pn-graph::packages/graph/src/title.rs::title::replay_title",
-      "body": "{ let result = title_inputs (graph , history , verifier) . map_err (crate :: recognition :: RecognitionError :: Formation) . and_then (| inputs | fold_title (graph , history , verifier , & inputs , epoch)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
+      "body": "{ let result = reconstruct_replay (history , verifier) . and_then (| expected | crate :: registration :: compare_graph (graph , & expected)) . map_err (crate :: recognition :: RecognitionError :: Formation) . and_then (| () | fold_title (graph , history , verifier , & indexed_inputs (history) , epoch)) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-affinity",
-      "item_premise": "Public graph, complete history and deterministic verifier are revalidated before a pure compliant boundary replay. Trace retains derived prior-owner and consumed-record premises, candidate evidence and complete certificates or whole-result hold/refusal. No secret, publication side effect, membership admission or title authentication is introduced; nested operations retain inclusive accounting.",
+      "item_premise": "Complete public graph and history undergo finalized reconstruction and typed comparison before boundary replay. Trace retains derived owner and consumed-record premises, clause evidence, certificates and events, including unavailable times and stamp faults without suppressing the result. Parent placement faults remain public history evidence. No secret, publication side effect or title authentication is introduced; nested operations retain inclusive accounting.",
       "assessments": {
         "full_recording": "graph-affinity-full_recording",
         "secret_flow": "graph-affinity-secret_flow",
@@ -12893,7 +12893,7 @@
       "operation": "pn-graph::packages/graph/src/title.rs::title::evaluate_candidate_title",
       "body": "{ let result = title_inputs (graph , history , verifier) . map_err (crate :: recognition :: RecognitionError :: Formation) . and_then (| inputs | fold_title (graph , history , verifier , & inputs , epoch)) . map (| replay | match decision { FinalSetDecision :: Selected => Some (replay) , FinalSetDecision :: Rejected => None , }) ; if result . is_err () { tracing :: event ! (tracing :: Level :: TRACE , outcome = \"refusal\") ; } result }",
       "class_decision": "graph-affinity",
-      "item_premise": "Public graph, complete history and deterministic verifier are revalidated before a pure compliant boundary replay. Trace retains derived prior-owner and consumed-record premises, candidate evidence and complete certificates or whole-result hold/refusal. No secret, publication side effect, membership admission or title authentication is introduced; nested operations retain inclusive accounting.",
+      "item_premise": "Public proposed graph and history undergo strict candidate formation before the same boundary fold. Rejected sets discard certificates and events without publication. Time evidence does not gate title. Complete diagnostic results and structural refusals remain observable, contain no private data and introduce no authentication verdict.",
       "assessments": {
         "full_recording": "graph-affinity-full_recording",
         "secret_flow": "graph-affinity-secret_flow",

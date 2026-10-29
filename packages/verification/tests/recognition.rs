@@ -598,7 +598,7 @@ fn recognition_holds() {
     }
 }
 
-/// Claim: Finalized settlement replay retains absent and misplaced targets with parent-placement evidence and unchanged actor projections. Missing Bid or Accept targets fail reference binding (ii), later targets fail well-formedness (vi), candidate formation still refuses each, and mutated replay graphs refuse before recognition evidence escapes.
+/// Claim: Finalized settlement replay retains absent and misplaced targets with parent-placement evidence and unchanged actor projections. Missing Bid or Accept targets fail reference binding (ii), later targets fail well-formedness (vi), candidate formation still refuses each, title retains the incumbent without consuming these attempts, and mutated replay graphs refuse before recognition evidence escapes.
 /// ´claim:verification:settlement-replay-retains-target-placement-faults´
 /// ´test:integration:settlement-replay-faults´
 #[test]
@@ -642,6 +642,11 @@ fn settlement_replay_faults() {
         };
         assert!(!evidence[0].clauses[&clause]);
         assert!(!evidence[0].recognized);
+        let title = pn_graph::title::replay_title(&graph, &history, &Approval, 2).unwrap();
+        assert_eq!(title.certificate[&item()], Some("seller".into()));
+        assert_eq!(title.events, []);
+        assert!(title.consumed.is_empty());
+        assert_eq!(title.boundaries[1].candidates, evidence);
         let mut changed = graph;
         changed.remove_edge(changed.edge_indices().next().unwrap());
         assert!(matches!(
@@ -922,5 +927,45 @@ fn title_events() {
             evaluate_candidate_title(&partial, &history, &Approval, 6, decision),
             Err(RecognitionError::Formation(_))
         ));
+    }
+}
+
+/// Claim: Finalized title uses the epoch-major settlement chain even when positions restart, preserves both Bid projections, and agrees between complete-history replay and each epoch prefix. Dangling Item title stays void and authorization fails before genesis; genesis in the Ratify epoch supplies the fresh owner and earlier genesis supplies the certified owner. No time-evidence premise or future genesis supplies title.
+/// ´claim:verification:title-replay-preserves-epoch-and-dangling-semantics´
+/// ´test:integration:title-replay-edges´
+#[test]
+fn title_replay_edges() {
+    for genesis_epoch in [None, Some(1), Some(2), Some(3), Some(4)] {
+        let mut inputs = handshake(10, 1, "buyer", "seller");
+        inputs[0].authoritative_position = 2;
+        inputs[1].finalization_epoch = 2;
+        inputs[1].authoritative_position = 1;
+        inputs[2].finalization_epoch = 3;
+        inputs[2].authoritative_position = 1;
+        if let Some(epoch) = genesis_epoch {
+            let mut owner = genesis();
+            owner.finalization_epoch = epoch;
+            owner.authoritative_position = if epoch == 2 || epoch == 3 { 2 } else { 1 };
+            inputs.push(owner);
+        }
+        stamp(&mut inputs);
+        let history = validate_history(&inputs, &[]).unwrap();
+        let graph = pn_graph::formation::reconstruct_replay(&history, &Approval).unwrap();
+        assert_eq!(graph.edge_count(), inputs.len() + 1);
+        let replay = pn_graph::title::replay_title(&graph, &history, &Approval, 4).unwrap();
+        let candidate = &replay.boundaries[2].candidates[0];
+        assert!(candidate.clauses[&RecognitionClause::WellFormedness]);
+        let anchored = genesis_epoch.is_some_and(|epoch| epoch <= 3);
+        assert_eq!(candidate.clauses[&RecognitionClause::Authorization], anchored);
+        assert_eq!(candidate.recognized, anchored);
+        assert_eq!(replay.boundaries[2].certificate[&item()], anchored.then(|| "buyer".into()));
+        for epoch in 0..=4 {
+            let prefix: Vec<_> = inputs.iter().filter(|act| act.finalization_epoch <= epoch).cloned().collect();
+            let prefix_history = validate_history(&prefix, &[]).unwrap();
+            let prefix_graph = pn_graph::formation::reconstruct_replay(&prefix_history, &Approval).unwrap();
+            let incremental = pn_graph::title::replay_title(&prefix_graph, &prefix_history, &Approval, epoch).unwrap();
+            let full = pn_graph::title::replay_title(&graph, &history, &Approval, epoch).unwrap();
+            assert_eq!(incremental, full);
+        }
     }
 }

@@ -1,7 +1,7 @@
 #[path = "../../verification/tests/common/title_checks.rs"]
 mod title_checks;
 
-/// Claim: Eight named compliant title cases execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.
+/// Claim: Eight named title cases and their five replay variations execute one public implementation with complete per-case results against an independent word-table oracle, retaining conflict, cancellation, party mismatch, retry and resale outcomes; both consumers share the suite, not an independent implementation.
 /// ´claim:formation:shared-title-cases-retain-complete-results´
 /// ´test:integration:title-shared-cases´
 #[test]

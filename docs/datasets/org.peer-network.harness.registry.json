@@ -4015,7 +4015,8 @@
         "pn-verification::recognition::recognition_holds",
         "pn-verification::recognition::title_boundaries",
         "pn-verification::recognition::title_premises",
-        "pn-verification::recognition::title_events"
+        "pn-verification::recognition::title_events",
+        "pn-verification::recognition::title_replay_edges"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",

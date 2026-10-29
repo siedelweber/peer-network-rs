@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet};
 
-use pn_graph::formation::reconstruct;
+use pn_graph::formation::reconstruct_replay;
 use pn_graph::registration::{OpeningKind, RegistrationVerifier};
 use pn_records::{
     ActId, CandidateAct, CandidateLeg, DependencyProjection, EdgeId, Layout, Position, PublicReference, Quantity,
@@ -258,17 +258,16 @@ fn expected(words: &[u64]) -> Vec<(String, Vec<[u64; 3]>, bool)> {
 ///
 /// # Panics
 /// Panics only if a fixture is malformed or an observable result differs from its table.
-pub(crate) fn check(words: &[u64]) -> pn_graph::title::TitleReplay {
-    let raw = inputs(words);
+fn check_presentations(words: &[u64], raw: &[CandidateAct]) -> pn_graph::title::TitleReplay {
     let table = expected(words);
     let mut result = None;
     for reversed in [false, true] {
-        let mut presented = raw.clone();
+        let mut presented = raw.to_vec();
         if reversed {
             presented.reverse();
         }
         let history = validate_history(&presented, &[]).unwrap();
-        let graph = reconstruct(&history, &Approval).unwrap();
+        let graph = reconstruct_replay(&history, &Approval).unwrap();
         let replay = pn_graph::title::replay_title(&graph, &history, &Approval, u64::try_from(table.len()).unwrap()).unwrap();
         let mut consumed = BTreeSet::new();
         let mut events = vec![];
@@ -314,4 +313,86 @@ pub(crate) fn check(words: &[u64]) -> pn_graph::title::TitleReplay {
         result = Some(replay);
     }
     result.unwrap()
+}
+
+// Time and parent faults are retained separately from the independent title table.
+type CaseEvidence = (
+    pn_graph::title::TitleReplay,
+    Vec<pn_records::ParentPlacementFault>,
+    Vec<pn_records::TimeEvidence>,
+);
+
+/// Exercise the same independent title table under five released replay variations.
+///
+/// # Panics
+/// Panics only if a fixture or result differs from its independently specified table.
+pub(crate) fn check(words: &[u64]) -> Vec<CaseEvidence> {
+    let raw = inputs(words);
+    let baseline = check_presentations(words, &raw);
+    let history = validate_history(&raw, &[]).unwrap();
+    let mut results = vec![(
+        baseline.clone(),
+        history.parent_faults().to_vec(),
+        history.time_evidence().to_vec(),
+    )];
+    for variation in 0..5 {
+        let mut changed = raw.clone();
+        // The genesis's unrelated asserted parent never participates in the public
+        // settlement chain. Altering it tests retained faults without altering a clause.
+        match variation {
+            0 => {
+                changed[0].body.asserted_parents = vec![ActId {
+                    author: "absent".into(),
+                    sequence: 999,
+                    family: "Owner".into(),
+                }];
+            }
+            1 => changed[0].body.asserted_parents = vec![changed.last().unwrap().id.clone()],
+            2 => changed[0].body.asserted_parents = vec![changed[0].id.clone()],
+            3 => {
+                for act in &mut changed {
+                    act.logical_time += 100;
+                }
+            }
+            _ => {
+                let index = changed.iter().position(|act| act.id.family == "Bid").unwrap_or(0);
+                let target = &mut changed[index];
+                target.projections.dependency = DependencyProjection::Tombstoned((3, 1));
+            }
+        }
+        let history = validate_history(&changed, &[]).unwrap();
+        if variation < 3 {
+            assert_eq!(history.parent_faults().len(), 1);
+        }
+        if variation == 3 {
+            assert!(
+                history
+                    .time_evidence()
+                    .iter()
+                    .all(|time| matches!(time.verdict, pn_records::TimeVerdict::Mismatch { .. }))
+            );
+        }
+        if variation == 4 {
+            assert!(
+                history
+                    .time_evidence()
+                    .iter()
+                    .any(|time| matches!(time.recomputed, pn_records::RecomputedTime::Unavailable(_)))
+            );
+        }
+        let replay = check_presentations(words, &changed);
+        assert_eq!(replay.certificate, baseline.certificate);
+        assert_eq!(replay.consumed, baseline.consumed);
+        assert_eq!(replay.events, baseline.events);
+        for (actual, expected) in replay.boundaries.iter().zip(&baseline.boundaries) {
+            assert_eq!(actual.premises, expected.premises);
+            assert_eq!(actual.candidates.len(), expected.candidates.len());
+            for (actual, expected) in actual.candidates.iter().zip(&expected.candidates) {
+                assert_eq!(actual.clauses, expected.clauses);
+                assert_eq!(actual.recognized, expected.recognized);
+            }
+        }
+        results.push((replay, history.parent_faults().to_vec(), history.time_evidence().to_vec()));
+    }
+    results
 }
