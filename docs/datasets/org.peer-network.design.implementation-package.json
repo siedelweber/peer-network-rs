@@ -17,7 +17,7 @@
       "name": "final-ledger"
     },
     {
-      "contents": "All accepted authored acts with cell membership, coefficient, recipient, revocation result, family domain profiles and sparse base allocation.",
+      "contents": "All accepted authored acts with cell membership, coefficient, recipient, family domain profiles and sparse base allocation.",
       "key": 4,
       "name": "semantic-projection"
     },

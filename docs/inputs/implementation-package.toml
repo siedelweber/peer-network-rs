@@ -4,7 +4,7 @@ version = [1, 0, 0]
 rows = [
   { key = 2, name = "accepted-records", contents = "Ordered acts, complete edge union, prior-history references, disjoint dependent blocks, authoritative positions, realized size, closure cause and attested timestamp." },
   { key = 3, name = "final-ledger", contents = "Marker-derived gross burn amounts and first-acceptance increments, residual balances, final action counts and charged debit vintages, bound to the preceding completed state in the same marker history, with units and effective boundaries." },
-  { key = 4, name = "semantic-projection", contents = "All accepted authored acts with cell membership, coefficient, recipient, revocation result, family domain profiles and sparse base allocation." },
+  { key = 4, name = "semantic-projection", contents = "All accepted authored acts with cell membership, coefficient, recipient, family domain profiles and sparse base allocation." },
   { key = 5, name = "allocation-transport", contents = "Tilt shape and accepted rung, every attempted higher verdict, depth mass, source emission and the complete factorized emitted operator." },
   { key = 6, name = "standing-admission", contents = "Rate hull, contributing width, evaluated fence and verdict, certified fixed-point enclosure, standing, action and epoch stamps, headroom and final-set solvency, individual-safety and epoch-admission results." },
   { key = 7, name = "closure-policy", contents = "Title and recognition evidence, target size, duration bounds, fixed structural floor, in-force wall and price, controller edition/constants, completed width and accepted rung, next wall proposal and delivered wall with lead, policy schedule and margin." },

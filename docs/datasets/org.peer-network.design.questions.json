@@ -355,13 +355,13 @@
       "topic": "Vacuous control fixture"
     },
     {
-      "ambiguity": "The revocation fixture uses latest-record language while the standing definition compares epoch indices with ties favoring revocation. (def:epoch:inviter-revocation) (ver:membership:inviter-revocation)",
+      "ambiguity": "The earlier definition and fixture disagreed about standing withdrawal order. The release replaces that fold with author-bundle netting and retains ordering only in the separate terminal membership fold. (lem:epoch:authored-vouch-withdrawable) (ver:membership:invitation-netting)",
       "class": "DEFECT",
       "id": "Q36",
-      "instruction": "Your epoch/tie rule is safe and is the specified compiler behavior. Keep terminal membership ordering distinct from this standing-consumed revocation fold.",
+      "instruction": "Compile authored Opinion, Reference and Invitation vouches by sum-then-clip netting within the accepted epoch set, with no withdrawal tie rule. Keep terminal membership ordering distinct; De-invite is a self-weighed singleton at coefficient one.",
       "reading": "Study judgment: Keep the epoch/tie rule in the proposed compiler and hold the conflicting fixture ordering.",
       "section": "Q36 — Revocation ordering",
-      "status": "**Status: corrected.** Revocation reads the latest represented epoch with revocation winning co-epoch ties in both order permutations, and reinstatement requires a complete Invitation in a strictly later epoch.",
+      "status": "**Status: settled by network-v0.31.0.** The earlier study’s epoch/tie reading is superseded by ``lem:epoch:authored-vouch-withdrawable`` and ``ver:membership:invitation-netting``. Exact Invitation cancellation weighs home at coefficient zero in either dependency-compliant placement; positive re-establishment and independent authors are preserved. Graph implementation evidence remains held under ``open:design:invitation-withdrawal-edition``.",
       "topic": "Revocation ordering"
     },
     {

@@ -1056,7 +1056,7 @@
     "pn-verification::properties::marker_recognition": "",
     "pn-verification::properties::numeric_coordinates": "",
     "pn-verification::properties::typed_corruptions": "Claim: Every declared single corruption of a valid generated batch returns its exact typed refusal in both input orders, keeping rejection distinct from accidental invalid fixtures.",
-    "pn-verification::recognition::paper_time_fixture": "Claim: The seven fully carried acts of network-v0.30.1's `ver:boundary:act-time-recomputation` match all 31 declared result fields against an independent literal boundary table, retaining two parent-placement faults, one dependency violation and one stamp mismatch without changing any published placement or stamp. Reversing presentation preserves the evidence.",
+    "pn-verification::recognition::paper_time_fixture": "Claim: The seven fully carried acts of network-v0.31.0's `ver:boundary:act-time-recomputation` match all 31 declared result fields against an independent literal boundary table, retaining two parent-placement faults, one dependency violation and one stamp mismatch without changing any published placement or stamp. Reversing presentation preserves the evidence.",
     "pn-verification::recognition::recognition_binding": "",
     "pn-verification::recognition::recognition_enumerator": "",
     "pn-verification::recognition::recognition_holds": "Claim: Recognition holds when recurrence evidence is unavailable, and refuses incomplete graph or boundary premises before returning clauses. A changed published stamp remains mismatch evidence without changing clause verdicts; payload removal preserves evidence, while tombstoned dependencies retain their named unavailable-time hold.",

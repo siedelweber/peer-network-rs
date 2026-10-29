@@ -75,7 +75,7 @@
         "alg:design:recipients",
         "alg:design:base"
       ],
-      "evidence": "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, revocation ties and dependency-permutation invariance. Extend real PostgreSQL tests to immutable debit vintages, atomic result references and earlier verdicts unaffected by later-effective rules. In pn-epoch, derive the gross snapshot and first-accepted increments from newly accepted destruction identities at the common marker, including delayed acceptance and empty act epochs; reject policy/history mixing and double counting before applying the writing-epoch debit.",
+      "evidence": "Freeze the final ledger, base and emission; show whole-act accounting, unequal profiles, Invitation cancellation under both dependency-compliant placements and singleton De-invite at self with coefficient one and dependency-permutation invariance. Extend real PostgreSQL tests to immutable debit vintages, atomic result references and earlier verdicts unaffected by later-effective rules. In pn-epoch, derive the gross snapshot and first-accepted increments from newly accepted destruction identities at the common marker, including delayed acceptance and empty act epochs; reject policy/history mixing and double counting before applying the writing-epoch debit.",
       "ordinal": 5,
       "requirements": [
         "final-state",
