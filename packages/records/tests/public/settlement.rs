@@ -85,7 +85,7 @@ fn settlement_closures() {
     }
 }
 
-/// Claim: Settlement metadata is required only in its matching Accept or Ratify variant, resolves an Offer-minting Bid and the exact Accept naming that Bid, and refuses missing, mistyped, mismatched or misplaced metadata independently of graph formation.
+/// Claim: Settlement metadata is required only in its matching Accept or Ratify variant, requires existing earlier act targets, and retains wrong-family or different-Bid references without a binding verdict. Missing targets, malformed variants and non-earlier placement still refuse; family and same-Bid binding belong to recognition.
 /// ´claim:acts:settlement-targets-resolve-by-family-and-bid´
 /// ´test:integration:settlement-targets´
 #[test]
@@ -137,26 +137,41 @@ fn settlement_targets() {
     }
     let mut acts = original.clone();
     acts[0].legs[1].target = named("right");
-    assert_eq!(validate_record(&acts, &resolved(), &[]).unwrap_err(), invalid(&acts[1]));
+    assert!(validate_record(&acts, &resolved(), &[]).is_ok());
+    let mut acts = original.clone();
+    acts[0].id.family = "Other".into();
+    for leg in &mut acts[0].legs {
+        leg.id.act.family = "Other".into();
+    }
+    acts[0].legs[1].target = named("right");
+    acts[1].body.settlement = Some(SettlementReferences::Accept {
+        settles: acts[0].id.clone(),
+    });
+    acts[2].body.settlement = Some(SettlementReferences::Ratify {
+        settles: acts[0].id.clone(),
+        accepts: acts[1].id.clone(),
+    });
+    assert!(validate_record(&acts, &resolved(), &[]).is_ok());
+    acts[2].body.settlement = Some(SettlementReferences::Ratify {
+        settles: acts[0].id.clone(),
+        accepts: acts[0].id.clone(),
+    });
+    assert!(validate_record(&acts, &resolved(), &[]).is_ok());
     let mut acts = original.to_vec();
     let mut other = acts[0].clone();
     other.id.sequence = 4;
+    other.authoritative_position = 0;
+    other.logical_time = 0;
     for leg in &mut other.legs {
         leg.id.act = other.id.clone();
     }
     other.legs[1].target = PublicReference::Minted(other.id.clone());
-    other.finalization_epoch = 4;
     acts[2].body.settlement = Some(SettlementReferences::Ratify {
         settles: other.id.clone(),
         accepts: acts[1].id.clone(),
     });
     acts.push(other);
-    assert_eq!(validate_record(&acts, &resolved(), &[]).unwrap_err(), invalid(&acts[2]));
-    let mut acts = original.clone();
-    acts[1].body.settlement = Some(SettlementReferences::Accept {
-        settles: acts[2].id.clone(),
-    });
-    assert_eq!(validate_record(&acts, &resolved(), &[]).unwrap_err(), invalid(&acts[1]));
+    assert!(validate_record(&acts, &resolved(), &[]).is_ok());
 }
 
 /// Claim: Candidate admission orders settlement parents before their children within a batch and across epoch-qualified history cuts, without requiring an additional asserted-parent declaration; reversed Bid/Accept and Accept/Ratify placement refuses.

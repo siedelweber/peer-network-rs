@@ -780,10 +780,8 @@ fn validate(
 
 fn validate_settlement_shape(act: &CandidateAct) -> Result<(), ValidationError> {
     let valid = match (act.id.family.as_str(), &act.body.settlement) {
-        ("Accept", Some(SettlementReferences::Accept { settles })) => valid_id(settles) && settles.family == "Bid",
-        ("Ratify", Some(SettlementReferences::Ratify { settles, accepts })) => {
-            valid_id(settles) && settles.family == "Bid" && valid_id(accepts) && accepts.family == "Accept"
-        }
+        ("Accept", Some(SettlementReferences::Accept { settles })) => valid_id(settles),
+        ("Ratify", Some(SettlementReferences::Ratify { settles, accepts })) => valid_id(settles) && valid_id(accepts),
         ("Accept" | "Ratify", _) | (_, Some(_)) => false,
         (_, None) => true,
     };
@@ -803,24 +801,6 @@ fn validate_settlement_targets(acts: &[CandidateAct], history: &[ValidatedAct]) 
         .map(|act| (&act.id, &act.body))
         .chain(acts.iter().map(|act| (&act.id, &act.body)))
         .collect();
-    let minted: BTreeSet<_> = history
-        .iter()
-        .filter(|act| {
-            act.legs
-                .iter()
-                .any(|leg| mints(&act.id, act.body.layout, leg.id.role, &leg.target))
-        })
-        .map(|act| &act.id)
-        .chain(
-            acts.iter()
-                .filter(|act| {
-                    act.legs
-                        .iter()
-                        .any(|leg| mints(&act.id, act.body.layout, leg.id.role, &leg.target))
-                })
-                .map(|act| &act.id),
-        )
-        .collect();
     for act in acts {
         let Some(references) = &act.body.settlement else {
             continue;
@@ -833,19 +813,6 @@ fn validate_settlement_targets(acts: &[CandidateAct], history: &[ValidatedAct]) 
                     return Err(ValidationError::UnresolvedReference(PublicReference::Act(parent.clone())));
                 }
             }
-        }
-        let matching = match references {
-            SettlementReferences::Accept { .. } => true,
-            SettlementReferences::Ratify { accepts, .. } => {
-                matches!(bodies.get(accepts).and_then(|body| body.settlement.as_ref()),
-                Some(SettlementReferences::Accept { settles: bid }) if bid == settles)
-            }
-        };
-        if !minted.contains(settles) || !matching {
-            return Err(ValidationError::InvalidRepresentation {
-                act: act.id.clone(),
-                cause: InvalidCause::SettlementReferences,
-            });
         }
     }
     Ok(())

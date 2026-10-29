@@ -514,8 +514,8 @@ pub enum Projection {
     Deinvite(DeinviteProjection),
 }
 
-/// Structural Bid act identity, never a node or an edge key.
-/// The family is fixed by this constructor; no byte encoding is assigned.
+/// Structural settles target identity, never a node or an edge key.
+/// The asserted family is retained without a binding verdict or byte encoding.
 /// (´def:formation:settlement´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -524,10 +524,12 @@ pub struct BidIdentity {
     pub author: String,
     /// Author-local act sequence.
     pub sequence: u64,
+    /// Retained target family; recognition checks the expected settlement family.
+    pub family: String,
 }
 
-/// Structural Accept act identity, never a node or an edge key.
-/// The family is fixed by this constructor; no byte encoding is assigned.
+/// Structural accepts target identity, never a node or an edge key.
+/// The asserted family is retained without a binding verdict or byte encoding.
 /// (´def:formation:settlement´)
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -536,6 +538,8 @@ pub struct AcceptIdentity {
     pub author: String,
     /// Author-local act sequence.
     pub sequence: u64,
+    /// Retained target family; recognition checks the expected settlement family.
+    pub family: String,
 }
 
 /// Complete Accept binary projection and non-incidence settlement metadata.
@@ -555,7 +559,7 @@ pub struct AcceptProjection {
     pub comfort: Coordinate,
     /// Signed equity, the intensity parameter.
     pub equity: Coordinate,
-    /// Bid that opened the Offer; metadata adds no Offer incidence.
+    /// Asserted Bid target; metadata adds no Offer incidence.
     pub settles: BidIdentity,
 }
 
@@ -576,9 +580,9 @@ pub struct RatifyProjection {
     pub comfort: Coordinate,
     /// Signed equity, the intensity parameter.
     pub equity: Coordinate,
-    /// Bid that opened the Offer; metadata adds no Offer incidence.
+    /// Asserted Bid target; metadata adds no Offer incidence.
     pub settles: BidIdentity,
-    /// Exact Accept confirming the same Bid.
+    /// Asserted exact Accept target; recognition checks same-Bid binding.
     pub accepts: AcceptIdentity,
 }
 
@@ -697,23 +701,9 @@ fn checked_project(
     }
     if let Some(references) = &act.body().settlement {
         let (SettlementReferences::Accept { settles } | SettlementReferences::Ratify { settles, .. }) = references;
-        let bid = settlement_target(settles, acts, verifier)?;
-        let partner = match references {
-            SettlementReferences::Accept { .. } => &bid.id().author,
-            SettlementReferences::Ratify { accepts, .. } => {
-                if act.id().author != bid.id().author {
-                    return Err(RegistrationError::Incidence);
-                }
-                &settlement_target(accepts, acts, verifier)?.id().author
-            }
-        };
-        if act.legs().first().map(pn_records::ValidatedLeg::target)
-            != Some(&PublicReference::Named {
-                namespace: "addr".into(),
-                name: partner.clone(),
-            })
-        {
-            return Err(RegistrationError::Incidence);
+        settlement_target(settles, acts, verifier)?;
+        if let SettlementReferences::Ratify { accepts, .. } = references {
+            settlement_target(accepts, acts, verifier)?;
         }
     }
     project(act, verifier)
@@ -763,6 +753,7 @@ fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
             settles: BidIdentity {
                 author: settles.author.clone(),
                 sequence: settles.sequence,
+                family: settles.family.clone(),
             },
         }),
         Some(SettlementReferences::Ratify { settles, accepts }) if act.id().family == "Ratify" => {
@@ -776,10 +767,12 @@ fn settlement(act: &ValidatedAct, verifier: &impl RegistrationVerifier) -> Resul
                 settles: BidIdentity {
                     author: settles.author.clone(),
                     sequence: settles.sequence,
+                    family: settles.family.clone(),
                 },
                 accepts: AcceptIdentity {
                     author: accepts.author.clone(),
                     sequence: accepts.sequence,
+                    family: accepts.family.clone(),
                 },
             })
         }

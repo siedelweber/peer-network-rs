@@ -3829,7 +3829,7 @@ fn bundle_in(
     .map_err(FormationFailure::Graph)
 }
 
-/// Claim: Accept and Ratify form only complete Actor-to-Actor projections with both exact signed comfort and equity bounded independently, author-fixed sources and the settlement partner named by their Bid and exact Accept. Their metadata introduces no Offer incidence; wrong endpoint constructors, wrong partners and incomplete coordinate carriers refuse without a title or recognition verdict.
+/// Claim: Accept and Ratify form only complete Actor-to-Actor projections with both exact signed comfort and equity bounded independently, author-fixed sources and Actor targets. Their metadata introduces no Offer incidence; wrong endpoint constructors and incomplete coordinate carriers refuse, while partner binding belongs to recognition without a title or recognition verdict.
 /// ´claim:formation:settlement-requires-complete-typed-actor-incidence´
 /// ´test:integration:settlement-projections´
 #[test]
@@ -3862,7 +3862,6 @@ fn settlement_projections() {
             }
         }
         for target in [
-            named("addr", "other"),
             named("prof", "a"),
             named("name", "a"),
             PublicReference::Minted(inputs[0].id.clone()),
@@ -3906,7 +3905,7 @@ fn settlement_projections() {
     }
 }
 
-/// Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced Bid and Accept projections, including their permitted removals. Malformed referenced coordinates, withheld approval or removal authority refuse even when projecting only the dependent act; records still refuses dangling, mistyped and different-Bid targets before graph formation.
+/// Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced acts, including permitted removals. Missing or non-earlier targets, malformed referenced formation and withheld approval or removal authority refuse. Earlier wrong-family targets and different-Bid references retain their exact family and actor incidence without a binding verdict; recognition checks clause (ii).
 /// ´claim:formation:settlement-targets-require-complete-authorized-acts´
 /// ´test:integration:settlement-context´
 #[test]
@@ -3947,38 +3946,43 @@ fn settlement_context() {
         );
     }
     let mut wrong = inputs.clone();
-    wrong[2].id.author = "other".into();
-    wrong[2].legs[0].id.act = wrong[2].id.clone();
-    wrong[2].legs[0].source = named("addr", "other");
-    assert_eq!(
-        bundle_in(&wrong[2], &wrong),
-        Err(FormationFailure::Graph(RegistrationError::Incidence))
-    );
-    let mut wrong = inputs.clone();
     wrong[1].body.settlement = Some(pn_records::SettlementReferences::Accept {
         settles: wrong[2].id.clone(),
     });
     assert!(matches!(
         validate_history(&wrong, &names()),
-        Err(pn_records::ValidationError::InvalidRepresentation {
-            cause: pn_records::InvalidCause::SettlementReferences,
+        Err(pn_records::ValidationError::Parent {
+            cause: pn_records::ParentCause::NotEarlier,
             ..
         })
     ));
-    let mut wrong = inputs.clone();
-    let other = bidding(7, 4, 7);
-    wrong[2].body.settlement = Some(pn_records::SettlementReferences::Ratify {
-        settles: other.id.clone(),
-        accepts: wrong[1].id.clone(),
-    });
-    wrong.push(other);
-    assert!(matches!(
-        validate_history(&wrong, &names()),
-        Err(pn_records::ValidationError::InvalidRepresentation {
-            cause: pn_records::InvalidCause::SettlementReferences,
-            ..
-        })
-    ));
+    for kind in 0..3 {
+        let mut wrong = inputs.clone();
+        let other = if kind == 2 {
+            bidding(7, 4, 7)
+        } else {
+            candidate("Registration", 7)
+        };
+        if kind == 0 {
+            wrong[1].body.settlement = Some(pn_records::SettlementReferences::Accept {
+                settles: other.id.clone(),
+            });
+        } else {
+            wrong[2].body.settlement = Some(pn_records::SettlementReferences::Ratify {
+                settles: if kind == 2 { other.id.clone() } else { wrong[0].id.clone() },
+                accepts: if kind == 1 { other.id.clone() } else { wrong[1].id.clone() },
+            });
+        }
+        wrong.push(other);
+        let history = validate_history(&wrong, &names()).unwrap();
+        let verifier = Verifier {
+            acts: wrong,
+            removals: false,
+        };
+        let graph = reconstruct(&history, &verifier).unwrap();
+        assert_eq!(graph.edge_count(), if kind == 2 { 6 } else { 5 });
+        assert!(project_complete_act(&history.acts()[2], &history, &verifier).is_ok());
+    }
     let history = validate_history(&inputs, &names()).unwrap();
     let other = validate_history(&[], &[]).unwrap();
     assert_eq!(

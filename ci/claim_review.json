@@ -1597,9 +1597,9 @@
       "operation": "pn-graph::formation::settlement_context",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:settlement-targets-require-complete-authorized-acts",
-      "before": "",
-      "after": "Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced Bid and Accept projections, including their permitted removals. Malformed referenced coordinates, withheld approval or removal authority refuse even when projecting only the dependent act; records still refuses dangling, mistyped and different-Bid targets before graph formation.",
-      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
+      "before": "Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced Bid and Accept projections, including their permitted removals. Malformed referenced coordinates, withheld approval or removal authority refuse even when projecting only the dependent act; records still refuses dangling, mistyped and different-Bid targets before graph formation.",
+      "after": "Claim: A settlement projection requires its exact supplied-history act and complete authorized referenced acts, including permitted removals. Missing or non-earlier targets, malformed referenced formation and withheld approval or removal authority refuse. Earlier wrong-family targets and different-Bid references retain their exact family and actor incidence without a binding verdict; recognition checks clause (ii).",
+      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
     },
     {
       "operation": "pn-graph::formation::settlement_partition",
@@ -1613,9 +1613,9 @@
       "operation": "pn-graph::formation::settlement_projections",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:settlement-requires-complete-typed-actor-incidence",
-      "before": "",
-      "after": "Claim: Accept and Ratify form only complete Actor-to-Actor projections with both exact signed comfort and equity bounded independently, author-fixed sources and the settlement partner named by their Bid and exact Accept. Their metadata introduces no Offer incidence; wrong endpoint constructors, wrong partners and incomplete coordinate carriers refuse without a title or recognition verdict.",
-      "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
+      "before": "Claim: Accept and Ratify form only complete Actor-to-Actor projections with both exact signed comfort and equity bounded independently, author-fixed sources and the settlement partner named by their Bid and exact Accept. Their metadata introduces no Offer incidence; wrong endpoint constructors, wrong partners and incomplete coordinate carriers refuse without a title or recognition verdict.",
+      "after": "Claim: Accept and Ratify form only complete Actor-to-Actor projections with both exact signed comfort and equity bounded independently, author-fixed sources and Actor targets. Their metadata introduces no Offer incidence; wrong endpoint constructors and incomplete coordinate carriers refuse, while partner binding belongs to recognition without a title or recognition verdict.",
+      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
     },
     {
       "operation": "pn-graph::formation::settlement_reconstruction",
@@ -2989,9 +2989,9 @@
       "operation": "pn-records::public::settlement::settlement_targets",
       "path": "packages/records/tests/public/settlement.rs",
       "claim": "RECORDS::claim:acts:settlement-targets-resolve-by-family-and-bid",
-      "before": "",
-      "after": "Claim: Settlement metadata is required only in its matching Accept or Ratify variant, resolves an Offer-minting Bid and the exact Accept naming that Bid, and refuses missing, mistyped, mismatched or misplaced metadata independently of graph formation.",
-      "review": "Scoped records witnesses establish typed settlement resolution and a distinct causal-parent union for closure, candidate placement and retained-time checks. Complete graph formation and authentication of the targets remain separate obligations; neither ordering question or title recognition is discharged."
+      "before": "Claim: Settlement metadata is required only in its matching Accept or Ratify variant, resolves an Offer-minting Bid and the exact Accept naming that Bid, and refuses missing, mistyped, mismatched or misplaced metadata independently of graph formation.",
+      "after": "Claim: Settlement metadata is required only in its matching Accept or Ratify variant, requires existing earlier act targets, and retains wrong-family or different-Bid references without a binding verdict. Missing targets, malformed variants and non-earlier placement still refuse; family and same-Bid binding belong to recognition.",
+      "review": "Settlement reference existence, earlier placement and complete authorization remain formation obligations. Earlier wrong-family and different-Bid references are retained, with their binding determined separately by recognition clause (ii). Recognition evidence is scoped to compliant histories; title folding and faulted ordering remain held."
     },
     {
       "operation": "pn-records::public::settlement::settlement_time",
