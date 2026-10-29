@@ -3260,10 +3260,10 @@
     {
       "operation": "pn-verification::recognition::title_premises",
       "path": "packages/verification/tests/recognition.rs",
-      "claim": "VERIFICATION::claim:verification:title-requires-complete-compliant-genesis-evidence",
-      "before": "Claim: Compliant title replay revalidates its complete graph, refuses missing or later Item genesis at formation, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Faulted time yields a whole-result hold instead of any partial certificate.",
+      "claim": "VERIFICATION::claim:verification:title-voids-dangling-items-and-keeps-faults-as-evidence",
+      "before": "Claim: Title replay revalidates its complete graph, admits dangling Item endpoints with void title and failed owner authorization before genesis, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Stamp faults do not change the certificate.",
       "after": "Claim: Title replay revalidates its complete graph, admits dangling Item endpoints with void title and failed owner authorization before genesis, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Stamp faults do not change the certificate.",
-      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
+      "review": "Retires VERIFICATION::claim:verification:title-requires-complete-compliant-genesis-evidence in favor of VERIFICATION::claim:verification:title-voids-dangling-items-and-keeps-faults-as-evidence at this witness site. The statement and executable witness are unchanged: dangling Items have void title before genesis, and retained stamp faults do not determine the certificate. The new label names that established result without implying a compliant-genesis admission requirement."
     },
     {
       "operation": "pn-verification::recognition::title_replay_edges",

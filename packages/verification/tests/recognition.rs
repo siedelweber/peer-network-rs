@@ -820,7 +820,7 @@ fn title_boundaries() {
 }
 
 /// Claim: Title replay revalidates its complete graph, admits dangling Item endpoints with void title and failed owner authorization before genesis, keeps boundary zero empty, introduces fresh genesis only at its positive boundary, authorizes a same-epoch fresh thread by its genesis owner, and gives ordinary Owner updates no title force. Stamp faults do not change the certificate.
-/// ´claim:verification:title-requires-complete-compliant-genesis-evidence´
+/// ´claim:verification:title-voids-dangling-items-and-keeps-faults-as-evidence´
 /// ´test:integration:title-premises´
 #[test]
 fn title_premises() {
