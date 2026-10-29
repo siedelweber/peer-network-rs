@@ -50,7 +50,7 @@ def validate():
     # Claim: nonempty release pins cover every current inventory and constants field.
     inventory = data('inventory')
     constants = data('constants')
-    if not (len(inventory) == 1648 and len({row['label'] for row in inventory}) == 1648):
+    if not (len(inventory) == 1659 and len({row['label'] for row in inventory}) == 1659):
         raise ValueError('inventory label census')
     placeholders = [row for row in inventory if re.search(r'^Track\s+.+\s+as a separately addressable\s+', row['statement'])]
     structural = {'section', 'subsection', 'appendix', 'motto'}
@@ -58,7 +58,7 @@ def validate():
     print(f'INVENTORY-PLACEHOLDERS rows={len(inventory)} structural={len(placeholders) - len(refused)} refused={len(refused)}')
     if refused:
         raise ValueError('obligation-bearing inventory placeholders: ' + ', '.join(refused))
-    if not (len(constants) == 2801 and len({row['id'] for row in constants}) == 2801):
+    if not (len(constants) == 2833 and len({row['id'] for row in constants}) == 2833):
         raise ValueError('constants id census')
     for name, pin in [('inventory', CURRENT_INVENTORY_PIN), ('constants', REFRESHED_CONSTANTS_PIN), ('questions', RELEASE_QUESTIONS_PIN)]:
         selection = release_projection(name, data(name))
@@ -166,9 +166,9 @@ def validate():
     print('PAPER-KINDS=' + json.dumps({kind: dict(citable=sum(row['citable'] for row in inventory if row['label'].split(':')[0] == kind), ineligible=sum(not row['citable'] for row in inventory if row['label'].split(':')[0] == kind)) for kind in sorted({row['label'].split(':')[0] for row in inventory})}, sort_keys=True))
 
 
-PAPER_TAG = 'network-v0.29.2'
-CURRENT_INVENTORY_PIN = '6d2eb06b4e15d77ac267708d91bdbda70b94319510406ae15fa6e96a3ec9dc56'
-REFRESHED_CONSTANTS_PIN = '81cdbae108d0d3b3471cb6ad0e4febb07b93f05e598826a569816263f338b6d2'
+PAPER_TAG = 'network-v0.30.0'
+CURRENT_INVENTORY_PIN = '363c21e4f98cb205732c05d5ba1c91109c43bbb0215460ccd38ceb8a3efcaba1'
+REFRESHED_CONSTANTS_PIN = '169e0b6187ae4080ff47a42bd70788e84ba59a0f744aa396a4c617ce3a0e5641'
 RELEASE_QUESTIONS_PIN = '80605718e898106860948960cd9aaa4b49ccf94532a9b465d826f7c5eb2c1e81'
 
 

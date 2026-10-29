@@ -28,7 +28,7 @@
     },
     {
       "category": "chapter",
-      "count": 247,
+      "count": 259,
       "name": "04 Graph"
     },
     {
@@ -88,12 +88,12 @@
     },
     {
       "category": "chapter",
-      "count": 227,
+      "count": 228,
       "name": "F Verification"
     },
     {
       "category": "chapter",
-      "count": 11,
+      "count": 9,
       "name": "G Frontiers"
     },
     {
@@ -108,7 +108,7 @@
     },
     {
       "category": "constants",
-      "count": 2638,
+      "count": 2669,
       "home": "pn-verification",
       "name": ""
     },
@@ -138,33 +138,33 @@
     },
     {
       "category": "constants",
-      "count": 2,
+      "count": 3,
       "home": "pn-verification",
       "name": "reference"
     },
     {
       "category": "totals",
-      "count": 1648,
+      "count": 1659,
       "name": "inventory"
     },
     {
       "category": "totals",
-      "count": 2801,
+      "count": 2833,
       "name": "constants"
     },
     {
       "category": "labels",
-      "count": 1612,
+      "count": 1625,
       "name": "explicit"
     },
     {
       "category": "labels",
-      "count": 36,
+      "count": 34,
       "name": "environment"
     },
     {
       "category": "constants-source",
-      "count": 2799,
+      "count": 2830,
       "name": "declarations"
     }
   ]
