@@ -11,6 +11,10 @@
       "may_cite": [
         {
           "owner": "EPOCH",
+          "target": "GRAPH"
+        },
+        {
+          "owner": "EPOCH",
           "target": "ROOT"
         },
         {

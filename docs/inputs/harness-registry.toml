@@ -1424,3 +1424,14 @@ implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::inputs::parameter_binding"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::ledger"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::ledger::ledger_derivation", "pn-epoch::ledger::whole_act_ledger", "pn-epoch::ledger::ledger_vintages", "pn-epoch::ledger::ledger_aliases"]

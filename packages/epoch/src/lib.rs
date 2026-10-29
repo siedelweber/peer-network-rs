@@ -1,6 +1,8 @@
 //! Exact structural compiler inputs; no publication encoding or standing solve.
 //! (´def:compiler:boundary-inputs´)
 
+pub mod ledger;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use nrz_cas::{

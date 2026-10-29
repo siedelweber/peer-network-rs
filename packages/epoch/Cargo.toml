@@ -9,11 +9,13 @@ version.workspace = true
 
 [dependencies]
 pn-records = { path = "../records" }
+pn-graph = { path = "../graph" }
 nrz-cas.workspace = true
 tracing.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]
+pn-records = { path = "../records", features = ["test-support"] }
 cli-common.workspace = true
 pn-testkit.workspace = true
 

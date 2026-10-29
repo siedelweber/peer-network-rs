@@ -188,7 +188,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(outcomes['default'],outcomes['trace'])
 
     def test_epoch_inputs(self):
-        """Claim: The real compiler parameter boundary preserves exact successful inputs and missing-profile refusals with observation disabled, default and trace; enabled observation retains both epoch invocations and trace carries the public constants and results.
+        """Claim: The real compiler parameter and ledger boundaries preserve exact successful inputs, ledger values and typed refusals with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.
         ´claim:discipline:epoch-inputs-retain-observed-results´
         ´test:integration:test-epoch-inputs´
         """
@@ -200,16 +200,18 @@ class Processes(unittest.TestCase):
             samples[mode] = result.stdout
             self.assertIn(b'MissingProfile', result.stdout)
             self.assertIn(b'CompilerInputs', result.stdout)
+            self.assertIn(b'FinalLedger', result.stdout)
+            self.assertIn(b'Boundary', result.stdout)
             if mode == 'disabled': continue
             rows = [json.loads(line) for line in result.stderr.splitlines()]
             summary = expanded(next(row['metrics'] for row in rows if row.get('kind') == 'metric_summary'))
             stem = 'epoch__root__sig__design__epoch__'
             accounting = distribution(summary)
-            self.assertEqual(accounting[stem+'started_operations', ''], 2)
+            self.assertEqual(accounting[stem+'started_operations', ''], 4)
             instruments = {row['name']: row for row in summary['instruments'] if row['name'].startswith(stem)}
-            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 2)
+            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 4)
             if mode == 'trace':
-                for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass'):
+                for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass', b'compile_ledger', b'RecognizedMarkers', b'FinalLedger'):
                     self.assertIn(marker, result.stderr)
         self.assertEqual(samples['disabled'], samples['default'])
         self.assertEqual(samples['default'], samples['trace'])

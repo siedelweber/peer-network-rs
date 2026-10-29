@@ -50,9 +50,11 @@ fn parameter_binding() {
     let mut bad = input.clone();
     bad.profiles.push(bad.profiles[0].clone());
     refuse(bad, InputError::ProfileIdentity);
-    let mut bad = input.clone();
-    bad.self_base = "zero".into();
-    refuse(bad, InputError::SelfBase);
+    for base in ["zero", "negative"] {
+        let mut bad = input.clone();
+        bad.self_base = base.into();
+        refuse(bad, InputError::SelfBase);
+    }
     let mut bad = input.clone();
     bad.self_base = "absent".into();
     refuse(bad, InputError::Constant);

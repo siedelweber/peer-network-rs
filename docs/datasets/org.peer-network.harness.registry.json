@@ -4124,6 +4124,22 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-epoch::ledger::ledger_derivation",
+        "pn-epoch::ledger::whole_act_ledger",
+        "pn-epoch::ledger::ledger_vintages",
+        "pn-epoch::ledger::ledger_aliases"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::ledger",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

@@ -6774,6 +6774,16 @@
         "boundary": "pn-epoch::packages/epoch/src/lib.rs::bind_inputs",
         "class_decision": "epoch-inputs"
       }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/ledger.rs",
+      "item": "ledger::compile_ledger",
+      "owner": "EPOCH",
+      "signature": "fn compile_ledger (inputs : & [CompilerInputs] , prices : & [ChargedPrice] , markers : & RecognizedMarkers , history : & ValidatedHistory , verifier : & impl RegistrationVerifier , numeric : & mut NumericContext , limits : Limits ,) -> Result < FinalLedger , LedgerError >",
+      "claim": "ROOT::alg:design:ledger",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -13074,6 +13084,17 @@
         "secret_flow": "epoch-secret_flow",
         "exposure_consumers": "epoch-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/ledger.rs::ledger::compile_ledger",
+      "body": "{ let last = inputs . last () . ok_or (LedgerError :: Boundary) ? . parameters () . boundary ; if inputs . len () != prices . len () || u64 :: try_from (inputs . len ()) . ok () != Some (last) || markers . markers () . first () . is_none_or (| m | m . identity () . index != 0 || ! m . destructions () . is_empty ()) || markers . markers () . len () <= inputs . len () || history . acts () . iter () . any (| a | a . position () . 0 > last) { return Err (LedgerError :: Boundary) ; } pn_graph :: formation :: reconstruct_replay (history , verifier) ? ; let mut budget = Budget :: new (limits) ? ; let mut gross = BTreeMap :: new () ; let mut balances = BTreeMap :: new () ; let mut counts = BTreeMap :: new () ; let mut debits = BTreeMap :: new () ; let mut snapshots = Vec :: new () ; let mut seen = BTreeSet :: new () ; let unit = inputs [0] . parameters () . numeraire . amount () . unit () ; for (offset , (input , price)) in inputs . iter () . zip (prices) . enumerate () { let boundary = u64 :: try_from (offset) . map_err (| _ | LedgerError :: Boundary) ? + 1 ; if input . parameters () . boundary != boundary || markers . markers () [offset + 1] . identity () . index != boundary { return Err (LedgerError :: Boundary) ; } if input . parameters () . numeraire . amount () . unit () != unit { return Err (LedgerError :: Units) ; } let expected = numeric . charged_price (price . wall () , & input . parameters () . numeraire , input . constants () . content () . floor) ? ; if & expected != price { return Err (LedgerError :: Price) ; } let mut increment = BTreeMap :: new () ; for (identity , record) in markers . markers () [offset + 1] . destructions () { if record . amount . unit () != unit { return Err (LedgerError :: Units) ; } counts . entry (record . address . clone ()) . or_insert (ActionCount (0)) ; if seen . insert (identity . clone ()) { add (& mut gross , & record . address , record . amount . exact () , & mut budget) ? ; add (& mut increment , & record . address , record . amount . exact () , & mut budget) ? ; add (& mut balances , & record . address , record . amount . exact () , & mut budget) ? ; } } for act in history . acts () . iter () . filter (| act | act . position () . 0 == boundary) { let address = Address (act . id () . author . clone ()) ; let count = counts . entry (address . clone ()) . or_insert (ActionCount (0)) ; count . 0 = count . 0 . checked_add (1) . ok_or (LedgerError :: Count) ? ; let debit = numeric . consummate (price , ActionCount (1) , boundary) ? ; let negative = format ! (\"-{}\" , debit . charged () . exact ()) ; add (& mut balances , & address , & negative , & mut budget) ? ; debits . insert (act . id () . clone () , debit) ; } if let Some ((address , _)) = balances . iter () . find (| (_ , balance) | balance . is_negative ()) { return Err (LedgerError :: InsufficientBalance { address : address . clone () , boundary , }) ; } snapshots . push (BurnSnapshot { boundary , gross : amounts (& gross , unit , numeric , & mut budget) ? , increment : amounts (& increment , unit , numeric , & mut budget) ? , }) ; } Ok (FinalLedger { snapshots , balances : amounts (& balances , unit , numeric , & mut budget) ? , counts , debits , }) }",
+      "class_decision": "epoch-ledger",
+      "item_premise": "Ledger derivation consumes public recognized markers, complete public act history, declared input editions, writing prices and arithmetic budgets. The verifier must expose only public approval verification. Arguments, result and typed refusal are recorded at trace; no private witness, canonical encoding or cryptographic recipe is admitted. Ledger values and observation are independent.",
+      "assessments": {
+        "full_recording": "epoch-ledger-full_recording",
+        "secret_flow": "epoch-ledger-secret_flow",
+        "exposure_consumers": "epoch-ledger-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -15992,6 +16013,33 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "epoch-inputs",
       "expansion_review": "Derived structural cloning, equality and complete Debug retain public fields; typed Error messages contain no secret data. Generated methods inherit parameter validation."
+    },
+    {
+      "item": "ledger::BurnSnapshot",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/ledger.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-ledger",
+      "expansion_review": "Structural Clone, Debug, equality and Error preserve complete public snapshot, numeric and refusal values. No secrets enter these carriers."
+    },
+    {
+      "item": "ledger::FinalLedger",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/ledger.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-ledger",
+      "expansion_review": "Structural Clone, Debug, equality and Error preserve complete public snapshot, numeric and refusal values. No secrets enter these carriers."
+    },
+    {
+      "item": "ledger::LedgerError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/ledger.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-ledger",
+      "expansion_review": "Structural Clone, Debug, equality and Error preserve complete public snapshot, numeric and refusal values. No secrets enter these carriers."
     }
   ],
   "reviewed_types": [
@@ -18102,6 +18150,24 @@
       "syntax": "# [doc = \" Pinned evidence and any fault for one run; pending evidence is never stored.\"] # [doc = \" (´def:wallet:settlement´)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Settlement { pinned : BTreeMap < ([u8 ; 32] , u32) , Evidence > , fault : Option < SettlementRefusal > , }"
     },
     {
+      "item": "ledger::BurnSnapshot",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/ledger.rs",
+      "syntax": "# [doc = \" One marker's cumulative snapshot and first-accepted increments by original address.\"] # [doc = \" (´def:compiler:final-ledger´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BurnSnapshot { pub boundary : u64 , pub gross : BTreeMap < Address , BurnAmount > , pub increment : BTreeMap < Address , BurnAmount > , }"
+    },
+    {
+      "item": "ledger::FinalLedger",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/ledger.rs",
+      "syntax": "# [doc = \" Derived values, not independently asserted replacement balances or publication bytes.\"] # [doc = \" (´def:compiler:final-ledger´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FinalLedger { pub snapshots : Vec < BurnSnapshot > , pub balances : BTreeMap < Address , BurnAmount > , pub counts : BTreeMap < Address , ActionCount > , pub debits : BTreeMap < ActId , ChargedVintage > , }"
+    },
+    {
+      "item": "ledger::LedgerError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/ledger.rs",
+      "syntax": "# [doc = \" No partial ledger escapes a failed derivation.\"] # [doc = \" (´def:compiler:final-ledger´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum LedgerError { # [error (\"incomplete or unauthorized act: {0}\")] Formation (# [from] RegistrationError) , # [error (\"numeric carrier: {0}\")] Numeric (# [from] NumericError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"boundary inputs, price vintages and marker sequence do not cover the same prefix\")] Boundary , # [error (\"burn units differ\")] Units , # [error (\"price differs from the boundary's declared numeraire or floor\")] Price , # [error (\"actor has insufficient own balance at the completed boundary\")] InsufficientBalance { address : Address , boundary : u64 } , # [error (\"action count exceeds the carrier\")] Count , }"
+    },
+    {
       "item": "FamilyProfile",
       "package": "pn-epoch",
       "path": "packages/epoch/src/lib.rs",
@@ -18291,6 +18357,16 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals."
+    },
+    {
+      "name": "epoch-ledger",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/ledger.rs::ledger::compile_ledger"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Ledger derivation consumes public recognized markers, complete public act history, declared input editions, writing prices and arithmetic budgets. The verifier must expose only public approval verification. Arguments, result and typed refusal are recorded at trace; no private witness, canonical encoding or cryptographic recipe is admitted. Ledger values and observation are independent."
     }
   ],
   "shapes": {
@@ -18531,8 +18607,8 @@
     },
     "shape-epoch": {
       "fields": [
-        "complete public constants history and parameter input at trace",
-        "complete validated parameters or typed refusal at trace",
+        "complete public compiler parameters, recognized markers and act history at trace",
+        "complete validated parameters, derived ledger or typed refusal at trace",
         "bounded outcome",
         "inclusive duration_seconds",
         "declared invocation work",
@@ -20155,6 +20231,21 @@
     "epoch-exposure_consumers": {
       "status": "reviewer-confirmed",
       "premises": "Compiler validation consumes public declaration history, exact literal names, family profiles and explicit arithmetic limits only. Complete Debug arguments and results are retained at trace. No secret carriers, cryptographic realization or publication encoding enter this API. Immutable borrows inherit its boundary; observation never changes validated values or refusals.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-ledger-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Ledger derivation consumes public recognized markers, complete public act history, declared input editions, writing prices and arithmetic budgets. The verifier must expose only public approval verification. Arguments, result and typed refusal are recorded at trace; no private witness, canonical encoding or cryptographic recipe is admitted. Ledger values and observation are independent.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-ledger-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Ledger derivation consumes public recognized markers, complete public act history, declared input editions, writing prices and arithmetic budgets. The verifier must expose only public approval verification. Arguments, result and typed refusal are recorded at trace; no private witness, canonical encoding or cryptographic recipe is admitted. Ledger values and observation are independent.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-ledger-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Ledger derivation consumes public recognized markers, complete public act history, declared input editions, writing prices and arithmetic budgets. The verifier must expose only public approval verification. Arguments, result and typed refusal are recorded at trace; no private witness, canonical encoding or cryptographic recipe is admitted. Ledger values and observation are independent.",
       "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
     }
   }

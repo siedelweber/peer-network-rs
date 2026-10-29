@@ -254,8 +254,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
       "before": "",
-      "after": "Claim: The real compiler parameter boundary preserves exact successful inputs and missing-profile refusals with observation disabled, default and trace; enabled observation retains both epoch invocations and trace carries the public constants and results.",
-      "review": "Runs actual parameter validation in three observation modes and compares exact result bytes, invocation totals, elapsed samples and trace public fields."
+      "after": "Claim: The real compiler parameter and ledger boundaries preserve exact successful inputs, ledger values and typed refusals with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.",
+      "review": "Runs actual parameter validation in three observation modes and compares exact result bytes, invocation totals, elapsed samples and trace public fields. Extended to exact ledger success and prefix refusal with recognized marker arguments and both operation stems."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -1400,6 +1400,38 @@
       "before": "",
       "after": "Claim: A compiler input retains its effective constants and exact declared unequal profile, refuses foreign and mixed editions, unit mismatch, missing or invalid family profiles, nonpositive self-base and invalid depth mass distinctly, and never substitutes equal weights or rounded literals.",
       "review": "Independent expected parameter values and typed negative causes exercise every family profile and retained effective edition; no standing or authentication verdict is inferred."
+    },
+    {
+      "operation": "pn-epoch::ledger::ledger_aliases",
+      "path": "packages/epoch/tests/ledger.rs",
+      "claim": "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
+      "before": "",
+      "after": "Claim: Repeated public aliases of one destruction leave its cumulative amount and first-accepted boundary unchanged.",
+      "review": "Changing only a duplicate record alias leaves all derived snapshots and ledger values unchanged; recognized destruction identity remains the counting premise. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again."
+    },
+    {
+      "operation": "pn-epoch::ledger::ledger_derivation",
+      "path": "packages/epoch/tests/ledger.rs",
+      "claim": "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
+      "before": "",
+      "after": "Claim: Replaying one recognized marker prefix derives exact cumulative and first-accepted burn by destruction identity, including aliases, delayed acceptance and empty-act epochs; final balances subtract each complete act's writing-price debit once, retain prior vintages and refuse own-balance insolvency without returning a partial ledger.",
+      "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling."
+    },
+    {
+      "operation": "pn-epoch::ledger::ledger_vintages",
+      "path": "packages/epoch/tests/ledger.rs",
+      "claim": "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
+      "before": "",
+      "after": "Claim: A later epoch charges its new price while the earlier act retains its original exact debit.",
+      "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again."
+    },
+    {
+      "operation": "pn-epoch::ledger::whole_act_ledger",
+      "path": "packages/epoch/tests/ledger.rs",
+      "claim": "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
+      "before": "",
+      "after": "Claim: Registration and a complete paired Send give two identities, three projections, two debits and two counts.",
+      "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again."
     },
     {
       "operation": "pn-graph::formation::affinity_coordinates",
