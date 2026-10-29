@@ -578,7 +578,7 @@ class SourceDiscipline(unittest.TestCase):
                 self.assertTrue(source_findings(Path('src/lib.rs'), source, 'printing'))
 
     def test_suppressions(self):
-        """Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels, distinct per-consumer reasons and justified smallest-function allows, with only declared fixture boundaries permitted in tests.
+        """Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels, distinct per-consumer reasons joined between source and register after declared citation and text normalization, and justified smallest-function allows, with only declared fixture boundaries permitted in tests.
         ´claim:discipline:test-lints-cannot-be-suppressed´
         ´test:integration:test-suppressions´
         """
@@ -617,6 +617,13 @@ class SourceDiscipline(unittest.TestCase):
         self.assertFalse(findings)
         register = [{"label": "cav:observe:secret-fixture", "path": "tests/probe.rs", "function": "fixture", "method": "expose_secret", "reason": "The fixture compares borrowed bytes"}]
         self.assertFalse(exposure_registry_findings(sites, register))
+        self.assertFalse(exposure_registry_findings(sites, [dict(register[0], reason='  THE fixture   compares borrowed bytes. ')]))
+        self.assertEqual(exposure_registry_findings(sites, [dict(register[0], reason='The fixture sends borrowed bytes')]),
+                         ['secret exposure source/register reason differs: cav:observe:secret-fixture'])
+        cited_sites = [dict(sites[0], reason='The fixture follows (´[ROOT-rule:observe:privacy]´).')]
+        cited_register = [dict(register[0], reason='The fixture follows (`rule:observe:privacy`)')]
+        self.assertFalse(exposure_registry_findings(cited_sites, cited_register))
+        self.assertTrue(exposure_registry_findings(cited_sites, [dict(cited_register[0], reason='The fixture follows (`rule:observe:spans`)')]))
         for bad in [[], register + register, [dict(register[0], function="other")], [dict(register[0], method="expose_secret_mut")]]:
             self.assertTrue(exposure_registry_findings(sites, bad))
         other = dict(sites[0], label="cav:observe:secret-other", item="other", reason="The second fixture checks its own decoded field")

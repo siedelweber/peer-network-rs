@@ -238,6 +238,12 @@ def source_findings(path, source, mode, forced_test=False):
     return findings
 
 
+def exposure_reason(reason):
+    # A source-local ROOT citation renders as the record's local Markdown citation.
+    rendered = re.sub(r"\(´\[ROOT-([a-z][a-z0-9:-]+)\]´\)", r"(`\1`)", reason)
+    return ' '.join(rendered.strip().rstrip('.').casefold().split())
+
+
 def exposure_registry_findings(sites, register):
     expected = {row["label"]: (row["path"], row["function"], row["method"]) for row in register}
     actual = {row["label"]: (row["path"], row["item"], row["method"]) for row in sites}
@@ -246,12 +252,16 @@ def exposure_registry_findings(sites, register):
     for entries in (sites, register):
         reasons = {}
         for row in entries:
-            reason = ' '.join(row.get('reason', '').strip().rstrip('.').casefold().split())
+            reason = exposure_reason(row.get('reason', ''))
             if not reason:
                 return ['secret exposure lacks its per-exit reason: '+row['label']]
             if reason in reasons:
                 return ['secret exposure reason reused across exits: '+reasons[reason]+' and '+row['label']]
             reasons[reason] = row['label']
+    registered = {row['label']: exposure_reason(row['reason']) for row in register}
+    for row in sites:
+        if exposure_reason(row['reason']) != registered[row['label']]:
+            return ['secret exposure source/register reason differs: '+row['label']]
     return []
 
 

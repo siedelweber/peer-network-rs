@@ -118,6 +118,62 @@ def capture_validator(test, configurations, outputs):
     return validate
 
 
+def storage_retake_control(test, command, env, validate, statements):
+    """Discard one captured record after checking the real child's complete content.
+
+    The injected loss selects the real retake path without generating node load.
+    Real child accounting is witnessed separately; injected findings stay local.
+    """
+    from devperf import report_loss
+    module=sys.modules[__name__]
+    run=subprocess.run
+    observe=witness
+    calls=[]
+    original=[]
+    findings=Path('.lane/storage-retake-control-findings.jsonl')
+    findings.unlink(missing_ok=True)
+    def child(argv, **kwargs):
+        calls.append(argv)
+        result=run(argv,**kwargs)
+        if len(calls)==1 and result.returncode==0:
+            stream=kwargs['stderr'];stream.flush()
+            raw=Path(stream.name).read_bytes();original.append(raw)
+            rows=[expanded(json.loads(line)) for line in raw.splitlines()]
+            validate(result,rows)  # No delivered private content can be discarded unchecked.
+            status=next(row for row in rows if row.get('kind')=='observation_status')
+            victim=next(i for i,row in enumerate(rows) if row.get('kind')!='observation_status' and row.get('process_id')==status['process_id'])
+            rows.pop(victim)
+            status['delivered_records']-=1
+            status['lost_records']+=1
+            status['loss_causes']['capture_overflow']=status['loss_causes'].get('capture_overflow',0)+1
+            stream.seek(0);stream.truncate()
+            stream.write(b''.join(json.dumps(row).encode()+b'\n' for row in rows));stream.flush()
+        return result
+    def observed(argv, status, wall, stderr):
+        injected=len(calls)==1 and bool(original)
+        if injected:
+            observe(argv,status,wall,original[0])
+            row=next(json.loads(line) for line in stderr.splitlines() if json.loads(line).get('kind')=='observation_status')
+            report_loss(dict(source='injected-storage-retake',configuration='injected capture discard control',operation=argv[0],outcome=f'exit:{status}',
+                level='trace',process_id=row['process_id'],utc=row['timestamp'],delivered_records=row['delivered_records'],lost_records=row['lost_records'],
+                undelivered_records=row['undelivered_records'],loss_causes=row['loss_causes']),findings,warnings=io.StringIO())
+        observe(argv,status,wall,stderr,injected=injected)
+    with patch('subprocess.run',side_effect=child),patch.object(module,'witness',side_effect=observed):
+        _,rows,status,_=traced_capture(test,command,env,'trace',validate,prefix='storage-retake-control')
+    test.assertGreaterEqual(len(calls),2)
+    test.assertLessEqual(len(calls),3)
+    test.assertTrue(all(argv==command for argv in calls))
+    test.assertEqual(status['delivered_records'],len(rows)-1)
+    text=decoded_content(rows)
+    for statement in statements:test.assertIn(statement,text)
+    retained=[json.loads(line) for line in findings.read_text().splitlines()]
+    test.assertEqual(len(retained),1)
+    test.assertEqual(retained[0]['classification'],'observation-completeness')
+    test.assertEqual(retained[0]['outcome'],'exit:0')
+    test.assertEqual(retained[0]['verdict_effect'],'none')
+    print(f'STORAGE-RETAKE-CONTROL injected=capture-discard attempts={len(calls)} statements={len(statements)} catalogue=present finding=retained')
+
+
 def capture_regressions(test, prefix):
     """Run both real test bodies against bad incomplete children followed by clean answers."""
     from devperf import report_loss
@@ -162,7 +218,7 @@ def capture_regressions(test, prefix):
             # Keep real loss reporting, but retain synthetic findings only in this fixture.
             def loss_report(record, output):return report_loss(record,findings,warnings=io.StringIO())
             transcript=io.StringIO()
-            with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(transcript):
+            with patch.object(module,'Path',side_effect=path), patch.object(module,'capture_regressions'), patch.object(module,'storage_retake_control'), patch('subprocess.run',side_effect=child), patch.dict(os.environ,PN_HOST_TEST_ROOT=str(root)), patch('harness.source_id',return_value='synthetic'), patch('devperf.report_loss',side_effect=loss_report) as loss, contextlib.redirect_stdout(transcript):
                 operation=getattr(HostRuntime(method),method)
                 if fault=='recovery':
                     operation()
@@ -245,7 +301,7 @@ class HostRuntime(unittest.TestCase):
         self.assertIn(b'forbidden_inline_sql',result.stderr)
 
     def test_storage_statements(self):
-        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal; acquisition takes at most three attempts and default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.
+        """Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal; acquisition takes at most three attempts and default and trace return identical bytes, while an injected capture loss forces real-child retaking with all statements including the catalogue query present, and a test-only metadata query is caught at the private role sentinel.
         ´claim:discipline:storage-results-preserve-the-secret-boundary´
         ´test:integration:test-storage-statements´
         """
@@ -278,6 +334,7 @@ class HostRuntime(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError,'without a named cause'):
             capture_complete(dict(lossy,loss_causes={'queue_full':1,'writer':0}))
         self.assertFalse(capture_complete(dict(lossy,lost_records=0,loss_causes={'queue_full':0},undelivered_records=3))[0])
+        storage_retake_control(self,[target,'storage::tests::storage_runtime','--exact','--nocapture'],env,validate,statements)
         env.update(PN_HOST_STORAGE_PRIVATE_CONTROL='1')
         result=subprocess.run([target,'storage::tests::storage_runtime','--exact','--nocapture'],env=env,capture_output=True,timeout=60,check=False)
         self.assertEqual(result.returncode,0)

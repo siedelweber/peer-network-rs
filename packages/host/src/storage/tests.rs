@@ -826,15 +826,36 @@ fn variant_vectors(
     extra
 }
 
-/// Claim: The closed storage statement set returns retained public values through `DataRows` under observation, with deterministic bytes and exact transaction results; its private service configuration remains behind Session.
+/// Claim: The closed storage statement set returns retained public values through `DataRows` under observation, with deterministic bytes and exact transaction results; every invocation resets its dedicated fixture before observation so a retake exercises bootstrap again, and its private service configuration remains behind Session.
 /// ´claim:history:closed-storage-statements-return-public-values´
 /// ´test:unit:storage-runtime´
 #[test]
 fn storage_runtime() {
-    let guard = cli_common::observation::bootstrap(true, false, tracing::Level::WARN).unwrap();
     let runtime = runtime();
+    let fixture = std::env::var("PN_HOST_STORAGE_FIXTURE").unwrap_or_else(|_| "storage-trace-initial.json".into());
+    // This database belongs only to this test. A prior capture must not turn
+    // bootstrap coverage into reopen coverage on the next child invocation.
     runtime.block_on(async {
-        let fixture = std::env::var("PN_HOST_STORAGE_FIXTURE").unwrap_or_else(|_| "storage-trace-initial.json".into());
+        let root = std::env::var_os("PN_HOST_TEST_ROOT").unwrap();
+        let mut file = std::fs::File::open(std::path::Path::new(&root).join(&fixture)).unwrap();
+        let config = crate::Configuration::acquire(Some("host-secured"), &mut file).unwrap();
+        let session = Session::connect(config).await.unwrap();
+        let initialized: bool = session
+            .client()
+            .query_one("SELECT to_regclass('public.pn_store_identity') IS NOT NULL", &[])
+            .await
+            .unwrap()
+            .get(0);
+        if initialized {
+            session
+                .client()
+                .batch_execute("DROP TABLE public.pn_closures, public.pn_versions, public.pn_store_identity")
+                .await
+                .unwrap();
+        }
+    });
+    let guard = cli_common::observation::bootstrap(true, false, tracing::Level::WARN).unwrap();
+    runtime.block_on(async {
         let mut store = store(&fixture).await;
         let value = Payload::rule(&encoding::text("public_storage_payload_731")).unwrap();
         let one = Version {

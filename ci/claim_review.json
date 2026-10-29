@@ -70,8 +70,8 @@
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:discipline:test-lints-cannot-be-suppressed",
       "before": "inner, conditional and inline-test suppressions refuse, including nesting.",
-      "after": "Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels, distinct per-consumer reasons and justified smallest-function allows, with only declared fixture boundaries permitted in tests.",
-      "review": "Read missing-reason and duplicate-source and duplicate-register reason controls, normalized duplicates and distinct-reason acceptance; semantics remain reviewed."
+      "after": "Inner and conditional suppressions and unrelated test suppressions refuse; secret exits require unique labels, distinct per-consumer reasons joined between source and register after declared citation and text normalization, and justified smallest-function allows, with only declared fixture boundaries permitted in tests.",
+      "review": "Read source/register mismatch refusal, whitespace and case acceptance, local citation rendering, changed citation refusal and retained uniqueness controls."
     },
     {
       "operation": "ci::test_discipline.SourceDiscipline.test_toolchain_versions",
@@ -158,8 +158,8 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-results-preserve-the-secret-boundary",
       "before": "",
-      "after": "Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal; acquisition takes at most three attempts and default and trace return identical bytes, while a test-only metadata query is caught at the private role sentinel.",
-      "review": "Read the real whole-test synthetic failed child with counted loss; it retains exactly one finding with exit:7, prints delivered/lost accounting and fails without retaking."
+      "after": "Claim: Every closed storage statement is exercised under a complete trace capture, written by the child to a file so that delivery never waits on the reader, and its decoded DataRows contain only public fixture content; every attempt resets its dedicated store before observation and checks private content and every completed child's public bytes before any retake, and counted trace loss retains its completeness finding after recovery or a failed child, with the original exit outcome witnessed before refusal; acquisition takes at most three attempts and default and trace return identical bytes, while an injected capture loss forces real-child retaking with all statements including the catalogue query present, and a test-only metadata query is caught at the private role sentinel.",
+      "review": "Read the real-child forced capture discard and complete retake: original content is validated before discarding, injected accounting stays separate, and the returned capture must contain all fourteen statements. Existing whole-test controls retain loss findings and refuse privacy or output violations before retaking."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_build_graph_census",
@@ -2046,8 +2046,8 @@
       "path": "packages/host/src/storage/tests.rs",
       "claim": "HOST::claim:history:closed-storage-statements-return-public-values",
       "before": "",
-      "after": "Claim: The closed storage statement set returns retained public values through `DataRows` under observation, with deterministic bytes and exact transaction results; its private service configuration remains behind Session.",
-      "review": "Read the fourteen closed SQL statements, including idempotent index bootstrap and catalogue definition verification, reached by fresh bootstrap, two versions, boundary reads and ReadHistory through audit_history; the only session-metadata query is opt-in test code for the negative scan."
+      "after": "Claim: The closed storage statement set returns retained public values through `DataRows` under observation, with deterministic bytes and exact transaction results; every invocation resets its dedicated fixture before observation so a retake exercises bootstrap again, and its private service configuration remains behind Session.",
+      "review": "Read the dedicated fixture reset before observation and before open_store on every invocation; the Python real-child retake control refuses if the reset is removed, because bootstrap statements then disappear."
     },
     {
       "operation": "pn-host::storage::tests::storage_scaling",
