@@ -149,6 +149,7 @@ fn affinity(names: &[PublicReference]) -> CandidateAct {
         family: "Affinity".into(),
     };
     CandidateAct {
+        commitments: None,
         id: id.clone(),
         body: StructuralBody {
             settlement: None,

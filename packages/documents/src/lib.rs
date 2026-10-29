@@ -228,6 +228,7 @@ fn validate_output(document: &str, vendors: &[PathBuf]) -> Result<()> {
                 | "packages/wallet/README.md"
                 | "packages/graph/README.md"
                 | "packages/epoch/README.md"
+                | "packages/act-profile/README.md"
                 | ".linter/environments.toml"
                 | ".linter/owners.toml"
                 | ".linter/policies.toml"

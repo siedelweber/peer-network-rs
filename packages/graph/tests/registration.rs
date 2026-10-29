@@ -23,6 +23,7 @@ fn candidate(author: &str, sequence: u64, position: u64) -> CandidateAct {
         family: "Registration".into(),
     };
     CandidateAct {
+        commitments: None,
         id: id.clone(),
         body: StructuralBody {
             settlement: None,

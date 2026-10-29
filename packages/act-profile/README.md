@@ -1,0 +1,42 @@
+# Shared act profile · `guide:profile:act-profile`
+
+**Section (Profile claims)** · `sec:profile:area-profile` If profile claims fail, openings can bind the wrong authored tuple, disclose removable private material or substitute unsupported anchor authority.
+
+**Definition (Scope)** · `def:profile:scope` Pure typed commitment computation and supplied-opening comparison implement a deterministic prerequisite to bite 8, not a signed envelope, production concealment or a canonical seven-part package. The package computes through the one protected canonical encoder, depends on records and interchange, and has no host, clock, entropy, network or signature operation. (`[ROOT-amend:identity:act-profile]`) states its ownership and holds.
+
+**Definition (Recipes)** · `def:profile:recipes` (`[ROOT-amend:identity:act-framing]`), (`[ROOT-amend:identity:act-proposal-admission]`), (`[ROOT-amend:identity:act-content-admission]`) and (`[ROOT-amend:identity:act-dependency-admission]`) define the immutable recipe identifiers, five preimages, semantic assurance, stale conditions and pre-one replacement. Both private intermediates remain secret carriers; only the three final residues are published.
+
+**Definition (Body)** · `def:profile:body` I is [act, author, sequence, family]. The canonical author is pn-devnet-v1/ followed by 64 lowercase hexadecimal run digits, a slash and 64 lowercase hexadecimal target digits, denoting assigned atoms rather than hashes. Sequences are u64. B is [I,layout,legs,quantities,license,asserted_parents,protocol_references,settlement,requested_content_state,requested_dependency_state]. Binary legs are one [binary,source,target]; paired legs are [A,source,target] then [T,source,target], with the T source equal to the A target and the first source equal to the author addr. References are I, [record,I,role], [mint,I], or [named,namespace,name], with node namespaces addr, prof and name. The latter's exact UTF-8 name has 1 to 1024 bytes. Quantities sort by exact name and retain [name,i64 value,one,0]; each coordinate has numerator and positive denominator, preserving exact authored pairs rather than rational equivalence. License is null or the two exact nonnegative unit-interval pairs, present only for self-mint Publish. Settlement is null, [Accept,bid_I] or [Ratify,bid_I,accept_I]. Original requested content is full-empty, full or reduced; dependency is full-empty, full or tombstoned. Full/empty requests must match supplied material. Later removals, stamps, positions and host enrichment are excluded from B. Referenced node predicates and authenticated family formation remain their owning graph boundary, not consequences of a matching digest.
+
+**Table (Closed family schema)** · `tab:profile:families` Signed coordinates s lie in [-1,1]; unit coordinates u lie in [0,1]. Each is stored as its exact authored pair. Endpoint predicates remain the graph formation contract.
+
+| Family | Shape and incidence | Authored coordinates / extra fields | Payload convention |
+| --- | --- | --- | --- |
+| Registration | binary: author Actor → its Profile | none; fixed `(1,1)` | profile data |
+| Publish | binary: author Actor → Content, existing or own mint | attachment `s`; license on own mint | content body |
+| Opinion | binary: author Actor → Passive | polarity `s`, reaction `s` | rationale |
+| Affinity | binary: author Actor → Type | association `s`, attraction `s` | rationale |
+| Participant | A: author Actor → origin Chat; T: same origin → destination Chat, existing or own mint | interactivity `s`, responsibility `s`, continuity `u` | participation note / continuity note |
+| Owner | binary: author Actor → Item, existing or own mint | attachment `s` | item description |
+| Join Request | binary: author Actor → Chat | urgency `s`, formality `s` | request message |
+| Invitation | A: author Actor → Chat; T: same Chat → invitee Profile | urgency `s`, formality `s`, relevance `u` | invitation message / empty |
+| De-invite | A: author Actor → Chat; T: same Chat → target Profile | none; both fixed `(1,1)` | reason / empty |
+| Tag | A: author Actor → Taggable; T: same target → Type | relevance `s`, confidence `u`; T swaps the A roles | rationale / empty |
+| Review | A: author Actor → Reviewable; T: same target → Comment, existing or own mint | enthusiasm `s`, effort `s`; T swaps the A roles | reviewer metadata / comment body |
+| Reference | A: author Actor → citing Passive artifact; T: that artifact → cited Passive target | effort `s`, enthusiasm `s`; T swaps the A roles | reference note / empty |
+| Bid | A: buyer Actor → Item; T: same Item → Offer, existing or own mint | generosity `s`, urgency `u`; T swaps the A roles | bid terms / offer body |
+| Send | A: author Actor → Chat; T: same Chat → Message, existing or own mint | importance `s`; A `(importance,1)`, T `(1,importance)` | metadata / message body |
+| Accept | binary: seller Actor → buyer Actor | comfort `s`, equity `s`; `Accept` settlement field | terms |
+| Ratify | binary: buyer Actor → seller Actor | comfort `s`, equity `s`; `Ratify` settlement field | receipt |
+| Withdraw | binary: buyer Actor → Offer | none; fixed `(1,1)` | reason |
+| Rescind | binary: seller Actor → Offer | none; fixed `(1,1)` | reason |
+| Leave | binary: author Actor → Chat | none; fixed `(1,1)` | parting reason |
+
+
+**Definition (Private inputs)** · `def:profile:private-inputs` N, salts, Y, dependency fields and private pre-digests enter secrecy containers and remain protected through canonical encoding and hashing. (`[ROOT-amend:identity:act-concealment]`) fixes their formats, conditional hiding and held production duties. ActId sets use records order: author UTF-8 bytes, numeric sequence, family UTF-8 bytes. Count limits are 1024 dependencies and 1024 asserted parents; dependency encoding is at most 262144 bytes, B at most 1048576 bytes and Y at most 65536 bytes. Closed constructors permit at most two legs and six quantities; auxiliary protocol references are empty. The count and fixed identifier bounds imply the dependency-byte ceiling independently. External envelope byte, nesting and decoded-node limits remain part of the deferred envelope acceptance, not a decoder implemented here.
+
+**Definition (Payload)** · `def:profile:payload` Binary payload rendering retains the exact single byte string. Paired rendering uses the canonical two-byte-string array [A_bytes,T_bytes], except that two empty fields render the distinguished zero-length aggregate. Invitation, De-invite, Tag and Reference require an empty T field. The final aggregate, including framing, obeys its byte ceiling. The commitment consumes aggregate Y opaquely and never interprets its prose or divides it into independent per-leg commitments.
+
+**Definition (Matching)** · `def:profile:matching` The pure checks establish only that these supplied opening fields match this supplied recorded commitment. Unsupported recipe tuples, malformed representations, exceeded bounds and unequal residues refuse. They do not authenticate an Actor, host, approval or anchor. The records adapter reads residues from the retained act and publishes a matched dependency list for recurrence and fault assessment, without replacing retained carriage. A fabricated anchor and matching fabricated opening may succeed, which witnesses the boundary's limit. Missing openings remain unavailable. Production authenticated use remains held under (`[ROOT-open:crypto:dependency-admission]`).
+
+**Amendment (Dependency-opening evidence)** · `amend:profile:opening-evidence` (`[ROOT-verif:design:dependency-opening-cases]`) has deterministic supplied-anchor evidence in (`claim:profile:opened-replay-preserves-structure-and-title`), (`claim:profile:fixed-recipes-bind-exact-authored-inputs`) and (`claim:profile:commitment-traces-retain-only-public-projection`). Fixed inputs and the explicitly declared fixture verifier recover recurrence without changing retained records, recognition or title; fabricated anchors can also match. Authentication and inclusion remain held under (`[ROOT-open:design:dependency-opening-recipe]`).

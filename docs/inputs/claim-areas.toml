@@ -330,3 +330,10 @@ area = "compiler"
 stake = "A mixed boundary or malformed parameter interpretation can compile a different final state from the accepted public inputs."
 register = "EPOCH::sec:compiler:area-compiler"
 contract = "EPOCH::def:compiler:boundary-inputs"
+
+[[rows]]
+owner = "ACTPROFILE"
+area = "profile"
+stake = "If profile claims fail, openings can bind the wrong authored tuple, disclose removable private material or substitute unsupported anchor authority."
+register = "ACTPROFILE::sec:profile:area-profile"
+contract = "ACTPROFILE::sec:profile:area-profile"

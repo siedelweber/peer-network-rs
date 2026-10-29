@@ -114,6 +114,7 @@ fn candidate(family: &str, sequence: u64) -> CandidateAct {
         vec![]
     };
     CandidateAct {
+        commitments: None,
         id: id.clone(),
         body: StructuralBody {
             settlement: None,

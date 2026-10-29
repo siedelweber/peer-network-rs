@@ -601,6 +601,54 @@
     {
       "owner": "EPOCH",
       "policy": "profile.claims-conform"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.citations-import-form"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.citations-imported-resolve"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.citations-layer-conform"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.citations-local-resolve"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.generated-regions-conform"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.heads-conform"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.mints-kind-conform"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.mints-unique"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.mints-well-formed"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "labels.outlines-conform"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "profile.tests-conform"
+    },
+    {
+      "owner": "ACTPROFILE",
+      "policy": "profile.claims-conform"
     }
   ]
 }

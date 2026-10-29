@@ -55,6 +55,7 @@ pub fn generate(words: &[u64]) -> Scenario {
             .map(|(_, act)| act.id.clone())
             .collect();
         acts.push(CandidateAct {
+            commitments: None,
             id: id.clone(),
             body: StructuralBody {
                 settlement: None,

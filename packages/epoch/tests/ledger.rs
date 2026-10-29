@@ -67,6 +67,7 @@ fn acts() -> Vec<CandidateAct> {
         family: "Registration".into(),
     };
     let first = CandidateAct {
+        commitments: None,
         id: id.clone(),
         body: StructuralBody {
             settlement: None,

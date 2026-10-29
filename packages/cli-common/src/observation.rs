@@ -747,6 +747,8 @@ pub enum OperationKind {
     Graph,
     /// Epoch compiler parameter and ledger operations.
     Epoch,
+    /// Shared act commitment and opening comparisons.
+    ActProfile,
 }
 impl OperationKind {
     const fn stem(self) -> &'static str {
@@ -763,6 +765,7 @@ impl OperationKind {
             Self::Wallet => "wallet__root__sig__design__devnet",
             Self::Graph => "graph__root__sig__design__graph",
             Self::Epoch => "epoch__root__sig__design__epoch",
+            Self::ActProfile => "actprofile__root__amend__decomposition__act_profile",
         }
     }
     const fn label(self) -> &'static str {
@@ -776,6 +779,7 @@ impl OperationKind {
             Self::Wallet => "sig:design:devnet",
             Self::Graph => "sig:design:graph",
             Self::Epoch => "sig:design:epoch",
+            Self::ActProfile => "amend:decomposition:act-profile",
         }
     }
     const fn owner(self) -> &'static str {
@@ -788,6 +792,7 @@ impl OperationKind {
             Self::Wallet => "WALLET",
             Self::Graph => "GRAPH",
             Self::Epoch => "EPOCH",
+            Self::ActProfile => "ACTPROFILE",
             _ => "CLICOMMON",
         }
     }
@@ -1171,6 +1176,7 @@ impl<S: Subscriber + for<'a> LookupSpan<'a>> Layer<S> for AccountingLayer {
                     Some("WALLET") => Some(OperationKind::Wallet),
                     Some("GRAPH") => Some(OperationKind::Graph),
                     Some("EPOCH") => Some(OperationKind::Epoch),
+                    Some("ACTPROFILE") => Some(OperationKind::ActProfile),
                     Some("CLICOMMON") => Some(OperationKind::PublicCli),
                     Some("EXECWRAP") => Some(OperationKind::PublicExec),
                     _ => None,

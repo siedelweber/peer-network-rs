@@ -1435,3 +1435,22 @@ implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::ledger::ledger_derivation", "pn-epoch::ledger::whole_act_ledger", "pn-epoch::ledger::ledger_vintages", "pn-epoch::ledger::ledger_aliases"]
+
+[[rows]]
+kind = "implementation"
+name = "pn-act-profile-rust"
+evidence = "pure"
+contract = "typed commitment comparison and supplied-opening replay"
+edition = "0.1"
+
+
+[[rows]]
+kind = "suite"
+name = "pn-act-profile"
+status = "active"
+runner = "nextest"
+level = "unit"
+implementation = "pn-act-profile-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-act-profile::tests::commitment_trace_privacy", "pn-act-profile::tests::fixed_recipes_and_controls", "pn-act-profile::tests::opened_replay"]

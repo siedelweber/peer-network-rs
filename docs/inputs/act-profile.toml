@@ -1,0 +1,6 @@
+namespace = "org.peer-network.act.profile"
+version = [1, 0, 0]
+
+[[rows]]
+name = "scope"
+statement = "Pure typed commitment computation and supplied-opening comparison implement a deterministic prerequisite to bite 8, not a signed envelope, production concealment or a canonical seven-part package."

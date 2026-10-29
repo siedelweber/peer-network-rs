@@ -10,7 +10,7 @@ use serde_json::{Value, json};
 
 include!("observation_operations.rs");
 
-pub(super) const STEMS: [&str; 12] = [
+pub(super) const STEMS: [&str; 13] = [
     "clicommon__root__rule__observe__metering",
     "execwrap__root__rule__observe__privacy",
     "clicommon__root__dec__observe__sinks",
@@ -23,6 +23,7 @@ pub(super) const STEMS: [&str; 12] = [
     "wallet__root__sig__design__devnet",
     "graph__root__sig__design__graph",
     "epoch__root__sig__design__epoch",
+    "actprofile__root__amend__decomposition__act_profile",
 ];
 pub(super) const OUTCOMES: [&str; 6] = ["success", "refusal", "error", "cancelled", "unwinding", "incomplete"];
 

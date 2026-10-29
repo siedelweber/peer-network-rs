@@ -34,6 +34,14 @@
       "exceptions": 2,
       "generators": 7,
       "helpers": 0,
+      "instrumented": 8,
+      "name": "pn-act-profile",
+      "operations": 10
+    },
+    {
+      "exceptions": 2,
+      "generators": 7,
+      "helpers": 0,
       "instrumented": 2,
       "name": "pn-epoch",
       "operations": 4
@@ -63,12 +71,12 @@
       "operations": 155
     },
     {
-      "exceptions": 67,
-      "generators": 84,
+      "exceptions": 68,
+      "generators": 89,
       "helpers": 0,
-      "instrumented": 38,
+      "instrumented": 39,
       "name": "pn-records",
-      "operations": 105
+      "operations": 107
     },
     {
       "exceptions": 23,

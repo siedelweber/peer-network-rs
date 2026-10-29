@@ -447,3 +447,39 @@ allowances = []
 
 [EPOCH."profile.claims-conform"]
 allowances = []
+
+[ACTPROFILE."labels.citations-import-form"]
+allowances = []
+
+[ACTPROFILE."labels.citations-imported-resolve"]
+allowances = []
+
+[ACTPROFILE."labels.citations-layer-conform"]
+allowances = []
+
+[ACTPROFILE."labels.citations-local-resolve"]
+allowances = []
+
+[ACTPROFILE."labels.generated-regions-conform"]
+allowances = []
+
+[ACTPROFILE."labels.heads-conform"]
+allowances = []
+
+[ACTPROFILE."labels.mints-kind-conform"]
+allowances = []
+
+[ACTPROFILE."labels.mints-unique"]
+allowances = []
+
+[ACTPROFILE."labels.mints-well-formed"]
+allowances = []
+
+[ACTPROFILE."labels.outlines-conform"]
+allowances = []
+
+[ACTPROFILE."profile.tests-conform"]
+allowances = []
+
+[ACTPROFILE."profile.claims-conform"]
+allowances = []

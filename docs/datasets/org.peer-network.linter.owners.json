@@ -172,6 +172,26 @@
         {
           "owner": "INTERCHANGE",
           "target": "CLICOMMON"
+        },
+        {
+          "owner": "ACTPROFILE",
+          "target": "ROOT"
+        },
+        {
+          "owner": "ACTPROFILE",
+          "target": "RECORDS"
+        },
+        {
+          "owner": "ACTPROFILE",
+          "target": "INTERCHANGE"
+        },
+        {
+          "owner": "ACTPROFILE",
+          "target": "CLICOMMON"
+        },
+        {
+          "owner": "ACTPROFILE",
+          "target": "GRAPH"
         }
       ],
       "name": "declaration",
@@ -188,7 +208,8 @@
         "WALLET",
         "GRAPH",
         "EPOCH",
-        "VENDOR"
+        "VENDOR",
+        "ACTPROFILE"
       ],
       "partitions": [
         {
@@ -275,6 +296,11 @@
           "name": "testkit",
           "owner": "TESTKIT",
           "pattern": "%s\"packages/testkit/\" *VCHAR"
+        },
+        {
+          "name": "act-profile-package",
+          "owner": "ACTPROFILE",
+          "pattern": "%s\"packages/act-profile/\" *VCHAR"
         }
       ]
     }

@@ -25,6 +25,7 @@ pub fn act(sequence: u64, layout: Layout) -> CandidateAct {
         Layout::Paired => &[Role::A, Role::T],
     };
     CandidateAct {
+        commitments: None,
         body: StructuralBody {
             settlement: None,
             license: None,

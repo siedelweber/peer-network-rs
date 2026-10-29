@@ -1402,6 +1402,30 @@
       "review": "Reviewed the executable assertions and premises; replaced the identifier respelling with their scoped consequence."
     },
     {
+      "operation": "pn-act-profile::tests::commitment_trace_privacy",
+      "path": "packages/act-profile/src/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:commitment-traces-retain-only-public-projection",
+      "before": "",
+      "after": "Claim: Complete traced commitment computations retain the three fixed residues without emitting the nonce, salts, payload, dependency list or private pre-digests.",
+      "review": "Read the fixed recipe comparisons, exact authored-pair and malformed-input controls, full-trace secret-content negatives and nontrivial settlement replay fixture. These establish supplied-anchor equality and preserved structural verdicts, not entropy, custody, formation authority or signature authentication."
+    },
+    {
+      "operation": "pn-act-profile::tests::fixed_recipes_and_controls",
+      "path": "packages/act-profile/src/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:fixed-recipes-bind-exact-authored-inputs",
+      "before": "",
+      "after": "Claim: Independently authored fixed preimages bind both private intermediates and all three public residues; typed controls preserve the profile's boundaries.",
+      "review": "Read the fixed recipe comparisons, exact authored-pair and malformed-input controls, full-trace secret-content negatives and nontrivial settlement replay fixture. These establish supplied-anchor equality and preserved structural verdicts, not entropy, custody, formation authority or signature authentication."
+    },
+    {
+      "operation": "pn-act-profile::tests::opened_replay",
+      "path": "packages/act-profile/src/tests.rs",
+      "claim": "ACTPROFILE::claim:profile:opened-replay-preserves-structure-and-title",
+      "before": "",
+      "after": "Claim: Matching tombstone openings restore exact recurrence and retain placement faults without changing settlement verdicts or title; missing or refused evidence never authenticates anchors or replaces retained carriage.",
+      "review": "Read the fixed recipe comparisons, exact authored-pair and malformed-input controls, full-trace secret-content negatives and nontrivial settlement replay fixture. These establish supplied-anchor equality and preserved structural verdicts, not entropy, custody, formation authority or signature authentication."
+    },
+    {
       "operation": "pn-epoch::inputs::parameter_binding",
       "path": "packages/epoch/tests/inputs.rs",
       "claim": "EPOCH::claim:compiler:boundary-inputs-bind-complete-declared-parameters",

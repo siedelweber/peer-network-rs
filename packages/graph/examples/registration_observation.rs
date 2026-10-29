@@ -36,6 +36,7 @@ fn main() {
         })
         .collect();
     let act = CandidateAct {
+        commitments: None,
         id: id.clone(),
         body: StructuralBody {
             settlement: None,

@@ -26,6 +26,15 @@ helpers = 0
 generators = 11
 
 [[rows]]
+name = "pn-act-profile"
+operations = 10
+instrumented = 8
+exceptions = 2
+helpers = 0
+generators = 7
+
+
+[[rows]]
 name = "pn-epoch"
 operations = 4
 instrumented = 2
@@ -58,12 +67,11 @@ generators = 91
 
 [[rows]]
 name = "pn-records"
-operations = 105
-instrumented = 38
-exceptions = 67
+operations = 107
+instrumented = 39
+exceptions = 68
 helpers = 0
-generators = 84
-
+generators = 89
 [[rows]]
 name = "pn-wallet"
 operations = 29

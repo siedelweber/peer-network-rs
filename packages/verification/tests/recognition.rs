@@ -135,6 +135,7 @@ fn act(family: &str, author: &str, sequence: u64, epoch: u64, target: PublicRefe
         sequence,
     };
     CandidateAct {
+        commitments: None,
         legs: vec![CandidateLeg {
             id: EdgeId {
                 act: id.clone(),

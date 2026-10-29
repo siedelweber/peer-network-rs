@@ -2289,11 +2289,13 @@ evidence_paragraph = "ROOT::amend:buildgraph:implementation-admission"
 name = "ROOT::verif:design:dependency-opening-cases"
 path = "docs/design/implementation.md"
 status = "held"
-claims = []
+claims = ["ACTPROFILE::claim:profile:opened-replay-preserves-structure-and-title", "ACTPROFILE::claim:profile:fixed-recipes-bind-exact-authored-inputs", "ACTPROFILE::claim:profile:commitment-traces-retain-only-public-projection"]
 realizers = []
+premises = "Fixed, supplied anchors and secret inputs establish deterministic equality, evidence refusal, protected computation and recurrence recovery with unchanged title. They establish no producer, approval, inclusion or finalized-anchor authority."
+evidence_paragraph = "ACTPROFILE::amend:profile:opening-evidence"
 hold = "ROOT::open:design:dependency-opening-recipe"
 owner = "Records and identity implementers"
-missing = "Admitted dependency-commitment recipe and authenticated reopening witnesses"
+missing = "Authentication of retained finalized anchors and inclusion; deterministic recipe matching, refusal and unavailable-time recovery have scoped witnesses without that authority claim"
 closing_condition = "Admit the byte recipe under record 006 and establish authentication, refusal and unavailable-time recovery witnesses."
 closing_step = "Dependency-opening implementation after identity admission"
 

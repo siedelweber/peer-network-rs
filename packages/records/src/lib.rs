@@ -13,6 +13,10 @@ pub mod constants;
 /// (´def:burn:carriers´)
 pub mod burn;
 
+/// Typed opaque act commitments; interpretation belongs to the shared profile.
+/// (´def:acts:commitment-residues´)
+pub mod commitments;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
@@ -273,6 +277,8 @@ impl StructuralBody {
 /// (´def:acts:carrier´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CandidateAct {
+    /// Retained public commitment residues, absent only for uncommitted internal inputs.
+    pub commitments: Option<commitments::ActCommitments>,
     /// Authored structural identity.
     pub id: ActId,
     /// Unchanged structural body with units and vintages.
@@ -352,6 +358,8 @@ pub struct ValidatedLeg {
 /// (´def:acts:carrier´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ValidatedAct {
+    /// Opaque residues survive independent projection removal without interpretation.
+    commitments: Option<commitments::ActCommitments>,
     /// Structural identity, containing the sole author and family representation.
     id: ActId,
     /// Retained quantities, units, vintage and layout.
@@ -1149,6 +1157,7 @@ fn invalid_key(namespace: &str, name: &str) -> Option<DeclarationCause> {
 
 fn validated_act(act: &CandidateAct) -> ValidatedAct {
     ValidatedAct {
+        commitments: act.commitments.clone(),
         id: act.id.clone(),
         body: act.body.clone(),
         projections: act.projections.clone(),
@@ -1438,6 +1447,83 @@ fn history_snapshot(acts: &[CandidateAct], names: &[PublicReference]) -> Result<
     })
 }
 
+/// Recompute observer evidence using supplied, checked tombstone openings.
+/// The retained acts, projections, references, placement and published stamps
+/// remain byte-for-byte structural equals; only recurrence and fault evidence
+/// gain the opened lists. The declared checker proves no anchor authenticity.
+/// (´def:acts:opening-evidence´)
+/// # Errors
+/// Refuses unknown, repeated or live targets and malformed or mismatched opening
+/// evidence. Absent, self or later opened dependencies remain host-fault evidence.
+#[tracing::instrument(
+    name = "sig:design:records",
+    fields(
+        execution_owner = "RECORDS",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:records",
+        operation = "replay-openings",
+        source_item = "replay_openings"
+    ),
+    ret
+)]
+pub fn replay_openings(
+    history: &ValidatedHistory,
+    opener: &impl commitments::DependencyOpener,
+) -> Result<ValidatedHistory, commitments::OpeningError> {
+    use commitments::OpeningError;
+    let mut acts: Vec<_> = history
+        .acts
+        .iter()
+        .map(|act| CandidateAct {
+            commitments: act.commitments.clone(),
+            id: act.id.clone(),
+            body: act.body.clone(),
+            legs: act
+                .legs
+                .iter()
+                .map(|leg| CandidateLeg {
+                    id: leg.id.clone(),
+                    source: leg.source.clone(),
+                    target: leg.target.clone(),
+                    removal: None,
+                })
+                .collect(),
+            projections: act.projections.clone(),
+            protocol_references: act.protocol_references.clone(),
+            authentication_evidence: act.authentication_evidence.clone(),
+            finalization_epoch: act.finalization_epoch,
+            authoritative_position: act.authoritative_position,
+            logical_time: act.logical_time,
+        })
+        .collect();
+    let mut seen = BTreeSet::new();
+    for target in opener.targets() {
+        if !seen.insert(target.clone()) {
+            return Err(OpeningError::Target);
+        }
+        let index = acts.iter().position(|act| act.id == target).ok_or(OpeningError::Target)?;
+        if !matches!(acts[index].projections.dependency, DependencyProjection::Tombstoned(_)) {
+            return Err(OpeningError::Target);
+        }
+        let dependencies = opener.open(&history.acts[index])?;
+        acts[index].projections.dependency = if dependencies.is_empty() {
+            DependencyProjection::FullEmpty
+        } else {
+            DependencyProjection::Full(dependencies)
+        };
+    }
+    let names: Vec<_> = history
+        .references
+        .iter()
+        .filter(|name| matches!(name, PublicReference::Named { .. }))
+        .cloned()
+        .collect();
+    let mut result = history_snapshot(&acts, &names).map_err(|_| OpeningError::History)?;
+    result.acts = Arc::clone(&history.acts);
+    result.references = Arc::clone(&history.references);
+    Ok(result)
+}
+
 /// Derive a validated edge's dependency status from its owning whole act.
 /// The validated leg has no independent status or candidate removal field.
 /// (´def:acts:dependencies´)
@@ -1621,6 +1707,14 @@ impl ValidatedLeg {
 }
 
 impl ValidatedAct {
+    /// Read retained residues without authenticating or interpreting them.
+    /// (´def:acts:commitment-residues´)
+    #[must_use]
+    /// Justified: Immutable carrier access inherits its enclosing records operation.
+    pub fn commitments(&self) -> Option<&commitments::ActCommitments> {
+        self.commitments.as_ref()
+    }
+
     /// Read the published epoch and position pair.
     /// (´def:acts:carrier´)
     #[must_use]

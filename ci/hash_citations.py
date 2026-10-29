@@ -79,10 +79,75 @@ def literal_integer(value):
     return None
 
 
+def act_profile_vectors(path):
+    """Rebuild fixed typed preimages independently of the Rust projection.
+
+    This deliberately restricted reader uses Python hashlib SHA-256 and only
+    null, integer, byte/text strings and arrays. It neither imports a production
+    encoder nor accepts arbitrary fixture-supplied projections as its oracle.
+    """
+    def head(major, size):
+        if size < 24:
+            return bytes([major * 32 + size])
+        for width, marker in ((1, 24), (2, 25), (4, 26), (8, 27)):
+            if size < 1 << (8 * width):
+                return bytes([major * 32 + marker]) + size.to_bytes(width, "big")
+        raise ValueError("act-profile vector integer is outside the restricted domain")
+
+    def encode(value):
+        if value is None:
+            return bytes([246])
+        if type(value) is int:
+            return head(0, value) if value >= 0 else head(1, -1 - value)
+        if isinstance(value, bytes):
+            return head(2, len(value)) + value
+        if isinstance(value, str):
+            raw = value.encode("utf-8")
+            return head(3, len(raw)) + raw
+        if isinstance(value, list):
+            return head(4, len(value)) + b"".join(map(encode, value))
+        raise ValueError("unsupported act-profile vector constructor")
+
+    author = "pn-devnet-v1/" + "12" * 32 + "/" + "34" * 32
+    identity = ["act", author, 2, "Registration"]
+    dependencies = [["act", author, 1, "Registration"]]
+    body = [identity, "binary", [["binary", ["named", "addr", author], ["named", "prof", author]]],
+            [], None, [], [], None, "full", "full"]
+    nonce = (2).to_bytes(8, "big") + bytes(range(32))
+    payload = b"fixture private aggregate"
+    salts = [(1).to_bytes(16, "big") + bytes(range(32, 64)),
+             (2).to_bytes(16, "big") + bytes(range(64, 96))]
+    fixture = json.loads(path.read_text())
+    rows = fixture.get("vectors", [])
+    if len(rows) != 5 or len({row.get("name") for row in rows}) != 5:
+        raise ValueError("act-profile vector census differs")
+    checked = {}
+
+    def verify(name, role, tag, fields):
+        recipe = "pn-act-profile/act-" + role + "/v1"
+        raw = recipe.encode() + bytes([0]) + encode([tag, fields])
+        digest = hashlib.sha256(raw).digest()
+        expected = dict(name=name, recipe=recipe, tag=tag, preimage=raw.hex(), digest=digest.hex())
+        if next((row for row in rows if row.get("name") == name), None) != expected:
+            raise ValueError(f"act-profile vector differs: {name}")
+        checked[name] = {raw.hex(), digest.hex()}
+        return digest
+
+    content_pre = verify("content-pre", "proposal", "PN-content-pre-v1", [identity, nonce, payload])
+    dependency_pre = verify("dependency-pre", "proposal", "PN-dependency-pre-v1", [identity, nonce, dependencies])
+    proposal = verify("proposal", "proposal", "PN-act-proposal-v1", [body, content_pre, dependency_pre])
+    verify("content", "content", "PN-content-v1", [identity, proposal, salts[0], payload])
+    verify("dependency", "dependency", "PN-dependency-v1", [identity, proposal, salts[1], dependencies])
+    return checked
+
+
 def establish(root, rule):
     """Compile a family's reader-checkable evidence, refusing unsupported claims."""
     kind = rule["reader"]
     standing = rule["establishment"]
+    if kind == "act-profile-vector" and standing == "recomputable":
+        values = act_profile_vectors(relative_file(root, rule["source"]))[rule["vector"]]
+        return lambda value, _line: value in values
     if kind == "storage-vectors" and standing == "recomputable":
         from storage_vectors import check
         values = check(relative_file(root, rule["source"]))

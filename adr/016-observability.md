@@ -76,11 +76,12 @@
 | cli-common | 113 | 30 | 80 | 3 | 42 |
 | documents | 18 | 12 | 6 | 0 | 10 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
+| pn-act-profile | 10 | 8 | 2 | 0 | 7 |
 | pn-epoch | 4 | 2 | 2 | 0 | 7 |
 | pn-graph | 12 | 12 | 0 | 0 | 50 |
 | pn-host | 40 | 22 | 18 | 0 | 13 |
 | pn-interchange | 155 | 119 | 35 | 1 | 91 |
-| pn-records | 105 | 38 | 67 | 0 | 84 |
+| pn-records | 107 | 39 | 68 | 0 | 89 |
 | pn-wallet | 29 | 6 | 23 | 0 | 21 |
 
 
@@ -434,6 +435,24 @@
 **Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-write-signed` In `packages/interchange/src/encode.rs`, function `write_private`: The private signed integer is borrowed for sign and magnitude selection and canonical head emission into protected output; the borrow ends at the signed arm and neither branch observes its numeric value. Source method: `expose_secret`. Production boundary.
 
 **Caveat (Explicit secret exit)** · `cav:observe:secret-interchange-fixture-equality` In `packages/interchange/src/encode.rs`, function `fixture_equal`: The fixed-vector encoded result is borrowed solely for equality with the fixture's public expected encoding; the borrow ends at the comparison and no borrowed bytes enter tracing. Source method: `expose_secret`. Fixture-only boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-hash-input` In `packages/act-profile/src/lib.rs`, function `hash`: The protected canonical preimage is borrowed only by SHA-256 update after the public prefix; the borrow ends at update, and the hash's fixed-width output immediately enters a secret carrier with the temporary array erased, without an observation field. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-nonce-format` In `packages/act-profile/src/lib.rs`, function `nonce_format`: The proposal nonce is borrowed to check its forty-byte format and public sequence prefix; the borrow ends at validation and reveals neither its suffix nor a claim of entropy. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-salt-format` In `packages/act-profile/src/lib.rs`, function `salt_format`: The host salt is borrowed only to check its forty-eight-byte format; the borrow ends at len and establishes no allocation, uniqueness or entropy. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-payload-length` In `packages/act-profile/src/lib.rs`, function `payload_length`: Payload bytes are borrowed only to enforce the independent byte bound and original empty-state request; the borrow ends with the check and no payload content is observed. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-dependency-projection` In `packages/act-profile/src/lib.rs`, function `dependencies`: The dependency list is borrowed for identifier validation, strict records ordering and projection into private canonical fields; its borrow ends before encoding and no ordinary Value contains its identifiers. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-publish-residue` In `packages/act-profile/src/lib.rs`, function `publish`: The completed public commitment digest is borrowed for a single copy into its retained thirty-two-byte residue; this is the declared commitment publication, not publication of a pre-digest or its inputs, and the borrow ends at conversion. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-opened-dependencies` In `packages/act-profile/src/lib.rs`, function `publish_opened_dependencies`: A successfully matched dependency opening releases its complete list to records for public fault assessment and recurrence; the borrow ends after cloning that explicitly opened list and releases no nonce, salt or payload. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-payload-buffer` In `packages/act-profile/src/lib.rs`, function `payload_buffer`: The protected paired-payload encoding is borrowed to check its exact aggregate bound and copy it directly into the payload's secret byte carrier; the borrow ends with that copy and no aggregate byte is observed. Source method: `expose_secret`. Production boundary.
+
+**Caveat (Explicit secret exit)** · `cav:observe:secret-profile-fixture-digest` In `packages/act-profile/src/tests.rs`, function `fixture_digest`: Fixed test pre-digests are borrowed solely for hexadecimal equality with independently authored fixture vectors; the borrow ends at this comparison and the helper never receives production material. Source method: `expose_secret`. Fixture-only boundary.
 
 
 
