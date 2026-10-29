@@ -29,10 +29,14 @@ const OBSERVE: Duration = Duration::from_secs(5);
 /// Attempts per case. Evidence is selected conditionally: provisioning shares the case's own
 /// per-read limit, so an attempt that expires before its case request reaches the server is
 /// inconclusive about the case and the next attempt is taken, while its invariant findings
-/// stand; a case that never reaches its request fails. The count also bounds the wall: the
-/// server stops waiting once the client has returned, so an attempt lasts at most its three
-/// reads, each within the case's per-read limit (one second for the timeout cases), plus a
-/// teardown wait that only a failing attempt reaches.
+/// stand; a case that never reaches its request fails. The count bounds the attempts, and with
+/// them the wall: the server stops waiting once the client has returned, so an attempt's wall
+/// is about its three reads, each within the case's per-read limit (one second for the timeout
+/// cases). That figure is an estimate, not an upper bound: every attempt also waits for its
+/// exchange task's teardown (a successful wait within the five-second teardown bound), and the
+/// server's remaining response or drip writes, its observation of the closed connection
+/// (within the observation window) and the join follow the client's return. Measured, the 74
+/// case runs together take about five seconds, the four timeout runs about a second each.
 const ATTEMPTS: usize = 5;
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
@@ -178,11 +182,21 @@ fn observe(stream: &mut TcpStream) -> Peer {
 }
 
 /// Accept the next connection within a fifteen-second guard, or stop once the client has
-/// returned and no connection it made is still queued: a connection is queued as soon as its
-/// connect completes, so one the client made is always drained before the stop.
+/// returned and no connection it made is still queued.
 fn accept(listener: &TcpListener, finished: &AtomicBool) -> Option<TcpStream> {
+    accept_pausing(listener, finished, || thread::sleep(Duration::from_millis(2)))
+}
+
+/// The accept loop with the pause that follows each empty poll supplied. Completion is
+/// observed before each poll, and the loop stops only when a poll made after seeing completion
+/// finds the queue empty: the client stores completion after every connect it made has
+/// completed, and a completed connect is already queued, so such a poll drains it. Testing the
+/// queue first and completion second would let a connection completed between the two go
+/// unobserved.
+fn accept_pausing(listener: &TcpListener, finished: &AtomicBool, mut pause: impl FnMut()) -> Option<TcpStream> {
     let deadline = Instant::now() + Duration::from_secs(15);
     while Instant::now() < deadline {
+        let done = finished.load(Ordering::Acquire);
         match listener.accept() {
             Ok((stream, _)) => {
                 stream.set_nonblocking(false).unwrap();
@@ -190,15 +204,56 @@ fn accept(listener: &TcpListener, finished: &AtomicBool) -> Option<TcpStream> {
                 return Some(stream);
             }
             Err(error) if error.kind() == ErrorKind::WouldBlock => {
-                if finished.load(Ordering::Acquire) {
+                pause();
+                if done {
                     return None;
                 }
-                thread::sleep(Duration::from_millis(2));
             }
             Err(error) => panic!("accept failed: {error}"),
         }
     }
     None
+}
+
+/// The early stop on a controlled interleaving: immediately after the first empty poll, a
+/// client connects, sends a request, closes and then stores completion, the window in which a
+/// queue-first loop would stop on completion it observes afterwards. The accept loop must still return that connection, and its request and
+/// closure must be observed; an empty queue after completion must stop the loop.
+fn accept_cases() -> Vec<String> {
+    let mut findings = Vec::new();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let address = listener.local_addr().unwrap();
+    let finished = AtomicBool::new(false);
+    let sent = b"POST / HTTP/1.1\r\nContent-Length: 2\r\n\r\n{}";
+    let mut interleaved = false;
+    let accepted = accept_pausing(&listener, &finished, || {
+        if !interleaved {
+            interleaved = true;
+            let mut client = TcpStream::connect(address).unwrap();
+            client.write_all(sent).unwrap();
+            drop(client);
+            finished.store(true, Ordering::Release);
+        }
+    });
+    match accepted {
+        Some(mut stream) => {
+            if request(&mut stream) != sent {
+                findings.push("early stop: the late connection's request was not observed whole".to_owned());
+            }
+            if observe(&mut stream) != Peer::Eof {
+                findings.push("early stop: the late connection's closure was not observed".to_owned());
+            }
+        }
+        None => findings.push("early stop: a connection completed before the client finished was left queued".to_owned()),
+    }
+    if !interleaved {
+        findings.push("early stop: the controlled interleaving did not run".to_owned());
+    }
+    if accept_pausing(&listener, &finished, || {}).is_some() {
+        findings.push("early stop: the loop did not stop on an empty queue after completion".to_owned());
+    }
+    findings
 }
 
 /// Answer the two provisioning reads, then the case connection with its exact segments.
@@ -998,7 +1053,7 @@ fn conclude_cases() -> Vec<String> {
     findings
 }
 
-/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline, each timeout case under a short focused deadline counting as case evidence only an attempt whose case request reached the server while every attempt's invariant findings survive, as synthetic attempts witness; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
+/// Claim: Through the public reader, a scripted server's exact bytes witness every strict predicate of the transport: CRLF-only lines without folds, refused interim and unadmitted statuses, missing, duplicate, comma-joined, conflicting or overflowing lengths, transfer and content codings, redirects, header syntax, count and byte bounds even on refused statuses, response-byte ceilings before any body byte, truncation, trailing bytes, socket closure and the single deadline, each timeout case under a short focused deadline counting as case evidence only an attempt whose case request reached the server while every attempt's invariant findings survive, as synthetic attempts witness, and the server's early stop still drains a connection completed just before the client finished, as a controlled interleaving witnesses; a 401 or refused status closes with its read-ahead body unread, a timed-out exchange closes its connection, which the held server observes, no task of a read's exchange thread remains once the kernel has torn its joined thread down within a bounded wait, and the process returns to its starting task count within the same bound after every exchange and server joined, the bounded wait refusing on a controlled clock a wake or a success that falls past its bound, a caller inside a Tokio runtime reads unchanged, and the request carries its only private bytes in the Basic field while refusals format no private sentinel.
 /// ´claim:wallet:rpc-wire-fixtures-keep-strict-framing´
 /// ´test:integration:wire-compatibility´
 #[test]
@@ -1027,6 +1082,7 @@ fn wire_compatibility() {
     let mut findings: Vec<_> = cases.iter().flat_map(|case| run_case(case, &genesis, &declaration)).collect();
     findings.extend(settle_cases());
     findings.extend(conclude_cases());
+    findings.extend(accept_cases());
     // A caller already inside a Tokio runtime: the reader runs its exchange on its own
     // thread and runtime instead of nesting one, for a success and for a timed-out read.
     let runtime = tokio::runtime::Builder::new_current_thread().build().unwrap();
