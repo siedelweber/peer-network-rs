@@ -1434,6 +1434,14 @@
       "review": "Scoped complete-family witnesses establish typed endpoint and coordinate constraints through shared reconstruction, approval, authorized removal and diagnostic revalidation. Protocol exclusions and observation mode equality extend only to the implemented families. Geometry, standing, title and the two ordering questions remain held."
     },
     {
+      "operation": "pn-graph::formation::formed_title",
+      "path": "packages/graph/tests/formation.rs",
+      "claim": "GRAPH::claim:formation:scoped-title-requires-complete-authorized-history",
+      "before": "",
+      "after": "Claim: On the nineteen-family fixture, finalized title transfers only after every complete projection and declared approval/removal check succeeds; deleting or substituting any edge, denying any act, or denying any opening removal refuses the whole result. Authorized payload or dependency tombstones preserve the transfer and consumed identities despite unavailable time. This is conditional on the public verifier and the held partner correspondence under clause (ii); authenticated dependency openings remain held without bounding title, and no deployment authentication or unrestricted formation-to-title theorem is claimed.",
+      "review": "Well-formed minted endpoints may dangle without an admission lookup. Published positive placements remain structural; unavailable summary evidence never determines recognition or title. Scoped executable witnesses establish only the stated formation and title surfaces."
+    },
+    {
       "operation": "pn-graph::formation::invitation_projection",
       "path": "packages/graph/tests/formation.rs",
       "claim": "GRAPH::claim:formation:invitation-requires-complete-chat-profile-incidence",

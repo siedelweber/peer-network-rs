@@ -4244,3 +4244,88 @@ fn metadata_equivalence() {
         }
     }
 }
+
+fn title_family_history() -> Vec<CandidateAct> {
+    let mut inputs = formed_cases();
+    // Keep every family while making one seller/buyer chain bind and moving the
+    // unrelated cancellation endpoints to another well-formed, dangling Offer.
+    inputs[3].id.author = "b".into();
+    inputs[3].legs[0].id.act = inputs[3].id.clone();
+    inputs[3].legs[0].source = named("addr", "b");
+    inputs[3].legs[0].target = PublicReference::Minted(inputs[3].id.clone());
+    inputs[7].legs[0].target = PublicReference::Minted(inputs[3].id.clone());
+    inputs[7].legs[1].source = PublicReference::Minted(inputs[3].id.clone());
+    for index in [15, 16] {
+        inputs[index].legs[0].target = PublicReference::Minted(bidding(99, 4, 99).id);
+    }
+    inputs
+}
+
+/// Claim: On the nineteen-family fixture, finalized title transfers only after every complete projection and declared approval/removal check succeeds; deleting or substituting any edge, denying any act, or denying any opening removal refuses the whole result. Authorized payload or dependency tombstones preserve the transfer and consumed identities despite unavailable time. This is conditional on the public verifier and the held partner correspondence under clause (ii); authenticated dependency openings remain held without bounding title, and no deployment authentication or unrestricted formation-to-title theorem is claimed.
+/// ´claim:formation:scoped-title-requires-complete-authorized-history´
+/// ´test:integration:formed-title´
+#[test]
+fn formed_title() {
+    use pn_graph::recognition::RecognitionError;
+    use pn_graph::title::replay_title;
+    let inputs = title_family_history();
+    let verifier = Verifier {
+        acts: inputs.clone(),
+        removals: false,
+    };
+    let history = validate_history(&inputs, &names()).unwrap();
+    let graph = reconstruct(&history, &verifier).unwrap();
+    assert_eq!(graph.edge_count(), 27);
+    let expected = replay_title(&graph, &history, &verifier, 1).unwrap();
+    let item = PublicReference::Minted(inputs[3].id.clone());
+    assert_eq!(expected.certificate[&item], Some("a".into()));
+    assert_eq!(expected.events.len(), 1);
+    assert_eq!(expected.consumed.len(), 3);
+    for edge in graph.edge_indices() {
+        let mut changed = graph.clone();
+        changed.remove_edge(edge);
+        assert_eq!(
+            replay_title(&changed, &history, &verifier, 1),
+            Err(RecognitionError::Formation(RegistrationError::GraphMismatch))
+        );
+        let mut changed = graph.clone();
+        changed[edge] = graph[petgraph::graph::EdgeIndex::new((edge.index() + 1) % graph.edge_count())].clone();
+        assert_eq!(
+            replay_title(&changed, &history, &verifier, 1),
+            Err(RecognitionError::Formation(RegistrationError::GraphMismatch))
+        );
+    }
+    for index in 0..inputs.len() {
+        let mut denied = Verifier {
+            acts: inputs.clone(),
+            removals: false,
+        };
+        denied.acts.remove(index);
+        assert_eq!(
+            replay_title(&graph, &history, &denied, 1),
+            Err(RecognitionError::Formation(RegistrationError::Unapproved))
+        );
+        for dependency in [false, true] {
+            let mut changed = inputs.clone();
+            if dependency {
+                changed[index].projections.dependency = DependencyProjection::Tombstoned((2, 1));
+            } else {
+                changed[index].projections.content = Removal::Tombstoned((2, 1));
+            }
+            let history = validate_history(&changed, &names()).unwrap();
+            let mut verifier = Verifier {
+                acts: changed,
+                removals: false,
+            };
+            assert_eq!(
+                replay_title(&graph, &history, &verifier, 1),
+                Err(RecognitionError::Formation(RegistrationError::UnauthorizedRemoval))
+            );
+            verifier.removals = true;
+            let actual = replay_title(&graph, &history, &verifier, 1).unwrap();
+            assert_eq!(actual.certificate, expected.certificate);
+            assert_eq!(actual.events, expected.events);
+            assert_eq!(actual.consumed, expected.consumed);
+        }
+    }
+}

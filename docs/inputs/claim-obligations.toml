@@ -962,14 +962,17 @@ closing_step = "Assigned domain bite, with evidence review in bite 11"
 [[rows]]
 name = "ROOT::gate:design:bite-4"
 path = "docs/design/implementation.md"
-status = "held"
-claims = []
+status = "scoped-supported"
+claims = ["GRAPH::claim:formation:scoped-title-requires-complete-authorized-history", "VERIFICATION::claim:verification:small-title-histories-match-independent-table", "VERIFICATION::claim:verification:recorded-title-cases-match-independent-table", "VERIFICATION::claim:verification:title-replay-preserves-epoch-and-dangling-semantics", "VERIFICATION::claim:verification:settlement-replay-retains-target-placement-faults", "VERIFICATION::claim:verification:recognition-preserves-unavailable-time-evidence", "ROOT::claim:discipline:title-suite-retains-observed-evidence"]
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Reviewed ordinary claim citations and scoped premises for gate:design:bite-4"
+missing = "Outside scope: deployment authentication, pending partner-clause placement, authenticated dependency openings and unrestricted history coverage; these do not limit supported title results."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
-closing_step = "Assigned domain bite, with evidence review in bite 11"
+closing_step = "Bite 4 scoped close; unrestricted evidence remains bite 11"
+
+premises = "Declared public verifier and complete nineteen-family fixture; independent bounded candidate and boundary tables, recorded properties, shared public consumers and observed results. Parent and stamp faults are retained, unavailable time never bounds title, and the implemented partner relation remains explicitly conditional on its held clause placement."
+evidence_paragraph = "VERIFICATION::amend:verification:bite-four-evidence"
 
 [[rows]]
 name = "ROOT::gate:design:bite-5"

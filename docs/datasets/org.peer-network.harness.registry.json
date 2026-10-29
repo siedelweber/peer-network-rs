@@ -3994,7 +3994,8 @@
         "pn-graph::formation::settlement_partition",
         "pn-graph::formation::title_inputs",
         "pn-graph::formation::metadata_equivalence",
-        "pn-graph::formation::item_endpoints"
+        "pn-graph::formation::item_endpoints",
+        "pn-graph::formation::formed_title"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",
