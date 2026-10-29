@@ -6995,6 +6995,16 @@
         "boundary": "pn-act-profile::packages/act-profile/src/lib.rs::proposal_commitment",
         "class_decision": "act-profile-private"
       }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/recipients.rs",
+      "item": "recipients::resolve_recipients",
+      "owner": "EPOCH",
+      "signature": "fn resolve_recipients (history : & ValidatedHistory , boundary : u64 , verifier : & impl RegistrationVerifier , limits : Limits ,) -> Result < Vec < ResolvedCell > , RecipientError >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -13546,9 +13556,9 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/cells.rs::cells::fold_cells",
-      "body": "{ if boundary == 0 { return Err (CellError :: Boundary) ; } pn_graph :: formation :: reconstruct_replay (history , verifier) ? ; let mut budget = Budget :: new (limits) ? ; let mut cells : BTreeMap < CellIdentity , (BTreeSet < ActId > , BTreeMap < String , Rational >) > = BTreeMap :: new () ; for act in history . acts () . iter () . filter (| act | act . position () . 0 == boundary) { if act . id () . family == \"Invitation\" { return Err (CellError :: InvitationEdition) ; } let mut incidence : Vec < _ > = act . legs () . iter () . map (| leg | (leg . id () . role , leg . source () . clone () , leg . target () . clone ())) . collect () ; incidence . sort () ; let identity = CellIdentity { author : act . id () . author . clone () , family : act . id () . family . clone () , incidence , singleton : (! matches ! (act . id () . family . as_str () , \"Opinion\" | \"Reference\")) . then (| | act . id () . clone ()) , } ; let (members , sums) = cells . entry (identity) . or_default () ; members . insert (act . id () . clone ()) ; for name in mandatory (& act . id () . family) { let value = coordinate (act , name , & mut budget) ? ; let sum = if let Some (old) = sums . get (* name) { old . add (& value , & mut budget) ? } else { value } ; sums . insert ((* name) . into () , sum) ; } } cells . into_iter () . map (| (identity , (members , sums)) | { let coordinates = sums . into_iter () . map (| (name , sum) | Ok ((name , clip (& sum , & mut budget) ?))) . collect :: < Result < _ , CellError > > () ? ; Ok (StandingCell { identity , members , coordinates , }) }) . collect () }",
+      "body": "{ if boundary == 0 { return Err (CellError :: Boundary) ; } pn_graph :: formation :: reconstruct_replay (history , verifier) ? ; let mut budget = Budget :: new (limits) ? ; let mut cells : BTreeMap < CellIdentity , (BTreeSet < ActId > , BTreeMap < String , Rational >) > = BTreeMap :: new () ; for act in history . acts () . iter () . filter (| act | act . position () . 0 <= boundary) { if act . id () . family == \"Invitation\" { return Err (CellError :: InvitationEdition) ; } let mut incidence : Vec < _ > = act . legs () . iter () . map (| leg | (leg . id () . role , leg . source () . clone () , leg . target () . clone ())) . collect () ; incidence . sort () ; let identity = CellIdentity { author : act . id () . author . clone () , family : act . id () . family . clone () , incidence , singleton : (! matches ! (act . id () . family . as_str () , \"Opinion\" | \"Reference\")) . then (| | act . id () . clone ()) , } ; let (members , sums) = cells . entry (identity) . or_default () ; members . insert (act . id () . clone ()) ; for name in mandatory (& act . id () . family) { let value = coordinate (act , name , & mut budget) ? ; let sum = if let Some (old) = sums . get (* name) { old . add (& value , & mut budget) ? } else { value } ; sums . insert ((* name) . into () , sum) ; } } cells . into_iter () . map (| (identity , (members , sums)) | { let coordinates = sums . into_iter () . map (| (name , sum) | Ok ((name , clip (& sum , & mut budget) ?))) . collect :: < Result < _ , CellError > > () ? ; Ok (StandingCell { identity , members , coordinates , }) }) . collect () }",
       "class_decision": "epoch-cells",
-      "item_premise": "Cell compilation reads complete public act history, a public approval verifier, a boundary and exact arithmetic limits. Full arguments, typed holds and cell identities are public trace values. No payload opening, private witness or identity byte recipe enters this operation. Observation does not change folding.",
+      "item_premise": "The completed set is cumulative through the supplied boundary. All accepted member identities and exact public coordinates remain recorded; source history, verifier, limits and whole-result errors are public. No observation setting changes netting or membership.",
       "assessments": {
         "full_recording": "epoch-cells-full_recording",
         "secret_flow": "epoch-cells-secret_flow",
@@ -13575,6 +13585,17 @@
         "full_recording": "act-profile-review",
         "secret_flow": "act-profile-review",
         "exposure_consumers": "act-profile-review"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/recipients.rs::recipients::resolve_recipients",
+      "body": "{ let cells = fold_cells (history , boundary , verifier , limits . clone ()) ? ; let graph = pn_graph :: formation :: reconstruct_replay (history , verifier) . map_err (CellError :: from) ? ; let title = pn_graph :: title :: replay_title (& graph , history , verifier , boundary) ? ; let anchors : BTreeSet < _ > = history . acts () . iter () . filter (| act | act . position () . 0 <= boundary && act . id () . family == \"Registration\") . map (| act | act . id () . author . as_str ()) . collect () ; let mut budget = Budget :: new (limits) ? ; let mut output = Vec :: new () ; for cell in cells { let mut positive = true ; for spelling in cell . coordinates . values () { let coordinate = Rational :: parse (spelling , & mut budget) ? ; positive &= ! coordinate . is_negative () && ! coordinate . is_zero () ; } let target = if positive { match cell . identity . family . as_str () { \"Opinion\" => profile (& cell , Role :: Binary) , \"Reference\" => profile (& cell , Role :: T) , \"Accept\" | \"Ratify\" => title . events . iter () . find_map (| event | { if event . outcome != TitleOutcome :: Transferred { return None ; } if cell . identity . family == \"Accept\" && cell . members . contains (& event . acts [1]) { Some (event . buyer . as_str ()) } else if cell . identity . family == \"Ratify\" && cell . members . contains (& event . acts [2]) { Some (event . seller . as_str ()) } else { None } }) , _ => None , } } else { None } ; let recipient = target . filter (| target | anchors . contains (target)) . unwrap_or (& cell . identity . author) . to_owned () ; output . push (ResolvedCell { cell , recipient }) ; } Ok (output) }",
+      "class_decision": "epoch-recipients",
+      "item_premise": "Recipient resolution reads public validated history, boundary, declared verifier and arithmetic limits. It derives cumulative cells, anchored Actors and persistent title events; complete cells and destinations or typed whole-result refusals are public trace values. No secret or private opening enters the carrier, and observation changes no recipient.",
+      "assessments": {
+        "full_recording": "epoch-recipients-full_recording",
+        "secret_flow": "epoch-recipients-secret_flow",
+        "exposure_consumers": "epoch-recipients-exposure_consumers"
       }
     }
   ],
@@ -16257,7 +16278,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/registration.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" A cache of one Registration binary projection and inherited finalization fields.\"] # [doc = \" Family and role are fixed by this type; neither time nor position is identity.\"] # [doc = \" (\u00b4def:formation:registration\u00b4)\"] pub struct RegistrationProjection { before { # [doc = \" Public author atom, also the grounded pair's atom.\"] pub author : String , # [doc = \" Author-local sequence in the Registration act identity.\"] pub sequence : u64 , } after { } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" A cache of one Registration binary projection and inherited finalization fields.\"] # [doc = \" Family and role are fixed by this type; neither time nor position is identity.\"] # [doc = \" (´def:formation:registration´)\"] pub struct RegistrationProjection { before { # [doc = \" Public author atom, also the grounded pair's atom.\"] pub author : String , # [doc = \" Author-local sequence in the Registration act identity.\"] pub sequence : u64 , } after { } } }",
       "class_decision": "graph-registration",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16266,7 +16287,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Affinity binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (\u00b4def:formation:affinity\u00b4)\"] pub struct AffinityProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Association occupies the directional role `p_d`.\"] pub association : Coordinate , # [doc = \" Attraction occupies the intensity role `p_i`.\"] pub attraction : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Affinity binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:affinity´)\"] pub struct AffinityProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Association occupies the directional role `p_d`.\"] pub association : Coordinate , # [doc = \" Attraction occupies the intensity role `p_i`.\"] pub attraction : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16275,7 +16296,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Opinion binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (\u00b4def:formation:opinion\u00b4)\"] pub struct OpinionProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Polarity occupies the directional role `p_d`.\"] pub polarity : Coordinate , # [doc = \" Reaction occupies the intensity role `p_i`.\"] pub reaction : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Opinion binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:opinion´)\"] pub struct OpinionProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Polarity occupies the directional role `p_d`.\"] pub polarity : Coordinate , # [doc = \" Reaction occupies the intensity role `p_i`.\"] pub reaction : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16284,7 +16305,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Join Request binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (\u00b4def:formation:join-request\u00b4)\"] pub struct JoinRequestProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Urgency occupies the directional role `p_d`.\"] pub urgency : Coordinate , # [doc = \" Formality occupies the intensity role `p_i`.\"] pub formality : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Join Request binary weight; coordinates remain distinct directional roles.\"] # [doc = \" (´def:formation:join-request´)\"] pub struct JoinRequestProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { # [doc = \" Urgency occupies the directional role `p_d`.\"] pub urgency : Coordinate , # [doc = \" Formality occupies the intensity role `p_i`.\"] pub formality : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16293,7 +16314,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Leave control weight; both parameter roles are fixed at one.\"] # [doc = \" (\u00b4def:formation:leave\u00b4)\"] pub struct LeaveProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Leave control weight; both parameter roles are fixed at one.\"] # [doc = \" (´def:formation:leave´)\"] pub struct LeaveProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16302,7 +16323,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Withdraw control weight; both parameter roles are fixed at one.\"] # [doc = \" (\u00b4def:formation:withdraw\u00b4)\"] pub struct WithdrawProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Withdraw control weight; both parameter roles are fixed at one.\"] # [doc = \" (´def:formation:withdraw´)\"] pub struct WithdrawProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16311,7 +16332,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Rescind control weight; both parameter roles are fixed at one.\"] # [doc = \" (\u00b4def:formation:rescind\u00b4)\"] pub struct RescindProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Rescind control weight; both parameter roles are fixed at one.\"] # [doc = \" (´def:formation:rescind´)\"] pub struct RescindProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local sequence, never host order.\"] pub sequence : u64 , } after { } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16320,7 +16341,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete scoped Publish weight, retaining immutable license qualifiers.\"] # [doc = \" (\u00b4def:formation:publish\u00b4)\"] pub struct PublishProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , } after { # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , # [doc = \" Pair fixed only on a self-minting Content genesis act.\"] pub license : Option < LicenseQualifiers >, } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete scoped Publish weight, retaining immutable license qualifiers.\"] # [doc = \" (´def:formation:publish´)\"] pub struct PublishProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , } after { # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , # [doc = \" Pair fixed only on a self-minting Content genesis act.\"] pub license : Option < LicenseQualifiers >, } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16329,7 +16350,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete scoped Owner weight, with no license or protocol-reference field.\"] # [doc = \" (\u00b4def:formation:owner\u00b4)\"] pub struct OwnerProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , } after { # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete scoped Owner weight, with no license or protocol-reference field.\"] # [doc = \" (´def:formation:owner´)\"] pub struct OwnerProjection { before { # [doc = \" Author atom shared with the initiating Actor endpoint.\"] pub author : String , # [doc = \" Author-local act sequence.\"] pub sequence : u64 , } after { # [doc = \" Authored directional coordinate; intensity is fixed at one.\"] pub attachment : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16338,7 +16359,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Participant tuple shared by its two role-addressed projections.\"] # [doc = \" (\u00b4def:formation:participant\u00b4)\"] pub struct ParticipantProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ParticipantRole , } after { # [doc = \" Signed A-leg directional coordinate.\"] pub interactivity : Coordinate , # [doc = \" Signed A-leg intensity coordinate.\"] pub responsibility : Coordinate , # [doc = \" Nonnegative T-leg directional coordinate; intensity is fixed at one.\"] pub continuity : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Participant tuple shared by its two role-addressed projections.\"] # [doc = \" (´def:formation:participant´)\"] pub struct ParticipantProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ParticipantRole , } after { # [doc = \" Signed A-leg directional coordinate.\"] pub interactivity : Coordinate , # [doc = \" Signed A-leg intensity coordinate.\"] pub responsibility : Coordinate , # [doc = \" Nonnegative T-leg directional coordinate; intensity is fixed at one.\"] pub continuity : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16347,7 +16368,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Review tuple shared by both role-addressed projections.\"] # [doc = \" (\u00b4def:formation:review\u00b4)\"] pub struct ReviewProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReviewRole , } after { # [doc = \" Signed enthusiasm, directional on A and intensity on T.\"] pub enthusiasm : Coordinate , # [doc = \" Signed effort, intensity on A and directional on T.\"] pub effort : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Review tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:review´)\"] pub struct ReviewProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReviewRole , } after { # [doc = \" Signed enthusiasm, directional on A and intensity on T.\"] pub enthusiasm : Coordinate , # [doc = \" Signed effort, intensity on A and directional on T.\"] pub effort : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16356,7 +16377,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Tag tuple shared by both role-addressed projections.\"] # [doc = \" (\u00b4def:formation:tag\u00b4)\"] pub struct TagProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : TagRole , } after { # [doc = \" Signed relevance, directional on A and intensity on T.\"] pub relevance : Coordinate , # [doc = \" Nonnegative confidence, intensity on A and directional on T.\"] pub confidence : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Tag tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:tag´)\"] pub struct TagProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : TagRole , } after { # [doc = \" Signed relevance, directional on A and intensity on T.\"] pub relevance : Coordinate , # [doc = \" Nonnegative confidence, intensity on A and directional on T.\"] pub confidence : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16365,7 +16386,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Reference tuple shared by both role-addressed projections.\"] # [doc = \" (\u00b4def:formation:reference\u00b4)\"] pub struct ReferenceProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReferenceRole , } after { # [doc = \" Signed effort, directional on A and intensity on T.\"] pub effort : Coordinate , # [doc = \" Signed enthusiasm, intensity on A and directional on T.\"] pub enthusiasm : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Reference tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:reference´)\"] pub struct ReferenceProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : ReferenceRole , } after { # [doc = \" Signed effort, directional on A and intensity on T.\"] pub effort : Coordinate , # [doc = \" Signed enthusiasm, intensity on A and directional on T.\"] pub enthusiasm : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16374,7 +16395,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Invitation tuple shared by both role-addressed projections.\"] # [doc = \" (\u00b4def:formation:invitation\u00b4)\"] pub struct InvitationProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : InvitationRole , } after { # [doc = \" Signed urgency, directional on A.\"] pub urgency : Coordinate , # [doc = \" Signed formality, intensity on A.\"] pub formality : Coordinate , # [doc = \" Nonnegative relevance, directional on T; T intensity is fixed at one.\"] pub relevance : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Invitation tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:invitation´)\"] pub struct InvitationProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : InvitationRole , } after { # [doc = \" Signed urgency, directional on A.\"] pub urgency : Coordinate , # [doc = \" Signed formality, intensity on A.\"] pub formality : Coordinate , # [doc = \" Nonnegative relevance, directional on T; T intensity is fixed at one.\"] pub relevance : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16383,7 +16404,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Deinvite tuple shared by both role-addressed projections.\"] # [doc = \" (\u00b4def:formation:deinvite\u00b4)\"] pub struct DeinviteProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : DeinviteRole , } after { } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Deinvite tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:deinvite´)\"] pub struct DeinviteProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : DeinviteRole , } after { } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16392,7 +16413,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Send tuple shared by both role-addressed projections.\"] # [doc = \" (\u00b4def:formation:send\u00b4)\"] pub struct SendProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : SendRole , } after { # [doc = \" Signed importance, directional on A and intensity on T.\"] pub importance : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Send tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:send´)\"] pub struct SendProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : SendRole , } after { # [doc = \" Signed importance, directional on A and intensity on T.\"] pub importance : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16401,7 +16422,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Bid tuple shared by both role-addressed projections.\"] # [doc = \" (\u00b4def:formation:bid\u00b4)\"] pub struct BidProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : BidRole , } after { # [doc = \" Signed generosity, directional on A and intensity on T.\"] pub generosity : Coordinate , # [doc = \" Nonnegative urgency, intensity on A and directional on T.\"] pub urgency : Coordinate , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Bid tuple shared by both role-addressed projections.\"] # [doc = \" (´def:formation:bid´)\"] pub struct BidProjection { before { # [doc = \" Initiating author shared by both legs.\"] pub author : String , # [doc = \" Author-local act sequence shared by both legs.\"] pub sequence : u64 , # [doc = \" A or T constructor role, never a separately authored identity.\"] pub role : BidRole , } after { # [doc = \" Signed generosity, directional on A and intensity on T.\"] pub generosity : Coordinate , # [doc = \" Nonnegative urgency, intensity on A and directional on T.\"] pub urgency : Coordinate , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16410,7 +16431,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Accept binary projection and non-incidence settlement metadata.\"] # [doc = \" (\u00b4def:formation:settlement\u00b4)\"] pub struct AcceptProjection { before { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , } after { # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Asserted Bid target; metadata adds no Offer incidence.\"] pub settles : BidIdentity , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Accept binary projection and non-incidence settlement metadata.\"] # [doc = \" (´def:formation:settlement´)\"] pub struct AcceptProjection { before { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , } after { # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Asserted Bid target; metadata adds no Offer incidence.\"] pub settles : BidIdentity , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16419,7 +16440,7 @@
       "kind": "item-macro",
       "package": "pn-graph",
       "path": "packages/graph/src/formation.rs",
-      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Ratify binary projection and non-incidence settlement metadata.\"] # [doc = \" (\u00b4def:formation:settlement\u00b4)\"] pub struct RatifyProjection { before { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , } after { # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Asserted Bid target; metadata adds no Offer incidence.\"] pub settles : BidIdentity , # [doc = \" Asserted exact Accept target; recognition checks same-Bid binding.\"] pub accepts : AcceptIdentity , } } }",
+      "syntax": "crate :: metadata :: projection ! { # [doc = \" Complete Ratify binary projection and non-incidence settlement metadata.\"] # [doc = \" (´def:formation:settlement´)\"] pub struct RatifyProjection { before { # [doc = \" Initiating author, equal to the source Actor.\"] pub author : String , # [doc = \" Author-local sequence.\"] pub sequence : u64 , } after { # [doc = \" Signed comfort, the directional parameter.\"] pub comfort : Coordinate , # [doc = \" Signed equity, the intensity parameter.\"] pub equity : Coordinate , # [doc = \" Asserted Bid target; metadata adds no Offer incidence.\"] pub settles : BidIdentity , # [doc = \" Asserted exact Accept target; recognition checks same-Bid binding.\"] pub accepts : AcceptIdentity , } } }",
       "class_decision": "graph-affinity",
       "expansion_review": "The shared projection macro emits structural Clone and equality, flat Debug, and flat Serde adapters with the original struct name, field order and unknown-field refusal. Its nineteen invocations substitute only public family fields and inherited ActMetadata. The carrier derives expose public placement and attached time only. Golden pre-carrier bytes and both Debug presentations cover every family; complete typed revalidation remains required before binding use. No canonical encoding, identity, operation or accounting boundary is generated."
     },
@@ -16674,6 +16695,24 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "epoch-coefficients",
       "expansion_review": "Clone, Debug, equality and Error preserve the public exact radicand, edition hold and typed arithmetic evidence; no secret enters this carrier."
+    },
+    {
+      "item": "recipients::ResolvedCell",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/recipients.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-recipients",
+      "expansion_review": "Clone, Debug, equality and Error retain public cells, Actor destinations and typed validation or arithmetic refusals. No secret or private opening enters these carriers."
+    },
+    {
+      "item": "recipients::RecipientError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/recipients.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-recipients",
+      "expansion_review": "Clone, Debug, equality and Error retain public cells, Actor destinations and typed validation or arithmetic refusals. No secret or private opening enters these carriers."
     }
   ],
   "reviewed_types": [
@@ -18874,6 +18913,18 @@
       "syntax": "# [doc = \" No partial ledger escapes a failed derivation.\"] # [doc = \" (\u00b4def:compiler:final-ledger\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum LedgerError { # [error (\"incomplete or unauthorized act: {0}\")] Formation (# [from] RegistrationError) , # [error (\"numeric carrier: {0}\")] Numeric (# [from] NumericError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"boundary inputs, price vintages and marker sequence do not cover the same prefix\")] Boundary , # [error (\"burn units differ\")] Units , # [error (\"price differs from the boundary's declared numeraire or floor\")] Price , # [error (\"actor has insufficient own balance at the completed boundary\")] InsufficientBalance { address : Address , boundary : u64 } , # [error (\"action count exceeds the carrier\")] Count , }"
     },
     {
+      "item": "recipients::ResolvedCell",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/recipients.rs",
+      "syntax": "# [doc = \" One complete cell and its resolved Actor or author's retention channel.\"] # [doc = \" This is destination evidence, not a coefficient or allocation.\"] # [doc = \" (\u00b4def:compiler:recipient-resolution\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ResolvedCell { pub cell : StandingCell , pub recipient : String , }"
+    },
+    {
+      "item": "recipients::RecipientError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/recipients.rs",
+      "syntax": "# [doc = \" Whole-result cell, title or bounded exact-arithmetic refusal.\"] # [doc = \" (\u00b4def:compiler:recipient-resolution\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RecipientError { # [error (\"cell compilation: {0}\")] Cells (# [from] CellError) , # [error (\"title replay: {0}\")] Title (# [from] pn_graph :: recognition :: RecognitionError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+    },
+    {
       "item": "FamilyProfile",
       "package": "pn-epoch",
       "path": "packages/epoch/src/lib.rs",
@@ -19296,6 +19347,16 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Coefficient evaluation reads a public folded cell and explicit exact arithmetic limits. Arguments, exact rational output and typed irrational or edition holds are public trace values. Mandatory magnitudes do not consume private openings or recipient evidence. Observation changes no coefficient."
+    },
+    {
+      "name": "epoch-recipients",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/recipients.rs::recipients::resolve_recipients"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Recipient resolution reads public validated history, boundary, declared verifier and arithmetic limits. It derives cumulative cells, anchored Actors and persistent title events; complete cells and destinations or typed whole-result refusals are public trace values. No secret or private opening enters the carrier, and observation changes no recipient."
     }
   ],
   "shapes": {
@@ -19537,7 +19598,7 @@
     "shape-epoch": {
       "fields": [
         "complete public compiler parameters, markers, act history, cells and arithmetic limits at trace",
-        "complete validated parameters, ledger, cells, exact coefficients or typed refusals and holds at trace",
+        "complete validated parameters, ledger, cells, coefficients, recipients or typed refusals and holds at trace",
         "bounded outcome",
         "inclusive duration_seconds",
         "declared invocation work",
@@ -21236,6 +21297,21 @@
     "epoch-coefficients-exposure_consumers": {
       "status": "reviewer-confirmed",
       "premises": "Coefficient evaluation reads a public folded cell and explicit exact arithmetic limits. Arguments, exact rational output and typed irrational or edition holds are public trace values. Mandatory magnitudes do not consume private openings or recipient evidence. Observation changes no coefficient.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-recipients-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Recipient resolution reads public validated history, boundary, declared verifier and arithmetic limits. It derives cumulative cells, anchored Actors and persistent title events; complete cells and destinations or typed whole-result refusals are public trace values. No secret or private opening enters the carrier, and observation changes no recipient.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-recipients-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Recipient resolution reads public validated history, boundary, declared verifier and arithmetic limits. It derives cumulative cells, anchored Actors and persistent title events; complete cells and destinations or typed whole-result refusals are public trace values. No secret or private opening enters the carrier, and observation changes no recipient.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-recipients-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Recipient resolution reads public validated history, boundary, declared verifier and arithmetic limits. It derives cumulative cells, anchored Actors and persistent title events; complete cells and destinations or typed whole-result refusals are public trace values. No secret or private opening enters the carrier, and observation changes no recipient.",
       "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
     }
   }

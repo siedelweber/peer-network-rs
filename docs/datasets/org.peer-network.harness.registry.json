@@ -4195,6 +4195,21 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-epoch::recipients::recipient_classes",
+        "pn-epoch::recipients::recipient_settlements",
+        "pn-epoch::recipients::recipient_cumulative"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::recipients",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

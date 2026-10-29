@@ -74,8 +74,12 @@ fn main() -> std::process::ExitCode {
     let coefficient = pn_epoch::coefficients::coefficient(&cell, pn_records::numerics::ExactLimits::default()).unwrap();
     cell.coordinates.insert("polarity".into(), "1/2".into());
     let coefficient_hold = pn_epoch::coefficients::coefficient(&cell, pn_records::numerics::ExactLimits::default()).unwrap_err();
+    let recipients =
+        pn_epoch::recipients::resolve_recipients(&empty, 1, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap();
+    let recipient_refusal =
+        pn_epoch::recipients::resolve_recipients(&empty, 0, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap_err();
     let result = cli_common::emit(&format!(
-        "{good:?};{refused:?};{ledger:?};{ledger_refusal:?};{cells:?};{cell_refusal:?};{coefficient:?};{coefficient_hold:?}"
+        "{good:?};{refused:?};{ledger:?};{ledger_refusal:?};{cells:?};{cell_refusal:?};{coefficient:?};{coefficient_hold:?};{recipients:?};{recipient_refusal:?}"
     ));
     drop(guard);
     if result.is_ok() {

@@ -270,8 +270,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
       "before": "",
-      "after": "Claim: The real compiler parameter, ledger, cell and coefficient boundaries preserve exact successful inputs, ledger values, empty cells, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary and trace carries public constants, recognized markers and results.",
-      "review": "Runs actual parameter validation in three observation modes and compares exact result bytes, invocation totals, elapsed samples and trace public fields. Extended to exact ledger success and prefix refusal with recognized marker arguments and both operation stems. Extended to empty-cell success and boundary refusal. Extended to exact coefficient success and irrational evidence hold."
+      "after": "Claim: The real compiler parameter, ledger, cell, coefficient and recipient boundaries preserve exact successful inputs, ledger values, empty cells and recipients, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary, including nested cell compilation and trace carries public constants, recognized markers and results.",
+      "review": "The example adds successful empty recipients and a boundary refusal. Both recipient calls invoke cell compilation, giving twelve compiler spans; exact outputs remain equal with observation off, default and trace."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -1528,6 +1528,30 @@
       "before": "",
       "after": "Claim: Registration and a complete paired Send give two identities, three projections, two debits and two counts.",
       "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again."
+    },
+    {
+      "operation": "pn-epoch::recipients::recipient_classes",
+      "path": "packages/epoch/tests/recipients.rs",
+      "claim": "EPOCH::claim:compiler:recipient-classes-require-positive-anchored-persons",
+      "before": "",
+      "after": "Claim: Across all eighteen unheld families, independent literal recipient tables send only positive Profile Opinion and Reference cells to anchored persons without a successful settlement event; artifact and control families remain home. Every mandatory sign is tested independently, dangling and future anchors resolve home, unauthorized formation refuses, and Invitation holds the whole result.",
+      "review": "Independent literal family and event tables share only raw input carriers with production. Positive signs, anchored recipients, persistent successful events and cumulative netting are tested without calculating expected destinations through production helpers."
+    },
+    {
+      "operation": "pn-epoch::recipients::recipient_cumulative",
+      "path": "packages/epoch/tests/recipients.rs",
+      "claim": "EPOCH::claim:compiler:recipient-cells-read-the-cumulative-boundary-set",
+      "before": "",
+      "after": "Claim: Completed-set recipient compilation retains earlier cell members across empty epochs and nets later opposite stance before resolving a target. Reversed presentation, payload or dependency removal and published stamp faults preserve recipients; every member remains present.",
+      "review": "Independent literal family and event tables share only raw input carriers with production. Positive signs, anchored recipients, persistent successful events and cumulative netting are tested without calculating expected destinations through production helpers."
+    },
+    {
+      "operation": "pn-epoch::recipients::recipient_settlements",
+      "path": "packages/epoch/tests/recipients.rs",
+      "claim": "EPOCH::claim:compiler:recipients-read-persistent-title-events",
+      "before": "",
+      "after": "Claim: Independent event tables distinguish unique transfer, conflict, buyer or seller cancellation, each wrong party, consumed-record reuse and resale. Successful Accept and Ratify cells retain counterparty recipients after consumption and resale, while losing or reused attempts resolve home; hostile settlement coordinates remain home without reversing title.",
+      "review": "Independent literal family and event tables share only raw input carriers with production. Positive signs, anchored recipients, persistent successful events and cumulative netting are tested without calculating expected destinations through production helpers."
     },
     {
       "operation": "pn-graph::formation::affinity_coordinates",

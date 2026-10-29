@@ -45,7 +45,7 @@ pub enum CellError {
     InvitationEdition,
 }
 
-/// Revalidate complete history and partition one epoch without consuming its acts.
+/// Revalidate complete history and partition its cumulative boundary set without consuming acts.
 /// (´def:compiler:standing-cells´)
 /// # Errors
 /// Refuses the whole result on formation failure, an Invitation cell or a resource limit.
@@ -71,7 +71,7 @@ pub fn fold_cells(
     pn_graph::formation::reconstruct_replay(history, verifier)?;
     let mut budget = Budget::new(limits)?;
     let mut cells: BTreeMap<CellIdentity, (BTreeSet<ActId>, BTreeMap<String, Rational>)> = BTreeMap::new();
-    for act in history.acts().iter().filter(|act| act.position().0 == boundary) {
+    for act in history.acts().iter().filter(|act| act.position().0 <= boundary) {
         if act.id().family == "Invitation" {
             return Err(CellError::InvitationEdition);
         }

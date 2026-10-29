@@ -1476,3 +1476,14 @@ implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::coefficients::coefficient_census", "pn-epoch::coefficients::coefficient_evidence", "pn-epoch::coefficients::coefficient_refusals"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::recipients"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::recipients::recipient_classes", "pn-epoch::recipients::recipient_settlements", "pn-epoch::recipients::recipient_cumulative"]
