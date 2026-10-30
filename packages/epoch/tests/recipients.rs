@@ -180,18 +180,38 @@ fn act(family: &str, author: &str, sequence: u64, epoch: u64) -> CandidateAct {
     act
 }
 fn positions(inputs: &[CandidateAct]) -> Vec<CandidateAct> {
-    let mut inputs = inputs.to_vec();
-    inputs.sort_by_key(|act| (act.finalization_epoch, act.id.sequence));
-    let mut positions = BTreeMap::new();
-    for act in &mut inputs {
-        let position = positions.entry(act.finalization_epoch).or_insert(0);
-        *position += 1;
-        act.authoritative_position = *position;
-    }
+    // Compact raw fixture gaps without sorting the presentation or changing its order of record.
+    let mut keys: Vec<_> = inputs
+        .iter()
+        .map(|act| (act.finalization_epoch, act.authoritative_position, act.id.clone()))
+        .collect();
+    keys.sort();
+    let mut counters = BTreeMap::new();
+    let assigned: BTreeMap<_, _> = keys
+        .into_iter()
+        .map(|(epoch, _, id)| {
+            let next = counters.entry(epoch).or_insert(0);
+            *next += 1;
+            (id, *next)
+        })
+        .collect();
     inputs
+        .iter()
+        .cloned()
+        .map(|mut act| {
+            act.authoritative_position = assigned[&act.id];
+            act
+        })
+        .collect()
 }
 fn history(inputs: &[CandidateAct]) -> pn_records::ValidatedHistory {
-    validate_history(&positions(inputs), &[]).unwrap()
+    let placed = positions(inputs);
+    let history = validate_history(&placed, &[]).unwrap();
+    assert_eq!(
+        history.acts().iter().map(ValidatedAct::id).collect::<Vec<_>>(),
+        inputs.iter().map(|act| &act.id).collect::<Vec<_>>()
+    );
+    history
 }
 fn recipients(inputs: &[CandidateAct], boundary: u64) -> BTreeMap<ActId, String> {
     let history = history(inputs);
@@ -315,7 +335,7 @@ fn handshake(buyer: &str, seller: &str, sequence: u64, epoch: u64) -> Vec<Candid
     vec![bid, accept, ratify]
 }
 
-/// Claim: Independent event tables distinguish unique transfer, conflict, buyer or seller cancellation, each wrong party, consumed-record reuse and resale. Successful Accept and Ratify cells retain counterparty recipients after consumption and resale, while losing or reused attempts resolve home; hostile settlement coordinates remain home without reversing title.
+/// Claim: Independent event tables distinguish unique transfer, conflict, buyer or seller cancellation, each wrong party, consumed-record reuse and resale. Successful Accept and Ratify cells retain counterparty recipients after consumption and resale, while losing or reused attempts resolve home; hostile settlement coordinates remain home without reversing title. Each of eleven event cases reaches validation in both distinct forward and reversed presentations with equal recipients.
 /// ´claim:compiler:recipients-read-persistent-title-events´
 /// ´test:integration:recipient-settlements´
 #[test]
@@ -385,7 +405,10 @@ fn recipient_settlements() {
             assert_eq!(results[&id("Accept", "buyer", 11)], "third");
             assert_eq!(results[&id("Ratify", "third", 12)], "buyer");
         }
+        let forward: Vec<_> = history(&inputs).acts().iter().map(|act| act.id().clone()).collect();
         inputs.reverse();
+        let reversed: Vec<_> = history(&inputs).acts().iter().map(|act| act.id().clone()).collect();
+        assert_ne!(forward, reversed);
         assert_eq!(recipients(&inputs, 4), results);
     }
     for index in [5, 6] {
@@ -402,7 +425,7 @@ fn recipient_settlements() {
     }
 }
 
-/// Claim: Completed-set recipient compilation retains earlier cell members across empty epochs and nets later opposite stance before resolving a target. Reversed presentation, payload or dependency removal and published stamp faults preserve recipients; every member remains present.
+/// Claim: Completed-set recipient compilation retains earlier cell members across empty epochs and nets later opposite stance before resolving a target. Distinct forward and reversed five-act presentations reach validation unchanged and preserve recipients; payload or dependency removal and published stamp faults also preserve recipients, with every member present.
 /// ´claim:compiler:recipient-cells-read-the-cumulative-boundary-set´
 /// ´test:integration:recipient-cumulative´
 #[test]
@@ -418,6 +441,10 @@ fn recipient_cumulative() {
     assert_eq!(expected[&id("Opinion", "seller", 10)], "seller");
     assert_eq!(expected[&id("Opinion", "seller", 11)], "seller");
     assert_eq!(expected.len(), inputs.len());
+    let mut reversed = inputs.clone();
+    reversed.reverse();
+    assert_ne!(history(&inputs).acts(), history(&reversed).acts());
+    assert_eq!(recipients(&reversed, 3), expected);
     inputs[3].projections.content = Removal::Tombstoned((3, 1));
     inputs[3].projections.dependency = DependencyProjection::Tombstoned((3, 1));
     inputs[4].logical_time = 500;

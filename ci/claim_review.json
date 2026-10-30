@@ -1525,17 +1525,17 @@
       "operation": "pn-epoch::compiler::compiler_generated",
       "path": "packages/epoch/tests/compiler.rs",
       "claim": "EPOCH::claim:compiler:generated-packages-match-the-literal-compiler-table",
-      "before": "",
-      "after": "Claim: Source-qualified recorded generated family and permutation cases agree with the independent literal compiler table before and after accepted-set presentation changes. The generated scope is the nineteen-family unit-coordinate alphabet with typed fixture publication, not arbitrary numeric or deployment histories.",
-      "review": "A registered consumer-qualified 256-case proptest campaign selects the independent nineteen-family table and permutes accepted-set presentation. The gate records the source seed and regression path; only raw carriers are shared with the production compiler."
+      "before": "Claim: Source-qualified recorded generated family and permutation cases agree with the independent literal compiler table before and after accepted-set presentation changes. The generated scope is the nineteen-family unit-coordinate alphabet with typed fixture publication, not arbitrary numeric or deployment histories.",
+      "after": "Claim: Source-qualified generated Opinion, Reference and Invitation packages vary one to three members, coordinates from one-quarter through one, published positions and accepted-set presentation. Independent literal tables check the folded coefficient, ledger and base for each case; reversed presentation preserves the joined view. This finite rational alphabet is not arbitrary numeric or deployment history coverage.",
+      "review": "The generated inputs now vary aggregate family, one to three members, mandatory coordinates, valid published positions and presentation. All 27 family/member/coordinate combinations also run deterministically against literal coefficient, ledger and base tables. The 256 generated draws are not claimed to be 256 distinct histories; each reversal is asserted distinct at the validated-history boundary."
     },
     {
       "operation": "pn-epoch::compiler::compiler_properties",
       "path": "packages/epoch/tests/compiler.rs",
       "claim": "EPOCH::claim:compiler:recorded-permutations-preserve-joined-results",
-      "before": "",
-      "after": "Claim: A recorded finite seed corpus permutes raw accepted-set presentation across every family and settlement, and reverses two independent Invitation placements. The verified package's joined result is identical, including holds; every Invitation identity remains counted. This is scoped compiler determinism, not universal partition invariance.",
-      "review": "Eight literal seeds permute presentation over nineteen families and settlement. A separate verified package reverses the two independent Invitation placements while keeping each act unchanged. Scope is finite compiler determinism, not a universal partition theorem."
+      "before": "Claim: A recorded finite seed corpus permutes raw accepted-set presentation across every family and settlement, and reverses two independent Invitation placements. The verified package's joined result is identical, including holds; every Invitation identity remains counted. This is scoped compiler determinism, not universal partition invariance.",
+      "after": "Claim: All 24 accepted-set presentations of each of nineteen family fixtures reach validation unchanged, producing 456 distinct histories and equal joined views. Twenty compliant interleavings of two settlement chains and 24 mixed-family placements preserve compiled values; chain and time evidence are checked against each changed input separately. This is finite compiler determinism, not universal partition invariance.",
+      "review": "The validator-retained identities are asserted in supplied order. Exhaustive presentation keys count 456 distinct histories, mixed-family placement keys count 24, and the two three-act settlement chains have all 20 compliant interleavings. Published chain and time evidence are checked against each changed input before comparing compiler values; presentation-only comparisons retain all evidence."
     },
     {
       "operation": "pn-epoch::compiler::compiler_splits",
@@ -1621,17 +1621,17 @@
       "operation": "pn-epoch::recipients::recipient_cumulative",
       "path": "packages/epoch/tests/recipients.rs",
       "claim": "EPOCH::claim:compiler:recipient-cells-read-the-cumulative-boundary-set",
-      "before": "",
-      "after": "Claim: Completed-set recipient compilation retains earlier cell members across empty epochs and nets later opposite stance before resolving a target. Reversed presentation, payload or dependency removal and published stamp faults preserve recipients; every member remains present.",
-      "review": "Independent literal family and event tables share only raw input carriers with production. Positive signs, anchored recipients, persistent successful events and cumulative netting are tested without calculating expected destinations through production helpers."
+      "before": "Claim: Completed-set recipient compilation retains earlier cell members across empty epochs and nets later opposite stance before resolving a target. Reversed presentation, payload or dependency removal and published stamp faults preserve recipients; every member remains present.",
+      "after": "Claim: Completed-set recipient compilation retains earlier cell members across empty epochs and nets later opposite stance before resolving a target. Distinct forward and reversed five-act presentations reach validation unchanged and preserve recipients; payload or dependency removal and published stamp faults also preserve recipients, with every member present.",
+      "review": "The five-act cumulative case separately compares distinct forward and reversed validated presentations before adding removals and a stamp fault. Literal home recipients and retained member counts remain unchanged across empty epochs and opposite stance."
     },
     {
       "operation": "pn-epoch::recipients::recipient_settlements",
       "path": "packages/epoch/tests/recipients.rs",
       "claim": "EPOCH::claim:compiler:recipients-read-persistent-title-events",
-      "before": "",
-      "after": "Claim: Independent event tables distinguish unique transfer, conflict, buyer or seller cancellation, each wrong party, consumed-record reuse and resale. Successful Accept and Ratify cells retain counterparty recipients after consumption and resale, while losing or reused attempts resolve home; hostile settlement coordinates remain home without reversing title.",
-      "review": "Independent literal family and event tables share only raw input carriers with production. Positive signs, anchored recipients, persistent successful events and cumulative netting are tested without calculating expected destinations through production helpers."
+      "before": "Claim: Independent event tables distinguish unique transfer, conflict, buyer or seller cancellation, each wrong party, consumed-record reuse and resale. Successful Accept and Ratify cells retain counterparty recipients after consumption and resale, while losing or reused attempts resolve home; hostile settlement coordinates remain home without reversing title.",
+      "after": "Claim: Independent event tables distinguish unique transfer, conflict, buyer or seller cancellation, each wrong party, consumed-record reuse and resale. Successful Accept and Ratify cells retain counterparty recipients after consumption and resale, while losing or reused attempts resolve home; hostile settlement coordinates remain home without reversing title. Each of eleven event cases reaches validation in both distinct forward and reversed presentations with equal recipients.",
+      "review": "All eleven independent settlement event cases explicitly assert distinct validator-retained identity vectors before and after reversal. Recipient results remain equal without sorting either presentation; expected event outcomes share no production title or routing code."
     },
     {
       "operation": "pn-epoch::support::support_refusals",

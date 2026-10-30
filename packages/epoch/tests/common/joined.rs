@@ -167,18 +167,38 @@ pub(crate) fn act(family: &str, author: &str, sequence: u64, epoch: u64) -> Cand
     act
 }
 pub(crate) fn positions(inputs: &[CandidateAct]) -> Vec<CandidateAct> {
-    let mut inputs = inputs.to_vec();
-    inputs.sort_by_key(|act| (act.finalization_epoch, act.id.sequence));
-    let mut positions = BTreeMap::new();
-    for act in &mut inputs {
-        let position = positions.entry(act.finalization_epoch).or_insert(0);
-        *position += 1;
-        act.authoritative_position = *position;
-    }
+    // Compact raw fixture gaps without sorting the presentation or changing its order of record.
+    let mut keys: Vec<_> = inputs
+        .iter()
+        .map(|act| (act.finalization_epoch, act.authoritative_position, act.id.clone()))
+        .collect();
+    keys.sort();
+    let mut counters = BTreeMap::new();
+    let assigned: BTreeMap<_, _> = keys
+        .into_iter()
+        .map(|(epoch, _, id)| {
+            let next = counters.entry(epoch).or_insert(0);
+            *next += 1;
+            (id, *next)
+        })
+        .collect();
     inputs
+        .iter()
+        .cloned()
+        .map(|mut act| {
+            act.authoritative_position = assigned[&act.id];
+            act
+        })
+        .collect()
 }
 pub(crate) fn history(inputs: &[CandidateAct]) -> pn_records::ValidatedHistory {
-    validate_history(&positions(inputs), &[]).unwrap()
+    let placed = positions(inputs);
+    let history = validate_history(&placed, &[]).unwrap();
+    assert_eq!(
+        history.acts().iter().map(ValidatedAct::id).collect::<Vec<_>>(),
+        inputs.iter().map(|act| &act.id).collect::<Vec<_>>()
+    );
+    history
 }
 pub(crate) fn anchors() -> Vec<CandidateAct> {
     vec![

@@ -403,7 +403,7 @@
       "cases": 256,
       "consumer": "pn-epoch",
       "dependency": "proptest 1.12.0",
-      "edition": "epoch-compiler-1",
+      "edition": "epoch-compiler-2",
       "generator": "packages/epoch/tests/common/joined.rs",
       "name": "pn-epoch::compiler::compiler_generated",
       "regressions": "packages/epoch/tests/compiler-regressions.txt",
