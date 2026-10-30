@@ -28,15 +28,18 @@ def release_projection(name, rows):
     raise ValueError(f'unknown release projection: {name}')
 
 
-def first_party_prose(include_vendors=False):
-    members = tomllib.loads(Path('Cargo.toml').read_text())['workspace']['members']
-    vendors = [Path(member) for member in members if member.startswith('vendor/')]
+def tracked_paths():
     started = time.monotonic()
     tracked = subprocess.run(['git', 'ls-files', '-z'], capture_output=True, check=True)
     print(f'git ls-files wall={time.monotonic() - started:.6f}s status={tracked.returncode}')
-    return [path for raw in tracked.stdout.split(b'\0') if raw
-            and (path := Path(raw.decode())).suffix in {'.md', '.j2'}
-            and (include_vendors or not any(path.is_relative_to(vendor) for vendor in vendors))]
+    return [Path(raw.decode()) for raw in tracked.stdout.split(b'\0') if raw]
+
+
+def first_party_prose():
+    members = tomllib.loads(Path('Cargo.toml').read_text())['workspace']['members']
+    vendors = [Path(member) for member in members if member.startswith('vendor/')]
+    return [path for path in tracked_paths() if path.suffix in {'.md', '.j2'}
+            and not any(path.is_relative_to(vendor) for vendor in vendors)]
 
 
 PAPER_EDITION_FIXTURES = {
@@ -46,21 +49,28 @@ PAPER_EDITION_FIXTURES = {
 
 
 def check_paper_editions(paths):
-    """Check tracked Markdown and templates; deliberate source fixtures are exempt."""
-    checked = mentions = 0
+    """Check tracked UTF-8 text without NUL bytes, except named source fixtures."""
+    checked = mentions = binary = exempt = 0
     findings = []
     for path in paths:
         if path.as_posix() in PAPER_EDITION_FIXTURES:
+            exempt += 1
             continue
-        if not (path.name.endswith('.md') or path.name.endswith('.md.j2')):
+        try:
+            source = path.read_bytes().decode('utf-8')
+        except UnicodeDecodeError:
+            binary += 1
+            continue
+        if '\0' in source:
+            binary += 1
             continue
         checked += 1
-        for number, line in enumerate(path.read_text().splitlines(), 1):
+        for number, line in enumerate(source.splitlines(), 1):
             for match in re.finditer(r'network-v[0-9]+\.[0-9]+\.[0-9]+(?:[-+][a-z0-9.-]+)?', line, re.IGNORECASE):
                 mentions += 1
                 if match.group().casefold() != PAPER_TAG.casefold():
                     findings.append(f'{path}:{number}: stale paper edition {match.group()} (current {PAPER_TAG})')
-    print(f'PAPER-EDITIONS files={checked} mentions={mentions} refused={len(findings)}')
+    print(f'PAPER-EDITIONS files={checked} mentions={mentions} binary={binary} exempt={exempt} refused={len(findings)}')
     if findings:
         raise ValueError('\n'.join(findings))
 
@@ -181,7 +191,7 @@ def validate():
             raise ValueError('withdrawn import remains present')
     labels.update(row['cites'] for row in constants if row['cites'])
     bare_mint = bare_mint_pattern(labels)
-    check_paper_editions(first_party_prose(include_vendors=True))
+    check_paper_editions(tracked_paths())
     for path in first_party_prose():
         source = path.read_text()
         if match := bare_mint.search(source):

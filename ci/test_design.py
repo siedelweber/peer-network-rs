@@ -12,7 +12,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from design import PAPER_EDITION_FIXTURES, PAPER_TAG, bare_mint_pattern, check_paper_editions, validate
+from design import PAPER_EDITION_FIXTURES, PAPER_TAG, bare_mint_pattern, validate
 
 
 REPOSITORY = Path(__file__).resolve().parent.parent
@@ -63,7 +63,7 @@ class Correspondence(unittest.TestCase):
         return subprocess.run([sys.executable, '-B', '-O', str(REPOSITORY / 'ci/design.py')], cwd=self.root, capture_output=True, text=True)
 
     def test_release_tags(self):
-        """Release identities are pinned, and tracked Markdown and templates refuse other paper editions regardless of case; deliberate source fixtures remain exempt.
+        """Release identities are pinned, and tracked UTF-8 text without NUL bytes refuses other paper editions regardless of case; only the two named source fixtures are exempt.
         ´claim:design:release-identities-are-pinned´
         ´test:integration:test-release-tags´
         """
@@ -78,7 +78,7 @@ class Correspondence(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(f'{name}: paper release tag changed', result.stderr)
         path.write_text(original)
-        for name in ('README.md', 'docs/templates/example.md.j2'):
+        for name in ('README.md', 'docs/templates/example.md.j2', 'example.rs', 'example.json'):
             prose = self.root / name
             prose.parent.mkdir(parents=True, exist_ok=True)
             prose.write_text('Network-v0.30.1\n')
@@ -91,8 +91,27 @@ class Correspondence(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn('refused=0', result.stdout)
         self.assertEqual(PAPER_EDITION_FIXTURES, {'ci/test_design.py', 'packages/documents/tests/integration.rs'})
-        # The allow-list is checked before reading fixture source, which is not prose.
-        check_paper_editions([Path(name) for name in sorted(PAPER_EDITION_FIXTURES)])
+        for count, name in enumerate(sorted(PAPER_EDITION_FIXTURES), 1):
+            fixture = self.root / name
+            fixture.parent.mkdir(parents=True, exist_ok=True)
+            fixture.write_text('Network-v0.30.1\n')
+            git(self.root, 'add', name)
+            result = self.check()
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn(f'exempt={count} refused=0', result.stdout)
+            probe = self.root / 'not-allow-listed.txt'
+            probe.write_bytes(fixture.read_bytes())
+            git(self.root, 'add', probe.name)
+            result = self.check()
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('not-allow-listed.txt:1: stale paper edition Network-v0.30.1', result.stderr)
+            probe.write_text(PAPER_TAG + '\n')
+        for name, content in [('nul.bin', b'Network-v0.30.1\0'), ('non-utf8.bin', b'Network-v0.30.1\xff')]:
+            (self.root / name).write_bytes(content)
+            git(self.root, 'add', name)
+        result = self.check()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('binary=2 exempt=2 refused=0', result.stdout)
 
     def test_release_projections(self):
         """Release fields remain pinned, and only structural inventory rows may retain placeholders.
