@@ -141,7 +141,7 @@
       "requirements": [
         "final-state"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in verified-package compiler scope at bite 5; exact-only numeric holds and declared public verification remain explicit, persistence and unrestricted corpus remain with their owning bites",
       "suite": "compiler"
     },
     {

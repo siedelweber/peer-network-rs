@@ -114,7 +114,7 @@
       "cases": "Unequal domain profiles, Invitation A-leg versus T-leg, repeated fold cells, home-resolved acts and Invitation cancellation under both dependency-compliant placements, with home coefficient zero and singleton De-invite at self with coefficient one. For each Accept and Ratify, compare a recognized, unchallenged title transfer with canceled, consumed, unauthorized and losing candidates; only a qualifying transfer with positive mandatory folded coordinates allocates to the counterparty, and each other case resolves to self. Reject mixed marker histories or policy editions; derive balances, emission and width from the same accepted burn increment.",
       "decision": "dec:design:final-state",
       "fixture": "compiler-cases",
-      "hold": "The released reference conserved fixture supplies an oracle; implementation executions and other input families remain held. Legacy staged expectations are not substitutes.",
+      "hold": "Deployment authentication and settled-lineage realization remain the public verifier contract; canonical publication, persistent admitted results, nonlinear evidence and unrestricted corpus retain their owning holds.",
       "labels": [
         "post:epoch:standing-epoch-set-determinism",
         "post:epoch:standing-memorylessness",
@@ -128,7 +128,7 @@
       "requirements": [
         "final-state"
       ],
-      "status": "planned; execution evidence pending"
+      "status": "scoped execution: verified package, joined nineteen-family compiler tables, recorded permutations and generated cases; see amend:design:bite-five-close"
     },
     {
       "cases": "A depleted relay, zero-emission source, closed cluster and retained diagonal with nonzero incoming mass; matched funded partitions, identical-public-record purpose completions and burn-response counterexamples under (`verif:design:core-standing-properties`).",

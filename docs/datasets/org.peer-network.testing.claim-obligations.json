@@ -223,16 +223,25 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+        "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+        "EPOCH::claim:compiler:recorded-permutations-preserve-joined-results",
+        "EPOCH::claim:compiler:generated-packages-match-the-literal-compiler-table",
+        "EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base",
+        "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
-      "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "closing_step": "Bite 5 scoped compiler close; persistent admission remains bites 7 and 8, unrestricted corpus bite 11",
+      "evidence_paragraph": "EPOCH::amend:compiler:bite-five-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:design:final-state",
+      "missing": "Outside scope: deployment authentication and settled-chain realization, canonical publication, persistent admitted results, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence.",
       "name": "ROOT::dec:design:final-state",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "Verified in-memory package with sound declared public binding and formation verifiers; complete recognized marker and authored-history prefix; fixed exact-rational constants, units and vintages; explicit irrational holds; released settlement parties and title events. Independent finite tables, recorded source-qualified properties and observed executions establish only this compiler scope.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -247,16 +256,21 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
+        "RECORDS::claim:ledger:later-prices-preserve-charged-vintages"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
-      "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "closing_step": "Bite 5 scoped compiler close; persistent admission remains bites 7 and 8, unrestricted corpus bite 11",
+      "evidence_paragraph": "EPOCH::amend:compiler:bite-five-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for dec:design:ledger-vintages",
+      "missing": "Outside scope: deployment authentication and settled-chain realization, canonical publication, persistent admitted results, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence.",
       "name": "ROOT::dec:design:ledger-vintages",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "Verified in-memory package with sound declared public binding and formation verifiers; complete recognized marker and authored-history prefix; fixed exact-rational constants, units and vintages; explicit irrational holds; released settlement parties and title events. Independent finite tables, recorded source-qualified properties and observed executions establish only this compiler scope.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -1123,16 +1137,34 @@
       "status": "scoped-supported"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+        "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+        "EPOCH::claim:compiler:recorded-permutations-preserve-joined-results",
+        "EPOCH::claim:compiler:generated-packages-match-the-literal-compiler-table",
+        "EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base",
+        "EPOCH::claim:compiler:boundary-inputs-bind-complete-declared-parameters",
+        "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
+        "RECORDS::claim:ledger:later-prices-preserve-charged-vintages",
+        "EPOCH::claim:compiler:cells-retain-members-and-sum-before-clipping",
+        "EPOCH::claim:compiler:coefficients-are-exact-or-held-with-numeric-evidence",
+        "EPOCH::claim:compiler:recipients-read-persistent-title-events",
+        "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free",
+        "EPOCH::claim:compiler:base-is-an-unnormalized-weighted-cell-sum",
+        "EPOCH::claim:compiler:emission-and-support-follow-final-pairs-and-depths",
+        "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
-      "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "closing_step": "Bite 5 scoped compiler close; persistent admission remains bites 7 and 8, unrestricted corpus bite 11",
+      "evidence_paragraph": "EPOCH::amend:compiler:bite-five-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for gate:design:bite-5",
+      "missing": "Outside scope: deployment authentication and settled-chain realization, canonical publication, persistent admitted results, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence.",
       "name": "ROOT::gate:design:bite-5",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "Verified in-memory package with sound declared public binding and formation verifiers; complete recognized marker and authored-history prefix; fixed exact-rational constants, units and vintages; explicit irrational holds; released settlement parties and title events. Independent finite tables, recorded source-qualified properties and observed executions establish only this compiler scope.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
@@ -2390,16 +2422,34 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+        "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+        "EPOCH::claim:compiler:recorded-permutations-preserve-joined-results",
+        "EPOCH::claim:compiler:generated-packages-match-the-literal-compiler-table",
+        "EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base",
+        "EPOCH::claim:compiler:boundary-inputs-bind-complete-declared-parameters",
+        "EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger",
+        "RECORDS::claim:ledger:later-prices-preserve-charged-vintages",
+        "EPOCH::claim:compiler:cells-retain-members-and-sum-before-clipping",
+        "EPOCH::claim:compiler:coefficients-are-exact-or-held-with-numeric-evidence",
+        "EPOCH::claim:compiler:recipients-read-persistent-title-events",
+        "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free",
+        "EPOCH::claim:compiler:base-is-an-unnormalized-weighted-cell-sum",
+        "EPOCH::claim:compiler:emission-and-support-follow-final-pairs-and-depths",
+        "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+      ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
-      "closing_step": "Assigned domain bite, with evidence review in bite 11",
+      "closing_step": "Bite 5 scoped compiler close; persistent admission remains bites 7 and 8, unrestricted corpus bite 11",
+      "evidence_paragraph": "EPOCH::amend:compiler:bite-five-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Reviewed ordinary claim citations and scoped premises for verif:design:compiler-cases",
+      "missing": "Outside scope: deployment authentication and settled-chain realization, canonical publication, persistent admitted results, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence.",
       "name": "ROOT::verif:design:compiler-cases",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
+      "premises": "Verified in-memory package with sound declared public binding and formation verifiers; complete recognized marker and authored-history prefix; fixed exact-rational constants, units and vintages; explicit irrational holds; released settlement parties and title events. Independent finite tables, recorded source-qualified properties and observed executions establish only this compiler scope.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [],
