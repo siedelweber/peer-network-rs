@@ -1521,3 +1521,16 @@ tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::package::package_bindings"]
 
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::compiler"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::compiler::compiler_tables", "pn-epoch::compiler::compiler_splits", "pn-epoch::compiler::compiler_properties", "pn-epoch::compiler::compiler_generated"]
+
+

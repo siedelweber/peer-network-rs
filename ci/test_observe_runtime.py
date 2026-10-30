@@ -188,7 +188,7 @@ class Processes(unittest.TestCase):
         self.assertEqual(outcomes['default'],outcomes['trace'])
 
     def test_epoch_inputs(self):
-        """Claim: The real compiler parameter, ledger, cell, coefficient, recipient, base and support boundaries preserve exact successful inputs, ledger values, empty cells and recipients, nonempty unnormalized bases, source emission and depth support, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary, including nested cell compilation and trace carries public constants, recognized markers and results.
+        """Claim: Compiler parameters, package verification and joined compilation preserve complete public successful results, title evidence, ledger values, cells, recipients, sparse base, emission and support, typed refusals and irrational holds with observation disabled, default and trace. Enabled observation accounts for all nested invocations; trace carries the verified source and compiled result without changing either.
         ´claim:discipline:epoch-inputs-retain-observed-results´
         ´test:integration:test-epoch-inputs´
         """
@@ -203,16 +203,19 @@ class Processes(unittest.TestCase):
             self.assertIn(b'FinalLedger', result.stdout)
             self.assertIn(b'Boundary', result.stdout)
             self.assertIn(b'Irrational', result.stdout)
+            self.assertIn(b'CompiledState', result.stdout)
+            self.assertIn(b'TitleReplay', result.stdout)
+            self.assertIn(b'Binding', result.stdout)
             if mode == 'disabled': continue
             rows = [json.loads(line) for line in result.stderr.splitlines()]
             summary = expanded(next(row['metrics'] for row in rows if row.get('kind') == 'metric_summary'))
             stem = 'epoch__root__sig__design__epoch__'
             accounting = distribution(summary)
-            self.assertEqual(accounting[stem+'started_operations', ''], 50)
+            self.assertEqual(accounting[stem+'started_operations', ''], 116)
             instruments = {row['name']: row for row in summary['instruments'] if row['name'].startswith(stem)}
-            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 50)
+            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 116)
             if mode == 'trace':
-                for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass', b'compile_ledger', b'RecognizedMarkers', b'FinalLedger', b'fold_cells', b'coefficient', b'Irrational', b'resolve_recipients', b'compile_base', b'BaseAllocation', b'HeldCoefficient', b'compile_support', b'StandingSupport', b'Products'):
+                for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass', b'compile_ledger', b'RecognizedMarkers', b'FinalLedger', b'fold_cells', b'coefficient', b'Irrational', b'resolve_recipients', b'compile_base', b'BaseAllocation', b'HeldCoefficient', b'compile_support', b'StandingSupport', b'Products', b'verify_package', b'compile_final_state', b'CompiledState'):
                     self.assertIn(marker, result.stderr)
         self.assertEqual(samples['disabled'], samples['default'])
         self.assertEqual(samples['default'], samples['trace'])

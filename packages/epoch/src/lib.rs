@@ -245,3 +245,7 @@ fn projection_domains(family: &str) -> Option<&'static [&'static str]> {
         _ => None,
     }
 }
+
+/// Joined compiler over verified completed packages.
+/// (´def:compiler:joined-state´)
+pub mod compiler;

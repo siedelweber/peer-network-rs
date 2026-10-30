@@ -4,6 +4,8 @@
 mod allocation;
 #[path = "../tests/common/mod.rs"]
 mod common;
+#[path = "../tests/common/joined.rs"]
+mod joined;
 #[path = "../tests/common/package.rs"]
 mod package_inputs;
 #[path = "../tests/common/support.rs"]
@@ -149,5 +151,42 @@ fn allocation_results() -> String {
     let package = pn_epoch::package::verify_package(package_input.clone(), &published).unwrap();
     let package_refusal = pn_epoch::package::verify_package(package_input, &package_inputs::Published(vec![])).unwrap_err();
     let bindings = &package.input().bindings;
-    format!("{base:?};{base_hold:?};{support:?};{support_refusal:?};{bindings:?};{package_refusal:?}")
+    let compiled = joined_results();
+    format!("{base:?};{base_hold:?};{support:?};{support_refusal:?};{bindings:?};{package_refusal:?};{compiled}")
+}
+
+fn joined_results() -> String {
+    let mut acts = joined::anchors();
+    let mut opinion = joined::act("Opinion", "seller", 10, 1);
+    opinion.body.quantities[1].1.value = 2;
+    acts.push(opinion);
+    let burns = [("seller", "100"), ("buyer", "100"), ("third", "100")];
+    let held = joined::reordered_package(&acts, 1, &burns);
+    let mut numeric = joined::numeric();
+    let held = pn_epoch::compiler::compile_final_state(
+        &held,
+        &joined::Verifier,
+        &mut numeric,
+        pn_records::numerics::ExactLimits::default(),
+        1000,
+    )
+    .unwrap();
+    let settlement = joined::package(&joined::settlement(), 2, &burns);
+    let accepted = pn_epoch::compiler::compile_final_state(
+        &settlement,
+        &joined::Verifier,
+        &mut numeric,
+        pn_records::numerics::ExactLimits::default(),
+        1000,
+    )
+    .unwrap();
+    let refused = pn_epoch::compiler::compile_final_state(
+        &settlement,
+        &joined::Verifier,
+        &mut numeric,
+        pn_records::numerics::ExactLimits::default(),
+        0,
+    )
+    .unwrap_err();
+    format!("{held:?};{accepted:?};{refused:?}")
 }

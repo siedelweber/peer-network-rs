@@ -278,8 +278,8 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
       "before": "",
-      "after": "Claim: The real compiler parameter, ledger, cell, coefficient, recipient, base and support boundaries preserve exact successful inputs, ledger values, empty cells and recipients, nonempty unnormalized bases, source emission and depth support, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary, including nested cell compilation and trace carries public constants, recognized markers and results.",
-      "review": "The example adds successful empty recipients and a boundary refusal. Both recipient calls invoke cell compilation, giving twelve compiler spans; exact outputs remain equal with observation off, default and trace."
+      "after": "Claim: Compiler parameters, package verification and joined compilation preserve complete public successful results, title evidence, ledger values, cells, recipients, sparse base, emission and support, typed refusals and irrational holds with observation disabled, default and trace. Enabled observation accounts for all nested invocations; trace carries the verified source and compiled result without changing either.",
+      "review": "The executable compares complete outputs with observation off, default and trace, including a verified package, joined irrational evidence and a successful settlement prefix. A rejected publication binding and exhausted support budget remain explicit refusals. Nested accounting has 116 epoch operations; this is observation transparency, not authentication evidence."
     },
     {
       "operation": "ci::test_observe_runtime.Processes.test_four_mode_results",
@@ -1520,6 +1520,38 @@
       "before": "",
       "after": "Claim: The coefficient boundary refuses unknown families, missing or extra mandatory coordinates and out-of-range inputs, without interpreting them as an irrational hold or returning partial evidence.",
       "review": "Independent literal coordinate and square tables, expected exact means and integer-squared probe bounds exercise the public exact-only boundary; no production root or folding function constructs the expected answers."
+    },
+    {
+      "operation": "pn-epoch::compiler::compiler_generated",
+      "path": "packages/epoch/tests/compiler.rs",
+      "claim": "EPOCH::claim:compiler:generated-packages-match-the-literal-compiler-table",
+      "before": "",
+      "after": "Claim: Source-qualified recorded generated family and permutation cases agree with the independent literal compiler table before and after accepted-set presentation changes. The generated scope is the nineteen-family unit-coordinate alphabet with typed fixture publication, not arbitrary numeric or deployment histories.",
+      "review": "A registered consumer-qualified 256-case proptest campaign selects the independent nineteen-family table and permutes accepted-set presentation. The gate records the source seed and regression path; only raw carriers are shared with the production compiler."
+    },
+    {
+      "operation": "pn-epoch::compiler::compiler_properties",
+      "path": "packages/epoch/tests/compiler.rs",
+      "claim": "EPOCH::claim:compiler:recorded-permutations-preserve-joined-results",
+      "before": "",
+      "after": "Claim: A recorded finite seed corpus permutes raw accepted-set presentation across every family and settlement, and reverses two independent Invitation placements. The verified package's joined result is identical, including holds; every Invitation identity remains counted. This is scoped compiler determinism, not universal partition invariance.",
+      "review": "Eight literal seeds permute presentation over nineteen families and settlement. A separate verified package reverses the two independent Invitation placements while keeping each act unchanged. Scope is finite compiler determinism, not a universal partition theorem."
+    },
+    {
+      "operation": "pn-epoch::compiler::compiler_splits",
+      "path": "packages/epoch/tests/compiler.rs",
+      "claim": "EPOCH::claim:compiler:split-witnesses-stop-at-the-compiled-base",
+      "before": "",
+      "after": "Claim: The finite compiler portion of the split fixtures preserves the source ledger pair proportionally without copying any act, while separate author cells change the unnormalized base. The witnesses establish compiler inputs to split admissibility and fold export, not equilibrium, conservation, universal split invariance or monotone standing under extra burn.",
+      "review": "The coarse and refined five-act fixtures keep the source ledger pair proportional and the target fixed, while showing the changed cell partition and unnormalized bases. No standing solve is invoked."
+    },
+    {
+      "operation": "pn-epoch::compiler::compiler_tables",
+      "path": "packages/epoch/tests/compiler.rs",
+      "claim": "EPOCH::claim:compiler:fixed-inputs-determine-the-compiled-state",
+      "before": "",
+      "after": "Claim: For verified fixture packages and deterministic formation verification, the joined compiler derives one frozen state from one complete prefix. Independent literal tables cover all nineteen families, ledger counts and debits, cells, coefficients, recipients, sparse base, source emission and support; numeric holds remain explicit and title-dependent recipients follow the released settlement-party rule. The result is neither a solve nor persistent epoch admission.",
+      "review": "Literal coordinate, recipient, ledger, sparse base and support tables cover the nineteen-family census. Separate cancellation, irrational and successful settlement rows exercise joined outputs, and product-budget and insolvency failures return no partial state."
     },
     {
       "operation": "pn-epoch::inputs::parameter_binding",

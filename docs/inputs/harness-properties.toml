@@ -391,3 +391,15 @@ dependency = "proptest 1.12.0"
 regressions = "packages/verification/proptest-regressions"
 case_count_kind = "configured-successful-cases; persisted regressions run additionally"
 consumer = "pn-verification"
+
+[[rows]]
+name = "pn-epoch::compiler::compiler_generated"
+seed_policy = "source-v1"
+cases = 256
+algorithm = "cc"
+generator = "packages/epoch/tests/common/joined.rs"
+edition = "epoch-compiler-1"
+dependency = "proptest 1.12.0"
+regressions = "packages/epoch/tests/compiler-regressions.txt"
+case_count_kind = "configured-successful-cases; persisted regressions run additionally"
+consumer = "pn-epoch"

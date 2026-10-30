@@ -7053,6 +7053,52 @@
         "boundary": "pn-epoch::packages/epoch/src/package.rs::package::verify_package",
         "class_decision": "epoch-package"
       }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "item": "compiler::compile_final_state",
+      "owner": "EPOCH",
+      "signature": "fn compile_final_state (package : & VerifiedPackage , verifier : & impl RegistrationVerifier , numeric : & mut NumericContext , limits : Limits , maximum_products : u64 ,) -> Result < CompiledState , CompileError >",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "item": "compiler::CompiledState::package",
+      "owner": "EPOCH",
+      "signature": "fn package (& self) -> & VerifiedPackage",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access inherits the joined compiler operation.",
+        "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+        "boundary": "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_final_state",
+        "class_decision": "epoch-compiler"
+      }
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "item": "compiler::CompiledState::view",
+      "owner": "EPOCH",
+      "signature": "fn view (& self) -> & CompiledView",
+      "claim": "ROOT::sig:design:epoch",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access inherits the joined compiler operation.",
+        "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+        "boundary": "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_final_state",
+        "class_decision": "epoch-compiler"
+      }
     }
   ],
   "metrics": [
@@ -13689,6 +13735,39 @@
         "secret_flow": "epoch-package-secret_flow",
         "exposure_consumers": "epoch-package-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_final_state",
+      "body": "{ let source = package . input () ; let inputs = source . inputs . last () . ok_or (CompileError :: Boundary) ? ; let price = source . prices . last () . ok_or (CompileError :: Boundary) ? ; let ledger = compile_ledger (& source . inputs , & source . prices , & source . markers , & source . history , verifier , numeric , limits . clone () ,) ? ; let graph = pn_graph :: formation :: reconstruct_replay (& source . history , verifier) . map_err (LedgerError :: Formation) ? ; let title = pn_graph :: title :: replay_title (& graph , & source . history , verifier , inputs . parameters () . boundary) ? ; let recipients = resolve_recipients (& source . history , inputs . parameters () . boundary , verifier , limits . clone ()) ? ; let cells : Vec < _ > = recipients . iter () . map (| row | row . cell . clone ()) . collect () ; let mut coefficients = BTreeMap :: new () ; for cell in & cells { let evidence = match coefficient (cell , limits . clone ()) { Ok (value) => CoefficientEvidence :: Exact (value) , Err (CoefficientError :: Irrational { radicand }) => CoefficientEvidence :: Irrational { radicand } , Err (error) => return Err (error . into ()) , } ; coefficients . insert (cell . identity . clone () , evidence) ; } let base = compile_base (inputs , & source . history , verifier , limits . clone ()) ? ; let support = compile_support (inputs , price , & ledger , & base , numeric , limits , maximum_products) ? ; Ok (CompiledState { source : package . clone () , view : CompiledView { title , ledger , cells , coefficients , recipients , base , support , } , }) }",
+      "class_decision": "epoch-compiler",
+      "item_premise": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
+      "assessments": {
+        "full_recording": "epoch-compiler-full_recording",
+        "secret_flow": "epoch-compiler-secret_flow",
+        "exposure_consumers": "epoch-compiler-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledState::package",
+      "body": "{ & self . source }",
+      "class_decision": "epoch-compiler",
+      "item_premise": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
+      "assessments": {
+        "full_recording": "epoch-compiler-full_recording",
+        "secret_flow": "epoch-compiler-secret_flow",
+        "exposure_consumers": "epoch-compiler-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledState::view",
+      "body": "{ & self . view }",
+      "class_decision": "epoch-compiler",
+      "item_premise": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
+      "assessments": {
+        "full_recording": "epoch-compiler-full_recording",
+        "secret_flow": "epoch-compiler-secret_flow",
+        "exposure_consumers": "epoch-compiler-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -16922,6 +17001,42 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "epoch-package",
       "expansion_review": "Structural cloning, diagnostic formatting, equality and named errors preserve complete public package fields. There is no serialization or authentication realization in these derives."
+    },
+    {
+      "item": "compiler::CoefficientEvidence",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-compiler",
+      "expansion_review": "Public structural compiler evidence is cloned, compared and formatted without hiding holds or introducing serialization. The frozen result retains a verified source package and exposes immutable views only."
+    },
+    {
+      "item": "compiler::CompiledView",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-compiler",
+      "expansion_review": "Public structural compiler evidence is cloned, compared and formatted without hiding holds or introducing serialization. The frozen result retains a verified source package and exposes immutable views only."
+    },
+    {
+      "item": "compiler::CompiledState",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "epoch-compiler",
+      "expansion_review": "Public structural compiler evidence is cloned, compared and formatted without hiding holds or introducing serialization. The frozen result retains a verified source package and exposes immutable views only."
+    },
+    {
+      "item": "compiler::CompileError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-compiler",
+      "expansion_review": "Public structural compiler evidence is cloned, compared and formatted without hiding holds or introducing serialization. The frozen result retains a verified source package and exposes immutable views only."
     }
   ],
   "reviewed_types": [
@@ -19236,6 +19351,30 @@
       "syntax": "# [doc = \" Distinct structural and bounded-arithmetic refusals.\"] # [doc = \" (\u00b4def:compiler:boundary-inputs\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum InputError { # [error (\"constants selection: {0}\")] Constants (# [from] ConstantsError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"boundary zero is not a compiling epoch\")] Boundary , # [error (\"input edition differs from the effective edition\")] Edition , # [error (\"profile mixes constants editions\")] MixedEdition , # [error (\"unit or numeraire differs from the effective edition\")] Units , # [error (\"missing or unsupported literal constant\")] Constant , # [error (\"family profile missing\")] MissingProfile , # [error (\"duplicate or unknown family or undeclared profile\")] ProfileIdentity , # [error (\"negative profile weight\")] NegativeProfile , # [error (\"profile does not sum to one\")] ProfileSum , # [error (\"profile supported outside the family's projection domains\")] ProfileSupport , # [error (\"published domain weight missing\")] MissingDomainWeight , # [error (\"negative published domain weight\")] NegativeDomainWeight , # [error (\"unknown published domain\")] UnknownDomain , # [error (\"hop limit must be a positive integer\")] HopLimit , # [error (\"self retention must be positive\")] SelfBase , # [error (\"depth mass must be nonempty, nonnegative and sum to one\")] DepthMass , }"
     },
     {
+      "item": "compiler::CoefficientEvidence",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [doc = \" Exact cell magnitude or its retained numeric-evidence hold.\"] # [doc = \" (\u00b4def:compiler:joined-state\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum CoefficientEvidence { Exact (String) , Irrational { radicand : String } , }"
+    },
+    {
+      "item": "compiler::CompiledView",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [doc = \" Public immutable compilation view; no independently supplied intermediate results.\"] # [doc = \" (\u00b4def:compiler:joined-state\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct CompiledView { pub title : pn_graph :: title :: TitleReplay , pub ledger : FinalLedger , pub cells : Vec < StandingCell > , pub coefficients : BTreeMap < CellIdentity , CoefficientEvidence > , pub recipients : Vec < ResolvedCell > , pub base : BaseAllocation , pub support : StandingSupport , }"
+    },
+    {
+      "item": "compiler::CompiledState",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [doc = \" Frozen joined output, not an admitted epoch or a persistence capability.\"] # [doc = \" (\u00b4def:compiler:joined-state\u00b4)\"] # [derive (Clone , Debug)] pub struct CompiledState { source : VerifiedPackage , view : CompiledView , }"
+    },
+    {
+      "item": "compiler::CompileError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/compiler.rs",
+      "syntax": "# [doc = \" Whole-result refusal; no partial compiled state escapes.\"] # [doc = \" (\u00b4def:compiler:joined-state\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CompileError { # [error (\"verified package has no completed boundary\")] Boundary , # [error (\"ledger: {0}\")] Ledger (# [from] LedgerError) , # [error (\"recipients: {0}\")] Recipients (# [from] RecipientError) , # [error (\"title: {0}\")] Title (# [from] pn_graph :: recognition :: RecognitionError) , # [error (\"coefficient: {0}\")] Coefficient (# [from] CoefficientError) , # [error (\"base: {0}\")] Base (# [from] BaseError) , # [error (\"support: {0}\")] Support (# [from] SupportError) , }"
+    },
+    {
       "item": "ContentRequest",
       "package": "pn-act-profile",
       "path": "packages/act-profile/src/lib.rs",
@@ -19675,6 +19814,18 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise."
+    },
+    {
+      "name": "epoch-compiler",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/compiler.rs::compiler::compile_final_state",
+          "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledState::package",
+          "pn-epoch::packages/epoch/src/compiler.rs::compiler::CompiledState::view"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise."
     }
   ],
   "shapes": {
@@ -21675,6 +21826,21 @@
     "epoch-package-exposure_consumers": {
       "status": "reviewer-confirmed",
       "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-compiler-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-compiler-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-compiler-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "The joined compiler reads an immutable verified public package and deterministic formation verification, derives every intermediate at the same boundary, and retains source, title, ledger, cell, recipient and numeric evidence. Irrational coefficients stay public holds; refusals return no compiled state. No secrets, canonical bytes, publication authorization or persistence capability enter this operation. Observation is not a premise.",
       "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
     }
   }
