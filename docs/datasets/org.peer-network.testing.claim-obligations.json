@@ -2967,7 +2967,7 @@
       "evidence_paragraph": "EPOCH::amend:compiler:invitation-netting-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
       "missing": "Geometry, allocation amounts and general irrational numeric evidence remain outside these scoped tables.",
-      "name": "ROOT::verif:design:suppressed-invitation-cases",
+      "name": "ROOT::verif:design:invitation-netting-cases",
       "owner": "Graph implementer",
       "path": "docs/design/implementation.md",
       "premises": "Declared public verifier, released Invitation fixture and independent rational tables; no geometric conduit or allocation theorem.",

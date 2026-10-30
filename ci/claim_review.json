@@ -1471,7 +1471,7 @@
       "claim": "EPOCH::claim:compiler:invitation-netting-retains-every-charge",
       "before": "",
       "after": "Claim: Complete cancelling Invitations form one zero-coordinate cell while retaining both identities, counts and debits; a De-invite stays a separate empty-coordinate singleton at coefficient one.",
-      "review": "Released Invitation author-bundle netting is checked against literal tables, retaining identities and charges; no revocation or edition hold remains. Retires EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition in favor of the executed netting claims."
+      "review": "Released Invitation author-bundle netting is checked against literal tables, retaining identities and charges; no revocation or edition hold remains. Retires EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition in favor of the executed netting claims. Retires ROOT::verif:design:suppressed-invitation-cases in favor of ROOT::verif:design:invitation-netting-cases as the verification plan supported by this witness; its scoped obligation and evidence are unchanged."
     },
     {
       "operation": "pn-epoch::coefficients::coefficient_census",
@@ -1543,7 +1543,7 @@
       "claim": "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free",
       "before": "",
       "after": "Claim: The released Invitation netting fixture and independent rational tables cancel one author's bundle to zero and home, restore a later positive vouch, preserve independent authors, and keep De-invite singleton at self with coefficient one. Both compliant co-epoch placements produce identical cells, coefficients and recipients; the released positive nonsquare coefficient remains explicit irrational evidence.",
-      "review": "Released Invitation author-bundle netting is checked against literal tables, retaining identities and charges; no revocation or edition hold remains. Retires EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition in favor of the executed netting claims."
+      "review": "Released Invitation author-bundle netting is checked against literal tables, retaining identities and charges; no revocation or edition hold remains. Retires EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition in favor of the executed netting claims. Retires ROOT::verif:design:suppressed-invitation-cases in favor of ROOT::verif:design:invitation-netting-cases as the verification plan supported by this witness; its scoped obligation and evidence are unchanged."
     },
     {
       "operation": "pn-epoch::recipients::recipient_classes",

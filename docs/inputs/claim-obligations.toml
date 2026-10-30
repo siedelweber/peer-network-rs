@@ -2300,7 +2300,7 @@ closing_condition = "Admit the byte recipe under record 006 and establish authen
 closing_step = "Dependency-opening implementation after identity admission"
 
 [[rows]]
-name = "ROOT::verif:design:suppressed-invitation-cases"
+name = "ROOT::verif:design:invitation-netting-cases"
 path = "docs/design/implementation.md"
 status = "scoped-supported"
 claims = ["EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free", "EPOCH::claim:compiler:invitation-netting-retains-every-charge"]
