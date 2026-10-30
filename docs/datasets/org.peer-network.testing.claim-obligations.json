@@ -1170,17 +1170,19 @@
       "claims": [
         "EPOCH::claim:compiler:solve-declarations-bind-without-enabling-evaluation",
         "EPOCH::claim:compiler:solve-records-refuse-malformed-procedures",
-        "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption"
+        "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption",
+        "EPOCH::claim:compiler:exact-transport-agrees-with-dense-rational-oracle",
+        "EPOCH::claim:compiler:zero-tilt-anchor-keeps-ledger-and-irrational-holds"
       ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "evidence_paragraph": "EPOCH::amend:compiler:solve-record-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Certified nonlinear backend, transport and solve, residual containment, current reference and response fixtures remain unimplemented; procedure records establish structural consistency only.",
+      "missing": "Certified nonlinear backend and transport, conserved nonlinear solve, residual containment, current reference and response fixtures remain unimplemented; exact rational zero-tilt transport and supplied procedure-record consistency are scoped evidence only.",
       "name": "ROOT::gate:design:bite-6",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
-      "premises": "Frozen verified compiler package and a declared full-payload publication verifier; exact rational checks validate supplied record consistency only. No evaluator is admitted, and no supplied hull, fence or residual is certified as a map evaluation.",
+      "premises": "Frozen verified compiler package and a declared full-payload publication verifier; exact rational checks validate supplied record consistency only. No nonlinear evaluator is admitted, and no supplied hull, fence or residual is certified as a map evaluation. The exact subset uses the existing rational backend through the declared exact arithmetic contract; independent bounded rational oracles cover source-adjacent composition, emission, direct anchor mediants and hulls without changing ledger values.",
       "realizers": [],
       "status": "held"
     },

@@ -154,3 +154,7 @@ pub mod recognition;
 /// Shared inherited act metadata and stable diagnostic presentation.
 /// (´def:formation:act-metadata´)
 pub mod metadata;
+
+/// Exact rational transport support, without nonlinear evaluation.
+/// (´def:numerics:exact-transport´)
+pub mod transport;

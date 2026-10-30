@@ -250,3 +250,7 @@ fn projection_domains(family: &str) -> Option<&'static [&'static str]> {
 /// Joined compiler over verified completed packages.
 /// (´def:compiler:joined-state´)
 pub mod compiler;
+
+/// Exact rational transport support, without nonlinear evaluation.
+/// (´def:compiler:exact-anchor´)
+pub mod anchor;

@@ -1634,6 +1634,14 @@
       "review": "All eleven independent settlement event cases explicitly assert distinct validator-retained identity vectors before and after reversal. Recipient results remain equal without sorting either presentation; expected event outcomes share no production title or routing code."
     },
     {
+      "operation": "pn-epoch::solve::anchor_tables",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:zero-tilt-anchor-keeps-ledger-and-irrational-holds",
+      "before": "",
+      "after": "Claim: The zero-tilt anchor consumes only the frozen exact base, final ledger and bound depth masses; an independent rational oracle checks paired transport, export ceilings, direct mediants and hull inclusion without changing the ledger, including zero balance, equal-rate and empty domains. Irrational base terms remain named holds rather than approximate standings.",
+      "review": "Read the independent dense rational operator, noncommuting hop order, paired cluster sums, exact mediants and hulls, export ceilings, empty-domain and irrational-hold controls. These establish only the rational zero-tilt subset under the frozen compiler and exact arithmetic premises, without a nonlinear evaluator."
+    },
+    {
       "operation": "pn-epoch::solve::evidence_records",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption",
@@ -1656,6 +1664,14 @@
       "before": "",
       "after": "Claim: Procedure records require finite positive limits and precision requests, a positive endpoint grid and margin above one, and a strictly descending nonnegative rung grid ending in zero; malformed declarations never enable numerical work.",
       "review": "Read the full-payload binding and malformed procedure controls, the straddling and interruption transcripts, and the residual consistency mutations. These establish declared record consistency and refusal to evaluate; no supplied bound is certified as an evaluation of a map."
+    },
+    {
+      "operation": "pn-epoch::solve::transport_oracle",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:exact-transport-agrees-with-dense-rational-oracle",
+      "before": "",
+      "after": "Claim: Exact sparse transport agrees with an independent dense rational operator on noncommuting source-adjacent hops, applies emission once, retains zero-balance identity rows and conserves each closed cluster's paired sums and equal rates; malformed premises and finite cell exhaustion refuse without a mathematical verdict.",
+      "review": "Read the independent dense rational operator, noncommuting hop order, paired cluster sums, exact mediants and hulls, export ceilings, empty-domain and irrational-hold controls. These establish only the rational zero-tilt subset under the frozen compiler and exact arithmetic premises, without a nonlinear evaluator."
     },
     {
       "operation": "pn-epoch::support::support_refusals",

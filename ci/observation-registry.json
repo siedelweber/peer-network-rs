@@ -7159,6 +7159,96 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/transport.rs",
+      "item": "transport::exact_transport",
+      "owner": "GRAPH",
+      "signature": "fn exact_transport < A : ExactArithmetic > (input : & TransportInput < A :: Number > , a : & mut A , maximum_cells : usize ,) -> Result < TransportOutput < A :: Number > , KernelError >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "item": "anchor::<Arithmetic as ExactArithmetic>::zero",
+      "owner": "EPOCH",
+      "signature": "fn zero (& self) -> Rational",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "item": "anchor::<Arithmetic as ExactArithmetic>::one",
+      "owner": "EPOCH",
+      "signature": "fn one (& self) -> Rational",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "item": "anchor::<Arithmetic as ExactArithmetic>::add",
+      "owner": "EPOCH",
+      "signature": "fn add (& mut self , a : & Rational , b : & Rational) -> Result < Rational , KernelError >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "item": "anchor::<Arithmetic as ExactArithmetic>::sub",
+      "owner": "EPOCH",
+      "signature": "fn sub (& mut self , a : & Rational , b : & Rational) -> Result < Rational , KernelError >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "item": "anchor::<Arithmetic as ExactArithmetic>::mul",
+      "owner": "EPOCH",
+      "signature": "fn mul (& mut self , a : & Rational , b : & Rational) -> Result < Rational , KernelError >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "item": "anchor::<Arithmetic as ExactArithmetic>::div",
+      "owner": "EPOCH",
+      "signature": "fn div (& mut self , a : & Rational , b : & Rational) -> Result < Rational , KernelError >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "item": "anchor::<Arithmetic as ExactArithmetic>::compare",
+      "owner": "EPOCH",
+      "signature": "fn compare (& mut self , a : & Rational , b : & Rational) -> Result < std :: cmp :: Ordering , KernelError >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "item": "anchor::exact_anchor",
+      "owner": "EPOCH",
+      "signature": "fn exact_anchor (state : & CompiledState , limits : Limits , maximum_cells : usize) -> Result < AnchorOutcome , KernelError >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
     }
   ],
   "metrics": [
@@ -13887,6 +13977,105 @@
         "secret_flow": "solve-public-records",
         "exposure_consumers": "solve-public-records"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/transport.rs::transport::exact_transport",
+      "body": "{ validate (input , a , maximum_cells) ? ; let n = input . counts . len () ; let zero = a . zero () ; let one = a . one () ; let mut normalized = Vec :: new () ; for hop in & input . hops { normalized . push (normalize (hop , a) ?) ; } let mut product : Matrix < _ > = (0 .. n) . map (| i | std :: collections :: BTreeMap :: from ([(i , one . clone ())])) . collect () ; let mut raw : Matrix < _ > = vec ! [std :: collections :: BTreeMap :: new () ; n] ; for (hop , weight) in normalized . iter () . zip (& input . depth_mass) { let mut next : Matrix < _ > = vec ! [std :: collections :: BTreeMap :: new () ; n] ; for (source , row) in product . iter () . enumerate () { for (relay , left) in row { for (target , right) in & hop [* relay] { let value = a . mul (left , right) ? ; add_entry (& mut next [source] , * target , & value , a) ? ; } } } product = next ; for (source , row) in product . iter () . enumerate () { for (target , value) in row { let value = a . mul (weight , value) ? ; add_entry (& mut raw [source] , * target , & value , a) ? ; } } } let mut emitted = raw . clone () ; for (source , row) in emitted . iter_mut () . enumerate () { for value in row . values_mut () { * value = a . mul (& input . emission [source] , value) ? ; } let retained = a . sub (& one , & input . emission [source]) ? ; add_entry (row , source , & retained , a) ? ; } let mut numerator = vec ! [zero . clone () ; n] ; let mut denominator = vec ! [zero . clone () ; n] ; let mut ranges : Vec < Option < (A :: Number , A :: Number) > > = vec ! [None ; n] ; for (source , row) in emitted . iter () . enumerate () { for (target , weight) in row { if a . compare (weight , & zero) ? . is_eq () { continue ; } let count = a . mul (weight , & input . counts [source]) ? ; let amount = a . mul (& count , & input . rates [source]) ? ; denominator [* target] = a . add (& denominator [* target] , & count) ? ; numerator [* target] = a . add (& numerator [* target] , & amount) ? ; match & mut ranges [* target] { None => ranges [* target] = Some ((input . rates [source] . clone () , input . rates [source] . clone ())) , Some ((low , high)) => { if a . compare (& input . rates [source] , low) ? . is_lt () { * low = input . rates [source] . clone () ; } if a . compare (& input . rates [source] , high) ? . is_gt () { * high = input . rates [source] . clone () ; } } } } } let mut standing = Vec :: new () ; let mut hull = Vec :: new () ; for ((numerator , denominator) , range) in numerator . iter () . zip (& denominator) . zip (ranges) { if ! a . compare (denominator , & zero) ? . is_gt () { return Err (KernelError :: Input) ; } let value = a . div (numerator , denominator) ? ; let (low , high) = range . ok_or (KernelError :: Input) ? ; if a . compare (& value , & low) ? . is_lt () || a . compare (& value , & high) ? . is_gt () { return Err (KernelError :: Input) ; } standing . push (value) ; hull . push ((low , high)) ; } Ok (TransportOutput { normalized , raw , emitted , numerator , denominator , standing , hull , }) }",
+      "class_decision": "exact-transport-public",
+      "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+      "assessments": {
+        "full_recording": "exact-transport-public",
+        "secret_flow": "exact-transport-public",
+        "exposure_consumers": "exact-transport-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::zero",
+      "body": "{ self . zero . clone () }",
+      "class_decision": "exact-transport-public",
+      "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+      "assessments": {
+        "full_recording": "exact-transport-public",
+        "secret_flow": "exact-transport-public",
+        "exposure_consumers": "exact-transport-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::one",
+      "body": "{ self . one . clone () }",
+      "class_decision": "exact-transport-public",
+      "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+      "assessments": {
+        "full_recording": "exact-transport-public",
+        "secret_flow": "exact-transport-public",
+        "exposure_consumers": "exact-transport-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::add",
+      "body": "{ a . add (b , & mut self . budget) . map_err (arithmetic) }",
+      "class_decision": "exact-transport-public",
+      "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+      "assessments": {
+        "full_recording": "exact-transport-public",
+        "secret_flow": "exact-transport-public",
+        "exposure_consumers": "exact-transport-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::sub",
+      "body": "{ a . sub (b , & mut self . budget) . map_err (arithmetic) }",
+      "class_decision": "exact-transport-public",
+      "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+      "assessments": {
+        "full_recording": "exact-transport-public",
+        "secret_flow": "exact-transport-public",
+        "exposure_consumers": "exact-transport-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::mul",
+      "body": "{ a . mul (b , & mut self . budget) . map_err (arithmetic) }",
+      "class_decision": "exact-transport-public",
+      "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+      "assessments": {
+        "full_recording": "exact-transport-public",
+        "secret_flow": "exact-transport-public",
+        "exposure_consumers": "exact-transport-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::div",
+      "body": "{ a . div (b , & mut self . budget) . map_err (arithmetic) }",
+      "class_decision": "exact-transport-public",
+      "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+      "assessments": {
+        "full_recording": "exact-transport-public",
+        "secret_flow": "exact-transport-public",
+        "exposure_consumers": "exact-transport-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::compare",
+      "body": "{ a . compare (b , & mut self . budget) . map_err (arithmetic) }",
+      "class_decision": "exact-transport-public",
+      "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+      "assessments": {
+        "full_recording": "exact-transport-public",
+        "secret_flow": "exact-transport-public",
+        "exposure_consumers": "exact-transport-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/anchor.rs::anchor::exact_anchor",
+      "body": "{ let view = state . view () ; let inputs = state . package () . input () . inputs . last () . ok_or (KernelError :: Input) ? ; let actors : Vec < _ > = view . base . rows . keys () . cloned () . collect () ; let mut held = BTreeMap :: new () ; for (source , row) in & view . base . rows { for (target , entry) in row { if matches ! (& entry . score , BaseScore :: Held { .. }) { held . insert ((source . clone () , target . clone ()) , entry . score . clone ()) ; } } } if ! held . is_empty () { return Ok (AnchorOutcome :: Held { entries : held }) ; } let depth = inputs . parameters () . depth_mass . len () ; if actors . len () . checked_mul (actors . len ()) . and_then (| n | n . checked_mul (depth . saturating_add (3))) . is_none_or (| n | n > maximum_cells) { return Err (KernelError :: Limit) ; } let mut budget = Budget :: new (limits) . map_err (arithmetic) ? ; let zero = Rational :: parse (\"0\" , & mut budget) . map_err (arithmetic) ? ; let one = Rational :: parse (\"1\" , & mut budget) . map_err (arithmetic) ? ; let indices : BTreeMap < _ , _ > = actors . iter () . enumerate () . map (| (i , actor) | (actor , i)) . collect () ; let mut base = Vec :: new () ; for row in view . base . rows . values () { let mut values = BTreeMap :: new () ; for (target , entry) in row { let BaseScore :: Exact (value) = & entry . score else { return Err (KernelError :: Input) ; } ; values . insert (* indices . get (target) . ok_or (KernelError :: Input) ? , Rational :: parse (value , & mut budget) . map_err (arithmetic) ? ,) ; } base . push (values) ; } let mut depth_mass = Vec :: new () ; for name in & inputs . parameters () . depth_mass { depth_mass . push (crate :: constant (inputs . constants () , name , & mut budget) . map_err (| e | KernelError :: Arithmetic (e . to_string ())) ?) ; } let mut counts = Vec :: new () ; let mut rates = Vec :: new () ; let mut emission = Vec :: new () ; for actor in & actors { let address = Address (actor . clone ()) ; let count = view . ledger . counts . get (& address) . ok_or (KernelError :: Input) ? . 0 ; let source = view . support . sources . get (actor) . ok_or (KernelError :: Input) ? ; counts . push (Rational :: parse (& count . to_string () , & mut budget) . map_err (arithmetic) ?) ; rates . push (Rational :: parse (& source . reduced_rate , & mut budget) . map_err (arithmetic) ?) ; emission . push (Rational :: parse (& source . emission , & mut budget) . map_err (arithmetic) ?) ; } let input = TransportInput { hops : vec ! [base ; depth] , depth_mass , counts , rates , emission , } ; let mut a = Arithmetic { budget , zero , one } ; let result = exact_transport (& input , & mut a , maximum_cells) ? ; let mut hull = BTreeMap :: new () ; for (actor , (lower , upper)) in actors . iter () . zip (& result . hull) { hull . insert (actor . clone () , Bounds { lower : lower . exact_string (& mut a . budget) . map_err (arithmetic) ? , upper : upper . exact_string (& mut a . budget) . map_err (arithmetic) ? , } ,) ; } Ok (AnchorOutcome :: Exact (Box :: new (ExactAnchor { boundary : view . base . boundary , edition : view . base . edition . clone () , normalized : matrix (result . normalized . first () . ok_or (KernelError :: Input) ? , & actors , & mut a . budget) ? , raw : matrix (& result . raw , & actors , & mut a . budget) ? , emitted : matrix (& result . emitted , & actors , & mut a . budget) ? , numerator : vector (& result . numerator , & actors , & mut a . budget) ? , denominator : vector (& result . denominator , & actors , & mut a . budget) ? , standing : vector (& result . standing , & actors , & mut a . budget) ? , hull , }))) }",
+      "class_decision": "exact-transport-public",
+      "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
+      "assessments": {
+        "full_recording": "exact-transport-public",
+        "secret_flow": "exact-transport-public",
+        "exposure_consumers": "exact-transport-public"
+      }
     }
   ],
   "generators": [
@@ -17264,6 +17453,60 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "solve-public-records",
       "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "transport::TransportInput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/transport.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "exact-transport-public",
+      "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "transport::TransportOutput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/transport.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "exact-transport-public",
+      "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "transport::KernelError",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/transport.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "exact-transport-public",
+      "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "anchor::ExactAnchor",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "exact-transport-public",
+      "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "anchor::AnchorOutcome",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "exact-transport-public",
+      "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "anchor::Arithmetic",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "exact-transport-public",
+      "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
     }
   ],
   "reviewed_types": [
@@ -18966,6 +19209,24 @@
       "syntax": "# [doc = \" Read-only whole-act inputs for the later graph partition.\"] # [doc = \" (´def:acts:boundary-inputs´)\"] # [derive (Debug)] pub struct BoundaryInputs < 'a > { # [doc = \" Node visits, parent inspections, inherited-member insert attempts and emitted members.\"] # [doc = \" None means counter overflow, never a work-limit refusal.\"] work : Option < u64 > , # [doc = \" Fixed pre-epoch cut: history lies before it and proposals at or after it.\"] boundary : Position , # [doc = \" Union of all closures, each whole act carried once in authoritative order.\"] acts : Vec < & 'a ValidatedAct > , # [doc = \" Overlap is retained; no connected components or disjoint blocks are computed.\"] closures : Vec < PrincipalClosure > , }"
     },
     {
+      "item": "transport::TransportInput",
+      "package": "pn-records",
+      "path": "packages/records/src/transport.rs",
+      "syntax": "# [doc = \" Public exact operator inputs; the epoch adapter owns their provenance.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug)] pub struct TransportInput < N > { pub hops : Vec < Matrix < N > > , pub depth_mass : Vec < N > , pub emission : Vec < N > , pub counts : Vec < N > , pub rates : Vec < N > , }"
+    },
+    {
+      "item": "transport::TransportOutput",
+      "package": "pn-records",
+      "path": "packages/records/src/transport.rs",
+      "syntax": "# [doc = \" Exact paired transport and direct mediant, with contributing rate hulls.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug)] pub struct TransportOutput < N > { pub normalized : Vec < Matrix < N > > , pub raw : Matrix < N > , pub emitted : Matrix < N > , pub numerator : Vec < N > , pub denominator : Vec < N > , pub standing : Vec < N > , pub hull : Vec < (N , N) > , }"
+    },
+    {
+      "item": "transport::KernelError",
+      "package": "pn-records",
+      "path": "packages/records/src/transport.rs",
+      "syntax": "# [doc = \" Refusals carry no mathematical FAIL verdict.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum KernelError { # [error (\"inconsistent exact operator input\")] Input , # [error (\"exact operator cell limit exceeded\")] Limit , # [error (\"exact arithmetic: {0}\")] Arithmetic (String) , }"
+    },
+    {
       "item": "registration::GroundedNode",
       "package": "pn-graph",
       "path": "packages/graph/src/registration.rs",
@@ -19674,6 +19935,24 @@
       "syntax": "# [doc = \" Whole-result refusal; no partial compiled state escapes.\"] # [doc = \" (´def:compiler:joined-state´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CompileError { # [error (\"verified package has no completed boundary\")] Boundary , # [error (\"ledger: {0}\")] Ledger (# [from] LedgerError) , # [error (\"recipients: {0}\")] Recipients (# [from] RecipientError) , # [error (\"title: {0}\")] Title (# [from] pn_graph :: recognition :: RecognitionError) , # [error (\"coefficient: {0}\")] Coefficient (# [from] CoefficientError) , # [error (\"base: {0}\")] Base (# [from] BaseError) , # [error (\"support: {0}\")] Support (# [from] SupportError) , }"
     },
     {
+      "item": "anchor::ExactAnchor",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "syntax": "# [doc = \" Exact reduced transported amounts and action counts; the ledger is unchanged.\"] # [doc = \" (´def:compiler:exact-anchor´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ExactAnchor { pub boundary : u64 , pub edition : DeclarationId , pub normalized : BTreeMap < String , BTreeMap < String , String > > , pub raw : BTreeMap < String , BTreeMap < String , String > > , pub emitted : BTreeMap < String , BTreeMap < String , String > > , pub numerator : BTreeMap < String , String > , pub denominator : BTreeMap < String , String > , pub standing : BTreeMap < String , String > , pub hull : BTreeMap < String , Bounds > , }"
+    },
+    {
+      "item": "anchor::AnchorOutcome",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "syntax": "# [doc = \" The exact subset never supplies a partial answer for an irrational base.\"] # [doc = \" (´def:compiler:exact-anchor´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum AnchorOutcome { Exact (Box < ExactAnchor >) , Held { entries : BTreeMap < (String , String) , BaseScore > } , }"
+    },
+    {
+      "item": "anchor::Arithmetic",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/anchor.rs",
+      "syntax": "# [derive (Debug)] struct Arithmetic { budget : Budget , zero : Rational , one : Rational , }"
+    },
+    {
       "item": "ContentRequest",
       "package": "pn-act-profile",
       "path": "packages/act-profile/src/lib.rs",
@@ -20137,6 +20416,24 @@
           "pn-epoch::packages/epoch/src/solve.rs::solve::bind_procedure",
           "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::inputs",
           "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::preflight"
+        ]
+      }
+    },
+    {
+      "name": "exact-transport-public",
+      "status": "reviewer-confirmed",
+      "premises": "Only public exact operator entries, frozen compiled inputs and bounded exact arithmetic enter these operations. Errors retain public domain or resource classes. No secret or subscriber is introduced.",
+      "membership": {
+        "explicit": [
+          "pn-graph::packages/graph/src/transport.rs::transport::exact_transport",
+          "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::zero",
+          "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::one",
+          "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::add",
+          "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::sub",
+          "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::mul",
+          "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::div",
+          "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::compare",
+          "pn-epoch::packages/epoch/src/anchor.rs::anchor::exact_anchor"
         ]
       }
     }
@@ -22160,6 +22457,11 @@
       "status": "reviewer-confirmed",
       "premises": "Read each argument, return and derived public type. ProcedureVerifier receives the complete public declaration; inherited access returns immutable references to that same retained payload. The controls distinguish unsupported capability, supplied mathematical bounds and interruption without claiming the bounds were computed.",
       "negative_probe": "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption"
+    },
+    "exact-transport-public": {
+      "status": "reviewer-confirmed",
+      "premises": "Read the public rational field contract, sparse operator and frozen adapter. Arithmetic state contains public constants and resource counters. All outputs are public exact pairs and hulls or retained irrational terms. The independent operator checks the supported numerical subset.",
+      "negative_probe": "EPOCH::claim:compiler:exact-transport-agrees-with-dense-rational-oracle"
     }
   }
 }

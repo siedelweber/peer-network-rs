@@ -77,11 +77,11 @@
 | documents | 18 | 12 | 6 | 0 | 10 |
 | execwrap | 12 | 8 | 4 | 0 | 11 |
 | pn-act-profile | 11 | 8 | 3 | 0 | 6 |
-| pn-epoch | 17 | 11 | 6 | 0 | 32 |
-| pn-graph | 12 | 12 | 0 | 0 | 50 |
+| pn-epoch | 25 | 19 | 6 | 0 | 35 |
+| pn-graph | 13 | 13 | 0 | 0 | 50 |
 | pn-host | 40 | 22 | 18 | 0 | 13 |
 | pn-interchange | 155 | 119 | 35 | 1 | 91 |
-| pn-records | 109 | 41 | 68 | 0 | 99 |
+| pn-records | 109 | 41 | 68 | 0 | 102 |
 | pn-wallet | 29 | 6 | 23 | 0 | 21 |
 
 
