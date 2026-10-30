@@ -7,6 +7,7 @@ pub mod coefficients;
 pub mod ledger;
 pub mod package;
 pub mod recipients;
+pub mod solve;
 pub mod support;
 
 use std::collections::{BTreeMap, BTreeSet};

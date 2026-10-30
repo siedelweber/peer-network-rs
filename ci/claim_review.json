@@ -1634,6 +1634,30 @@
       "review": "All eleven independent settlement event cases explicitly assert distinct validator-retained identity vectors before and after reversal. Recipient results remain equal without sorting either presentation; expected event outcomes share no production title or routing code."
     },
     {
+      "operation": "pn-epoch::solve::evidence_records",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption",
+      "before": "",
+      "after": "Claim: Supplied evidence records distinguish proved bound separation, exhausted straddling and interruption; reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii; and never attach a residual result to an interrupted attempt. These are consistency checks, not validation of the supplied map evaluations.",
+      "review": "Read the full-payload binding and malformed procedure controls, the straddling and interruption transcripts, and the residual consistency mutations. These establish declared record consistency and refusal to evaluate; no supplied bound is certified as an evaluation of a map."
+    },
+    {
+      "operation": "pn-epoch::solve::procedure_binding",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:solve-declarations-bind-without-enabling-evaluation",
+      "before": "",
+      "after": "Claim: A solve declaration is retained with the frozen compiled package only after its boundary, constants edition, declared name and full public payload agree; wrong bindings and same-name payload substitution refuse, and every declared nonlinear backend remains unsupported at preflight.",
+      "review": "Read the full-payload binding and malformed procedure controls, the straddling and interruption transcripts, and the residual consistency mutations. These establish declared record consistency and refusal to evaluate; no supplied bound is certified as an evaluation of a map."
+    },
+    {
+      "operation": "pn-epoch::solve::procedure_records",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:solve-records-refuse-malformed-procedures",
+      "before": "",
+      "after": "Claim: Procedure records require finite positive limits and precision requests, a positive endpoint grid and margin above one, and a strictly descending nonnegative rung grid ending in zero; malformed declarations never enable numerical work.",
+      "review": "Read the full-payload binding and malformed procedure controls, the straddling and interruption transcripts, and the residual consistency mutations. These establish declared record consistency and refusal to evaluate; no supplied bound is certified as an evaluation of a map."
+    },
+    {
       "operation": "pn-epoch::support::support_refusals",
       "path": "packages/epoch/tests/support.rs",
       "claim": "EPOCH::claim:compiler:support-keeps-structural-refusals-and-numeric-holds-distinct",

@@ -39,12 +39,12 @@
       "operations": 11
     },
     {
-      "exceptions": 5,
-      "generators": 30,
+      "exceptions": 6,
+      "generators": 32,
       "helpers": 0,
-      "instrumented": 9,
+      "instrumented": 11,
       "name": "pn-epoch",
-      "operations": 14
+      "operations": 17
     },
     {
       "exceptions": 0,
@@ -72,11 +72,11 @@
     },
     {
       "exceptions": 68,
-      "generators": 89,
+      "generators": 99,
       "helpers": 0,
-      "instrumented": 39,
+      "instrumented": 41,
       "name": "pn-records",
-      "operations": 107
+      "operations": 109
     },
     {
       "exceptions": 23,

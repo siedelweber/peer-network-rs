@@ -4,6 +4,7 @@
 /// Exact numeric carriers and explicit unit operations.
 /// (´def:numerics:exact-carriers´)
 pub mod numerics;
+pub mod solve;
 
 /// Exact declaration payloads attached to validated effective editions.
 /// (´def:declarations:constants-edition´)

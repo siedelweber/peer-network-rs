@@ -69,7 +69,7 @@
       ],
       "ordinal": 6,
       "records": "Study judgment: hull, activation enclosures, attempted-rung fence values, accepted rung, residual bounds and standing enclosure; numerical dependency and certificate fixture records (def:dynamics:conserved-standing-certificate) (lem:dynamics:fixed-point-residual-enclosure) (ver:standing:conservation).",
-      "slice": "pn-epoch: certified numerical kernel and conserved solve"
+      "slice": "pn-epoch: certified composition and conserved solve; pn-graph: reusable numerical kernel"
     },
     {
       "dependency": "Study judgment: requires certified standing from bite 6 and a specified threshold-calibration rule; do not invent final-set search or consensus.",

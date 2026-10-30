@@ -4269,6 +4269,21 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-epoch::solve::procedure_binding",
+        "pn-epoch::solve::procedure_records",
+        "pn-epoch::solve::evidence_records"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::solve",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

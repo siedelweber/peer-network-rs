@@ -116,7 +116,7 @@
 
 **Goal (Structural meaning)** · `goal:vision:phase-structure` Establish formation and title evidence before standing consumes their results. Mapped bites: 3 (pn-graph: geometry and formation); 4 (pn-graph: complete-act structural folds and title).
 
-**Goal (Certified epoch)** · `goal:vision:phase-epoch` Establish the completed ledger and compiled standing obligations, then certified equilibrium, then final admission and schedules. Mapped bites: 5 (pn-epoch: final ledger and standing compiler); 6 (pn-epoch: certified numerical kernel and conserved solve); 7 (pn-epoch: final admission and schedules).
+**Goal (Certified epoch)** · `goal:vision:phase-epoch` Establish the completed ledger and compiled standing obligations, then certified equilibrium, then final admission and schedules. Mapped bites: 5 (pn-epoch: final ledger and standing compiler); 6 (pn-epoch: certified composition and conserved solve; pn-graph: reusable numerical kernel); 7 (pn-epoch: final admission and schedules).
 
 **Goal (Publication and replay)** · `goal:vision:phase-publication` Close the externally checkable contract by publishing and independently reconstructing the binding result. Mapped bites: 8 (pn-host: canonical seven-part package); 9 (pn-replay).
 
