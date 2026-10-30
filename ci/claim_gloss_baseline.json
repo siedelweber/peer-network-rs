@@ -354,6 +354,7 @@
     "pn-act-profile::tests::opened_replay": "",
     "pn-act-profile::tests::proposal_projection_vectors": "",
     "pn-epoch::cells::cell_incidence": "",
+    "pn-epoch::cells::cell_representation": "",
     "pn-epoch::cells::cell_tables": "",
     "pn-epoch::cells::invitation_charges": "",
     "pn-epoch::coefficients::coefficient_census": "",

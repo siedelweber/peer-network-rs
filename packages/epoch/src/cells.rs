@@ -31,10 +31,12 @@ pub struct StandingCell {
     pub coordinates: BTreeMap<String, String>,
 }
 
-/// Whole-result formation or bounded exact-arithmetic refusal.
+/// Whole-result coordinate, formation or bounded exact-arithmetic refusal.
 /// (´def:compiler:standing-cells´)
 #[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum CellError {
+    #[error("missing or malformed mandatory coordinate")]
+    Representation,
     #[error("formation: {0}")]
     Formation(#[from] RegistrationError),
     #[error("exact arithmetic: {0}")]
@@ -46,7 +48,7 @@ pub enum CellError {
 /// Revalidate complete history and partition its cumulative boundary set without consuming acts.
 /// (´def:compiler:standing-cells´)
 /// # Errors
-/// Refuses the whole result on formation failure or a resource limit.
+/// Refuses the whole result on malformed mandatory coordinates, formation failure or a resource limit.
 #[tracing::instrument(
     name = "sig:design:epoch",
     fields(
@@ -65,6 +67,11 @@ pub fn fold_cells(
 ) -> Result<Vec<StandingCell>, CellError> {
     if boundary == 0 {
         return Err(CellError::Boundary);
+    }
+    for act in history.acts() {
+        for name in mandatory(&act.id().family) {
+            coordinate_parts(act, name)?;
+        }
     }
     pn_graph::formation::reconstruct_replay(history, verifier)?;
     let mut budget = Budget::new(limits)?;
@@ -117,19 +124,28 @@ fn mandatory(family: &str) -> &'static [&'static str] {
         .map_or(&[], |(_, names)| *names)
 }
 
-fn coordinate(act: &ValidatedAct, name: &str, budget: &mut Budget) -> Result<Rational, CellError> {
+fn coordinate_parts(act: &ValidatedAct, name: &str) -> Result<(i64, i64), CellError> {
     let field = |suffix| {
         act.body()
             .quantities
             .iter()
             .find(|(key, _)| key == &format!("{name}.{suffix}"))
-            .map(|(_, value)| value.value)
-            .ok_or(RegistrationError::Incidence)
+            .map(|(_, value)| value)
+            .filter(|value| value.unit == "one" && value.vintage == 0)
+            .map(|value| value.value)
+            .ok_or(CellError::Representation)
     };
-    Ok(Rational::parse(
-        &format!("{}/{}", field("numerator")?, field("denominator")?),
-        budget,
-    )?)
+    let numerator = field("numerator")?;
+    let denominator = field("denominator")?;
+    if denominator <= 0 || numerator.unsigned_abs() > denominator.unsigned_abs() {
+        return Err(CellError::Representation);
+    }
+    Ok((numerator, denominator))
+}
+
+fn coordinate(act: &ValidatedAct, name: &str, budget: &mut Budget) -> Result<Rational, CellError> {
+    let (numerator, denominator) = coordinate_parts(act, name)?;
+    Ok(Rational::parse(&format!("{numerator}/{denominator}"), budget)?)
 }
 
 fn clip(value: &Rational, budget: &mut Budget) -> Result<String, CellError> {

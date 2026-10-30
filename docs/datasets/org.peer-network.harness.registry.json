@@ -4171,7 +4171,8 @@
       "cases": [
         "pn-epoch::cells::cell_tables",
         "pn-epoch::cells::cell_incidence",
-        "pn-epoch::cells::invitation_charges"
+        "pn-epoch::cells::invitation_charges",
+        "pn-epoch::cells::cell_representation"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",

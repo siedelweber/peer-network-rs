@@ -270,3 +270,46 @@ fn invitation_charges() {
         Err(CellError::Boundary)
     );
 }
+
+/// Claim: Missing or malformed mandatory coordinates refuse the whole cell result as Representation, including missing fields, units, vintages, nonpositive denominators and out-of-range numerators; valid coordinates with invalid incidence retain the formation refusal.
+/// ´claim:compiler:cell-coordinates-have-structural-refusals´
+/// ´test:integration:cell-representation´
+#[test]
+fn cell_representation() {
+    for coordinate in [0, 2] {
+        for defect in 0..8 {
+            let mut malformed = opinion(2, 1);
+            let quantities = &mut malformed.body.quantities;
+            match defect {
+                0 => {
+                    quantities.remove(coordinate);
+                }
+                1 => {
+                    quantities.remove(coordinate + 1);
+                }
+                2 => quantities[coordinate].1.unit = "other".into(),
+                3 => quantities[coordinate + 1].1.vintage = 1,
+                4 => quantities[coordinate + 1].1.value = 0,
+                5 => quantities[coordinate + 1].1.value = -1,
+                6 => quantities[coordinate].1.value = 5,
+                _ => quantities[coordinate].1.value = -5,
+            }
+            let history = validate_history(&[opinion(1, 1), malformed], &[]).unwrap();
+            assert_eq!(
+                fold_cells(&history, 1, &Verifier, Limits::default()),
+                Err(CellError::Representation)
+            );
+            assert_eq!(
+                pn_epoch::recipients::resolve_recipients(&history, 1, &Verifier, Limits::default()),
+                Err(pn_epoch::recipients::RecipientError::Cells(CellError::Representation))
+            );
+        }
+    }
+    let mut malformed = opinion(1, 1);
+    malformed.legs[0].source = named("name", "not-an-actor");
+    let history = validate_history(&[malformed], &[]).unwrap();
+    assert_eq!(
+        fold_cells(&history, 1, &Verifier, Limits::default()),
+        Err(CellError::Formation(pn_graph::registration::RegistrationError::Incidence))
+    );
+}

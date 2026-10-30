@@ -1450,6 +1450,14 @@
       "review": "Literal expected cell coordinates, identity sets and ledger assertions use complete public records; no implementation fold constructs the expected table. Invitation now shares the released author-bundle netting."
     },
     {
+      "operation": "pn-epoch::cells::cell_representation",
+      "path": "packages/epoch/tests/cells.rs",
+      "claim": "EPOCH::claim:compiler:cell-coordinates-have-structural-refusals",
+      "before": "",
+      "after": "Claim: Missing or malformed mandatory coordinates refuse the whole cell result as Representation, including missing fields, units, vintages, nonpositive denominators and out-of-range numerators; valid coordinates with invalid incidence retain the formation refusal.",
+      "review": "Both mandatory coordinates exercise eight independent representation defects after a valid member; cell and recipient boundaries refuse the whole result with the named cause. A separate endpoint defect keeps Formation(Incidence). Public fixture values add no protected-input route."
+    },
+    {
       "operation": "pn-epoch::cells::cell_tables",
       "path": "packages/epoch/tests/cells.rs",
       "claim": "EPOCH::claim:compiler:cells-retain-members-and-sum-before-clipping",

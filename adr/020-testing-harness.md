@@ -152,7 +152,7 @@
 | pn-epoch::inputs | active | public-surface | pn-epoch-rust | fast | 1 |
 | pn-epoch::ledger | active | public-surface | pn-epoch-rust | fast | 4 |
 | pn-act-profile | active | unit | pn-act-profile-rust | fast | 4 |
-| pn-epoch::cells | active | public-surface | pn-epoch-rust | fast | 3 |
+| pn-epoch::cells | active | public-surface | pn-epoch-rust | fast | 4 |
 | pn-epoch::coefficients | active | public-surface | pn-epoch-rust | fast | 3 |
 | pn-epoch::recipients | active | public-surface | pn-epoch-rust | fast | 4 |
 
