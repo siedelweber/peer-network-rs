@@ -1639,7 +1639,7 @@
       "claim": "EPOCH::claim:compiler:zero-tilt-anchor-keeps-ledger-and-irrational-holds",
       "before": "",
       "after": "Claim: The zero-tilt anchor consumes only the frozen exact base, final ledger and bound depth masses; an independent rational oracle checks paired transport, export ceilings, direct mediants and hull inclusion without changing the ledger, including zero balance, equal-rate and empty domains. Irrational base terms remain named holds rather than approximate standings.",
-      "review": "Read the independent dense rational operator, noncommuting hop order, paired cluster sums, exact mediants and hulls, export ceilings, empty-domain and irrational-hold controls. These establish only the rational zero-tilt subset under the frozen compiler and exact arithmetic premises, without a nonlinear evaluator."
+      "review": "Checks the exact anchor against an independent rational oracle on equal-rate, zero-balance, mixed-balance, settlement and empty fixtures, with the compiled view unchanged. Its helpers compare normalized, raw and emitted entries, export ceilings, numerator and denominator pairs, direct mediants, contributor hulls and total count. An irrational reaction fixture retains its original held base score and radicands. These one-hop cases establish the exact supported subset, not noncommuting hop order or nonlinear evaluation."
     },
     {
       "operation": "pn-epoch::solve::evidence_records",
@@ -1647,7 +1647,7 @@
       "claim": "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption",
       "before": "",
       "after": "Claim: Supplied evidence records distinguish proved bound separation, exhausted straddling and interruption; reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii; and never attach a residual result to an interrupted attempt. These are consistency checks, not validation of the supplied map evaluations.",
-      "review": "Read the full-payload binding and malformed procedure controls, the straddling and interruption transcripts, and the residual consistency mutations. These establish declared record consistency and refusal to evaluate; no supplied bound is certified as an evaluation of a map."
+      "review": "Accepts supplied PASS, FAIL and exhausted straddling INDECISIVE transcripts; interruption accepts only without a residual and retains its distinct category. Ten mutations reject reversed hull bounds, verdicts inconsistent with straddling, premature exhaustion, wrong rung order, an attempt after completion, too-small residual radius, contraction one, an outside-hull candidate and missing candidate coordinates. This checks record consistency, not the truth of supplied map evaluations."
     },
     {
       "operation": "pn-epoch::solve::procedure_binding",
@@ -1655,7 +1655,7 @@
       "claim": "EPOCH::claim:compiler:solve-declarations-bind-without-enabling-evaluation",
       "before": "",
       "after": "Claim: A solve declaration is retained with the frozen compiled package only after its boundary, constants edition, declared name and full public payload agree; wrong bindings and same-name payload substitution refuse, and every declared nonlinear backend remains unsupported at preflight.",
-      "review": "Read the full-payload binding and malformed procedure controls, the straddling and interruption transcripts, and the residual consistency mutations. These establish declared record consistency and refusal to evaluate; no supplied bound is certified as an evaluation of a map."
+      "review": "Checks retention of the frozen package and complete declaration, including two settlement presentations; wrong edition, boundary and name refuse binding, and a same-name work-limit substitution refuses publication. The declared binary and exact-rational precision cases remain Unsupported at preflight. This test establishes binding and refusal to evaluate, not transcript or residual consistency."
     },
     {
       "operation": "pn-epoch::solve::procedure_records",
@@ -1663,7 +1663,7 @@
       "claim": "EPOCH::claim:compiler:solve-records-refuse-malformed-procedures",
       "before": "",
       "after": "Claim: Procedure records require finite positive limits and precision requests, a positive endpoint grid and margin above one, and a strictly descending nonnegative rung grid ending in zero; malformed declarations never enable numerical work.",
-      "review": "Read the full-payload binding and malformed procedure controls, the straddling and interruption transcripts, and the residual consistency mutations. These establish declared record consistency and refusal to evaluate; no supplied bound is certified as an evaluation of a map."
+      "review": "Accepts the supplied valid declaration and rejects empty, missing-zero, ascending, repeated-value and negative rung grids. It rejects zero work or iteration limits, margin one, endpoint grid zero, empty or descending precision requests, an empty primitive set and an empty backend name. These are declaration checks, not package binding or numerical evaluation."
     },
     {
       "operation": "pn-epoch::solve::transport_oracle",
@@ -1671,7 +1671,7 @@
       "claim": "EPOCH::claim:compiler:exact-transport-agrees-with-dense-rational-oracle",
       "before": "",
       "after": "Claim: Exact sparse transport agrees with an independent dense rational operator on noncommuting source-adjacent hops, applies emission once, retains zero-balance identity rows and conserves each closed cluster's paired sums and equal rates; malformed premises and finite cell exhaustion refuse without a mathematical verdict.",
-      "review": "Read the independent dense rational operator, noncommuting hop order, paired cluster sums, exact mediants and hulls, export ceilings, empty-domain and irrational-hold controls. These establish only the rational zero-tilt subset under the frozen compiler and exact arithmetic premises, without a nonlinear evaluator."
+      "review": "Compares sparse emitted transport with an independent dense rational operator on two noncommuting hops and proves reversing the hops changes the oracle. It checks one emission application, a zero-emission identity row, equal standing rates and paired sums in two closed clusters. Seven malformed-input controls refuse, as does a finite cell limit of one. Export ceilings, empty domains and irrational holds are not exercised here."
     },
     {
       "operation": "pn-epoch::support::support_refusals",
