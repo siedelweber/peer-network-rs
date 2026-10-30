@@ -144,13 +144,13 @@ pub(crate) fn acts() -> Vec<CandidateAct> {
         removal: None,
     });
     acts.push(reference);
-    for position in [5, 6] {
+    for (position, polarity_denominator, reaction_denominator) in [(5, 2, 8), (6, 8, 2)] {
         acts.push(act(
             position,
             "address-2",
             "Opinion",
             named("prof", "address-3"),
-            &[("polarity", 1, 4), ("reaction", 1, 4)],
+            &[("polarity", 1, polarity_denominator), ("reaction", 1, reaction_denominator)],
         ));
     }
     acts.push(act(

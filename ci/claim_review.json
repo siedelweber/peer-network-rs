@@ -1455,7 +1455,7 @@
       "claim": "EPOCH::claim:compiler:irrational-base-entries-retain-their-evidence-gap",
       "before": "",
       "after": "Claim: An irrational cell coefficient holds only its dependent base entry with its radicand and domain factor; exact entries remain exact, and a cell outside the anchored source index refuses rather than creating a non-Actor row.",
-      "review": "Independent literal rows share only public input carriers and assert unnormalized sums, exact entries and typed dependent holds. No solver or normalized transport is claimed."
+      "review": "The crossed-ratio Opinion cell contributes exact partial sum 15/8 beside the held Reference term with radicand 1/2 and domain factor 8/3. Independent literals retain exact diagonal entries and the unanchored-source refusal; no solver or normalized transport is claimed."
     },
     {
       "operation": "pn-epoch::base::base_tables",
@@ -1463,7 +1463,7 @@
       "claim": "EPOCH::claim:compiler:base-is-an-unnormalized-weighted-cell-sum",
       "before": "",
       "after": "Claim: A sparse base on anchored Actors adds the positive self base and each complete cell's coefficient once with unequal profile and domain weights; independent literal rows retain home artifact activity without outward artifact allocation or early normalization, invariant under accepted-set permutations.",
-      "review": "Independent literal rows share only public input carriers and assert unnormalized sums, exact entries and typed dependent holds. No solver or normalized transport is claimed."
+      "review": "Independent literal rows distinguish one folded coefficient from per-member summation: crossed-ratio Opinions fold to coefficient 5/8 and outward entry 77/24, whereas per-member summation gives 17/6. Unequal weights, home artifacts and permutations remain covered; no solver or normalization is claimed."
     },
     {
       "operation": "pn-epoch::cells::cell_incidence",
@@ -1639,7 +1639,7 @@
       "claim": "EPOCH::claim:compiler:support-keeps-structural-refusals-and-numeric-holds-distinct",
       "before": "",
       "after": "Claim: Support refuses mismatched boundary or writing price, missing positive anchored counts, malformed base diagonals and exhausted product budgets; a positive irrational base term establishes reachability without establishing its magnitude.",
-      "review": "Literal source fractions, Boolean matrices and rate extrema share no production support computation. The ledger is independently derived from public fixture markers; unchanged debits and balances and structural refusals bound the claim to pre-solve evidence."
+      "review": "The held outward entry now has exact part zero and exactly one positive irrational term. Its target is explicitly reachable and its complete support equals the exact-base support with that edge present. Counts and debits are unchanged because the zeroed Opinion identities remain; boundary, ledger, diagonal and budget refusals remain covered."
     },
     {
       "operation": "pn-epoch::support::support_tables",

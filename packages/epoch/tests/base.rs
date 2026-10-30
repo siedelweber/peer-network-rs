@@ -28,13 +28,15 @@ fn base_tables() {
         })
         .collect();
     // Literal arithmetic: A self = 1 + Registration 1 + Publish (1/2)*4 + artifact Opinion (1/2)*3.
-    // A outward = Reference (1/2)*(2/3 + 2) + one folded Opinion cell (1/2)*3.
+    // A outward = Reference (1/2)*(2/3 + 2) + one folded Opinion cell (5/8)*3.
+    // Members (1/2, 1/8) and (1/8, 1/2) each have coefficient 1/4;
+    // incorrectly adding their coefficients would give 17/6 instead of 77/24.
     let expected = BTreeMap::from([
         (
             "address-2",
             BTreeMap::from([
                 ("address-2", BaseScore::Exact("11/2".into())),
-                ("address-3", BaseScore::Exact("17/6".into())),
+                ("address-3", BaseScore::Exact("77/24".into())),
             ]),
         ),
         ("address-3", BTreeMap::from([("address-3", BaseScore::Exact("2".into()))])),
@@ -86,7 +88,7 @@ fn base_holds() {
     let BaseScore::Held { exact_part, terms } = &base.rows["address-2"]["address-3"].score else {
         panic!("irrational base evidence must remain held")
     };
-    assert_eq!(exact_part, "3/2");
+    assert_eq!(exact_part, "15/8");
     assert_eq!(terms.len(), 1);
     assert_eq!(terms[0].radicand, "1/2");
     assert_eq!(terms[0].domain_factor, "8/3");

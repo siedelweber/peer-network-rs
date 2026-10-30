@@ -137,12 +137,20 @@ fn support_refusals() {
     );
     acts[3].body.quantities[2].1.value = 1;
     acts[3].body.quantities[3].1.value = 1;
+    // Keep every charged identity, but remove the exact outward contribution.
+    for opinion in &mut acts[4..6] {
+        opinion.body.quantities[0].1.value = 0;
+        opinion.body.quantities[2].1.value = 0;
+    }
     let held = compile_base(&inputs, &allocation::history(&acts), &Verifier, ExactLimits::default()).unwrap();
     assert!(matches!(
-        held.rows["address-2"]["address-3"].score,
-        pn_epoch::base::BaseScore::Held { .. }
+        &held.rows["address-2"]["address-3"].score,
+        pn_epoch::base::BaseScore::Held { exact_part, terms }
+            if exact_part == "0" && terms.len() == 1
+                && terms[0].radicand == "1/2" && terms[0].domain_factor == "8/3"
     ));
     let a = compile_support(&inputs, &price, &ledger, &base, &mut numeric, ExactLimits::default(), 1000).unwrap();
     let b = compile_support(&inputs, &price, &ledger, &held, &mut numeric, ExactLimits::default(), 1000).unwrap();
+    assert!(b.emitted["address-2"].contains("address-3"));
     assert_eq!(a, b);
 }
