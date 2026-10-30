@@ -4212,6 +4212,20 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-epoch::base::base_tables",
+        "pn-epoch::base::base_holds"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::base",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

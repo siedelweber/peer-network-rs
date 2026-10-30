@@ -353,6 +353,8 @@
     "pn-act-profile::tests::fixed_recipes_and_controls": "",
     "pn-act-profile::tests::opened_replay": "",
     "pn-act-profile::tests::proposal_projection_vectors": "",
+    "pn-epoch::base::base_holds": "",
+    "pn-epoch::base::base_tables": "",
     "pn-epoch::cells::cell_incidence": "",
     "pn-epoch::cells::cell_representation": "",
     "pn-epoch::cells::cell_tables": "",

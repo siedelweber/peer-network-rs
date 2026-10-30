@@ -7005,6 +7005,16 @@
       "claim": "ROOT::sig:design:epoch",
       "shape": "shape-epoch",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "item": "base::compile_base",
+      "owner": "EPOCH",
+      "signature": "fn compile_base (inputs : & CompilerInputs , history : & ValidatedHistory , verifier : & impl RegistrationVerifier , limits : Limits ,) -> Result < BaseAllocation , BaseError >",
+      "claim": "ROOT::alg:design:base",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -13597,6 +13607,17 @@
         "secret_flow": "epoch-recipients-secret_flow",
         "exposure_consumers": "epoch-recipients-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/base.rs::base::compile_base",
+      "body": "{ let boundary = inputs . parameters () . boundary ; let resolved = resolve_recipients (history , boundary , verifier , limits . clone ()) ? ; let anchors : BTreeSet < _ > = history . acts () . iter () . filter (| act | act . position () . 0 <= boundary && act . id () . family == \"Registration\") . map (| act | act . id () . author . clone ()) . collect () ; let mut budget = Budget :: new (limits . clone ()) ? ; let self_base = crate :: constant (inputs . constants () , & inputs . parameters () . self_base , & mut budget) ? . exact_string (& mut budget) ? ; let mut rows : BTreeMap < _ , _ > = anchors . iter () . map (| actor | { (actor . clone () , BTreeMap :: from ([(actor . clone () , BaseEntry { score : BaseScore :: Exact (self_base . clone ()) , cells : BTreeSet :: new () , } ,)]) ,) }) . collect () ; for resolved in resolved { let identity = resolved . cell . identity . clone () ; if ! anchors . contains (& identity . author) || ! anchors . contains (& resolved . recipient) { return Err (BaseError :: ActorIndex) ; } let profile = inputs . parameters () . profiles . iter () . find (| profile | profile . family == identity . family) . ok_or (InputError :: MissingProfile) ? ; let mut factor = Rational :: parse (\"0\" , & mut budget) ? ; for (domain , name) in & profile . weights { let weight = crate :: constant (inputs . constants () , name , & mut budget) ? ; if weight . is_zero () { continue ; } let domain_name = inputs . parameters () . domain_weights . get (domain) . ok_or (InputError :: UnknownDomain) ? ; let domain_weight = crate :: constant (inputs . constants () , domain_name , & mut budget) ? ; factor = factor . add (& weight . mul (& domain_weight , & mut budget) ? , & mut budget) ? ; } let row = rows . get_mut (& identity . author) . ok_or (BaseError :: ActorIndex) ? ; let entry = row . entry (resolved . recipient) . or_insert (BaseEntry { score : BaseScore :: Exact (\"0\" . into ()) , cells : BTreeSet :: new () , }) ; entry . cells . insert (identity . clone ()) ; if factor . is_zero () { continue ; } match coefficient (& resolved . cell , limits . clone ()) { Ok (value) => { let value = Rational :: parse (& value , & mut budget) ? . mul (& factor , & mut budget) ? ; let exact = match & mut entry . score { BaseScore :: Exact (value) | BaseScore :: Held { exact_part : value , .. } => value , } ; * exact = Rational :: parse (exact , & mut budget) ? . add (& value , & mut budget) ? . exact_string (& mut budget) ? ; } Err (CoefficientError :: Irrational { radicand }) => { let term = HeldCoefficient { cell : identity , radicand , domain_factor : factor . exact_string (& mut budget) ? , } ; match & mut entry . score { BaseScore :: Exact (value) => { entry . score = BaseScore :: Held { exact_part : value . clone () , terms : vec ! [term] , } } BaseScore :: Held { terms , .. } => terms . push (term) , } } Err (error) => return Err (error . into ()) , } } Ok (BaseAllocation { boundary , edition : inputs . parameters () . edition . clone () , rows , }) }",
+      "class_decision": "epoch-base",
+      "item_premise": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score.",
+      "assessments": {
+        "full_recording": "epoch-base-full_recording",
+        "secret_flow": "epoch-base-secret_flow",
+        "exposure_consumers": "epoch-base-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -16713,6 +16734,51 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "epoch-recipients",
       "expansion_review": "Clone, Debug, equality and Error retain public cells, Actor destinations and typed validation or arithmetic refusals. No secret or private opening enters these carriers."
+    },
+    {
+      "item": "base::HeldCoefficient",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-base",
+      "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+    },
+    {
+      "item": "base::BaseScore",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-base",
+      "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+    },
+    {
+      "item": "base::BaseEntry",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-base",
+      "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+    },
+    {
+      "item": "base::BaseAllocation",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-base",
+      "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+    },
+    {
+      "item": "base::BaseError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-base",
+      "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
     }
   ],
   "reviewed_types": [
@@ -18871,6 +18937,36 @@
       "syntax": "# [doc = \" Pinned evidence and any fault for one run; pending evidence is never stored.\"] # [doc = \" (\u00b4def:wallet:settlement\u00b4)\"] # [derive (Clone , Debug , Default , Eq , PartialEq)] pub struct Settlement { pinned : BTreeMap < ([u8 ; 32] , u32) , Evidence > , fault : Option < SettlementRefusal > , }"
     },
     {
+      "item": "base::HeldCoefficient",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [doc = \" A positive irrational term retained without an approximate base entry.\"] # [doc = \" (\u00b4def:compiler:base-allocation\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct HeldCoefficient { pub cell : CellIdentity , pub radicand : String , pub domain_factor : String , }"
+    },
+    {
+      "item": "base::BaseScore",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [doc = \" Exact magnitude or an explicitly incomplete magnitude with its missing evidence.\"] # [doc = \" (\u00b4def:compiler:base-allocation\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum BaseScore { Exact (String) , Held { exact_part : String , terms : Vec < HeldCoefficient > , } , }"
+    },
+    {
+      "item": "base::BaseEntry",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [doc = \" One sparse entry, retaining contributing cells even when their weight is zero.\"] # [doc = \" (\u00b4def:compiler:base-allocation\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BaseEntry { pub score : BaseScore , pub cells : BTreeSet < CellIdentity > , }"
+    },
+    {
+      "item": "base::BaseAllocation",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [doc = \" Sparse, unnormalized rows; only anchored Actors own rows and columns.\"] # [doc = \" (\u00b4def:compiler:base-allocation\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BaseAllocation { pub boundary : u64 , pub edition : DeclarationId , pub rows : BTreeMap < String , BTreeMap < String , BaseEntry > > , }"
+    },
+    {
+      "item": "base::BaseError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/base.rs",
+      "syntax": "# [doc = \" Structural refusals are distinct from an entry's retained irrational hold.\"] # [doc = \" (\u00b4def:compiler:base-allocation\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum BaseError { # [error (\"recipient derivation: {0}\")] Recipients (# [from] RecipientError) , # [error (\"coefficient: {0}\")] Coefficient (# [from] CoefficientError) , # [error (\"bound parameters: {0}\")] Input (# [from] InputError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"cell source or recipient is outside the anchored Actor index\")] ActorIndex , }"
+    },
+    {
       "item": "cells::CellIdentity",
       "package": "pn-epoch",
       "path": "packages/epoch/src/cells.rs",
@@ -19357,6 +19453,16 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Recipient resolution reads public validated history, boundary, declared verifier and arithmetic limits. It derives cumulative cells, anchored Actors and persistent title events; complete cells and destinations or typed whole-result refusals are public trace values. No secret or private opening enters the carrier, and observation changes no recipient."
+    },
+    {
+      "name": "epoch-base",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/base.rs::base::compile_base"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score."
     }
   ],
   "shapes": {
@@ -21312,6 +21418,21 @@
     "epoch-recipients-exposure_consumers": {
       "status": "reviewer-confirmed",
       "premises": "Recipient resolution reads public validated history, boundary, declared verifier and arithmetic limits. It derives cumulative cells, anchored Actors and persistent title events; complete cells and destinations or typed whole-result refusals are public trace values. No secret or private opening enters the carrier, and observation changes no recipient.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-base-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-base-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-base-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score.",
       "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
     }
   }

@@ -278,7 +278,7 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
       "before": "",
-      "after": "Claim: The real compiler parameter, ledger, cell, coefficient and recipient boundaries preserve exact successful inputs, ledger values, empty cells and recipients, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary, including nested cell compilation and trace carries public constants, recognized markers and results.",
+      "after": "Claim: The real compiler parameter, ledger, cell, coefficient, recipient and base boundaries preserve exact successful inputs, ledger values, empty cells and recipients, nonempty unnormalized bases, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary, including nested cell compilation and trace carries public constants, recognized markers and results.",
       "review": "The example adds successful empty recipients and a boundary refusal. Both recipient calls invoke cell compilation, giving twelve compiler spans; exact outputs remain equal with observation off, default and trace."
     },
     {
@@ -1448,6 +1448,22 @@
       "before": "",
       "after": "Claim: Independently authored proposal vectors bind both layouts, every reference constructor, signed and nonnegative exact pairs, both license states, all settlement states and all content and dependency request states.",
       "review": "Read the exact vector comparisons and corruption refusals, redacting dependency Debug, complete capture accounting and public-route positive. Protected-input privacy is a construction property of secrecy types and labelled exits; no trace absence search is evidence. The independent reader shares neither the production projection nor encoder."
+    },
+    {
+      "operation": "pn-epoch::base::base_holds",
+      "path": "packages/epoch/tests/base.rs",
+      "claim": "EPOCH::claim:compiler:irrational-base-entries-retain-their-evidence-gap",
+      "before": "",
+      "after": "Claim: An irrational cell coefficient holds only its dependent base entry with its radicand and domain factor; exact entries remain exact, and a cell outside the anchored source index refuses rather than creating a non-Actor row.",
+      "review": "Independent literal rows share only public input carriers and assert unnormalized sums, exact entries and typed dependent holds. No solver or normalized transport is claimed."
+    },
+    {
+      "operation": "pn-epoch::base::base_tables",
+      "path": "packages/epoch/tests/base.rs",
+      "claim": "EPOCH::claim:compiler:base-is-an-unnormalized-weighted-cell-sum",
+      "before": "",
+      "after": "Claim: A sparse base on anchored Actors adds the positive self base and each complete cell's coefficient once with unequal profile and domain weights; independent literal rows retain home artifact activity without outward artifact allocation or early normalization, invariant under accepted-set permutations.",
+      "review": "Independent literal rows share only public input carriers and assert unnormalized sums, exact entries and typed dependent holds. No solver or normalized transport is claimed."
     },
     {
       "operation": "pn-epoch::cells::cell_incidence",

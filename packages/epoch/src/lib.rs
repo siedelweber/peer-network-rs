@@ -1,6 +1,7 @@
 //! Exact structural compiler inputs; no publication encoding or standing solve.
 //! (´def:compiler:boundary-inputs´)
 
+pub mod base;
 pub mod cells;
 pub mod coefficients;
 pub mod ledger;

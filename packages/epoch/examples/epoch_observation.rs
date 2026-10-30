@@ -1,5 +1,7 @@
 //! Public parameter validation with executable-owned observation.
 //! (´def:compiler:boundary-inputs´)
+#[path = "../tests/common/allocation.rs"]
+mod allocation;
 #[path = "../tests/common/mod.rs"]
 mod common;
 
@@ -78,8 +80,26 @@ fn main() -> std::process::ExitCode {
         pn_epoch::recipients::resolve_recipients(&empty, 1, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap();
     let recipient_refusal =
         pn_epoch::recipients::resolve_recipients(&empty, 0, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap_err();
+    let base_inputs = allocation::inputs();
+    let mut base_acts = allocation::acts();
+    let base = pn_epoch::base::compile_base(
+        &base_inputs,
+        &allocation::history(&base_acts),
+        &allocation::Verifier,
+        pn_records::numerics::ExactLimits::default(),
+    )
+    .unwrap();
+    base_acts[3].body.quantities[2].1.value = 1;
+    base_acts[3].body.quantities[3].1.value = 1;
+    let base_hold = pn_epoch::base::compile_base(
+        &base_inputs,
+        &allocation::history(&base_acts),
+        &allocation::Verifier,
+        pn_records::numerics::ExactLimits::default(),
+    )
+    .unwrap();
     let result = cli_common::emit(&format!(
-        "{good:?};{refused:?};{ledger:?};{ledger_refusal:?};{cells:?};{cell_refusal:?};{coefficient:?};{coefficient_hold:?};{recipients:?};{recipient_refusal:?}"
+        "{good:?};{refused:?};{ledger:?};{ledger_refusal:?};{cells:?};{cell_refusal:?};{coefficient:?};{coefficient_hold:?};{recipients:?};{recipient_refusal:?};{base:?};{base_hold:?}"
     ));
     drop(guard);
     if result.is_ok() {
