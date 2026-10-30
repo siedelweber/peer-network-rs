@@ -225,7 +225,7 @@ claims = ["EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bi
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Outside scope: deployment authentication and settled-chain realization, canonical publication, persistent admitted results, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence."
+missing = "Outstanding compiler core-standing evidence under open:design:core-standing-properties (epoch and verification implementers and evidence reviewer): matched burn/act fixture compiles, identical-public-record private-purpose annotations and negative probes; only matched split compilation is established. Applicable pinned burn samples, first-accepted increments and ledger-vintage devnet cases remain open:design:devnet-evidence (epoch and adapter implementers and devnet operator). PostgreSQL immutable debit vintages, atomic admitted-result references and preservation of earlier verdicts belong to bite 8 under open:host:admitted-epoch-result (epoch and host implementers). Also outside scope: deployment authentication and settled-chain realization, canonical publication, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Bite 5 scoped compiler close; persistent admission remains bites 7 and 8, unrestricted corpus bite 11"
 
@@ -252,7 +252,7 @@ claims = ["EPOCH::claim:compiler:recognized-prefix-derives-the-final-ledger", "R
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Outside scope: deployment authentication and settled-chain realization, canonical publication, persistent admitted results, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence."
+missing = "Outstanding compiler core-standing evidence under open:design:core-standing-properties (epoch and verification implementers and evidence reviewer): matched burn/act fixture compiles, identical-public-record private-purpose annotations and negative probes; only matched split compilation is established. Applicable pinned burn samples, first-accepted increments and ledger-vintage devnet cases remain open:design:devnet-evidence (epoch and adapter implementers and devnet operator). PostgreSQL immutable debit vintages, atomic admitted-result references and preservation of earlier verdicts belong to bite 8 under open:host:admitted-epoch-result (epoch and host implementers). Also outside scope: deployment authentication and settled-chain realization, canonical publication, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Bite 5 scoped compiler close; persistent admission remains bites 7 and 8, unrestricted corpus bite 11"
 
@@ -988,7 +988,7 @@ claims = ["EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bi
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Outside scope: deployment authentication and settled-chain realization, canonical publication, persistent admitted results, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence."
+missing = "Outstanding compiler core-standing evidence under open:design:core-standing-properties (epoch and verification implementers and evidence reviewer): matched burn/act fixture compiles, identical-public-record private-purpose annotations and negative probes; only matched split compilation is established. Applicable pinned burn samples, first-accepted increments and ledger-vintage devnet cases remain open:design:devnet-evidence (epoch and adapter implementers and devnet operator). PostgreSQL immutable debit vintages, atomic admitted-result references and preservation of earlier verdicts belong to bite 8 under open:host:admitted-epoch-result (epoch and host implementers). Also outside scope: deployment authentication and settled-chain realization, canonical publication, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Bite 5 scoped compiler close; persistent admission remains bites 7 and 8, unrestricted corpus bite 11"
 
@@ -1872,7 +1872,7 @@ claims = ["EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bi
 realizers = []
 hold = "ROOT::open:testing:obligation-evidence"
 owner = "Domain implementer and repository reviewer"
-missing = "Outside scope: deployment authentication and settled-chain realization, canonical publication, persistent admitted results, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence."
+missing = "Outstanding compiler core-standing evidence under open:design:core-standing-properties (epoch and verification implementers and evidence reviewer): matched burn/act fixture compiles, identical-public-record private-purpose annotations and negative probes; only matched split compilation is established. Applicable pinned burn samples, first-accepted increments and ledger-vintage devnet cases remain open:design:devnet-evidence (epoch and adapter implementers and devnet operator). PostgreSQL immutable debit vintages, atomic admitted-result references and preservation of earlier verdicts belong to bite 8 under open:host:admitted-epoch-result (epoch and host implementers). Also outside scope: deployment authentication and settled-chain realization, canonical publication, certified nonlinear coefficient evidence, conserved solve and unrestricted histories. Dependency-opening evidence bounds no title or compiler consequence."
 closing_condition = "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface."
 closing_step = "Bite 5 scoped compiler close; persistent admission remains bites 7 and 8, unrestricted corpus bite 11"
 
@@ -1899,7 +1899,7 @@ claims = []
 realizers = []
 hold = "ROOT::open:design:core-standing-properties"
 owner = "pn-epoch implementer and repository reviewer"
-missing = "Executed matched split comparisons, identical-public-record purpose-completion witnesses and certified burn/act reversals, conditional invariant and response tests, reviewed claim premises and negative review probes."
+missing = "Beyond the established matched split compiler case: matched burn and act fixture compiles, identical-public-record purpose-completion witnesses and negative review probes remain outstanding in the compiler slice. Certified matched split comparisons, burn/act reversals, conditional invariant and response tests and reviewed claim premises remain outstanding in the solver and integrated slices."
 closing_condition = "Attach passing source/configuration-matched evidence for observational equivalence, non-monotonicity and the conditional response and partition bounds; reject private-purpose classification, unconditional equality between different split histories, universal monotonicity or recovery claims."
 closing_step = "Bites 5 and 6 scoped witnesses, with integrated evidence review in bite 11"
 
