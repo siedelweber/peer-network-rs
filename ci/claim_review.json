@@ -50,6 +50,14 @@
       "review": "Read the structural-placeholder acceptance and condition, case and proposition refusal assertions beside the retained release-field pin probes. The assertions require the diagnostic to identify every refused label and retain the existing pin-drift checks; the gloss states those tested properties without claiming semantic review of inventory prose."
     },
     {
+      "operation": "ci::test_design.Correspondence.test_release_tags",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:release-identities-are-pinned",
+      "before": "both rendered release tags are pinned independently of accepted-study projections.",
+      "after": "Release identities are pinned, and tracked Markdown and templates refuse other paper editions regardless of case; deliberate source fixtures remain exempt.",
+      "review": "Publication pin mutations still refuse. Isolated tracked Markdown and template fixtures refuse a capitalized stale edition and accept the current edition in uppercase. The explicit source-fixture allow-list remains outside prose scanning."
+    },
+    {
       "operation": "ci::test_discipline.HashCitations.test_act_profile_vector_corruptions",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:hashcitations:act-profile-vector-corruptions-refuse",

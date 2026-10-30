@@ -12,7 +12,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from design import bare_mint_pattern, validate
+from design import PAPER_EDITION_FIXTURES, PAPER_TAG, bare_mint_pattern, check_paper_editions, validate
 
 
 REPOSITORY = Path(__file__).resolve().parent.parent
@@ -63,7 +63,7 @@ class Correspondence(unittest.TestCase):
         return subprocess.run([sys.executable, '-B', '-O', str(REPOSITORY / 'ci/design.py')], cwd=self.root, capture_output=True, text=True)
 
     def test_release_tags(self):
-        """both rendered release tags are pinned independently of accepted-study projections.
+        """Release identities are pinned, and tracked Markdown and templates refuse other paper editions regardless of case; deliberate source fixtures remain exempt.
         ´claim:design:release-identities-are-pinned´
         ´test:integration:test-release-tags´
         """
@@ -78,6 +78,21 @@ class Correspondence(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(f'{name}: paper release tag changed', result.stderr)
         path.write_text(original)
+        for name in ('README.md', 'docs/templates/example.md.j2'):
+            prose = self.root / name
+            prose.parent.mkdir(parents=True, exist_ok=True)
+            prose.write_text('Network-v0.30.1\n')
+            git(self.root, 'add', name)
+            result = self.check()
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(f'{name}:1: stale paper edition Network-v0.30.1', result.stderr)
+            prose.write_text(PAPER_TAG.upper() + '\n')
+            result = self.check()
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('refused=0', result.stdout)
+        self.assertEqual(PAPER_EDITION_FIXTURES, {'ci/test_design.py', 'packages/documents/tests/integration.rs'})
+        # The allow-list is checked before reading fixture source, which is not prose.
+        check_paper_editions([Path(name) for name in sorted(PAPER_EDITION_FIXTURES)])
 
     def test_release_projections(self):
         """Release fields remain pinned, and only structural inventory rows may retain placeholders.

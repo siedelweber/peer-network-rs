@@ -28,7 +28,7 @@ def release_projection(name, rows):
     raise ValueError(f'unknown release projection: {name}')
 
 
-def first_party_prose():
+def first_party_prose(include_vendors=False):
     members = tomllib.loads(Path('Cargo.toml').read_text())['workspace']['members']
     vendors = [Path(member) for member in members if member.startswith('vendor/')]
     started = time.monotonic()
@@ -36,7 +36,33 @@ def first_party_prose():
     print(f'git ls-files wall={time.monotonic() - started:.6f}s status={tracked.returncode}')
     return [path for raw in tracked.stdout.split(b'\0') if raw
             and (path := Path(raw.decode())).suffix in {'.md', '.j2'}
-            and not any(path.is_relative_to(vendor) for vendor in vendors)]
+            and (include_vendors or not any(path.is_relative_to(vendor) for vendor in vendors))]
+
+
+PAPER_EDITION_FIXTURES = {
+    'ci/test_design.py',
+    'packages/documents/tests/integration.rs',
+}
+
+
+def check_paper_editions(paths):
+    """Check tracked Markdown and templates; deliberate source fixtures are exempt."""
+    checked = mentions = 0
+    findings = []
+    for path in paths:
+        if path.as_posix() in PAPER_EDITION_FIXTURES:
+            continue
+        if not (path.name.endswith('.md') or path.name.endswith('.md.j2')):
+            continue
+        checked += 1
+        for number, line in enumerate(path.read_text().splitlines(), 1):
+            for match in re.finditer(r'network-v[0-9]+\.[0-9]+\.[0-9]+(?:[-+][a-z0-9.-]+)?', line, re.IGNORECASE):
+                mentions += 1
+                if match.group().casefold() != PAPER_TAG.casefold():
+                    findings.append(f'{path}:{number}: stale paper edition {match.group()} (current {PAPER_TAG})')
+    print(f'PAPER-EDITIONS files={checked} mentions={mentions} refused={len(findings)}')
+    if findings:
+        raise ValueError('\n'.join(findings))
 
 
 def bare_mint_pattern(labels):
@@ -155,6 +181,7 @@ def validate():
             raise ValueError('withdrawn import remains present')
     labels.update(row['cites'] for row in constants if row['cites'])
     bare_mint = bare_mint_pattern(labels)
+    check_paper_editions(first_party_prose(include_vendors=True))
     for path in first_party_prose():
         source = path.read_text()
         if match := bare_mint.search(source):
