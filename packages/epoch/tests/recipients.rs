@@ -211,7 +211,7 @@ fn anchors() -> Vec<CandidateAct> {
     ]
 }
 
-/// Claim: Across all nineteen families, independent literal recipient tables send only positive Profile Opinion and Reference cells to anchored persons without a successful settlement event; artifact and control families remain home. Every mandatory sign is tested independently, dangling and future anchors resolve home, unauthorized formation refuses, and positive Invitation resolves to its anchored invitee.
+/// Claim: Across all nineteen families, independent literal recipient tables send only positive Profile Opinion, Reference and Invitation cells to anchored persons without a successful settlement event; artifact and control families remain home. Every mandatory sign is tested independently, dangling and future anchors resolve home, unauthorized formation refuses, and positive Invitation resolves to its anchored invitee.
 /// ´claim:compiler:recipient-classes-require-positive-anchored-persons´
 /// ´test:integration:recipient-classes´
 #[test]
@@ -431,7 +431,7 @@ fn recipient_cumulative() {
 #[test]
 fn invitation_netting() {
     use pn_epoch::coefficients::{CoefficientError, coefficient};
-    for (u, f, denominator, positive) in [(8, 7, 10, None), (1, 1, 2, Some("1/2"))] {
+    for (u, f, denominator, positive, pair) in [(8, 7, 10, None, ("4/5", "7/10")), (1, 1, 2, Some("1/2"), ("1/2", "1/2"))] {
         let make = |author, sequence, epoch, sign: i64| {
             let mut input = act("Invitation", author, sequence, epoch);
             input.body.quantities[0].1.value = sign * u;
@@ -454,6 +454,9 @@ fn invitation_netting() {
             let result = resolve_recipients(&history(&inputs), boundary, &Verifier, Limits::default()).unwrap();
             for row in result.iter().filter(|row| row.cell.identity.family == "Invitation") {
                 let cancelled = row.cell.identity.author == "seller" && boundary == 3;
+                let (urgency, formality) = if cancelled { ("0", "0") } else { pair };
+                assert_eq!(row.cell.coordinates["urgency"], urgency);
+                assert_eq!(row.cell.coordinates["formality"], formality);
                 assert_eq!(row.recipient, if cancelled { "seller" } else { "buyer" });
                 let expected = if cancelled {
                     Ok("0".into())
@@ -493,6 +496,8 @@ fn invitation_netting() {
             .find(|row| row.cell.identity.family == "Invitation" && row.cell.identity.author == "seller")
             .unwrap();
         assert_eq!(cancelled.recipient, "seller");
+        assert_eq!(cancelled.cell.coordinates["urgency"], "0");
+        assert_eq!(cancelled.cell.coordinates["formality"], "0");
         assert_eq!(coefficient(&cancelled.cell, Limits::default()).unwrap(), "0");
     }
 }

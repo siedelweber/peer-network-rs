@@ -257,6 +257,10 @@ fn invitation_charges() {
     let cells = fold_cells(&history, 1, &Verifier, Limits::default()).unwrap();
     assert_eq!(cells.len(), 2);
     for cell in &cells {
+        if cell.identity.family == "Invitation" {
+            assert_eq!(cell.coordinates["urgency"], "0");
+            assert_eq!(cell.coordinates["formality"], "0");
+        }
         let expected = if cell.identity.family == "Invitation" { "0" } else { "1" };
         assert_eq!(
             pn_epoch::coefficients::coefficient(cell, Limits::default()).unwrap(),

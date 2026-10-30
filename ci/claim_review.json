@@ -1495,7 +1495,7 @@
       "claim": "EPOCH::claim:compiler:invitation-netting-retains-every-charge",
       "before": "",
       "after": "Claim: Complete cancelling Invitations form one zero-coordinate cell while retaining both identities, counts and debits; a De-invite stays a separate empty-coordinate singleton at coefficient one.",
-      "review": "Released Invitation author-bundle netting is checked against literal tables, retaining identities and charges; no revocation or edition hold remains. Retires EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition in favor of the executed netting claims. Retires ROOT::verif:design:suppressed-invitation-cases in favor of ROOT::verif:design:invitation-netting-cases as the verification plan supported by this witness; its scoped obligation and evidence are unchanged."
+      "review": "Released Invitation author-bundle netting asserts urgency and formality separately at zero, retaining both identities and every charge; De-invite remains a singleton at one. Retires EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition in favor of the executed netting claims. Retires ROOT::verif:design:suppressed-invitation-cases in favor of ROOT::verif:design:invitation-netting-cases as the verification plan supported by this witness; its scoped obligation and evidence are unchanged."
     },
     {
       "operation": "pn-epoch::coefficients::coefficient_census",
@@ -1503,7 +1503,7 @@
       "claim": "EPOCH::claim:compiler:mandatory-coordinate-census-covers-nineteen-families",
       "before": "",
       "after": "Claim: The mandatory-coordinate census names all nineteen families and agrees with an independent literal table; empty sets weigh one, single coordinates use their magnitude, and Invitation uses its mandatory A-leg pair.",
-      "review": "Released Invitation author-bundle netting is checked against literal tables, retaining identities and charges; no revocation or edition hold remains. Retires EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition in favor of the executed netting claims."
+      "review": "An independent literal table lists the mandatory coordinates for all nineteen families and compares the public census. Each family is evaluated at negative one-half on every mandatory coordinate: empty sets return one and nonempty sets return one-half, including the Invitation A-leg urgency/formality pair. The expected values use no production coefficient or folding code."
     },
     {
       "operation": "pn-epoch::coefficients::coefficient_evidence",
@@ -1567,15 +1567,15 @@
       "claim": "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free",
       "before": "",
       "after": "Claim: The released Invitation netting fixture and independent rational tables cancel one author's bundle to zero and home, restore a later positive vouch, preserve independent authors, and keep De-invite singleton at self with coefficient one. Both compliant co-epoch placements produce identical cells, coefficients and recipients; the released positive nonsquare coefficient remains explicit irrational evidence.",
-      "review": "Released Invitation author-bundle netting is checked against literal tables, retaining identities and charges; no revocation or edition hold remains. Retires EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition in favor of the executed netting claims. Retires ROOT::verif:design:suppressed-invitation-cases in favor of ROOT::verif:design:invitation-netting-cases as the verification plan supported by this witness; its scoped obligation and evidence are unchanged."
+      "review": "The released Invitation fixture and an independent rational table assert each literal urgency/formality sum at every boundary, including zero cancellation and positive re-establishment. Independent authors, member identities, outward recipients, De-invite self-retention and both compliant co-epoch placements are checked; the nonsquare coefficient remains typed evidence."
     },
     {
       "operation": "pn-epoch::recipients::recipient_classes",
       "path": "packages/epoch/tests/recipients.rs",
       "claim": "EPOCH::claim:compiler:recipient-classes-require-positive-anchored-persons",
       "before": "",
-      "after": "Claim: Across all nineteen families, independent literal recipient tables send only positive Profile Opinion and Reference cells to anchored persons without a successful settlement event; artifact and control families remain home. Every mandatory sign is tested independently, dangling and future anchors resolve home, unauthorized formation refuses, and positive Invitation resolves to its anchored invitee.",
-      "review": "Released Invitation author-bundle netting is checked against literal tables, retaining identities and charges; no revocation or edition hold remains. Retires EPOCH::claim:compiler:invitation-cells-await-withdrawal-edition in favor of the executed netting claims."
+      "after": "Claim: Across all nineteen families, independent literal recipient tables send only positive Profile Opinion, Reference and Invitation cells to anchored persons without a successful settlement event; artifact and control families remain home. Every mandatory sign is tested independently, dangling and future anchors resolve home, unauthorized formation refuses, and positive Invitation resolves to its anchored invitee.",
+      "review": "Independent literal family and event tables share only raw input carriers with production. Positive signs, anchored recipients, persistent successful events and cumulative netting are tested without calculating expected destinations through production helpers. Invitation is included among the positive Profile-target families, with both mandatory signs, missing and future anchors checked independently."
     },
     {
       "operation": "pn-epoch::recipients::recipient_cumulative",
