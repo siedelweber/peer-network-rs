@@ -4,6 +4,8 @@
 mod allocation;
 #[path = "../tests/common/mod.rs"]
 mod common;
+#[path = "../tests/common/support.rs"]
+mod support_fixture;
 
 #[derive(Debug)]
 struct Verifier;
@@ -80,6 +82,19 @@ fn main() -> std::process::ExitCode {
         pn_epoch::recipients::resolve_recipients(&empty, 1, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap();
     let recipient_refusal =
         pn_epoch::recipients::resolve_recipients(&empty, 0, &Verifier, pn_records::numerics::ExactLimits::default()).unwrap_err();
+    let allocation = allocation_results();
+    let result = cli_common::emit(&format!(
+        "{good:?};{refused:?};{ledger:?};{ledger_refusal:?};{cells:?};{cell_refusal:?};{coefficient:?};{coefficient_hold:?};{recipients:?};{recipient_refusal:?};{allocation}"
+    ));
+    drop(guard);
+    if result.is_ok() {
+        std::process::ExitCode::SUCCESS
+    } else {
+        std::process::ExitCode::FAILURE
+    }
+}
+
+fn allocation_results() -> String {
     let base_inputs = allocation::inputs();
     let mut base_acts = allocation::acts();
     let base = pn_epoch::base::compile_base(
@@ -98,13 +113,34 @@ fn main() -> std::process::ExitCode {
         pn_records::numerics::ExactLimits::default(),
     )
     .unwrap();
-    let result = cli_common::emit(&format!(
-        "{good:?};{refused:?};{ledger:?};{ledger_refusal:?};{cells:?};{cell_refusal:?};{coefficient:?};{coefficient_hold:?};{recipients:?};{recipient_refusal:?};{base:?};{base_hold:?}"
-    ));
-    drop(guard);
-    if result.is_ok() {
-        std::process::ExitCode::SUCCESS
-    } else {
-        std::process::ExitCode::FAILURE
-    }
+    let support_history = allocation::history(&support_fixture::support_acts());
+    let (mut support_numeric, support_price, support_ledger) = support_fixture::ledger(&base_inputs, &support_history);
+    let support_base = pn_epoch::base::compile_base(
+        &base_inputs,
+        &support_history,
+        &allocation::Verifier,
+        pn_records::numerics::ExactLimits::default(),
+    )
+    .unwrap();
+    let support = pn_epoch::support::compile_support(
+        &base_inputs,
+        &support_price,
+        &support_ledger,
+        &support_base,
+        &mut support_numeric,
+        pn_records::numerics::ExactLimits::default(),
+        1000,
+    )
+    .unwrap();
+    let support_refusal = pn_epoch::support::compile_support(
+        &base_inputs,
+        &support_price,
+        &support_ledger,
+        &support_base,
+        &mut support_numeric,
+        pn_records::numerics::ExactLimits::default(),
+        0,
+    )
+    .unwrap_err();
+    format!("{base:?};{base_hold:?};{support:?};{support_refusal:?}")
 }

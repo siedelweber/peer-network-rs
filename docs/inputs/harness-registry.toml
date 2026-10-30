@@ -1498,3 +1498,14 @@ implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::base::base_tables", "pn-epoch::base::base_holds"]
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::support"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "fast"
+budget = "pure-suite"
+cases = ["pn-epoch::support::support_tables", "pn-epoch::support::support_refusals"]

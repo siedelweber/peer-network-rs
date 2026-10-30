@@ -7015,6 +7015,16 @@
       "claim": "ROOT::alg:design:base",
       "shape": "shape-epoch",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/support.rs",
+      "item": "support::compile_support",
+      "owner": "EPOCH",
+      "signature": "fn compile_support (inputs : & CompilerInputs , price : & ChargedPrice , ledger : & FinalLedger , base : & BaseAllocation , numeric : & mut NumericContext , limits : Limits , maximum_products : u64 ,) -> Result < StandingSupport , SupportError >",
+      "claim": "ROOT::alg:design:emission-support",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
     }
   ],
   "metrics": [
@@ -13618,6 +13628,17 @@
         "secret_flow": "epoch-base-secret_flow",
         "exposure_consumers": "epoch-base-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/support.rs::support::compile_support",
+      "body": "{ let boundary = inputs . parameters () . boundary ; if base . boundary != boundary || base . edition != inputs . parameters () . edition || ledger . snapshots . last () . map (| snapshot | snapshot . boundary) != Some (boundary) || price . numeraire () != & inputs . parameters () . numeraire || numeric . charged_price (price . wall () , & inputs . parameters () . numeraire , inputs . constants () . content () . floor ,) ? != * price || ledger . debits . values () . any (| debit | debit . boundary () == boundary && debit . price () != price) { return Err (SupportError :: Boundary) ; } let mut budget = Budget :: new (limits) ? ; let mut adjacency = BTreeMap :: new () ; for (source , row) in & base . rows { let mut targets = BTreeSet :: new () ; for (target , entry) in row { if ! base . rows . contains_key (target) { return Err (SupportError :: Base) ; } if positive (& entry . score , & mut budget) ? { targets . insert (target . clone ()) ; } } if ! targets . contains (source) { return Err (SupportError :: Base) ; } adjacency . insert (source . clone () , targets) ; } let (sources , rates) = source_pairs (inputs , price , ledger , base , & mut budget) ? ; let mut current : SupportRows = base . rows . keys () . map (| source | (source . clone () , BTreeSet :: from ([source . clone ()]))) . collect () ; let mut by_depth = BTreeMap :: new () ; let mut products = 0_u64 ; for (index , mass_name) in inputs . parameters () . depth_mass . iter () . enumerate () { let mut next = BTreeMap :: new () ; for (source , reached) in & current { let mut targets = BTreeSet :: new () ; for relay in reached { for target in adjacency . get (relay) . ok_or (SupportError :: Base) ? { products = products . checked_add (1) . filter (| value | * value <= maximum_products) . ok_or (SupportError :: Products) ? ; targets . insert (target . clone ()) ; } } next . insert (source . clone () , targets) ; } current = next ; if ! crate :: constant (inputs . constants () , mass_name , & mut budget) ? . is_zero () { by_depth . insert (index + 1 , current . clone ()) ; } } let mut emitted = BTreeMap :: new () ; let mut contributors : SupportRows = base . rows . keys () . map (| actor | (actor . clone () , BTreeSet :: new ())) . collect () ; for (source , evidence) in & sources { let mut targets = BTreeSet :: new () ; if evidence . emission != \"0\" { for support in by_depth . values () { targets . extend (support [source] . iter () . cloned ()) ; } } if evidence . retained != \"0\" { targets . insert (source . clone ()) ; } for target in & targets { contributors . get_mut (target) . ok_or (SupportError :: Base) ? . insert (source . clone ()) ; } emitted . insert (source . clone () , targets) ; } let ranges = contributing_ranges (& contributors , & rates , & mut budget) ? ; Ok (StandingSupport { boundary , sources , by_depth , emitted , contributors , ranges , products , }) }",
+      "class_decision": "epoch-support",
+      "item_premise": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result.",
+      "assessments": {
+        "full_recording": "epoch-support-full_recording",
+        "secret_flow": "epoch-support-secret_flow",
+        "exposure_consumers": "epoch-support-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -16779,6 +16800,42 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "epoch-base",
       "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+    },
+    {
+      "item": "support::SourceEmission",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/support.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-support",
+      "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+    },
+    {
+      "item": "support::ContributingRange",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/support.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-support",
+      "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+    },
+    {
+      "item": "support::StandingSupport",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/support.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-support",
+      "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+    },
+    {
+      "item": "support::SupportError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/support.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-support",
+      "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
     }
   ],
   "reviewed_types": [
@@ -19021,6 +19078,30 @@
       "syntax": "# [doc = \" Whole-result cell, title or bounded exact-arithmetic refusal.\"] # [doc = \" (\u00b4def:compiler:recipient-resolution\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RecipientError { # [error (\"cell compilation: {0}\")] Cells (# [from] CellError) , # [error (\"title replay: {0}\")] Title (# [from] pn_graph :: recognition :: RecognitionError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
     },
     {
+      "item": "support::SourceEmission",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/support.rs",
+      "syntax": "# [doc = \" One source's reduced rate and its emission and identity-retention fractions.\"] # [doc = \" (\u00b4def:compiler:emission-support\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct SourceEmission { pub reduced_rate : String , pub emission : String , pub retained : String , }"
+    },
+    {
+      "item": "support::ContributingRange",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/support.rs",
+      "syntax": "# [doc = \" Exact extrema of source rates reaching a target, not a standing solution.\"] # [doc = \" (\u00b4def:compiler:emission-support\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ContributingRange { pub minimum : String , pub maximum : String , pub width : String , }"
+    },
+    {
+      "item": "support::StandingSupport",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/support.rs",
+      "syntax": "# [doc = \" Supported hop products before emission, and the emitted contributing relation.\"] # [doc = \" (\u00b4def:compiler:emission-support\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct StandingSupport { pub boundary : u64 , pub sources : BTreeMap < String , SourceEmission > , pub by_depth : BTreeMap < usize , SupportRows > , pub emitted : SupportRows , pub contributors : SupportRows , pub ranges : BTreeMap < String , ContributingRange > , pub products : u64 , }"
+    },
+    {
+      "item": "support::SupportError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/support.rs",
+      "syntax": "# [doc = \" No partial support escapes invalid premises or bounded computation.\"] # [doc = \" (\u00b4def:compiler:emission-support\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum SupportError { # [error (\"base, ledger or price does not match the bound boundary\")] Boundary , # [error (\"base is not a nonnegative square anchored matrix with positive diagonal\")] Base , # [error (\"anchored ledger pair is missing, has zero count or differs in units\")] Ledger , # [error (\"support product budget exhausted\")] Products , # [error (\"bound parameter: {0}\")] Input (# [from] InputError) , # [error (\"numeric coordinate: {0}\")] Numeric (# [from] NumericError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+    },
+    {
       "item": "FamilyProfile",
       "package": "pn-epoch",
       "path": "packages/epoch/src/lib.rs",
@@ -19463,6 +19544,16 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score."
+    },
+    {
+      "name": "epoch-support",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/support.rs::support::compile_support"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result."
     }
   ],
   "shapes": {
@@ -21433,6 +21524,21 @@
     "epoch-base-exposure_consumers": {
       "status": "reviewer-confirmed",
       "premises": "Base compilation reads public bound constants, complete history, verifier and arithmetic limits. Exact sparse entries, contributing cell identities and typed irrational terms are fully public. No secret or private opening enters this operation, and observation changes no base score.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-support-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-support-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-support-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result.",
       "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
     }
   }

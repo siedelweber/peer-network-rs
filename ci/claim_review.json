@@ -278,7 +278,7 @@
       "path": "ci/test_observe_runtime.py",
       "claim": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
       "before": "",
-      "after": "Claim: The real compiler parameter, ledger, cell, coefficient, recipient and base boundaries preserve exact successful inputs, ledger values, empty cells and recipients, nonempty unnormalized bases, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary, including nested cell compilation and trace carries public constants, recognized markers and results.",
+      "after": "Claim: The real compiler parameter, ledger, cell, coefficient, recipient, base and support boundaries preserve exact successful inputs, ledger values, empty cells and recipients, nonempty unnormalized bases, source emission and depth support, exact coefficients and typed refusals or irrational holds with observation disabled, default and trace; enabled observation retains both invocations of each boundary, including nested cell compilation and trace carries public constants, recognized markers and results.",
       "review": "The example adds successful empty recipients and a boundary refusal. Both recipient calls invoke cell compilation, giving twelve compiler spans; exact outputs remain equal with observation off, default and trace."
     },
     {
@@ -1592,6 +1592,22 @@
       "before": "",
       "after": "Claim: Independent event tables distinguish unique transfer, conflict, buyer or seller cancellation, each wrong party, consumed-record reuse and resale. Successful Accept and Ratify cells retain counterparty recipients after consumption and resale, while losing or reused attempts resolve home; hostile settlement coordinates remain home without reversing title.",
       "review": "Independent literal family and event tables share only raw input carriers with production. Positive signs, anchored recipients, persistent successful events and cumulative netting are tested without calculating expected destinations through production helpers."
+    },
+    {
+      "operation": "pn-epoch::support::support_refusals",
+      "path": "packages/epoch/tests/support.rs",
+      "claim": "EPOCH::claim:compiler:support-keeps-structural-refusals-and-numeric-holds-distinct",
+      "before": "",
+      "after": "Claim: Support refuses mismatched boundary or writing price, missing positive anchored counts, malformed base diagonals and exhausted product budgets; a positive irrational base term establishes reachability without establishing its magnitude.",
+      "review": "Literal source fractions, Boolean matrices and rate extrema share no production support computation. The ledger is independently derived from public fixture markers; unchanged debits and balances and structural refusals bound the claim to pre-solve evidence."
+    },
+    {
+      "operation": "pn-epoch::support::support_tables",
+      "path": "packages/epoch/tests/support.rs",
+      "claim": "EPOCH::claim:compiler:emission-and-support-follow-final-pairs-and-depths",
+      "before": "",
+      "after": "Claim: Source emission uses the final own balance and current writing price once, with exact zero, fractional and saturated emission; independent depth tables retain a solvent source's reach through a depleted relay, derive contributing rate extrema, and leave ledger values unchanged under accepted-set permutations.",
+      "review": "Literal source fractions, Boolean matrices and rate extrema share no production support computation. The ledger is independently derived from public fixture markers; unchanged debits and balances and structural refusals bound the claim to pre-solve evidence."
     },
     {
       "operation": "pn-graph::formation::affinity_coordinates",

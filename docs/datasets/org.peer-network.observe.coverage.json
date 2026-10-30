@@ -40,11 +40,11 @@
     },
     {
       "exceptions": 2,
-      "generators": 18,
+      "generators": 22,
       "helpers": 0,
-      "instrumented": 6,
+      "instrumented": 7,
       "name": "pn-epoch",
-      "operations": 8
+      "operations": 9
     },
     {
       "exceptions": 0,

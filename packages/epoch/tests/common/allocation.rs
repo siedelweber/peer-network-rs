@@ -20,6 +20,10 @@ impl pn_graph::registration::RegistrationVerifier for Verifier {
 }
 
 pub(crate) fn inputs() -> CompilerInputs {
+    inputs_for_depth(&["third", "rest"])
+}
+
+pub(crate) fn inputs_for_depth(depth_mass: &[&str]) -> CompilerInputs {
     let (declaration, mut edition, mut input) = crate::common::fixture();
     let mut numeric = NumericContext::new(ExactLimits::default(), ComparisonLimits::new(1000, 1000)).unwrap();
     for (name, value) in [("two", "2"), ("three", "3"), ("four", "4")] {
@@ -37,6 +41,7 @@ pub(crate) fn inputs() -> CompilerInputs {
         .find(|profile| profile.family == "Reference")
         .unwrap();
     reference.weights = BTreeMap::from([("Epistemic".into(), "third".into()), ("Tribal".into(), "rest".into())]);
+    input.depth_mass = depth_mass.iter().map(|name| (*name).into()).collect();
     let empty = validate_history(&[], &[]).unwrap();
     let records = validate_record(&[], &empty, &[declaration]).unwrap();
     let constants = bind_constants(&records, vec![edition]).unwrap();
