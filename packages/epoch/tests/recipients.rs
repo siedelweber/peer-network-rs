@@ -179,7 +179,7 @@ fn act(family: &str, author: &str, sequence: u64, epoch: u64) -> CandidateAct {
     }
     act
 }
-fn history(inputs: &[CandidateAct]) -> pn_records::ValidatedHistory {
+fn positions(inputs: &[CandidateAct]) -> Vec<CandidateAct> {
     let mut inputs = inputs.to_vec();
     inputs.sort_by_key(|act| (act.finalization_epoch, act.id.sequence));
     let mut positions = BTreeMap::new();
@@ -188,7 +188,10 @@ fn history(inputs: &[CandidateAct]) -> pn_records::ValidatedHistory {
         *position += 1;
         act.authoritative_position = *position;
     }
-    validate_history(&inputs, &[]).unwrap()
+    inputs
+}
+fn history(inputs: &[CandidateAct]) -> pn_records::ValidatedHistory {
+    validate_history(&positions(inputs), &[]).unwrap()
 }
 fn recipients(inputs: &[CandidateAct], boundary: u64) -> BTreeMap<ActId, String> {
     let history = history(inputs);
@@ -208,7 +211,7 @@ fn anchors() -> Vec<CandidateAct> {
     ]
 }
 
-/// Claim: Across all eighteen unheld families, independent literal recipient tables send only positive Profile Opinion and Reference cells to anchored persons without a successful settlement event; artifact and control families remain home. Every mandatory sign is tested independently, dangling and future anchors resolve home, unauthorized formation refuses, and Invitation holds the whole result.
+/// Claim: Across all nineteen families, independent literal recipient tables send only positive Profile Opinion and Reference cells to anchored persons without a successful settlement event; artifact and control families remain home. Every mandatory sign is tested independently, dangling and future anchors resolve home, unauthorized formation refuses, and positive Invitation resolves to its anchored invitee.
 /// ´claim:compiler:recipient-classes-require-positive-anchored-persons´
 /// ´test:integration:recipient-classes´
 #[test]
@@ -219,6 +222,7 @@ fn recipient_classes() {
         ("Owner", "seller"),
         ("Opinion", "buyer"),
         ("Reference", "buyer"),
+        ("Invitation", "buyer"),
         ("Affinity", "seller"),
         ("Participant", "seller"),
         ("Review", "seller"),
@@ -252,7 +256,7 @@ fn recipient_classes() {
         inputs.push(input);
         assert_eq!(recipients(&inputs, 1)[&identity], expected, "{family}");
     }
-    for family in ["Opinion", "Reference"] {
+    for family in ["Opinion", "Reference", "Invitation"] {
         for coordinate in [0, 2] {
             for value in [-1, 0, 1] {
                 let mut inputs = anchors();
@@ -275,20 +279,14 @@ fn recipient_classes() {
             inputs.push(act(family, "seller", 10, 1));
             assert_eq!(recipients(&inputs, 1)[&id(family, "seller", 10)], "seller");
         }
-        let mut inputs = anchors();
-        let mut input = act(family, "seller", 10, 1);
-        input.legs.last_mut().unwrap().target = named("name", "artifact");
-        inputs.push(input);
-        assert_eq!(recipients(&inputs, 1)[&id(family, "seller", 10)], "seller");
+        if family != "Invitation" {
+            let mut inputs = anchors();
+            let mut input = act(family, "seller", 10, 1);
+            input.legs.last_mut().unwrap().target = named("name", "artifact");
+            inputs.push(input);
+            assert_eq!(recipients(&inputs, 1)[&id(family, "seller", 10)], "seller");
+        }
     }
-    let mut inputs = anchors();
-    inputs.push(act("Invitation", "seller", 10, 1));
-    assert_eq!(
-        resolve_recipients(&history(&inputs), 1, &Verifier, Limits::default()),
-        Err(pn_epoch::recipients::RecipientError::Cells(
-            pn_epoch::cells::CellError::InvitationEdition
-        ))
-    );
     assert!(matches!(
         resolve_recipients(&history(&anchors()), 1, &Deny, Limits::default()),
         Err(pn_epoch::recipients::RecipientError::Cells(
@@ -425,4 +423,76 @@ fn recipient_cumulative() {
     inputs[4].logical_time = 500;
     inputs.reverse();
     assert_eq!(recipients(&inputs, 3), expected);
+}
+
+/// Claim: The released Invitation netting fixture and independent rational tables cancel one author's bundle to zero and home, restore a later positive vouch, preserve independent authors, and keep De-invite singleton at self with coefficient one. Both compliant co-epoch placements produce identical cells, coefficients and recipients; the released positive nonsquare coefficient remains explicit irrational evidence.
+/// ´claim:compiler:invitation-netting-is-author-local-and-order-free´
+/// ´test:integration:invitation-netting´
+#[test]
+fn invitation_netting() {
+    use pn_epoch::coefficients::{CoefficientError, coefficient};
+    for (u, f, denominator, positive) in [(8, 7, 10, None), (1, 1, 2, Some("1/2"))] {
+        let make = |author, sequence, epoch, sign: i64| {
+            let mut input = act("Invitation", author, sequence, epoch);
+            input.body.quantities[0].1.value = sign * u;
+            input.body.quantities[1].1.value = denominator;
+            input.body.quantities[2].1.value = sign * f;
+            input.body.quantities[3].1.value = denominator;
+            input.body.quantities[4].1.value = 4;
+            input.body.quantities[5].1.value = 5;
+            input
+        };
+        let mut inputs = anchors();
+        inputs.extend([
+            make("seller", 10, 2, 1),
+            make("third", 11, 2, 1),
+            make("seller", 12, 3, -1),
+            make("seller", 13, 4, 1),
+            act("De-invite", "seller", 14, 5),
+        ]);
+        for boundary in 2..=5 {
+            let result = resolve_recipients(&history(&inputs), boundary, &Verifier, Limits::default()).unwrap();
+            for row in result.iter().filter(|row| row.cell.identity.family == "Invitation") {
+                let cancelled = row.cell.identity.author == "seller" && boundary == 3;
+                assert_eq!(row.recipient, if cancelled { "seller" } else { "buyer" });
+                let expected = if cancelled {
+                    Ok("0".into())
+                } else if let Some(value) = positive {
+                    Ok(value.into())
+                } else {
+                    Err(CoefficientError::Irrational {
+                        radicand: "14/25".into(),
+                    })
+                };
+                assert_eq!(coefficient(&row.cell, Limits::default()), expected);
+                let members = if row.cell.identity.author == "third" {
+                    1
+                } else {
+                    usize::try_from(boundary.min(4) - 1).unwrap()
+                };
+                assert_eq!(row.cell.members.len(), members);
+            }
+            if boundary == 5 {
+                let row = result.iter().find(|row| row.cell.identity.family == "De-invite").unwrap();
+                assert_eq!(row.recipient, "seller");
+                assert_eq!(row.cell.members.len(), 1);
+                assert_eq!(coefficient(&row.cell, Limits::default()).unwrap(), "1");
+            }
+        }
+        inputs.truncate(6);
+        inputs[5].finalization_epoch = 2;
+        let mut placed = positions(&inputs);
+        let first = resolve_recipients(&validate_history(&placed, &[]).unwrap(), 2, &Verifier, Limits::default()).unwrap();
+        let old = placed[3].authoritative_position;
+        placed[3].authoritative_position = placed[5].authoritative_position;
+        placed[5].authoritative_position = old;
+        let second = resolve_recipients(&validate_history(&placed, &[]).unwrap(), 2, &Verifier, Limits::default()).unwrap();
+        assert_eq!(first, second);
+        let cancelled = first
+            .iter()
+            .find(|row| row.cell.identity.family == "Invitation" && row.cell.identity.author == "seller")
+            .unwrap();
+        assert_eq!(cancelled.recipient, "seller");
+        assert_eq!(coefficient(&cancelled.cell, Limits::default()).unwrap(), "0");
+    }
 }

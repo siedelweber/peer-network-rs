@@ -4171,7 +4171,7 @@
       "cases": [
         "pn-epoch::cells::cell_tables",
         "pn-epoch::cells::cell_incidence",
-        "pn-epoch::cells::invitation_hold"
+        "pn-epoch::cells::invitation_charges"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
@@ -4201,7 +4201,8 @@
       "cases": [
         "pn-epoch::recipients::recipient_classes",
         "pn-epoch::recipients::recipient_settlements",
-        "pn-epoch::recipients::recipient_cumulative"
+        "pn-epoch::recipients::recipient_cumulative",
+        "pn-epoch::recipients::invitation_netting"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",

@@ -21,7 +21,7 @@ fn cell(family: &str, entries: &[(&str, &str)]) -> StandingCell {
     }
 }
 
-/// Claim: The mandatory-coordinate census names all nineteen families and agrees with an independent literal table; empty sets weigh one, single coordinates use their magnitude, and Invitation remains an edition hold.
+/// Claim: The mandatory-coordinate census names all nineteen families and agrees with an independent literal table; empty sets weigh one, single coordinates use their magnitude, and Invitation uses its mandatory A-leg pair.
 /// ´claim:compiler:mandatory-coordinate-census-covers-nineteen-families´
 /// ´test:integration:coefficient-census´
 #[test]
@@ -62,11 +62,7 @@ fn coefficient_census() {
     for (family, names) in &expected {
         let entries: Vec<_> = names.iter().map(|name| (*name, "-1/2")).collect();
         let result = coefficient(&cell(family, &entries), Limits::default());
-        if *family == "Invitation" {
-            assert_eq!(result, Err(CoefficientError::InvitationEdition));
-        } else {
-            assert_eq!(result.unwrap(), if names.is_empty() { "1" } else { "1/2" });
-        }
+        assert_eq!(result.unwrap(), if names.is_empty() { "1" } else { "1/2" });
     }
 }
 

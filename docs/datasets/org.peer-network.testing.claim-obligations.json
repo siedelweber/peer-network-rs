@@ -2958,16 +2958,21 @@
       "status": "held"
     },
     {
-      "claims": [],
+      "claims": [
+        "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free",
+        "EPOCH::claim:compiler:invitation-netting-retains-every-charge"
+      ],
       "closing_condition": "Establish the released Invitation netting and De-invite singleton witnesses without removing accepted acts from counts or debits.",
       "closing_step": "Bite 5 Invitation netting implementation",
-      "hold": "ROOT::open:design:invitation-withdrawal-edition",
-      "missing": "Bite 5 implementation and independent Invitation netting evidence under network-v0.31.0: both cancellation placements, zero home coefficient, positive re-establishment, independent authors and De-invite singleton at self with coefficient one",
+      "evidence_paragraph": "EPOCH::amend:compiler:invitation-netting-evidence",
+      "hold": "ROOT::open:testing:obligation-evidence",
+      "missing": "Geometry, allocation amounts and general irrational numeric evidence remain outside these scoped tables.",
       "name": "ROOT::verif:design:suppressed-invitation-cases",
       "owner": "Graph implementer",
       "path": "docs/design/implementation.md",
+      "premises": "Declared public verifier, released Invitation fixture and independent rational tables; no geometric conduit or allocation theorem.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     },
     {
       "claims": [

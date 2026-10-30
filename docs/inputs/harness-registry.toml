@@ -1464,7 +1464,7 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::cells::cell_tables", "pn-epoch::cells::cell_incidence", "pn-epoch::cells::invitation_hold"]
+cases = ["pn-epoch::cells::cell_tables", "pn-epoch::cells::cell_incidence", "pn-epoch::cells::invitation_charges"]
 
 [[rows]]
 kind = "suite"
@@ -1486,4 +1486,4 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::recipients::recipient_classes", "pn-epoch::recipients::recipient_settlements", "pn-epoch::recipients::recipient_cumulative"]
+cases = ["pn-epoch::recipients::recipient_classes", "pn-epoch::recipients::recipient_settlements", "pn-epoch::recipients::recipient_cumulative", "pn-epoch::recipients::invitation_netting"]

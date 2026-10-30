@@ -36,8 +36,7 @@ pub enum RecipientError {
 /// Derive recipients from one completed history, retaining every compiled member.
 /// (´[ROOT-sig:design:epoch]´)
 /// # Errors
-/// Refuses the entire result on cell or title validation failure, the Invitation
-/// edition hold, or exact-arithmetic exhaustion. No partial allocation is returned.
+/// Refuses the entire result on cell or title validation failure or exact-arithmetic exhaustion. No partial allocation is returned.
 #[tracing::instrument(
     name = "sig:design:epoch",
     fields(
@@ -74,7 +73,7 @@ pub fn resolve_recipients(
         let target = if positive {
             match cell.identity.family.as_str() {
                 "Opinion" => profile(&cell, Role::Binary),
-                "Reference" => profile(&cell, Role::T),
+                "Reference" | "Invitation" => profile(&cell, Role::T),
                 "Accept" | "Ratify" => title.events.iter().find_map(|event| {
                     if event.outcome != TitleOutcome::Transferred {
                         return None;

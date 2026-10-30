@@ -8,7 +8,6 @@ use nrz_cas::{
 };
 
 /// Mandatory authored coordinates from the nineteen-family census.
-/// Invitation is enumerated but its cell compilation remains held.
 /// (´def:compiler:cell-coefficients´)
 pub const MANDATORY_COORDINATES: [(&str, &[&str]); 19] = [
     ("Registration", &[]),
@@ -38,8 +37,6 @@ pub const MANDATORY_COORDINATES: [(&str, &[&str]); 19] = [
 pub enum CoefficientError {
     #[error("exact arithmetic: {0}")]
     Arithmetic(#[from] nrz_cas::Fault),
-    #[error("Invitation withdrawal awaits the next minor edition")]
-    InvitationEdition,
     #[error("unknown family, wrong mandatory coordinates or out-of-range value")]
     Representation,
     #[error("irrational coefficient needs numeric evidence: square root of {radicand}")]
@@ -50,7 +47,7 @@ pub enum CoefficientError {
 /// The returned spelling is an exact rational, not a canonical byte encoding.
 /// (´def:compiler:cell-coefficients´)
 /// # Errors
-/// Returns a typed edition or irrational-evidence hold, malformed cell refusal,
+/// Returns a typed irrational-evidence hold, malformed cell refusal,
 /// or exact arithmetic resource failure; it never substitutes an approximation.
 #[tracing::instrument(
     name = "sig:design:epoch",
@@ -63,9 +60,6 @@ pub enum CoefficientError {
     ret
 )]
 pub fn coefficient(cell: &StandingCell, limits: Limits) -> Result<String, CoefficientError> {
-    if cell.identity.family == "Invitation" {
-        return Err(CoefficientError::InvitationEdition);
-    }
     let names = MANDATORY_COORDINATES
         .iter()
         .find(|(family, _)| *family == cell.identity.family)

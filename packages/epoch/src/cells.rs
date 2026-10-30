@@ -31,7 +31,7 @@ pub struct StandingCell {
     pub coordinates: BTreeMap<String, String>,
 }
 
-/// Whole-result formation, edition hold or bounded exact-arithmetic refusal.
+/// Whole-result formation or bounded exact-arithmetic refusal.
 /// (´def:compiler:standing-cells´)
 #[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum CellError {
@@ -41,14 +41,12 @@ pub enum CellError {
     Arithmetic(#[from] nrz_cas::Fault),
     #[error("boundary zero is not a compiling epoch")]
     Boundary,
-    #[error("Invitation withdrawal awaits the next minor edition")]
-    InvitationEdition,
 }
 
 /// Revalidate complete history and partition its cumulative boundary set without consuming acts.
 /// (´def:compiler:standing-cells´)
 /// # Errors
-/// Refuses the whole result on formation failure, an Invitation cell or a resource limit.
+/// Refuses the whole result on formation failure or a resource limit.
 #[tracing::instrument(
     name = "sig:design:epoch",
     fields(
@@ -72,9 +70,6 @@ pub fn fold_cells(
     let mut budget = Budget::new(limits)?;
     let mut cells: BTreeMap<CellIdentity, (BTreeSet<ActId>, BTreeMap<String, Rational>)> = BTreeMap::new();
     for act in history.acts().iter().filter(|act| act.position().0 <= boundary) {
-        if act.id().family == "Invitation" {
-            return Err(CellError::InvitationEdition);
-        }
         let mut incidence: Vec<_> = act
             .legs()
             .iter()
@@ -85,7 +80,7 @@ pub fn fold_cells(
             author: act.id().author.clone(),
             family: act.id().family.clone(),
             incidence,
-            singleton: (!matches!(act.id().family.as_str(), "Opinion" | "Reference")).then(|| act.id().clone()),
+            singleton: (!matches!(act.id().family.as_str(), "Opinion" | "Reference" | "Invitation")).then(|| act.id().clone()),
         };
         let (members, sums) = cells.entry(identity).or_default();
         members.insert(act.id().clone());

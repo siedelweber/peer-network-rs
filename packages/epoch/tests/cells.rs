@@ -208,13 +208,13 @@ fn cell_incidence() {
     );
 }
 
-/// Claim: A formed Invitation causes the entire cell result to hold for its withdrawal edition, without suppressing or discarding an accepted act.
-/// ´claim:compiler:invitation-cells-await-withdrawal-edition´
-/// ´test:integration:invitation-hold´
+/// Claim: Complete cancelling Invitations form one zero-coordinate cell while retaining both identities, counts and debits; a De-invite stays a separate empty-coordinate singleton at coefficient one.
+/// ´claim:compiler:invitation-netting-retains-every-charge´
+/// ´test:integration:invitation-charges´
 #[test]
-fn invitation_hold() {
+fn invitation_charges() {
     let mut invitation = act(
-        2,
+        1,
         "Invitation",
         &[("urgency", 1, 2), ("formality", 1, 2), ("relevance", 1, 2)],
     );
@@ -235,12 +235,36 @@ fn invitation_hold() {
         target: named("prof", "target"),
         removal: None,
     });
-    let history = validate_history(&[opinion(1, 1), invitation], &[]).unwrap();
-    assert_eq!(
-        fold_cells(&history, 1, &Verifier, Limits::default()),
-        Err(CellError::InvitationEdition)
-    );
-    assert_eq!(history.acts().len(), 2);
+    let mut opposite = invitation.clone();
+    opposite.id.sequence = 2;
+    opposite.authoritative_position = 2;
+    for leg in &mut opposite.legs {
+        leg.id.act = opposite.id.clone();
+    }
+    for index in [0, 2] {
+        opposite.body.quantities[index].1.value = -1;
+    }
+    let mut control = invitation.clone();
+    control.id.family = "De-invite".into();
+    control.id.sequence = 3;
+    control.authoritative_position = 3;
+    control.body.quantities.clear();
+    for leg in &mut control.legs {
+        leg.id.act = control.id.clone();
+    }
+    let acts = [invitation, opposite, control];
+    let history = validate_history(&acts, &[]).unwrap();
+    let cells = fold_cells(&history, 1, &Verifier, Limits::default()).unwrap();
+    assert_eq!(cells.len(), 2);
+    for cell in &cells {
+        let expected = if cell.identity.family == "Invitation" { "0" } else { "1" };
+        assert_eq!(
+            pn_epoch::coefficients::coefficient(cell, Limits::default()).unwrap(),
+            expected
+        );
+        assert_eq!(cell.members.len(), if expected == "0" { 2 } else { 1 });
+    }
+    charged_members(&acts);
     assert_eq!(
         fold_cells(&history, 0, &Verifier, Limits::default()),
         Err(CellError::Boundary)
