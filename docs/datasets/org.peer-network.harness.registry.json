@@ -4240,6 +4240,19 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-epoch::package::package_bindings"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::package",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }

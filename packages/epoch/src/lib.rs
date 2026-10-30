@@ -5,6 +5,7 @@ pub mod base;
 pub mod cells;
 pub mod coefficients;
 pub mod ledger;
+pub mod package;
 pub mod recipients;
 pub mod support;
 

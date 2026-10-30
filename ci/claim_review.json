@@ -1562,6 +1562,14 @@
       "review": "Literal expected balances, counts and writing-vintage values exercise the new consumer through recognized burns and complete formed acts; this does not establish marker authentication or controller scheduling. The local derivation claim is the primary site citation; ordinary imported records citations retain the antecedent contract without minting it again."
     },
     {
+      "operation": "pn-epoch::package::package_bindings",
+      "path": "packages/epoch/tests/package.rs",
+      "claim": "EPOCH::claim:compiler:completed-packages-require-explicit-coherent-bindings",
+      "before": "",
+      "after": "Claim: Structural package verification separates burn-marker acceptance from complete act sequences and refuses mismatched histories, policies, predecessor markers, constants, writing prices, sequences and epoch alignment before public binding verification; matching epoch numbers alone do not establish a package.",
+      "review": "An explicit fixture publication supplies the comparison oracle. Individual mutations exercise each structural cause and a rejecting publication oracle proves that matching structure alone is insufficient. Deployment authentication and settled-chain evidence are not established by this fixture."
+    },
+    {
       "operation": "pn-epoch::recipients::invitation_netting",
       "path": "packages/epoch/tests/recipients.rs",
       "claim": "EPOCH::claim:compiler:invitation-netting-is-author-local-and-order-free",

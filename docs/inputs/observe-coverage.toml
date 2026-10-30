@@ -35,11 +35,11 @@ generators = 6
 
 [[rows]]
 name = "pn-epoch"
-operations = 9
-instrumented = 7
-exceptions = 2
+operations = 11
+instrumented = 8
+exceptions = 3
 helpers = 0
-generators = 22
+generators = 26
 
 [[rows]]
 name = "pn-graph"

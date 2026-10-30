@@ -367,6 +367,7 @@
     "pn-epoch::ledger::ledger_derivation": "",
     "pn-epoch::ledger::ledger_vintages": "",
     "pn-epoch::ledger::whole_act_ledger": "",
+    "pn-epoch::package::package_bindings": "",
     "pn-epoch::recipients::invitation_netting": "",
     "pn-epoch::recipients::recipient_classes": "",
     "pn-epoch::recipients::recipient_cumulative": "",

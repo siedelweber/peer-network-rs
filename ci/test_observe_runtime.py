@@ -208,9 +208,9 @@ class Processes(unittest.TestCase):
             summary = expanded(next(row['metrics'] for row in rows if row.get('kind') == 'metric_summary'))
             stem = 'epoch__root__sig__design__epoch__'
             accounting = distribution(summary)
-            self.assertEqual(accounting[stem+'started_operations', ''], 47)
+            self.assertEqual(accounting[stem+'started_operations', ''], 50)
             instruments = {row['name']: row for row in summary['instruments'] if row['name'].startswith(stem)}
-            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 47)
+            self.assertEqual(instruments[stem+'elapsed_seconds']['count'], 50)
             if mode == 'trace':
                 for marker in (b'bind_inputs', b'formula_edition', b'MissingProfile', b'depth_mass', b'compile_ledger', b'RecognizedMarkers', b'FinalLedger', b'fold_cells', b'coefficient', b'Irrational', b'resolve_recipients', b'compile_base', b'BaseAllocation', b'HeldCoefficient', b'compile_support', b'StandingSupport', b'Products'):
                     self.assertIn(marker, result.stderr)

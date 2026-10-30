@@ -7025,6 +7025,34 @@
       "claim": "ROOT::alg:design:emission-support",
       "shape": "shape-epoch",
       "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "item": "package::verify_package",
+      "owner": "EPOCH",
+      "signature": "fn verify_package (input : PackageInput , verifier : & impl PackageVerifier) -> Result < VerifiedPackage , PackageError >",
+      "claim": "ROOT::dec:design:final-state",
+      "shape": "shape-epoch",
+      "mode": "instrumented"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "item": "package::VerifiedPackage::input",
+      "owner": "EPOCH",
+      "signature": "fn input (& self) -> & PackageInput",
+      "claim": "ROOT::dec:design:final-state",
+      "shape": "shape-epoch",
+      "mode": "exception",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access preserves the enclosing verification result.",
+        "witness": "ROOT::claim:discipline:epoch-inputs-retain-observed-results",
+        "boundary": "pn-epoch::packages/epoch/src/package.rs::package::verify_package",
+        "class_decision": "epoch-package"
+      }
     }
   ],
   "metrics": [
@@ -13639,6 +13667,28 @@
         "secret_flow": "epoch-support-secret_flow",
         "exposure_consumers": "epoch-support-exposure_consumers"
       }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/package.rs::package::verify_package",
+      "body": "{ let count = input . bindings . len () ; let markers = input . markers . markers () ; if count == 0 || input . inputs . len () != count || input . prices . len () != count || markers . len () <= count { return Err (PackageError :: Alignment) ; } let last = u64 :: try_from (count) . map_err (| _ | PackageError :: Alignment) ? ; if input . history . acts () . iter () . any (| act | act . position () . 0 > last) { return Err (PackageError :: Sequence) ; } let basis = input . markers . basis () ; for (offset , binding) in input . bindings . iter () . enumerate () { let boundary = u64 :: try_from (offset) . map_err (| _ | PackageError :: Alignment) ? + 1 ; if binding . marker . history != basis . history || binding . predecessor . history != basis . history { return Err (PackageError :: History) ; } if [& binding . marker , & binding . predecessor] . iter () . any (| marker | marker . policy_identity != basis . policy_identity || marker . policy_edition != basis . policy_edition) { return Err (PackageError :: Policy) ; } if binding . marker . index != boundary || input . inputs [offset] . parameters () . boundary != boundary { return Err (PackageError :: Alignment) ; } if binding . predecessor != * markers [offset] . identity () { return Err (PackageError :: Predecessor) ; } if binding . marker != * markers [offset + 1] . identity () { return Err (PackageError :: Alignment) ; } if binding . inputs != input . inputs [offset] { return Err (PackageError :: Constants) ; } if binding . price != input . prices [offset] { return Err (PackageError :: Vintage) ; } let mut sequence : Vec < _ > = input . history . acts () . iter () . filter (| act | act . position () . 0 == boundary) . collect () ; sequence . sort_by_key (| act | act . position ()) ; if ! sequence . into_iter () . eq (binding . sequence . iter ()) { return Err (PackageError :: Sequence) ; } } if ! verifier . published_package (& input) { return Err (PackageError :: Binding) ; } Ok (VerifiedPackage { input }) }",
+      "class_decision": "epoch-package",
+      "item_premise": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+      "assessments": {
+        "full_recording": "epoch-package-full_recording",
+        "secret_flow": "epoch-package-secret_flow",
+        "exposure_consumers": "epoch-package-exposure_consumers"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/package.rs::package::VerifiedPackage::input",
+      "body": "{ & self . input }",
+      "class_decision": "epoch-package",
+      "item_premise": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+      "assessments": {
+        "full_recording": "epoch-package-full_recording",
+        "secret_flow": "epoch-package-secret_flow",
+        "exposure_consumers": "epoch-package-exposure_consumers"
+      }
     }
   ],
   "generators": [
@@ -16836,6 +16886,42 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "epoch-support",
       "expansion_review": "Structural Clone, Debug, equality and Error retain complete public exact values, dependent irrational terms and cell identities; no secret enters these carriers."
+    },
+    {
+      "item": "package::EpochBinding",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, diagnostic formatting, equality and named errors preserve complete public package fields. There is no serialization or authentication realization in these derives."
+    },
+    {
+      "item": "package::PackageInput",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, diagnostic formatting, equality and named errors preserve complete public package fields. There is no serialization or authentication realization in these derives."
+    },
+    {
+      "item": "package::VerifiedPackage",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Debug)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, diagnostic formatting, equality and named errors preserve complete public package fields. There is no serialization or authentication realization in these derives."
+    },
+    {
+      "item": "package::PackageError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "epoch-package",
+      "expansion_review": "Structural cloning, diagnostic formatting, equality and named errors preserve complete public package fields. There is no serialization or authentication realization in these derives."
     }
   ],
   "reviewed_types": [
@@ -19066,6 +19152,30 @@
       "syntax": "# [doc = \" No partial ledger escapes a failed derivation.\"] # [doc = \" (\u00b4def:compiler:final-ledger\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum LedgerError { # [error (\"incomplete or unauthorized act: {0}\")] Formation (# [from] RegistrationError) , # [error (\"numeric carrier: {0}\")] Numeric (# [from] NumericError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"boundary inputs, price vintages and marker sequence do not cover the same prefix\")] Boundary , # [error (\"burn units differ\")] Units , # [error (\"price differs from the boundary's declared numeraire or floor\")] Price , # [error (\"actor has insufficient own balance at the completed boundary\")] InsufficientBalance { address : Address , boundary : u64 } , # [error (\"action count exceeds the carrier\")] Count , }"
     },
     {
+      "item": "package::EpochBinding",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" One epoch's explicit package binding, separate from the marker's burn acceptance.\"] # [doc = \" (\u00b4def:compiler:completed-package\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EpochBinding { pub marker : Marker , pub predecessor : Marker , pub inputs : CompilerInputs , pub price : ChargedPrice , # [doc = \" Full immutable acts in published position order, including all projection evidence.\"] pub sequence : Vec < ValidatedAct > , }"
+    },
+    {
+      "item": "package::PackageInput",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" Untrusted full-prefix package; no independently asserted balance is accepted.\"] # [doc = \" (\u00b4def:compiler:completed-package\u00b4)\"] # [derive (Clone , Debug)] pub struct PackageInput { pub markers : RecognizedMarkers , pub history : ValidatedHistory , pub inputs : Vec < CompilerInputs > , pub prices : Vec < ChargedPrice > , pub bindings : Vec < EpochBinding > , }"
+    },
+    {
+      "item": "package::VerifiedPackage",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" Frozen package, constructible only by the verification operation.\"] # [doc = \" (\u00b4def:compiler:completed-package\u00b4)\"] # [derive (Clone , Debug)] pub struct VerifiedPackage { input : PackageInput , }"
+    },
+    {
+      "item": "package::PackageError",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/package.rs",
+      "syntax": "# [doc = \" Structural coherence refusals precede public binding verification.\"] # [doc = \" (\u00b4def:compiler:completed-package\u00b4)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum PackageError { # [error (\"package components belong to different marker histories\")] History , # [error (\"package mixes marker policy identities or editions\")] Policy , # [error (\"package drops or substitutes the preceding marker or epoch\")] Predecessor , # [error (\"package constants differ from the bound effective inputs\")] Constants , # [error (\"package write sequence differs from the validated history\")] Sequence , # [error (\"package epochs and markers are not aligned one to one\")] Alignment , # [error (\"package substitutes the writing epoch's debit vintage\")] Vintage , # [error (\"public verification does not establish the package binding\")] Binding , }"
+    },
+    {
       "item": "recipients::ResolvedCell",
       "package": "pn-epoch",
       "path": "packages/epoch/src/recipients.rs",
@@ -19554,6 +19664,17 @@
       },
       "status": "reviewer-confirmed",
       "premises": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result."
+    },
+    {
+      "name": "epoch-package",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/package.rs::package::verify_package",
+          "pn-epoch::packages/epoch/src/package.rs::package::VerifiedPackage::input"
+        ]
+      },
+      "status": "reviewer-confirmed",
+      "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise."
     }
   ],
   "shapes": {
@@ -21539,6 +21660,21 @@
     "epoch-support-exposure_consumers": {
       "status": "reviewer-confirmed",
       "premises": "Support compilation reads public bound inputs, price, final ledger, base entries and numeric and product limits. Source fractions, depth relations, contributing ranges, product counts and refusals are public trace values. No secret or private opening enters these carriers, and observation changes no result.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-package-full_recording": {
+      "status": "reviewer-confirmed",
+      "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-package-secret_flow": {
+      "status": "reviewer-confirmed",
+      "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
+      "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
+    },
+    "epoch-package-exposure_consumers": {
+      "status": "reviewer-confirmed",
+      "premises": "Package verification reads full public marker and act carriers, effective constants, writing prices and a declared deterministic public binding verifier. Structural equality does not substitute for published binding evidence. Inputs, immutable checked results and distinct refusals remain public; no secret or canonical encoding enters this operation. Observation supplies no verification premise.",
       "negative_probe": "ROOT::claim:discipline:epoch-inputs-retain-observed-results"
     }
   }

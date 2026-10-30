@@ -4,6 +4,8 @@
 mod allocation;
 #[path = "../tests/common/mod.rs"]
 mod common;
+#[path = "../tests/common/package.rs"]
+mod package_inputs;
 #[path = "../tests/common/support.rs"]
 mod support_fixture;
 
@@ -142,5 +144,10 @@ fn allocation_results() -> String {
         0,
     )
     .unwrap_err();
-    format!("{base:?};{base_hold:?};{support:?};{support_refusal:?}")
+    let package_input = package_inputs::fixture();
+    let published = package_inputs::Published(package_input.bindings.clone());
+    let package = pn_epoch::package::verify_package(package_input.clone(), &published).unwrap();
+    let package_refusal = pn_epoch::package::verify_package(package_input, &package_inputs::Published(vec![])).unwrap_err();
+    let bindings = &package.input().bindings;
+    format!("{base:?};{base_hold:?};{support:?};{support_refusal:?};{bindings:?};{package_refusal:?}")
 }
