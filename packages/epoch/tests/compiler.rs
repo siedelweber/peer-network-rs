@@ -488,14 +488,32 @@ fn placement_corpus() {
             acts.push(if mask & (1 << bit) == 0 { a.next() } else { b.next() }.unwrap().clone());
         }
         place(&mut acts);
-        // Candidate admission, independently of replay, establishes compliant parent placement.
-        pn_records::validate_history(&acts, &[]).unwrap();
+        // Replay retains faults; empty evidence establishes compliant parent and dependency placement.
+        let history = pn_records::validate_history(&acts, &[]).unwrap();
+        assert_eq!(history.parent_faults(), []);
+        assert_eq!(history.non_compliance(), []);
         let result = compile(&acts, 2);
         distinct.insert(history_key(&result));
         let values = placement_values(&result);
         assert_eq!(&values, expected.get_or_insert_with(|| values.clone()));
     }
     assert_eq!(distinct.len(), 20);
+    // Accept before its Bid still replays, but cannot pass the fault-free placement check above.
+    let mut misordered = prefix;
+    misordered.extend(first.iter().cloned());
+    misordered.extend(second.iter().cloned());
+    misordered.swap(4, 5);
+    place(&mut misordered);
+    let history = pn_records::validate_history(&misordered, &[]).unwrap();
+    assert_eq!(
+        history.parent_faults(),
+        &[pn_records::ParentPlacementFault {
+            act: first[1].id.clone(),
+            parent: first[0].id.clone(),
+            cause: pn_records::ParentCause::NotEarlier,
+        }]
+    );
+    assert_eq!(history.non_compliance(), []);
 }
 
 /// Claim: All 24 accepted-set presentations of each of nineteen family fixtures reach validation unchanged, producing 456 distinct histories and equal joined views. Twenty compliant interleavings of two settlement chains and 24 mixed-family placements preserve compiled values; chain and time evidence are checked against each changed input separately. This is finite compiler determinism, not universal partition invariance.
