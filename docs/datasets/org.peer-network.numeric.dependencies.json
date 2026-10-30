@@ -12,9 +12,9 @@
       "features": "none",
       "license": "AGPL-3.0-only",
       "name": "nrz-accuracy",
-      "resolution": "new",
+      "resolution": "Git revision moved; version, licence and dependency edges retained",
       "role": "Explicit cumulative comparison attempt/work limits",
-      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526",
+      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=7725f2682a0335930eab10f98c511993596cac2c#7725f2682a0335930eab10f98c511993596cac2c",
       "version": "0.1.0"
     },
     {
@@ -23,9 +23,9 @@
       "features": "none",
       "license": "AGPL-3.0-only",
       "name": "nrz-cas",
-      "resolution": "new",
-      "role": "Budgeted exact rational arithmetic and closed constant expressions",
-      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526",
+      "resolution": "Git revision moved; version, licence and dependency edges retained",
+      "role": "Budgeted exact rational arithmetic, closed constants and certified rational-endpoint enclosures; enclosure API not yet consumed",
+      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=7725f2682a0335930eab10f98c511993596cac2c#7725f2682a0335930eab10f98c511993596cac2c",
       "version": "0.1.0"
     },
     {
@@ -34,9 +34,9 @@
       "features": "none",
       "license": "AGPL-3.0-only",
       "name": "nrz-scalar",
-      "resolution": "new",
+      "resolution": "Git revision moved; version, licence and dependency edges retained",
       "role": "Finite binary arithmetic and outward literal enclosures; not an exact-value substitute",
-      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=b90b8025a2c0fdc70e1a5a8e8fa83403c8634526#b90b8025a2c0fdc70e1a5a8e8fa83403c8634526",
+      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=7725f2682a0335930eab10f98c511993596cac2c#7725f2682a0335930eab10f98c511993596cac2c",
       "version": "0.1.0"
     },
     {
@@ -67,7 +67,7 @@
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "fixedbitset",
-      "resolution": "new",
+      "resolution": "retained",
       "role": "CAS graph bit sets",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.5.7"
@@ -78,7 +78,7 @@
       "features": "none",
       "license": "Zlib",
       "name": "foldhash",
-      "resolution": "new",
+      "resolution": "retained",
       "role": "CAS graph hash-table hashing",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.1.5"
@@ -89,7 +89,7 @@
       "features": "default-hasher, inline-more",
       "license": "MIT OR Apache-2.0",
       "name": "hashbrown",
-      "resolution": "new",
+      "resolution": "retained",
       "role": "Petgraph direct hash storage, using foldhash",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.15.5"
@@ -122,7 +122,7 @@
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "num-bigint",
-      "resolution": "new",
+      "resolution": "retained",
       "role": "Arbitrary-precision rational components",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.4.8"
@@ -133,7 +133,7 @@
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "num-complex",
-      "resolution": "new",
+      "resolution": "retained",
       "role": "CAS complex syntax support, outside records scalar admission",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.4.6"
@@ -144,7 +144,7 @@
       "features": "i128",
       "license": "MIT OR Apache-2.0",
       "name": "num-integer",
-      "resolution": "new",
+      "resolution": "retained",
       "role": "Exact integer division and gcd",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.1.47"
@@ -155,7 +155,7 @@
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "num-rational",
-      "resolution": "new",
+      "resolution": "retained",
       "role": "Reduced ratio backing",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.4.2"
@@ -177,7 +177,7 @@
       "features": "default, graphmap, matrix_graph, stable_graph, std",
       "license": "MIT OR Apache-2.0",
       "name": "petgraph",
-      "resolution": "new",
+      "resolution": "retained",
       "role": "CAS-owned graph storage; no records partition algorithm",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.8.3"

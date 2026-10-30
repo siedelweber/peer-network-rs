@@ -242,8 +242,8 @@ measures = "Public Git commit resolved by Cargo for the numeric backend"
 producer = "Cargo lock resolution"
 establishment = "resolvable"
 reader = "public-git"
-locator = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum/commit/b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
-commit = "b90b8025a2c0fdc70e1a5a8e8fa83403c8634526"
+locator = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum/commit/7725f2682a0335930eab10f98c511993596cac2c"
+commit = "7725f2682a0335930eab10f98c511993596cac2c"
 definition = "The public main commit supplies nrz-scalar, nrz-accuracy and nrz-cas. The manifest rev and Cargo.lock fix the same reviewed source revision; the accepting record and numeric dependency dataset retain the licence, resolved features and representation limits reviewed before numeric carriers."
 paths = ["Cargo.toml", "Cargo.lock", "ci/hash-citation-families.toml", "docs/inputs/numeric-dependencies.toml", "docs/datasets/org.peer-network.numeric.dependencies.json", "docs/templates/adr/007-crate-decomposition.md.j2", "adr/007-crate-decomposition.md", "packages/records/NOTICE-NUMERIC"]
 

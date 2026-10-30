@@ -18,9 +18,9 @@ hyper-util = { version = "=0.1.21", default-features = false }
 http-body-util = { version = "=0.1.5", default-features = false }
 petgraph = { version = "0.8", features = ["serde-1"] }
 # Reviewed exact carriers and explicit numeric bounds; manifest and lock pin one reviewed public revision.
-nrz-scalar = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", rev = "b90b8025a2c0fdc70e1a5a8e8fa83403c8634526" }
-nrz-accuracy = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", rev = "b90b8025a2c0fdc70e1a5a8e8fa83403c8634526" }
-nrz-cas = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", rev = "b90b8025a2c0fdc70e1a5a8e8fa83403c8634526" }
+nrz-scalar = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", rev = "7725f2682a0335930eab10f98c511993596cac2c" }
+nrz-accuracy = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", rev = "7725f2682a0335930eab10f98c511993596cac2c" }
+nrz-cas = { git = "https://github.com/naturrhythmuszentrum/naturrhythmuszentrum", rev = "7725f2682a0335930eab10f98c511993596cac2c" }
 # Public anchored-plus-budget fork (Paligo/regexml#15), scalar aliases and local XSD count-preserving endpoint search; see README.
 # Retire when upstream releases the anchored matcher, budget and count-preserving endpoint search.
 regexml = { path = "vendor/regexml" }
