@@ -18,7 +18,7 @@
         1
       ],
       "name": "Registration",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:registration",
       "parameters": "1; 1 (fixed)",
       "payload": "profile data",
@@ -42,7 +42,7 @@
         1
       ],
       "name": "Publish",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:publish",
       "parameters": "attachment [-1,1]; 1",
       "payload": "content body",
@@ -66,7 +66,7 @@
         1
       ],
       "name": "Opinion",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:opinion",
       "parameters": "polarity [-1,1]; reaction [-1,1]",
       "payload": "rationale",
@@ -90,7 +90,7 @@
         1
       ],
       "name": "Affinity",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:affinity",
       "parameters": "association [-1,1]; attraction [-1,1]",
       "payload": "rationale",
@@ -114,7 +114,7 @@
         1
       ],
       "name": "Participant/A",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:participant",
       "parameters": "interactivity [-1,1]; responsibility [-1,1]",
       "payload": "participation note (A); continuity note (T)",
@@ -138,7 +138,7 @@
         1
       ],
       "name": "Participant/T",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:participant",
       "parameters": "continuity [0,1]; 1",
       "payload": "participation note (A); continuity note (T)",
@@ -162,7 +162,7 @@
         1
       ],
       "name": "Owner",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:owner",
       "parameters": "attachment [-1,1]; 1",
       "payload": "item description",
@@ -186,7 +186,7 @@
         1
       ],
       "name": "Join Request",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:join-request",
       "parameters": "urgency [-1,1]; formality [-1,1]",
       "payload": "request message",
@@ -210,7 +210,7 @@
         1
       ],
       "name": "Invitation/A",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-invitation",
       "parameters": "urgency [-1,1]; formality [-1,1]",
       "payload": "invitation message (A); empty (T)",
@@ -234,7 +234,7 @@
         1
       ],
       "name": "Invitation/T",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-invitation",
       "parameters": "relevance [0,1]; 1",
       "payload": "invitation message (A); empty (T)",
@@ -258,7 +258,7 @@
         1
       ],
       "name": "De-invite/A",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-deinvite",
       "parameters": "1; 1 (fixed)",
       "payload": "reason (A); empty (T)",
@@ -282,7 +282,7 @@
         1
       ],
       "name": "De-invite/T",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-deinvite",
       "parameters": "1; 1 (fixed)",
       "payload": "reason (A); empty (T)",
@@ -306,7 +306,7 @@
         1
       ],
       "name": "Tag/A",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-tag",
       "parameters": "relevance [-1,1]; confidence [0,1]",
       "payload": "rationale (A); empty (T)",
@@ -330,7 +330,7 @@
         1
       ],
       "name": "Tag/T",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-tag",
       "parameters": "confidence [0,1]; relevance [-1,1]",
       "payload": "rationale (A); empty (T)",
@@ -354,7 +354,7 @@
         1
       ],
       "name": "Review/A",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-review",
       "parameters": "enthusiasm [-1,1]; effort [-1,1]",
       "payload": "reviewer metadata (A); comment body (T)",
@@ -378,7 +378,7 @@
         1
       ],
       "name": "Review/T",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-review",
       "parameters": "effort [-1,1]; enthusiasm [-1,1]",
       "payload": "reviewer metadata (A); comment body (T)",
@@ -402,7 +402,7 @@
         1
       ],
       "name": "Reference/A",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-reference",
       "parameters": "effort [-1,1]; enthusiasm [-1,1]",
       "payload": "reference note (A); empty (T)",
@@ -426,7 +426,7 @@
         1
       ],
       "name": "Reference/T",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-reference",
       "parameters": "enthusiasm [-1,1]; effort [-1,1]",
       "payload": "reference note (A); empty (T)",
@@ -450,7 +450,7 @@
         1
       ],
       "name": "Bid/A",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-bid",
       "parameters": "generosity [-1,1]; urgency [0,1]",
       "payload": "bid terms (A); offer body (T)",
@@ -474,7 +474,7 @@
         1
       ],
       "name": "Bid/T",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-bid",
       "parameters": "urgency [0,1]; generosity [-1,1]",
       "payload": "bid terms (A); offer body (T)",
@@ -498,7 +498,7 @@
         1
       ],
       "name": "Send/A",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-send",
       "parameters": "importance [-1,1]; 1",
       "payload": "metadata (A); message body (T)",
@@ -522,7 +522,7 @@
         1
       ],
       "name": "Send/T",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:hyper-send",
       "parameters": "1; importance [-1,1]",
       "payload": "metadata (A); message body (T)",
@@ -546,7 +546,7 @@
         1
       ],
       "name": "Accept",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:accept",
       "parameters": "comfort [-1,1]; equity [-1,1]",
       "payload": "terms",
@@ -570,7 +570,7 @@
         1
       ],
       "name": "Ratify",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:ratify",
       "parameters": "comfort [-1,1]; equity [-1,1]",
       "payload": "receipt",
@@ -594,7 +594,7 @@
         1
       ],
       "name": "Withdraw",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:withdraw",
       "parameters": "1; 1 (fixed)",
       "payload": "reason",
@@ -618,7 +618,7 @@
         1
       ],
       "name": "Rescind",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:rescind",
       "parameters": "1; 1 (fixed)",
       "payload": "reason",
@@ -642,7 +642,7 @@
         1
       ],
       "name": "Leave",
-      "paper": "network-v0.31.0",
+      "paper": "network-v0.31.1",
       "paper_label": "edge:nodes:leave",
       "parameters": "1; 1 (fixed)",
       "payload": "parting reason",

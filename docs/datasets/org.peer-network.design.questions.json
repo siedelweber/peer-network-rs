@@ -102,7 +102,7 @@
       "instruction": "Order-free standing folds are safe. Narrow your provisional “acceptance and recognition” wording: retain authoritative order for formation, but title/conflict recognition uses the specified epoch fold rather than intra-epoch latest-record order.",
       "reading": "Study judgment: Retain authoritative act order for acceptance and recognition while proposing order-free standing folds; do not claim the conflicting prose has been resolved.",
       "section": "Q10 — Order and standing",
-      "status": "**Status: corrected.** Order can affect formation, dependency validity, admission and order-sensitive raw quantities, while dependency-compliant permutations preserve standing for fixed accepted membership, final ledger, epoch title fold and constants, and conflict recognition reads membership and epoch.",
+      "status": "**Status: corrected.** Order can affect formation, dependency validity, admission and order-sensitive raw quantities, while dependency-compliant permutations preserve standing for fixed accepted membership, final ledger, epoch title fold and constants, and conflict recognition reads membership and epoch. Network-v0.31.1, ``post:epoch:standing-epoch-set-determinism``, now explicitly names epoch inclusion as the host’s only lever over standing; order, position and intra-epoch placement reach no standing quantity.",
       "topic": "Order and standing"
     },
     {
@@ -361,7 +361,7 @@
       "instruction": "Compile authored Opinion, Reference and Invitation vouches by sum-then-clip netting within the accepted epoch set, with no withdrawal tie rule. Keep terminal membership ordering distinct; De-invite is a self-weighed singleton at coefficient one.",
       "reading": "Study judgment: Keep the epoch/tie rule in the proposed compiler and hold the conflicting fixture ordering.",
       "section": "Q36 — Revocation ordering",
-      "status": "**Status: settled by network-v0.31.0.** The earlier study’s epoch/tie reading is superseded by ``lem:epoch:authored-vouch-withdrawable`` and ``ver:membership:invitation-netting``. Exact Invitation cancellation weighs home at coefficient zero in either dependency-compliant placement; positive re-establishment and independent authors are preserved. Graph implementation evidence remains held under ``open:design:invitation-withdrawal-edition``.",
+      "status": "**Status: settled by network-v0.31.1.** The earlier study’s epoch/tie reading is superseded by ``lem:epoch:authored-vouch-withdrawable`` and ``ver:membership:invitation-netting``. Exact Invitation cancellation weighs home at coefficient zero in either dependency-compliant placement; positive re-establishment and independent authors are preserved. Graph implementation evidence remains held under ``open:design:invitation-withdrawal-edition``.",
       "topic": "Revocation ordering"
     },
     {
