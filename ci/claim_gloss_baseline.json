@@ -429,6 +429,8 @@
     "pn-graph::formation::withdraw_projection": "",
     "pn-graph::formation::withdraw_reconstruction": "",
     "pn-graph::integration::shared_cases": "",
+    "pn-graph::numeric::activation_costs": "",
+    "pn-graph::numeric::activation_endpoints": "",
     "pn-graph::numeric::activation_oracles": "",
     "pn-graph::numeric::activation_walls": "",
     "pn-graph::numeric::primitive_domains": "",

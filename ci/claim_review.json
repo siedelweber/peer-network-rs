@@ -2058,6 +2058,22 @@
       "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
     },
     {
+      "operation": "pn-graph::numeric::activation_costs",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:activation-costs-have-exact-resource-boundaries",
+      "before": "",
+      "after": "Claim: Four composed requests pin cold total Work, evaluation Work, arithmetic steps, certificate bytes and minimum output ceilings; each Work, output and step ceiling succeeds at N and refuses complete evaluation at N minus one. A crossing-box width limit remains incomplete evidence, never a mathematical verdict.",
+      "review": "Four composed requests independently pin total Work, output ceiling and arithmetic steps at N and N-1 (24 boundary runs), with evaluation Work and certificate bytes checked beside each total. The crossing derivative retains WidthLimit, not a verdict. These are fixed precision-four costs, not a runtime or solve-complexity promise."
+    },
+    {
+      "operation": "pn-graph::numeric::activation_endpoints",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises",
+      "before": "",
+      "after": "Claim: Reference-profile monotone endpoint composition contains independent value and gain brackets on unsorted wall placements, keeps zero below the kink and its generalized join across it, and reuses a sealed activation for positive hop powers with every source premise retained. It admits no other bleed profile or gain as a reusable activation.",
+      "review": "Four unsorted box placements exercise eight value/gain endpoint envelopes; independent brackets sit inside their bounds, which fit the original composed bounds. Four one-third powers reuse sealed value evidence. Checked point records replay in fresh stores; an unsupported bleed and a gain used as a value refuse. The test covers the deployed reference profile only and no fence or solve."
+    },
+    {
       "operation": "pn-graph::numeric::activation_oracles",
       "path": "packages/graph/tests/numeric.rs",
       "claim": "GRAPH::claim:numerics:activation-and-gain-agree-with-independent-brackets",

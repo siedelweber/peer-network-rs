@@ -1,6 +1,8 @@
 //! Responsive activation and its wall clamp, with separate deployed and clean gains.
 //! (´def:numerics:activation´)
 
+pub mod monotone;
+
 use super::Error;
 use nrz_cas::{Rational, limits::Budget};
 use pn_records::{
@@ -113,7 +115,8 @@ fn query(input: &Request, budget: &mut Budget) -> Result<Query, Error> {
         0
     };
     let denominator = push(&mut nodes, Node::Add(1, x));
-    let p = push(&mut nodes, Node::Divide(x, denominator));
+    let reciprocal = push(&mut nodes, Node::Divide(1, denominator));
+    let p = push(&mut nodes, Node::Subtract(1, reciprocal));
     let q = core(&mut nodes, p, beta, bleed, 1);
     let mut value = if clean {
         q

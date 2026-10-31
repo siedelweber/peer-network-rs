@@ -120,7 +120,7 @@ fn schemas(input: &[Schema]) -> Result<(), Error> {
     Ok(())
 }
 
-fn mapped(report: EnclosureReport, work: u64, width_only: bool) -> Result<PrimitiveEvidence, Error> {
+fn mapped(report: EnclosureReport, usage: &nrz_cas::limits::BudgetUsage, width_only: bool) -> Result<PrimitiveEvidence, Error> {
     if width_only && matches!(report.outcome, EnclosureOutcome::Proved | EnclosureOutcome::Refuted)
         || !width_only && report.outcome == EnclosureOutcome::Bound
     {
@@ -167,7 +167,8 @@ fn mapped(report: EnclosureReport, work: u64, width_only: bool) -> Result<Primit
         outcome,
         bounds,
         attachment,
-        work,
+        work: usage.work,
+        usage: *usage,
         evaluation_work: report.work,
         precision_met: report.precision_met,
         completed_rounds: report.completed_rounds,
@@ -211,7 +212,7 @@ fn run_budget(
     };
     let result = mapped(
         report,
-        budget.usage().work,
+        &budget.usage(),
         matches!(query.goal, pn_records::primitive::Goal::Width),
     )?;
     if let (Some(supplied), Some(checked)) = (evidence, &result.attachment)

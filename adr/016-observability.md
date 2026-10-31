@@ -78,7 +78,7 @@
 | execwrap | 12 | 8 | 4 | 0 | 11 |
 | pn-act-profile | 11 | 8 | 3 | 0 | 6 |
 | pn-epoch | 27 | 21 | 6 | 0 | 36 |
-| pn-graph | 18 | 18 | 0 | 0 | 54 |
+| pn-graph | 24 | 20 | 4 | 0 | 55 |
 | pn-host | 40 | 22 | 18 | 0 | 13 |
 | pn-interchange | 155 | 119 | 35 | 1 | 91 |
 | pn-records | 109 | 41 | 68 | 0 | 113 |

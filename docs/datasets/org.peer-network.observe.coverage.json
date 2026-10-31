@@ -47,12 +47,12 @@
       "operations": 27
     },
     {
-      "exceptions": 0,
-      "generators": 54,
+      "exceptions": 4,
+      "generators": 55,
       "helpers": 0,
-      "instrumented": 18,
+      "instrumented": 20,
       "name": "pn-graph",
-      "operations": 18
+      "operations": 24
     },
     {
       "exceptions": 18,

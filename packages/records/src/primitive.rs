@@ -103,6 +103,7 @@ pub struct PrimitiveEvidence {
     pub bounds: Option<nrz_cas::enclosure::Interval>,
     pub attachment: Option<Attachment>,
     pub work: u64,
+    pub usage: nrz_cas::limits::BudgetUsage,
     pub evaluation_work: u64,
     pub precision_met: bool,
     pub completed_rounds: u32,

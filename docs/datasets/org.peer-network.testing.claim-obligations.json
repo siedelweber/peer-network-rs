@@ -1168,6 +1168,8 @@
     },
     {
       "claims": [
+        "GRAPH::claim:numerics:activation-costs-have-exact-resource-boundaries",
+        "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises",
         "EPOCH::claim:compiler:real-base-enclosures-retain-frozen-provenance",
         "GRAPH::claim:numerics:activation-and-gain-agree-with-independent-brackets",
         "GRAPH::claim:numerics:activation-clamp-keeps-generalized-wall-gain",

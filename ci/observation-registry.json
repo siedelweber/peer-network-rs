@@ -7319,6 +7319,98 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/monotone.rs",
+      "item": "numeric::activation::monotone::Envelope::bounds",
+      "owner": "GRAPH",
+      "signature": "const fn bounds (& self) -> Option < & Range >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "exception",
+      "shape": "shape-graph",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access retains the checked endpoint construction boundary.",
+        "witness": "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises",
+        "boundary": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
+        "class_decision": "activation-base-public"
+      }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/monotone.rs",
+      "item": "numeric::activation::monotone::Envelope::records",
+      "owner": "GRAPH",
+      "signature": "fn records (& self) -> & [PrimitiveRecord]",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "exception",
+      "shape": "shape-graph",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access retains the checked endpoint construction boundary.",
+        "witness": "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises",
+        "boundary": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
+        "class_decision": "activation-base-public"
+      }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/monotone.rs",
+      "item": "numeric::activation::monotone::Envelope::work",
+      "owner": "GRAPH",
+      "signature": "const fn work (& self) -> u64",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "exception",
+      "shape": "shape-graph",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access retains the checked endpoint construction boundary.",
+        "witness": "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises",
+        "boundary": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
+        "class_decision": "activation-base-public"
+      }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/monotone.rs",
+      "item": "numeric::activation::monotone::Envelope::source",
+      "owner": "GRAPH",
+      "signature": "fn source (& self) -> Option < & Self >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "exception",
+      "shape": "shape-graph",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access retains the explicit checked source rather than a private cache.",
+        "witness": "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises",
+        "boundary": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
+        "class_decision": "activation-base-public"
+      }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/monotone.rs",
+      "item": "numeric::activation::monotone::evaluate",
+      "owner": "GRAPH",
+      "signature": "fn evaluate (procedure : & Procedure , input : & Request) -> Result < Envelope , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/monotone.rs",
+      "item": "numeric::activation::monotone::power",
+      "owner": "GRAPH",
+      "signature": "fn power (procedure : & Procedure , base : & Envelope , exponent : & str) -> Result < Envelope , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
     }
   ],
   "metrics": [
@@ -14223,6 +14315,72 @@
         "secret_flow": "activation-base-public",
         "exposure_consumers": "activation-base-public"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::bounds",
+      "body": "{ self . bounds . as_ref () }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::records",
+      "body": "{ & self . records }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::work",
+      "body": "{ self . work }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::source",
+      "body": "{ self . source . as_deref () }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
+      "body": "{ super :: super :: preflight (procedure) ? ; let policy = procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? ; let mut budget = Budget :: new (policy . operation . clone ()) ? ; let (lower , upper , includes_zero) = endpoints (input , & mut budget) ? ; let gain = matches ! (input . quantity , Quantity :: ResponsiveLogGain | Quantity :: GeneralizedLogGain) ; if ! matches ! (input . quantity , Quantity :: Responsive | Quantity :: Clamped | Quantity :: ResponsiveLogGain | Quantity :: GeneralizedLogGain) { return Err (Error :: Unsupported) ; } let mut result = Envelope { input : input . clone () , bounds : None , records : Vec :: new () , source : None , work : 0 , } ; if gain && includes_zero && Rational :: parse (& input . standing . upper , & mut budget) ? . compare (& lower , & mut budget) ? . is_lt () { result . bounds = Some (Range { lower : \"0\" . into () , upper : \"0\" . into () , }) ; result . work = budget . usage () . work ; return Ok (result) ; } let quantity = if gain { Quantity :: ResponsiveLogGain } else { Quantity :: Responsive } ; let first = point (procedure , input , & lower , quantity . clone () , & mut budget) ? ; result . records . push (first) ; if lower != upper && ! (gain && includes_zero) { result . records . push (point (procedure , input , & upper , quantity , & mut budget) ?) ; } result . bounds = assemble (input , & result . records , includes_zero , gain , & mut budget) ? ; result . work = budget . usage () . work ; Ok (result) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::power",
+      "body": "{ super :: super :: preflight (procedure) ? ; if ! matches ! (base . input . quantity , Quantity :: Responsive | Quantity :: Clamped) { return Err (Error :: Declaration) ; } let bounds = base . bounds . as_ref () . ok_or (Error :: Declaration) ? ; let policy = procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? ; let mut budget = Budget :: new (policy . operation . clone ()) ? ; let exponent = super :: nonnegative (exponent , & mut budget) ? . exact_string (& mut budget) ? ; let lower = Rational :: parse (& bounds . lower , & mut budget) ? ; if lower . is_negative () || lower . is_zero () { return Err (Error :: Declaration) ; } let mut result = Envelope { input : base . input . clone () , bounds : None , records : Vec :: new () , source : Some (Box :: new (base . clone ())) , work : 0 , } ; for text in [& bounds . lower , & bounds . upper] { let query = Query { coordinates : Vec :: new () , nodes : vec ! [Node :: Rational (text . clone ()) , Node :: PositivePower (0 , exponent . clone ())] , target : 1 , goal : Goal :: Width , } ; let evidence = super :: super :: evaluate (& allowance (procedure , & budget) ? , & query , None) ? ; budget . work (evidence . work , Location :: new (\"activation endpoint power\")) ? ; result . records . push (PrimitiveRecord { query , precision : policy . refinement . precision , evidence , }) ; } result . bounds = assemble (& base . input , & result . records , false , false , & mut budget) ? ; result . work = budget . usage () . work ; Ok (result) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
     }
   ],
   "generators": [
@@ -17798,6 +17956,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "activation-base-public",
       "expansion_review": "Debug, Clone and equality retain only the public formula request and numerical evidence or the frozen public base entry. No secret bytes, digest or publication encoding is derived."
+    },
+    {
+      "item": "numeric::activation::monotone::Envelope",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/monotone.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "activation-base-public",
+      "expansion_review": "Clone, Debug and equality retain public numeric requests, checked endpoint records and the explicit source envelope only. No secret or publication encoding is introduced."
     }
   ],
   "reviewed_types": [
@@ -19077,7 +19244,7 @@
       "item": "primitive::PrimitiveEvidence",
       "package": "pn-records",
       "path": "packages/records/src/primitive.rs",
-      "syntax": "# [doc = \" Actual consumed Work and checked bounds; never padded to a declared limit.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PrimitiveEvidence { pub outcome : Outcome , pub bounds : Option < nrz_cas :: enclosure :: Interval > , pub attachment : Option < Attachment > , pub work : u64 , pub evaluation_work : u64 , pub precision_met : bool , pub completed_rounds : u32 , pub resource_fault : Option < nrz_cas :: Fault > , }"
+      "syntax": "# [doc = \" Actual consumed Work and checked bounds; never padded to a declared limit.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PrimitiveEvidence { pub outcome : Outcome , pub bounds : Option < nrz_cas :: enclosure :: Interval > , pub attachment : Option < Attachment > , pub work : u64 , pub usage : nrz_cas :: limits :: BudgetUsage , pub evaluation_work : u64 , pub precision_met : bool , pub completed_rounds : u32 , pub resource_fault : Option < nrz_cas :: Fault > , }"
     },
     {
       "item": "primitive::PrimitiveRecord",
@@ -19762,6 +19929,12 @@
       "package": "pn-graph",
       "path": "packages/graph/src/metadata.rs",
       "syntax": "# [doc = \" Shared finalization metadata copied from the owning validated act.\"] # [doc = \" Projection metadata retains the published stamp; observer-specific recomputation\"] # [doc = \" and stamp evidence are joined here from the owning immutable history snapshot.\"] # [doc = \" Neither field is an authored identity or a canonical publication encoding.\"] # [doc = \" (´def:formation:act-metadata´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] # [non_exhaustive] pub struct ActMetadata { # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment, never recomputed by formation.\"] pub logical_time : u64 , }"
+    },
+    {
+      "item": "numeric::activation::monotone::Envelope",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/monotone.rs",
+      "syntax": "# [doc = \" Locally constructed endpoint evidence; no caller-supplied bound can construct this value.\"] # [doc = \" (´def:numerics:activation-endpoints´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Envelope { input : Request , bounds : Option < Range > , records : Vec < PrimitiveRecord > , source : Option < Box < Envelope > > , work : u64 , }"
     },
     {
       "item": "numeric::activation::Quantity",
@@ -20845,7 +21018,13 @@
           "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::evaluate",
           "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::replay",
           "pn-epoch::packages/epoch/src/real_base.rs::real_base::evaluate",
-          "pn-epoch::packages/epoch/src/real_base.rs::real_base::replay"
+          "pn-epoch::packages/epoch/src/real_base.rs::real_base::replay",
+          "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::bounds",
+          "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::records",
+          "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::work",
+          "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::source",
+          "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
+          "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::power"
         ]
       }
     }

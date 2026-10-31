@@ -1553,4 +1553,4 @@ level = "public-surface"
 implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-graph::numeric::primitive_oracles", "pn-graph::numeric::primitive_domains", "pn-graph::numeric::primitive_replay", "pn-graph::numeric::primitive_limits", "pn-graph::numeric::activation_oracles", "pn-graph::numeric::activation_walls"]
+cases = ["pn-graph::numeric::primitive_oracles", "pn-graph::numeric::primitive_domains", "pn-graph::numeric::primitive_replay", "pn-graph::numeric::primitive_limits", "pn-graph::numeric::activation_oracles", "pn-graph::numeric::activation_walls", "pn-graph::numeric::activation_costs", "pn-graph::numeric::activation_endpoints"]

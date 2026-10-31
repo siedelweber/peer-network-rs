@@ -695,3 +695,150 @@ fn activation_refusals(mut input: pn_graph::numeric::activation::Request, result
         assert!(activation::evaluate(&policy, &input, None).is_err());
     }
 }
+
+fn cost_inputs() -> Vec<pn_graph::numeric::activation::Request> {
+    use pn_graph::numeric::activation::Quantity;
+    let mut hop = activation_request(
+        "1/2",
+        Quantity::Hop {
+            strength: "2/3".into(),
+            shape: "1/2".into(),
+        },
+    );
+    hop.wall = Some("1".into());
+    let mut crossing = activation_request("1/2", Quantity::GeneralizedLogGain);
+    crossing.standing = range("1/2", "2");
+    crossing.wall = Some("1".into());
+    vec![
+        activation_request("1", Quantity::ResponsiveLogGain),
+        activation_request("1/2", Quantity::Responsive),
+        hop,
+        crossing,
+    ]
+}
+
+fn cost_policy() -> Procedure {
+    let mut policy = activation_policy();
+    policy.enclosure.as_mut().unwrap().refinement.checking_work = 0;
+    policy
+}
+
+fn set_cost_limit(policy: &mut Procedure, resource: usize, value: u64) {
+    let limits = policy.enclosure.as_mut().unwrap();
+    match resource {
+        0 => {
+            limits.store.work = value;
+            limits.operation.work = value;
+        }
+        1 => {
+            limits.store.output_bytes = value;
+            limits.operation.output_bytes = value;
+        }
+        _ => {
+            limits.store.arithmetic_steps = value;
+            limits.operation.arithmetic_steps = value;
+        }
+    }
+}
+
+/// Claim: Four composed requests pin cold total Work, evaluation Work, arithmetic steps, certificate bytes and minimum output ceilings; each Work, output and step ceiling succeeds at N and refuses complete evaluation at N minus one. A crossing-box width limit remains incomplete evidence, never a mathematical verdict.
+/// ´claim:numerics:activation-costs-have-exact-resource-boundaries´
+/// ´test:integration:activation-costs´
+#[test]
+fn activation_costs() {
+    use pn_graph::numeric::activation;
+    let pins = [
+        (26_346_212, 26_303_212, 685_790, 8_483, 2_573_905),
+        (22_122_299, 22_081_009, 578_260, 6_250, 12_191_733),
+        (25_083_341, 25_035_921, 670_062, 7_445, 2_332_677),
+        (120_143_841, 120_098_356, 2_388_598, 10_019, 2_673_792),
+    ];
+    for (input, (work, evaluation, steps, bytes, output)) in cost_inputs().into_iter().zip(pins) {
+        let policy = cost_policy();
+        let result = activation::evaluate(&policy, &input, None).unwrap().primitive.evidence;
+        assert_eq!(
+            (result.work, result.evaluation_work, result.usage.arithmetic_steps),
+            (work, evaluation, steps)
+        );
+        let mut budget = nrz_cas::limits::Budget::new(policy.enclosure.as_ref().unwrap().operation.clone()).unwrap();
+        assert_eq!(
+            result
+                .attachment
+                .as_ref()
+                .unwrap()
+                .certificate
+                .to_bytes(&mut budget)
+                .unwrap()
+                .len(),
+            bytes
+        );
+        for (resource, ceiling) in [work, output, steps].into_iter().enumerate() {
+            for (limit, expected) in [(ceiling, true), (ceiling - 1, false)] {
+                let mut bounded = policy.clone();
+                set_cost_limit(&mut bounded, resource, limit);
+                let observed = activation::evaluate(&bounded, &input, None);
+                assert_eq!(
+                    observed.as_ref().is_ok_and(|x| x.primitive.evidence.bounds == result.bounds
+                        && x.primitive.evidence.completed_rounds == result.completed_rounds
+                        && x.primitive.evidence.resource_fault.is_none()),
+                    expected,
+                    "{input:?} {resource} {limit} {observed:?}"
+                );
+            }
+        }
+    }
+}
+
+/// Claim: Reference-profile monotone endpoint composition contains independent value and gain brackets on unsorted wall placements, keeps zero below the kink and its generalized join across it, and reuses a sealed activation for positive hop powers with every source premise retained. It admits no other bleed profile or gain as a reusable activation.
+/// ´claim:numerics:activation-endpoints-retain-monotone-premises´
+/// ´test:integration:activation-endpoints´
+#[test]
+fn activation_endpoints() {
+    use pn_graph::numeric::activation::{self, Quantity, monotone};
+    let policy = cost_policy();
+    for (a, b) in [("1/2", "2"), ("2", "3"), ("1/4", "1/2"), ("1/2", "1")] {
+        for quantity in [Quantity::Clamped, Quantity::GeneralizedLogGain] {
+            let mut input = activation_request(a, quantity.clone());
+            input.standing = range(a, b);
+            input.wall = Some("1".into());
+            let direct = activation::evaluate(&policy, &input, None).unwrap();
+            let result = monotone::evaluate(&policy, &input).unwrap();
+            let bounds = result.bounds().unwrap();
+            let (low, high) = (Q::parse(&bounds.lower), Q::parse(&bounds.upper));
+            let (outer_low, outer_high) = endpoints(&direct.primitive.evidence);
+            assert!(outer_low.le(low) && high.le(outer_high));
+            if quantity == Quantity::Clamped {
+                let lower = if Q::parse(a).le(Q(1, 1)) { Q(1, 1) } else { Q::parse(a) };
+                let upper = if Q::parse(b).le(Q(1, 1)) { Q(1, 1) } else { Q::parse(b) };
+                assert!(low.le(independent_activation(lower, false, false).0));
+                assert!(independent_activation(upper, false, false).1.le(high));
+                let powered = monotone::power(&policy, &result, "1/3").unwrap();
+                assert_eq!(powered.source(), Some(&result));
+                let power_bounds = powered.bounds().unwrap();
+                assert!(Q::parse(&power_bounds.lower).le(independent_activation(lower, false, false).root(3).0));
+                assert!(
+                    independent_activation(upper, false, false)
+                        .root(3)
+                        .1
+                        .le(Q::parse(&power_bounds.upper))
+                );
+            } else if b == "1/2" {
+                assert_eq!((low, high), (Q(0, 1), Q(0, 1)));
+            } else if a == "1/2" {
+                assert_eq!(low, Q(0, 1));
+                assert!(independent_activation(Q(1, 1), false, true).1.le(high));
+            }
+            for record in result.records() {
+                assert!(replay(&policy, &record.query, record.evidence.attachment.as_ref().unwrap(), None).is_ok());
+            }
+            assert!(result.work() > 0);
+        }
+    }
+    let mut other = activation_request("1", Quantity::Responsive);
+    other.bleed_squared = "1/100".into();
+    assert!(monotone::evaluate(&policy, &other).is_err());
+    other.bleed_squared = "1/400".into();
+    other.quantity = Quantity::ResponsiveLogGain;
+    let gain = monotone::evaluate(&policy, &other).unwrap();
+    assert!(monotone::power(&policy, &gain, "1/3").is_err());
+}

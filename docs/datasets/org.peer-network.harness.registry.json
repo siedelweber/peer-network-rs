@@ -4296,7 +4296,9 @@
         "pn-graph::numeric::primitive_replay",
         "pn-graph::numeric::primitive_limits",
         "pn-graph::numeric::activation_oracles",
-        "pn-graph::numeric::activation_walls"
+        "pn-graph::numeric::activation_walls",
+        "pn-graph::numeric::activation_costs",
+        "pn-graph::numeric::activation_endpoints"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",
