@@ -341,6 +341,13 @@
       "owner": "ACTPROFILE",
       "register": "ACTPROFILE::sec:profile:area-profile",
       "stake": "If profile claims fail, openings can bind the wrong authored tuple, disclose removable private material or substitute unsupported anchor authority."
+    },
+    {
+      "area": "numerics",
+      "contract": "GRAPH::def:numerics:primitive-adapter",
+      "owner": "GRAPH",
+      "register": "GRAPH::sec:numerics:area-numerics",
+      "stake": "A primitive adapter that changes the original question, loses checked bounds or treats resource exhaustion as a verdict can falsely certify a numerical boundary."
     }
   ]
 }

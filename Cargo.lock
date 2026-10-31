@@ -1700,6 +1700,7 @@ name = "pn-graph"
 version = "0.1.0"
 dependencies = [
  "cli-common",
+ "nrz-cas",
  "petgraph",
  "pn-records",
  "pn-testkit",

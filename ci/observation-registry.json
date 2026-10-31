@@ -7249,6 +7249,36 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric.rs",
+      "item": "numeric::preflight",
+      "owner": "GRAPH",
+      "signature": "fn preflight (procedure : & Procedure) -> Result < () , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric.rs",
+      "item": "numeric::evaluate",
+      "owner": "GRAPH",
+      "signature": "fn evaluate (procedure : & Procedure , query : & Query , interrupt_at : Option < u64 >) -> Result < PrimitiveEvidence , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric.rs",
+      "item": "numeric::replay",
+      "owner": "GRAPH",
+      "signature": "fn replay (procedure : & Procedure , expected : & Query , evidence : & Attachment , interrupt_at : Option < u64 > ,) -> Result < PrimitiveEvidence , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
     }
   ],
   "metrics": [
@@ -13925,7 +13955,7 @@
     },
     {
       "operation": "pn-records::packages/records/src/solve.rs::solve::validate_procedure",
-      "body": "{ let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; if input . boundary == 0 || input . name . is_empty () || input . backend . is_empty () || input . primitives . is_empty () || input . maximum_work == 0 || input . maximum_iterations == 0 || ! nonnegative (& input . margin , & mut budget) ? . compare (& one , & mut budget) ? . is_gt () || nonnegative (& input . endpoint_grid , & mut budget) ? . is_zero () { return Err (RecordError :: Procedure) ; } if let Precision :: BinaryBits (bits) = & input . precision && (bits . is_empty () || bits [0] == 0 || bits . windows (2) . any (| pair | pair [0] >= pair [1])) { return Err (RecordError :: Procedure) ; } let mut previous : Option < Rational > = None ; for rung in & input . grid { let value = nonnegative (rung , & mut budget) ? ; if previous . as_ref () . map (| old | old . compare (& value , & mut budget)) . transpose () ? . is_some_and (| order | ! order . is_gt ()) { return Err (RecordError :: Grid) ; } previous = Some (value) ; } if ! previous . is_some_and (| last | last . is_zero ()) { return Err (RecordError :: Grid) ; } Ok (()) }",
+      "body": "{ let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; if input . boundary == 0 || input . name . is_empty () || input . backend . is_empty () || input . primitives . is_empty () || input . maximum_work == 0 || input . maximum_iterations == 0 || ! nonnegative (& input . margin , & mut budget) ? . compare (& one , & mut budget) ? . is_gt () || nonnegative (& input . endpoint_grid , & mut budget) ? . is_zero () { return Err (RecordError :: Procedure) ; } if let Precision :: BinaryBits (bits) | Precision :: AbsoluteWidthBits (bits) = & input . precision && (bits . is_empty () || bits [0] == 0 || bits . windows (2) . any (| pair | pair [0] >= pair [1])) { return Err (RecordError :: Procedure) ; } let mut previous : Option < Rational > = None ; for rung in & input . grid { let value = nonnegative (rung , & mut budget) ? ; if previous . as_ref () . map (| old | old . compare (& value , & mut budget)) . transpose () ? . is_some_and (| order | ! order . is_gt ()) { return Err (RecordError :: Grid) ; } previous = Some (value) ; } if ! previous . is_some_and (| last | last . is_zero ()) { return Err (RecordError :: Grid) ; } Ok (()) }",
       "class_decision": "solve-public-records",
       "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
       "assessments": {
@@ -13936,7 +13966,7 @@
     },
     {
       "operation": "pn-records::packages/records/src/solve.rs::solve::validate_evidence",
-      "body": "{ validate_procedure (procedure , limits . clone ()) ? ; let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; for range in input . hull . values () { bounds (range , & mut budget) ? ; } if input . attempts . is_empty () || input . attempts . len () > procedure . grid . len () { return Err (RecordError :: Attempt) ; } let mut stopped = false ; let mut passed = false ; for (attempt , rung) in input . attempts . iter () . zip (& procedure . grid) { if stopped || attempt . work > procedure . maximum_work || Rational :: parse (& attempt . rung , & mut budget) ? . compare (& Rational :: parse (rung , & mut budget) ? , & mut budget) ? . is_ne () { return Err (RecordError :: Attempt) ; } let (lower , upper) = bounds (& attempt . margined_fence , & mut budget) ? ; match attempt . completion { Completion :: Pass if ! upper . compare (& one , & mut budget) ? . is_gt () => { stopped = true ; passed = true ; } Completion :: Fail if lower . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Indecisive if ! lower . compare (& one , & mut budget) ? . is_gt () && upper . compare (& one , & mut budget) ? . is_gt () && attempt . work == procedure . maximum_work => { } Completion :: Interrupted => { stopped = true ; } _ => return Err (RecordError :: Attempt) , } } if ! stopped { return Err (RecordError :: Attempt) ; } if let Some (residual) = & input . residual { if ! passed || residual . candidate . keys () . ne (input . hull . keys ()) { return Err (RecordError :: Residual) ; } for (actor , point) in & residual . candidate { let point = nonnegative (point , & mut budget) ? ; let (lower , upper) = bounds (& input . hull [actor] , & mut budget) ? ; if point . compare (& lower , & mut budget) ? . is_lt () || point . compare (& upper , & mut budget) ? . is_gt () { return Err (RecordError :: Residual) ; } } let c = nonnegative (& residual . contraction_upper , & mut budget) ? ; if ! c . compare (& one , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } let r = nonnegative (& residual . residual_upper , & mut budget) ? ; let required = r . div (& one . sub (& c , & mut budget) ? , & mut budget) ? ; if nonnegative (& residual . radius , & mut budget) ? . compare (& required , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } } Ok (()) }",
+      "body": "{ validate_procedure (procedure , limits . clone ()) ? ; let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; for range in input . hull . values () { bounds (range , & mut budget) ? ; } if input . attempts . is_empty () || input . attempts . len () > procedure . grid . len () { return Err (RecordError :: Attempt) ; } let mut stopped = false ; let mut passed = false ; for (attempt , rung) in input . attempts . iter () . zip (& procedure . grid) { if stopped || attempt . work > procedure . maximum_work || Rational :: parse (& attempt . rung , & mut budget) ? . compare (& Rational :: parse (rung , & mut budget) ? , & mut budget) ? . is_ne () { return Err (RecordError :: Attempt) ; } let (lower , upper) = bounds (& attempt . margined_fence , & mut budget) ? ; match attempt . completion { Completion :: Pass if ! upper . compare (& one , & mut budget) ? . is_gt () => { stopped = true ; passed = true ; } Completion :: Fail if lower . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Indecisive if ! lower . compare (& one , & mut budget) ? . is_gt () && upper . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Interrupted => { stopped = true ; } _ => return Err (RecordError :: Attempt) , } } if ! stopped { return Err (RecordError :: Attempt) ; } if let Some (residual) = & input . residual { if ! passed || residual . candidate . keys () . ne (input . hull . keys ()) { return Err (RecordError :: Residual) ; } for (actor , point) in & residual . candidate { let point = nonnegative (point , & mut budget) ? ; let (lower , upper) = bounds (& input . hull [actor] , & mut budget) ? ; if point . compare (& lower , & mut budget) ? . is_lt () || point . compare (& upper , & mut budget) ? . is_gt () { return Err (RecordError :: Residual) ; } } let c = nonnegative (& residual . contraction_upper , & mut budget) ? ; if ! c . compare (& one , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } let r = nonnegative (& residual . residual_upper , & mut budget) ? ; let required = r . div (& one . sub (& c , & mut budget) ? , & mut budget) ? ; if nonnegative (& residual . radius , & mut budget) ? . compare (& required , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } } Ok (()) }",
       "class_decision": "solve-public-records",
       "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
       "assessments": {
@@ -13969,7 +13999,7 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::preflight",
-      "body": "{ Err (ProcedureError :: Unsupported) }",
+      "body": "{ if self . procedure . enclosure . is_none () { return Err (ProcedureError :: Unsupported) ; } pn_graph :: numeric :: preflight (& self . procedure) ? ; Ok (()) }",
       "class_decision": "solve-public-records",
       "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
       "assessments": {
@@ -14075,6 +14105,39 @@
         "full_recording": "exact-transport-public",
         "secret_flow": "exact-transport-public",
         "exposure_consumers": "exact-transport-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric.rs::numeric::preflight",
+      "body": "{ if procedure . backend != \"nrz-cas\" { return Err (Error :: Unsupported) ; } let policy = procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? ; let Precision :: AbsoluteWidthBits (bits) = & procedure . precision else { return Err (Error :: Unsupported) ; } ; policy . store . validate () ? ; policy . operation . validate () ? ; if bits . is_empty () || bits [0] == 0 || bits . windows (2) . any (| pair | pair [0] >= pair [1]) || policy . operation . work > policy . store . work || policy . operation . work > procedure . maximum_work || policy . refinement . version != 1 || policy . refinement . rounds == 0 || u64 :: from (policy . refinement . rounds) > procedure . maximum_iterations || ! bits . contains (& policy . refinement . precision) || bits . iter () . any (| p | p . checked_add (2) . is_none_or (| grid | grid > policy . refinement . grid_ceiling)) || procedure . primitives . is_empty () { return Err (Error :: Declaration) ; } for primitive in & procedure . primitives { match primitive { Primitive :: Matrix | Primitive :: Krawczyk => return Err (Error :: Composition) , Primitive :: InverseGain => return Err (Error :: InverseGain) , Primitive :: Rational | Primitive :: Root | Primitive :: Logarithm | Primitive :: Exponential | Primitive :: Sigmoid | Primitive :: Tanh | Primitive :: Power | Primitive :: SmoothDerivative | Primitive :: ClampGeneralized => { } } } Ok (()) }",
+      "class_decision": "certified-primitives-public",
+      "item_premise": "The complete public original request, declared policy, typed evidence and precise refusal or checked outcome are recorded.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric.rs::numeric::evaluate",
+      "body": "{ run (procedure , query , None , interrupt_at) }",
+      "class_decision": "certified-primitives-public",
+      "item_premise": "The complete public original request, declared policy, typed evidence and precise refusal or checked outcome are recorded.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric.rs::numeric::replay",
+      "body": "{ run (procedure , expected , Some (evidence) , interrupt_at) }",
+      "class_decision": "certified-primitives-public",
+      "item_premise": "The complete public original request, declared policy, typed evidence and precise refusal or checked outcome are recorded.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
       }
     }
   ],
@@ -17507,6 +17570,105 @@
       "syntax": "# [derive (Debug)]",
       "class_decision": "exact-transport-public",
       "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "primitive::EnclosurePolicy",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "primitive::Node",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "primitive::Goal",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "primitive::Range",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "primitive::Query",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "primitive::Schema",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "primitive::Attachment",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "primitive::Outcome",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "primitive::PrimitiveEvidence",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "primitive::PrimitiveRecord",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "numeric::Error",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "certified-primitives-public",
+      "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
     }
   ],
   "reviewed_types": [
@@ -18735,16 +18897,76 @@
       "syntax": "# [doc = \" Burn divided by its named numeraire, in action credits; distinct from full burn and standing.\"] # [doc = \" (´def:numerics:dimensioned-values´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ReducedBurn { exact : Exact , numeraire : Numeraire , }"
     },
     {
+      "item": "primitive::EnclosurePolicy",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" A public procedure supplies every effective limit; the adapter selects no defaults.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct EnclosurePolicy { pub store : Limits , pub operation : Limits , pub refinement : RefinementPolicy , }"
+    },
+    {
+      "item": "primitive::Node",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" Original ordered expression nodes; references must point strictly backwards.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Node { Rational (String) , Coordinate (usize) , Negate (usize) , Add (usize , usize) , Subtract (usize , usize) , Multiply (usize , usize) , Divide (usize , usize) , SquareRoot (usize) , Logarithm (usize) , Exponential (usize) , Sigmoid (usize) , Tanh (usize) , PositivePower (usize , String) , Derivative (usize , usize) , Clamp (usize , usize) , GeneralizedDerivative (usize , usize) , }"
+    },
+    {
+      "item": "primitive::Goal",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" An exact question about the original target, not a rounded display.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Goal { Width , AtMost (String) , LessThan (String) , Equal (String) , }"
+    },
+    {
+      "item": "primitive::Range",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" A signed rational box bound; standing hull nonnegativity is a separate contract.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Range { pub lower : String , pub upper : String , }"
+    },
+    {
+      "item": "primitive::Query",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" Empty-assumption real context, ordered coordinates and original expression.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Query { pub coordinates : Vec < Range > , pub nodes : Vec < Node > , pub target : usize , pub goal : Goal , }"
+    },
+    {
+      "item": "primitive::Schema",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" Names and semantic versions travel with evidence; names grant no checker authority.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Schema { pub name : String , pub version : u32 , }"
+    },
+    {
+      "item": "primitive::Attachment",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" Supplied, untrusted evidence in nrz's own typed format; no new digest or wire format.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attachment { pub schemas : Vec < Schema > , pub certificate : EnclosureCertificate , }"
+    },
+    {
+      "item": "primitive::Outcome",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" Checked stopping reasons are kept apart from mathematical verdicts.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Outcome { Pass , Fail , Bound , Indecisive (nrz_cas :: enclosure :: UndecidedReason) , Exhausted , Interrupted , Unsupported , DomainBoundary , }"
+    },
+    {
+      "item": "primitive::PrimitiveEvidence",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" Actual consumed Work and checked bounds; never padded to a declared limit.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PrimitiveEvidence { pub outcome : Outcome , pub bounds : Option < nrz_cas :: enclosure :: Interval > , pub attachment : Option < Attachment > , pub work : u64 , pub evaluation_work : u64 , pub precision_met : bool , pub completed_rounds : u32 , pub resource_fault : Option < nrz_cas :: Fault > , }"
+    },
+    {
+      "item": "primitive::PrimitiveRecord",
+      "package": "pn-records",
+      "path": "packages/records/src/primitive.rs",
+      "syntax": "# [doc = \" One original primitive request, its declared policy and its untrusted evidence.\"] # [doc = \" (´def:numerics:primitive-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct PrimitiveRecord { pub query : Query , pub precision : u32 , pub evidence : PrimitiveEvidence , }"
+    },
+    {
       "item": "solve::Primitive",
       "package": "pn-records",
       "path": "packages/records/src/solve.rs",
-      "syntax": "# [doc = \" Required operations are declarations, never evidence of backend support.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum Primitive { Rational , Root , Exponential , Logarithm , Power , }"
+      "syntax": "# [doc = \" Required operations are declarations, never evidence of backend support.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)] pub enum Primitive { Rational , Root , Exponential , Logarithm , Power , Sigmoid , Tanh , SmoothDerivative , ClampGeneralized , Matrix , Krawczyk , InverseGain , }"
     },
     {
       "item": "solve::Precision",
       "package": "pn-records",
       "path": "packages/records/src/solve.rs",
-      "syntax": "# [doc = \" Precision requests do not select or install a backend.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Precision { ExactRational , BinaryBits (Vec < u32 >) , }"
+      "syntax": "# [doc = \" Precision requests do not select or install a backend.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Precision { ExactRational , BinaryBits (Vec < u32 >) , AbsoluteWidthBits (Vec < u32 >) , }"
     },
     {
       "item": "solve::Equality",
@@ -18756,7 +18978,7 @@
       "item": "solve::Procedure",
       "package": "pn-records",
       "path": "packages/records/src/solve.rs",
-      "syntax": "# [doc = \" Public procedure payload; publication binding is an owning consumer's duty.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Procedure { pub edition : DeclarationId , pub boundary : u64 , pub name : String , pub backend : String , pub primitives : BTreeSet < Primitive > , pub precision : Precision , pub equality : Equality , pub grid : Vec < String > , pub margin : String , pub maximum_work : u64 , pub maximum_iterations : u64 , pub endpoint_grid : String , }"
+      "syntax": "# [doc = \" Public procedure payload; publication binding is an owning consumer's duty.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Procedure { pub edition : DeclarationId , pub boundary : u64 , pub name : String , pub backend : String , pub primitives : BTreeSet < Primitive > , pub precision : Precision , pub equality : Equality , pub grid : Vec < String > , pub margin : String , pub maximum_work : u64 , pub maximum_iterations : u64 , pub endpoint_grid : String , pub enclosure : Option < crate :: primitive :: EnclosurePolicy > , }"
     },
     {
       "item": "solve::Bounds",
@@ -18786,7 +19008,7 @@
       "item": "solve::Evidence",
       "package": "pn-records",
       "path": "packages/records/src/solve.rs",
-      "syntax": "# [doc = \" Untrusted transcript; structural validation does not certify its numerical premises.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evidence { pub hull : BTreeMap < String , Bounds > , pub attempts : Vec < Attempt > , pub residual : Option < Residual > , }"
+      "syntax": "# [doc = \" Untrusted transcript; structural validation does not certify its numerical premises.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evidence { pub hull : BTreeMap < String , Bounds > , pub attempts : Vec < Attempt > , pub residual : Option < Residual > , pub primitives : Vec < crate :: primitive :: PrimitiveRecord > , }"
     },
     {
       "item": "solve::RecordError",
@@ -19407,6 +19629,12 @@
       "syntax": "# [doc = \" Shared finalization metadata copied from the owning validated act.\"] # [doc = \" Projection metadata retains the published stamp; observer-specific recomputation\"] # [doc = \" and stamp evidence are joined here from the owning immutable history snapshot.\"] # [doc = \" Neither field is an authored identity or a canonical publication encoding.\"] # [doc = \" (´def:formation:act-metadata´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] # [non_exhaustive] pub struct ActMetadata { # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment, never recomputed by formation.\"] pub logical_time : u64 , }"
     },
     {
+      "item": "numeric::Error",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric.rs",
+      "syntax": "# [doc = \" Refusals provide no mathematical verdict, including invalid certificate evidence.\"] # [doc = \" (´def:numerics:primitive-adapter´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"unsupported primitive or precision under open:design:numeric-backend\")] Unsupported , # [error (\"inverse gain remains under open:design:reference-wall-route\")] InverseGain , # [error (\"matrix or local inclusion remains under open:design:nrz-capabilities\")] Composition , # [error (\"invalid numerical declaration or ordered query\")] Declaration , # [error (\"unknown schema, version or mismatched certificate inventory\")] Schema , # [error (\"invalid certificate or original-scope join: {0}\")] InvalidCertificate (nrz_cas :: Fault) , # [error (\"nrz request or evidence refusal: {0}\")] Backend (# [from] nrz_cas :: Fault) , }"
+    },
+    {
       "item": "config::Configuration",
       "package": "pn-host",
       "path": "packages/host/src/config.rs",
@@ -19854,13 +20082,13 @@
       "item": "solve::BoundProcedure",
       "package": "pn-epoch",
       "path": "packages/epoch/src/solve.rs",
-      "syntax": "# [doc = \" A procedure bound to this immutable compiled state, with no evaluation capability.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Debug)] pub struct BoundProcedure < 'a > { state : & 'a CompiledState , procedure : Procedure , }"
+      "syntax": "# [doc = \" A procedure bound to this immutable compiled state; composition remains separate.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Debug)] pub struct BoundProcedure < 'a > { state : & 'a CompiledState , procedure : Procedure , }"
     },
     {
       "item": "solve::ProcedureError",
       "package": "pn-epoch",
       "path": "packages/epoch/src/solve.rs",
-      "syntax": "# [doc = \" Binding refusals differ from numerical comparison outcomes.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ProcedureError { # [error (\"procedure boundary, edition or name differs from frozen package\")] Binding , # [error (\"procedure publication verification refused\")] Publication , # [error (\"procedure records: {0}\")] Record (# [from] RecordError) , # [error (\"nonlinear backend is not admitted\")] Unsupported , }"
+      "syntax": "# [doc = \" Binding refusals differ from numerical comparison outcomes.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ProcedureError { # [error (\"procedure boundary, edition or name differs from frozen package\")] Binding , # [error (\"procedure publication verification refused\")] Publication , # [error (\"procedure records: {0}\")] Record (# [from] RecordError) , # [error (\"nonlinear backend is not admitted\")] Unsupported , # [error (\"numerical preflight: {0}\")] Numeric (# [from] pn_graph :: numeric :: Error) , }"
     },
     {
       "item": "support::SourceEmission",
@@ -20434,6 +20662,18 @@
           "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::div",
           "pn-epoch::packages/epoch/src/anchor.rs::anchor::<Arithmetic as ExactArithmetic>::compare",
           "pn-epoch::packages/epoch/src/anchor.rs::anchor::exact_anchor"
+        ]
+      }
+    },
+    {
+      "name": "certified-primitives-public",
+      "status": "reviewer-confirmed",
+      "premises": "Public procedure, real expression, ordered coordinate box, limits and typed numerical evidence only. All arguments and results are public, including refused or interrupted requests. No secret or subscriber enters the adapter.",
+      "membership": {
+        "explicit": [
+          "pn-graph::packages/graph/src/numeric.rs::numeric::preflight",
+          "pn-graph::packages/graph/src/numeric.rs::numeric::evaluate",
+          "pn-graph::packages/graph/src/numeric.rs::numeric::replay"
         ]
       }
     }
@@ -22462,6 +22702,11 @@
       "status": "reviewer-confirmed",
       "premises": "Read the public rational field contract, sparse operator and frozen adapter. Arithmetic state contains public constants and resource counters. All outputs are public exact pairs and hulls or retained irrational terms. The independent operator checks the supported numerical subset.",
       "negative_probe": "EPOCH::claim:compiler:exact-transport-agrees-with-dense-rational-oracle"
+    },
+    "certified-primitives-public": {
+      "status": "reviewer-confirmed",
+      "premises": "Read the fresh-store builder, closed schema inventory, exact rational conversion, checked outcome mapping and receiving-store replay. All fields are public numeric declarations or evidence. Wrong original goals and corrupted certificates refuse; trace supplies no mathematical premise.",
+      "negative_probe": "GRAPH::claim:numerics:primitive-replay-binds-scope-and-outcome"
     }
   }
 }

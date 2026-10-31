@@ -337,3 +337,10 @@ area = "profile"
 stake = "If profile claims fail, openings can bind the wrong authored tuple, disclose removable private material or substitute unsupported anchor authority."
 register = "ACTPROFILE::sec:profile:area-profile"
 contract = "ACTPROFILE::sec:profile:area-profile"
+
+[[rows]]
+owner = "GRAPH"
+area = "numerics"
+stake = "A primitive adapter that changes the original question, loses checked bounds or treats resource exhaustion as a verdict can falsely certify a numerical boundary."
+register = "GRAPH::sec:numerics:area-numerics"
+contract = "GRAPH::def:numerics:primitive-adapter"

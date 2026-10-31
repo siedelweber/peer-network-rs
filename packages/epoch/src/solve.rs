@@ -1,4 +1,4 @@
-//! Bind a declared numerical procedure without enabling a nonlinear backend.
+//! Bind a declared numerical procedure and preflight its explicit scalar capabilities.
 //! (´def:compiler:solve-binding´)
 
 use crate::compiler::CompiledState;
@@ -11,7 +11,7 @@ pub trait ProcedureVerifier: std::fmt::Debug {
     fn published_procedure(&self, procedure: &Procedure) -> bool;
 }
 
-/// A procedure bound to this immutable compiled state, with no evaluation capability.
+/// A procedure bound to this immutable compiled state; composition remains separate.
 /// (´def:compiler:solve-binding´)
 #[derive(Debug)]
 pub struct BoundProcedure<'a> {
@@ -31,6 +31,8 @@ pub enum ProcedureError {
     Record(#[from] RecordError),
     #[error("nonlinear backend is not admitted")]
     Unsupported,
+    #[error("numerical preflight: {0}")]
+    Numeric(#[from] pn_graph::numeric::Error),
 }
 
 /// Bind the complete payload through its verifier, not just a matching procedure name.
@@ -76,10 +78,10 @@ impl BoundProcedure<'_> {
         (self.state, &self.procedure)
     }
 
-    /// No declared name or precision request can enable the held nonlinear backend.
+    /// Admit only the declared scalar inventory with explicit absolute-width policy.
     /// (´[ROOT-open:design:numeric-backend]´)
     /// # Errors
-    /// Always returns Unsupported until a separately reviewed evaluator is admitted.
+    /// Refuses unsupported precision, missing policy and held compositions.
     #[tracing::instrument(
         name = "sig:design:epoch",
         fields(
@@ -91,6 +93,10 @@ impl BoundProcedure<'_> {
         ret
     )]
     pub fn preflight(&self) -> Result<(), ProcedureError> {
-        Err(ProcedureError::Unsupported)
+        if self.procedure.enclosure.is_none() {
+            return Err(ProcedureError::Unsupported);
+        }
+        pn_graph::numeric::preflight(&self.procedure)?;
+        Ok(())
     }
 }

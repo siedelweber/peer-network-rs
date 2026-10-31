@@ -17,6 +17,13 @@ pub enum Primitive {
     Exponential,
     Logarithm,
     Power,
+    Sigmoid,
+    Tanh,
+    SmoothDerivative,
+    ClampGeneralized,
+    Matrix,
+    Krawczyk,
+    InverseGain,
 }
 
 /// Precision requests do not select or install a backend.
@@ -25,6 +32,7 @@ pub enum Primitive {
 pub enum Precision {
     ExactRational,
     BinaryBits(Vec<u32>),
+    AbsoluteWidthBits(Vec<u32>),
 }
 
 /// This initial record admits exact rational equality only.
@@ -50,6 +58,7 @@ pub struct Procedure {
     pub maximum_work: u64,
     pub maximum_iterations: u64,
     pub endpoint_grid: String,
+    pub enclosure: Option<crate::primitive::EnclosurePolicy>,
 }
 
 /// Rational endpoints supplied as evidence; each use validates their ordering.
@@ -97,6 +106,7 @@ pub struct Evidence {
     pub hull: BTreeMap<String, Bounds>,
     pub attempts: Vec<Attempt>,
     pub residual: Option<Residual>,
+    pub primitives: Vec<crate::primitive::PrimitiveRecord>,
 }
 
 /// Distinct representation refusals; no arithmetic failure becomes a fence FAIL.
@@ -163,7 +173,7 @@ pub fn validate_procedure(input: &Procedure, limits: Limits) -> Result<(), Recor
     {
         return Err(RecordError::Procedure);
     }
-    if let Precision::BinaryBits(bits) = &input.precision
+    if let Precision::BinaryBits(bits) | Precision::AbsoluteWidthBits(bits) = &input.precision
         && (bits.is_empty() || bits[0] == 0 || bits.windows(2).any(|pair| pair[0] >= pair[1]))
     {
         return Err(RecordError::Procedure);
@@ -230,10 +240,8 @@ pub fn validate_evidence(procedure: &Procedure, input: &Evidence, limits: Limits
                 passed = true;
             }
             Completion::Fail if lower.compare(&one, &mut budget)?.is_gt() => {}
-            Completion::Indecisive
-                if !lower.compare(&one, &mut budget)?.is_gt()
-                    && upper.compare(&one, &mut budget)?.is_gt()
-                    && attempt.work == procedure.maximum_work => {}
+            Completion::Indecisive if !lower.compare(&one, &mut budget)?.is_gt() && upper.compare(&one, &mut budget)?.is_gt() => {
+            }
             Completion::Interrupted => {
                 stopped = true;
             }

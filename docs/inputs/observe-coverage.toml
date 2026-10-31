@@ -43,11 +43,11 @@ generators = 35
 
 [[rows]]
 name = "pn-graph"
-operations = 13
-instrumented = 13
+operations = 16
+instrumented = 16
 exceptions = 0
 helpers = 0
-generators = 50
+generators = 51
 
 [[rows]]
 name = "pn-host"
@@ -71,7 +71,7 @@ operations = 109
 instrumented = 41
 exceptions = 68
 helpers = 0
-generators = 102
+generators = 112
 
 [[rows]]
 name = "pn-wallet"

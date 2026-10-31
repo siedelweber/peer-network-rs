@@ -1645,17 +1645,17 @@
       "operation": "pn-epoch::solve::evidence_records",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption",
-      "before": "",
-      "after": "Claim: Supplied evidence records distinguish proved bound separation, exhausted straddling and interruption; reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii; and never attach a residual result to an interrupted attempt. These are consistency checks, not validation of the supplied map evaluations.",
-      "review": "Accepts supplied PASS, FAIL and exhausted straddling INDECISIVE transcripts; interruption accepts only without a residual and retains its distinct category. Ten mutations reject reversed hull bounds, verdicts inconsistent with straddling, premature exhaustion, wrong rung order, an attempt after completion, too-small residual radius, contraction one, an outside-hull candidate and missing candidate coordinates. This checks record consistency, not the truth of supplied map evaluations."
+      "before": "Claim: Supplied evidence records distinguish proved bound separation, exhausted straddling and interruption; reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii; and never attach a residual result to an interrupted attempt. These are consistency checks, not validation of the supplied map evaluations.",
+      "after": "Claim: Supplied evidence records distinguish proved bound separation, completed straddling with actual consumed Work and interruption; reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii; and never attach a residual result to an interrupted attempt. These are consistency checks, not validation of the supplied map evaluations.",
+      "review": "Supplied PASS, FAIL and straddling INDECISIVE consistency with actual Work below or at the cap; interruption accepts only without a residual. Ten mutations reject bounds, false verdicts, over-cap work, rung order, post-completion records and residual premises. This is not certification of map evaluations."
     },
     {
       "operation": "pn-epoch::solve::procedure_binding",
       "path": "packages/epoch/tests/solve.rs",
-      "claim": "EPOCH::claim:compiler:solve-declarations-bind-without-enabling-evaluation",
-      "before": "",
-      "after": "Claim: A solve declaration is retained with the frozen compiled package only after its boundary, constants edition, declared name and full public payload agree; wrong bindings and same-name payload substitution refuse, and every declared nonlinear backend remains unsupported at preflight.",
-      "review": "Checks retention of the frozen package and complete declaration, including two settlement presentations; wrong edition, boundary and name refuse binding, and a same-name work-limit substitution refuses publication. The declared binary and exact-rational precision cases remain Unsupported at preflight. This test establishes binding and refusal to evaluate, not transcript or residual consistency."
+      "claim": "EPOCH::claim:compiler:solve-declarations-bind-to-admitted-primitives",
+      "before": "Claim: A solve declaration is retained with the frozen compiled package only after its boundary, constants edition, declared name and full public payload agree; wrong bindings and same-name payload substitution refuse, and every declared nonlinear backend remains unsupported at preflight.",
+      "after": "Claim: A solve declaration is retained with the frozen compiled package only after its boundary, constants edition, declared name and full public payload agree; wrong bindings and same-name payload substitution refuse, and only an explicit absolute-width policy and the admitted scalar inventory pass preflight; binary-format requests and held compositions refuse.",
+      "review": "Retires EPOCH::claim:compiler:solve-declarations-bind-without-enabling-evaluation in favor of EPOCH::claim:compiler:solve-declarations-bind-to-admitted-primitives. Retains the frozen package and complete declaration. Three wrong bindings and same-name payload substitution refuse. Binary and exact-rational policies without an enclosure declaration stay unsupported; an explicit absolute-width scalar declaration passes while matrices, Krawczyk and inverse gain refuse."
     },
     {
       "operation": "pn-epoch::solve::procedure_records",
@@ -2048,6 +2048,38 @@
       "before": "",
       "after": "Claim: Six shared word-vector cases execute the records-level partition through the public API with independently owned expectations and complete per-case results; both consumers observe one implementation rather than asserting independent implementations.",
       "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-graph::numeric::primitive_domains",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:primitive-domains-keep-generalized-slopes-distinct",
+      "before": "",
+      "after": "Claim: Full-box polynomial derivatives and four wall placements retain exact branch bounds and generalized slopes, while a zero-root derivative and a smooth derivative across a kink refuse without a mathematical verdict.",
+      "review": "Independent polynomial derivative table and four fixed wall placements check full-box slopes and values. The zero-root derivative, crossing smooth derivative, negative radicand, zero log, zero positive-power base and zero divisor refuse without a verdict."
+    },
+    {
+      "operation": "pn-graph::numeric::primitive_limits",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:primitive-limits-retain-actual-work",
+      "before": "",
+      "after": "Claim: Declared cold-store Work caps bound complete requests without padding consumption, with a one-unit-short refusal and exact-boundary success; tiny exact inputs, zero cancellation and finite size refusal preserve operational categories rather than fabricating a verdict.",
+      "review": "Checks the actual cold request Work boundary 82289/82288, evaluation Work 76872, repeat-call equality from fresh stores, no-bound exhaustion, three near-zero exact cancellations, huge literal refusal, fourth-root fourth-power containment and twice-log-two against integral bounds."
+    },
+    {
+      "operation": "pn-graph::numeric::primitive_oracles",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:primitive-bounds-agree-with-independent-oracles",
+      "before": "",
+      "after": "Claim: Shuffled exact inputs exercise roots and all analytic primitive adapters against independent integer squaring, cubing, integral logarithm and binomial exponential brackets, with fresh expected-scope replay; these finite checks support the admitted subset and assert no solver result.",
+      "review": "Six roots by independent squaring, four logarithms by rational integral rectangles, five signed inputs each for exponential, sigmoid and tanh by independent binomial brackets, and four powers by cubing. Fixed input order is deliberately unsorted; every result replays against its original request in a fresh store. No oracle calls nrz arithmetic or its producer."
+    },
+    {
+      "operation": "pn-graph::numeric::primitive_replay",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:primitive-replay-binds-scope-and-outcome",
+      "before": "",
+      "after": "Claim: The primitive boundary preserves original comparison outcomes, distinguishes width-only bounds and interruption, refuses altered certificates and scopes, and admits no unknown schema or held composition through a backend name.",
+      "review": "Checks exact PASS and FAIL versus width-only Bound, straddling INDECISIVE and deterministic interruption, five certificate or schema corruptions, a changed original goal, three held composition capabilities and BinaryBits refusal."
     },
     {
       "operation": "pn-graph::properties::generated_partitions",

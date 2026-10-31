@@ -8,6 +8,7 @@ publish = false
 version.workspace = true
 
 [dependencies]
+nrz-cas.workspace = true
 petgraph.workspace = true
 serde.workspace = true
 pn-records = { path = "../records" }

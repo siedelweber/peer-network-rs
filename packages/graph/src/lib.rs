@@ -155,6 +155,7 @@ pub mod recognition;
 /// (´def:formation:act-metadata´)
 pub mod metadata;
 
+pub mod numeric;
 /// Exact rational transport support, without nonlinear evaluation.
 /// (´def:numerics:exact-transport´)
 pub mod transport;

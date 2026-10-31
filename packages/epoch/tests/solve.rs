@@ -42,6 +42,7 @@ fn declaration(state: &pn_epoch::compiler::CompiledState) -> Procedure {
         maximum_work: 10,
         maximum_iterations: 20,
         endpoint_grid: "1/1000".into(),
+        enclosure: None,
     }
 }
 
@@ -60,8 +61,8 @@ fn state() -> pn_epoch::compiler::CompiledState {
     .unwrap()
 }
 
-/// Claim: A solve declaration is retained with the frozen compiled package only after its boundary, constants edition, declared name and full public payload agree; wrong bindings and same-name payload substitution refuse, and every declared nonlinear backend remains unsupported at preflight.
-/// ´claim:compiler:solve-declarations-bind-without-enabling-evaluation´
+/// Claim: A solve declaration is retained with the frozen compiled package only after its boundary, constants edition, declared name and full public payload agree; wrong bindings and same-name payload substitution refuse, and only an explicit absolute-width policy and the admitted scalar inventory pass preflight; binary-format requests and held compositions refuse.
+/// ´claim:compiler:solve-declarations-bind-to-admitted-primitives´
 /// ´test:integration:procedure-binding´
 #[test]
 fn procedure_binding() {
@@ -110,6 +111,45 @@ fn procedure_binding() {
             Err(ProcedureError::Unsupported)
         );
     }
+    let mut admitted = procedure.clone();
+    admitted.backend = "nrz-cas".into();
+    admitted.precision = Precision::AbsoluteWidthBits(vec![4]);
+    admitted.maximum_work = 3_000_000;
+    let limits = Limits {
+        work: 3_000_000,
+        ..Limits::default()
+    };
+    admitted.enclosure = Some(pn_records::primitive::EnclosurePolicy {
+        store: limits.clone(),
+        operation: limits,
+        refinement: nrz_cas::enclosure::RefinementPolicy {
+            version: 1,
+            precision: 4,
+            grid_ceiling: 64,
+            rounds: 2,
+            reduction_ceiling: 4,
+            term_ceiling: 64,
+            checking_work: 100_000,
+        },
+    });
+    let published = Published(admitted.clone());
+    assert!(
+        bind_procedure(&state, admitted.clone(), &published, Limits::default())
+            .unwrap()
+            .preflight()
+            .is_ok()
+    );
+    for primitive in [Primitive::Matrix, Primitive::Krawczyk, Primitive::InverseGain] {
+        let mut held = admitted.clone();
+        held.primitives.insert(primitive);
+        let published = Published(held.clone());
+        assert!(
+            bind_procedure(&state, held, &published, Limits::default())
+                .unwrap()
+                .preflight()
+                .is_err()
+        );
+    }
 }
 
 /// Claim: Procedure records require finite positive limits and precision requests, a positive endpoint grid and margin above one, and a strictly descending nonnegative rung grid ending in zero; malformed declarations never enable numerical work.
@@ -155,13 +195,14 @@ fn attempt(rung: &str, range: Bounds, completion: Completion) -> Attempt {
     }
 }
 
-/// Claim: Supplied evidence records distinguish proved bound separation, exhausted straddling and interruption; reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii; and never attach a residual result to an interrupted attempt. These are consistency checks, not validation of the supplied map evaluations.
+/// Claim: Supplied evidence records distinguish proved bound separation, completed straddling with actual consumed Work and interruption; reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii; and never attach a residual result to an interrupted attempt. These are consistency checks, not validation of the supplied map evaluations.
 /// ´claim:compiler:solve-transcripts-separate-verdicts-from-interruption´
 /// ´test:integration:evidence-records´
 #[test]
 fn evidence_records() {
     let procedure = declaration(&state());
     let evidence = Evidence {
+        primitives: Vec::new(),
         hull: BTreeMap::from([("a".into(), interval("0", "2"))]),
         attempts: vec![
             attempt("1", interval("9/10", "11/10"), Completion::Indecisive),
@@ -175,6 +216,9 @@ fn evidence_records() {
         }),
     };
     validate_evidence(&procedure, &evidence, Limits::default()).unwrap();
+    let mut partial_work = evidence.clone();
+    partial_work.attempts[0].work = 9;
+    validate_evidence(&procedure, &partial_work, Limits::default()).unwrap();
     let mut failed = evidence.clone();
     failed.attempts[0] = attempt("1", interval("11/10", "6/5"), Completion::Fail);
     validate_evidence(&procedure, &failed, Limits::default()).unwrap();
@@ -193,7 +237,7 @@ fn evidence_records() {
             0 => bad.hull.insert("a".into(), interval("2", "1")).map(|_| ()).unwrap(),
             1 => bad.attempts[0].completion = Completion::Fail,
             2 => bad.attempts[0].completion = Completion::Pass,
-            3 => bad.attempts[0].work = 9,
+            3 => bad.attempts[0].work = 11,
             4 => bad.attempts[0].rung = "0".into(),
             5 => bad.attempts.push(attempt("0", interval("0", "0"), Completion::Pass)),
             6 => bad.residual.as_mut().unwrap().radius = "1/6".into(),

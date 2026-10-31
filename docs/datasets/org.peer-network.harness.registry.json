@@ -4286,6 +4286,22 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "budget": "pure-suite",
+      "cases": [
+        "pn-graph::numeric::primitive_oracles",
+        "pn-graph::numeric::primitive_domains",
+        "pn-graph::numeric::primitive_replay",
+        "pn-graph::numeric::primitive_limits"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-graph::numeric",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "fast"
     }
   ]
 }
