@@ -3094,6 +3094,19 @@
       "path": "docs/design/implementation.md",
       "realizers": [],
       "status": "held"
+    },
+    {
+      "claims": [],
+      "closing_condition": "Join measured schedule controls and independent brackets to the implemented evaluation policy before its use in cut 6-f.",
+      "closing_step": "Solve cost design and cut 6-f evidence integration",
+      "hold": "ROOT::open:design:numeric-backend",
+      "missing": "Evaluation-local sharing, resource boundaries and integration into the declared residual procedure remain to be witnessed.",
+      "name": "ROOT::dec:design:activation-evaluation-policy",
+      "owner": "Numeric kernel implementer and numerical-evidence reviewer",
+      "path": "docs/design/implementation.md",
+      "premises": "The scalar enclosure laws remain the checking boundary; this policy supplies no conserved-map or residual certificate.",
+      "realizers": [],
+      "status": "held"
     }
   ]
 }

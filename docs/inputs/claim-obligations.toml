@@ -2382,3 +2382,15 @@ owner = "Host implementer and deployment; offline replay reviewer"
 missing = "Halt at the last closed epoch after lineage loss, immutable closed results and separately witnessed published re-anchor and follow responses with ledger continuity."
 closing_condition = "Attach reviewed test-site claims and passing source/configuration-matched evidence for every case of this verification plan."
 closing_step = "Bites 8, 9 and 11"
+[[rows]]
+name = "ROOT::dec:design:activation-evaluation-policy"
+path = "docs/design/implementation.md"
+status = "held"
+claims = []
+realizers = []
+hold = "ROOT::open:design:numeric-backend"
+owner = "Numeric kernel implementer and numerical-evidence reviewer"
+missing = "Evaluation-local sharing, resource boundaries and integration into the declared residual procedure remain to be witnessed."
+premises = "The scalar enclosure laws remain the checking boundary; this policy supplies no conserved-map or residual certificate."
+closing_condition = "Join measured schedule controls and independent brackets to the implemented evaluation policy before its use in cut 6-f."
+closing_step = "Solve cost design and cut 6-f evidence integration"
