@@ -7309,6 +7309,16 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/real_base.rs",
+      "item": "real_base::replay",
+      "owner": "EPOCH",
+      "signature": "fn replay (bound : & BoundProcedure < '_ > , source : & str , target : & str , attachment : & Attachment , interrupt_at : Option < u64 > ,) -> Result < Evaluation , ProcedureError >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
     }
   ],
   "metrics": [
@@ -13996,7 +14006,7 @@
     },
     {
       "operation": "pn-records::packages/records/src/solve.rs::solve::validate_evidence",
-      "body": "{ validate_procedure (procedure , limits . clone ()) ? ; let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; for range in input . hull . values () { bounds (range , & mut budget) ? ; } if input . attempts . is_empty () || input . attempts . len () > procedure . grid . len () { return Err (RecordError :: Attempt) ; } let mut stopped = false ; let mut passed = false ; for (attempt , rung) in input . attempts . iter () . zip (& procedure . grid) { if stopped || ! declared_stop (procedure , attempt) || attempt . work > procedure . maximum_work || Rational :: parse (& attempt . rung , & mut budget) ? . compare (& Rational :: parse (rung , & mut budget) ? , & mut budget) ? . is_ne () { return Err (RecordError :: Attempt) ; } let (lower , upper) = bounds (& attempt . margined_fence , & mut budget) ? ; match attempt . completion { Completion :: Pass if ! upper . compare (& one , & mut budget) ? . is_gt () => { stopped = true ; passed = true ; } Completion :: Fail if lower . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Indecisive if ! lower . compare (& one , & mut budget) ? . is_gt () && upper . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Interrupted => { stopped = true ; } _ => return Err (RecordError :: Attempt) , } } if ! stopped { return Err (RecordError :: Attempt) ; } if let Some (residual) = & input . residual { if ! passed || residual . candidate . keys () . ne (input . hull . keys ()) { return Err (RecordError :: Residual) ; } for (actor , point) in & residual . candidate { let point = nonnegative (point , & mut budget) ? ; let (lower , upper) = bounds (& input . hull [actor] , & mut budget) ? ; if point . compare (& lower , & mut budget) ? . is_lt () || point . compare (& upper , & mut budget) ? . is_gt () { return Err (RecordError :: Residual) ; } } let c = nonnegative (& residual . contraction_upper , & mut budget) ? ; if ! c . compare (& one , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } let r = nonnegative (& residual . residual_upper , & mut budget) ? ; let required = r . div (& one . sub (& c , & mut budget) ? , & mut budget) ? ; if nonnegative (& residual . radius , & mut budget) ? . compare (& required , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } } Ok (()) }",
+      "body": "{ validate_procedure (procedure , limits . clone ()) ? ; let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; for range in input . hull . values () { bounds (range , & mut budget) ? ; } if input . attempts . is_empty () || input . attempts . len () > procedure . grid . len () { return Err (RecordError :: Attempt) ; } let mut stopped = false ; let mut passed = false ; for (attempt , rung) in input . attempts . iter () . zip (& procedure . grid) { if stopped || ! declared_stop (procedure , attempt , & input . primitives) || attempt . work > procedure . maximum_work || Rational :: parse (& attempt . rung , & mut budget) ? . compare (& Rational :: parse (rung , & mut budget) ? , & mut budget) ? . is_ne () { return Err (RecordError :: Attempt) ; } let (lower , upper) = bounds (& attempt . margined_fence , & mut budget) ? ; match attempt . completion { Completion :: Pass if ! upper . compare (& one , & mut budget) ? . is_gt () => { stopped = true ; passed = true ; } Completion :: Fail if lower . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Indecisive if ! lower . compare (& one , & mut budget) ? . is_gt () && upper . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Interrupted => { stopped = true ; } _ => return Err (RecordError :: Attempt) , } } if ! stopped { return Err (RecordError :: Attempt) ; } if let Some (residual) = & input . residual { if ! passed || residual . candidate . keys () . ne (input . hull . keys ()) { return Err (RecordError :: Residual) ; } for (actor , point) in & residual . candidate { let point = nonnegative (point , & mut budget) ? ; let (lower , upper) = bounds (& input . hull [actor] , & mut budget) ? ; if point . compare (& lower , & mut budget) ? . is_lt () || point . compare (& upper , & mut budget) ? . is_gt () { return Err (RecordError :: Residual) ; } } let c = nonnegative (& residual . contraction_upper , & mut budget) ? ; if ! c . compare (& one , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } let r = nonnegative (& residual . residual_upper , & mut budget) ? ; let required = r . div (& one . sub (& c , & mut budget) ? , & mut budget) ? ; if nonnegative (& residual . radius , & mut budget) ? . compare (& required , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } } Ok (()) }",
       "class_decision": "solve-public-records",
       "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
       "assessments": {
@@ -14194,7 +14204,18 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/real_base.rs::real_base::evaluate",
-      "body": "{ bound . preflight () ? ; let (state , procedure) = bound . inputs () ; let original = state . view () . base . rows . get (source) . and_then (| row | row . get (target)) . ok_or (ProcedureError :: BaseEntry) ? . clone () ; let BaseScore :: Held { exact_part , terms } = & original . score else { return Ok (Evaluation { original , primitive : None , }) ; } ; let mut nodes = vec ! [Node :: Rational (exact_part . clone ())] ; let mut sum = 0 ; for term in terms { let radicand = nodes . len () ; nodes . push (Node :: Rational (term . radicand . clone ())) ; nodes . push (Node :: SquareRoot (radicand)) ; nodes . push (Node :: Rational (term . domain_factor . clone ())) ; nodes . push (Node :: Multiply (radicand + 1 , radicand + 2)) ; nodes . push (Node :: Add (sum , radicand + 3)) ; sum = radicand + 4 ; } let query = Query { coordinates : Vec :: new () , nodes , target : sum , goal : Goal :: Width , } ; let evidence = pn_graph :: numeric :: evaluate (procedure , & query , interrupt_at) ? ; let precision = procedure . enclosure . as_ref () . ok_or (ProcedureError :: Unsupported) ? . refinement . precision ; Ok (Evaluation { original , primitive : Some (PrimitiveRecord { query , precision , evidence , }) , }) }",
+      "body": "{ run (bound , source , target , None , interrupt_at) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/real_base.rs::real_base::replay",
+      "body": "{ run (bound , source , target , Some (attachment) , interrupt_at) }",
       "class_decision": "activation-base-public",
       "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
       "assessments": {
@@ -19110,7 +19131,7 @@
       "item": "solve::Attempt",
       "package": "pn-records",
       "path": "packages/records/src/solve.rs",
-      "syntax": "# [doc = \" A completed comparison or an interrupted attempt; the fence is already margined.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attempt { pub rung : String , pub margined_fence : Bounds , pub work : u64 , pub completion : Completion , pub stop : AttemptStop , }"
+      "syntax": "# [doc = \" A completed comparison or an interrupted attempt; the fence is already margined.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attempt { pub rung : String , pub margined_fence : Bounds , pub work : u64 , pub completion : Completion , pub stop : AttemptStop , pub primitives : Vec < usize > , }"
     },
     {
       "item": "solve::Residual",
@@ -20823,7 +20844,8 @@
         "explicit": [
           "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::evaluate",
           "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::replay",
-          "pn-epoch::packages/epoch/src/real_base.rs::real_base::evaluate"
+          "pn-epoch::packages/epoch/src/real_base.rs::real_base::evaluate",
+          "pn-epoch::packages/epoch/src/real_base.rs::real_base::replay"
         ]
       }
     }

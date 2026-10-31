@@ -98,6 +98,7 @@ pub struct Attempt {
     pub work: u64,
     pub completion: Completion,
     pub stop: AttemptStop,
+    pub primitives: Vec<usize>,
 }
 
 /// Supplied residual premises and claimed radius, not a checked map evaluation.
@@ -155,12 +156,49 @@ fn bounds(input: &Bounds, budget: &mut Budget) -> Result<(Rational, Rational), R
     Ok((lower, upper))
 }
 
-fn declared_stop(procedure: &Procedure, attempt: &Attempt) -> bool {
+fn work_stop(procedure: &Procedure, attempt: &Attempt, records: &[crate::primitive::PrimitiveRecord]) -> bool {
+    let mut work = 0_u64;
+    let mut prior = 0_u64;
+    let mut checked = false;
+    let mut last = None;
+    for (position, index) in attempt.primitives.iter().enumerate() {
+        if attempt.primitives[..position].contains(index) {
+            return false;
+        }
+        let Some(record) = records.get(*index) else { return false };
+        prior = work;
+        let Some(total) = work.checked_add(record.evidence.work) else {
+            return false;
+        };
+        work = total;
+        checked |= record.evidence.bounds.is_some() && record.evidence.attachment.is_some();
+        last = Some(&record.evidence);
+    }
+    let Some(last) = last else { return false };
+    let Some(remaining) = procedure.maximum_work.checked_sub(prior) else {
+        return false;
+    };
+    checked
+        && work == attempt.work
+        && work <= procedure.maximum_work
+        && matches!(
+            last.outcome,
+            crate::primitive::Outcome::Exhausted
+                | crate::primitive::Outcome::Indecisive(nrz_cas::enclosure::UndecidedReason::WorkExhausted)
+        )
+        && last.resource_fault.is_some_and(|fault| {
+            matches!(fault.kind,
+            nrz_cas::FaultKind::Exhausted { budget: nrz_cas::limits::BudgetKind::Work, limit, needed, .. }
+            if limit == remaining && needed > limit)
+        })
+}
+
+fn declared_stop(procedure: &Procedure, attempt: &Attempt, records: &[crate::primitive::PrimitiveRecord]) -> bool {
     match (&attempt.completion, &attempt.stop) {
         (Completion::Pass | Completion::Fail, AttemptStop::ComparisonSeparated)
         | (Completion::Indecisive, AttemptStop::PrecisionSequenceExhausted)
         | (Completion::Interrupted, AttemptStop::Interrupted) => true,
-        (Completion::Indecisive, AttemptStop::WorkLimit) => attempt.work == procedure.maximum_work,
+        (Completion::Indecisive, AttemptStop::WorkLimit) => work_stop(procedure, attempt, records),
         _ => false,
     }
 }
@@ -247,7 +285,7 @@ pub fn validate_evidence(procedure: &Procedure, input: &Evidence, limits: Limits
     let mut passed = false;
     for (attempt, rung) in input.attempts.iter().zip(&procedure.grid) {
         if stopped
-            || !declared_stop(procedure, attempt)
+            || !declared_stop(procedure, attempt, &input.primitives)
             || attempt.work > procedure.maximum_work
             || Rational::parse(&attempt.rung, &mut budget)?
                 .compare(&Rational::parse(rung, &mut budget)?, &mut budget)?

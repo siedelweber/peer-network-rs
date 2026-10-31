@@ -5,7 +5,7 @@ use crate::{
     base::{BaseEntry, BaseScore},
     solve::{BoundProcedure, ProcedureError},
 };
-use pn_records::primitive::{Goal, Node, PrimitiveRecord, Query};
+use pn_records::primitive::{Attachment, Goal, Node, PrimitiveRecord, Query};
 
 /// Exact entries remain exact; held entries retain their complete source and checked evidence.
 /// (´def:compiler:real-base´)
@@ -35,6 +35,40 @@ pub fn evaluate(
     target: &str,
     interrupt_at: Option<u64>,
 ) -> Result<Evaluation, ProcedureError> {
+    run(bound, source, target, None, interrupt_at)
+}
+
+/// Rebuild the expected query from the frozen entry before checking supplied evidence.
+/// (´def:compiler:real-base´)
+/// # Errors
+/// Refuses absent or exact entries, changed scope and invalid scalar evidence.
+#[tracing::instrument(
+    name = "sig:design:epoch",
+    fields(
+        execution_owner = "EPOCH",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:epoch",
+        source_item = "real_base::replay"
+    ),
+    ret
+)]
+pub fn replay(
+    bound: &BoundProcedure<'_>,
+    source: &str,
+    target: &str,
+    attachment: &Attachment,
+    interrupt_at: Option<u64>,
+) -> Result<Evaluation, ProcedureError> {
+    run(bound, source, target, Some(attachment), interrupt_at)
+}
+
+fn run(
+    bound: &BoundProcedure<'_>,
+    source: &str,
+    target: &str,
+    attachment: Option<&Attachment>,
+    interrupt_at: Option<u64>,
+) -> Result<Evaluation, ProcedureError> {
     bound.preflight()?;
     let (state, procedure) = bound.inputs();
     let original = state
@@ -46,6 +80,9 @@ pub fn evaluate(
         .ok_or(ProcedureError::BaseEntry)?
         .clone();
     let BaseScore::Held { exact_part, terms } = &original.score else {
+        if attachment.is_some() {
+            return Err(ProcedureError::BaseEntry);
+        }
         return Ok(Evaluation {
             original,
             primitive: None,
@@ -68,7 +105,11 @@ pub fn evaluate(
         target: sum,
         goal: Goal::Width,
     };
-    let evidence = pn_graph::numeric::evaluate(procedure, &query, interrupt_at)?;
+    let evidence = if let Some(attachment) = attachment {
+        pn_graph::numeric::replay(procedure, &query, attachment, interrupt_at)?
+    } else {
+        pn_graph::numeric::evaluate(procedure, &query, interrupt_at)?
+    };
     let precision = procedure
         .enclosure
         .as_ref()

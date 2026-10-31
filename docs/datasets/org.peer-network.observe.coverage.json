@@ -42,9 +42,9 @@
       "exceptions": 6,
       "generators": 36,
       "helpers": 0,
-      "instrumented": 20,
+      "instrumented": 21,
       "name": "pn-epoch",
-      "operations": 26
+      "operations": 27
     },
     {
       "exceptions": 0,

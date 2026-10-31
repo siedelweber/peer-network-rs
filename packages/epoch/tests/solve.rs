@@ -198,10 +198,11 @@ fn attempt(rung: &str, range: Bounds, completion: Completion) -> Attempt {
         work: 10,
         completion,
         stop,
+        primitives: Vec::new(),
     }
 }
 
-/// Claim: Supplied evidence records require compatible verdict and stopping categories, refuse a Work-limit straddle below the declared cap, accept a declared exhausted precision sequence with actual consumed Work, and distinguish interruption. They reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii, and attach no residual to interruption. These are structural consistency checks; they do not certify execution of the declared sequence or the supplied map evaluations.
+/// Claim: Supplied evidence records require compatible verdict and stopping categories and a joined Work-exhaustion fault for a Work-limited straddle, with actual consumed Work never padded. An actual completed primitive straddle stopped before its next charge fits is recorded as INDECISIVE and passed over; missing or mismatched joins refuse. Precision-sequence completion remains declared, and interrupted transcripts carry no residual. These are structural consistency checks, not certification of the supplied map evaluations or sequence execution.
 /// ´claim:compiler:solve-transcripts-separate-verdicts-from-interruption´
 /// ´test:integration:evidence-records´
 #[test]
@@ -230,8 +231,7 @@ fn evidence_records() {
         validate_evidence(&procedure, &partial_work, Limits::default()),
         Err(RecordError::Attempt)
     );
-    partial_work.attempts[0].work = 10;
-    validate_evidence(&procedure, &partial_work, Limits::default()).unwrap();
+    work_limited_record();
     for stop in [AttemptStop::ComparisonSeparated, AttemptStop::Interrupted] {
         partial_work.attempts[0].stop = stop;
         assert_eq!(
@@ -664,6 +664,61 @@ fn base_procedure(state: &pn_epoch::compiler::CompiledState) -> Procedure {
     input
 }
 
+fn work_limited_record() {
+    use pn_records::primitive::{Goal, Node, Outcome, PrimitiveRecord, Query, Range};
+    let query = Query {
+        coordinates: vec![Range {
+            lower: "9/10".into(),
+            upper: "11/10".into(),
+        }],
+        nodes: vec![Node::Coordinate(0)],
+        target: 0,
+        goal: Goal::AtMost("1".into()),
+    };
+    let mut p = base_procedure(&state());
+    let policy = p.enclosure.as_mut().unwrap();
+    policy.refinement.checking_work = 0;
+    policy.refinement.rounds = 1;
+    let first = pn_graph::numeric::evaluate(&p, &query, None).unwrap();
+    p.maximum_work = first.work + 1;
+    let policy = p.enclosure.as_mut().unwrap();
+    policy.store.work = p.maximum_work;
+    policy.operation.work = p.maximum_work;
+    policy.refinement.rounds = 2;
+    let stopped = pn_graph::numeric::evaluate(&p, &query, None).unwrap();
+    assert_eq!(
+        stopped.outcome,
+        Outcome::Indecisive(nrz_cas::enclosure::UndecidedReason::WorkExhausted)
+    );
+    assert!(stopped.work < p.maximum_work);
+    let mut first_attempt = attempt("1", interval("9/10", "11/10"), Completion::Indecisive);
+    first_attempt.stop = AttemptStop::WorkLimit;
+    first_attempt.work = stopped.work;
+    first_attempt.primitives = vec![0];
+    let evidence = Evidence {
+        hull: BTreeMap::new(),
+        attempts: vec![first_attempt, attempt("1/2", interval("0", "1"), Completion::Pass)],
+        residual: None,
+        primitives: vec![PrimitiveRecord {
+            query,
+            precision: 4,
+            evidence: stopped,
+        }],
+    };
+    validate_evidence(&p, &evidence, Limits::default()).unwrap();
+    for case in 0..5 {
+        let mut bad = evidence.clone();
+        match case {
+            0 => bad.attempts[0].primitives.clear(),
+            1 => bad.attempts[0].primitives.push(0),
+            2 => bad.attempts[0].work += 1,
+            3 => bad.primitives[0].evidence.resource_fault = None,
+            _ => bad.primitives[0].evidence.outcome = Outcome::Interrupted,
+        }
+        assert_eq!(validate_evidence(&p, &bad, Limits::default()), Err(RecordError::Attempt));
+    }
+}
+
 fn base_root_bracket(x: Fraction) -> (Fraction, Fraction) {
     assert!(x.0 >= 0 && x.0 < 4 * x.1);
     let grid = 1_i128 << 16;
@@ -697,9 +752,18 @@ fn check_real_base(bound: &pn_epoch::solve::BoundProcedure<'_>) -> (usize, usize
                     let record = result.primitive.unwrap();
                     assert_eq!(record.evidence.outcome, pn_records::primitive::Outcome::Bound);
                     let replayed =
-                        pn_graph::numeric::replay(procedure, &record.query, record.evidence.attachment.as_ref().unwrap(), None)
+                        pn_epoch::real_base::replay(bound, source, target, record.evidence.attachment.as_ref().unwrap(), None)
                             .unwrap();
-                    assert_eq!(replayed.bounds, record.evidence.bounds);
+                    assert_eq!(replayed.primitive.unwrap().evidence.bounds, record.evidence.bounds);
+                    for index in [1, 3] {
+                        let mut changed = record.query.clone();
+                        changed.nodes[index] = pn_records::primitive::Node::Rational("2".into());
+                        let substituted = pn_graph::numeric::evaluate(procedure, &changed, None).unwrap();
+                        assert!(
+                            pn_epoch::real_base::replay(bound, source, target, substituted.attachment.as_ref().unwrap(), None)
+                                .is_err()
+                        );
+                    }
                     let mut oracle = (Fraction::parse(exact_part), Fraction::parse(exact_part));
                     for term in terms {
                         assert!(original.cells.contains(&term.cell));

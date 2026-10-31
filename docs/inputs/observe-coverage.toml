@@ -35,8 +35,8 @@ generators = 6
 
 [[rows]]
 name = "pn-epoch"
-operations = 26
-instrumented = 20
+operations = 27
+instrumented = 21
 exceptions = 6
 helpers = 0
 generators = 36
