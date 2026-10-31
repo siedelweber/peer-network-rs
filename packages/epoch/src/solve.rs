@@ -2,7 +2,10 @@
 //! (´def:compiler:solve-binding´)
 
 use crate::compiler::CompiledState;
-use nrz_cas::limits::Limits;
+use nrz_cas::{
+    Rational,
+    limits::{Budget, Limits},
+};
 use pn_records::solve::{Procedure, RecordError, validate_procedure};
 
 /// Public declaration verification remains an explicit deployment premise.
@@ -25,6 +28,10 @@ pub struct BoundProcedure<'a> {
 pub enum ProcedureError {
     #[error("procedure boundary, edition or name differs from frozen package")]
     Binding,
+    #[error("frozen wall is outside the declared reduction range")]
+    WallRange,
+    #[error("exact binding arithmetic: {0}")]
+    Arithmetic(#[from] nrz_cas::Fault),
     #[error("base entry is absent from the frozen compiler output")]
     BaseEntry,
     #[error("procedure publication verification refused")]
@@ -64,7 +71,8 @@ pub fn bind_procedure<'a>(
     {
         return Err(ProcedureError::Binding);
     }
-    validate_procedure(&procedure, limits)?;
+    validate_procedure(&procedure, limits.clone())?;
+    wall_range(state, &procedure, limits)?;
     if !verifier.published_procedure(&procedure) {
         return Err(ProcedureError::Publication);
     }
@@ -101,4 +109,27 @@ impl BoundProcedure<'_> {
         pn_graph::numeric::preflight(&self.procedure)?;
         Ok(())
     }
+}
+
+fn wall_range(state: &CompiledState, procedure: &Procedure, limits: Limits) -> Result<(), ProcedureError> {
+    if procedure.fence.is_none() {
+        return Ok(());
+    }
+    let Some(policy) = &procedure.enclosure else { return Ok(()) };
+    let k = policy.refinement.reduction_ceiling;
+    let scale = 1_u64.checked_shl(k).filter(|v| *v > 2).ok_or(ProcedureError::WallRange)?;
+    let mut b = Budget::new(limits)?;
+    let lower = Rational::parse("1", &mut b)?.div(&Rational::parse(&(scale - 2).to_string(), &mut b)?, &mut b)?;
+    let wall = state
+        .package()
+        .input()
+        .prices
+        .last()
+        .ok_or(ProcedureError::Binding)?
+        .wall()
+        .exact();
+    if Rational::parse(wall, &mut b)?.compare(&lower, &mut b)?.is_lt() {
+        return Err(ProcedureError::WallRange);
+    }
+    Ok(())
 }

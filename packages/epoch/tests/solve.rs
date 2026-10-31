@@ -40,6 +40,7 @@ fn declaration(state: &pn_epoch::compiler::CompiledState) -> Procedure {
         grid: vec!["1".into(), "1/2".into(), "0".into()],
         margin: "5/4".into(),
         maximum_work: 10,
+        maximum_solve_work: 10,
         maximum_iterations: 20,
         endpoint_grid: "1/1000".into(),
         fence: None,
@@ -342,10 +343,38 @@ impl pn_records::transport::ExactArithmetic for FixtureArithmetic {
     }
 }
 
-fn dense_operator(hops: &[Vec<Vec<Fraction>>], mass: &[Fraction], emission: &[Fraction]) -> Vec<Vec<Fraction>> {
+trait DenseNumber: Copy {
+    fn zero() -> Self;
+    fn one() -> Self;
+    fn plus(self, other: Self) -> Self;
+    fn minus(self, other: Self) -> Self;
+    fn times(self, other: Self) -> Self;
+    fn over(self, other: Self) -> Self;
+}
+impl DenseNumber for Fraction {
+    fn zero() -> Self {
+        Self(0, 1)
+    }
+    fn one() -> Self {
+        Self(1, 1)
+    }
+    fn plus(self, b: Self) -> Self {
+        self.plus(b)
+    }
+    fn minus(self, b: Self) -> Self {
+        self.minus(b)
+    }
+    fn times(self, b: Self) -> Self {
+        self.times(b)
+    }
+    fn over(self, b: Self) -> Self {
+        self.over(b)
+    }
+}
+fn dense_operator<T: DenseNumber>(hops: &[Vec<Vec<T>>], mass: &[T], emission: &[T]) -> Vec<Vec<T>> {
     let n = emission.len();
-    let z = Fraction(0, 1);
-    let one = Fraction(1, 1);
+    let z = T::zero();
+    let one = T::one();
     let mut current: Vec<Vec<_>> = (0..n)
         .map(|i| (0..n).map(|j| if i == j { one } else { z }).collect())
         .collect();
@@ -354,7 +383,7 @@ fn dense_operator(hops: &[Vec<Vec<Fraction>>], mass: &[Fraction], emission: &[Fr
         let normalized: Vec<Vec<_>> = hop
             .iter()
             .map(|row| {
-                let sum = row.iter().copied().fold(z, Fraction::plus);
+                let sum = row.iter().copied().fold(z, T::plus);
                 row.iter().map(|v| v.over(sum)).collect()
             })
             .collect();
@@ -366,7 +395,7 @@ fn dense_operator(hops: &[Vec<Vec<Fraction>>], mass: &[Fraction], emission: &[Fr
                         row.iter()
                             .zip(&normalized)
                             .map(|(left, right)| left.times(right[target]))
-                            .fold(z, Fraction::plus)
+                            .fold(z, T::plus)
                     })
                     .collect()
             })
@@ -829,6 +858,7 @@ fn real_base() {
 fn fence_procedure(state: &pn_epoch::compiler::CompiledState) -> Procedure {
     let mut p = base_procedure(state);
     p.maximum_work = 200_000_000;
+    p.maximum_solve_work = 200_000_000;
     p.primitives.extend([
         Primitive::Sigmoid,
         Primitive::Tanh,
@@ -1161,11 +1191,12 @@ fn contains_fraction(value: &nrz_cas::enclosure::Interval, expected: Fraction, b
     assert!(!value.upper().compare(&expected, budget).unwrap().is_lt());
 }
 
-/// Claim: Twelve unsorted positive endpoint transports contain an independent dense rational operator and its pair mediants, including exact singleton inputs; factor order, emission and source counts are retained rather than inferred from interval row sums.
+/// Claim: Twelve unsorted positive endpoint transports and a three-Actor, three-hop case with missing entries and a zero-emission source contain an independent dense rational operator and its pair mediants, including exact singleton inputs; factor order, emission and source counts are retained rather than inferred from interval row sums.
 /// ´claim:compiler:endpoint-transport-contains-dense-rational-oracle´
 /// ´test:integration:endpoint-transport´
 #[test]
 fn endpoint_transport() {
+    check_sparse_three_actor_oracle();
     let z = Fraction(0, 1);
     let one = Fraction(1, 1);
     let counts = [Fraction(3, 1), Fraction(5, 1)];
@@ -1229,7 +1260,7 @@ fn endpoint_transport() {
     assert_eq!(distinct.len(), 12);
 }
 
-/// Claim: Four unsorted positive standing inputs retain Actor-key scalar order, target-owned hop powers and unmodulated self scores in the frozen map; replay reconstructs the original scope and refuses a changed transported image.
+/// Claim: Four unsorted positive standing inputs retain Actor-key scalar order, target-owned hop powers and unmodulated self scores in the frozen map; replay reconstructs the original scope and refuses a changed transported image. Independently computed activation and root brackets flow through the dense directed operator and pair mediants inside every image coordinate.
 /// ´claim:compiler:conserved-map-replays-frozen-point-scopes´
 /// ´test:integration:conserved-map´
 #[test]
@@ -1254,6 +1285,7 @@ fn conserved_map() {
     let checked = pn_epoch::conserved::replay_map(&bound, &result).unwrap();
     assert_eq!(checked.image, result.image);
     check_map_joins(&state, &result);
+    check_independent_map(&state, &result);
     let mut changed = result.clone();
     changed.image.values_mut().next().unwrap().upper = "100".into();
     assert!(pn_epoch::conserved::replay_map(&bound, &changed).is_err());
@@ -1289,11 +1321,13 @@ fn check_map_joins(state: &pn_epoch::compiler::CompiledState, map: &pn_records::
     }
 }
 
-/// Claim: The declared rational proposal sequence is followed by one certified map per declared precision, and frozen-package replay reconstructs the residual intersection while rejecting changed residual and radius fields. The compiler view and ledger remain immutable.
+/// Claim: The declared rational proposal sequence is followed by one certified map per declared precision, and frozen-package replay reconstructs the residual intersection while rejecting changed residual and radius fields. Four denominator/cap declarations pin residuals, radii and each published width within the hull; their two-grid standings intersect, changed standing refuses, and a separate solve exhaustion cannot alter fence selection. The compiler view and ledger remain immutable.
 /// ´claim:compiler:projected-residual-replays-conserved-map´
 /// ´test:integration:conserved-residual´
 #[test]
 fn conserved_residual() {
+    check_solve_accuracy();
+    check_prefix_pins();
     let state = conserved_state();
     let before = state.view().clone();
     let mut p = fence_procedure(&state);
@@ -1309,7 +1343,7 @@ fn conserved_residual() {
     let fence = pn_epoch::fence::search(&bound, None).unwrap();
     assert_eq!(fence.selected.as_deref(), Some("1/4"));
     let result = pn_epoch::conserved::solve(&bound, &fence).unwrap();
-    assert_eq!(result.work, 116_209_419);
+    assert_eq!(result.work, 115_287_737);
     let checked = pn_epoch::conserved::replay(&bound, &result).unwrap();
     assert_eq!(
         checked.rounds.last().unwrap().standing,
@@ -1353,17 +1387,18 @@ fn conserved_residual() {
     alternate.endpoint_grid = "1/4".into();
     let bound = bind_procedure(&state, alternate.clone(), &Published(alternate.clone()), Limits::default()).unwrap();
     let comparison = pn_epoch::conserved::solve(&bound, &fence).unwrap();
-    assert_eq!(comparison.work, 115_540_181);
-    for cap in [115_540_181, 115_540_180] {
+    assert_eq!(comparison.work, 114_618_499);
+    for cap in [114_618_499, 114_618_498] {
         let limited = work_policy(&alternate, cap);
         let bound = bind_procedure(&state, limited.clone(), &Published(limited), Limits::default()).unwrap();
-        assert_eq!(pn_epoch::conserved::solve(&bound, &fence).is_ok(), cap == 115_540_181);
+        assert_eq!(pn_epoch::conserved::solve(&bound, &fence).is_ok(), cap == 114_618_499);
     }
 }
 
 fn work_policy(p: &Procedure, cap: u64) -> Procedure {
     let mut result = p.clone();
     result.maximum_work = cap;
+    result.maximum_solve_work = cap;
     let policy = result.enclosure.as_mut().unwrap();
     policy.operation.work = policy.operation.work.min(cap);
     result
@@ -1375,18 +1410,18 @@ fn check_solve_work(
     fence: &pn_epoch::fence::Search,
     result: &pn_records::conserved::SolveRecord,
 ) {
-    for cap in [116_209_419, 116_209_418] {
+    for cap in [115_287_737, 115_287_736] {
         let limited = work_policy(p, cap);
         let bound = bind_procedure(state, limited.clone(), &Published(limited), Limits::default()).unwrap();
-        assert_eq!(pn_epoch::conserved::solve(&bound, fence).is_ok(), cap == 116_209_419);
+        assert_eq!(pn_epoch::conserved::solve(&bound, fence).is_ok(), cap == 115_287_737);
     }
     let round = &result.rounds[0];
-    assert_eq!(round.candidate_work, 64_694_819);
+    assert_eq!(round.candidate_work, 64_097_175);
     assert_eq!(round.proposals.len(), 2);
     for (map, expected) in [
-        (&round.proposals[1], 43_629_547),
-        (&round.certified, 51_357_308),
-        (&round.proposals[0], 20_749_766),
+        (&round.proposals[1], 43_330_725),
+        (&round.certified, 51_033_270),
+        (&round.proposals[0], 20_450_944),
     ] {
         assert_eq!(map.work, expected);
         for cap in [expected, expected - 1] {
@@ -1401,12 +1436,12 @@ fn check_solve_work(
 }
 
 fn check_kernel_work(p: &Procedure, map: &pn_records::conserved::MapRecord) {
-    for cap in [771_717, 771_716] {
+    for cap in [583_937, 583_936] {
         let mut limits = p.enclosure.as_ref().unwrap().operation.clone();
         limits.work = cap;
         let mut budget = nrz_cas::limits::Budget::new(limits).unwrap();
         let output = pn_graph::transport::enclosed::evaluate(&map.transport_input, &mut budget, 10000);
-        assert_eq!(output.is_ok(), cap == 771_717);
+        assert_eq!(output.is_ok(), cap == 583_937);
         if let Ok(output) = output {
             assert_eq!(output, map.transport);
             assert_eq!(budget.usage().work, cap);
@@ -1469,12 +1504,13 @@ fn conserved_policy(state: &pn_epoch::compiler::CompiledState, grid: &str) -> Pr
     p
 }
 
-/// Claim: Two declared dyadic grids produce different rational proposals outside a singleton non-dyadic hull, yet final projection and replay certify the same exact self-only standing. Changed starting points, contraction fields and non-dyadic proposal grids refuse; no private start enters the declared solve. On a non-singleton hull the replayed zero fence publishes the certified image exactly; a positive rung below the edge uses its evaluated contraction bound and a strictly smaller radius than the margin-only bound.
+/// Claim: Two declared dyadic grids produce different rational proposals outside a singleton non-dyadic hull, yet final projection and replay certify the same exact self-only standing. Changed starting points, contraction fields and non-dyadic proposal grids refuse; no private start enters the declared solve. On a non-singleton hull the replayed zero fence publishes the certified image exactly; a positive rung below the edge uses its evaluated contraction bound and a strictly smaller radius than the margin-only bound. Eight wall/ceiling bindings refuse unsupported argument ranges before scalar evaluation.
 /// ´claim:compiler:projected-proposals-keep-hull-and-start-binding´
 /// ´test:integration:conserved-projection´
 #[test]
 fn conserved_projection() {
     check_evaluated_contraction();
+    check_wall_binding();
     let state = singleton_hull_state();
     let mut starts = BTreeSet::new();
     for grid in ["1/16", "1/4"] {
@@ -1551,6 +1587,493 @@ fn check_evaluated_contraction() {
             let mut bad = accepted.clone();
             bad.evidence.attempts.last_mut().unwrap().margined_fence.upper = "1/2".into();
             assert!(pn_epoch::conserved::solve(&bound, &bad).is_err());
+        }
+    }
+}
+
+// Independent small-integer oracle. No nrz numbers, producer, interval or checker calls.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct Q(i128, i128);
+impl Q {
+    fn new(n: i128, d: i128) -> Self {
+        assert_ne!(d, 0);
+        let (mut a, mut b) = (n.abs(), d.abs());
+        while b != 0 {
+            (a, b) = (b, a % b);
+        }
+        Self(n / a * d.signum(), d.abs() / a)
+    }
+    fn parse(s: &str) -> Self {
+        let (n, d) = s.split_once('/').unwrap_or((s, "1"));
+        Self::new(n.parse().unwrap(), d.parse().unwrap())
+    }
+    fn add(self, b: Self) -> Self {
+        Self::new(self.0 * b.1 + b.0 * self.1, self.1 * b.1)
+    }
+    fn neg(self) -> Self {
+        Self(-self.0, self.1)
+    }
+    fn mul(self, b: Self) -> Self {
+        Self::new(self.0 * b.0, self.1 * b.1)
+    }
+    fn div(self, b: Self) -> Self {
+        Self::new(self.0 * b.1, self.1 * b.0)
+    }
+    fn le(self, b: Self) -> bool {
+        self.0 * b.1 <= b.0 * self.1
+    }
+    fn round(self, bits: u32, upper: bool) -> Self {
+        let scale = 1_i128 << bits;
+        let n = self.0 * scale;
+        Self::new(n.div_euclid(self.1) + i128::from(upper && n.rem_euclid(self.1) != 0), scale)
+    }
+}
+// Directed integer rounding on a fixed grid bounds every product in the
+// independent binomial oracle; it shares no analytic series with the backend.
+fn rounded_power(mut base: Q, mut exponent: u32, upper: bool) -> Q {
+    let mut result = Q(1, 1);
+    while exponent != 0 {
+        if exponent % 2 == 1 {
+            result = result.mul(base).round(32, upper);
+        }
+        exponent /= 2;
+        if exponent != 0 {
+            base = base.mul(base).round(32, upper);
+        }
+    }
+    result
+}
+
+fn tight_exp(x: Q) -> (Q, Q) {
+    let one = Q(1, 1);
+    if x.0 < 0 {
+        let (a, b) = tight_exp(x.neg());
+        return (one.div(b), one.div(a));
+    }
+    let h = x.div(Q(4096, 1));
+    (
+        rounded_power(one.add(h), 4096, false),
+        one.div(rounded_power(one.add(h.neg()), 4096, false)),
+    )
+}
+
+fn tight_log(x: Q) -> (Q, Q) {
+    if x.le(Q(1, 1)) {
+        if x == Q(1, 1) {
+            return (Q(0, 1), Q(0, 1));
+        }
+        let (a, b) = tight_log(Q(1, 1).div(x));
+        return (b.neg(), a.neg());
+    }
+    let h = x.add(Q(-1, 1)).div(Q(4096, 1));
+    let (mut lower, mut upper) = (Q(0, 1), Q(0, 1));
+    for i in 0..4096 {
+        lower = lower.add(h.div(Q(1, 1).add(h.mul(Q(i + 1, 1)))).round(32, false));
+        upper = upper.add(h.div(Q(1, 1).add(h.mul(Q(i, 1)))).round(32, true));
+    }
+    (lower, upper)
+}
+// Independent directed fixed-grid computation, using integral/binomial brackets
+// and integer root comparisons rather than the backend's analytic series.
+#[derive(Clone, Copy, Debug)]
+struct I(Q, Q);
+impl I {
+    fn point(value: Q) -> Self {
+        Self(value, value)
+    }
+    fn rounded(a: Q, b: Q) -> Self {
+        Self(a.round(24, false), b.round(24, true))
+    }
+    fn add(self, b: Self) -> Self {
+        Self::rounded(self.0.add(b.0), self.1.add(b.1))
+    }
+    fn sub(self, b: Self) -> Self {
+        Self::rounded(self.0.add(b.1.neg()), self.1.add(b.0.neg()))
+    }
+    fn mul(self, b: Self) -> Self {
+        let values = [self.0.mul(b.0), self.0.mul(b.1), self.1.mul(b.0), self.1.mul(b.1)];
+        let (mut low, mut high) = (values[0], values[0]);
+        for value in values {
+            if value.le(low) {
+                low = value;
+            }
+            if high.le(value) {
+                high = value;
+            }
+        }
+        Self::rounded(low, high)
+    }
+    fn div(self, b: Self) -> Self {
+        assert!(b.0.0 > 0);
+        self.mul(Self::rounded(Q(1, 1).div(b.1), Q(1, 1).div(b.0)))
+    }
+    fn root(self, degree: u32) -> Self {
+        fn endpoint(x: Q, degree: u32, upper: bool) -> Q {
+            assert!(x.0 >= 0 && x.0 < 8_i128.pow(degree) * x.1);
+            let scale = 1_i128 << 24;
+            let target = x.0 * scale.pow(degree);
+            let (mut low, mut high) = (0_i128, 8 * scale);
+            while high - low > 1 {
+                let middle = high.midpoint(low);
+                if middle.pow(degree) * x.1 <= target {
+                    low = middle;
+                } else {
+                    high = middle;
+                }
+            }
+            Q::new(low + i128::from(upper && low.pow(degree) * x.1 != target), scale)
+        }
+        Self(endpoint(self.0, degree, false), endpoint(self.1, degree, true))
+    }
+    fn sigmoid(self) -> Self {
+        let one = Q(1, 1);
+        let (a, _) = tight_exp(self.0);
+        let (_, b) = tight_exp(self.1);
+        Self::rounded(a.div(one.add(a)), b.div(one.add(b)))
+    }
+    fn tanh(self) -> Self {
+        let one = Q(1, 1);
+        let (a, _) = tight_exp(self.0.mul(Q(2, 1)));
+        let (_, b) = tight_exp(self.1.mul(Q(2, 1)));
+        Self::rounded(a.add(one.neg()).div(a.add(one)), b.add(one.neg()).div(b.add(one)))
+    }
+}
+
+fn independent_activation(x: Q, clean: bool, gain: bool) -> I {
+    let one = I::point(Q(1, 1));
+    let (log_lower, log_upper) = tight_log(Q(2, 1));
+    let beta = I::rounded(log_lower.mul(Q(2, 1)), log_upper.mul(Q(2, 1)));
+    let eta = I::point(if clean { Q(0, 1) } else { Q(1, 400) });
+    let denominator = I::point(Q(1, 1).add(x));
+    let p = I::point(x.div(Q(1, 1).add(x)));
+    let core = |p: I| {
+        let t = p.tanh();
+        beta.mul(p).sigmoid().mul(t.mul(one.sub(eta.mul(t))).root(2))
+    };
+    if gain {
+        let t = p.tanh();
+        let slope = one.sub(t.mul(t));
+        let kernel = beta
+            .mul(one.sub(beta.mul(p).sigmoid()))
+            .add(slope.div(I::point(Q(2, 1)).mul(t)))
+            .sub(eta.mul(slope).div(I::point(Q(2, 1)).mul(one.sub(eta.mul(t)))));
+        let gain = kernel.div(denominator.mul(denominator));
+        if clean { gain } else { gain.mul(I::point(Q(1, 4))) }
+    } else {
+        core(p).div(core(one)).root(2).root(2)
+    }
+}
+
+impl DenseNumber for I {
+    fn zero() -> Self {
+        Self::point(Q(0, 1))
+    }
+    fn one() -> Self {
+        Self::point(Q(1, 1))
+    }
+    fn plus(self, b: Self) -> Self {
+        self.add(b)
+    }
+    fn minus(self, b: Self) -> Self {
+        self.sub(b)
+    }
+    fn times(self, b: Self) -> Self {
+        self.mul(b)
+    }
+    fn over(self, b: Self) -> Self {
+        self.div(b)
+    }
+}
+
+fn check_independent_map(state: &pn_epoch::compiler::CompiledState, map: &pn_records::conserved::MapRecord) {
+    let actors: Vec<_> = map.point.keys().collect();
+    let powers: Vec<_> = map
+        .point
+        .values()
+        .map(|x| {
+            let a = independent_activation(Q::parse(x), false, false);
+            [a.root(2).root(2), a.root(2).root(3), a.root(2).root(2).root(3)]
+        })
+        .collect();
+    let hops: Vec<Vec<Vec<I>>> = (0..3)
+        .map(|hop| {
+            actors
+                .iter()
+                .enumerate()
+                .map(|(source, actor)| {
+                    actors
+                        .iter()
+                        .enumerate()
+                        .map(|(target, recipient)| {
+                            let Some(entry) = state.view().base.rows[*actor].get(*recipient) else {
+                                return I::zero();
+                            };
+                            let pn_epoch::base::BaseScore::Exact(value) = &entry.score else {
+                                panic!("rational fixture")
+                            };
+                            let base = I::point(Q::parse(value));
+                            if source == target {
+                                base
+                            } else {
+                                base.mul(powers[target][hop])
+                            }
+                        })
+                        .collect()
+                })
+                .collect()
+        })
+        .collect();
+    let sources = &state.view().support.sources;
+    let emissions: Vec<_> = actors.iter().map(|a| I::point(Q::parse(&sources[*a].emission))).collect();
+    let counts: Vec<_> = actors
+        .iter()
+        .map(|a| {
+            I::point(Q(
+                i128::from(state.view().ledger.counts[&pn_records::burn::Address((*a).clone())].0),
+                1,
+            ))
+        })
+        .collect();
+    let rates: Vec<_> = actors.iter().map(|a| I::point(Q::parse(&sources[*a].reduced_rate))).collect();
+    let operator = dense_operator(&hops, &[I::point(Q(1, 3)); 3], &emissions);
+    let mut b = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+    for (target, actor) in actors.iter().enumerate() {
+        let denominator = operator
+            .iter()
+            .zip(&counts)
+            .map(|(row, count)| row[target].mul(*count))
+            .fold(I::zero(), I::add);
+        let numerator = operator
+            .iter()
+            .zip(&counts)
+            .zip(&rates)
+            .map(|((row, count), rate)| row[target].mul(*count).mul(*rate))
+            .fold(I::zero(), I::add);
+        let oracle = numerator.div(denominator);
+        let value = &map.image[*actor];
+        let lo = nrz_cas::Rational::parse(&value.lower, &mut b).unwrap();
+        let hi = nrz_cas::Rational::parse(&value.upper, &mut b).unwrap();
+        let a = nrz_cas::Rational::parse(&format!("{}/{}", oracle.0.0, oracle.0.1), &mut b).unwrap();
+        let z = nrz_cas::Rational::parse(&format!("{}/{}", oracle.1.0, oracle.1.1), &mut b).unwrap();
+        assert!(!lo.compare(&a, &mut b).unwrap().is_gt());
+        assert!(!hi.compare(&z, &mut b).unwrap().is_lt());
+    }
+}
+
+fn check_sparse_three_actor_oracle() {
+    let z = Fraction(0, 1);
+    let o = Fraction(1, 1);
+    let hops = vec![
+        vec![vec![o, z, o], vec![o, o, z], vec![z, o, o]],
+        vec![vec![o, o, z], vec![z, o, o], vec![o, z, o]],
+        vec![vec![o, z, o], vec![z, o, z], vec![o, o, o]],
+    ];
+    let mass = [Fraction(1, 2), Fraction(1, 3), Fraction(1, 6)];
+    let emission = [o, z, Fraction(2, 3)];
+    let counts = [Fraction(3, 1), Fraction(2, 1), o];
+    let rates = [Fraction(7, 1), o, Fraction(3, 1)];
+    let expected = dense_operator(&hops, &mass, &emission);
+    let mut b = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+    let input = pn_records::transport::TransportInput {
+        hops: hops
+            .iter()
+            .map(|h| {
+                h.iter()
+                    .map(|row| {
+                        row.iter()
+                            .enumerate()
+                            .filter(|(_, v)| **v != z)
+                            .map(|(i, v)| (i, endpoint_pair(*v, *v, &mut b)))
+                            .collect()
+                    })
+                    .collect()
+            })
+            .collect(),
+        depth_mass: mass.iter().map(|v| endpoint_pair(*v, *v, &mut b)).collect(),
+        emission: emission.iter().map(|v| endpoint_pair(*v, *v, &mut b)).collect(),
+        counts: counts.iter().map(|v| endpoint_pair(*v, *v, &mut b)).collect(),
+        rates: rates.iter().map(|v| endpoint_pair(*v, *v, &mut b)).collect(),
+    };
+    let result = pn_graph::transport::enclosed::evaluate(&input, &mut b, 100).unwrap();
+    for (i, row) in expected.iter().enumerate() {
+        for (j, value) in row.iter().enumerate() {
+            if let Some(got) = result.emitted[i].get(&j) {
+                contains_fraction(got, *value, &mut b);
+            } else {
+                assert_eq!(*value, z);
+            }
+        }
+    }
+    for (target, got) in result.standing.iter().enumerate() {
+        let denominator = expected
+            .iter()
+            .zip(counts)
+            .map(|(row, n)| row[target].times(n))
+            .fold(z, Fraction::plus);
+        let numerator = expected
+            .iter()
+            .zip(counts)
+            .zip(rates)
+            .map(|((row, n), r)| row[target].times(n).times(r))
+            .fold(z, Fraction::plus);
+        contains_fraction(got, numerator.over(denominator), &mut b);
+        assert_eq!(got.lower(), got.upper());
+    }
+}
+
+fn check_solve_accuracy() {
+    let state = conserved_state();
+    let mut results = Vec::new();
+    for (grid, cap) in [("1/16", 2), ("1/4", 1), ("1/16", 1), ("1/4", 2)] {
+        results.push((grid, cap, accuracy_case(&state, grid, cap)));
+    }
+    for cap in [2, 1] {
+        let a = &results.iter().find(|(d, c, _)| *d == "1/16" && *c == cap).unwrap().2;
+        let z = &results.iter().find(|(d, c, _)| *d == "1/4" && *c == cap).unwrap().2;
+        let mut b = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+        for (actor, range) in a {
+            let other = &z[actor];
+            assert!(
+                !nrz_cas::Rational::parse(&range.lower, &mut b)
+                    .unwrap()
+                    .compare(&nrz_cas::Rational::parse(&other.upper, &mut b).unwrap(), &mut b)
+                    .unwrap()
+                    .is_gt()
+            );
+            assert!(
+                !nrz_cas::Rational::parse(&other.lower, &mut b)
+                    .unwrap()
+                    .compare(&nrz_cas::Rational::parse(&range.upper, &mut b).unwrap(), &mut b)
+                    .unwrap()
+                    .is_gt()
+            );
+        }
+    }
+}
+
+fn accuracy_case(state: &pn_epoch::compiler::CompiledState, grid: &str, cap: u64) -> BTreeMap<String, Bounds> {
+    let mut p = conserved_policy(state, grid);
+    p.maximum_iterations = cap;
+    let bound = bind_procedure(state, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+    let accepted = pn_epoch::fence::search(&bound, None).unwrap();
+    let result = pn_epoch::conserved::solve(&bound, &accepted).unwrap();
+    let round = &result.rounds[0];
+    let expected = match (grid, cap) {
+        ("1/16", 2) => 115_287_737,
+        ("1/4", 1) => 71_352_757,
+        ("1/16", 1) => 71_819_896,
+        ("1/4", 2) => 114_618_499,
+        _ => unreachable!(),
+    };
+    assert_eq!(result.work, expected);
+    for work in [expected, expected - 1] {
+        let mut limited = p.clone();
+        limited.maximum_solve_work = work;
+        let bounded = bind_procedure(state, limited.clone(), &Published(limited), Limits::default()).unwrap();
+        assert_eq!(pn_epoch::conserved::solve(&bounded, &accepted).is_ok(), work == expected);
+    }
+    assert_accuracy(round, &accepted.evidence.hull, grid);
+    let mut no_solve = p.clone();
+    no_solve.maximum_solve_work = 1;
+    let limited = bind_procedure(state, no_solve.clone(), &Published(no_solve), Limits::default()).unwrap();
+    assert_eq!(pn_epoch::fence::search(&limited, None).unwrap(), accepted);
+    assert!(pn_epoch::conserved::solve(&limited, &accepted).is_err());
+    let mut altered = result.clone();
+    altered.rounds[0].standing.values_mut().next().unwrap().upper = "999".into();
+    assert!(matches!(
+        pn_epoch::conserved::replay(&bound, &altered),
+        Err(pn_epoch::conserved::Error::Residual)
+    ));
+    round.standing.clone()
+}
+
+fn assert_accuracy(round: &pn_records::conserved::ResidualRound, hull: &BTreeMap<String, Bounds>, grid: &str) {
+    let (residual, radius, widths) = match grid {
+        "1/16" => (
+            "883609435249115/350734766844784",
+            "4418047176245575/350734766844784",
+            [
+                "17480737461808201588044445/816865088589551049228292",
+                "9789239633016473196927485/408432544294775524614146",
+                "9751430014794363498347005/408432544294775524614146",
+                "9656833631773836919198205/408432544294775524614146",
+            ],
+        ),
+        "1/4" => (
+            "110976068652445/43841845855598",
+            "554880343262225/43841845855598",
+            [
+                "4379964147582925249900990/204216272147387762307073",
+                "4914179380769986304243500/204216272147387762307073",
+                "4895274571658931454953260/204216272147387762307073",
+                "4847976380148668165378860/204216272147387762307073",
+            ],
+        ),
+        _ => unreachable!(),
+    };
+    assert_eq!(round.residual, residual);
+    assert_eq!(round.radius, radius);
+    let mut b = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+    for ((actor, value), width) in round.standing.iter().zip(widths) {
+        let h = &hull[actor];
+        let lo = nrz_cas::Rational::parse(&value.lower, &mut b).unwrap();
+        let hi = nrz_cas::Rational::parse(&value.upper, &mut b).unwrap();
+        assert!(
+            !lo.compare(&nrz_cas::Rational::parse(&h.lower, &mut b).unwrap(), &mut b)
+                .unwrap()
+                .is_lt()
+        );
+        assert!(
+            !hi.compare(&nrz_cas::Rational::parse(&h.upper, &mut b).unwrap(), &mut b)
+                .unwrap()
+                .is_gt()
+        );
+        assert_eq!(hi.sub(&lo, &mut b).unwrap().exact_string(&mut b).unwrap(), width);
+    }
+}
+
+fn check_wall_binding() {
+    for wall in ["2", "1/8"] {
+        let state = compile_final_state(
+            &joined::package_at_wall(
+                &joined::anchors(),
+                1,
+                &[("seller", "50"), ("buyer", "60"), ("third", "100")],
+                wall,
+            ),
+            &joined::Verifier,
+            &mut joined::numeric(),
+            Limits::default(),
+            10000,
+        )
+        .unwrap();
+        for k in [3, 1, 4, 2] {
+            let mut p = conserved_policy(&state, "1/16");
+            p.enclosure.as_mut().unwrap().refinement.reduction_ceiling = k;
+            let got = bind_procedure(&state, p.clone(), &Published(p), Limits::default());
+            if k < 2 || (wall == "1/8" && k < 4) {
+                assert!(matches!(got, Err(ProcedureError::WallRange)));
+            } else {
+                assert!(got.is_ok());
+            }
+        }
+    }
+}
+
+fn check_prefix_pins() {
+    let state = conserved_state();
+    for (precision, expected) in [(2, 4_219_729), (4, 4_924_286)] {
+        for cap in [expected, expected - 1] {
+            let mut p = conserved_policy(&state, "1/16");
+            p.precision = Precision::AbsoluteWidthBits(vec![precision]);
+            p.enclosure.as_mut().unwrap().refinement.precision = precision;
+            p.maximum_work = cap;
+            p.enclosure.as_mut().unwrap().operation.work = cap;
+            let result = pn_graph::numeric::activation::sharing::Session::new(&p, "1/400");
+            assert_eq!(result.is_ok(), cap == expected);
+            if let Ok(session) = result {
+                assert_eq!(session.work(), expected);
+            }
         }
     }
 }

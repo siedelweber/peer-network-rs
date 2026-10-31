@@ -222,7 +222,7 @@ fn inputs(
         counts: Vec::new(),
         rates: Vec::new(),
     };
-    for name in &declared.parameters().depth_mass {
+    for name in declared.parameters().depth_mass.iter().take(powers.len()) {
         result.depth_mass.push(Interval::singleton(
             &crate::constant(declared.constants(), name, &mut checks.budget)?,
             &mut checks.budget,
@@ -280,10 +280,11 @@ pub(super) fn run(
     if profile.inverse_wall && !strength.is_zero() && !point.is_empty() {
         return Err(crate::fence::Error::ReferenceWall.into());
     }
+    let depth = state.view().support.by_depth.keys().next_back().copied().unwrap_or(0);
     let exponents = profile
         .shape
         .iter()
-        .take(frozen.parameters().depth_mass.len())
+        .take(depth)
         .map(|name| {
             Ok(strength
                 .mul(

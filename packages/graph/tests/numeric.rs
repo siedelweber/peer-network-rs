@@ -37,6 +37,7 @@ fn procedure() -> Procedure {
         grid: vec!["1".into(), "0".into()],
         margin: "5/4".into(),
         maximum_work: limits.work,
+        maximum_solve_work: limits.work,
         maximum_iterations: 2,
         endpoint_grid: "1/64".into(),
         fence: None,

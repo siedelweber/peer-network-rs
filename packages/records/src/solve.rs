@@ -65,6 +65,7 @@ pub struct Procedure {
     pub grid: Vec<String>,
     pub margin: String,
     pub maximum_work: u64,
+    pub maximum_solve_work: u64,
     pub maximum_iterations: u64,
     pub endpoint_grid: String,
     pub enclosure: Option<crate::primitive::EnclosurePolicy>,
@@ -236,6 +237,7 @@ pub fn validate_procedure(input: &Procedure, limits: Limits) -> Result<(), Recor
         || input.backend.is_empty()
         || input.primitives.is_empty()
         || input.maximum_work == 0
+        || input.maximum_solve_work == 0
         || input.maximum_iterations == 0
         || !nonnegative(&input.margin, &mut budget)?.compare(&one, &mut budget)?.is_gt()
         || nonnegative(&input.endpoint_grid, &mut budget)?.is_zero()

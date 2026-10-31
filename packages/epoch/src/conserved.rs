@@ -130,7 +130,7 @@ pub fn evaluate_map(
     precision: u32,
 ) -> Result<MapRecord, Error> {
     bound.preflight()?;
-    map::run(bound, rung, point, precision, bound.inputs().1.maximum_work, None)
+    map::run(bound, rung, point, precision, bound.inputs().1.maximum_solve_work, None)
 }
 
 /// Rebuild every scalar question and transport factor from the original frozen package.
@@ -154,7 +154,7 @@ pub fn replay_map(bound: &BoundProcedure<'_>, record: &MapRecord) -> Result<MapR
         &record.rung,
         &record.point,
         record.precision,
-        bound.inputs().1.maximum_work,
+        bound.inputs().1.maximum_solve_work,
         Some(record),
     )
 }

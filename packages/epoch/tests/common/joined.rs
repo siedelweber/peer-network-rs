@@ -245,6 +245,15 @@ impl pn_epoch::package::PackageVerifier for Publication {
 }
 
 pub(crate) fn package(acts: &[CandidateAct], boundary: u64, burns: &[(&str, &str)]) -> pn_epoch::package::VerifiedPackage {
+    package_at_wall(acts, boundary, burns, "2")
+}
+
+pub(crate) fn package_at_wall(
+    acts: &[CandidateAct],
+    boundary: u64,
+    burns: &[(&str, &str)],
+    wall_text: &str,
+) -> pn_epoch::package::VerifiedPackage {
     use pn_records::{
         burn::{AcceptedSet, Address},
         test_support::burn,
@@ -296,7 +305,7 @@ pub(crate) fn package(acts: &[CandidateAct], boundary: u64, burns: &[(&str, &str
         let record = pn_records::validate_record(&[], &empty, &[declaration]).unwrap();
         let constants = pn_records::constants::bind_constants(&record, vec![edition]).unwrap();
         let input = pn_epoch::bind_inputs(&constants, parameters, nrz_cas::limits::Limits::default()).unwrap();
-        let literal = numeric.literal("2").unwrap();
+        let literal = numeric.literal(wall_text).unwrap();
         let wall = numeric.computed(&literal).unwrap();
         let price = numeric
             .charged_price(&wall, &input.parameters().numeraire, input.constants().content().floor)

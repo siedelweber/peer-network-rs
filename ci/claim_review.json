@@ -1646,32 +1646,32 @@
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes",
       "before": "",
-      "after": "Claim: Four unsorted positive standing inputs retain Actor-key scalar order, target-owned hop powers and unmodulated self scores in the frozen map; replay reconstructs the original scope and refuses a changed transported image.",
-      "review": "Four distinct unsorted standing values in Actor-key order check original activation coordinates, recipient-owned hop endpoints and unchanged diagonal base scores. Independent certificate replay reconstructs the frozen questions and all retained transport factors and refuses a substituted image. The separate dense endpoint oracle covers the rational composition."
+      "after": "Claim: Four unsorted positive standing inputs retain Actor-key scalar order, target-owned hop powers and unmodulated self scores in the frozen map; replay reconstructs the original scope and refuses a changed transported image. Independently computed activation and root brackets flow through the dense directed operator and pair mediants inside every image coordinate.",
+      "review": "Four distinct unsorted standing coordinates retain their original joins. Independent integral-log, binomial-exp and integer-root activation brackets, with directed rational arithmetic in the dense operator, are contained by each composed image. Frozen replay agrees and a changed image refuses."
     },
     {
       "operation": "pn-epoch::solve::conserved_projection",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:projected-proposals-keep-hull-and-start-binding",
       "before": "",
-      "after": "Claim: Two declared dyadic grids produce different rational proposals outside a singleton non-dyadic hull, yet final projection and replay certify the same exact self-only standing. Changed starting points, contraction fields and non-dyadic proposal grids refuse; no private start enters the declared solve. On a non-singleton hull the replayed zero fence publishes the certified image exactly; a positive rung below the edge uses its evaluated contraction bound and a strictly smaller radius than the margin-only bound.",
-      "review": "Two declared dyadic grids start below a singleton one-third hull at different rational points. Both project the final candidate to one third and certify the exact known self-only fixed point. Altered initial points and a contraction field equal to one refuse at their named checks; a non-dyadic proposal grid refuses. No private start is admitted. Two additional unsorted rung inputs, one eighth and zero, check the contraction equals the replayed fence upper bound divided by margin. At zero the non-singleton hull publishes exactly its certified image; at one eighth the radius is strictly smaller than five times the residual. A forged positive anchor bound without primitive evidence refuses."
+      "after": "Claim: Two declared dyadic grids produce different rational proposals outside a singleton non-dyadic hull, yet final projection and replay certify the same exact self-only standing. Changed starting points, contraction fields and non-dyadic proposal grids refuse; no private start enters the declared solve. On a non-singleton hull the replayed zero fence publishes the certified image exactly; a positive rung below the edge uses its evaluated contraction bound and a strictly smaller radius than the margin-only bound. Eight wall/ceiling bindings refuse unsupported argument ranges before scalar evaluation.",
+      "review": "Two dyadic grids project to the singleton fixed point and reject changed starts, contraction fields and a non-dyadic grid. Two further unsorted rungs on the non-singleton hull show zero-fence image equality and strictly smaller below-edge radius from the evaluated fence; forged unproved anchor bounds refuse. Eight combinations of two frozen walls and four ceilings check typed binding refusal before scalar evaluation."
     },
     {
       "operation": "pn-epoch::solve::conserved_residual",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:projected-residual-replays-conserved-map",
       "before": "",
-      "after": "Claim: The declared rational proposal sequence is followed by one certified map per declared precision, and frozen-package replay reconstructs the residual intersection while rejecting changed residual and radius fields. The compiler view and ledger remain immutable.",
-      "review": "The four-Actor frozen fixture executes two lower-precision rational proposals and one final map, checks complete ordered replay and separate residual/radius mutations, and retains an unchanged compiler view. Literal Work boundaries cover each proposal map, the final map, complete solve, rational transport and one candidate-sized activation. Two declared proposal grids measure their distinct costs. This is finite scoped solve evidence, not the current paper reference artifact or publication authentication. Truncated proposal and precision transcripts and a changed certifying precision refuse; both declared grids have N/N-1 complete-solve controls."
+      "after": "Claim: The declared rational proposal sequence is followed by one certified map per declared precision, and frozen-package replay reconstructs the residual intersection while rejecting changed residual and radius fields. Four denominator/cap declarations pin residuals, radii and each published width within the hull; their two-grid standings intersect, changed standing refuses, and a separate solve exhaustion cannot alter fence selection. The compiler view and ledger remain immutable.",
+      "review": "Four declared denominator/cap pairs retain literal N/N-1 complete-solve Work, exact residual, radius and four coordinate-width pins against the hull. D16 and D4 standings intersect for each cap. Residual, radius, standing and transcript mutations refuse. A separate one-Work solve allowance preserves the selected fence and stops without publication. Existing per-map and kernel boundary controls remain."
     },
     {
       "operation": "pn-epoch::solve::endpoint_transport",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:endpoint-transport-contains-dense-rational-oracle",
       "before": "",
-      "after": "Claim: Twelve unsorted positive endpoint transports contain an independent dense rational operator and its pair mediants, including exact singleton inputs; factor order, emission and source counts are retained rather than inferred from interval row sums.",
-      "review": "Twelve distinct inputs in unsorted seed order compare positive endpoint transport with a separately transcribed dense rational operator and pair mediants. Six singleton cases agree exactly and six widened cases contain the independently computed point. This witnesses composition containment, not conservation inferred from interval row sums."
+      "after": "Claim: Twelve unsorted positive endpoint transports and a three-Actor, three-hop case with missing entries and a zero-emission source contain an independent dense rational operator and its pair mediants, including exact singleton inputs; factor order, emission and source counts are retained rather than inferred from interval row sums.",
+      "review": "Thirteen inputs: the twelve seed/width cases and one three-Actor three-hop sparse case. Dense independent rational normalization, products, mixture and mediants agree; omitted entries and zero emission are explicit, and exact cases remain singleton."
     },
     {
       "operation": "pn-epoch::solve::evidence_records",
