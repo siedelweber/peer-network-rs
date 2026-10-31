@@ -8,40 +8,40 @@
   "rows": [
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "AGPL-3.0-only",
       "name": "nrz-accuracy",
       "resolution": "Git revision moved; version, licence and dependency edges retained",
       "role": "Explicit cumulative comparison attempt/work limits",
-      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=7725f2682a0335930eab10f98c511993596cac2c#7725f2682a0335930eab10f98c511993596cac2c",
+      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=ce7c8c4db0bd14016aa30a0815a46d2fd7299479#ce7c8c4db0bd14016aa30a0815a46d2fd7299479",
       "version": "0.1.0"
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "AGPL-3.0-only",
       "name": "nrz-cas",
       "resolution": "Git revision moved; version, licence and dependency edges retained",
-      "role": "Budgeted exact rational arithmetic, closed constants and certified rational-endpoint enclosures; enclosure API not yet consumed",
-      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=7725f2682a0335930eab10f98c511993596cac2c#7725f2682a0335930eab10f98c511993596cac2c",
+      "role": "Budgeted exact rational arithmetic, closed constants and certified rational-endpoint enclosures consumed by the graph numerical adapter",
+      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=ce7c8c4db0bd14016aa30a0815a46d2fd7299479#ce7c8c4db0bd14016aa30a0815a46d2fd7299479",
       "version": "0.1.0"
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "AGPL-3.0-only",
       "name": "nrz-scalar",
       "resolution": "Git revision moved; version, licence and dependency edges retained",
       "role": "Finite binary arithmetic and outward literal enclosures; not an exact-value substitute",
-      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=7725f2682a0335930eab10f98c511993596cac2c#7725f2682a0335930eab10f98c511993596cac2c",
+      "source": "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=ce7c8c4db0bd14016aa30a0815a46d2fd7299479#ce7c8c4db0bd14016aa30a0815a46d2fd7299479",
       "version": "0.1.0"
     },
     {
       "build_time": "build-time library invoked by num-traits; no own script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "Apache-2.0 OR MIT",
       "name": "autocfg",
@@ -52,7 +52,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "Apache-2.0 OR MIT",
       "name": "equivalent",
@@ -63,7 +63,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "fixedbitset",
@@ -74,7 +74,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "Zlib",
       "name": "foldhash",
@@ -85,7 +85,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "default-hasher, inline-more",
       "license": "MIT OR Apache-2.0",
       "name": "hashbrown",
@@ -96,7 +96,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "hashbrown",
@@ -107,7 +107,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "std",
       "license": "Apache-2.0 OR MIT",
       "name": "indexmap",
@@ -118,7 +118,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "num-bigint",
@@ -129,7 +129,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "num-complex",
@@ -140,7 +140,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "i128",
       "license": "MIT OR Apache-2.0",
       "name": "num-integer",
@@ -151,7 +151,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "num-rational",
@@ -162,7 +162,7 @@
     },
     {
       "build_time": "build.rs probes numeric compiler capabilities through autocfg",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "i128, std",
       "license": "MIT OR Apache-2.0",
       "name": "num-traits",
@@ -173,7 +173,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "default, graphmap, matrix_graph, stable_graph, std",
       "license": "MIT OR Apache-2.0",
       "name": "petgraph",
@@ -184,7 +184,7 @@
     },
     {
       "build_time": "build.rs probes compiler and span capabilities; macro support library",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "default, proc-macro",
       "license": "MIT OR Apache-2.0",
       "name": "proc-macro2",
@@ -195,7 +195,7 @@
     },
     {
       "build_time": "build.rs checks compiler diagnostic support; macro token library",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "default, proc-macro",
       "license": "MIT OR Apache-2.0",
       "name": "quote",
@@ -206,7 +206,7 @@
     },
     {
       "build_time": "build.rs writes private bindings and checks compiler capabilities; derive delegates to serde_derive",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "default, derive, serde_derive, std",
       "license": "MIT OR Apache-2.0",
       "name": "serde",
@@ -217,7 +217,7 @@
     },
     {
       "build_time": "build.rs writes private bindings and checks compiler/target capabilities",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "result, std",
       "license": "MIT OR Apache-2.0",
       "name": "serde_core",
@@ -228,7 +228,7 @@
     },
     {
       "build_time": "procedural macro expands serialization derives; no build script",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "default",
       "license": "MIT OR Apache-2.0",
       "name": "serde_derive",
@@ -239,7 +239,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "clone-impls, default, derive, full, parsing, printing, proc-macro, visit-mut",
       "license": "MIT OR Apache-2.0",
       "name": "syn",
@@ -250,7 +250,7 @@
     },
     {
       "build_time": "procedural macro expands typed errors; no build script",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "MIT OR Apache-2.0",
       "name": "thiserror-impl",
@@ -261,7 +261,7 @@
     },
     {
       "build_time": "build.rs writes private bindings and probes error/backtrace support; derive delegates to thiserror-impl",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "default, std",
       "license": "MIT OR Apache-2.0",
       "name": "thiserror",
@@ -272,7 +272,7 @@
     },
     {
       "build_time": "No build script or procedural macro",
-      "feature_scope": "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table.",
+      "feature_scope": "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table.",
       "features": "none",
       "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
       "name": "unicode-ident",

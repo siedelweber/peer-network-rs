@@ -2,40 +2,40 @@ namespace = "org.peer-network.numeric.dependencies"
 version = [1, 0, 0]
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "nrz-accuracy"
 version = "0.1.0"
 license = "AGPL-3.0-only"
 features = "none"
 role = "Explicit cumulative comparison attempt/work limits"
 resolution = "Git revision moved; version, licence and dependency edges retained"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=7725f2682a0335930eab10f98c511993596cac2c#7725f2682a0335930eab10f98c511993596cac2c"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=ce7c8c4db0bd14016aa30a0815a46d2fd7299479#ce7c8c4db0bd14016aa30a0815a46d2fd7299479"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "nrz-cas"
 version = "0.1.0"
 license = "AGPL-3.0-only"
 features = "none"
-role = "Budgeted exact rational arithmetic, closed constants and certified rational-endpoint enclosures; enclosure API not yet consumed"
+role = "Budgeted exact rational arithmetic, closed constants and certified rational-endpoint enclosures consumed by the graph numerical adapter"
 resolution = "Git revision moved; version, licence and dependency edges retained"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=7725f2682a0335930eab10f98c511993596cac2c#7725f2682a0335930eab10f98c511993596cac2c"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=ce7c8c4db0bd14016aa30a0815a46d2fd7299479#ce7c8c4db0bd14016aa30a0815a46d2fd7299479"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "nrz-scalar"
 version = "0.1.0"
 license = "AGPL-3.0-only"
 features = "none"
 role = "Finite binary arithmetic and outward literal enclosures; not an exact-value substitute"
 resolution = "Git revision moved; version, licence and dependency edges retained"
-source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=7725f2682a0335930eab10f98c511993596cac2c#7725f2682a0335930eab10f98c511993596cac2c"
+source = "git+https://github.com/naturrhythmuszentrum/naturrhythmuszentrum?rev=ce7c8c4db0bd14016aa30a0815a46d2fd7299479#ce7c8c4db0bd14016aa30a0815a46d2fd7299479"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "autocfg"
 version = "1.5.1"
 license = "Apache-2.0 OR MIT"
@@ -46,7 +46,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "build-time library invoked by num-traits; no own script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "equivalent"
 version = "1.0.3"
 license = "Apache-2.0 OR MIT"
@@ -57,7 +57,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "fixedbitset"
 version = "0.5.7"
 license = "MIT OR Apache-2.0"
@@ -68,7 +68,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "foldhash"
 version = "0.1.5"
 license = "Zlib"
@@ -79,7 +79,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "hashbrown"
 version = "0.15.5"
 license = "MIT OR Apache-2.0"
@@ -90,7 +90,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "hashbrown"
 version = "0.17.1"
 license = "MIT OR Apache-2.0"
@@ -101,7 +101,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "indexmap"
 version = "2.14.2"
 license = "Apache-2.0 OR MIT"
@@ -112,7 +112,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-bigint"
 version = "0.4.8"
 license = "MIT OR Apache-2.0"
@@ -123,7 +123,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-complex"
 version = "0.4.6"
 license = "MIT OR Apache-2.0"
@@ -134,7 +134,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-integer"
 version = "0.1.47"
 license = "MIT OR Apache-2.0"
@@ -145,7 +145,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-rational"
 version = "0.4.2"
 license = "MIT OR Apache-2.0"
@@ -156,7 +156,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "num-traits"
 version = "0.2.19"
 license = "MIT OR Apache-2.0"
@@ -167,7 +167,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "build.rs probes numeric compiler capabilities through autocfg"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "petgraph"
 version = "0.8.3"
 license = "MIT OR Apache-2.0"
@@ -178,7 +178,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "proc-macro2"
 version = "1.0.107"
 license = "MIT OR Apache-2.0"
@@ -189,7 +189,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "build.rs probes compiler and span capabilities; macro support library"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "quote"
 version = "1.0.47"
 license = "MIT OR Apache-2.0"
@@ -200,7 +200,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "build.rs checks compiler diagnostic support; macro token library"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "serde"
 version = "1.0.229"
 license = "MIT OR Apache-2.0"
@@ -211,7 +211,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "build.rs writes private bindings and checks compiler capabilities; derive delegates to serde_derive"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "serde_core"
 version = "1.0.229"
 license = "MIT OR Apache-2.0"
@@ -222,7 +222,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "build.rs writes private bindings and checks compiler/target capabilities"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "serde_derive"
 version = "1.0.229"
 license = "MIT OR Apache-2.0"
@@ -233,7 +233,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "procedural macro expands serialization derives; no build script"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "syn"
 version = "3.0.9"
 license = "MIT OR Apache-2.0"
@@ -244,7 +244,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "No build script or procedural macro"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "thiserror-impl"
 version = "2.0.21"
 license = "MIT OR Apache-2.0"
@@ -255,7 +255,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "procedural macro expands typed errors; no build script"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "thiserror"
 version = "2.0.21"
 license = "MIT OR Apache-2.0"
@@ -266,7 +266,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 build_time = "build.rs writes private bindings and probes error/backtrace support; derive delegates to thiserror-impl"
 
 [[rows]]
-feature_scope = "Features resolved for pn-records built on its own; workspace-unified petgraph features are recorded by the graph dependency table."
+feature_scope = "Features resolved for pn-records built on its own, including development/test unification; normal/build-only differences are stated in the admission amendment. Workspace-unified petgraph features are recorded by the graph dependency table."
 name = "unicode-ident"
 version = "1.0.27"
 license = "(MIT OR Apache-2.0) AND Unicode-3.0"

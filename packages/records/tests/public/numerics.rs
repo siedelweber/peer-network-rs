@@ -70,6 +70,7 @@ fn unit_costs() {
 /// ´test:integration:floor-decisions´
 #[test]
 fn floor_decisions() {
+    literal_displays();
     let mut c = context();
     for (text, expected) in [
         ("2999999999999999999/37000000000000000000", FloorComparison::Below),
@@ -97,6 +98,25 @@ fn floor_decisions() {
             Ok(FloorComparison::Indecisive)
         );
     }
+}
+
+fn literal_displays() {
+    let mut c = context();
+    for (source, expected) in [("1/3", "0.3333333333333333"), ("3/2", "1.5000000000000000")] {
+        let literal = c.literal(source).unwrap();
+        let value = c.computed(&literal).unwrap();
+        assert_eq!(value.exact(), source);
+        assert_eq!(c.display(&value, 16).unwrap().text(), expected);
+        assert_eq!(value.exact(), source);
+    }
+    let arithmetic = nrz_scalar::ArithmeticContext::new().unwrap();
+    let third = nrz_scalar::NumericLiteral::new("1/3", nrz_scalar::LiteralLimits::default())
+        .unwrap()
+        .decode::<f64>(&arithmetic)
+        .unwrap();
+    // The old and new revisions return these same distinct outward endpoints.
+    assert_eq!(third.enclosure().lower().get().to_bits(), 4_599_676_419_421_066_580);
+    assert_eq!(third.enclosure().upper().get().to_bits(), 4_599_676_419_421_066_582);
 }
 
 /// Claim: A charged price is derived from one exact wall-numeraire pair, and a consummated vintage retains that pair and total when a later price changes; no independently supplied price can disagree with its wall.
