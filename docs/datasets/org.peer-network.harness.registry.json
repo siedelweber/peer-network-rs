@@ -4285,7 +4285,8 @@
         "pn-epoch::solve::conserved_map",
         "pn-epoch::solve::conserved_residual",
         "pn-epoch::solve::conserved_projection",
-        "pn-epoch::solve::reference_wall_binding"
+        "pn-epoch::solve::reference_wall_binding",
+        "pn-epoch::solve::enclosed_wall_solve"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
@@ -4311,7 +4312,8 @@
         "pn-graph::numeric::reference_wall_oracle",
         "pn-graph::numeric::reference_wall_work",
         "pn-graph::numeric::reference_wall_controls",
-        "pn-graph::numeric::reference_wall_branches"
+        "pn-graph::numeric::reference_wall_branches",
+        "pn-graph::numeric::enclosed_wall_clamp"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",

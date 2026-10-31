@@ -54,6 +54,7 @@ pub(super) fn run(
     rung: &str,
     interrupt_at: Option<u64>,
     evidence: &mut Evidence,
+    enclosed_wall: bool,
 ) -> Result<Option<Outcome>, Error> {
     let policy = procedure.enclosure.as_ref().ok_or(Error::Profile)?;
     let mut preparation = Budget::new(policy.operation.clone())?;
@@ -62,7 +63,7 @@ pub(super) fn run(
         evidence.attempts.push(exact(rung));
         return Ok(None);
     }
-    if procedure.fence.as_ref().is_some_and(|profile| profile.inverse_wall) {
+    if procedure.fence.as_ref().is_some_and(|profile| profile.inverse_wall) && !enclosed_wall {
         return Err(Error::ReferenceWall);
     }
     let query = super::question(procedure, prepared, rung)?;

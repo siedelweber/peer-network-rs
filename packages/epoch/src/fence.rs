@@ -27,7 +27,7 @@ pub struct Search {
 pub enum Error {
     #[error("fence declaration does not bind a supported reference profile")]
     Profile,
-    #[error("inverse-gain wall remains held under open:design:reference-wall-route")]
+    #[error("inverse-gain wall requires its checked reference enclosure")]
     ReferenceWall,
     #[error("procedure: {0}")]
     Procedure(#[from] crate::solve::ProcedureError),
@@ -39,7 +39,7 @@ pub enum Error {
     Arithmetic(#[from] nrz_cas::Fault),
 }
 
-fn prepare(bound: &BoundProcedure<'_>) -> Result<(Inputs, BTreeMap<String, Bounds>), Error> {
+pub(crate) fn prepare(bound: &BoundProcedure<'_>) -> Result<(Inputs, BTreeMap<String, Bounds>), Error> {
     let (state, procedure) = bound.inputs();
     let profile = procedure.fence.as_ref().ok_or(Error::Profile)?;
     let declared = state.package().input().inputs.last().ok_or(Error::Profile)?;
@@ -90,15 +90,18 @@ fn prepare(bound: &BoundProcedure<'_>) -> Result<(Inputs, BTreeMap<String, Bound
     }
     Ok((
         Inputs {
-            wall: state
-                .package()
-                .input()
-                .prices
-                .last()
-                .ok_or(Error::Profile)?
-                .wall()
-                .exact()
-                .into(),
+            wall: bound.enclosed_wall().map_or_else(
+                || {
+                    state
+                        .package()
+                        .input()
+                        .prices
+                        .last()
+                        .ok_or(Error::Profile)
+                        .map(|price| price.wall().exact().into())
+                },
+                |wall| Ok(wall.lower.clone()),
+            )?,
             bleed_squared: bleed.exact_string(&mut budget)?,
             width: width.exact_string(&mut budget)?,
             cumulative_tilt: cumulative.exact_string(&mut budget)?,
@@ -142,7 +145,7 @@ pub fn replay(bound: &BoundProcedure<'_>, rung: &str, record: &PrimitiveRecord) 
         return Err(Error::Profile);
     }
     let (prepared, _) = prepare(bound)?;
-    if procedure.fence.as_ref().is_some_and(|profile| profile.inverse_wall) {
+    if procedure.fence.as_ref().is_some_and(|profile| profile.inverse_wall) && bound.enclosed_wall().is_none() {
         return Err(Error::ReferenceWall);
     }
     let expected = question(procedure, &prepared, rung)?;
@@ -191,7 +194,15 @@ pub fn search(bound: &BoundProcedure<'_>, interrupt_at: Option<u64>) -> Result<S
         operational_stop: None,
     };
     for rung in &procedure.grid {
-        let stop = attempts::run(procedure, sequence, &prepared, rung, interrupt_at, &mut result.evidence)?;
+        let stop = attempts::run(
+            procedure,
+            sequence,
+            &prepared,
+            rung,
+            interrupt_at,
+            &mut result.evidence,
+            bound.enclosed_wall().is_some(),
+        )?;
         if let Some(stop) = stop {
             result.operational_stop = Some(stop);
             break;

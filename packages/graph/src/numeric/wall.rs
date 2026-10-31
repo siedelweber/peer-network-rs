@@ -101,6 +101,7 @@ impl Run<'_> {
                     standing: range(x, x, &mut self.budget)?,
                     bleed_squared: "1/400".into(),
                     wall: None,
+                    wall_enclosure: None,
                     quantity: Quantity::ResponsiveLogGain,
                 },
                 &mut self.budget,

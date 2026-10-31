@@ -80,6 +80,7 @@ fn point(
         },
         bleed_squared: input.bleed_squared.clone(),
         wall: None,
+        wall_enclosure: None,
         quantity,
     };
     let result = super::evaluate(&allowance(procedure, budget)?, &request, None)?.primitive;
@@ -88,6 +89,9 @@ fn point(
 }
 
 fn endpoints(input: &Request, budget: &mut Budget) -> Result<(Rational, Rational, bool), Error> {
+    if input.wall_enclosure.is_some() {
+        return Err(Error::Unsupported);
+    }
     super::validate(input, budget)?;
     if Rational::parse(&input.bleed_squared, budget)? != Rational::parse("1/400", budget)? {
         return Err(Error::Unsupported);

@@ -7645,6 +7645,16 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/wall.rs",
+      "item": "wall::BoundReference < '_ >::consume",
+      "owner": "EPOCH",
+      "signature": "fn consume < 'a > (& self , bound : & BoundProcedure < 'a > , record : & Record) -> Result < BoundProcedure < 'a > , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
     }
   ],
   "metrics": [
@@ -14343,7 +14353,7 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/solve.rs::solve::bind_procedure",
-      "body": "{ let inputs = state . package () . input () . inputs . last () . ok_or (ProcedureError :: Binding) ? ; if procedure . boundary != inputs . parameters () . boundary || procedure . edition != inputs . parameters () . edition || procedure . name != inputs . constants () . content () . numerical_procedure { return Err (ProcedureError :: Binding) ; } validate_procedure (& procedure , limits . clone ()) ? ; wall_range (state , & procedure , limits) ? ; if ! verifier . published_procedure (& procedure) { return Err (ProcedureError :: Publication) ; } Ok (BoundProcedure { state , procedure }) }",
+      "body": "{ let inputs = state . package () . input () . inputs . last () . ok_or (ProcedureError :: Binding) ? ; if procedure . boundary != inputs . parameters () . boundary || procedure . edition != inputs . parameters () . edition || procedure . name != inputs . constants () . content () . numerical_procedure { return Err (ProcedureError :: Binding) ; } validate_procedure (& procedure , limits . clone ()) ? ; wall_range (state , & procedure , limits) ? ; if ! verifier . published_procedure (& procedure) { return Err (ProcedureError :: Publication) ; } Ok (BoundProcedure { state , procedure , enclosed_wall : None , }) }",
       "class_decision": "solve-public-records",
       "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
       "assessments": {
@@ -14618,7 +14628,7 @@
     },
     {
       "operation": "pn-graph::packages/graph/src/numeric/activation/fence.rs::numeric::activation::fence::query",
-      "body": "{ super :: super :: preflight (procedure) ? ; let policy = procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? ; let mut budget = Budget :: new (policy . operation . clone ()) ? ; let width = super :: nonnegative (& input . width , & mut budget) ? ; let tilt = super :: nonnegative (& input . cumulative_tilt , & mut budget) ? ; let margin = super :: nonnegative (& input . margin , & mut budget) ? ; if ! margin . compare (& Rational :: parse (\"1\" , & mut budget) ? , & mut budget) ? . is_gt () { return Err (Error :: Declaration) ; } if width . is_zero () || tilt . is_zero () { return Ok (Query { coordinates : Vec :: new () , nodes : vec ! [Node :: Rational (\"0\" . into ())] , target : 0 , goal : Goal :: AtMost (\"1\" . into ()) , }) ; } let request = Request { standing : Range { lower : input . wall . clone () , upper : input . wall . clone () , } , bleed_squared : input . bleed_squared . clone () , wall : None , quantity : Quantity :: ResponsiveLogGain , } ; let mut result = super :: query (& request , & mut budget) ? ; for factor in [\"2\" , & input . margin , & input . width , & input . cumulative_tilt] { let scalar = super :: push (& mut result . nodes , Node :: Rational (factor . into ())) ; result . target = super :: push (& mut result . nodes , Node :: Multiply (result . target , scalar)) ; } result . goal = Goal :: AtMost (\"1\" . into ()) ; Ok (result) }",
+      "body": "{ super :: super :: preflight (procedure) ? ; let policy = procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? ; let mut budget = Budget :: new (policy . operation . clone ()) ? ; let width = super :: nonnegative (& input . width , & mut budget) ? ; let tilt = super :: nonnegative (& input . cumulative_tilt , & mut budget) ? ; let margin = super :: nonnegative (& input . margin , & mut budget) ? ; if ! margin . compare (& Rational :: parse (\"1\" , & mut budget) ? , & mut budget) ? . is_gt () { return Err (Error :: Declaration) ; } if width . is_zero () || tilt . is_zero () { return Ok (Query { coordinates : Vec :: new () , nodes : vec ! [Node :: Rational (\"0\" . into ())] , target : 0 , goal : Goal :: AtMost (\"1\" . into ()) , }) ; } let request = Request { standing : Range { lower : input . wall . clone () , upper : input . wall . clone () , } , bleed_squared : input . bleed_squared . clone () , wall : None , wall_enclosure : None , quantity : Quantity :: ResponsiveLogGain , } ; let mut result = super :: query (& request , & mut budget) ? ; for factor in [\"2\" , & input . margin , & input . width , & input . cumulative_tilt] { let scalar = super :: push (& mut result . nodes , Node :: Rational (factor . into ())) ; result . target = super :: push (& mut result . nodes , Node :: Multiply (result . target , scalar)) ; } result . goal = Goal :: AtMost (\"1\" . into ()) ; Ok (result) }",
       "class_decision": "solve-public-records",
       "item_premise": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
       "assessments": {
@@ -14629,7 +14639,7 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/fence.rs::fence::search",
-      "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; let Precision :: AbsoluteWidthBits (sequence) = & procedure . precision else { return Err (Error :: Profile) ; } ; let (prepared , hull) = prepare (bound) ? ; let mut result = Search { evidence : Evidence { hull , attempts : Vec :: new () , residual : None , primitives : Vec :: new () , } , selected : None , operational_stop : None , } ; for rung in & procedure . grid { let stop = attempts :: run (procedure , sequence , & prepared , rung , interrupt_at , & mut result . evidence) ? ; if let Some (stop) = stop { result . operational_stop = Some (stop) ; break ; } if result . evidence . attempts . last () . is_some_and (| a | a . completion == pn_records :: solve :: Completion :: Pass) { result . selected = Some (rung . clone ()) ; break ; } } Ok (result) }",
+      "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; let Precision :: AbsoluteWidthBits (sequence) = & procedure . precision else { return Err (Error :: Profile) ; } ; let (prepared , hull) = prepare (bound) ? ; let mut result = Search { evidence : Evidence { hull , attempts : Vec :: new () , residual : None , primitives : Vec :: new () , } , selected : None , operational_stop : None , } ; for rung in & procedure . grid { let stop = attempts :: run (procedure , sequence , & prepared , rung , interrupt_at , & mut result . evidence , bound . enclosed_wall () . is_some () ,) ? ; if let Some (stop) = stop { result . operational_stop = Some (stop) ; break ; } if result . evidence . attempts . last () . is_some_and (| a | a . completion == pn_records :: solve :: Completion :: Pass) { result . selected = Some (rung . clone ()) ; break ; } } Ok (result) }",
       "class_decision": "solve-public-records",
       "item_premise": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
       "assessments": {
@@ -14695,7 +14705,7 @@
     },
     {
       "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evaluate",
-      "body": "{ if ! self . active { return Err (Error :: Declaration) ; } self . active = false ; if ! self . production || input . bleed_squared != self . bleed { return Err (Error :: Declaration) ; } self . budget . work (key_work (input) ? , Location :: new (\"evaluation memo key\")) ? ; for (index , entry) in self . retained . iter () . enumerate () { self . budget . work (key_work (& entry . input) ? , Location :: new (\"evaluation memo comparison\")) ? ; if entry . input == * input { self . active = true ; return Ok (index) ; } } if u64 :: try_from (self . retained . len ()) . map_err (| _ | Error :: Declaration) ? >= self . procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? . operation . proof_nodes { return Err (Error :: Declaration) ; } let query = super :: shared_query (input , & mut self . budget , Some (& self . constants)) ? ; let record = checked (& self . procedure , query , None , & mut self . budget) ? ; if record . evidence . attachment . is_none () || record . evidence . resource_fault . is_some () { return Err (Error :: Declaration) ; } self . retained . push (Evaluation { input : input . clone () , primitive : record , }) ; self . active = true ; Ok (self . retained . len () - 1) }",
+      "body": "{ if ! self . active { return Err (Error :: Declaration) ; } self . active = false ; if ! self . production || input . bleed_squared != self . bleed { return Err (Error :: Declaration) ; } super :: wall_binding (& self . procedure , input , & mut self . budget) ? ; self . budget . work (key_work (input) ? , Location :: new (\"evaluation memo key\")) ? ; for (index , entry) in self . retained . iter () . enumerate () { self . budget . work (key_work (& entry . input) ? , Location :: new (\"evaluation memo comparison\")) ? ; if entry . input == * input { self . active = true ; return Ok (index) ; } } if u64 :: try_from (self . retained . len ()) . map_err (| _ | Error :: Declaration) ? >= self . procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? . operation . proof_nodes { return Err (Error :: Declaration) ; } let query = super :: shared_query (input , & mut self . budget , Some (& self . constants)) ? ; let record = checked (& self . procedure , query , None , & mut self . budget) ? ; if record . evidence . attachment . is_none () || record . evidence . resource_fault . is_some () { return Err (Error :: Declaration) ; } self . retained . push (Evaluation { input : input . clone () , primitive : record , }) ; self . active = true ; Ok (self . retained . len () - 1) }",
       "class_decision": "activation-base-public",
       "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
       "assessments": {
@@ -14706,7 +14716,7 @@
     },
     {
       "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::replay",
-      "body": "{ if ! self . active { return Err (Error :: Declaration) ; } self . active = false ; if self . production || input . input . bleed_squared != self . bleed { return Err (Error :: Declaration) ; } self . budget . work (key_work (& input . input) ? , Location :: new (\"evaluation memo key\")) ? ; for entry in & self . retained { self . budget . work (key_work (& entry . input) ? , Location :: new (\"evaluation memo comparison\")) ? ; if entry . input == input . input { if entry . primitive . query != input . primitive . query || entry . primitive . precision != input . primitive . precision || entry . primitive . evidence . attachment != input . primitive . evidence . attachment { return Err (Error :: Declaration) ; } self . active = true ; return Ok (entry . primitive . clone ()) ; } } if u64 :: try_from (self . retained . len ()) . map_err (| _ | Error :: Declaration) ? >= self . procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? . operation . proof_nodes { return Err (Error :: Declaration) ; } let query = super :: shared_query (& input . input , & mut self . budget , Some (& self . constants)) ? ; let record = checked (& self . procedure , query , Some (& input . primitive) , & mut self . budget) ? ; if record . evidence . attachment . is_none () || record . evidence . resource_fault . is_some () { return Err (Error :: Declaration) ; } self . retained . push (Evaluation { input : input . input . clone () , primitive : record . clone () , }) ; self . active = true ; Ok (record) }",
+      "body": "{ if ! self . active { return Err (Error :: Declaration) ; } self . active = false ; if self . production || input . input . bleed_squared != self . bleed { return Err (Error :: Declaration) ; } super :: wall_binding (& self . procedure , & input . input , & mut self . budget) ? ; self . budget . work (key_work (& input . input) ? , Location :: new (\"evaluation memo key\")) ? ; for entry in & self . retained { self . budget . work (key_work (& entry . input) ? , Location :: new (\"evaluation memo comparison\")) ? ; if entry . input == input . input { if entry . primitive . query != input . primitive . query || entry . primitive . precision != input . primitive . precision || entry . primitive . evidence . attachment != input . primitive . evidence . attachment { return Err (Error :: Declaration) ; } self . active = true ; return Ok (entry . primitive . clone ()) ; } } if u64 :: try_from (self . retained . len ()) . map_err (| _ | Error :: Declaration) ? >= self . procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? . operation . proof_nodes { return Err (Error :: Declaration) ; } let query = super :: shared_query (& input . input , & mut self . budget , Some (& self . constants)) ? ; let record = checked (& self . procedure , query , Some (& input . primitive) , & mut self . budget) ? ; if record . evidence . attachment . is_none () || record . evidence . resource_fault . is_some () { return Err (Error :: Declaration) ; } self . retained . push (Evaluation { input : input . input . clone () , primitive : record . clone () , }) ; self . active = true ; Ok (record) }",
       "class_decision": "activation-base-public",
       "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
       "assessments": {
@@ -14717,7 +14727,7 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/fence.rs::fence::replay",
-      "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; let Precision :: AbsoluteWidthBits (sequence) = & procedure . precision else { return Err (Error :: Profile) ; } ; if ! procedure . grid . iter () . any (| value | value == rung) || ! sequence . contains (& record . precision) { return Err (Error :: Profile) ; } let (prepared , _) = prepare (bound) ? ; if procedure . fence . as_ref () . is_some_and (| profile | profile . inverse_wall) { return Err (Error :: ReferenceWall) ; } let expected = question (procedure , & prepared , rung) ? ; if expected != record . query { return Err (Error :: Profile) ; } let mut policy = procedure . clone () ; policy . enclosure . as_mut () . ok_or (Error :: Profile) ? . refinement . precision = record . precision ; Ok (pn_graph :: numeric :: replay (& policy , & expected , record . evidence . attachment . as_ref () . ok_or (Error :: Profile) ? , None ,) ?) }",
+      "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; let Precision :: AbsoluteWidthBits (sequence) = & procedure . precision else { return Err (Error :: Profile) ; } ; if ! procedure . grid . iter () . any (| value | value == rung) || ! sequence . contains (& record . precision) { return Err (Error :: Profile) ; } let (prepared , _) = prepare (bound) ? ; if procedure . fence . as_ref () . is_some_and (| profile | profile . inverse_wall) && bound . enclosed_wall () . is_none () { return Err (Error :: ReferenceWall) ; } let expected = question (procedure , & prepared , rung) ? ; if expected != record . query { return Err (Error :: Profile) ; } let mut policy = procedure . clone () ; policy . enclosure . as_mut () . ok_or (Error :: Profile) ? . refinement . precision = record . precision ; Ok (pn_graph :: numeric :: replay (& policy , & expected , record . evidence . attachment . as_ref () . ok_or (Error :: Profile) ? , None ,) ?) }",
       "class_decision": "solve-public-records",
       "item_premise": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
       "assessments": {
@@ -14841,6 +14851,17 @@
       "body": "{ Ok (pn_graph :: numeric :: wall :: replay (self . procedure , & self . input , record) ?) }",
       "class_decision": "reference-wall-public",
       "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::consume",
+      "body": "{ use nrz_cas :: { Rational , limits :: Budget } ; use pn_records :: wall :: Verdict ; if bound . inputs () . 1 != self . procedure || self . procedure . fence . as_ref () . is_none_or (| p | ! p . inverse_wall) { return Err (Error :: Scope) ; } let (prepared , _) = crate :: fence :: prepare (bound) ? ; let mut b = Budget :: new (self . procedure . enclosure . as_ref () . ok_or (Error :: Scope) ? . operation . clone ()) ? ; if Rational :: parse (& prepared . width , & mut b) ? != Rational :: parse (& self . input . width , & mut b) ? || Rational :: parse (& prepared . cumulative_tilt , & mut b) ? != Rational :: parse (& self . input . cumulative_tilt , & mut b) ? { return Err (Error :: Scope) ; } let checked = self . replay (record) ? ; let branches = checked . branches . as_ref () . ok_or (Error :: Scope) ? ; if checked . indecisive || branches . above_floor != Verdict :: Pass || branches . policy_valid != Verdict :: Pass { return Err (Error :: Scope) ; } Ok (bound . with_enclosed_wall (branches . delivered . clone ()) ?) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "The complete public reference definition and checked record bind to the immutable compiled support; only public rational wall bounds are retained, with no price mutation or secret input.",
       "assessments": {
         "full_recording": "certified-primitives-public",
         "secret_flow": "certified-primitives-public",
@@ -19730,7 +19751,7 @@
       "item": "conserved::MapRecord",
       "package": "pn-records",
       "path": "packages/records/src/conserved.rs",
-      "syntax": "# [doc = \" A map's original point, ordered scalar premises and exact endpoint composition.\"] # [doc = \" Work is the producer's consumption; replay measures its own independent consumption.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct MapRecord { pub edition : crate :: DeclarationId , pub boundary : u64 , pub point : BTreeMap < String , String > , pub rung : String , pub precision : u32 , pub primitives : Vec < PrimitiveRecord > , pub image : BTreeMap < String , Bounds > , pub transport_input : crate :: transport :: TransportInput < nrz_cas :: enclosure :: Interval > , pub transport : crate :: transport :: TransportOutput < nrz_cas :: enclosure :: Interval > , pub work : u64 , pub composition_work : u64 , }"
+      "syntax": "# [doc = \" A map's original point, ordered scalar premises and exact endpoint composition.\"] # [doc = \" Work is the producer's consumption; replay measures its own independent consumption.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct MapRecord { pub edition : crate :: DeclarationId , pub boundary : u64 , pub point : BTreeMap < String , String > , pub rung : String , pub precision : u32 , pub wall_enclosure : Option < crate :: primitive :: Range > , pub primitives : Vec < PrimitiveRecord > , pub image : BTreeMap < String , Bounds > , pub transport_input : crate :: transport :: TransportInput < nrz_cas :: enclosure :: Interval > , pub transport : crate :: transport :: TransportOutput < nrz_cas :: enclosure :: Interval > , pub work : u64 , pub composition_work : u64 , }"
     },
     {
       "item": "conserved::SolveRecord",
@@ -20690,7 +20711,7 @@
       "item": "numeric::activation::Request",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/activation.rs",
-      "syntax": "# [doc = \" Public reduced-standing box and declared squared bleed; a wall is an exact rational.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Request { pub standing : Range , pub bleed_squared : String , pub wall : Option < String > , pub quantity : Quantity , }"
+      "syntax": "# [doc = \" Public standing box and bleed, with either a rational or independent enclosed wall.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Request { pub standing : Range , pub bleed_squared : String , pub wall : Option < String > , pub wall_enclosure : Option < Range > , pub quantity : Quantity , }"
     },
     {
       "item": "numeric::activation::Evaluation",
@@ -21128,7 +21149,7 @@
       "item": "fence::Error",
       "package": "pn-epoch",
       "path": "packages/epoch/src/fence.rs",
-      "syntax": "# [doc = \" Preparation and scope refusals are not mathematical fence failures.\"] # [doc = \" (´def:compiler:fence-search´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"fence declaration does not bind a supported reference profile\")] Profile , # [error (\"inverse-gain wall remains held under open:design:reference-wall-route\")] ReferenceWall , # [error (\"procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"numerical request: {0}\")] Numeric (# [from] pn_graph :: numeric :: Error) , # [error (\"constant profile: {0}\")] Input (# [from] crate :: InputError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+      "syntax": "# [doc = \" Preparation and scope refusals are not mathematical fence failures.\"] # [doc = \" (´def:compiler:fence-search´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"fence declaration does not bind a supported reference profile\")] Profile , # [error (\"inverse-gain wall requires its checked reference enclosure\")] ReferenceWall , # [error (\"procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"numerical request: {0}\")] Numeric (# [from] pn_graph :: numeric :: Error) , # [error (\"constant profile: {0}\")] Input (# [from] crate :: InputError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
     },
     {
       "item": "ledger::BurnSnapshot",
@@ -21188,7 +21209,7 @@
       "item": "solve::BoundProcedure",
       "package": "pn-epoch",
       "path": "packages/epoch/src/solve.rs",
-      "syntax": "# [doc = \" A procedure bound to this immutable compiled state; composition remains separate.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Debug)] pub struct BoundProcedure < 'a > { state : & 'a CompiledState , procedure : Procedure , }"
+      "syntax": "# [doc = \" A procedure bound to this immutable compiled state; composition remains separate.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Debug)] pub struct BoundProcedure < 'a > { state : & 'a CompiledState , procedure : Procedure , enclosed_wall : Option < pn_records :: primitive :: Range > , }"
     },
     {
       "item": "solve::ProcedureError",
@@ -21230,7 +21251,7 @@
       "item": "wall::Error",
       "package": "pn-epoch",
       "path": "packages/epoch/src/wall.rs",
-      "syntax": "# [doc = \" Publication and scalar refusals retain distinct categories.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"reference definition publication refused\")] Publication , # [error (\"bound procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"reference wall: {0}\")] Wall (# [from] pn_graph :: numeric :: wall :: Error) , }"
+      "syntax": "# [doc = \" Publication and scalar refusals retain distinct categories.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"reference wall differs from the frozen composition or has unresolved branches\")] Scope , # [error (\"reference composition: {0}\")] Fence (# [from] crate :: fence :: Error) , # [error (\"reference binding arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"reference definition publication refused\")] Publication , # [error (\"bound procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"reference wall: {0}\")] Wall (# [from] pn_graph :: numeric :: wall :: Error) , }"
     },
     {
       "item": "FamilyProfile",
@@ -21850,6 +21871,7 @@
       "premises": "Public reference definitions and complete rational numerical evidence only. The immutable charged price is never replaced. Scalar queries and full returned evidence are recorded; no secret, publication encoder or subscriber is introduced.",
       "membership": {
         "explicit": [
+          "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::consume",
           "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::evaluate",
           "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::replay",
           "pn-epoch::packages/epoch/src/wall.rs::wall::bind",

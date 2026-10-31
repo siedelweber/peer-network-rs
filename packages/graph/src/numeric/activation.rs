@@ -24,13 +24,14 @@ pub enum Quantity {
     GeneralizedLogGain,
 }
 
-/// Public reduced-standing box and declared squared bleed; a wall is an exact rational.
+/// Public standing box and bleed, with either a rational or independent enclosed wall.
 /// (´def:numerics:activation´)
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Request {
     pub standing: Range,
     pub bleed_squared: String,
     pub wall: Option<String>,
+    pub wall_enclosure: Option<Range>,
     pub quantity: Quantity,
 }
 
@@ -56,6 +57,23 @@ fn nonnegative(text: &str, budget: &mut Budget) -> Result<Rational, Error> {
     Ok(value)
 }
 
+fn wall_binding(procedure: &Procedure, input: &Request, budget: &mut Budget) -> Result<(), Error> {
+    if let Some(wall) = &input.wall_enclosure {
+        let k = procedure
+            .enclosure
+            .as_ref()
+            .ok_or(Error::Unsupported)?
+            .refinement
+            .reduction_ceiling;
+        let scale = 1_u64.checked_shl(k).filter(|v| *v > 2).ok_or(Error::Declaration)?;
+        let minimum = Rational::parse("1", budget)?.div(&Rational::parse(&(scale - 2).to_string(), budget)?, budget)?;
+        if Rational::parse(&wall.lower, budget)?.compare(&minimum, budget)?.is_lt() {
+            return Err(Error::Declaration);
+        }
+    }
+    Ok(())
+}
+
 fn validate(input: &Request, budget: &mut Budget) -> Result<Option<String>, Error> {
     let lower = nonnegative(&input.standing.lower, budget)?;
     let upper = nonnegative(&input.standing.upper, budget)?;
@@ -68,13 +86,22 @@ fn validate(input: &Request, budget: &mut Budget) -> Result<Option<String>, Erro
         input.quantity,
         Quantity::Clamped | Quantity::Hop { .. } | Quantity::GeneralizedLogGain
     );
-    if clamped != input.wall.is_some() {
+    if clamped != (input.wall.is_some() || input.wall_enclosure.is_some())
+        || (input.wall.is_some() && input.wall_enclosure.is_some())
+    {
         return Err(Error::Declaration);
     }
     if let Some(wall) = &input.wall
         && nonnegative(wall, budget)?.is_zero()
     {
         return Err(Error::Declaration);
+    }
+    if let Some(wall) = &input.wall_enclosure {
+        let a = nonnegative(&wall.lower, budget)?;
+        let z = nonnegative(&wall.upper, budget)?;
+        if a.is_zero() || a.compare(&z, budget)?.is_gt() {
+            return Err(Error::Declaration);
+        }
     }
     if matches!(input.quantity, Quantity::ResponsiveLogGain | Quantity::CleanScreenLogGain) && lower.is_zero() {
         return Err(Error::Declaration);
@@ -136,6 +163,10 @@ fn shared_query(input: &Request, budget: &mut Budget, constants: Option<&[Range;
     let x = if let Some(wall) = &input.wall {
         let wall = push(&mut nodes, Node::Rational(wall.clone()));
         push(&mut nodes, Node::Clamp(0, wall))
+    } else if input.wall_enclosure.is_some() {
+        let index = if constants.is_some() { 3 } else { 1 };
+        let wall = push(&mut nodes, Node::Coordinate(index));
+        push(&mut nodes, Node::Clamp(0, wall))
     } else {
         0
     };
@@ -155,7 +186,7 @@ fn shared_query(input: &Request, budget: &mut Budget, constants: Option<&[Range;
             core(&mut nodes, 1, beta, bleed, 1)
         };
         let normalized = push(&mut nodes, Node::Divide(q, normalization));
-        if input.wall.is_some() || !Rational::parse(&input.standing.lower, budget)?.is_zero() {
+        if input.wall.is_some() || input.wall_enclosure.is_some() || !Rational::parse(&input.standing.lower, budget)?.is_zero() {
             push(&mut nodes, Node::PositivePower(normalized, "1/4".into()))
         } else {
             let square = push(&mut nodes, Node::SquareRoot(normalized));
@@ -188,6 +219,9 @@ fn shared_query(input: &Request, budget: &mut Budget, constants: Option<&[Range;
     if let Some(constants) = constants {
         coordinates.extend_from_slice(constants);
     }
+    if let Some(wall) = &input.wall_enclosure {
+        coordinates.push(wall.clone());
+    }
     Ok(Query {
         coordinates,
         nodes,
@@ -208,6 +242,7 @@ fn run(
         super::schemas(&evidence.schemas)?;
     }
     let mut budget = Budget::new(policy.operation.clone())?;
+    wall_binding(procedure, input, &mut budget)?;
     let query = query(input, &mut budget)?;
     let checked = super::run_budget(procedure, &query, evidence, interrupt_at, &mut budget)?;
     Ok(Evaluation {

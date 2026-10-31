@@ -20,6 +20,7 @@ pub trait ProcedureVerifier: std::fmt::Debug {
 pub struct BoundProcedure<'a> {
     state: &'a CompiledState,
     procedure: Procedure,
+    enclosed_wall: Option<pn_records::primitive::Range>,
 }
 
 /// Binding refusals differ from numerical comparison outcomes.
@@ -76,10 +77,40 @@ pub fn bind_procedure<'a>(
     if !verifier.published_procedure(&procedure) {
         return Err(ProcedureError::Publication);
     }
-    Ok(BoundProcedure { state, procedure })
+    Ok(BoundProcedure {
+        state,
+        procedure,
+        enclosed_wall: None,
+    })
 }
 
 impl BoundProcedure<'_> {
+    pub(crate) fn enclosed_wall(&self) -> Option<&pn_records::primitive::Range> {
+        self.enclosed_wall.as_ref()
+    }
+
+    pub(crate) fn with_enclosed_wall(&self, wall: pn_records::primitive::Range) -> Result<Self, ProcedureError> {
+        let limits = self
+            .procedure
+            .enclosure
+            .as_ref()
+            .ok_or(ProcedureError::Unsupported)?
+            .operation
+            .clone();
+        let mut b = Budget::new(limits.clone())?;
+        if Rational::parse(&wall.lower, &mut b)?
+            .compare(&Rational::parse(&wall.upper, &mut b)?, &mut b)?
+            .is_gt()
+        {
+            return Err(ProcedureError::WallRange);
+        }
+        check_wall_range(&wall.lower, &self.procedure, limits)?;
+        Ok(Self {
+            state: self.state,
+            procedure: self.procedure.clone(),
+            enclosed_wall: Some(wall),
+        })
+    }
     /// Inspect the complete retained inputs without permitting mutation.
     /// (´def:compiler:solve-binding´)
     /// Justified: Immutable access inherits the procedure binding boundary.
@@ -112,14 +143,9 @@ impl BoundProcedure<'_> {
 }
 
 fn wall_range(state: &CompiledState, procedure: &Procedure, limits: Limits) -> Result<(), ProcedureError> {
-    if procedure.fence.is_none() {
+    if procedure.fence.as_ref().is_none_or(|profile| profile.inverse_wall) {
         return Ok(());
     }
-    let Some(policy) = &procedure.enclosure else { return Ok(()) };
-    let k = policy.refinement.reduction_ceiling;
-    let scale = 1_u64.checked_shl(k).filter(|v| *v > 2).ok_or(ProcedureError::WallRange)?;
-    let mut b = Budget::new(limits)?;
-    let lower = Rational::parse("1", &mut b)?.div(&Rational::parse(&(scale - 2).to_string(), &mut b)?, &mut b)?;
     let wall = state
         .package()
         .input()
@@ -128,6 +154,15 @@ fn wall_range(state: &CompiledState, procedure: &Procedure, limits: Limits) -> R
         .ok_or(ProcedureError::Binding)?
         .wall()
         .exact();
+    check_wall_range(wall, procedure, limits)
+}
+
+fn check_wall_range(wall: &str, procedure: &Procedure, limits: Limits) -> Result<(), ProcedureError> {
+    let Some(policy) = &procedure.enclosure else { return Ok(()) };
+    let k = policy.refinement.reduction_ceiling;
+    let scale = 1_u64.checked_shl(k).filter(|v| *v > 2).ok_or(ProcedureError::WallRange)?;
+    let mut b = Budget::new(limits)?;
+    let lower = Rational::parse("1", &mut b)?.div(&Rational::parse(&(scale - 2).to_string(), &mut b)?, &mut b)?;
     if Rational::parse(wall, &mut b)?.compare(&lower, &mut b)?.is_lt() {
         return Err(ProcedureError::WallRange);
     }

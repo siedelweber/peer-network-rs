@@ -766,11 +766,72 @@ fn independent_activation(x: Q, clean: bool, gain: bool) -> I {
     }
 }
 
+/// Claim: Four unsorted standing boxes with an independent wall interval contain independently computed activation brackets at three rational walls; crossing generalized gains retain zero and responsive slopes, the bare clamp has slope interval zero to one, smooth differentiation refuses, and changed wall evidence and unsupported lower endpoints refuse.
+/// ´claim:numerics:enclosed-wall-clamp-retains-independent-coordinate´
+/// ´test:integration:enclosed-wall-clamp´
+#[test]
+fn enclosed_wall_clamp() {
+    use pn_graph::numeric::activation::{self, Quantity};
+    let mut p = wall_policy();
+    p.precision = Precision::AbsoluteWidthBits(vec![4]);
+    p.enclosure.as_mut().unwrap().refinement.precision = 4;
+    for (a, z) in [("3/4", "1"), ("1/4", "1/2"), ("1/2", "3/4"), ("1/4", "3/4")] {
+        let mut input = activation_request(a, Quantity::Clamped);
+        input.standing = range(a, z);
+        input.wall_enclosure = Some(range("1/2", "65/128"));
+        let result = activation::evaluate(&p, &input, None).unwrap();
+        let (lower, upper) = endpoints(&result.primitive.evidence);
+        assert_eq!(result.primitive.query.coordinates[1], range("1/2", "65/128"));
+        for wall in ["65/128", "1/2", "129/256"] {
+            let wall = Q::parse(wall);
+            let lo = if Q::parse(a).le(wall) { wall } else { Q::parse(a) };
+            let hi = if Q::parse(z).le(wall) { wall } else { Q::parse(z) };
+            assert!(lower.le(independent_activation(lo, false, false).0));
+            assert!(independent_activation(hi, false, false).1.le(upper));
+        }
+        activation::replay(&p, &input, result.primitive.evidence.attachment.as_ref().unwrap(), None).unwrap();
+        let mut changed = input.clone();
+        changed.wall_enclosure.as_mut().unwrap().upper = "3/4".into();
+        assert!(activation::replay(&p, &changed, result.primitive.evidence.attachment.as_ref().unwrap(), None).is_err());
+        input.quantity = Quantity::GeneralizedLogGain;
+        let slopes = activation::evaluate(&p, &input, None).unwrap();
+        let (lo, hi) = endpoints(&slopes.primitive.evidence);
+        if z == "3/4" {
+            assert!(lo.le(Q(0, 1)));
+            assert!(independent_activation(Q(1, 2), false, true).1.le(hi));
+        }
+        input.wall_enclosure.as_mut().unwrap().lower = "1/4".into();
+        assert!(activation::evaluate(&p, &input, None).is_err());
+    }
+    enclosed_floor_slope(&p);
+}
+
+fn enclosed_floor_slope(p: &Procedure) {
+    let mut q = Query {
+        coordinates: vec![range("1/4", "3/4"), range("1/2", "65/128")],
+        nodes: vec![
+            Node::Coordinate(0),
+            Node::Coordinate(1),
+            Node::Clamp(0, 1),
+            Node::GeneralizedDerivative(2, 0),
+        ],
+        target: 3,
+        goal: Goal::Width,
+    };
+    let result = evaluate(p, &q, None).unwrap();
+    assert_eq!(endpoints(&result), (Q(0, 1), Q(1, 1)));
+    replay(p, &q, result.attachment.as_ref().unwrap(), None).unwrap();
+    q.nodes[3] = Node::Derivative(2, 0);
+    let result = evaluate(p, &q, None).unwrap();
+    assert_eq!(result.outcome, Outcome::Unsupported);
+}
+
 fn activation_request(text: &str, quantity: pn_graph::numeric::activation::Quantity) -> pn_graph::numeric::activation::Request {
     pn_graph::numeric::activation::Request {
         standing: range(text, text),
         bleed_squared: "1/400".into(),
         wall: None,
+        wall_enclosure: None,
         quantity,
     }
 }

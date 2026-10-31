@@ -1666,6 +1666,14 @@
       "review": "Four denominator/cap cases retain their production N/N-minus-one pins and replay at N. A four-Actor equal-hull proposal has four identical activation records and replays at its production allowance. One-Work replay declarations now refuse solve publication as well as replay; standing and ledger remain unchanged."
     },
     {
+      "operation": "pn-epoch::solve::enclosed_wall_solve",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:enclosed-wall-solve-binds-fence-map-and-residual",
+      "before": "",
+      "after": "Claim: A five-Actor reference declaration consumes a replayed inverse-wall enclosure through the lower-endpoint fence and independent-coordinate map, completes its declared solve and residual replay without changing charged prices, and refuses an altered wall scope. Literal N/N-minus-one controls pin production and replay separately beside the rational-wall solve; insufficient replay allowance also refuses production publication. Wrong frozen width or tilt, changed inverse evidence and a delivered wall below the binding range refuse. The rational-wall comparison retains its separate path.",
+      "review": "Five Actors arrive in unsorted order with width one and four supported hops. The published inverse definition binds the same frozen width and cumulative tilt, the fence agrees with the lower-endpoint query, and independent endpoint signs isolate the defining target. Complete rational and enclosed-wall solves retain their declared precision rounds and replay, while a changed map wall refuses and frozen price and ledger remain equal. Literal N/N-minus-one controls separately bound production and replay; an insufficient replay cap also refuses solve publication. Wrong frozen width or tilt, an altered inverse target, changed exact-branch wall scope and a capped delivered wall below the binding range each refuse at the expected check."
+    },
+    {
       "operation": "pn-epoch::solve::endpoint_transport",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:endpoint-transport-contains-dense-rational-oracle",
@@ -2144,6 +2152,14 @@
       "before": "",
       "after": "Claim: The wall clamp keeps the same below-wall value and zero generalized gain, retains the zero-to-responsive generalized join on touching and crossing boxes, and composes non-dyadic hop powers from the exact strength times shape. Expected-input replay rejects a changed wall; invalid domains and deterministic interruption carry no mathematical verdict.",
       "review": "Fifteen distinct formula requests cover one below-wall anchor, four box placements for values and generalized gains, a one-third applied exponent, a zero exponent, changed-wall replay, and three invalid-domain requests. Independent brackets check value endpoints and responsive gains; below-wall value and zero gain are exact branch controls. Interruption has no verdict. A separate policy with only the output ceiling reduced to one MiB retains an explicit no-bound OutputBytes exhaustion. No smooth derivative or wall inversion is admitted."
+    },
+    {
+      "operation": "pn-graph::numeric::enclosed_wall_clamp",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:enclosed-wall-clamp-retains-independent-coordinate",
+      "before": "",
+      "after": "Claim: Four unsorted standing boxes with an independent wall interval contain independently computed activation brackets at three rational walls; crossing generalized gains retain zero and responsive slopes, the bare clamp has slope interval zero to one, smooth differentiation refuses, and changed wall evidence and unsupported lower endpoints refuse.",
+      "review": "Four unsorted standing boxes and three rational wall samples per box use the independent directed analytic oracle. Queries retain an independent wall coordinate; generalized crossing controls contain zero and responsive slopes, and a bare clamp contains the full unit slope interval. Smooth differentiation, changed wall scope and unsupported lower endpoints refuse."
     },
     {
       "operation": "pn-graph::numeric::evaluation_costs",

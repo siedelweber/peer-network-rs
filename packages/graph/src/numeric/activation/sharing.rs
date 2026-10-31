@@ -142,6 +142,12 @@ fn key_work(input: &Request) -> Result<u64, Error> {
         .checked_add(input.bleed_squared.len())
         .and_then(|n| n.checked_add(input.wall.as_ref().map_or(0, String::len)))
         .ok_or(Error::Declaration)?;
+    if let Some(wall) = &input.wall_enclosure {
+        size = size
+            .checked_add(wall.lower.len())
+            .and_then(|n| n.checked_add(wall.upper.len()))
+            .ok_or(Error::Declaration)?;
+    }
     if let super::Quantity::Hop { strength, shape } = &input.quantity {
         size = size
             .checked_add(strength.len())
@@ -235,6 +241,7 @@ impl Session {
         if !self.production || input.bleed_squared != self.bleed {
             return Err(Error::Declaration);
         }
+        super::wall_binding(&self.procedure, input, &mut self.budget)?;
         self.budget.work(key_work(input)?, Location::new("evaluation memo key"))?;
         for (index, entry) in self.retained.iter().enumerate() {
             self.budget
@@ -290,6 +297,7 @@ impl Session {
         if self.production || input.input.bleed_squared != self.bleed {
             return Err(Error::Declaration);
         }
+        super::wall_binding(&self.procedure, &input.input, &mut self.budget)?;
         self.budget
             .work(key_work(&input.input)?, Location::new("evaluation memo key"))?;
         for entry in &self.retained {

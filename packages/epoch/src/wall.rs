@@ -22,6 +22,12 @@ pub struct BoundReference<'a> {
 /// (´[ROOT-alg:design:reference-wall]´)
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error("reference wall differs from the frozen composition or has unresolved branches")]
+    Scope,
+    #[error("reference composition: {0}")]
+    Fence(#[from] crate::fence::Error),
+    #[error("reference binding arithmetic: {0}")]
+    Arithmetic(#[from] nrz_cas::Fault),
     #[error("reference definition publication refused")]
     Publication,
     #[error("bound procedure: {0}")]
@@ -59,6 +65,41 @@ pub fn bind<'a>(
 }
 
 impl BoundReference<'_> {
+    /// Bind the replayed delivered enclosure to the frozen width and cumulative tilt.
+    /// (´[ROOT-rule:design:reference-wall-consumption]´)
+    /// # Errors
+    /// Refuses changed scopes, incomplete branches, altered evidence and unsupported lower endpoints.
+    #[tracing::instrument(
+        name = "sig:design:epoch",
+        fields(
+            execution_owner = "EPOCH",
+            claim_owner = "ROOT",
+            claim_label = "sig:design:epoch",
+            source_item = "wall::BoundReference < '_ >::consume"
+        ),
+        ret
+    )]
+    pub fn consume<'a>(&self, bound: &BoundProcedure<'a>, record: &Record) -> Result<BoundProcedure<'a>, Error> {
+        use nrz_cas::{Rational, limits::Budget};
+        use pn_records::wall::Verdict;
+        if bound.inputs().1 != self.procedure || self.procedure.fence.as_ref().is_none_or(|p| !p.inverse_wall) {
+            return Err(Error::Scope);
+        }
+        let (prepared, _) = crate::fence::prepare(bound)?;
+        let mut b = Budget::new(self.procedure.enclosure.as_ref().ok_or(Error::Scope)?.operation.clone())?;
+        if Rational::parse(&prepared.width, &mut b)? != Rational::parse(&self.input.width, &mut b)?
+            || Rational::parse(&prepared.cumulative_tilt, &mut b)? != Rational::parse(&self.input.cumulative_tilt, &mut b)?
+        {
+            return Err(Error::Scope);
+        }
+        let checked = self.replay(record)?;
+        let branches = checked.branches.as_ref().ok_or(Error::Scope)?;
+        if checked.indecisive || branches.above_floor != Verdict::Pass || branches.policy_valid != Verdict::Pass {
+            return Err(Error::Scope);
+        }
+        Ok(bound.with_enclosed_wall(branches.delivered.clone())?)
+    }
+
     /// Evaluate only the retained reference definition; the frozen package is immutable.
     /// (´[ROOT-alg:design:reference-wall]´)
     /// # Errors

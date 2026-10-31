@@ -58,6 +58,7 @@ pub fn query(procedure: &Procedure, input: &Inputs) -> Result<Query, Error> {
         },
         bleed_squared: input.bleed_squared.clone(),
         wall: None,
+        wall_enclosure: None,
         quantity: Quantity::ResponsiveLogGain,
     };
     let mut result = super::query(&request, &mut budget)?;

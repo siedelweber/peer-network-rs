@@ -24,6 +24,276 @@ impl pn_epoch::wall::ReferenceVerifier for PublishedReference {
     }
 }
 
+fn enclosed_state() -> pn_epoch::compiler::CompiledState {
+    let actors = ["third", "fifth", "seller", "buyer", "fourth"];
+    let mut acts = Vec::new();
+    for (i, actor) in actors.iter().enumerate() {
+        acts.push(joined::act("Registration", actor, u64::try_from(i + 1).unwrap(), 1));
+        let mut opinion = joined::act("Opinion", actor, u64::try_from(i + 6).unwrap(), 1);
+        opinion.legs[0].target = joined::named("prof", actors[(i + 1) % actors.len()]);
+        acts.push(opinion);
+    }
+    let original = joined::package(
+        &acts,
+        1,
+        &[
+            ("third", "6"),
+            ("fifth", "5"),
+            ("seller", "7"),
+            ("buyer", "11/2"),
+            ("fourth", "13/2"),
+        ],
+    );
+    let (declaration, mut edition, _) = common::fixture();
+    let mut numeric = joined::numeric();
+    for (name, value) in [("half", "1/2"), ("quarter", "1/4"), ("eighth", "1/8")] {
+        edition.constants.push(pn_records::constants::ConstantDefinition::Literal {
+            name: name.into(),
+            value: numeric.literal(value).unwrap(),
+        });
+    }
+    let history = pn_records::validate_history(&[], &[]).unwrap();
+    let record = pn_records::validate_record(&[], &history, &[declaration]).unwrap();
+    let constants = pn_records::constants::bind_constants(&record, vec![edition]).unwrap();
+    let mut package = original.input().clone();
+    let mut parameters = package.inputs[0].parameters().clone();
+    parameters.depth_mass = vec!["quarter".into(); 4];
+    let input = pn_epoch::bind_inputs(&constants, parameters, Limits::default()).unwrap();
+    package.inputs[0] = input.clone();
+    package.bindings[0].inputs = input;
+    let publication = FencePublication(package.bindings.clone());
+    let verified = pn_epoch::package::verify_package(package, &publication).unwrap();
+    let state = compile_final_state(&verified, &joined::Verifier, &mut numeric, Limits::default(), 10000).unwrap();
+    assert_eq!(state.view().support.by_depth.keys().next_back(), Some(&4));
+    assert!(state.view().support.ranges.values().all(|r| r.width == "1"));
+    state
+}
+
+fn enclosed_policy(state: &pn_epoch::compiler::CompiledState, inverse: bool) -> Procedure {
+    let mut p = fence_procedure(state);
+    p.precision = Precision::AbsoluteWidthBits(vec![8, 16, 24]);
+    p.grid = vec!["1".into(), "1/2".into(), "0".into()];
+    p.endpoint_grid = "1/128".into();
+    p.maximum_iterations = 2;
+    p.maximum_work = 2_000_000_000;
+    p.maximum_solve_work = p.maximum_work;
+    p.maximum_replay_work = p.maximum_work;
+    let policy = p.enclosure.as_mut().unwrap();
+    policy.operation.work = p.maximum_work;
+    policy.operation.arithmetic_steps = 100_000_000;
+    policy.operation.literal_bytes = 4096;
+    policy.store = policy.operation.clone();
+    policy.refinement.precision = 8;
+    policy.refinement.reduction_ceiling = 2;
+    policy.refinement.rounds = 2;
+    let profile = p.fence.as_mut().unwrap();
+    profile.shape = vec!["one".into(), "half".into(), "quarter".into(), "eighth".into()];
+    profile.inverse_wall = inverse;
+    p
+}
+
+fn enclosed_definition() -> pn_records::wall::Inputs {
+    pn_records::wall::Inputs {
+        width: "1".into(),
+        cumulative_tilt: "15/8".into(),
+        bracket: pn_records::primitive::Range {
+            lower: "1/2".into(),
+            upper: "1".into(),
+        },
+        stopping_width: "1/128".into(),
+        maximum_steps: 64,
+        maximum_work: 2_000_000_000,
+        maximum_replay_work: 2_000_000_000,
+        floor: pn_records::wall::Floor::Rational,
+        previous: pn_records::wall::Previous::Target,
+        door: "1".into(),
+        absolute_cap: "1/10".into(),
+        relative_cap: "1/4".into(),
+        deadband: "1/20".into(),
+    }
+}
+
+/// Claim: A five-Actor reference declaration consumes a replayed inverse-wall enclosure through the lower-endpoint fence and independent-coordinate map, completes its declared solve and residual replay without changing charged prices, and refuses an altered wall scope. Literal N/N-minus-one controls pin production and replay separately beside the rational-wall solve; insufficient replay allowance also refuses production publication. Wrong frozen width or tilt, changed inverse evidence and a delivered wall below the binding range refuse. The rational-wall comparison retains its separate path.
+/// ´claim:compiler:enclosed-wall-solve-binds-fence-map-and-residual´
+/// ´test:integration:enclosed-wall-solve´
+#[test]
+fn enclosed_wall_solve() {
+    let state = enclosed_state();
+    let before = state.view().clone();
+    let price = state.package().input().prices.last().unwrap().clone();
+    for inverse in [true, false] {
+        let p = enclosed_policy(&state, inverse);
+        let bound = bind_procedure(&state, p.clone(), &Published(p), Limits::default()).unwrap();
+        let definition = enclosed_definition();
+        let reference = pn_epoch::wall::bind(&bound, definition.clone(), &PublishedReference(definition)).unwrap();
+        let wall = reference.evaluate().unwrap();
+        assert_eq!(wall.target.as_ref().unwrap().lower, "1/2");
+        assert_eq!(wall.target.as_ref().unwrap().upper, "65/128");
+        let consumed = if inverse {
+            Some(reference.consume(&bound, &wall).unwrap())
+        } else {
+            None
+        };
+        let active = consumed.as_ref().unwrap_or(&bound);
+        let fence = pn_epoch::fence::search(active, None).unwrap();
+        assert_eq!(fence.selected.as_deref(), Some(if inverse { "1/2" } else { "1" }));
+        if inverse {
+            enclosed_fence(&bound, &fence);
+        }
+        let solved = pn_epoch::conserved::solve(active, &fence).unwrap();
+        let checked = pn_epoch::conserved::replay(active, &solved).unwrap();
+        assert_eq!(solved.rounds.len(), 3);
+        assert_eq!(
+            solved.rounds.last().unwrap().standing,
+            checked.rounds.last().unwrap().standing
+        );
+        if inverse {
+            let mut changed = solved.clone();
+            changed.rounds[0].certified.wall_enclosure.as_mut().unwrap().upper = "1".into();
+            assert!(matches!(
+                pn_epoch::conserved::replay(active, &changed),
+                Err(pn_epoch::conserved::Error::Scope)
+            ));
+        }
+        let (production, replay, residuals) = if inverse {
+            (
+                612_584_299,
+                380_980_787,
+                [
+                    "5670141826438649515891619368601199708332953414052388146919623/981010981479406899837363992476113976808150623333565068647018368",
+                    "158459167044379273832471725989253443784384870325214392084444336722433273594407277236757607522198685041639631556016670729113/41698426653304478132274004120036559947438140753445930447086199182362541242148577432681496137945158911327465068169836485201280",
+                    "154384356534326173951113198299405577634554285670260280189045521572196148144100982293584088608415339639816313833558425587755955994232765063577225262164976701288127670987487175037028274684088163898954996761/40677082559805512101152199789879933607564018006795460058126514322933456888137157109515011992513424507201615092650143047085721624065839183451394697839601295923799011604521478146473911063886593048570925736576",
+                ],
+            )
+        } else {
+            (
+                455_927_402,
+                252_822_503,
+                [
+                    "95835251845316451407327/17577709914569017269853056",
+                    "1342422069073379924110811894088156726642243/372794307304807277232275496297520517193064960",
+                    "173939885486187734702589247281184449958500746197177318821128591607/48412748022768835731083442280110380961561562754342471004276514293632",
+                ],
+            )
+        };
+        assert_eq!((solved.work, checked.work), (production, replay));
+        assert_eq!(
+            solved.rounds.iter().map(|r| r.residual.as_str()).collect::<Vec<_>>(),
+            residuals
+        );
+        enclosed_work(&state, active.inputs().1, &wall, &fence, &solved, (production, replay));
+        if inverse {
+            enclosed_refusals(&bound, &wall, &solved);
+        }
+    }
+    assert_eq!(state.view(), &before);
+    assert_eq!(state.package().input().prices.last().unwrap(), &price);
+}
+
+fn enclosed_work(
+    state: &pn_epoch::compiler::CompiledState,
+    p: &Procedure,
+    wall: &pn_records::wall::Record,
+    fence: &pn_epoch::fence::Search,
+    solved: &pn_records::conserved::SolveRecord,
+    costs: (u64, u64),
+) {
+    let (production, replay) = costs;
+    for (n, r, passes) in [
+        (production - 1, replay, false),
+        (production, replay, true),
+        (production, replay - 1, false),
+    ] {
+        let mut policy = p.clone();
+        policy.maximum_solve_work = n;
+        policy.maximum_replay_work = r;
+        let bound = bind_procedure(state, policy.clone(), &Published(policy), Limits::default()).unwrap();
+        let definition = enclosed_definition();
+        let reference = pn_epoch::wall::bind(&bound, definition.clone(), &PublishedReference(definition)).unwrap();
+        let consumed = if p.fence.as_ref().unwrap().inverse_wall {
+            Some(reference.consume(&bound, wall).unwrap())
+        } else {
+            None
+        };
+        let active = consumed.as_ref().unwrap_or(&bound);
+        assert_eq!(
+            pn_epoch::conserved::solve(active, fence).is_ok(),
+            passes,
+            "production={n} replay={r}"
+        );
+        assert_eq!(pn_epoch::conserved::replay(active, solved).is_ok(), r == replay);
+    }
+}
+
+fn enclosed_refusals(
+    bound: &pn_epoch::solve::BoundProcedure<'_>,
+    wall: &pn_records::wall::Record,
+    solved: &pn_records::conserved::SolveRecord,
+) {
+    use pn_epoch::wall::{self as reference, Error};
+    for field in [1, 0] {
+        let mut input = enclosed_definition();
+        if field == 0 {
+            input.width = "2".into();
+        } else {
+            input.cumulative_tilt = "1".into();
+        }
+        let checked = reference::bind(bound, input.clone(), &PublishedReference(input)).unwrap();
+        assert!(matches!(checked.consume(bound, wall), Err(Error::Scope)));
+    }
+    let input = enclosed_definition();
+    let checked = reference::bind(bound, input.clone(), &PublishedReference(input)).unwrap();
+    let mut changed = wall.clone();
+    changed.target.as_mut().unwrap().upper = "1".into();
+    assert!(matches!(
+        checked.consume(bound, &changed),
+        Err(Error::Wall(pn_graph::numeric::wall::Error::Record))
+    ));
+    let active = checked.consume(bound, wall).unwrap();
+    let mut zero = pn_epoch::conserved::evaluate_map(&active, "0", &solved.rounds[0].certified.point, 8).unwrap();
+    assert_eq!(zero.primitives, Vec::new());
+    zero.wall_enclosure.as_mut().unwrap().upper = "1".into();
+    assert!(matches!(
+        pn_epoch::conserved::replay_map(&active, &zero),
+        Err(pn_epoch::conserved::Error::Scope)
+    ));
+    let mut input = enclosed_definition();
+    input.previous = pn_records::wall::Previous::Rational("3/37".into());
+    let checked = reference::bind(bound, input.clone(), &PublishedReference(input)).unwrap();
+    let capped = checked.evaluate().unwrap();
+    assert!(matches!(
+        checked.consume(bound, &capped),
+        Err(Error::Procedure(ProcedureError::WallRange))
+    ));
+}
+
+fn enclosed_fence(bound: &pn_epoch::solve::BoundProcedure<'_>, fence: &pn_epoch::fence::Search) {
+    let p = bound.inputs().1;
+    assert_eq!(fence.evidence.attempts[0].completion, Completion::Fail);
+    for attempt in &fence.evidence.attempts {
+        for index in &attempt.primitives {
+            let record = &fence.evidence.primitives[*index];
+            let input = pn_graph::numeric::activation::fence::Inputs {
+                wall: "1/2".into(),
+                bleed_squared: "1/400".into(),
+                width: "1".into(),
+                margin: "5/4".into(),
+                cumulative_tilt: if attempt.rung == "1" { "15/8" } else { "15/16" }.into(),
+            };
+            let query = pn_graph::numeric::activation::fence::query(p, &input).unwrap();
+            assert_eq!(record.query, query);
+            let mut policy = p.clone();
+            policy.enclosure.as_mut().unwrap().refinement.precision = record.precision;
+            let endpoint = pn_graph::numeric::evaluate(&policy, &query, None).unwrap();
+            assert_eq!(endpoint.bounds, record.evidence.bounds);
+        }
+    }
+    let left = independent_activation(Q(1, 2), false, true);
+    let right = independent_activation(Q(65, 128), false, true);
+    assert!(!left.0.le(Q(16, 75)));
+    assert!(!Q(16, 75).le(right.1));
+}
+
 /// Claim: A separately published reference definition binds through the frozen procedure, refuses a changed declaration and unsupported lower endpoint, and evaluates and replays zero width without changing the rational charged price.
 /// ´claim:compiler:reference-wall-binding-preserves-charged-price´
 /// ´test:integration:reference-wall-binding´
@@ -1539,6 +1809,7 @@ fn check_activation_work(p: &Procedure, map: &pn_records::conserved::MapRecord) 
         },
         bleed_squared: "1/400".into(),
         wall: Some("2".into()),
+        wall_enclosure: None,
         quantity: pn_graph::numeric::activation::Quantity::Clamped,
     };
     let index = session.evaluate(&request).unwrap();

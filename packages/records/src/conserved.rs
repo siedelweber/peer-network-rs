@@ -14,6 +14,7 @@ pub struct MapRecord {
     pub point: BTreeMap<String, String>,
     pub rung: String,
     pub precision: u32,
+    pub wall_enclosure: Option<crate::primitive::Range>,
     pub primitives: Vec<PrimitiveRecord>,
     pub image: BTreeMap<String, Bounds>,
     pub transport_input: crate::transport::TransportInput<nrz_cas::enclosure::Interval>,

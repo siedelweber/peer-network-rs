@@ -120,6 +120,7 @@ fn activations(
     points: &BTreeMap<String, String>,
     wall: &str,
     bleed: &str,
+    enclosed_wall: Option<&Range>,
 ) -> Result<Vec<Interval>, Error> {
     let mut session = if let Some(records) = checks.supplied {
         Session::from_evidence(&checks.policy, bleed, records.get(..2).ok_or(Error::Map)?)?
@@ -135,7 +136,8 @@ fn activations(
                 upper: value.clone(),
             },
             bleed_squared: bleed.into(),
-            wall: Some(wall.into()),
+            wall: enclosed_wall.is_none().then(|| wall.into()),
+            wall_enclosure: enclosed_wall.cloned(),
             quantity: Quantity::Clamped,
         };
         let record = if let Some(records) = checks.supplied {
@@ -258,7 +260,9 @@ pub(super) fn run(
     let profile = declared.fence.as_ref().ok_or(Error::Scope)?;
     if !declared.grid.iter().any(|r| r == rung)
         || point.keys().ne(state.view().base.rows.keys())
-        || supplied.is_some_and(|r| r.edition != declared.edition || r.boundary != declared.boundary)
+        || supplied.is_some_and(|r| {
+            r.edition != declared.edition || r.boundary != declared.boundary || r.wall_enclosure.as_ref() != bound.enclosed_wall()
+        })
     {
         return Err(Error::Scope);
     }
@@ -277,7 +281,7 @@ pub(super) fn run(
     let bleed =
         crate::constant(frozen.constants(), &profile.bleed_squared, &mut checks.budget)?.exact_string(&mut checks.budget)?;
     let strength = Rational::parse(rung, &mut checks.budget)?;
-    if profile.inverse_wall && !strength.is_zero() && !point.is_empty() {
+    if profile.inverse_wall && bound.enclosed_wall().is_none() && !strength.is_zero() && !point.is_empty() {
         return Err(crate::fence::Error::ReferenceWall.into());
     }
     let depth = state.view().support.by_depth.keys().next_back().copied().unwrap_or(0);
@@ -302,7 +306,7 @@ pub(super) fn run(
     let powers = if strength.is_zero() {
         vec![vec![singleton("1", &mut checks.budget)?; point.len()]; exponents.len()]
     } else {
-        let values = activations(&mut checks, point, wall, &bleed)?;
+        let values = activations(&mut checks, point, wall, &bleed, bound.enclosed_wall())?;
         powers(&mut checks, &values, &exponents)?
     };
     let input = inputs(bound, &mut checks, &powers)?;
@@ -323,6 +327,7 @@ pub(super) fn run(
         point: point.clone(),
         rung: rung.into(),
         precision,
+        wall_enclosure: bound.enclosed_wall().cloned(),
         primitives: checks.records,
         image,
         transport_input: input,
