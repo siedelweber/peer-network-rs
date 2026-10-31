@@ -113,7 +113,7 @@ fn enclosed_definition() -> pn_records::wall::Inputs {
     }
 }
 
-/// Claim: A five-Actor reference declaration consumes a replayed inverse-wall enclosure through the lower-endpoint fence and independent-coordinate map, completes its declared solve and residual replay without changing charged prices, and refuses an altered wall scope. Literal N/N-minus-one controls pin production and replay separately beside the rational-wall solve; insufficient replay allowance also refuses production publication. Wrong frozen width or tilt, changed inverse evidence and a delivered wall below the binding range refuse. The rational-wall comparison retains its separate path.
+/// Claim: A five-Actor reference declaration consumes a replayed inverse-wall enclosure through the lower-endpoint fence and independent-coordinate map, completes its declared solve and residual replay without changing charged prices, and refuses an altered wall scope. Literal N/N-minus-one controls pin production and replay separately beside the rational-wall solve; insufficient replay allowance also refuses production publication. Wrong frozen width, tilt or bleed, changed inverse evidence and a delivered wall below the binding range refuse. The rational-wall comparison retains its separate path.
 /// ´claim:compiler:enclosed-wall-solve-binds-fence-map-and-residual´
 /// ´test:integration:enclosed-wall-solve´
 #[test]
@@ -231,6 +231,21 @@ fn enclosed_refusals(
     solved: &pn_records::conserved::SolveRecord,
 ) {
     use pn_epoch::wall::{self as reference, Error};
+    let mut wrong_bleed = bound.inputs().1.clone();
+    wrong_bleed.fence.as_mut().unwrap().bleed_squared = "one".into();
+    let changed = bind_procedure(
+        bound.inputs().0,
+        wrong_bleed.clone(),
+        &Published(wrong_bleed),
+        Limits::default(),
+    )
+    .unwrap();
+    let input = enclosed_definition();
+    let checked = reference::bind(&changed, input.clone(), &PublishedReference(input)).unwrap();
+    assert!(matches!(
+        checked.consume(&changed, wall),
+        Err(Error::Fence(pn_epoch::fence::Error::Profile))
+    ));
     for field in [1, 0] {
         let mut input = enclosed_definition();
         if field == 0 {

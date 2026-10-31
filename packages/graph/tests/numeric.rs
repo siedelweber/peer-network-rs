@@ -182,6 +182,8 @@ fn reference_wall_controls() {
     let mut wrong = input.clone();
     wrong.bracket = range("1", "2");
     assert_eq!(wall::evaluate(&p, &wrong), Err(Error::Bracket));
+    wrong.bracket = range("1/2", "513/1024");
+    assert_eq!(wall::evaluate(&p, &wrong), Err(Error::Bracket));
     wrong.bracket = range("1/4", "1");
     assert_eq!(wall::evaluate(&p, &wrong), Err(Error::Binding));
     let mut coarse = p.clone();
