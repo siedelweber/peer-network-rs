@@ -7535,6 +7535,56 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/transport/enclosed.rs",
+      "item": "transport::enclosed::evaluate",
+      "owner": "GRAPH",
+      "signature": "fn evaluate (input : & TransportInput < Interval > , budget : & mut Budget , maximum_cells : usize ,) -> Result < TransportOutput < Interval > , KernelError >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/conserved.rs",
+      "item": "conserved::evaluate_map",
+      "owner": "EPOCH",
+      "signature": "fn evaluate_map (bound : & BoundProcedure < '_ > , rung : & str , point : & BTreeMap < String , String > , precision : u32 ,) -> Result < MapRecord , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/conserved.rs",
+      "item": "conserved::replay_map",
+      "owner": "EPOCH",
+      "signature": "fn replay_map (bound : & BoundProcedure < '_ > , record : & MapRecord) -> Result < MapRecord , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/conserved.rs",
+      "item": "conserved::solve",
+      "owner": "EPOCH",
+      "signature": "fn solve (bound : & BoundProcedure < '_ > , accepted : & crate :: fence :: Search) -> Result < pn_records :: conserved :: SolveRecord , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/conserved.rs",
+      "item": "conserved::replay",
+      "owner": "EPOCH",
+      "signature": "fn replay (bound : & BoundProcedure < '_ > , supplied : & pn_records :: conserved :: SolveRecord ,) -> Result < pn_records :: conserved :: SolveRecord , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
     }
   ],
   "metrics": [
@@ -14615,6 +14665,61 @@
         "secret_flow": "solve-public-records",
         "exposure_consumers": "solve-public-records"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/transport/enclosed.rs::transport::enclosed::evaluate",
+      "body": "{ validate (input , maximum_cells , budget) ? ; let (normalized , raw) = products (input , budget) ? ; let emitted = emission (& raw , & input . emission , budget) ? ; let mut result = pairs (input , & emitted , budget) ? ; result . normalized = normalized ; result . raw = raw ; Ok (result) }",
+      "class_decision": "conserved-public-evaluation",
+      "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+      "assessments": {
+        "full_recording": "conserved-public-evaluation",
+        "secret_flow": "conserved-public-evaluation",
+        "exposure_consumers": "conserved-public-evaluation"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/conserved.rs::conserved::evaluate_map",
+      "body": "{ bound . preflight () ? ; map :: run (bound , rung , point , precision , bound . inputs () . 1 . maximum_work , None) }",
+      "class_decision": "conserved-public-evaluation",
+      "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+      "assessments": {
+        "full_recording": "conserved-public-evaluation",
+        "secret_flow": "conserved-public-evaluation",
+        "exposure_consumers": "conserved-public-evaluation"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay_map",
+      "body": "{ bound . preflight () ? ; map :: run (bound , & record . rung , & record . point , record . precision , bound . inputs () . 1 . maximum_work , Some (record) ,) }",
+      "class_decision": "conserved-public-evaluation",
+      "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+      "assessments": {
+        "full_recording": "conserved-public-evaluation",
+        "secret_flow": "conserved-public-evaluation",
+        "exposure_consumers": "conserved-public-evaluation"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/conserved.rs::conserved::solve",
+      "body": "{ driver :: run (bound , & accepted . evidence , accepted . selected . as_deref () . ok_or (Error :: Scope) ? , None ,) }",
+      "class_decision": "conserved-public-evaluation",
+      "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+      "assessments": {
+        "full_recording": "conserved-public-evaluation",
+        "secret_flow": "conserved-public-evaluation",
+        "exposure_consumers": "conserved-public-evaluation"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay",
+      "body": "{ let rung = & supplied . rounds . first () . ok_or (Error :: Scope) ? . certified . rung ; driver :: run (bound , & supplied . fence , rung , Some (supplied)) }",
+      "class_decision": "conserved-public-evaluation",
+      "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+      "assessments": {
+        "full_recording": "conserved-public-evaluation",
+        "secret_flow": "conserved-public-evaluation",
+        "exposure_consumers": "conserved-public-evaluation"
+      }
     }
   ],
   "generators": [
@@ -17994,33 +18099,6 @@
       "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
     },
     {
-      "item": "transport::TransportInput",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/transport.rs",
-      "syntax": "# [derive (Clone , Debug)]",
-      "class_decision": "exact-transport-public",
-      "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "transport::TransportOutput",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/transport.rs",
-      "syntax": "# [derive (Clone , Debug)]",
-      "class_decision": "exact-transport-public",
-      "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "transport::KernelError",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/transport.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
-      "class_decision": "exact-transport-public",
-      "expansion_review": "Debug, Clone and structural equality retain public exact operator fields and resource counters; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
       "item": "anchor::ExactAnchor",
       "kind": "derive",
       "package": "pn-epoch",
@@ -18244,6 +18322,69 @@
       "syntax": "# [derive (Debug)]",
       "class_decision": "activation-base-public",
       "expansion_review": "Debug records public rational requests, checked constant premises, retained certificates and explicit resource ledgers only; no secret material or publication encoding."
+    },
+    {
+      "item": "transport::TransportInput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/transport.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Public frozen map coordinates, exact rational endpoints, ordered primitive evidence, Work totals and operational refusals only. Derives expose no secret and define no publication encoding."
+    },
+    {
+      "item": "transport::TransportOutput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/transport.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Public frozen map coordinates, exact rational endpoints, ordered primitive evidence, Work totals and operational refusals only. Derives expose no secret and define no publication encoding."
+    },
+    {
+      "item": "transport::KernelError",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/transport.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Public frozen map coordinates, exact rational endpoints, ordered primitive evidence, Work totals and operational refusals only. Derives expose no secret and define no publication encoding."
+    },
+    {
+      "item": "conserved::Error",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/conserved.rs",
+      "syntax": "# [derive (Debug , thiserror :: Error)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Public frozen map coordinates, exact rational endpoints, ordered primitive evidence, Work totals and operational refusals only. Derives expose no secret and define no publication encoding."
+    },
+    {
+      "item": "conserved::MapRecord",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Typed public map and residual transcripts retain rational coordinates, scalar attachments and Work totals. Their derives expose no private material and define no publication bytes."
+    },
+    {
+      "item": "conserved::SolveRecord",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Typed public map and residual transcripts retain rational coordinates, scalar attachments and Work totals. Their derives expose no private material and define no publication bytes."
+    },
+    {
+      "item": "conserved::ResidualRound",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Typed public map and residual transcripts retain rational coordinates, scalar attachments and Work totals. Their derives expose no private material and define no publication bytes."
     }
   ],
   "reviewed_types": [
@@ -19352,6 +19493,24 @@
       "syntax": "# [derive (Debug , Parser)] # [command (name = \"execwrap\" , version , about = \"Spawn a command and route its stdout/stderr to log files\" , trailing_var_arg = false)] struct Args { # [doc = \" Redirect both STDOUT and STDERR to this file (raw, merged).\"] # [arg (long = \"redirect\" , value_name = \"FILE\")] redirect : Option < PathBuf > , # [doc = \" Redirect STDOUT to this file.\"] # [arg (long = \"redirect-output\" , value_name = \"FILE\")] redirect_output : Option < PathBuf > , # [doc = \" Redirect STDERR to this file.\"] # [arg (long = \"redirect-error\" , value_name = \"FILE\")] redirect_error : Option < PathBuf > , # [doc = \" Redirect both streams to this file with per-stream prefixes.\"] # [arg (long = \"redirect-prefixed\" , value_name = \"FILE\")] redirect_prefixed : Option < PathBuf > , # [doc = \" Emit notifications when log files are written.\"] # [arg (long = \"notify-on-write\")] notify_on_write : bool , # [doc = \" Change to this directory before executing the command.\"] # [arg (long = \"change-directory\" , short = 'C' , value_name = \"DIR\")] change_directory : Option < PathBuf > , # [doc = \" Add Writer write/line events at trace; does not select observation level. Use `PN_OBSERVE_LEVEL`.\"] # [arg (long , short = 'd')] debug : bool , # [doc = \" Observation delivery mode, independent of command results.\"] # [arg (long , value_enum , default_value_t = ObservationMode :: Enabled)] observation : ObservationMode , # [doc = \" Command and its arguments (after `--`).\"] # [arg (last = true , required = true , num_args = 1 .., value_name = \"COMMAND\")] command : Vec < OsString > , }"
     },
     {
+      "item": "conserved::MapRecord",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" A map's original point, ordered scalar premises and exact endpoint composition.\"] # [doc = \" Work is the producer's consumption; replay measures its own independent consumption.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct MapRecord { pub edition : crate :: DeclarationId , pub boundary : u64 , pub point : BTreeMap < String , String > , pub rung : String , pub precision : u32 , pub primitives : Vec < PrimitiveRecord > , pub image : BTreeMap < String , Bounds > , pub transport_input : crate :: transport :: TransportInput < nrz_cas :: enclosure :: Interval > , pub transport : crate :: transport :: TransportOutput < nrz_cas :: enclosure :: Interval > , pub work : u64 , pub composition_work : u64 , }"
+    },
+    {
+      "item": "conserved::SolveRecord",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" The rational proposal prefix and final certified map remain separately accounted.\"] # [doc = \" These carriers grant no authority until the frozen-package checker accepts them.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct SolveRecord { pub fence : crate :: solve :: Evidence , pub rounds : Vec < ResidualRound > , pub work : u64 , }"
+    },
+    {
+      "item": "conserved::ResidualRound",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" One declared precision's complete proposal prefix and residual construction.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ResidualRound { pub proposals : Vec < MapRecord > , pub certified : MapRecord , pub residual : String , pub contraction : String , pub radius : String , pub standing : BTreeMap < String , Bounds > , pub candidate_work : u64 , pub work : u64 , }"
+    },
+    {
       "item": "numerics::NumericError",
       "package": "pn-records",
       "path": "packages/records/src/numerics.rs",
@@ -20021,13 +20180,13 @@
       "item": "transport::TransportInput",
       "package": "pn-records",
       "path": "packages/records/src/transport.rs",
-      "syntax": "# [doc = \" Public exact operator inputs; the epoch adapter owns their provenance.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug)] pub struct TransportInput < N > { pub hops : Vec < Matrix < N > > , pub depth_mass : Vec < N > , pub emission : Vec < N > , pub counts : Vec < N > , pub rates : Vec < N > , }"
+      "syntax": "# [doc = \" Public exact operator inputs; the epoch adapter owns their provenance.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TransportInput < N > { pub hops : Vec < Matrix < N > > , pub depth_mass : Vec < N > , pub emission : Vec < N > , pub counts : Vec < N > , pub rates : Vec < N > , }"
     },
     {
       "item": "transport::TransportOutput",
       "package": "pn-records",
       "path": "packages/records/src/transport.rs",
-      "syntax": "# [doc = \" Exact paired transport and direct mediant, with contributing rate hulls.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug)] pub struct TransportOutput < N > { pub normalized : Vec < Matrix < N > > , pub raw : Matrix < N > , pub emitted : Matrix < N > , pub numerator : Vec < N > , pub denominator : Vec < N > , pub standing : Vec < N > , pub hull : Vec < (N , N) > , }"
+      "syntax": "# [doc = \" Exact paired transport and direct mediant, with contributing rate hulls.\"] # [doc = \" (´def:numerics:exact-transport-contract´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TransportOutput < N > { pub normalized : Vec < Matrix < N > > , pub raw : Matrix < N > , pub emitted : Matrix < N > , pub numerator : Vec < N > , pub denominator : Vec < N > , pub standing : Vec < N > , pub hull : Vec < (N , N) > , }"
     },
     {
       "item": "transport::KernelError",
@@ -20646,6 +20805,18 @@
       "package": "pn-epoch",
       "path": "packages/epoch/src/coefficients.rs",
       "syntax": "# [doc = \" Exact-only evidence boundary; no approximate coefficient can escape a hold.\"] # [doc = \" (´def:compiler:cell-coefficients´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CoefficientError { # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"unknown family, wrong mandatory coordinates or out-of-range value\")] Representation , # [error (\"irrational coefficient needs numeric evidence: square root of {radicand}\")] Irrational { radicand : String } , }"
+    },
+    {
+      "item": "conserved::map::Checks",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/conserved/map.rs",
+      "syntax": "struct Checks < 'a > { policy : Procedure , supplied : Option < & 'a [PrimitiveRecord] > , records : Vec < PrimitiveRecord > , memo : Vec < (Query , PrimitiveRecord) > , budget : Budget , }"
+    },
+    {
+      "item": "conserved::Error",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/conserved.rs",
+      "syntax": "# [doc = \" A refusal never constitutes a standing or convergence verdict.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"conserved solve declaration or frozen scope refused\")] Scope , # [error (\"map evidence or endpoint composition refused\")] Map , # [error (\"residual bound refused\")] Residual , # [error (\"residual radius refused\")] Radius , # [error (\"procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"primitive: {0}\")] Primitive (# [from] pn_graph :: numeric :: Error) , # [error (\"transport: {0}\")] Transport (# [from] pn_records :: transport :: KernelError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"frozen constants: {0}\")] Input (# [from] crate :: InputError) , # [error (\"accepted fence: {0}\")] Fence (# [from] crate :: fence :: Error) , # [error (\"records: {0}\")] Records (# [from] pn_records :: solve :: RecordError) , }"
     },
     {
       "item": "fence::Search",
@@ -21344,6 +21515,20 @@
           "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evidence",
           "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evaluate",
           "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::replay"
+        ]
+      }
+    },
+    {
+      "name": "conserved-public-evaluation",
+      "status": "reviewer-confirmed",
+      "premises": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
+      "membership": {
+        "explicit": [
+          "pn-graph::packages/graph/src/transport/enclosed.rs::transport::enclosed::evaluate",
+          "pn-epoch::packages/epoch/src/conserved.rs::conserved::evaluate_map",
+          "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay_map",
+          "pn-epoch::packages/epoch/src/conserved.rs::conserved::solve",
+          "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay"
         ]
       }
     }
@@ -23382,6 +23567,11 @@
       "status": "reviewer-confirmed",
       "premises": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
       "negative_probe": "GRAPH::claim:numerics:activation-clamp-keeps-generalized-wall-gain"
+    },
+    "conserved-public-evaluation": {
+      "status": "reviewer-confirmed",
+      "premises": "Read the frozen point-map builder, positive endpoint kernel and receiving replay. Only public compiler state, rational proposals, declared limits and ordered mathematical evidence enter these operations. Changed scopes, images, residuals and radii refuse. No secret material, new digest or publication encoder is introduced; observation supplies no mathematical premise.",
+      "negative_probe": "EPOCH::claim:compiler:projected-residual-replays-conserved-map"
     }
   }
 }

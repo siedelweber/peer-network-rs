@@ -1,6 +1,7 @@
 //! Internal carriers; no codec, host admission or graph algorithm.
 //! (´[ROOT-amend:design:bite-one-internal-envelopes]´)
 
+pub mod conserved;
 /// Exact numeric carriers and explicit unit operations.
 /// (´def:numerics:exact-carriers´)
 pub mod numerics;

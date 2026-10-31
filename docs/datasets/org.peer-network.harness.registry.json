@@ -4280,7 +4280,11 @@
         "pn-epoch::solve::anchor_tables",
         "pn-epoch::solve::real_base",
         "pn-epoch::solve::fence_shapes",
-        "pn-epoch::solve::fence_refinement"
+        "pn-epoch::solve::fence_refinement",
+        "pn-epoch::solve::endpoint_transport",
+        "pn-epoch::solve::conserved_map",
+        "pn-epoch::solve::conserved_residual",
+        "pn-epoch::solve::conserved_projection"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",

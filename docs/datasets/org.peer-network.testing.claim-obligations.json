@@ -1168,6 +1168,10 @@
     },
     {
       "claims": [
+        "EPOCH::claim:compiler:endpoint-transport-contains-dense-rational-oracle",
+        "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes",
+        "EPOCH::claim:compiler:projected-residual-replays-conserved-map",
+        "EPOCH::claim:compiler:projected-proposals-keep-hull-and-start-binding",
         "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
         "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries",
         "EPOCH::claim:compiler:width-fence-retains-frozen-support-and-anchor",
@@ -1191,11 +1195,11 @@
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "evidence_paragraph": "EPOCH::amend:compiler:solve-record-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "The certified nonlinear transport, conserved solve, residual enclosure and integrated conservation certificate remain; the inverse-gain reference wall and current reference, response and local-inclusion fixtures remain held. Cut 6-e supplies the bound reference profile, actual width fence, declared precision sequence, cumulative numerical Work stops and independent rung search. Public evidence authentication and publication remain separate obligations.",
+      "missing": "The inverse-gain reference wall, current reference and response fixtures, local inclusion and integrated conservation certificate remain for cuts 6-g and 6-h. Public evidence authentication and publication remain separate obligations.",
       "name": "ROOT::gate:design:bite-6",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
-      "premises": "Frozen verified-prefix and compiler premises remain explicit. Cuts 6-a through 6-e cover procedure carriers, exact anchor, scalar adapters, real-base and activation evidence, measured composition costs and the width-fence rung driver. Reference-profile and full-payload publication verification remain premises; finite fixtures prove no general nonlinear solve, wall inversion or public certificate authentication.",
+      "premises": "Frozen verified-prefix, compiler and full-payload publication premises remain explicit. Cuts 6-a through 6-f cover the carriers, anchor, scalar adapters, activation, width fence, declared rational proposal sequence, endpoint map and independently replayed projected residual on the scoped fixtures. Finite fixtures prove no general deployment profile, inverse wall or public certificate authentication.",
       "realizers": [],
       "status": "held"
     },
@@ -3098,17 +3102,23 @@
       "status": "held"
     },
     {
-      "claims": [],
-      "closing_condition": "Join the scoped schedule controls and independent brackets to the conserved-map and residual evidence when the policy is used in cut 6-f.",
+      "claims": [
+        "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
+        "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries",
+        "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes",
+        "EPOCH::claim:compiler:projected-residual-replays-conserved-map"
+      ],
+      "closing_condition": "Retain the joined scoped schedule and independent map/residual witnesses when changing this policy.",
       "closing_step": "Solve cost design and cut 6-f evidence integration",
+      "evidence_paragraph": "EPOCH::amend:compiler:solve-record-evidence",
       "hold": "ROOT::open:design:numeric-backend",
-      "missing": "Integrating the checked evaluation-local schedule and argument-bound-based policy selection into the conserved map and declared residual procedure remains. Scoped constant-sharing, memo, replay and resource-boundary controls now exist; they supply no integrated solve certificate.",
+      "missing": "The declared schedule now has scoped integrated map and residual evidence. Deployment-profile calibration and current reference certification remain under their own holds.",
       "name": "ROOT::dec:design:activation-evaluation-policy",
       "owner": "Numeric kernel implementer and numerical-evidence reviewer",
       "path": "docs/design/implementation.md",
-      "premises": "The scalar enclosure laws remain the checking boundary; this policy supplies no conserved-map or residual certificate.",
+      "premises": "The scalar enclosure laws and frozen verified package remain premises. Finite four-Actor fixtures establish the declared evaluation-local schedule, expected-scope replay and measured cumulative Work only; they do not price arbitrary profiles or authenticate publication.",
       "realizers": [],
-      "status": "held"
+      "status": "scoped-supported"
     }
   ]
 }

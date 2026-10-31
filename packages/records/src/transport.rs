@@ -43,7 +43,7 @@ pub type Matrix<N> = Vec<std::collections::BTreeMap<usize, N>>;
 
 /// Public exact operator inputs; the epoch adapter owns their provenance.
 /// (´def:numerics:exact-transport-contract´)
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TransportInput<N> {
     pub hops: Vec<Matrix<N>>,
     pub depth_mass: Vec<N>,
@@ -54,7 +54,7 @@ pub struct TransportInput<N> {
 
 /// Exact paired transport and direct mediant, with contributing rate hulls.
 /// (´def:numerics:exact-transport-contract´)
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TransportOutput<N> {
     pub normalized: Vec<Matrix<N>>,
     pub raw: Matrix<N>,

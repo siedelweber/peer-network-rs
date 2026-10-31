@@ -181,3 +181,6 @@ pub fn exact_transport<A: ExactArithmetic>(
         hull,
     })
 }
+/// Positive endpoint composition under separately checked scalar premises.
+/// (´[ROOT-alg:design:transport]´)
+pub mod enclosed;
