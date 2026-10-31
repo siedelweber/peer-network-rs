@@ -13,9 +13,9 @@
       "accuracy_types": "`Nonnegative<f64>`, `Budget`, `BudgetAssessment`, `RecoveryPolicy`, `Recovery`, `RecoveryEvidence`",
       "branch": "main",
       "cas_crate": "nrz-cas",
-      "cas_limits": "A constructed expression is not a proof; a conditional witness retains its domain obligations. Exact symbolic construction supplies no general certified transcendental enclosure evaluator.",
-      "cas_operations": "Normalized arbitrary-precision rational carriers with budgeted exact arithmetic, sign and comparison; exact expression graphs and checked symbolic derivations with expected-judgment replay.",
-      "cas_types": "`Rational`, `limits::Budget`, `Cas`, `proof::VerifiedWitness`",
+      "cas_limits": "Original domains, finite Work, size and policy ceilings, conditional premises and exact scope remain binding. No automatic box subdivision, arbitrary real equality, inversion, interval-matrix or Krawczyk API. A checked scalar bound does not certify our composed kernel; nonlinear preflight remains Unsupported until cut 6-c.",
+      "cas_operations": "Budgeted exact rational arithmetic and symbolic replay; certified rational-endpoint arithmetic, roots, log and exp, sigmoid and tanh, positive rational powers, complete-box first derivatives and clamp generalized derivatives. The adapter uses mutable Cas::enclose and Cas::check_enclosure; see the pinned CAS guide under open:design:nrz-capabilities.",
+      "cas_types": "`Rational`, `limits::Limits`, `limits::Budget`, `Cas`, `proof::VerifiedWitness`, `enclosure::Interval`, `EnclosureRequest`, `RefinementPolicy`, `CheckedEnclosure`",
       "distribution": "It is in active development and is not published to crates.io.",
       "entry_bite": 2,
       "formats": [
