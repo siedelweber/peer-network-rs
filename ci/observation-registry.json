@@ -14706,7 +14706,7 @@
     },
     {
       "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::replay",
-      "body": "{ if ! self . active { return Err (Error :: Declaration) ; } self . active = false ; if self . production || input . input . bleed_squared != self . bleed { return Err (Error :: Declaration) ; } let query = super :: shared_query (& input . input , & mut self . budget , Some (& self . constants)) ? ; let record = checked (& self . procedure , query , Some (& input . primitive) , & mut self . budget) ? ; if record . evidence . attachment . is_none () || record . evidence . resource_fault . is_some () { return Err (Error :: Declaration) ; } self . active = true ; Ok (record) }",
+      "body": "{ if ! self . active { return Err (Error :: Declaration) ; } self . active = false ; if self . production || input . input . bleed_squared != self . bleed { return Err (Error :: Declaration) ; } self . budget . work (key_work (& input . input) ? , Location :: new (\"evaluation memo key\")) ? ; for entry in & self . retained { self . budget . work (key_work (& entry . input) ? , Location :: new (\"evaluation memo comparison\")) ? ; if entry . input == input . input { if entry . primitive . query != input . primitive . query || entry . primitive . precision != input . primitive . precision || entry . primitive . evidence . attachment != input . primitive . evidence . attachment { return Err (Error :: Declaration) ; } self . active = true ; return Ok (entry . primitive . clone ()) ; } } if u64 :: try_from (self . retained . len ()) . map_err (| _ | Error :: Declaration) ? >= self . procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? . operation . proof_nodes { return Err (Error :: Declaration) ; } let query = super :: shared_query (& input . input , & mut self . budget , Some (& self . constants)) ? ; let record = checked (& self . procedure , query , Some (& input . primitive) , & mut self . budget) ? ; if record . evidence . attachment . is_none () || record . evidence . resource_fault . is_some () { return Err (Error :: Declaration) ; } self . retained . push (Evaluation { input : input . input . clone () , primitive : record . clone () , }) ; self . active = true ; Ok (record) }",
       "class_decision": "activation-base-public",
       "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
       "assessments": {
@@ -14761,7 +14761,7 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/conserved.rs::conserved::solve",
-      "body": "{ driver :: run (bound , & accepted . evidence , accepted . selected . as_deref () . ok_or (Error :: Scope) ? , None ,) }",
+      "body": "{ let result = driver :: run (bound , & accepted . evidence , accepted . selected . as_deref () . ok_or (Error :: Scope) ? , None ,) ? ; replay (bound , & result) ? ; Ok (result) }",
       "class_decision": "conserved-public-evaluation",
       "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
       "assessments": {

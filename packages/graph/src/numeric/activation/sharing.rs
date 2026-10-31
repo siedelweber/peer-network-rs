@@ -290,11 +290,42 @@ impl Session {
         if self.production || input.input.bleed_squared != self.bleed {
             return Err(Error::Declaration);
         }
+        self.budget
+            .work(key_work(&input.input)?, Location::new("evaluation memo key"))?;
+        for entry in &self.retained {
+            self.budget
+                .work(key_work(&entry.input)?, Location::new("evaluation memo comparison"))?;
+            if entry.input == input.input {
+                if entry.primitive.query != input.primitive.query
+                    || entry.primitive.precision != input.primitive.precision
+                    || entry.primitive.evidence.attachment != input.primitive.evidence.attachment
+                {
+                    return Err(Error::Declaration);
+                }
+                self.active = true;
+                return Ok(entry.primitive.clone());
+            }
+        }
+        if u64::try_from(self.retained.len()).map_err(|_| Error::Declaration)?
+            >= self
+                .procedure
+                .enclosure
+                .as_ref()
+                .ok_or(Error::Unsupported)?
+                .operation
+                .proof_nodes
+        {
+            return Err(Error::Declaration);
+        }
         let query = super::shared_query(&input.input, &mut self.budget, Some(&self.constants))?;
         let record = checked(&self.procedure, query, Some(&input.primitive), &mut self.budget)?;
         if record.evidence.attachment.is_none() || record.evidence.resource_fault.is_some() {
             return Err(Error::Declaration);
         }
+        self.retained.push(Evaluation {
+            input: input.input.clone(),
+            primitive: record.clone(),
+        });
         self.active = true;
         Ok(record)
     }

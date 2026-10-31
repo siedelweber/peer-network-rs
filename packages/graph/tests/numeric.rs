@@ -1081,7 +1081,7 @@ fn activation_endpoints() {
     assert!(monotone::power(&policy, &gain, "1/3").is_err());
 }
 
-/// Claim: One declared evaluation checks beta and Q(1) in order, uses their checked boxes as explicit premises and contains independent activation brackets on three unsorted points. Identical requests borrow identical retained evidence with charged lookup; fresh replay checks constants before dependent requests and refuses a changed constant query or dependent argument. Replay receivers cannot generate requests, and producers cannot switch into replay.
+/// Claim: One declared evaluation checks beta and Q(1) in order, uses their checked boxes as explicit premises and contains independent activation brackets on three unsorted points. Identical requests borrow identical retained evidence with charged lookup; fresh replay checks constants before dependent requests and refuses a changed constant query or dependent argument. Sixty-five exact repeats replay within the same allowance as production; changed repeat queries, precisions and attachments refuse. Replay receivers cannot generate requests, and producers cannot switch into replay.
 /// ´claim:numerics:evaluation-sharing-keeps-checked-premises´
 /// ´test:integration:evaluation-sharing´
 #[test]
@@ -1134,10 +1134,23 @@ fn evaluation_sharing() {
         );
     }
     assert!(limited_source.work() <= limited.maximum_work);
-    let mut exhausted = Session::from_evidence(&limited, "1/400", limited_source.premises()).unwrap();
-    let stopped = (0..64).any(|_| exhausted.replay(limited_source.evidence(index).unwrap()).is_err());
-    assert!(stopped);
-    assert!(exhausted.replay(limited_source.evidence(index).unwrap()).is_err());
+    let mut repeated = Session::from_evidence(&limited, "1/400", limited_source.premises()).unwrap();
+    for _ in 0..65 {
+        repeated.replay(limited_source.evidence(index).unwrap()).unwrap();
+    }
+    assert!(repeated.work() <= limited_source.work());
+    for mutation in [2, 0, 1] {
+        let first = limited_source.evidence(index).unwrap();
+        let mut receiver = Session::from_evidence(&limited, "1/400", limited_source.premises()).unwrap();
+        receiver.replay(first).unwrap();
+        let mut changed = first.clone();
+        match mutation {
+            0 => changed.primitive.query.target = 0,
+            1 => changed.primitive.precision += 1,
+            _ => changed.primitive.evidence.attachment = None,
+        }
+        assert!(receiver.replay(&changed).is_err());
+    }
     let mut changed = premises;
     let mut replay_only = Session::from_evidence(&p, "1/400", &changed).unwrap();
     assert!(replay_only.evaluate(&activation_request("1", Quantity::Responsive)).is_err());

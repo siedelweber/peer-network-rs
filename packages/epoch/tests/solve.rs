@@ -1385,7 +1385,7 @@ fn check_map_joins(state: &pn_epoch::compiler::CompiledState, map: &pn_records::
     }
 }
 
-/// Claim: The declared rational proposal sequence is followed by one certified map per declared precision, and frozen-package replay reconstructs the residual intersection while rejecting changed residual and radius fields. Four denominator/cap declarations pin residuals, radii and each published width within the hull; their two-grid standings intersect, changed standing refuses, and a separate solve exhaustion cannot alter fence selection. The compiler view and ledger remain immutable.
+/// Claim: The declared rational proposal sequence is followed by one certified map per declared precision, and frozen-package replay reconstructs the residual intersection while rejecting changed residual and radius fields. Four denominator/cap declarations pin residuals, radii and each published width within the hull; their two-grid standings intersect, changed standing refuses, and a separate solve exhaustion cannot alter fence selection. The equal-hull four-Actor first proposal replays within its production allowance, and insufficient replay Work refuses solve publication. The compiler view and ledger remain immutable.
 /// ´claim:compiler:projected-residual-replays-conserved-map´
 /// ´test:integration:conserved-residual´
 #[test]
@@ -1482,6 +1482,21 @@ fn check_solve_work(
     let round = &result.rounds[0];
     assert_eq!(round.candidate_work, 64_097_175);
     assert_eq!(round.proposals.len(), 2);
+    let repeated = &round.proposals[0];
+    assert_eq!(repeated.point.len(), 4);
+    assert!(
+        repeated
+            .point
+            .values()
+            .all(|value| value == repeated.point.values().next().unwrap())
+    );
+    assert!(repeated.primitives[2..6].windows(2).all(|pair| pair[0] == pair[1]));
+    let mut replay_policy = p.clone();
+    replay_policy.maximum_replay_work = repeated.work;
+    let replay_bound = bind_procedure(state, replay_policy.clone(), &Published(replay_policy), Limits::default()).unwrap();
+    let checked = pn_epoch::conserved::replay_map(&replay_bound, repeated).unwrap();
+    assert_eq!(checked.image, repeated.image);
+    assert!(checked.work <= repeated.work);
     for (map, expected) in [
         (&round.proposals[1], 43_330_725),
         (&round.certified, 51_033_270),
@@ -2057,7 +2072,7 @@ fn accuracy_case(state: &pn_epoch::compiler::CompiledState, grid: &str, cap: u64
     no_replay.maximum_replay_work = 1;
     let limited = bind_procedure(state, no_replay.clone(), &Published(no_replay), Limits::default()).unwrap();
     assert!(pn_epoch::conserved::replay(&limited, &result).is_err());
-    assert_eq!(pn_epoch::conserved::solve(&limited, &accepted).unwrap().work, expected);
+    assert!(pn_epoch::conserved::solve(&limited, &accepted).is_err());
     let mut altered = result.clone();
     altered.rounds[0].standing.values_mut().next().unwrap().upper = "999".into();
     assert!(matches!(

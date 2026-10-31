@@ -174,12 +174,14 @@ pub fn replay_map(bound: &BoundProcedure<'_>, record: &MapRecord) -> Result<MapR
     ret
 )]
 pub fn solve(bound: &BoundProcedure<'_>, accepted: &crate::fence::Search) -> Result<pn_records::conserved::SolveRecord, Error> {
-    driver::run(
+    let result = driver::run(
         bound,
         &accepted.evidence,
         accepted.selected.as_deref().ok_or(Error::Scope)?,
         None,
-    )
+    )?;
+    replay(bound, &result)?;
+    Ok(result)
 }
 
 /// Replay the frozen map scopes and independently reconstruct each residual and radius.
