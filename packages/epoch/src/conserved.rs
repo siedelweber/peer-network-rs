@@ -154,7 +154,7 @@ pub fn replay_map(bound: &BoundProcedure<'_>, record: &MapRecord) -> Result<MapR
         &record.rung,
         &record.point,
         record.precision,
-        bound.inputs().1.maximum_solve_work,
+        bound.inputs().1.maximum_replay_work,
         Some(record),
     )
 }

@@ -41,6 +41,7 @@ fn declaration(state: &pn_epoch::compiler::CompiledState) -> Procedure {
         margin: "5/4".into(),
         maximum_work: 10,
         maximum_solve_work: 10,
+        maximum_replay_work: 10,
         maximum_iterations: 20,
         endpoint_grid: "1/1000".into(),
         fence: None,
@@ -166,7 +167,7 @@ fn procedure_records() {
         bad.grid = grid.iter().map(ToString::to_string).collect();
         assert!(validate_procedure(&bad, Limits::default()).is_err());
     }
-    for case in 0..8 {
+    for case in 0..10 {
         let mut bad = procedure.clone();
         match case {
             0 => bad.maximum_work = 0,
@@ -176,6 +177,8 @@ fn procedure_records() {
             4 => bad.precision = Precision::BinaryBits(vec![]),
             5 => bad.precision = Precision::BinaryBits(vec![64, 32]),
             6 => bad.primitives.clear(),
+            7 => bad.maximum_solve_work = 0,
+            8 => bad.maximum_replay_work = 0,
             _ => bad.backend.clear(),
         }
         assert_eq!(validate_procedure(&bad, Limits::default()), Err(RecordError::Procedure));
@@ -859,6 +862,7 @@ fn fence_procedure(state: &pn_epoch::compiler::CompiledState) -> Procedure {
     let mut p = base_procedure(state);
     p.maximum_work = 200_000_000;
     p.maximum_solve_work = 200_000_000;
+    p.maximum_replay_work = 200_000_000;
     p.primitives.extend([
         Primitive::Sigmoid,
         Primitive::Tanh,
@@ -1504,7 +1508,7 @@ fn conserved_policy(state: &pn_epoch::compiler::CompiledState, grid: &str) -> Pr
     p
 }
 
-/// Claim: Two declared dyadic grids produce different rational proposals outside a singleton non-dyadic hull, yet final projection and replay certify the same exact self-only standing. Changed starting points, contraction fields and non-dyadic proposal grids refuse; no private start enters the declared solve. On a non-singleton hull the replayed zero fence publishes the certified image exactly; a positive rung below the edge uses its evaluated contraction bound and a strictly smaller radius than the margin-only bound. Eight wall/ceiling bindings refuse unsupported argument ranges before scalar evaluation.
+/// Claim: Two declared dyadic grids produce different rational proposals outside a singleton non-dyadic hull, yet final projection and replay certify the same exact self-only standing. Changed starting points, contraction fields and non-dyadic proposal grids refuse; no private start enters the declared solve. On a non-singleton hull the replayed zero fence publishes the certified image exactly; a positive rung below the edge uses its evaluated contraction bound and a strictly smaller radius than the margin-only bound. Eight wall/ceiling bindings admit supported and refuse unsupported argument ranges at binding.
 /// ´claim:compiler:projected-proposals-keep-hull-and-start-binding´
 /// ´test:integration:conserved-projection´
 #[test]
@@ -1969,8 +1973,19 @@ fn accuracy_case(state: &pn_epoch::compiler::CompiledState, grid: &str, cap: u64
     for work in [expected, expected - 1] {
         let mut limited = p.clone();
         limited.maximum_solve_work = work;
+        limited.maximum_replay_work = work;
         let bounded = bind_procedure(state, limited.clone(), &Published(limited), Limits::default()).unwrap();
         assert_eq!(pn_epoch::conserved::solve(&bounded, &accepted).is_ok(), work == expected);
+        if work == expected {
+            let replayed = pn_epoch::conserved::replay(&bounded, &result).unwrap();
+            assert!(
+                replayed.work <= result.work,
+                "replay {} producer {}",
+                replayed.work,
+                result.work
+            );
+            assert_eq!(replayed.rounds[0].standing, round.standing);
+        }
     }
     assert_accuracy(round, &accepted.evidence.hull, grid);
     let mut no_solve = p.clone();
@@ -1978,6 +1993,11 @@ fn accuracy_case(state: &pn_epoch::compiler::CompiledState, grid: &str, cap: u64
     let limited = bind_procedure(state, no_solve.clone(), &Published(no_solve), Limits::default()).unwrap();
     assert_eq!(pn_epoch::fence::search(&limited, None).unwrap(), accepted);
     assert!(pn_epoch::conserved::solve(&limited, &accepted).is_err());
+    let mut no_replay = p.clone();
+    no_replay.maximum_replay_work = 1;
+    let limited = bind_procedure(state, no_replay.clone(), &Published(no_replay), Limits::default()).unwrap();
+    assert!(pn_epoch::conserved::replay(&limited, &result).is_err());
+    assert_eq!(pn_epoch::conserved::solve(&limited, &accepted).unwrap().work, expected);
     let mut altered = result.clone();
     altered.rounds[0].standing.values_mut().next().unwrap().upper = "999".into();
     assert!(matches!(

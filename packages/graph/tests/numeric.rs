@@ -38,6 +38,7 @@ fn procedure() -> Procedure {
         margin: "5/4".into(),
         maximum_work: limits.work,
         maximum_solve_work: limits.work,
+        maximum_replay_work: limits.work,
         maximum_iterations: 2,
         endpoint_grid: "1/64".into(),
         fence: None,
@@ -895,6 +896,15 @@ fn evaluation_sharing() {
     let index = limited_source
         .evaluate(&activation_request("2", Quantity::Responsive))
         .unwrap();
+    for _ in 0..64 {
+        assert_eq!(
+            limited_source
+                .evaluate(&activation_request("2", Quantity::Responsive))
+                .unwrap(),
+            index
+        );
+    }
+    assert!(limited_source.work() <= limited.maximum_work);
     let mut exhausted = Session::from_evidence(&limited, "1/400", limited_source.premises()).unwrap();
     let stopped = (0..64).any(|_| exhausted.replay(limited_source.evidence(index).unwrap()).is_err());
     assert!(stopped);

@@ -85,6 +85,11 @@ fn round(
     if precision < 2 {
         return Err(Error::Scope);
     }
+    let allowance = if supplied.is_some() {
+        p.maximum_replay_work
+    } else {
+        p.maximum_solve_work
+    };
     let start = b.usage().work;
     let hull = super::hull(bound);
     let grid = residual::grid(
@@ -116,7 +121,7 @@ fn round(
             rung,
             &point,
             proposal_precision,
-            p.maximum_solve_work.checked_sub(b.usage().work).ok_or(Error::Scope)?,
+            allowance.checked_sub(b.usage().work).ok_or(Error::Scope)?,
             given,
         )?;
         b.work(record.work, Location::new("candidate map"))?;
@@ -141,7 +146,7 @@ fn round(
         rung,
         &point,
         precision,
-        p.maximum_solve_work.checked_sub(b.usage().work).ok_or(Error::Scope)?,
+        allowance.checked_sub(b.usage().work).ok_or(Error::Scope)?,
         given,
     )?;
     b.work(certified.work, Location::new("certified residual map"))?;
@@ -176,7 +181,11 @@ pub(super) fn run(
         return Err(Error::Scope);
     };
     let mut limits = p.enclosure.as_ref().ok_or(Error::Scope)?.operation.clone();
-    limits.work = p.maximum_solve_work;
+    limits.work = if supplied.is_some() {
+        p.maximum_replay_work
+    } else {
+        p.maximum_solve_work
+    };
     let mut budget = Budget::new(limits)?;
     let mut rounds = Vec::new();
     for (index, precision) in sequence.iter().enumerate() {

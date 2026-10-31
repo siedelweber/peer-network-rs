@@ -14261,7 +14261,7 @@
     },
     {
       "operation": "pn-records::packages/records/src/solve.rs::solve::validate_procedure",
-      "body": "{ let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; if input . boundary == 0 || input . name . is_empty () || input . backend . is_empty () || input . primitives . is_empty () || input . maximum_work == 0 || input . maximum_solve_work == 0 || input . maximum_iterations == 0 || ! nonnegative (& input . margin , & mut budget) ? . compare (& one , & mut budget) ? . is_gt () || nonnegative (& input . endpoint_grid , & mut budget) ? . is_zero () { return Err (RecordError :: Procedure) ; } if let Precision :: BinaryBits (bits) | Precision :: AbsoluteWidthBits (bits) = & input . precision && (bits . is_empty () || bits [0] == 0 || bits . windows (2) . any (| pair | pair [0] >= pair [1])) { return Err (RecordError :: Procedure) ; } let mut previous : Option < Rational > = None ; for rung in & input . grid { let value = nonnegative (rung , & mut budget) ? ; if previous . as_ref () . map (| old | old . compare (& value , & mut budget)) . transpose () ? . is_some_and (| order | ! order . is_gt ()) { return Err (RecordError :: Grid) ; } previous = Some (value) ; } if ! previous . is_some_and (| last | last . is_zero ()) { return Err (RecordError :: Grid) ; } Ok (()) }",
+      "body": "{ let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; if input . boundary == 0 || input . name . is_empty () || input . backend . is_empty () || input . primitives . is_empty () || input . maximum_work == 0 || input . maximum_solve_work == 0 || input . maximum_replay_work == 0 || input . maximum_iterations == 0 || ! nonnegative (& input . margin , & mut budget) ? . compare (& one , & mut budget) ? . is_gt () || nonnegative (& input . endpoint_grid , & mut budget) ? . is_zero () { return Err (RecordError :: Procedure) ; } if let Precision :: BinaryBits (bits) | Precision :: AbsoluteWidthBits (bits) = & input . precision && (bits . is_empty () || bits [0] == 0 || bits . windows (2) . any (| pair | pair [0] >= pair [1])) { return Err (RecordError :: Procedure) ; } let mut previous : Option < Rational > = None ; for rung in & input . grid { let value = nonnegative (rung , & mut budget) ? ; if previous . as_ref () . map (| old | old . compare (& value , & mut budget)) . transpose () ? . is_some_and (| order | ! order . is_gt ()) { return Err (RecordError :: Grid) ; } previous = Some (value) ; } if ! previous . is_some_and (| last | last . is_zero ()) { return Err (RecordError :: Grid) ; } Ok (()) }",
       "class_decision": "solve-public-records",
       "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
       "assessments": {
@@ -14690,7 +14690,7 @@
     },
     {
       "operation": "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay_map",
-      "body": "{ bound . preflight () ? ; map :: run (bound , & record . rung , & record . point , record . precision , bound . inputs () . 1 . maximum_solve_work , Some (record) ,) }",
+      "body": "{ bound . preflight () ? ; map :: run (bound , & record . rung , & record . point , record . precision , bound . inputs () . 1 . maximum_replay_work , Some (record) ,) }",
       "class_decision": "conserved-public-evaluation",
       "item_premise": "Only frozen public compiler inputs, rational coordinates, declared policies and checked numerical evidence enter these operations. The evaluator retains public bounds and operational Work, never private material or publication bytes; it neither changes a subscriber nor admits a digest.",
       "assessments": {
@@ -17991,114 +17991,6 @@
       "expansion_review": "Public structural compiler evidence is cloned, compared and formatted without hiding holds or introducing serialization. The frozen result retains a verified source package and exposes immutable views only."
     },
     {
-      "item": "solve::Primitive",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::Precision",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::Equality",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::Procedure",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::Bounds",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::Completion",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::Attempt",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::Residual",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::Evidence",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::RecordError",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::BoundProcedure",
-      "kind": "derive",
-      "package": "pn-epoch",
-      "path": "packages/epoch/src/solve.rs",
-      "syntax": "# [derive (Debug)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
-      "item": "solve::ProcedureError",
-      "kind": "derive",
-      "package": "pn-epoch",
-      "path": "packages/epoch/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
-    },
-    {
       "item": "anchor::ExactAnchor",
       "kind": "derive",
       "package": "pn-epoch",
@@ -18225,15 +18117,6 @@
       "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
     },
     {
-      "item": "solve::AttemptStop",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Debug, Clone and equality carry only the public declared stopping category; no private field or publication encoding is derived."
-    },
-    {
       "item": "numeric::activation::Quantity",
       "kind": "derive",
       "package": "pn-graph",
@@ -18277,15 +18160,6 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "activation-base-public",
       "expansion_review": "Clone, Debug and equality retain public numeric requests, checked endpoint records and the explicit source envelope only. No secret or publication encoding is introduced."
-    },
-    {
-      "item": "solve::FenceProfile",
-      "kind": "derive",
-      "package": "pn-records",
-      "path": "packages/records/src/solve.rs",
-      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
-      "class_decision": "solve-public-records",
-      "expansion_review": "Public frozen-profile names, rational fence inputs, independent attempt records and operational errors only. Derives neither expose secrets nor define publication bytes."
     },
     {
       "item": "numeric::activation::fence::Inputs",
@@ -18351,15 +18225,6 @@
       "expansion_review": "Public frozen map coordinates, exact rational endpoints, ordered primitive evidence, Work totals and operational refusals only. Derives expose no secret and define no publication encoding."
     },
     {
-      "item": "conserved::Error",
-      "kind": "derive",
-      "package": "pn-epoch",
-      "path": "packages/epoch/src/conserved.rs",
-      "syntax": "# [derive (Debug , thiserror :: Error)]",
-      "class_decision": "conserved-public-evaluation",
-      "expansion_review": "Public frozen map coordinates, exact rational endpoints, ordered primitive evidence, Work totals and operational refusals only. Derives expose no secret and define no publication encoding."
-    },
-    {
       "item": "conserved::MapRecord",
       "kind": "derive",
       "package": "pn-records",
@@ -18385,6 +18250,141 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "conserved-public-evaluation",
       "expansion_review": "Typed public map and residual transcripts retain rational coordinates, scalar attachments and Work totals. Their derives expose no private material and define no publication bytes."
+    },
+    {
+      "item": "solve::Primitive",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , PartialOrd , Ord)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::Precision",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::Equality",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::FenceProfile",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Public frozen-profile names, rational fence inputs, independent attempt records and operational errors only. Derives neither expose secrets nor define publication bytes."
+    },
+    {
+      "item": "solve::Procedure",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::Bounds",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::Completion",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::AttemptStop",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and equality carry only the public declared stopping category; no private field or publication encoding is derived."
+    },
+    {
+      "item": "solve::Attempt",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::Residual",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::Evidence",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::RecordError",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "conserved::Error",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/conserved.rs",
+      "syntax": "# [derive (Debug , thiserror :: Error)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Public frozen map coordinates, exact rational endpoints, ordered primitive evidence, Work totals and operational refusals only. Derives expose no secret and define no publication encoding."
+    },
+    {
+      "item": "solve::BoundProcedure",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/solve.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "solve::ProcedureError",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
     }
   ],
   "reviewed_types": [
@@ -19718,7 +19718,7 @@
       "item": "solve::Procedure",
       "package": "pn-records",
       "path": "packages/records/src/solve.rs",
-      "syntax": "# [doc = \" Public procedure payload; publication binding is an owning consumer's duty.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Procedure { pub edition : DeclarationId , pub boundary : u64 , pub name : String , pub backend : String , pub primitives : BTreeSet < Primitive > , pub precision : Precision , pub equality : Equality , pub grid : Vec < String > , pub margin : String , pub maximum_work : u64 , pub maximum_solve_work : u64 , pub maximum_iterations : u64 , pub endpoint_grid : String , pub enclosure : Option < crate :: primitive :: EnclosurePolicy > , pub fence : Option < FenceProfile > , }"
+      "syntax": "# [doc = \" Public procedure payload; publication binding is an owning consumer's duty.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Procedure { pub edition : DeclarationId , pub boundary : u64 , pub name : String , pub backend : String , pub primitives : BTreeSet < Primitive > , pub precision : Precision , pub equality : Equality , pub grid : Vec < String > , pub margin : String , pub maximum_work : u64 , pub maximum_solve_work : u64 , pub maximum_replay_work : u64 , pub maximum_iterations : u64 , pub endpoint_grid : String , pub enclosure : Option < crate :: primitive :: EnclosurePolicy > , pub fence : Option < FenceProfile > , }"
     },
     {
       "item": "solve::Bounds",
