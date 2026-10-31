@@ -7585,6 +7585,66 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/wall.rs",
+      "item": "numeric::wall::check_declaration",
+      "owner": "GRAPH",
+      "signature": "fn check_declaration (procedure : & Procedure , input : & Inputs) -> Result < () , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/wall.rs",
+      "item": "numeric::wall::evaluate",
+      "owner": "GRAPH",
+      "signature": "fn evaluate (procedure : & Procedure , input : & Inputs) -> Result < Record , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/wall.rs",
+      "item": "numeric::wall::replay",
+      "owner": "GRAPH",
+      "signature": "fn replay (procedure : & Procedure , input : & Inputs , record : & Record) -> Result < Record , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/wall.rs",
+      "item": "wall::bind",
+      "owner": "EPOCH",
+      "signature": "fn bind < 'a > (bound : & 'a BoundProcedure < '_ > , input : Inputs , verifier : & impl ReferenceVerifier ,) -> Result < BoundReference < 'a > , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/wall.rs",
+      "item": "wall::BoundReference < '_ >::evaluate",
+      "owner": "EPOCH",
+      "signature": "fn evaluate (& self) -> Result < Record , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/wall.rs",
+      "item": "wall::BoundReference < '_ >::replay",
+      "owner": "EPOCH",
+      "signature": "fn replay (& self , record : & Record) -> Result < Record , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
     }
   ],
   "metrics": [
@@ -14720,6 +14780,72 @@
         "secret_flow": "conserved-public-evaluation",
         "exposure_consumers": "conserved-public-evaluation"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::check_declaration",
+      "body": "{ let limits = procedure . enclosure . as_ref () . ok_or (Error :: Declaration) ? . operation . clone () ; validate (procedure , input , & mut Budget :: new (limits) ?) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::evaluate",
+      "body": "{ run (procedure , input , None) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::replay",
+      "body": "{ run (procedure , input , Some (record)) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/wall.rs::wall::bind",
+      "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; pn_graph :: numeric :: wall :: check_declaration (procedure , & input) ? ; if ! verifier . published_reference (procedure , & input) { return Err (Error :: Publication) ; } Ok (BoundReference { procedure , input }) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::evaluate",
+      "body": "{ Ok (pn_graph :: numeric :: wall :: evaluate (self . procedure , & self . input) ?) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::replay",
+      "body": "{ Ok (pn_graph :: numeric :: wall :: replay (self . procedure , & self . input , record) ?) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Public reference inputs, immutable bound procedure, rational enclosures and scalar attachments only. Queries are rebuilt before certificate checks. Results and refusals expose no secret or price mutation.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
     }
   ],
   "generators": [
@@ -18385,6 +18511,114 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "solve-public-records",
       "expansion_review": "Debug, Clone and structural equality retain public procedure/evidence fields; the error conversion carries only public arithmetic refusal. No private field or codec is derived."
+    },
+    {
+      "item": "wall::Previous",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::Floor",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::Inputs",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::Sign",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::Step",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::Verdict",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::Participation",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [derive (Clone , Copy , Debug , PartialEq , Eq)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::Branches",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::Record",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "numeric::wall::Error",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/wall.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::BoundReference",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/wall.rs",
+      "syntax": "# [derive (Debug)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "wall::Error",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/wall.rs",
+      "syntax": "# [derive (Debug , thiserror :: Error)]",
+      "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
+      "class_decision": "reference-wall-public"
     }
   ],
   "reviewed_types": [
@@ -19763,6 +19997,60 @@
       "syntax": "# [doc = \" Distinct representation refusals; no arithmetic failure becomes a fence FAIL.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum RecordError { # [error (\"invalid procedure declaration\")] Procedure , # [error (\"invalid descending rung grid or missing zero anchor\")] Grid , # [error (\"invalid nonnegative bounds\")] Bounds , # [error (\"attempt transcript differs from declared procedure\")] Attempt , # [error (\"residual premises or radius are inconsistent\")] Residual , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
     },
     {
+      "item": "wall::Previous",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [doc = \" Identity with this target is stronger than equality of two interval displays.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Previous { Target , Rational (String) , }"
+    },
+    {
+      "item": "wall::Floor",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [doc = \" The ridge declaration is supported only when its certified upper bound is nonbinding.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Floor { Rational , Ridge , }"
+    },
+    {
+      "item": "wall::Inputs",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [doc = \" Public inputs in reduced units; no charged price or rounded target is admitted here.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Inputs { pub width : String , pub cumulative_tilt : String , pub bracket : Range , pub stopping_width : String , pub maximum_steps : u64 , pub maximum_work : u64 , pub maximum_replay_work : u64 , pub floor : Floor , pub previous : Previous , pub door : String , pub absolute_cap : String , pub relative_cap : String , pub deadband : String , }"
+    },
+    {
+      "item": "wall::Sign",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [doc = \" Strict signs only; an unresolved enclosure cannot select a half bracket.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Sign { Positive , Negative , Indecisive , }"
+    },
+    {
+      "item": "wall::Step",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [doc = \" Every attempted precision remains in execution order, including indecisive attempts.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Step { pub primitive : PrimitiveRecord , pub sign : Sign , pub work : u64 , }"
+    },
+    {
+      "item": "wall::Verdict",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [doc = \" Outward branch certification distinguishes an unresolved comparison from a false one.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Verdict { Pass , Fail , Indecisive , }"
+    },
+    {
+      "item": "wall::Participation",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [doc = \" The effective participation floor follows the certified policy comparison.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] pub enum Participation { Door , Wall , Indecisive , }"
+    },
+    {
+      "item": "wall::Branches",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [doc = \" Ordered controller decisions and both enclosures; these are not ledger publication values.\"] # [doc = \" (´[ROOT-rule:design:reference-wall-branches]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Branches { pub floor_binding : bool , pub deadband_hold : bool , pub step_capped : bool , pub above_floor : Verdict , pub policy_valid : Verdict , pub participation : Participation , pub proposal : Range , pub delivered : Range , }"
+    },
+    {
+      "item": "wall::Record",
+      "package": "pn-records",
+      "path": "packages/records/src/wall.rs",
+      "syntax": "# [doc = \" A completed enclosure or a retained indecisive prefix, independently checked on replay.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Record { pub target : Option < Range > , pub steps : Vec < Step > , pub bisections : u64 , pub bisection_work : Vec < u64 > , pub branches : Option < Branches > , pub indecisive : bool , pub work : u64 , }"
+    },
+    {
       "item": "constants::ConstantDefinition",
       "package": "pn-records",
       "path": "packages/records/src/constants.rs",
@@ -20411,6 +20699,18 @@
       "syntax": "# [doc = \" Formula inputs retained beside the original scalar query and checked attachment.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evaluation { pub input : Request , pub primitive : PrimitiveRecord , }"
     },
     {
+      "item": "numeric::wall::Error",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/wall.rs",
+      "syntax": "# [doc = \" Refusals identify the first failed admission or evidence check.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"invalid reference wall declaration\")] Declaration , # [error (\"lower bracket endpoint is outside the declared reduction range\")] Binding , # [error (\"initial bracket has a certified wrong endpoint sign\")] Bracket , # [error (\"supplied wall query or precision differs from the rebuilt query\")] Query , # [error (\"supplied wall attachment is absent or invalid\")] Attachment , # [error (\"supplied wall result differs from independently replayed evidence\")] Record , # [error (\"wall scalar evaluation stopped: {outcome:?}; resource fault: {resource_fault:?}\")] Operational { outcome : Outcome , resource_fault : Option < nrz_cas :: Fault > , } , # [error (\"wall iteration allowance exhausted\")] Iterations , # [error (\"binding ridge floor requires its exact defining object\")] Ridge , # [error (\"wall numeric request: {0}\")] Numeric (# [from] super :: Error) , # [error (\"wall exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+    },
+    {
+      "item": "numeric::wall::Run",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/wall.rs",
+      "syntax": "struct Run < 'a > { procedure : & 'a Procedure , supplied : Option < & 'a Record > , budget : Budget , result : Record , }"
+    },
+    {
       "item": "numeric::Error",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric.rs",
@@ -20919,6 +21219,18 @@
       "package": "pn-epoch",
       "path": "packages/epoch/src/support.rs",
       "syntax": "# [doc = \" No partial support escapes invalid premises or bounded computation.\"] # [doc = \" (´def:compiler:emission-support´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum SupportError { # [error (\"base, ledger or price does not match the bound boundary\")] Boundary , # [error (\"base is not a nonnegative square anchored matrix with positive diagonal\")] Base , # [error (\"anchored ledger pair is missing, has zero count or differs in units\")] Ledger , # [error (\"support product budget exhausted\")] Products , # [error (\"bound parameter: {0}\")] Input (# [from] InputError) , # [error (\"numeric coordinate: {0}\")] Numeric (# [from] NumericError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
+    },
+    {
+      "item": "wall::BoundReference",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/wall.rs",
+      "syntax": "# [doc = \" A reference definition remains separate from the package's rational debit vintage.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Debug)] pub struct BoundReference < 'a > { procedure : & 'a pn_records :: solve :: Procedure , input : Inputs , }"
+    },
+    {
+      "item": "wall::Error",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/wall.rs",
+      "syntax": "# [doc = \" Publication and scalar refusals retain distinct categories.\"] # [doc = \" (´[ROOT-alg:design:reference-wall]´)\"] # [derive (Debug , thiserror :: Error)] pub enum Error { # [error (\"reference definition publication refused\")] Publication , # [error (\"bound procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"reference wall: {0}\")] Wall (# [from] pn_graph :: numeric :: wall :: Error) , }"
     },
     {
       "item": "FamilyProfile",
@@ -21529,6 +21841,21 @@
           "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay_map",
           "pn-epoch::packages/epoch/src/conserved.rs::conserved::solve",
           "pn-epoch::packages/epoch/src/conserved.rs::conserved::replay"
+        ]
+      }
+    },
+    {
+      "name": "reference-wall-public",
+      "status": "reviewer-confirmed",
+      "premises": "Public reference definitions and complete rational numerical evidence only. The immutable charged price is never replaced. Scalar queries and full returned evidence are recorded; no secret, publication encoder or subscriber is introduced.",
+      "membership": {
+        "explicit": [
+          "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::evaluate",
+          "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::replay",
+          "pn-epoch::packages/epoch/src/wall.rs::wall::bind",
+          "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::check_declaration",
+          "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::evaluate",
+          "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::replay"
         ]
       }
     }

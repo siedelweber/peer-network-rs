@@ -15,6 +15,66 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Debug)]
 struct Published(Procedure);
+
+#[derive(Debug)]
+struct PublishedReference(pn_records::wall::Inputs);
+impl pn_epoch::wall::ReferenceVerifier for PublishedReference {
+    fn published_reference(&self, _: &Procedure, input: &pn_records::wall::Inputs) -> bool {
+        input == &self.0
+    }
+}
+
+/// Claim: A separately published reference definition binds through the frozen procedure, refuses a changed declaration and unsupported lower endpoint, and evaluates and replays zero width without changing the rational charged price.
+/// ´claim:compiler:reference-wall-binding-preserves-charged-price´
+/// ´test:integration:reference-wall-binding´
+#[test]
+fn reference_wall_binding() {
+    use pn_epoch::wall;
+    use pn_records::{
+        primitive::Range,
+        wall::{Floor, Inputs, Previous},
+    };
+    let state = state();
+    let p = base_procedure(&state);
+    let bound = bind_procedure(&state, p.clone(), &Published(p), Limits::default()).unwrap();
+    let input = Inputs {
+        width: "0".into(),
+        cumulative_tilt: "15/8".into(),
+        bracket: Range {
+            lower: "1/2".into(),
+            upper: "1".into(),
+        },
+        stopping_width: "1/128".into(),
+        maximum_steps: 64,
+        maximum_work: 200_000_000,
+        maximum_replay_work: 200_000_000,
+        floor: Floor::Rational,
+        previous: Previous::Rational("3/37".into()),
+        door: "1".into(),
+        absolute_cap: "1/4".into(),
+        relative_cap: "1/2".into(),
+        deadband: "1/16".into(),
+    };
+    let published = PublishedReference(input.clone());
+    let price = state.package().input().prices.last().unwrap().clone();
+    let reference = wall::bind(&bound, input.clone(), &published).unwrap();
+    let record = reference.evaluate().unwrap();
+    assert_eq!(record.steps, Vec::new());
+    assert_eq!(reference.replay(&record).unwrap(), record);
+    assert_eq!(state.package().input().prices.last().unwrap(), &price);
+    let mut changed = input.clone();
+    changed.door = "2".into();
+    assert!(matches!(
+        wall::bind(&bound, changed, &published),
+        Err(wall::Error::Publication)
+    ));
+    let mut changed = input;
+    changed.bracket.lower = "1/1000".into();
+    assert!(matches!(
+        wall::bind(&bound, changed, &published),
+        Err(wall::Error::Wall(pn_graph::numeric::wall::Error::Binding))
+    ));
+}
 impl ProcedureVerifier for Published {
     fn published_procedure(&self, input: &Procedure) -> bool {
         input == &self.0

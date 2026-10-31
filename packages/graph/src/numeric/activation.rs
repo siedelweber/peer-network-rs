@@ -115,7 +115,7 @@ fn log_core(nodes: &mut Vec<Node>, p: usize, beta: usize, bleed: usize, one: usi
     push(nodes, Node::Add(log_sigmoid, log_root))
 }
 
-fn query(input: &Request, budget: &mut Budget) -> Result<Query, Error> {
+pub(super) fn query(input: &Request, budget: &mut Budget) -> Result<Query, Error> {
     shared_query(input, budget, None)
 }
 

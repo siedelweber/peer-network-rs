@@ -35,19 +35,19 @@ generators = 6
 
 [[rows]]
 name = "pn-epoch"
-operations = 33
-instrumented = 27
+operations = 36
+instrumented = 30
 exceptions = 6
 helpers = 0
-generators = 39
+generators = 41
 
 [[rows]]
 name = "pn-graph"
-operations = 33
-instrumented = 26
+operations = 36
+instrumented = 29
 exceptions = 7
 helpers = 0
-generators = 57
+generators = 58
 
 [[rows]]
 name = "pn-host"
@@ -71,7 +71,7 @@ operations = 109
 instrumented = 41
 exceptions = 68
 helpers = 0
-generators = 117
+generators = 126
 
 [[rows]]
 name = "pn-wallet"

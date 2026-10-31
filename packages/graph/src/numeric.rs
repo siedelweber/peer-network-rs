@@ -3,6 +3,7 @@
 
 pub mod activation;
 mod scope;
+pub mod wall;
 
 use nrz_cas::{
     enclosure::{EnclosureOutcome, EnclosureReport, UndecidedReason},

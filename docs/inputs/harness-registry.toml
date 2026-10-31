@@ -1542,7 +1542,7 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::solve::procedure_binding", "pn-epoch::solve::procedure_records", "pn-epoch::solve::evidence_records", "pn-epoch::solve::transport_oracle", "pn-epoch::solve::anchor_tables", "pn-epoch::solve::real_base", "pn-epoch::solve::fence_shapes", "pn-epoch::solve::fence_refinement", "pn-epoch::solve::endpoint_transport", "pn-epoch::solve::conserved_map", "pn-epoch::solve::conserved_residual", "pn-epoch::solve::conserved_projection"]
+cases = ["pn-epoch::solve::procedure_binding", "pn-epoch::solve::procedure_records", "pn-epoch::solve::evidence_records", "pn-epoch::solve::transport_oracle", "pn-epoch::solve::anchor_tables", "pn-epoch::solve::real_base", "pn-epoch::solve::fence_shapes", "pn-epoch::solve::fence_refinement", "pn-epoch::solve::endpoint_transport", "pn-epoch::solve::conserved_map", "pn-epoch::solve::conserved_residual", "pn-epoch::solve::conserved_projection", "pn-epoch::solve::reference_wall_binding"]
 
 [[rows]]
 kind = "suite"
@@ -1553,4 +1553,4 @@ level = "public-surface"
 implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-graph::numeric::primitive_oracles", "pn-graph::numeric::primitive_domains", "pn-graph::numeric::primitive_replay", "pn-graph::numeric::primitive_limits", "pn-graph::numeric::activation_oracles", "pn-graph::numeric::activation_walls", "pn-graph::numeric::activation_costs", "pn-graph::numeric::activation_endpoints", "pn-graph::numeric::evaluation_sharing", "pn-graph::numeric::evaluation_costs"]
+cases = ["pn-graph::numeric::primitive_oracles", "pn-graph::numeric::primitive_domains", "pn-graph::numeric::primitive_replay", "pn-graph::numeric::primitive_limits", "pn-graph::numeric::activation_oracles", "pn-graph::numeric::activation_walls", "pn-graph::numeric::activation_costs", "pn-graph::numeric::activation_endpoints", "pn-graph::numeric::evaluation_sharing", "pn-graph::numeric::evaluation_costs", "pn-graph::numeric::reference_wall_oracle", "pn-graph::numeric::reference_wall_work", "pn-graph::numeric::reference_wall_controls", "pn-graph::numeric::reference_wall_branches"]

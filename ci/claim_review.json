@@ -1722,6 +1722,14 @@
       "review": "Six unsorted reaction denominators retain 24 frozen entries (21 exact, three irrational). Independent square brackets lie inside the bounds. Replay rebuilds the expected query from the bound frozen entry; independently valid certificates with each held entry’s radicand or domain factor changed refuse. Original compiler output and support remain unchanged; absent entries refuse."
     },
     {
+      "operation": "pn-epoch::solve::reference_wall_binding",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:reference-wall-binding-preserves-charged-price",
+      "before": "",
+      "after": "Claim: A separately published reference definition binds through the frozen procedure, refuses a changed declaration and unsupported lower endpoint, and evaluates and replays zero width without changing the rational charged price.",
+      "review": "The publication verifier sees the whole reference input. A changed door refuses publication, an unsupported lower endpoint refuses at the kernel binding check, and zero-width evaluation and replay leave the immutable rational charged price identical."
+    },
+    {
       "operation": "pn-epoch::solve::transport_oracle",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:exact-transport-agrees-with-dense-rational-oracle",
@@ -2184,6 +2192,38 @@
       "before": "",
       "after": "Claim: The primitive boundary preserves original comparison outcomes, distinguishes width-only bounds and interruption, refuses altered certificates and scopes, and admits no unknown schema or held composition through a backend name.",
       "review": "Checks exact PASS and FAIL versus width-only Bound, straddling INDECISIVE and deterministic interruption, five certificate or schema corruptions, a changed original goal, three held composition capabilities and BinaryBits refusal."
+    },
+    {
+      "operation": "pn-graph::numeric::reference_wall_branches",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:reference-wall-certifies-floor-deadband-and-policy",
+      "before": "",
+      "after": "Claim: Four unsorted rational previous walls exercise zero-width floor proposals, deadband equality, capped and uncapped moves without scalar requests; two doors distinguish valid and invalid policy branches. A positive-width inverse target is certified below the rational floor, while the ridge declaration in that range refuses without its defining object.",
+      "review": "Eight combinations of four unsorted rational previous walls and two doors have exact zero-width proposals and no scalar requests. They include equality at the deadband, capped and uncapped moves, and both policy validity outcomes. A positive-width 1/8 case uses ceiling five and independent strict endpoint gain signs below 3/37, then holds at the rational floor and replays. The ridge declaration in that range refuses without asserting which side of the exact ridge the target lies on."
+    },
+    {
+      "operation": "pn-graph::numeric::reference_wall_controls",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:reference-wall-refuses-unproved-signs-and-replay-changes",
+      "before": "",
+      "after": "Claim: Wrong-sign brackets and unsupported lower endpoints refuse; an unresolved declared sign stops without bisection, and replay distinguishes a changed query from a changed attachment.",
+      "review": "Read strict wrong-sign bracket refusal, lower endpoint binding refusal, a coarse unresolved sign with no bisection, changed-query refusal at Query and a substituted original-scope certificate refusal at Attachment. This is finite refusal evidence, not a proof of monotonicity."
+    },
+    {
+      "operation": "pn-graph::numeric::reference_wall_oracle",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:reference-wall-encloses-independent-gain-root",
+      "before": "",
+      "after": "Claim: Three unsorted widths produce reference target enclosures with independently separated gain-equation endpoint signs; the target identity holds the previous wall and replay checks the same defining inputs.",
+      "review": "Independent directed integral and binomial enclosures evaluate the analytic gain formula at both returned endpoints for three unsorted widths. Their strict opposite signs isolate the unique target under the cited analytic premise. The reference identity holds both floor declarations without equating independently computed intervals. No fence or clamp consumes the interval."
+    },
+    {
+      "operation": "pn-graph::numeric::reference_wall_work",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:reference-wall-retains-measured-work",
+      "before": "",
+      "after": "Claim: Seven unsorted reference stopping widths have literal cumulative Work boundaries at N and N minus one; ordered query and bisection charges accompany the six-step enclosure at width 1/128.",
+      "review": "Seven unsorted stopping widths measure the ordered reference inversion schedule and complete production allowance. Work is deterministic for these declarations and no general performance bound follows."
     },
     {
       "operation": "pn-graph::properties::generated_partitions",

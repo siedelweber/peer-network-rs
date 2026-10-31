@@ -11,6 +11,7 @@ pub mod package;
 pub mod recipients;
 pub mod solve;
 pub mod support;
+pub mod wall;
 
 use std::collections::{BTreeMap, BTreeSet};
 

@@ -57,6 +57,235 @@ fn procedure() -> Procedure {
         }),
     }
 }
+
+fn wall_policy() -> Procedure {
+    let mut p = activation_policy();
+    p.precision = Precision::AbsoluteWidthBits(vec![8, 16, 24]);
+    p.maximum_work = 2_000_000_000;
+    p.maximum_iterations = 64;
+    let policy = p.enclosure.as_mut().unwrap();
+    policy.operation.work = p.maximum_work;
+    policy.store.work = p.maximum_work;
+    policy.operation.arithmetic_steps = 100_000_000;
+    policy.store.arithmetic_steps = 100_000_000;
+    policy.refinement.precision = 8;
+    policy.refinement.reduction_ceiling = 2;
+    policy.refinement.checking_work = 0;
+    p
+}
+
+fn wall_input() -> pn_records::wall::Inputs {
+    pn_records::wall::Inputs {
+        width: "1".into(),
+        cumulative_tilt: "15/8".into(),
+        bracket: range("1/2", "1"),
+        stopping_width: "1/128".into(),
+        maximum_steps: 64,
+        maximum_work: 2_000_000_000,
+        maximum_replay_work: 2_000_000_000,
+        floor: pn_records::wall::Floor::Rational,
+        previous: pn_records::wall::Previous::Target,
+        door: "1".into(),
+        absolute_cap: "1/10".into(),
+        relative_cap: "1/4".into(),
+        deadband: "1/20".into(),
+    }
+}
+
+/// Claim: Three unsorted widths produce reference target enclosures with independently separated gain-equation endpoint signs; the target identity holds the previous wall and replay checks the same defining inputs.
+/// ´claim:numerics:reference-wall-encloses-independent-gain-root´
+/// ´test:integration:reference-wall-oracle´
+#[test]
+fn reference_wall_oracle() {
+    use pn_graph::numeric::wall;
+    use pn_records::wall::Verdict;
+    let p = wall_policy();
+    for width in ["3/2", "1", "2"] {
+        let mut input = wall_input();
+        input.width = width.into();
+        let record = wall::evaluate(&p, &input).unwrap();
+        assert!(!record.indecisive, "{record:?}");
+        let target = record.target.as_ref().unwrap();
+        let required = Q(16, 75).div(Q::parse(width));
+        let left = independent_activation(Q::parse(&target.lower), false, true);
+        let right = independent_activation(Q::parse(&target.upper), false, true);
+        assert!(!left.0.le(required));
+        assert!(!required.le(right.1));
+        assert!(Q::parse(&target.upper).add(Q::parse(&target.lower).neg()).le(Q(1, 128)));
+        assert_eq!(record.bisections, 6);
+        let branches = record.branches.as_ref().unwrap();
+        assert!(!branches.floor_binding);
+        assert!(branches.deadband_hold);
+        assert_eq!(branches.above_floor, Verdict::Pass);
+        assert_eq!(branches.policy_valid, Verdict::Pass);
+        assert_eq!(&branches.delivered, target);
+        assert_eq!(wall::replay(&p, &input, &record).unwrap().target, record.target);
+        if width == "1" {
+            input.floor = pn_records::wall::Floor::Ridge;
+            let ridge = wall::evaluate(&p, &input).unwrap();
+            assert_eq!(ridge.target, record.target);
+            assert_eq!(ridge.branches, record.branches);
+            assert_eq!(wall::replay(&p, &input, &ridge).unwrap().target, ridge.target);
+        }
+    }
+}
+
+/// Claim: Seven unsorted reference stopping widths have literal cumulative Work boundaries at N and N minus one; ordered query and bisection charges accompany the six-step enclosure at width 1/128.
+/// ´claim:numerics:reference-wall-retains-measured-work´
+/// ´test:integration:reference-wall-work´
+#[test]
+fn reference_wall_work() {
+    let p = wall_policy();
+    let queries = [
+        18_691_604, 16_223_174, 19_865_237, 20_282_653, 20_005_822, 20_076_095, 20_290_890, 20_464_969,
+    ];
+    let bisections = [19_867_093, 20_284_573, 20_007_742, 20_078_015, 20_292_810, 20_466_889];
+    for (width, count, work) in [
+        ("1/16", 3, 95_089_873),
+        ("1/2", 0, 34_929_785),
+        ("1/128", 6, 155_927_977),
+        ("1/4", 1, 54_797_106),
+        ("1/32", 4, 115_168_018),
+        ("1/8", 2, 75_081_871),
+        ("1/64", 5, 135_460_828),
+    ] {
+        let mut input = wall_input();
+        input.stopping_width = width.into();
+        let record = pn_graph::numeric::wall::evaluate(&p, &input).unwrap();
+        assert_eq!(record.work, work);
+        assert_eq!(record.bisections, count);
+        assert_eq!(
+            record.steps.iter().map(|s| s.work).collect::<Vec<_>>(),
+            queries[..record.steps.len()]
+        );
+        assert!(record.steps.iter().all(|s| s.primitive.precision == 8));
+        assert_eq!(record.bisection_work, bisections[..record.bisection_work.len()]);
+        for (cap, succeeds) in [(work - 1, false), (work, true)] {
+            input.maximum_work = cap;
+            let result = pn_graph::numeric::wall::evaluate(&p, &input);
+            assert_eq!(result.is_ok(), succeeds, "{width} cap={cap}: {result:?}");
+        }
+        if count == 6 {
+            assert_eq!(record.target, Some(range("1/2", "65/128")));
+        }
+    }
+}
+
+/// Claim: Wrong-sign brackets and unsupported lower endpoints refuse; an unresolved declared sign stops without bisection, and replay distinguishes a changed query from a changed attachment.
+/// ´claim:numerics:reference-wall-refuses-unproved-signs-and-replay-changes´
+/// ´test:integration:reference-wall-controls´
+#[test]
+fn reference_wall_controls() {
+    use pn_graph::numeric::wall::{self, Error};
+    let p = wall_policy();
+    let input = wall_input();
+    let mut wrong = input.clone();
+    wrong.bracket = range("1", "2");
+    assert_eq!(wall::evaluate(&p, &wrong), Err(Error::Bracket));
+    wrong.bracket = range("1/4", "1");
+    assert_eq!(wall::evaluate(&p, &wrong), Err(Error::Binding));
+    let mut coarse = p.clone();
+    coarse.precision = Precision::AbsoluteWidthBits(vec![1, 2]);
+    coarse.enclosure.as_mut().unwrap().refinement.precision = 1;
+    let stopped = wall::evaluate(&coarse, &input).unwrap();
+    assert!(stopped.indecisive);
+    assert_eq!(stopped.bisections, 0);
+    assert!(stopped.target.is_none() && stopped.branches.is_none());
+    assert_eq!(
+        stopped.steps.iter().map(|s| s.primitive.precision).collect::<Vec<_>>(),
+        [1, 2]
+    );
+    assert!(stopped.steps.iter().all(|s| s.sign == pn_records::wall::Sign::Indecisive));
+    assert!(wall::replay(&coarse, &input, &stopped).unwrap().indecisive);
+    coarse.precision = Precision::AbsoluteWidthBits(vec![1, 8]);
+    let refined = wall::evaluate(&coarse, &input).unwrap();
+    assert!(!refined.indecisive);
+    assert_eq!(refined.steps[0].primitive.precision, 1);
+    assert_eq!(refined.steps[1].primitive.precision, 8);
+    let record = wall::evaluate(&p, &input).unwrap();
+    let mut unresolved = input.clone();
+    unresolved.door.clone_from(&record.target.as_ref().unwrap().lower);
+    let unresolved = wall::evaluate(&p, &unresolved).unwrap();
+    assert!(unresolved.indecisive);
+    assert_eq!(
+        unresolved.branches.unwrap().participation,
+        pn_records::wall::Participation::Indecisive
+    );
+    let mut changed = record.clone();
+    changed.steps[0].primitive.query.coordinates[0].lower = "3/4".into();
+    assert_eq!(wall::replay(&p, &input, &changed), Err(Error::Query));
+    changed = record.clone();
+    changed.steps[0].primitive.evidence.attachment = record.steps.last().unwrap().primitive.evidence.attachment.clone();
+    assert_eq!(wall::replay(&p, &input, &changed), Err(Error::Attachment));
+}
+
+/// Claim: Four unsorted rational previous walls exercise zero-width floor proposals, deadband equality, capped and uncapped moves without scalar requests; two doors distinguish valid and invalid policy branches. A positive-width inverse target is certified below the rational floor, while the ridge declaration in that range refuses without its defining object.
+/// ´claim:numerics:reference-wall-certifies-floor-deadband-and-policy´
+/// ´test:integration:reference-wall-branches´
+#[test]
+fn reference_wall_branches() {
+    use pn_graph::numeric::wall;
+    use pn_records::wall::{Previous, Verdict};
+    let p = wall_policy();
+    for (previous, deadband, hold, capped, delivered) in [
+        ("1", "0", false, true, "3/4"),
+        ("3/37", "0", true, false, "3/37"),
+        ("1/10", "0", false, false, "3/37"),
+        ("6/37", "1/2", true, false, "6/37"),
+    ] {
+        for (door, valid) in [("1", Verdict::Pass), ("1/100", Verdict::Fail)] {
+            let mut input = wall_input();
+            input.width = "0".into();
+            input.previous = Previous::Rational(previous.into());
+            input.absolute_cap = "1/4".into();
+            input.relative_cap = "1/2".into();
+            input.deadband = deadband.into();
+            input.door = door.into();
+            let record = wall::evaluate(&p, &input).unwrap();
+            assert!(record.steps.is_empty() && record.target.is_none());
+            let branch = record.branches.as_ref().unwrap();
+            assert!(branch.floor_binding);
+            assert_eq!((branch.deadband_hold, branch.step_capped), (hold, capped));
+            assert_eq!(branch.delivered, range(delivered, delivered));
+            assert_eq!(branch.above_floor, Verdict::Pass);
+            assert_eq!(branch.policy_valid, valid);
+            assert_eq!(
+                branch.participation,
+                if valid == Verdict::Pass {
+                    pn_records::wall::Participation::Door
+                } else {
+                    pn_records::wall::Participation::Wall
+                }
+            );
+            assert_eq!(wall::replay(&p, &input, &record).unwrap(), record);
+        }
+    }
+    reference_floor_binding();
+}
+
+fn reference_floor_binding() {
+    use pn_graph::numeric::wall::{self, Error};
+    use pn_records::wall::{Floor, Previous};
+    let mut p = wall_policy();
+    p.enclosure.as_mut().unwrap().refinement.reduction_ceiling = 5;
+    let mut input = wall_input();
+    input.width = "1/8".into();
+    input.bracket = range("1/16", "1/8");
+    input.previous = Previous::Rational("3/37".into());
+    let record = wall::evaluate(&p, &input).unwrap();
+    assert!(!record.indecisive);
+    let target = record.target.as_ref().unwrap();
+    assert!(Q::parse(&target.upper).le(Q(3, 37)));
+    let required = Q(128, 75);
+    assert!(!independent_activation(Q::parse(&target.lower), false, true).0.le(required));
+    assert!(!required.le(independent_activation(Q::parse(&target.upper), false, true).1));
+    let branches = record.branches.as_ref().unwrap();
+    assert!(branches.floor_binding && branches.deadband_hold);
+    assert_eq!(branches.delivered, range("3/37", "3/37"));
+    assert_eq!(wall::replay(&p, &input, &record).unwrap().branches, record.branches);
+    input.floor = Floor::Ridge;
+    assert_eq!(wall::evaluate(&p, &input), Err(Error::Ridge));
+}
 fn query(nodes: Vec<Node>) -> Query {
     Query {
         target: nodes.len() - 1,

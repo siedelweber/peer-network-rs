@@ -7,6 +7,7 @@ pub mod conserved;
 pub mod numerics;
 pub mod primitive;
 pub mod solve;
+pub mod wall;
 
 /// Exact declaration payloads attached to validated effective editions.
 /// (´def:declarations:constants-edition´)

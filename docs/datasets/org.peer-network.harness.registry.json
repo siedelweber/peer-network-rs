@@ -4284,7 +4284,8 @@
         "pn-epoch::solve::endpoint_transport",
         "pn-epoch::solve::conserved_map",
         "pn-epoch::solve::conserved_residual",
-        "pn-epoch::solve::conserved_projection"
+        "pn-epoch::solve::conserved_projection",
+        "pn-epoch::solve::reference_wall_binding"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
@@ -4306,7 +4307,11 @@
         "pn-graph::numeric::activation_costs",
         "pn-graph::numeric::activation_endpoints",
         "pn-graph::numeric::evaluation_sharing",
-        "pn-graph::numeric::evaluation_costs"
+        "pn-graph::numeric::evaluation_costs",
+        "pn-graph::numeric::reference_wall_oracle",
+        "pn-graph::numeric::reference_wall_work",
+        "pn-graph::numeric::reference_wall_controls",
+        "pn-graph::numeric::reference_wall_branches"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",
