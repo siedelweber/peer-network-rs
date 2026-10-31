@@ -199,7 +199,31 @@ fn run_budget(
     budget: &mut Budget,
 ) -> Result<PrimitiveEvidence, Error> {
     let policy = procedure.enclosure.as_ref().ok_or(Error::Unsupported)?;
-    let (mut cas, request) = scope::build(procedure, query, budget)?;
+    let (mut cas, request) = match scope::build(procedure, query, budget) {
+        Ok(scope) => scope,
+        Err(Error::Backend(fault))
+            if matches!(
+                fault.kind,
+                nrz_cas::FaultKind::Exhausted {
+                    budget: nrz_cas::limits::BudgetKind::Work,
+                    ..
+                }
+            ) =>
+        {
+            return Ok(PrimitiveEvidence {
+                outcome: Outcome::Exhausted,
+                bounds: None,
+                attachment: None,
+                work: budget.usage().work,
+                usage: budget.usage(),
+                evaluation_work: 0,
+                precision_met: false,
+                completed_rounds: 0,
+                resource_fault: Some(fault),
+            });
+        }
+        Err(error) => return Err(error),
+    };
     let mut interrupt = |usage: nrz_cas::limits::BudgetUsage| interrupt_at.is_some_and(|limit| usage.work >= limit);
     let report = if let Some(evidence) = evidence {
         cas.check_enclosure(&request, policy.refinement, &evidence.certificate, budget, &mut interrupt)

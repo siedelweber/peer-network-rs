@@ -42,6 +42,15 @@ pub enum Equality {
     ExactRationalOnly,
 }
 
+/// Public names in the frozen constants edition, with the wall taken from its charged price.
+/// (´def:numerics:solve-records´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FenceProfile {
+    pub bleed_squared: String,
+    pub shape: Vec<String>,
+    pub inverse_wall: bool,
+}
+
 /// Public procedure payload; publication binding is an owning consumer's duty.
 /// (´def:numerics:solve-records´)
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -59,6 +68,7 @@ pub struct Procedure {
     pub maximum_iterations: u64,
     pub endpoint_grid: String,
     pub enclosure: Option<crate::primitive::EnclosurePolicy>,
+    pub fence: Option<FenceProfile>,
 }
 
 /// Rational endpoints supplied as evidence; each use validates their ordering.

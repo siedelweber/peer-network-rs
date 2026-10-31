@@ -42,6 +42,7 @@ fn declaration(state: &pn_epoch::compiler::CompiledState) -> Procedure {
         maximum_work: 10,
         maximum_iterations: 20,
         endpoint_grid: "1/1000".into(),
+        fence: None,
         enclosure: None,
     }
 }
@@ -823,4 +824,259 @@ fn real_base() {
         );
     }
     assert_eq!((exact, held), (21, 3));
+}
+
+fn fence_procedure(state: &pn_epoch::compiler::CompiledState) -> Procedure {
+    let mut p = base_procedure(state);
+    p.maximum_work = 200_000_000;
+    p.primitives.extend([
+        Primitive::Sigmoid,
+        Primitive::Tanh,
+        Primitive::SmoothDerivative,
+        Primitive::ClampGeneralized,
+    ]);
+    p.precision = Precision::AbsoluteWidthBits(vec![4, 8]);
+    let policy = p.enclosure.as_mut().unwrap();
+    policy.store.work = p.maximum_work;
+    policy.store.output_bytes = 32 * 1024 * 1024;
+    policy.store.arithmetic_steps = 5_000_000;
+    policy.operation = policy.store.clone();
+    policy.refinement.grid_ceiling = 96;
+    policy.refinement.checking_work = 0;
+    policy.refinement.rounds = 1;
+    p.fence = Some(pn_records::solve::FenceProfile {
+        bleed_squared: "bleed".into(),
+        shape: vec!["one".into(), "rest".into(), "third".into(), "zero".into()],
+        inverse_wall: false,
+    });
+    p
+}
+
+fn fence_state(reaction: i64, buyer: &str) -> pn_epoch::compiler::CompiledState {
+    let mut acts = joined::anchors();
+    let mut opinion = joined::act("Opinion", "seller", 2, 1);
+    opinion
+        .body
+        .quantities
+        .iter_mut()
+        .find(|(name, _)| name == "reaction.denominator")
+        .unwrap()
+        .1
+        .value = reaction;
+    acts.push(opinion);
+    compile_final_state(
+        &joined::package(&acts, 1, &[("seller", "50"), ("buyer", buyer), ("third", "100")]),
+        &joined::Verifier,
+        &mut joined::numeric(),
+        Limits::default(),
+        10000,
+    )
+    .unwrap()
+}
+
+fn search(state: &pn_epoch::compiler::CompiledState, p: &Procedure) -> pn_epoch::fence::Search {
+    let bound = bind_procedure(state, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+    pn_epoch::fence::search(&bound, None).unwrap()
+}
+
+/// Claim: The rung driver uses the frozen contributing width and cumulative shape through the deepest supported depth, evaluates the deployed wall gain independently at each attempted rung, and selects the first proved pass in the descending published grid; exact zero-width and empty-domain cases preserve the frozen state, and equal-width weighted graphs give identical fence transcripts.
+/// ´claim:compiler:width-fence-retains-frozen-support-and-anchor´
+/// ´test:integration:fence-shapes´
+#[test]
+fn fence_shapes() {
+    let left = fence_state(4, "100");
+    let right = fence_state(1, "100");
+    let third = fence_state(9, "100");
+    assert_ne!(left.view().base, right.view().base);
+    assert_eq!(left.view().support.ranges, right.view().support.ranges);
+    let p = fence_procedure(&left);
+    check_depth_fence(&left);
+    check_fence_comparison(&p);
+    let a = search(&left, &p);
+    let b = search(&right, &fence_procedure(&right));
+    assert_eq!(a, b);
+    assert_eq!(a, search(&third, &fence_procedure(&third)));
+    check_width_factor(&left, &a);
+    assert!(a.evidence.attempts.iter().any(|v| v.completion == Completion::Fail));
+    assert!(a.selected.is_some());
+    validate_evidence(&p, &a.evidence, Limits::default()).unwrap();
+    for record in &a.evidence.primitives {
+        let mut replay_policy = p.clone();
+        replay_policy.enclosure.as_mut().unwrap().refinement.precision = record.precision;
+        let replay = pn_graph::numeric::replay(
+            &replay_policy,
+            &record.query,
+            record.evidence.attachment.as_ref().unwrap(),
+            None,
+        )
+        .unwrap();
+        assert_eq!(replay.bounds, record.evidence.bounds);
+    }
+    assert!(
+        pn_graph::numeric::replay(
+            &p,
+            &a.evidence.primitives[1].query,
+            a.evidence.primitives[0].evidence.attachment.as_ref().unwrap(),
+            None
+        )
+        .is_err()
+    );
+    for state in [
+        state(),
+        compile_final_state(
+            &joined::package(&[], 1, &[]),
+            &joined::Verifier,
+            &mut joined::numeric(),
+            Limits::default(),
+            1000,
+        )
+        .unwrap(),
+    ] {
+        let before = state.view().clone();
+        let p = fence_procedure(&state);
+        let got = search(&state, &p);
+        assert_eq!(got.selected, Some("1".into()));
+        assert_eq!(got.evidence.attempts[0].work, 0);
+        assert_eq!(got.evidence.attempts[0].margined_fence, interval("0", "0"));
+        assert_eq!(state.view(), &before);
+    }
+    let mut anchor = p.clone();
+    anchor.grid = vec!["0".into()];
+    let got = search(&left, &anchor);
+    assert_eq!(got.selected, Some("0".into()));
+    assert_eq!(got.evidence.primitives.len(), 0);
+    for case in 0..3 {
+        let mut bad = p.clone();
+        let profile = bad.fence.as_mut().unwrap();
+        match case {
+            0 => profile.inverse_wall = true,
+            1 => profile.shape.swap(0, 3),
+            _ => profile.bleed_squared = "zero".into(),
+        }
+        let bound = bind_procedure(&left, bad.clone(), &Published(bad), Limits::default()).unwrap();
+        assert!(pn_epoch::fence::search(&bound, None).is_err());
+    }
+}
+
+/// Claim: A rung's fixed precision sequence uses fresh stores and retains actual Work and original queries; a straddle at sequence exhaustion and a straddle stopped before the next unaffordable operation are INDECISIVE and passed over, while interruption supplies no selected rung. A private starting precision cannot replace the declared sequence or alter its choice.
+/// ´claim:compiler:rung-search-keeps-declared-stops-and-precision´
+/// ´test:integration:fence-refinement´
+#[test]
+fn fence_refinement() {
+    let state = fence_state(1, "100");
+    let mut p = fence_procedure(&state);
+    // Tune an exact declared rung from a checked gain bracket, not from a point estimate.
+    // The retained original query still checks the resulting fence independently.
+    let preliminary = search(&state, &p);
+    let first = &preliminary.evidence.primitives[0];
+    let mut budget = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+    let b = first.evidence.bounds.as_ref().unwrap();
+    let middle = b
+        .lower()
+        .add(b.upper(), &mut budget)
+        .unwrap()
+        .div(&nrz_cas::Rational::parse("2", &mut budget).unwrap(), &mut budget)
+        .unwrap();
+    let rung = nrz_cas::Rational::parse("1", &mut budget)
+        .unwrap()
+        .div(&middle, &mut budget)
+        .unwrap()
+        .exact_string(&mut budget)
+        .unwrap();
+    p.grid = vec![rung, "0".into()];
+    p.precision = Precision::AbsoluteWidthBits(vec![4]);
+    let first = search(&state, &p);
+    assert_eq!(first.evidence.attempts[0].completion, Completion::Indecisive);
+    assert_eq!(first.evidence.attempts[0].stop, AttemptStop::PrecisionSequenceExhausted);
+    assert_eq!(first.selected, Some("0".into()));
+    validate_evidence(&p, &first.evidence, Limits::default()).unwrap();
+    let mut capped = p.clone();
+    capped.precision = Precision::AbsoluteWidthBits(vec![4, 8]);
+    capped.maximum_work = first.evidence.attempts[0].work + 1_000_000;
+    let cap = capped.maximum_work;
+    let policy = capped.enclosure.as_mut().unwrap();
+    policy.store.work = cap;
+    policy.operation.work = cap;
+    let limited = search(&state, &capped);
+    assert_eq!(limited.evidence.attempts[0].stop, AttemptStop::WorkLimit);
+    assert!(limited.evidence.attempts[0].work < cap);
+    assert_eq!(limited.selected, Some("0".into()));
+    validate_evidence(&capped, &limited.evidence, Limits::default()).unwrap();
+    let mut alternate = capped.clone();
+    alternate.enclosure.as_mut().unwrap().refinement.precision = 8;
+    assert_eq!(search(&state, &alternate), limited);
+    let bound = bind_procedure(&state, capped.clone(), &Published(capped.clone()), Limits::default()).unwrap();
+    let interrupted = pn_epoch::fence::search(&bound, Some(0)).unwrap();
+    assert_eq!(
+        interrupted.operational_stop,
+        Some(pn_records::primitive::Outcome::Interrupted)
+    );
+    assert!(interrupted.selected.is_none());
+    assert!(bind_procedure(&state, alternate, &Published(capped), Limits::default()).is_err());
+}
+
+#[derive(Debug)]
+struct FencePublication(Vec<pn_epoch::package::EpochBinding>);
+impl pn_epoch::package::PackageVerifier for FencePublication {
+    fn published_package(&self, input: &pn_epoch::package::PackageInput) -> bool {
+        input.bindings == self.0
+    }
+}
+
+fn depths(state: &pn_epoch::compiler::CompiledState, names: &[&str]) -> pn_epoch::compiler::CompiledState {
+    let (declaration, edition, _) = common::fixture();
+    let history = pn_records::validate_history(&[], &[]).unwrap();
+    let record = pn_records::validate_record(&[], &history, &[declaration]).unwrap();
+    let constants = pn_records::constants::bind_constants(&record, vec![edition]).unwrap();
+    let mut package = state.package().input().clone();
+    let mut parameters = package.inputs[0].parameters().clone();
+    parameters.depth_mass = names.iter().map(|s| (*s).into()).collect();
+    let input = pn_epoch::bind_inputs(&constants, parameters, Limits::default()).unwrap();
+    package.inputs[0] = input.clone();
+    package.bindings[0].inputs = input;
+    let publication = FencePublication(package.bindings.clone());
+    let verified = pn_epoch::package::verify_package(package, &publication).unwrap();
+    compile_final_state(&verified, &joined::Verifier, &mut joined::numeric(), Limits::default(), 10000).unwrap()
+}
+
+fn check_depth_fence(state: &pn_epoch::compiler::CompiledState) {
+    use pn_records::primitive::Node;
+    for (mass, expected) in [(["third", "rest"], "5/3"), (["one", "zero"], "1")] {
+        let state = depths(state, &mass);
+        let p = fence_procedure(&state);
+        let result = search(&state, &p);
+        let first = &result.evidence.primitives[0].query;
+        assert_eq!(first.nodes[first.target - 1], Node::Rational(expected.into()));
+        validate_evidence(&p, &result.evidence, Limits::default()).unwrap();
+    }
+}
+
+fn check_width_factor(state: &pn_epoch::compiler::CompiledState, result: &pn_epoch::fence::Search) {
+    let expected = state.view().support.ranges.values().fold(Fraction(0, 1), |old, range| {
+        let width = Fraction::parse(&range.maximum).minus(Fraction::parse(&range.minimum));
+        if width.order(old).is_gt() { width } else { old }
+    });
+    for record in &result.evidence.primitives {
+        let pn_records::primitive::Node::Rational(width) = &record.query.nodes[record.query.target - 3] else {
+            panic!("fence must retain its width factor");
+        };
+        assert_eq!(Fraction::parse(width), expected);
+    }
+}
+
+fn check_fence_comparison(p: &Procedure) {
+    use pn_records::primitive::{Goal, Node, Outcome, Query};
+    // Exact arithmetic controls for the same <= comparison used by the fence.
+    for (value, expected) in [("1", Outcome::Pass), ("0", Outcome::Pass), ("2", Outcome::Fail)] {
+        let query = Query {
+            coordinates: vec![],
+            nodes: vec![Node::Rational(value.into())],
+            target: 0,
+            goal: Goal::AtMost("1".into()),
+        };
+        let result = pn_graph::numeric::evaluate(p, &query, None).unwrap();
+        assert_eq!(result.outcome, expected);
+        let replay = pn_graph::numeric::replay(p, &query, result.attachment.as_ref().unwrap(), None).unwrap();
+        assert_eq!(result.bounds, replay.bounds);
+    }
 }

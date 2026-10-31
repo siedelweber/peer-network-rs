@@ -1168,6 +1168,8 @@
     },
     {
       "claims": [
+        "EPOCH::claim:compiler:width-fence-retains-frozen-support-and-anchor",
+        "EPOCH::claim:compiler:rung-search-keeps-declared-stops-and-precision",
         "GRAPH::claim:numerics:activation-costs-have-exact-resource-boundaries",
         "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises",
         "EPOCH::claim:compiler:real-base-enclosures-retain-frozen-provenance",
@@ -1187,11 +1189,11 @@
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "evidence_paragraph": "EPOCH::amend:compiler:solve-record-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Remaining obligations are profile and rung binding, complete precision-sequence execution and cumulative attempt accounting, the evaluated width fence and rung search, nonlinear transport, conserved solve, residual containment, inverse-gain reference-wall production and carriage under open:design:reference-wall-route, current reference and response fixtures, and integrated conservation. Exact zero-tilt transport, supplied record consistency, scalar adapters and cut 6-d activation and real-base evidence are scoped only.",
+      "missing": "The certified nonlinear transport, conserved solve, residual enclosure and integrated conservation certificate remain; the inverse-gain reference wall and current reference, response and local-inclusion fixtures remain held. Cut 6-e supplies the bound reference profile, actual width fence, declared precision sequence, cumulative numerical Work stops and independent rung search. Public evidence authentication and publication remain separate obligations.",
       "name": "ROOT::gate:design:bite-6",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
-      "premises": "Frozen verified compiler package and a declared full-payload publication verifier; exact rational checks validate supplied record consistency only. The scalar adapter, responsive and clamped activation, applied hop powers, separate deployed and clean gains, and provenance-retaining real-base enclosures supply scoped evidence with independent brackets and expected-scope replay. Their profile inputs remain caller premises; no supplied hull, fence or residual is certified as a conserved-map evaluation. The exact subset uses the existing rational backend through the declared exact arithmetic contract; independent bounded rational oracles cover source-adjacent composition, emission, direct anchor mediants and hulls without changing ledger values.",
+      "premises": "Frozen verified-prefix and compiler premises remain explicit. Cuts 6-a through 6-e cover procedure carriers, exact anchor, scalar adapters, real-base and activation evidence, measured composition costs and the width-fence rung driver. Reference-profile and full-payload publication verification remain premises; finite fixtures prove no general nonlinear solve, wall inversion or public certificate authentication.",
       "realizers": [],
       "status": "held"
     },

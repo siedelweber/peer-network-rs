@@ -159,7 +159,7 @@
 | pn-epoch::support | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::package | active | public-surface | pn-epoch-rust | fast | 1 |
 | pn-epoch::compiler | active | public-surface | pn-epoch-rust | fast | 4 |
-| pn-epoch::solve | active | public-surface | pn-epoch-rust | fast | 6 |
+| pn-epoch::solve | active | public-surface | pn-epoch-rust | fast | 8 |
 | pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 8 |
 
 

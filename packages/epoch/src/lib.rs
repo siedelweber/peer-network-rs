@@ -4,6 +4,7 @@
 pub mod base;
 pub mod cells;
 pub mod coefficients;
+pub mod fence;
 pub mod ledger;
 pub mod package;
 pub mod recipients;

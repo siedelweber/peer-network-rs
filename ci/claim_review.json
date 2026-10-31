@@ -1650,6 +1650,22 @@
       "review": "An actual coordinate comparison retains a straddling checked bound before a second-round Work charge exceeds the declared attempt allowance. The joined transcript records INDECISIVE below the cap and passes over it to a lower passing rung. Missing, duplicate, wrong-Work, missing-fault and wrong-outcome joins refuse. Existing stopping-category, verdict, hull, order and residual controls remain. Sequence completion and map evaluations are not certified by this structural checker."
     },
     {
+      "operation": "pn-epoch::solve::fence_refinement",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:rung-search-keeps-declared-stops-and-precision",
+      "before": "",
+      "after": "Claim: A rung's fixed precision sequence uses fresh stores and retains actual Work and original queries; a straddle at sequence exhaustion and a straddle stopped before the next unaffordable operation are INDECISIVE and passed over, while interruption supplies no selected rung. A private starting precision cannot replace the declared sequence or alter its choice.",
+      "review": "An exact declared rung built from a preliminary coarse bracket straddles at precision four and is passed over after sequence exhaustion. Adding precision eight with one million remaining Work units retains the actual exhaustion before a multi-unit arithmetic charge and passes over with WorkLimit. Structural evidence validation checks both. Changing the starting-precision field cannot skip the sequence; full-payload publication rejects substitution, and deterministic interruption selects nothing."
+    },
+    {
+      "operation": "pn-epoch::solve::fence_shapes",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:width-fence-retains-frozen-support-and-anchor",
+      "before": "",
+      "after": "Claim: The rung driver uses the frozen contributing width and cumulative shape through the deepest supported depth, evaluates the deployed wall gain independently at each attempted rung, and selects the first proved pass in the descending published grid; exact zero-width and empty-domain cases preserve the frozen state, and equal-width weighted graphs give identical fence transcripts.",
+      "review": "Three unsorted differently weighted frozen graphs with the same contributing ranges have identical evaluated fence transcripts. Two depth profiles distinguish cumulative deepest-supported shape from a weighted average and ignore zero trailing mass. Zero-width and empty states and a zero-only grid certify exactly; three profile controls refuse. Every retained gain comparison replays, and exchanging rung certificates refuses. Three unsorted exact comparison controls cover equality, failure and zero through scalar replay, separately from the deployed transcendental gain. Independent integer-fraction subtraction and maximum recover the width factor from the frozen hull endpoints and compare every original query factor."
+    },
+    {
       "operation": "pn-epoch::solve::procedure_binding",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:solve-declarations-bind-to-admitted-primitives",
@@ -2103,7 +2119,7 @@
       "claim": "GRAPH::claim:numerics:primitive-limits-retain-actual-work",
       "before": "",
       "after": "Claim: Declared cold-store Work caps bound complete requests without padding consumption, with a one-unit-short refusal and exact-boundary success; tiny exact inputs, zero cancellation and finite size refusal preserve operational categories rather than fabricating a verdict.",
-      "review": "Checks the actual cold request Work boundary 82289/82288, evaluation Work 76872, repeat-call equality from fresh stores, no-bound exhaustion, three near-zero exact cancellations, huge literal refusal, fourth-root fourth-power containment and twice-log-two against integral bounds."
+      "review": "Checks the actual cold request Work boundary 82289/82288, evaluation Work 76872, repeat-call equality from fresh stores, no-bound exhaustion, three near-zero exact cancellations, huge literal refusal, fourth-root fourth-power containment and twice-log-two against integral bounds. The one-Work construction control now retains its actual scope-construction exhaustion as a typed no-bound outcome, preserving the fault for a later rung-attempt join."
     },
     {
       "operation": "pn-graph::numeric::primitive_oracles",

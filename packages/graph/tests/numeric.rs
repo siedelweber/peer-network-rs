@@ -39,6 +39,7 @@ fn procedure() -> Procedure {
         maximum_work: limits.work,
         maximum_iterations: 2,
         endpoint_grid: "1/64".into(),
+        fence: None,
         enclosure: Some(EnclosurePolicy {
             store: limits.clone(),
             operation: limits,
@@ -411,7 +412,10 @@ fn primitive_limits() {
     let mut bounded = p.clone();
     bounded.enclosure.as_mut().unwrap().store.work = 1;
     bounded.enclosure.as_mut().unwrap().operation.work = 1;
-    assert!(evaluate(&bounded, &input, None).is_err());
+    let construction_stop = evaluate(&bounded, &input, None).unwrap();
+    assert_eq!(construction_stop.outcome, Outcome::Exhausted);
+    assert!(construction_stop.work <= 1 && construction_stop.bounds.is_none());
+    assert!(construction_stop.resource_fault.is_some());
     bounded.enclosure.as_mut().unwrap().store.work = 10_000;
     bounded.enclosure.as_mut().unwrap().operation.work = 10_000;
     let exhausted = evaluate(&bounded, &input, None).unwrap();

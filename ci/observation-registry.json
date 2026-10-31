@@ -7411,6 +7411,26 @@
       "claim": "ROOT::sig:design:graph",
       "mode": "instrumented",
       "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/fence.rs",
+      "item": "numeric::activation::fence::query",
+      "owner": "GRAPH",
+      "signature": "fn query (procedure : & Procedure , input : & Inputs) -> Result < Query , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/fence.rs",
+      "item": "fence::search",
+      "owner": "EPOCH",
+      "signature": "fn search (bound : & BoundProcedure < '_ > , interrupt_at : Option < u64 >) -> Result < Search , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
     }
   ],
   "metrics": [
@@ -14381,6 +14401,28 @@
         "secret_flow": "activation-base-public",
         "exposure_consumers": "activation-base-public"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/fence.rs::numeric::activation::fence::query",
+      "body": "{ super :: super :: preflight (procedure) ? ; let policy = procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? ; let mut budget = Budget :: new (policy . operation . clone ()) ? ; let width = super :: nonnegative (& input . width , & mut budget) ? ; let tilt = super :: nonnegative (& input . cumulative_tilt , & mut budget) ? ; let margin = super :: nonnegative (& input . margin , & mut budget) ? ; if ! margin . compare (& Rational :: parse (\"1\" , & mut budget) ? , & mut budget) ? . is_gt () { return Err (Error :: Declaration) ; } if width . is_zero () || tilt . is_zero () { return Ok (Query { coordinates : Vec :: new () , nodes : vec ! [Node :: Rational (\"0\" . into ())] , target : 0 , goal : Goal :: AtMost (\"1\" . into ()) , }) ; } let request = Request { standing : Range { lower : input . wall . clone () , upper : input . wall . clone () , } , bleed_squared : input . bleed_squared . clone () , wall : None , quantity : Quantity :: ResponsiveLogGain , } ; let mut result = super :: query (& request , & mut budget) ? ; for factor in [\"2\" , & input . margin , & input . width , & input . cumulative_tilt] { let scalar = super :: push (& mut result . nodes , Node :: Rational (factor . into ())) ; result . target = super :: push (& mut result . nodes , Node :: Multiply (result . target , scalar)) ; } result . goal = Goal :: AtMost (\"1\" . into ()) ; Ok (result) }",
+      "class_decision": "solve-public-records",
+      "item_premise": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
+      "assessments": {
+        "full_recording": "solve-public-records",
+        "secret_flow": "solve-public-records",
+        "exposure_consumers": "solve-public-records"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/fence.rs::fence::search",
+      "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; let Precision :: AbsoluteWidthBits (sequence) = & procedure . precision else { return Err (Error :: Profile) ; } ; let (prepared , hull) = prepare (bound) ? ; let mut result = Search { evidence : Evidence { hull , attempts : Vec :: new () , residual : None , primitives : Vec :: new () , } , selected : None , operational_stop : None , } ; for rung in & procedure . grid { let stop = attempts :: run (procedure , sequence , & prepared , rung , interrupt_at , & mut result . evidence) ? ; if let Some (stop) = stop { result . operational_stop = Some (stop) ; break ; } if result . evidence . attempts . last () . is_some_and (| a | a . completion == pn_records :: solve :: Completion :: Pass) { result . selected = Some (rung . clone ()) ; break ; } } Ok (result) }",
+      "class_decision": "solve-public-records",
+      "item_premise": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
+      "assessments": {
+        "full_recording": "solve-public-records",
+        "secret_flow": "solve-public-records",
+        "exposure_consumers": "solve-public-records"
+      }
     }
   ],
   "generators": [
@@ -17965,6 +18007,42 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "activation-base-public",
       "expansion_review": "Clone, Debug and equality retain public numeric requests, checked endpoint records and the explicit source envelope only. No secret or publication encoding is introduced."
+    },
+    {
+      "item": "solve::FenceProfile",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Public frozen-profile names, rational fence inputs, independent attempt records and operational errors only. Derives neither expose secrets nor define publication bytes."
+    },
+    {
+      "item": "numeric::activation::fence::Inputs",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/fence.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Public frozen-profile names, rational fence inputs, independent attempt records and operational errors only. Derives neither expose secrets nor define publication bytes."
+    },
+    {
+      "item": "fence::Search",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/fence.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Public frozen-profile names, rational fence inputs, independent attempt records and operational errors only. Derives neither expose secrets nor define publication bytes."
+    },
+    {
+      "item": "fence::Error",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/fence.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Public frozen-profile names, rational fence inputs, independent attempt records and operational errors only. Derives neither expose secrets nor define publication bytes."
     }
   ],
   "reviewed_types": [
@@ -19271,10 +19349,16 @@
       "syntax": "# [doc = \" This initial record admits exact rational equality only.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Equality { ExactRationalOnly , }"
     },
     {
+      "item": "solve::FenceProfile",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [doc = \" Public names in the frozen constants edition, with the wall taken from its charged price.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct FenceProfile { pub bleed_squared : String , pub shape : Vec < String > , pub inverse_wall : bool , }"
+    },
+    {
       "item": "solve::Procedure",
       "package": "pn-records",
       "path": "packages/records/src/solve.rs",
-      "syntax": "# [doc = \" Public procedure payload; publication binding is an owning consumer's duty.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Procedure { pub edition : DeclarationId , pub boundary : u64 , pub name : String , pub backend : String , pub primitives : BTreeSet < Primitive > , pub precision : Precision , pub equality : Equality , pub grid : Vec < String > , pub margin : String , pub maximum_work : u64 , pub maximum_iterations : u64 , pub endpoint_grid : String , pub enclosure : Option < crate :: primitive :: EnclosurePolicy > , }"
+      "syntax": "# [doc = \" Public procedure payload; publication binding is an owning consumer's duty.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Procedure { pub edition : DeclarationId , pub boundary : u64 , pub name : String , pub backend : String , pub primitives : BTreeSet < Primitive > , pub precision : Precision , pub equality : Equality , pub grid : Vec < String > , pub margin : String , pub maximum_work : u64 , pub maximum_iterations : u64 , pub endpoint_grid : String , pub enclosure : Option < crate :: primitive :: EnclosurePolicy > , pub fence : Option < FenceProfile > , }"
     },
     {
       "item": "solve::Bounds",
@@ -19931,6 +20015,12 @@
       "syntax": "# [doc = \" Shared finalization metadata copied from the owning validated act.\"] # [doc = \" Projection metadata retains the published stamp; observer-specific recomputation\"] # [doc = \" and stamp evidence are joined here from the owning immutable history snapshot.\"] # [doc = \" Neither field is an authored identity or a canonical publication encoding.\"] # [doc = \" (´def:formation:act-metadata´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] # [non_exhaustive] pub struct ActMetadata { # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment, never recomputed by formation.\"] pub logical_time : u64 , }"
     },
     {
+      "item": "numeric::activation::fence::Inputs",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/fence.rs",
+      "syntax": "# [doc = \" Exact public inputs already joined by the epoch owner to its frozen compiler output.\"] # [doc = \" (´def:numerics:width-fence´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Inputs { pub wall : String , pub bleed_squared : String , pub width : String , pub cumulative_tilt : String , pub margin : String , }"
+    },
+    {
       "item": "numeric::activation::monotone::Envelope",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/activation/monotone.rs",
@@ -20349,6 +20439,18 @@
       "package": "pn-epoch",
       "path": "packages/epoch/src/coefficients.rs",
       "syntax": "# [doc = \" Exact-only evidence boundary; no approximate coefficient can escape a hold.\"] # [doc = \" (´def:compiler:cell-coefficients´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum CoefficientError { # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , # [error (\"unknown family, wrong mandatory coordinates or out-of-range value\")] Representation , # [error (\"irrational coefficient needs numeric evidence: square root of {radicand}\")] Irrational { radicand : String } , }"
+    },
+    {
+      "item": "fence::Search",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/fence.rs",
+      "syntax": "# [doc = \" A successful choice or an operational stop, with every executed request retained.\"] # [doc = \" (´def:compiler:fence-search´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Search { pub evidence : Evidence , pub selected : Option < String > , pub operational_stop : Option < Outcome > , }"
+    },
+    {
+      "item": "fence::Error",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/fence.rs",
+      "syntax": "# [doc = \" Preparation and scope refusals are not mathematical fence failures.\"] # [doc = \" (´def:compiler:fence-search´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum Error { # [error (\"fence declaration does not bind a supported reference profile\")] Profile , # [error (\"inverse-gain wall remains held under open:design:reference-wall-route\")] ReferenceWall , # [error (\"procedure: {0}\")] Procedure (# [from] crate :: solve :: ProcedureError) , # [error (\"numerical request: {0}\")] Numeric (# [from] pn_graph :: numeric :: Error) , # [error (\"constant profile: {0}\")] Input (# [from] crate :: InputError) , # [error (\"exact arithmetic: {0}\")] Arithmetic (# [from] nrz_cas :: Fault) , }"
     },
     {
       "item": "ledger::BurnSnapshot",
@@ -20975,7 +21077,9 @@
           "pn-records::packages/records/src/solve.rs::solve::validate_evidence",
           "pn-epoch::packages/epoch/src/solve.rs::solve::bind_procedure",
           "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::inputs",
-          "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::preflight"
+          "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::preflight",
+          "pn-graph::packages/graph/src/numeric/activation/fence.rs::numeric::activation::fence::query",
+          "pn-epoch::packages/epoch/src/fence.rs::fence::search"
         ]
       }
     },

@@ -1542,7 +1542,7 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::solve::procedure_binding", "pn-epoch::solve::procedure_records", "pn-epoch::solve::evidence_records", "pn-epoch::solve::transport_oracle", "pn-epoch::solve::anchor_tables", "pn-epoch::solve::real_base"]
+cases = ["pn-epoch::solve::procedure_binding", "pn-epoch::solve::procedure_records", "pn-epoch::solve::evidence_records", "pn-epoch::solve::transport_oracle", "pn-epoch::solve::anchor_tables", "pn-epoch::solve::real_base", "pn-epoch::solve::fence_shapes", "pn-epoch::solve::fence_refinement"]
 
 [[rows]]
 kind = "suite"

@@ -1,6 +1,7 @@
 //! Responsive activation and its wall clamp, with separate deployed and clean gains.
 //! (´def:numerics:activation´)
 
+pub mod fence;
 pub mod monotone;
 
 use super::Error;
