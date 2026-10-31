@@ -2109,8 +2109,8 @@
       "operation": "pn-graph::numeric::evaluation_costs",
       "path": "packages/graph/tests/numeric.rs",
       "claim": "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries",
-      "before": "",
-      "after": "Claim: The declared reduction ceilings have literal Work boundaries for four compositions each; root-route and log-exp endpoint pairs and every prefix of the constant-sharing and memo schedule succeed at N and cannot complete at N minus one. Reported request Work remains distinct from the charged memo lookup and constant prefix.",
+      "before": "Claim: The declared reduction ceilings have literal Work boundaries for four compositions each; root-route and log-exp endpoint pairs and every prefix of the constant-sharing and memo schedule succeed at N and cannot complete at N minus one. Reported request Work remains distinct from the charged memo lookup and constant prefix.",
+      "after": "Claim: The declared reduction ceilings have literal Work boundaries for four compositions each; root-route and log-exp endpoint pairs and every prefix of the constant-sharing and memo schedule succeed at N and cannot complete at N minus one. Session-prefix controls distinguish constant preparation, three distinct requests and a memo hit; they do not isolate query-construction Work from scalar evidence Work.",
       "review": "Eight composition/policy cases, four monotone gain endpoint cases, two endpoint-power routes, the sealed base and direct point value, and five sharing prefixes have literal N/N-1 Work controls. The prefixes distinguish constant preparation, three distinct requests and one memo hit. A shared point bound equals the sealed value bound used by the power controls. WidthLimit remains checked evidence without a verdict. No arbitrary-size or solve-complexity claim follows."
     },
     {
@@ -2119,7 +2119,7 @@
       "claim": "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
       "before": "",
       "after": "Claim: One declared evaluation checks beta and Q(1) in order, uses their checked boxes as explicit premises and contains independent activation brackets on three unsorted points. Identical requests borrow identical retained evidence with charged lookup; fresh replay checks constants before dependent requests and refuses a changed constant query or dependent argument. Replay receivers cannot generate requests, and producers cannot switch into replay.",
-      "review": "Three unsorted point requests retain checked beta and Q(1) premises, replay in a fresh receiver, and contain independent brackets. Repeating each request returns identical retained evidence with separately charged lookup Work. Changed arguments, constant queries and bleed refuse. Inconsistent total/operation caps refuse; a consistently bounded receiver eventually exhausts and cannot resume. Replay receivers cannot produce requests, and producers cannot switch to replay accounting. This witnesses one evaluation-local schedule, not a conserved solve."
+      "review": "Three unsorted point requests retain checked beta and Q(1) premises, replay in a fresh receiver, and contain independent brackets. Repeating each request returns identical retained evidence with separately charged lookup Work. Swapped beta/Q(1) premises, changed arguments, constant queries and bleed refuse. Inconsistent total/operation caps refuse; a consistently bounded receiver eventually exhausts and cannot resume. Replay receivers cannot produce requests, and producers cannot switch to replay accounting. This witnesses one evaluation-local schedule, not a conserved solve."
     },
     {
       "operation": "pn-graph::numeric::primitive_domains",

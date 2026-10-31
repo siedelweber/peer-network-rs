@@ -982,12 +982,20 @@ fn check_fence_replay(state: &pn_epoch::compiler::CompiledState, p: &Procedure, 
             }
         }
         assert_ne!(changed.query, record.query, "mutation {case} must change the scope");
-        changed.evidence = pn_graph::numeric::evaluate(p, &changed.query, None).unwrap();
+        let mut policy = p.clone();
+        policy.enclosure.as_mut().unwrap().refinement.precision = record.precision;
+        changed.evidence = pn_graph::numeric::evaluate(&policy, &changed.query, None).unwrap();
         assert!(changed.evidence.attachment.is_some());
-        assert!(pn_epoch::fence::replay(&bound, &result.evidence.attempts[0].rung, &changed).is_err());
+        assert!(matches!(
+            pn_epoch::fence::replay(&bound, &result.evidence.attempts[0].rung, &changed),
+            Err(pn_epoch::fence::Error::Profile)
+        ));
         changed.query = record.query.clone();
         let replay = pn_epoch::fence::replay(&bound, &result.evidence.attempts[0].rung, &changed);
-        assert!(replay.is_err(), "case {case}: {replay:?}");
+        assert!(
+            matches!(replay, Err(pn_epoch::fence::Error::Numeric(_))),
+            "case {case}: {replay:?}"
+        );
     }
 }
 

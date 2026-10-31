@@ -435,7 +435,7 @@
     "pn-graph::numeric::activation_endpoints": "",
     "pn-graph::numeric::activation_oracles": "",
     "pn-graph::numeric::activation_walls": "",
-    "pn-graph::numeric::evaluation_costs": "",
+    "pn-graph::numeric::evaluation_costs": "Claim: The declared reduction ceilings have literal Work boundaries for four compositions each; root-route and log-exp endpoint pairs and every prefix of the constant-sharing and memo schedule succeed at N and cannot complete at N minus one. Reported request Work remains distinct from the charged memo lookup and constant prefix.",
     "pn-graph::numeric::evaluation_sharing": "",
     "pn-graph::numeric::primitive_domains": "",
     "pn-graph::numeric::primitive_limits": "",

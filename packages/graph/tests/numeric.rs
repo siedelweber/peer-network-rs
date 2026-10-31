@@ -860,6 +860,9 @@ fn evaluation_sharing() {
     p.enclosure.as_mut().unwrap().refinement.reduction_ceiling = 2;
     let mut session = Session::new(&p, "1/400").unwrap();
     let premises = session.premises().to_vec();
+    let mut swapped = premises.clone();
+    swapped.swap(0, 1);
+    assert!(Session::from_evidence(&p, "1/400", &swapped).is_err());
     let mut receiver = Session::from_evidence(&p, "1/400", &premises).unwrap();
     for text in ["2", "1/2", "1"] {
         let input = activation_request(text, Quantity::Responsive);
@@ -1027,7 +1030,7 @@ fn sharing_cost_comparison() {
     );
 }
 
-/// Claim: The declared reduction ceilings have literal Work boundaries for four compositions each; root-route and log-exp endpoint pairs and every prefix of the constant-sharing and memo schedule succeed at N and cannot complete at N minus one. Reported request Work remains distinct from the charged memo lookup and constant prefix.
+/// Claim: The declared reduction ceilings have literal Work boundaries for four compositions each; root-route and log-exp endpoint pairs and every prefix of the constant-sharing and memo schedule succeed at N and cannot complete at N minus one. Session-prefix controls distinguish constant preparation, three distinct requests and a memo hit; they do not isolate query-construction Work from scalar evidence Work.
 /// ´claim:numerics:evaluation-policy-has-measured-work-boundaries´
 /// ´test:integration:evaluation-costs´
 #[test]
