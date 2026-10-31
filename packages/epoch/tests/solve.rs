@@ -1309,7 +1309,7 @@ fn conserved_residual() {
     let fence = pn_epoch::fence::search(&bound, None).unwrap();
     assert_eq!(fence.selected.as_deref(), Some("1/4"));
     let result = pn_epoch::conserved::solve(&bound, &fence).unwrap();
-    assert_eq!(result.work, 116_210_286);
+    assert_eq!(result.work, 116_209_419);
     let checked = pn_epoch::conserved::replay(&bound, &result).unwrap();
     assert_eq!(
         checked.rounds.last().unwrap().standing,
@@ -1353,11 +1353,11 @@ fn conserved_residual() {
     alternate.endpoint_grid = "1/4".into();
     let bound = bind_procedure(&state, alternate.clone(), &Published(alternate.clone()), Limits::default()).unwrap();
     let comparison = pn_epoch::conserved::solve(&bound, &fence).unwrap();
-    assert_eq!(comparison.work, 115_541_048);
-    for cap in [115_541_048, 115_541_047] {
+    assert_eq!(comparison.work, 115_540_181);
+    for cap in [115_540_181, 115_540_180] {
         let limited = work_policy(&alternate, cap);
         let bound = bind_procedure(&state, limited.clone(), &Published(limited), Limits::default()).unwrap();
-        assert_eq!(pn_epoch::conserved::solve(&bound, &fence).is_ok(), cap == 115_541_048);
+        assert_eq!(pn_epoch::conserved::solve(&bound, &fence).is_ok(), cap == 115_540_181);
     }
 }
 
@@ -1375,10 +1375,10 @@ fn check_solve_work(
     fence: &pn_epoch::fence::Search,
     result: &pn_records::conserved::SolveRecord,
 ) {
-    for cap in [116_210_286, 116_210_285] {
+    for cap in [116_209_419, 116_209_418] {
         let limited = work_policy(p, cap);
         let bound = bind_procedure(state, limited.clone(), &Published(limited), Limits::default()).unwrap();
-        assert_eq!(pn_epoch::conserved::solve(&bound, fence).is_ok(), cap == 116_210_286);
+        assert_eq!(pn_epoch::conserved::solve(&bound, fence).is_ok(), cap == 116_209_419);
     }
     let round = &result.rounds[0];
     assert_eq!(round.candidate_work, 64_694_819);
@@ -1469,11 +1469,12 @@ fn conserved_policy(state: &pn_epoch::compiler::CompiledState, grid: &str) -> Pr
     p
 }
 
-/// Claim: Two declared dyadic grids produce different rational proposals outside a singleton non-dyadic hull, yet final projection and replay certify the same exact self-only standing. Changed starting points, contraction fields and non-dyadic proposal grids refuse; no private start enters the declared solve.
+/// Claim: Two declared dyadic grids produce different rational proposals outside a singleton non-dyadic hull, yet final projection and replay certify the same exact self-only standing. Changed starting points, contraction fields and non-dyadic proposal grids refuse; no private start enters the declared solve. On a non-singleton hull the replayed zero fence publishes the certified image exactly; a positive rung below the edge uses its evaluated contraction bound and a strictly smaller radius than the margin-only bound.
 /// ´claim:compiler:projected-proposals-keep-hull-and-start-binding´
 /// ´test:integration:conserved-projection´
 #[test]
 fn conserved_projection() {
+    check_evaluated_contraction();
     let state = singleton_hull_state();
     let mut starts = BTreeSet::new();
     for grid in ["1/16", "1/4"] {
@@ -1512,4 +1513,44 @@ fn conserved_projection() {
         pn_epoch::conserved::solve(&bound, &accepted),
         Err(pn_epoch::conserved::Error::Scope)
     ));
+}
+
+fn check_evaluated_contraction() {
+    let state = conserved_state();
+    for rung in ["1/8", "0"] {
+        let mut p = conserved_policy(&state, "1/16");
+        p.grid = if rung == "0" {
+            vec!["0".into()]
+        } else {
+            vec![rung.into(), "0".into()]
+        };
+        let bound = bind_procedure(&state, p.clone(), &Published(p), Limits::default()).unwrap();
+        let accepted = pn_epoch::fence::search(&bound, None).unwrap();
+        assert_eq!(accepted.selected.as_deref(), Some(rung));
+        let result = pn_epoch::conserved::solve(&bound, &accepted).unwrap();
+        let round = &result.rounds[0];
+        let mut b = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+        let c = nrz_cas::Rational::parse(&round.contraction, &mut b).unwrap();
+        let upper = nrz_cas::Rational::parse(&accepted.evidence.attempts.last().unwrap().margined_fence.upper, &mut b).unwrap();
+        let margin = nrz_cas::Rational::parse("5/4", &mut b).unwrap();
+        assert_eq!(c, upper.div(&margin, &mut b).unwrap());
+        assert!(accepted.evidence.hull.values().all(|h| h.lower != h.upper));
+        if rung == "0" {
+            assert!(c.is_zero());
+            assert_eq!(round.standing, round.certified.image);
+        } else {
+            let old = nrz_cas::Rational::parse("4/5", &mut b).unwrap();
+            assert!(c.compare(&old, &mut b).unwrap().is_lt());
+            let r = nrz_cas::Rational::parse(&round.residual, &mut b).unwrap();
+            let radius = nrz_cas::Rational::parse(&round.radius, &mut b).unwrap();
+            let old_radius = r.mul(&nrz_cas::Rational::parse("5", &mut b).unwrap(), &mut b).unwrap();
+            assert!(radius.compare(&old_radius, &mut b).unwrap().is_lt());
+        }
+        pn_epoch::conserved::replay(&bound, &result).unwrap();
+        if rung == "0" {
+            let mut bad = accepted.clone();
+            bad.evidence.attempts.last_mut().unwrap().margined_fence.upper = "1/2".into();
+            assert!(pn_epoch::conserved::solve(&bound, &bad).is_err());
+        }
+    }
 }

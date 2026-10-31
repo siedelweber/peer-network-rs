@@ -8,7 +8,7 @@ use pn_records::{
     solve::{AttemptStop, Completion, Evidence, Precision},
 };
 
-fn fence(bound: &BoundProcedure<'_>, evidence: &Evidence, rung: &str) -> Result<(), Error> {
+fn fence(bound: &BoundProcedure<'_>, evidence: &Evidence, rung: &str) -> Result<Rational, Error> {
     let p = bound.inputs().1;
     let limits = p.enclosure.as_ref().ok_or(Error::Scope)?.operation.clone();
     pn_records::solve::validate_evidence(p, evidence, limits.clone())?;
@@ -64,13 +64,20 @@ fn fence(bound: &BoundProcedure<'_>, evidence: &Evidence, rung: &str) -> Result<
             return Err(Error::Scope);
         }
     }
-    Ok(())
+    let accepted = evidence.attempts.last().ok_or(Error::Scope)?;
+    let upper = Rational::parse(&accepted.margined_fence.upper, &mut b)?;
+    // Empty mathematical transcripts are admitted only for the exact zero fence.
+    if accepted.primitives.is_empty() && !upper.is_zero() {
+        return Err(Error::Scope);
+    }
+    Ok(upper.div(&Rational::parse(&p.margin, &mut b)?, &mut b)?)
 }
 
 fn round(
     bound: &BoundProcedure<'_>,
     rung: &str,
     precision: u32,
+    contraction: &Rational,
     supplied: Option<&ResidualRound>,
     b: &mut Budget,
 ) -> Result<ResidualRound, Error> {
@@ -138,7 +145,7 @@ fn round(
         given,
     )?;
     b.work(certified.work, Location::new("certified residual map"))?;
-    let mut result = residual::assemble(certified, &hull, &p.margin, b)?;
+    let mut result = residual::assemble(certified, &hull, contraction, b)?;
     result.proposals = proposals;
     result.candidate_work = candidate_work;
     result.work = b.usage().work - start;
@@ -163,7 +170,7 @@ pub(super) fn run(
     supplied: Option<&SolveRecord>,
 ) -> Result<SolveRecord, Error> {
     bound.preflight()?;
-    fence(bound, accepted, rung)?;
+    let contraction = fence(bound, accepted, rung)?;
     let p = bound.inputs().1;
     let Precision::AbsoluteWidthBits(sequence) = &p.precision else {
         return Err(Error::Scope);
@@ -174,7 +181,7 @@ pub(super) fn run(
     let mut rounds = Vec::new();
     for (index, precision) in sequence.iter().enumerate() {
         let given = supplied.map(|s| s.rounds.get(index).ok_or(Error::Scope)).transpose()?;
-        rounds.push(round(bound, rung, *precision, given, &mut budget)?);
+        rounds.push(round(bound, rung, *precision, &contraction, given, &mut budget)?);
     }
     if supplied.is_some_and(|s| s.rounds.len() != rounds.len()) {
         return Err(Error::Scope);

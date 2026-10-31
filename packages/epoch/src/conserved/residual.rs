@@ -112,7 +112,7 @@ fn intersection(a: &Bounds, lo: Rational, hi: Rational, b: &mut Budget) -> Resul
 pub(super) fn assemble(
     record: MapRecord,
     hull: &BTreeMap<String, Bounds>,
-    margin: &str,
+    c: &Rational,
     b: &mut Budget,
 ) -> Result<ResidualRound, Error> {
     super::point_in_hull(&record.point, hull, b)?;
@@ -120,7 +120,6 @@ pub(super) fn assemble(
         return Err(Error::Map);
     }
     let one = Rational::parse("1", b)?;
-    let c = one.div(&Rational::parse(margin, b)?, b)?;
     if c.is_negative() || !c.compare(&one, b)?.is_lt() {
         return Err(Error::Residual);
     }
@@ -134,7 +133,7 @@ pub(super) fn assemble(
             }
         }
     }
-    let radius = r.div(&one.sub(&c, b)?, b)?;
+    let radius = r.div(&one.sub(c, b)?, b)?;
     let contracted = c.mul(&radius, b)?;
     let mut standing = BTreeMap::new();
     for (actor, value) in &record.image {
