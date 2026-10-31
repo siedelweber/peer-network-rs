@@ -879,7 +879,7 @@ fn search(state: &pn_epoch::compiler::CompiledState, p: &Procedure) -> pn_epoch:
     pn_epoch::fence::search(&bound, None).unwrap()
 }
 
-/// Claim: The rung driver uses the frozen contributing width and cumulative shape through the deepest supported depth, evaluates the deployed wall gain independently at each attempted rung, and selects the first proved pass in the descending published grid; exact zero-width and empty-domain cases preserve the frozen state, and equal-width weighted graphs give identical fence transcripts.
+/// Claim: The rung driver uses the frozen contributing width and cumulative shape through the deepest supported depth, evaluates the deployed wall gain independently at each attempted rung, and selects the first proved pass in the descending published grid; exact zero-width and empty-domain cases preserve the frozen state, and equal-width weighted graphs give identical fence transcripts. Replay rebuilds each retained question from the frozen package and refuses substituted width, tilt and wall queries or their attachments.
 /// ´claim:compiler:width-fence-retains-frozen-support-and-anchor´
 /// ´test:integration:fence-shapes´
 #[test]
@@ -897,6 +897,7 @@ fn fence_shapes() {
     assert_eq!(a, b);
     assert_eq!(a, search(&third, &fence_procedure(&third)));
     check_width_factor(&left, &a);
+    check_fence_replay(&left, &p, &a);
     assert!(a.evidence.attempts.iter().any(|v| v.completion == Completion::Fail));
     assert!(a.selected.is_some());
     validate_evidence(&p, &a.evidence, Limits::default()).unwrap();
@@ -955,6 +956,38 @@ fn fence_shapes() {
         }
         let bound = bind_procedure(&left, bad.clone(), &Published(bad), Limits::default()).unwrap();
         assert!(pn_epoch::fence::search(&bound, None).is_err());
+    }
+}
+
+fn check_fence_replay(state: &pn_epoch::compiler::CompiledState, p: &Procedure, result: &pn_epoch::fence::Search) {
+    let bound = bind_procedure(state, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+    for attempt in &result.evidence.attempts {
+        for index in &attempt.primitives {
+            let record = &result.evidence.primitives[*index];
+            let checked = pn_epoch::fence::replay(&bound, &attempt.rung, record).unwrap();
+            assert_eq!(checked.bounds, record.evidence.bounds);
+        }
+    }
+    let record = &result.evidence.primitives[0];
+    for case in [2, 0, 1] {
+        let mut changed = record.clone();
+        match case {
+            0 => changed.query.nodes[record.query.target - 3] = pn_records::primitive::Node::Rational("7".into()),
+            1 => changed.query.nodes[record.query.target - 1] = pn_records::primitive::Node::Rational("7".into()),
+            _ => {
+                changed.query.coordinates[0] = pn_records::primitive::Range {
+                    lower: "3".into(),
+                    upper: "3".into(),
+                }
+            }
+        }
+        assert_ne!(changed.query, record.query, "mutation {case} must change the scope");
+        changed.evidence = pn_graph::numeric::evaluate(p, &changed.query, None).unwrap();
+        assert!(changed.evidence.attachment.is_some());
+        assert!(pn_epoch::fence::replay(&bound, &result.evidence.attempts[0].rung, &changed).is_err());
+        changed.query = record.query.clone();
+        let replay = pn_epoch::fence::replay(&bound, &result.evidence.attempts[0].rung, &changed);
+        assert!(replay.is_err(), "case {case}: {replay:?}");
     }
 }
 

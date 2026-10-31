@@ -65,14 +65,7 @@ pub(super) fn run(
     if procedure.fence.as_ref().is_some_and(|profile| profile.inverse_wall) {
         return Err(Error::ReferenceWall);
     }
-    let mut input = prepared.clone();
-    input.cumulative_tilt = strength
-        .mul(
-            &Rational::parse(&prepared.cumulative_tilt, &mut preparation)?,
-            &mut preparation,
-        )?
-        .exact_string(&mut preparation)?;
-    let query = fence::query(procedure, &input)?;
+    let query = super::question(procedure, prepared, rung)?;
     let mut attempt = Attempt {
         rung: rung.into(),
         margined_fence: Bounds {

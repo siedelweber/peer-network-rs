@@ -7,7 +7,7 @@ use crate::solve::BoundProcedure;
 use nrz_cas::{Rational, limits::Budget};
 use pn_graph::numeric::activation::fence::Inputs;
 use pn_records::{
-    primitive::Outcome,
+    primitive::{Outcome, PrimitiveEvidence, PrimitiveRecord, Query},
     solve::{Bounds, Evidence, Precision},
 };
 use std::collections::BTreeMap;
@@ -106,6 +106,57 @@ fn prepare(bound: &BoundProcedure<'_>) -> Result<(Inputs, BTreeMap<String, Bound
         },
         hull,
     ))
+}
+
+fn question(procedure: &pn_records::solve::Procedure, prepared: &Inputs, rung: &str) -> Result<Query, Error> {
+    let policy = procedure.enclosure.as_ref().ok_or(Error::Profile)?;
+    let mut budget = Budget::new(policy.operation.clone())?;
+    let mut input = prepared.clone();
+    input.cumulative_tilt = Rational::parse(rung, &mut budget)?
+        .mul(&Rational::parse(&prepared.cumulative_tilt, &mut budget)?, &mut budget)?
+        .exact_string(&mut budget)?;
+    Ok(pn_graph::numeric::activation::fence::query(procedure, &input)?)
+}
+
+/// Rebuild a rung's question from the frozen package before replaying its supplied attachment.
+/// (´def:compiler:fence-search´)
+/// # Errors
+/// Refuses undeclared rungs or precisions, changed queries, missing attachments and invalid evidence.
+#[tracing::instrument(
+    name = "sig:design:epoch",
+    fields(
+        execution_owner = "EPOCH",
+        claim_owner = "ROOT",
+        claim_label = "sig:design:epoch",
+        source_item = "fence::replay"
+    ),
+    ret
+)]
+pub fn replay(bound: &BoundProcedure<'_>, rung: &str, record: &PrimitiveRecord) -> Result<PrimitiveEvidence, Error> {
+    bound.preflight()?;
+    let (_, procedure) = bound.inputs();
+    let Precision::AbsoluteWidthBits(sequence) = &procedure.precision else {
+        return Err(Error::Profile);
+    };
+    if !procedure.grid.iter().any(|value| value == rung) || !sequence.contains(&record.precision) {
+        return Err(Error::Profile);
+    }
+    let (prepared, _) = prepare(bound)?;
+    if procedure.fence.as_ref().is_some_and(|profile| profile.inverse_wall) {
+        return Err(Error::ReferenceWall);
+    }
+    let expected = question(procedure, &prepared, rung)?;
+    if expected != record.query {
+        return Err(Error::Profile);
+    }
+    let mut policy = procedure.clone();
+    policy.enclosure.as_mut().ok_or(Error::Profile)?.refinement.precision = record.precision;
+    Ok(pn_graph::numeric::replay(
+        &policy,
+        &expected,
+        record.evidence.attachment.as_ref().ok_or(Error::Profile)?,
+        None,
+    )?)
 }
 
 /// Run the published sequence from fresh stores and choose the greatest proved passing rung.

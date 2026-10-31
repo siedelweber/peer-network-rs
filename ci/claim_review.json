@@ -1661,9 +1661,9 @@
       "operation": "pn-epoch::solve::fence_shapes",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:width-fence-retains-frozen-support-and-anchor",
-      "before": "",
-      "after": "Claim: The rung driver uses the frozen contributing width and cumulative shape through the deepest supported depth, evaluates the deployed wall gain independently at each attempted rung, and selects the first proved pass in the descending published grid; exact zero-width and empty-domain cases preserve the frozen state, and equal-width weighted graphs give identical fence transcripts.",
-      "review": "Three unsorted differently weighted frozen graphs with the same contributing ranges have identical evaluated fence transcripts. Two depth profiles distinguish cumulative deepest-supported shape from a weighted average and ignore zero trailing mass. Zero-width and empty states and a zero-only grid certify exactly; three profile controls refuse. Every retained gain comparison replays, and exchanging rung certificates refuses. Three unsorted exact comparison controls cover equality, failure and zero through scalar replay, separately from the deployed transcendental gain. Independent integer-fraction subtraction and maximum recover the width factor from the frozen hull endpoints and compare every original query factor."
+      "before": "Claim: The rung driver uses the frozen contributing width and cumulative shape through the deepest supported depth, evaluates the deployed wall gain independently at each attempted rung, and selects the first proved pass in the descending published grid; exact zero-width and empty-domain cases preserve the frozen state, and equal-width weighted graphs give identical fence transcripts.",
+      "after": "Claim: The rung driver uses the frozen contributing width and cumulative shape through the deepest supported depth, evaluates the deployed wall gain independently at each attempted rung, and selects the first proved pass in the descending published grid; exact zero-width and empty-domain cases preserve the frozen state, and equal-width weighted graphs give identical fence transcripts. Replay rebuilds each retained question from the frozen package and refuses substituted width, tilt and wall queries or their attachments.",
+      "review": "Three differently weighted frozen graphs with equal contributing ranges yield identical fence transcripts. Two depth profiles distinguish cumulative deepest-supported shape from a weighted average. Exact zero-width, empty and anchor cases and exact comparisons retain their earlier controls. Frozen-package replay checks every retained request; three distinct width, tilt and wall mutations refuse both as changed queries and as substituted valid attachments."
     },
     {
       "operation": "pn-epoch::solve::procedure_binding",
@@ -2087,7 +2087,7 @@
       "claim": "GRAPH::claim:numerics:activation-endpoints-retain-monotone-premises",
       "before": "",
       "after": "Claim: Reference-profile monotone endpoint composition contains independent value and gain brackets on unsorted wall placements, keeps zero below the kink and its generalized join across it, and reuses a sealed activation for positive hop powers with every source premise retained. It admits no other bleed profile or gain as a reusable activation.",
-      "review": "Four unsorted box placements exercise eight value/gain endpoint envelopes; independent brackets sit inside their bounds, which fit the original composed bounds. Four one-third powers reuse sealed value evidence. Checked point records replay in fresh stores; an unsupported bleed and a gain used as a value refuse. The test covers the deployed reference profile only and no fence or solve."
+      "review": "Four unsorted box placements exercise eight value/gain endpoint envelopes. Independent brackets lie inside every bound, including [G(3),G(2)] for the above-wall gain on [2,3], and each envelope fits the composed bound. Four one-third powers reuse sealed value evidence. Fresh-store replay and unsupported-bleed and gain-as-value refusals remain scoped to the deployed reference profile."
     },
     {
       "operation": "pn-graph::numeric::activation_oracles",
@@ -2104,6 +2104,22 @@
       "before": "",
       "after": "Claim: The wall clamp keeps the same below-wall value and zero generalized gain, retains the zero-to-responsive generalized join on touching and crossing boxes, and composes non-dyadic hop powers from the exact strength times shape. Expected-input replay rejects a changed wall; invalid domains and deterministic interruption carry no mathematical verdict.",
       "review": "Fifteen distinct formula requests cover one below-wall anchor, four box placements for values and generalized gains, a one-third applied exponent, a zero exponent, changed-wall replay, and three invalid-domain requests. Independent brackets check value endpoints and responsive gains; below-wall value and zero gain are exact branch controls. Interruption has no verdict. A separate policy with only the output ceiling reduced to one MiB retains an explicit no-bound OutputBytes exhaustion. No smooth derivative or wall inversion is admitted."
+    },
+    {
+      "operation": "pn-graph::numeric::evaluation_costs",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries",
+      "before": "",
+      "after": "Claim: The declared reduction ceilings have literal Work boundaries for four compositions each; root-route and log-exp endpoint pairs and every prefix of the constant-sharing and memo schedule succeed at N and cannot complete at N minus one. Reported request Work remains distinct from the charged memo lookup and constant prefix.",
+      "review": "Eight composition/policy cases, four monotone gain endpoint cases, two endpoint-power routes, the sealed base and direct point value, and five sharing prefixes have literal N/N-1 Work controls. The prefixes distinguish constant preparation, three distinct requests and one memo hit. A shared point bound equals the sealed value bound used by the power controls. WidthLimit remains checked evidence without a verdict. No arbitrary-size or solve-complexity claim follows."
+    },
+    {
+      "operation": "pn-graph::numeric::evaluation_sharing",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
+      "before": "",
+      "after": "Claim: One declared evaluation checks beta and Q(1) in order, uses their checked boxes as explicit premises and contains independent activation brackets on three unsorted points. Identical requests borrow identical retained evidence with charged lookup; fresh replay checks constants before dependent requests and refuses a changed constant query or dependent argument. Replay receivers cannot generate requests, and producers cannot switch into replay.",
+      "review": "Three unsorted point requests retain checked beta and Q(1) premises, replay in a fresh receiver, and contain independent brackets. Repeating each request returns identical retained evidence with separately charged lookup Work. Changed arguments, constant queries and bleed refuse. Inconsistent total/operation caps refuse; a consistently bounded receiver eventually exhausts and cannot resume. Replay receivers cannot produce requests, and producers cannot switch to replay accounting. This witnesses one evaluation-local schedule, not a conserved solve."
     },
     {
       "operation": "pn-graph::numeric::primitive_domains",

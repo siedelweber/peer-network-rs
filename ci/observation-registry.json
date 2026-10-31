@@ -7431,6 +7431,110 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/sharing.rs",
+      "item": "numeric::activation::sharing::Session::new",
+      "owner": "GRAPH",
+      "signature": "fn new (procedure : & Procedure , bleed : & str) -> Result < Self , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/sharing.rs",
+      "item": "numeric::activation::sharing::Session::from_evidence",
+      "owner": "GRAPH",
+      "signature": "fn from_evidence (procedure : & Procedure , bleed : & str , records : & [PrimitiveRecord]) -> Result < Self , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/sharing.rs",
+      "item": "numeric::activation::sharing::Session::premises",
+      "owner": "GRAPH",
+      "signature": "fn premises (& self) -> & [PrimitiveRecord]",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "exception",
+      "shape": "shape-graph",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access preserves the sealed checked constant premises.",
+        "witness": "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
+        "boundary": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::new",
+        "class_decision": "activation-base-public"
+      }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/sharing.rs",
+      "item": "numeric::activation::sharing::Session::work",
+      "owner": "GRAPH",
+      "signature": "fn work (& self) -> u64",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "exception",
+      "shape": "shape-graph",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable access reports the evaluation ledger without altering evidence.",
+        "witness": "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
+        "boundary": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::new",
+        "class_decision": "activation-base-public"
+      }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/sharing.rs",
+      "item": "numeric::activation::sharing::Session::evidence",
+      "owner": "GRAPH",
+      "signature": "fn evidence (& self , index : usize) -> Option < & Evaluation >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "exception",
+      "shape": "shape-graph",
+      "exception": {
+        "rule": "ROOT::rule:observe:spans",
+        "kind": "inherited",
+        "justification": "Justified: Immutable borrowing neither copies evidence nor changes the evaluation ledger.",
+        "witness": "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
+        "boundary": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::new",
+        "class_decision": "activation-base-public"
+      }
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/sharing.rs",
+      "item": "numeric::activation::sharing::Session::evaluate",
+      "owner": "GRAPH",
+      "signature": "fn evaluate (& mut self , input : & Request) -> Result < usize , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/sharing.rs",
+      "item": "numeric::activation::sharing::Session::replay",
+      "owner": "GRAPH",
+      "signature": "fn replay (& mut self , input : & Evaluation) -> Result < PrimitiveRecord , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/fence.rs",
+      "item": "fence::replay",
+      "owner": "EPOCH",
+      "signature": "fn replay (bound : & BoundProcedure < '_ > , rung : & str , record : & PrimitiveRecord) -> Result < PrimitiveEvidence , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
     }
   ],
   "metrics": [
@@ -14423,6 +14527,94 @@
         "secret_flow": "solve-public-records",
         "exposure_consumers": "solve-public-records"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::new",
+      "body": "{ start (procedure , bleed , None) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::from_evidence",
+      "body": "{ start (procedure , bleed , Some (records)) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::premises",
+      "body": "{ & self . premises }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::work",
+      "body": "{ self . budget . usage () . work }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evidence",
+      "body": "{ self . retained . get (index) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evaluate",
+      "body": "{ if ! self . active { return Err (Error :: Declaration) ; } self . active = false ; if ! self . production || input . bleed_squared != self . bleed { return Err (Error :: Declaration) ; } self . budget . work (key_work (input) ? , Location :: new (\"evaluation memo key\")) ? ; for (index , entry) in self . retained . iter () . enumerate () { self . budget . work (key_work (& entry . input) ? , Location :: new (\"evaluation memo comparison\")) ? ; if entry . input == * input { self . active = true ; return Ok (index) ; } } if u64 :: try_from (self . retained . len ()) . map_err (| _ | Error :: Declaration) ? >= self . procedure . enclosure . as_ref () . ok_or (Error :: Unsupported) ? . operation . proof_nodes { return Err (Error :: Declaration) ; } let query = super :: shared_query (input , & mut self . budget , Some (& self . constants)) ? ; let record = checked (& self . procedure , query , None , & mut self . budget) ? ; if record . evidence . attachment . is_none () || record . evidence . resource_fault . is_some () { return Err (Error :: Declaration) ; } self . retained . push (Evaluation { input : input . clone () , primitive : record , }) ; self . active = true ; Ok (self . retained . len () - 1) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::replay",
+      "body": "{ if ! self . active { return Err (Error :: Declaration) ; } self . active = false ; if self . production || input . input . bleed_squared != self . bleed { return Err (Error :: Declaration) ; } let query = super :: shared_query (& input . input , & mut self . budget , Some (& self . constants)) ? ; let record = checked (& self . procedure , query , Some (& input . primitive) , & mut self . budget) ? ; if record . evidence . attachment . is_none () || record . evidence . resource_fault . is_some () { return Err (Error :: Declaration) ; } self . active = true ; Ok (record) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/fence.rs::fence::replay",
+      "body": "{ bound . preflight () ? ; let (_ , procedure) = bound . inputs () ; let Precision :: AbsoluteWidthBits (sequence) = & procedure . precision else { return Err (Error :: Profile) ; } ; if ! procedure . grid . iter () . any (| value | value == rung) || ! sequence . contains (& record . precision) { return Err (Error :: Profile) ; } let (prepared , _) = prepare (bound) ? ; if procedure . fence . as_ref () . is_some_and (| profile | profile . inverse_wall) { return Err (Error :: ReferenceWall) ; } let expected = question (procedure , & prepared , rung) ? ; if expected != record . query { return Err (Error :: Profile) ; } let mut policy = procedure . clone () ; policy . enclosure . as_mut () . ok_or (Error :: Profile) ? . refinement . precision = record . precision ; Ok (pn_graph :: numeric :: replay (& policy , & expected , record . evidence . attachment . as_ref () . ok_or (Error :: Profile) ? , None ,) ?) }",
+      "class_decision": "solve-public-records",
+      "item_premise": "Only public declarations, frozen public compiled inputs and supplied numerical evidence enter these operations. Errors retain public consistency classes. No secret, evaluator or subscriber is introduced.",
+      "assessments": {
+        "full_recording": "solve-public-records",
+        "secret_flow": "solve-public-records",
+        "exposure_consumers": "solve-public-records"
+      }
     }
   ],
   "generators": [
@@ -18043,6 +18235,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "solve-public-records",
       "expansion_review": "Public frozen-profile names, rational fence inputs, independent attempt records and operational errors only. Derives neither expose secrets nor define publication bytes."
+    },
+    {
+      "item": "numeric::activation::sharing::Session",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/sharing.rs",
+      "syntax": "# [derive (Debug)]",
+      "class_decision": "activation-base-public",
+      "expansion_review": "Debug records public rational requests, checked constant premises, retained certificates and explicit resource ledgers only; no secret material or publication encoding."
     }
   ],
   "reviewed_types": [
@@ -20027,6 +20228,12 @@
       "syntax": "# [doc = \" Locally constructed endpoint evidence; no caller-supplied bound can construct this value.\"] # [doc = \" (´def:numerics:activation-endpoints´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Envelope { input : Request , bounds : Option < Range > , records : Vec < PrimitiveRecord > , source : Option < Box < Envelope > > , work : u64 , }"
     },
     {
+      "item": "numeric::activation::sharing::Session",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation/sharing.rs",
+      "syntax": "# [doc = \" One evaluation's checked constants, ordered requests and charged Work ledger.\"] # [doc = \" (´[ROOT-rule:design:evaluation-schedule]´)\"] # [derive (Debug)] pub struct Session { procedure : Procedure , bleed : String , constants : [Range ; 2] , premises : Vec < PrimitiveRecord > , retained : Vec < Evaluation > , budget : Budget , active : bool , production : bool , }"
+    },
+    {
       "item": "numeric::activation::Quantity",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/activation.rs",
@@ -21079,7 +21286,8 @@
           "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::inputs",
           "pn-epoch::packages/epoch/src/solve.rs::solve::BoundProcedure < '_ >::preflight",
           "pn-graph::packages/graph/src/numeric/activation/fence.rs::numeric::activation::fence::query",
-          "pn-epoch::packages/epoch/src/fence.rs::fence::search"
+          "pn-epoch::packages/epoch/src/fence.rs::fence::search",
+          "pn-epoch::packages/epoch/src/fence.rs::fence::replay"
         ]
       }
     },
@@ -21128,7 +21336,14 @@
           "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::work",
           "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::Envelope::source",
           "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::evaluate",
-          "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::power"
+          "pn-graph::packages/graph/src/numeric/activation/monotone.rs::numeric::activation::monotone::power",
+          "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::new",
+          "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::from_evidence",
+          "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::premises",
+          "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::work",
+          "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evidence",
+          "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::evaluate",
+          "pn-graph::packages/graph/src/numeric/activation/sharing.rs::numeric::activation::sharing::Session::replay"
         ]
       }
     }

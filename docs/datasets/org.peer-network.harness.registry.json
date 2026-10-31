@@ -4300,7 +4300,9 @@
         "pn-graph::numeric::activation_oracles",
         "pn-graph::numeric::activation_walls",
         "pn-graph::numeric::activation_costs",
-        "pn-graph::numeric::activation_endpoints"
+        "pn-graph::numeric::activation_endpoints",
+        "pn-graph::numeric::evaluation_sharing",
+        "pn-graph::numeric::evaluation_costs"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",

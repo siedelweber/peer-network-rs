@@ -752,10 +752,10 @@ fn set_cost_limit(policy: &mut Procedure, resource: usize, value: u64) {
 fn activation_costs() {
     use pn_graph::numeric::activation;
     let pins = [
-        (26_346_212, 26_303_212, 685_790, 8_483, 2_573_905),
-        (22_122_299, 22_081_009, 578_260, 6_250, 12_191_733),
-        (25_083_341, 25_035_921, 670_062, 7_445, 2_332_677),
-        (120_143_841, 120_098_356, 2_388_598, 10_019, 2_673_792),
+        (20_986_736, 20_955_085, 558_565, 7_015, 1_791_495),
+        (22_147_931, 22_108_551, 579_066, 6_349, 1_924_854),
+        (25_112_350, 25_067_131, 670_962, 7_507, 2_340_998),
+        (102_500_767, 102_466_631, 2_044_492, 8_500, 1_891_382),
     ];
     for (input, (work, evaluation, steps, bytes, output)) in cost_inputs().into_iter().zip(pins) {
         let policy = cost_policy();
@@ -831,6 +831,9 @@ fn activation_endpoints() {
             } else if a == "1/2" {
                 assert_eq!(low, Q(0, 1));
                 assert!(independent_activation(Q(1, 1), false, true).1.le(high));
+            } else {
+                assert!(low.le(independent_activation(Q(3, 1), false, true).0));
+                assert!(independent_activation(Q(2, 1), false, true).1.le(high));
             }
             for record in result.records() {
                 assert!(replay(&policy, &record.query, record.evidence.attachment.as_ref().unwrap(), None).is_ok());
@@ -845,4 +848,199 @@ fn activation_endpoints() {
     other.quantity = Quantity::ResponsiveLogGain;
     let gain = monotone::evaluate(&policy, &other).unwrap();
     assert!(monotone::power(&policy, &gain, "1/3").is_err());
+}
+
+/// Claim: One declared evaluation checks beta and Q(1) in order, uses their checked boxes as explicit premises and contains independent activation brackets on three unsorted points. Identical requests borrow identical retained evidence with charged lookup; fresh replay checks constants before dependent requests and refuses a changed constant query or dependent argument. Replay receivers cannot generate requests, and producers cannot switch into replay.
+/// ´claim:numerics:evaluation-sharing-keeps-checked-premises´
+/// ´test:integration:evaluation-sharing´
+#[test]
+fn evaluation_sharing() {
+    use pn_graph::numeric::activation::{Quantity, sharing::Session};
+    let mut p = cost_policy();
+    p.enclosure.as_mut().unwrap().refinement.reduction_ceiling = 2;
+    let mut session = Session::new(&p, "1/400").unwrap();
+    let premises = session.premises().to_vec();
+    let mut receiver = Session::from_evidence(&p, "1/400", &premises).unwrap();
+    for text in ["2", "1/2", "1"] {
+        let input = activation_request(text, Quantity::Responsive);
+        let index = session.evaluate(&input).unwrap();
+        let first = session.evidence(index).unwrap().clone();
+        let before = session.work();
+        let repeated = session.evaluate(&input).unwrap();
+        assert_eq!(repeated, index);
+        let repeat = session.evidence(repeated).unwrap().clone();
+        assert_eq!(first, repeat);
+        assert!(session.work() > before);
+        assert!(session.work() - before < first.primitive.evidence.work);
+        let (lo, hi) = endpoints(&first.primitive.evidence);
+        let oracle = independent_activation(Q::parse(text), false, false);
+        assert!(lo.le(oracle.0) && oracle.1.le(hi));
+        let checked = receiver.replay(&first).unwrap();
+        assert_eq!(checked.evidence.bounds, first.primitive.evidence.bounds);
+        let mut changed = first.clone();
+        changed.input.standing = range("7", "7");
+        let mut negative = Session::from_evidence(&p, "1/400", &premises).unwrap();
+        assert!(negative.replay(&changed).is_err());
+        assert!(negative.replay(&first).is_err());
+    }
+    let mut limited = p.clone();
+    limited.maximum_work = 20_000_000;
+    assert!(Session::from_evidence(&limited, "1/400", &premises).is_err());
+    set_cost_limit(&mut limited, 0, 20_000_000);
+    let mut limited_source = Session::new(&limited, "1/400").unwrap();
+    let index = limited_source
+        .evaluate(&activation_request("2", Quantity::Responsive))
+        .unwrap();
+    let mut exhausted = Session::from_evidence(&limited, "1/400", limited_source.premises()).unwrap();
+    let stopped = (0..64).any(|_| exhausted.replay(limited_source.evidence(index).unwrap()).is_err());
+    assert!(stopped);
+    assert!(exhausted.replay(limited_source.evidence(index).unwrap()).is_err());
+    let mut changed = premises;
+    let mut replay_only = Session::from_evidence(&p, "1/400", &changed).unwrap();
+    assert!(replay_only.evaluate(&activation_request("1", Quantity::Responsive)).is_err());
+    let mut production_only = Session::new(&p, "1/400").unwrap();
+    assert!(production_only.replay(session.evidence(0).unwrap()).is_err());
+    changed[0].query.nodes[0] = Node::Rational("3".into());
+    assert!(Session::from_evidence(&p, "1/400", &changed).is_err());
+    let mut other = activation_request("1", Quantity::Responsive);
+    other.bleed_squared = "1/100".into();
+    assert!(session.evaluate(&other).is_err());
+}
+
+fn sharing_prefix(limit: u64, count: usize) -> Result<u64, pn_graph::numeric::Error> {
+    use pn_graph::numeric::activation::{Quantity, sharing::Session};
+    let mut p = cost_policy();
+    p.maximum_work = limit;
+    set_cost_limit(&mut p, 0, limit);
+    p.enclosure.as_mut().unwrap().refinement.reduction_ceiling = 2;
+    let mut session = Session::new(&p, "1/400")?;
+    for text in ["1", "1/2", "2", "1"].into_iter().take(count) {
+        session.evaluate(&activation_request(text, Quantity::Responsive))?;
+    }
+    Ok(session.work())
+}
+
+fn reduction_boundaries() {
+    use pn_graph::numeric::activation;
+    let inputs = cost_inputs();
+    for (ceiling, works) in [
+        (3, [15_858_856, 15_514_999, 18_011_396, 64_092_367]),
+        (2, [13_553_427, 12_699_480, 14_778_128, 49_222_716]),
+    ] {
+        for (input, work) in inputs.iter().zip(works) {
+            let mut p = cost_policy();
+            p.enclosure.as_mut().unwrap().refinement.reduction_ceiling = ceiling;
+            let expected = activation::evaluate(&p, input, None).unwrap().primitive.evidence;
+            assert_eq!(expected.work, work);
+            for (cap, succeeds) in [(work, true), (work - 1, false)] {
+                let mut limited = p.clone();
+                set_cost_limit(&mut limited, 0, cap);
+                let got = activation::evaluate(&limited, input, None);
+                assert_eq!(
+                    got.as_ref().is_ok_and(|v| v.primitive.evidence.bounds == expected.bounds
+                        && v.primitive.evidence.completed_rounds == expected.completed_rounds
+                        && v.primitive.evidence.resource_fault.is_none()),
+                    succeeds
+                );
+            }
+        }
+    }
+}
+
+fn power_boundaries() {
+    use pn_graph::numeric::activation::{Quantity, monotone};
+    let mut p = cost_policy();
+    p.enclosure.as_mut().unwrap().refinement.reduction_ceiling = 2;
+    let mut input = activation_request("1", Quantity::Clamped);
+    input.wall = Some("1".into());
+    let base = monotone::evaluate(&p, &input).unwrap();
+    assert_eq!(base.work(), 10_689_380);
+    for (cap, succeeds) in [(10_689_380, true), (10_689_379, false)] {
+        let mut limited = p.clone();
+        set_cost_limit(&mut limited, 0, cap);
+        let got = monotone::evaluate(&limited, &input);
+        assert_eq!(got.as_ref().is_ok_and(|v| v.bounds() == base.bounds()), succeeds);
+    }
+    for (exponent, work) in [("1/4", 218_608), ("1/3", 6_182_071)] {
+        let expected = monotone::power(&p, &base, exponent).unwrap();
+        assert_eq!(expected.work(), work);
+        for (cap, succeeds) in [(work, true), (work - 1, false)] {
+            let mut limited = p.clone();
+            set_cost_limit(&mut limited, 0, cap);
+            let got = monotone::power(&limited, &base, exponent);
+            assert_eq!(got.as_ref().is_ok_and(|v| v.bounds() == expected.bounds()), succeeds);
+        }
+    }
+}
+
+fn endpoint_cost_boundaries() {
+    use pn_graph::numeric::activation::monotone;
+    let inputs = cost_inputs();
+    for (ceiling, works) in [(3, [15_861_820, 15_863_749]), (2, [13_556_391, 13_558_320])] {
+        for (input, work) in [&inputs[0], &inputs[3]].into_iter().zip(works) {
+            let mut p = cost_policy();
+            p.enclosure.as_mut().unwrap().refinement.reduction_ceiling = ceiling;
+            let expected = monotone::evaluate(&p, input).unwrap();
+            assert_eq!(expected.work(), work);
+            for (cap, succeeds) in [(work, true), (work - 1, false)] {
+                let mut limited = p.clone();
+                set_cost_limit(&mut limited, 0, cap);
+                let got = monotone::evaluate(&limited, input);
+                assert_eq!(got.as_ref().is_ok_and(|v| v.bounds() == expected.bounds()), succeeds);
+            }
+        }
+    }
+}
+
+fn sharing_cost_comparison() {
+    use pn_graph::numeric::activation::{self, Quantity, monotone, sharing::Session};
+    let mut p = cost_policy();
+    p.enclosure.as_mut().unwrap().refinement.reduction_ceiling = 2;
+    let input = activation_request("1", Quantity::Responsive);
+    let direct = activation::evaluate(&p, &input, None).unwrap();
+    assert_eq!(direct.primitive.evidence.work, 10_685_294);
+    for (cap, succeeds) in [(10_685_294, true), (10_685_293, false)] {
+        let mut limited = p.clone();
+        set_cost_limit(&mut limited, 0, cap);
+        let got = activation::evaluate(&limited, &input, None);
+        assert_eq!(
+            got.as_ref()
+                .is_ok_and(|v| v.primitive.evidence.bounds == direct.primitive.evidence.bounds
+                    && v.primitive.evidence.resource_fault.is_none()),
+            succeeds
+        );
+    }
+    let mut session = Session::new(&p, "1/400").unwrap();
+    let index = session.evaluate(&input).unwrap();
+    let shared = session.evidence(index).unwrap().primitive.evidence.bounds.as_ref().unwrap();
+    let mut clamped = activation_request("1", Quantity::Clamped);
+    clamped.wall = Some("1".into());
+    let base = monotone::evaluate(&p, &clamped).unwrap();
+    let mut budget = nrz_cas::limits::Budget::new(p.enclosure.as_ref().unwrap().operation.clone()).unwrap();
+    assert_eq!(
+        shared.lower().exact_string(&mut budget).unwrap(),
+        base.bounds().unwrap().lower
+    );
+    assert_eq!(
+        shared.upper().exact_string(&mut budget).unwrap(),
+        base.bounds().unwrap().upper
+    );
+}
+
+/// Claim: The declared reduction ceilings have literal Work boundaries for four compositions each; root-route and log-exp endpoint pairs and every prefix of the constant-sharing and memo schedule succeed at N and cannot complete at N minus one. Reported request Work remains distinct from the charged memo lookup and constant prefix.
+/// ´claim:numerics:evaluation-policy-has-measured-work-boundaries´
+/// ´test:integration:evaluation-costs´
+#[test]
+fn evaluation_costs() {
+    reduction_boundaries();
+    power_boundaries();
+    endpoint_cost_boundaries();
+    sharing_cost_comparison();
+    for (count, work) in [4_924_286, 9_383_042, 16_229_668, 23_651_776, 23_651_792]
+        .into_iter()
+        .enumerate()
+    {
+        assert_eq!(sharing_prefix(work, count).unwrap(), work);
+        assert!(sharing_prefix(work - 1, count).is_err());
+    }
 }

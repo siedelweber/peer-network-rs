@@ -3,6 +3,7 @@
 
 pub mod fence;
 pub mod monotone;
+pub mod sharing;
 
 use super::Error;
 use nrz_cas::{Rational, limits::Budget};
@@ -99,11 +100,34 @@ fn core(nodes: &mut Vec<Node>, p: usize, beta: usize, bleed: usize, one: usize) 
     push(nodes, Node::Multiply(sigmoid, root))
 }
 
+fn log_core(nodes: &mut Vec<Node>, p: usize, beta: usize, bleed: usize, one: usize) -> usize {
+    let temperature = push(nodes, Node::Multiply(beta, p));
+    let sigmoid = push(nodes, Node::Sigmoid(temperature));
+    let t = push(nodes, Node::Tanh(p));
+    let leaked = push(nodes, Node::Multiply(bleed, t));
+    let remaining = push(nodes, Node::Subtract(one, leaked));
+    let log_t = push(nodes, Node::Logarithm(t));
+    let log_remaining = push(nodes, Node::Logarithm(remaining));
+    let sum = push(nodes, Node::Add(log_t, log_remaining));
+    let half = push(nodes, Node::Rational("1/2".into()));
+    let log_root = push(nodes, Node::Multiply(half, sum));
+    let log_sigmoid = push(nodes, Node::Logarithm(sigmoid));
+    push(nodes, Node::Add(log_sigmoid, log_root))
+}
+
 fn query(input: &Request, budget: &mut Budget) -> Result<Query, Error> {
+    shared_query(input, budget, None)
+}
+
+fn shared_query(input: &Request, budget: &mut Budget, constants: Option<&[Range; 2]>) -> Result<Query, Error> {
     let exponent = validate(input, budget)?;
     let mut nodes = vec![Node::Coordinate(0), Node::Rational("1".into()), Node::Rational("2".into())];
-    let logarithm = push(&mut nodes, Node::Logarithm(2));
-    let beta = push(&mut nodes, Node::Multiply(2, logarithm));
+    let beta = if constants.is_some() {
+        push(&mut nodes, Node::Coordinate(1))
+    } else {
+        let logarithm = push(&mut nodes, Node::Logarithm(2));
+        push(&mut nodes, Node::Multiply(2, logarithm))
+    };
     let clean = input.quantity == Quantity::CleanScreenLogGain;
     let bleed = push(
         &mut nodes,
@@ -118,14 +142,25 @@ fn query(input: &Request, budget: &mut Budget) -> Result<Query, Error> {
     let denominator = push(&mut nodes, Node::Add(1, x));
     let reciprocal = push(&mut nodes, Node::Divide(1, denominator));
     let p = push(&mut nodes, Node::Subtract(1, reciprocal));
-    let q = core(&mut nodes, p, beta, bleed, 1);
-    let mut value = if clean {
-        q
+    let gain = matches!(input.quantity, Quantity::ResponsiveLogGain | Quantity::GeneralizedLogGain);
+    let mut value = if gain {
+        log_core(&mut nodes, p, beta, bleed, 1)
+    } else if clean {
+        core(&mut nodes, p, beta, bleed, 1)
     } else {
-        let normalization = core(&mut nodes, 1, beta, bleed, 1);
+        let q = core(&mut nodes, p, beta, bleed, 1);
+        let normalization = if constants.is_some() {
+            push(&mut nodes, Node::Coordinate(2))
+        } else {
+            core(&mut nodes, 1, beta, bleed, 1)
+        };
         let normalized = push(&mut nodes, Node::Divide(q, normalization));
-        let square = push(&mut nodes, Node::SquareRoot(normalized));
-        push(&mut nodes, Node::SquareRoot(square))
+        if input.wall.is_some() || !Rational::parse(&input.standing.lower, budget)?.is_zero() {
+            push(&mut nodes, Node::PositivePower(normalized, "1/4".into()))
+        } else {
+            let square = push(&mut nodes, Node::SquareRoot(normalized));
+            push(&mut nodes, Node::SquareRoot(square))
+        }
     };
     if let Some(exponent) = exponent {
         value = push(&mut nodes, Node::PositivePower(value, exponent));
@@ -134,7 +169,12 @@ fn query(input: &Request, budget: &mut Budget) -> Result<Query, Error> {
         input.quantity,
         Quantity::ResponsiveLogGain | Quantity::CleanScreenLogGain | Quantity::GeneralizedLogGain
     ) {
-        let logarithm = push(&mut nodes, Node::Logarithm(value));
+        let logarithm = if gain {
+            let quarter = push(&mut nodes, Node::Rational("1/4".into()));
+            push(&mut nodes, Node::Multiply(quarter, value))
+        } else {
+            push(&mut nodes, Node::Logarithm(value))
+        };
         value = push(
             &mut nodes,
             if input.quantity == Quantity::GeneralizedLogGain {
@@ -144,8 +184,12 @@ fn query(input: &Request, budget: &mut Budget) -> Result<Query, Error> {
             },
         );
     }
+    let mut coordinates = vec![input.standing.clone()];
+    if let Some(constants) = constants {
+        coordinates.extend_from_slice(constants);
+    }
     Ok(Query {
-        coordinates: vec![input.standing.clone()],
+        coordinates,
         nodes,
         target: value,
         goal: Goal::Width,

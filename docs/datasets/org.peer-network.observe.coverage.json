@@ -42,17 +42,17 @@
       "exceptions": 6,
       "generators": 38,
       "helpers": 0,
-      "instrumented": 22,
+      "instrumented": 23,
       "name": "pn-epoch",
-      "operations": 28
+      "operations": 29
     },
     {
-      "exceptions": 4,
-      "generators": 56,
+      "exceptions": 7,
+      "generators": 57,
       "helpers": 0,
-      "instrumented": 21,
+      "instrumented": 25,
       "name": "pn-graph",
-      "operations": 25
+      "operations": 32
     },
     {
       "exceptions": 18,

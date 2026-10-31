@@ -1168,6 +1168,8 @@
     },
     {
       "claims": [
+        "GRAPH::claim:numerics:evaluation-sharing-keeps-checked-premises",
+        "GRAPH::claim:numerics:evaluation-policy-has-measured-work-boundaries",
         "EPOCH::claim:compiler:width-fence-retains-frozen-support-and-anchor",
         "EPOCH::claim:compiler:rung-search-keeps-declared-stops-and-precision",
         "GRAPH::claim:numerics:activation-costs-have-exact-resource-boundaries",
