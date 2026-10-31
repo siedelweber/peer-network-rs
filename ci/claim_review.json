@@ -2260,10 +2260,10 @@
     {
       "operation": "pn-graph::numeric::verification_corpus",
       "path": "packages/graph/tests/numeric.rs",
-      "claim": "GRAPH::claim:numerics:reference-corpus-keeps-published-values-pending",
+      "claim": "GRAPH::claim:numerics:reference-corpus-enclosures-agree",
       "before": "",
-      "after": "Claim: Seven unsorted reference figure records retain six typed pending intervals and one typed pending verdict beside locally certified enclosures. No supplied publication value or containment verdict is inferred from a pending marker.",
-      "review": "The seven requested figure rows are unique by tagged label and quantity, with typed pending interval or verdict markers. Computed fields come from the checked reference box residual and local inclusion. Bounds use zero to a certified upper endpoint where appropriate; this shape check makes no published-figure containment claim."
+      "after": "Claim: The tagged reference wall and all five slack-free equilibrium intervals are contained by our exact enclosures; the fence and four active local root intervals intersect, with matching full-strength fence and inclusion verdicts. Both global contraction bounds are below one. Method-specific radii, local norms and iteration counts retain separate scopes without comparison.",
+      "review": "The paper own build at network-v0.31.1 supplies exact transcribed rational figures. Five unsorted Actor equilibrium intervals, stripped of display comparison slack by using the first image and exact radius, are contained by our two-map intervals. Wall containment, conservative fence intersection, four active local-root intersections and matching verdicts are asserted. The two global bounds are below one; the method-specific bounds have separate centres, boxes and preconditioners and carry no ordering claim."
     },
     {
       "operation": "pn-graph::numeric::verification_local",

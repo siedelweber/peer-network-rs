@@ -195,8 +195,8 @@ fn verification_box() {
     }
 }
 
-/// Claim: Seven unsorted reference figure records retain six typed pending intervals and one typed pending verdict beside locally certified enclosures. No supplied publication value or containment verdict is inferred from a pending marker.
-/// ´claim:numerics:reference-corpus-keeps-published-values-pending´
+/// Claim: The tagged reference wall and all five slack-free equilibrium intervals are contained by our exact enclosures; the fence and four active local root intervals intersect, with matching full-strength fence and inclusion verdicts. Both global contraction bounds are below one. Method-specific radii, local norms and iteration counts retain separate scopes without comparison.
+/// ´claim:numerics:reference-corpus-enclosures-agree´
 /// ´test:integration:verification-corpus´
 #[test]
 fn verification_corpus() {

@@ -1200,17 +1200,17 @@
         "EPOCH::claim:compiler:two-map-verification-retains-frozen-fixture",
         "GRAPH::claim:numerics:two-map-reference-keeps-box-and-residual-evidence",
         "GRAPH::claim:numerics:local-inclusion-retains-generalized-derivatives",
-        "GRAPH::claim:numerics:reference-corpus-keeps-published-values-pending"
+        "GRAPH::claim:numerics:reference-corpus-enclosures-agree"
       ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",
       "evidence_paragraph": "EPOCH::amend:compiler:solve-record-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "The authoritative published reference values and their containment comparisons remain pending; response fixtures, integrated conservation and the source-matched bite close remain for 6-h. Public evidence authentication and publication remain separate obligations.",
+      "missing": "The reference wall and equilibrium containment, fence and local-root intersection, and matching verdict comparisons pass on the declared fixture; response fixtures, integrated conservation and the source-matched bite close remain for 6-h. Public evidence authentication and publication remain separate obligations.",
       "name": "ROOT::gate:design:bite-6",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
-      "premises": "Frozen verified-prefix, compiler and full-payload publication premises remain explicit. Cuts 6-a through 6-f cover the carriers, anchor, scalar adapters, activation, width fence, declared rational proposal sequence, endpoint map and independently replayed projected residual on the scoped fixtures. Cut 6-g-wall-a supplies the separate strict-sign inverse procedure and its scoped branch and replay witnesses; cut 6-g-wall-b supplies checked interval consumption, conservative fence and full-coordinate clamp witnesses with complete solve replay. Cut 6-g-2 adds image-first box residuals and a separate interval-forward local inclusion on the declared reference inputs, with typed pending publication figures. Finite fixtures prove no general deployment profile or public certificate authentication.",
+      "premises": "Frozen verified-prefix, compiler and full-payload publication premises remain explicit. Cuts 6-a through 6-f cover the carriers, anchor, scalar adapters, activation, width fence, declared rational proposal sequence, endpoint map and independently replayed projected residual on the scoped fixtures. Cut 6-g-wall-a supplies the separate strict-sign inverse procedure and its scoped branch and replay witnesses; cut 6-g-wall-b supplies checked interval consumption, conservative fence and full-coordinate clamp witnesses with complete solve replay. Cut 6-g-2 adds image-first box residuals and a separate interval-forward local inclusion on the declared reference inputs, with published reference wall and equilibrium containment, fence and local-root intersection, and matching verdict evidence. Method-specific bounds retain their separate scopes. Finite fixtures prove no general deployment profile or public certificate authentication.",
       "realizers": [],
       "status": "held"
     },
