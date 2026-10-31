@@ -1,3 +1,6 @@
+#[path = "numeric/corpus.rs"]
+mod corpus;
+
 use nrz_cas::{enclosure::RefinementPolicy, limits::Limits};
 use pn_graph::numeric::{Error, evaluate, preflight, replay};
 use pn_records::{
@@ -190,6 +193,25 @@ fn verification_box() {
         }
         assert!(verification::replay_two_map(&p, &input, &candidate, &changed).is_err());
     }
+}
+
+/// Claim: Seven unsorted reference figure records retain six typed pending intervals and one typed pending verdict beside locally certified enclosures. No supplied publication value or containment verdict is inferred from a pending marker.
+/// ´claim:numerics:reference-corpus-keeps-published-values-pending´
+/// ´test:integration:verification-corpus´
+#[test]
+fn verification_corpus() {
+    use pn_graph::numeric::verification;
+    let p = verification_policy();
+    let input = verification_reference();
+    let candidate = vec![range("11/10", "11/10"); 5];
+    let residual = verification::two_map(&p, &input, &candidate).unwrap();
+    let declaration = pn_records::conserved::LocalDeclaration {
+        inflation: "2".into(),
+        padding: "1/1024".into(),
+        maximum_work: 3_954_534_051,
+    };
+    let local = verification::local_check(&p, &input, &candidate, &residual, &declaration).unwrap();
+    corpus::check(&residual, &local);
 }
 
 fn touching_declaration(

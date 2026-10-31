@@ -454,6 +454,7 @@
     "pn-graph::numeric::reference_wall_oracle": "",
     "pn-graph::numeric::reference_wall_work": "",
     "pn-graph::numeric::verification_box": "",
+    "pn-graph::numeric::verification_corpus": "",
     "pn-graph::numeric::verification_local": "",
     "pn-graph::properties::generated_partitions": "Claim: Recorded shrinkable DAG inputs agree with an independently enumerated closure-union partition and exact intersection witnesses in three presentations, preserving all whole-act identities without treating dependency tombstones as causal removals.",
     "pn-graph::public::chain_storage": "",

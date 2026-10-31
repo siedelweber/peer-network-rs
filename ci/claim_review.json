@@ -2258,6 +2258,14 @@
       "review": "The exact five-Actor reference definitions are transcribed independently. Full source-rate wall uncertainty and independent map coordinates survive both evaluations and replay. Literal box Work N/N-minus-one controls and changed box/radius refusals are finite scoped evidence; published values remain unavailable."
     },
     {
+      "operation": "pn-graph::numeric::verification_corpus",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:reference-corpus-keeps-published-values-pending",
+      "before": "",
+      "after": "Claim: Seven unsorted reference figure records retain six typed pending intervals and one typed pending verdict beside locally certified enclosures. No supplied publication value or containment verdict is inferred from a pending marker.",
+      "review": "The seven requested figure rows are unique by tagged label and quantity, with typed pending interval or verdict markers. Computed fields come from the checked reference box residual and local inclusion. Bounds use zero to a certified upper endpoint where appropriate; this shape check makes no published-figure containment claim."
+    },
+    {
       "operation": "pn-graph::numeric::verification_local",
       "path": "packages/graph/tests/numeric.rs",
       "claim": "GRAPH::claim:numerics:local-inclusion-retains-generalized-derivatives",

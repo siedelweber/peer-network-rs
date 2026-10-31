@@ -4316,7 +4316,8 @@
         "pn-graph::numeric::reference_wall_branches",
         "pn-graph::numeric::enclosed_wall_clamp",
         "pn-graph::numeric::verification_box",
-        "pn-graph::numeric::verification_local"
+        "pn-graph::numeric::verification_local",
+        "pn-graph::numeric::verification_corpus"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",
