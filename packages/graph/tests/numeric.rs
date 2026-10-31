@@ -1036,12 +1036,22 @@ fn enclosed_wall_clamp() {
         let result = activation::evaluate(&p, &input, None).unwrap();
         let (lower, upper) = endpoints(&result.primitive.evidence);
         assert_eq!(result.primitive.query.coordinates[1], range("1/2", "65/128"));
+        let mut session = activation::sharing::Session::new(&p, "1/400").unwrap();
+        let index = session.evaluate(&input).unwrap();
+        let shared = session.evidence(index).unwrap();
+        assert_eq!(shared.primitive.query.coordinates[3], range("1/2", "65/128"));
+        assert!(shared.primitive.query.nodes.iter().any(|node| matches!(node,
+            Node::Clamp(0, wall) if shared.primitive.query.nodes[*wall] == Node::Coordinate(3)
+        )));
+        let (shared_lower, shared_upper) = endpoints(&shared.primitive.evidence);
         for wall in ["65/128", "1/2", "129/256"] {
             let wall = Q::parse(wall);
             let lo = if Q::parse(a).le(wall) { wall } else { Q::parse(a) };
             let hi = if Q::parse(z).le(wall) { wall } else { Q::parse(z) };
             assert!(lower.le(independent_activation(lo, false, false).0));
             assert!(independent_activation(hi, false, false).1.le(upper));
+            assert!(shared_lower.le(independent_activation(lo, false, false).0));
+            assert!(independent_activation(hi, false, false).1.le(shared_upper));
         }
         activation::replay(&p, &input, result.primitive.evidence.attachment.as_ref().unwrap(), None).unwrap();
         let mut changed = input.clone();

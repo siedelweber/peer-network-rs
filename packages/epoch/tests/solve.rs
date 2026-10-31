@@ -148,6 +148,19 @@ fn enclosed_wall_solve() {
             checked.rounds.last().unwrap().standing
         );
         if inverse {
+            for round in &solved.rounds {
+                let map = &round.certified;
+                let activations = &map.primitives[2..2 + map.point.len()];
+                assert_eq!(activations.len(), 5);
+                for activation in activations {
+                    use pn_records::primitive::Node;
+                    let query = &activation.query;
+                    assert_eq!(query.coordinates[3], *wall.target.as_ref().unwrap());
+                    assert!(query.nodes.iter().any(|node| matches!(node,
+                        Node::Clamp(0, wall) if query.nodes[*wall] == Node::Coordinate(3)
+                    )));
+                }
+            }
             let mut changed = solved.clone();
             changed.rounds[0].certified.wall_enclosure.as_mut().unwrap().upper = "1".into();
             assert!(matches!(
