@@ -7705,6 +7705,26 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification/local.rs",
+      "item": "numeric::verification::local::local_check",
+      "owner": "GRAPH",
+      "signature": "fn local_check (p : & Procedure , input : & VerificationInput , candidate : & [Range] , residual : & TwoMapRecord , declaration : & LocalDeclaration ,) -> Result < LocalRecord , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification/local.rs",
+      "item": "numeric::verification::local::replay_local",
+      "owner": "GRAPH",
+      "signature": "fn replay_local (p : & Procedure , input : & VerificationInput , candidate : & [Range] , residual : & TwoMapRecord , declaration : & LocalDeclaration , record : & LocalRecord ,) -> Result < LocalRecord , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
     }
   ],
   "metrics": [
@@ -14972,6 +14992,28 @@
         "secret_flow": "certified-primitives-public",
         "exposure_consumers": "certified-primitives-public"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/verification/local.rs::numeric::verification::local::local_check",
+      "body": "{ replay_two_map (p , input , candidate , residual) ? ; run (p , input , residual , declaration , None) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/verification/local.rs::numeric::verification::local::replay_local",
+      "body": "{ replay_two_map (p , input , candidate , residual) ? ; run (p , input , residual , declaration , Some (record)) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
     }
   ],
   "generators": [
@@ -18790,6 +18832,33 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "conserved-public-evaluation",
       "expansion_review": "Only public exact fixture declarations, ordered coordinate boxes, scalar evidence and Work totals are derived. No authentication or publication encoding is introduced."
+    },
+    {
+      "item": "conserved::LocalDeclaration",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "The local verification declarations, intervals and verdicts contain only public numerical evidence. Derives introduce no authenticated publication encoding or secret carrier."
+    },
+    {
+      "item": "conserved::LocalVerdict",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "The local verification declarations, intervals and verdicts contain only public numerical evidence. Derives introduce no authenticated publication encoding or secret carrier."
+    },
+    {
+      "item": "conserved::LocalRecord",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "The local verification declarations, intervals and verdicts contain only public numerical evidence. Derives introduce no authenticated publication encoding or secret carrier."
     }
   ],
   "reviewed_types": [
@@ -19946,6 +20015,24 @@
       "syntax": "# [doc = \" Image-first residual bound around the exact y=F(z), with a distinct one-map comparison.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TwoMapRecord { pub first : BoxMapRecord , pub second : BoxMapRecord , pub one_map_radius : String , pub radius : String , pub enclosure : Vec < crate :: primitive :: Range > , pub assembly_work : u64 , }"
     },
     {
+      "item": "conserved::LocalDeclaration",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" Inflation and a separate measured allowance for a corroborating local check.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct LocalDeclaration { pub inflation : String , pub padding : String , pub maximum_work : u64 , }"
+    },
+    {
+      "item": "conserved::LocalVerdict",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" A local inclusion never replaces the global residual certificate.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum LocalVerdict { Included , Unresolved , }"
+    },
+    {
+      "item": "conserved::LocalRecord",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" Reconstructible interval forward derivatives and the rational Krawczyk image.\"] # [doc = \" The preconditioner is the declared identity, with denominator one.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct LocalRecord { pub declaration : LocalDeclaration , pub active : Vec < usize > , pub center : Vec < crate :: primitive :: Range > , pub domain : Vec < crate :: primitive :: Range > , pub preconditioner : Vec < Vec < String > > , pub preconditioner_denominator : String , pub jacobian : Vec < Vec < crate :: primitive :: Range > > , pub asserted : Vec < crate :: primitive :: Range > , pub jacobian_norm : String , pub inflation_radius : String , pub image_radius : String , pub above_wall : bool , pub verdict : LocalVerdict , pub primitives : Vec < PrimitiveRecord > , pub work : u64 , }"
+    },
+    {
       "item": "numerics::NumericError",
       "package": "pn-records",
       "path": "packages/records/src/numerics.rs",
@@ -20904,6 +20991,18 @@
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/verification/arithmetic.rs",
       "syntax": "pub (super) struct Arithmetic { pub budget : Budget , pub bits : u32 , }"
+    },
+    {
+      "item": "numeric::verification::dual::Dual",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification/dual.rs",
+      "syntax": "pub (super) struct Dual { pub value : Interval , pub gradient : Vec < Interval > , }"
+    },
+    {
+      "item": "numeric::verification::local::Neighborhood",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification/local.rs",
+      "syntax": "struct Neighborhood { active : Vec < usize > , center : Vec < Range > , domain : Vec < Range > , radius : Rational , above_wall : bool , inside_hull : bool , }"
     },
     {
       "item": "numeric::verification::map::Engine",
@@ -22078,6 +22177,8 @@
           "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::replay_box",
           "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::replay_two_map",
           "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::two_map",
+          "pn-graph::packages/graph/src/numeric/verification/local.rs::numeric::verification::local::local_check",
+          "pn-graph::packages/graph/src/numeric/verification/local.rs::numeric::verification::local::replay_local",
           "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::check_declaration",
           "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::evaluate",
           "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::replay"

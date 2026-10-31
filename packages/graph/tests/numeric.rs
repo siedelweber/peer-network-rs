@@ -192,6 +192,136 @@ fn verification_box() {
     }
 }
 
+fn touching_declaration(
+    p: &Procedure,
+    input: &pn_records::conserved::VerificationInput,
+    result: &pn_records::conserved::LocalRecord,
+) -> pn_records::conserved::LocalDeclaration {
+    use nrz_cas::{Rational, limits::Budget};
+    let mut budget = Budget::new(p.enclosure.as_ref().unwrap().operation.clone()).unwrap();
+    let mut minimum = Rational::parse(&result.center[result.active[0]].lower, &mut budget).unwrap();
+    for i in &result.active {
+        let point = Rational::parse(&result.center[*i].lower, &mut budget).unwrap();
+        if point.compare(&minimum, &mut budget).unwrap().is_lt() {
+            minimum = point;
+        }
+    }
+    let wall = Rational::parse(&input.wall.upper, &mut budget).unwrap();
+    let old_padding = Rational::parse(&result.declaration.padding, &mut budget).unwrap();
+    let radius = Rational::parse(&result.inflation_radius, &mut budget).unwrap();
+    let base = radius.sub(&old_padding, &mut budget).unwrap();
+    let padding = minimum
+        .sub(&wall, &mut budget)
+        .unwrap()
+        .sub(&base, &mut budget)
+        .unwrap()
+        .exact_string(&mut budget)
+        .unwrap();
+    pn_records::conserved::LocalDeclaration {
+        padding,
+        maximum_work: p.enclosure.as_ref().unwrap().operation.work,
+        ..result.declaration.clone()
+    }
+}
+
+/// Claim: The unsorted reference declaration independently replays its image-first residual and a separate interval-forward local inclusion. A changed depth mass, asserted coordinate, preconditioner or box refuses; a wall-touching inflation retains generalized scalar derivatives and no local inclusion verdict.
+/// ´claim:numerics:local-inclusion-retains-generalized-derivatives´
+/// ´test:integration:verification-local´
+#[test]
+fn verification_local() {
+    use pn_graph::numeric::verification;
+    use pn_records::conserved::{LocalDeclaration, LocalVerdict};
+    let p = verification_policy();
+    let input = verification_reference();
+    let candidate = vec![range("11/10", "11/10"); 5];
+    let residual = verification::two_map(&p, &input, &candidate).unwrap();
+    let declaration = LocalDeclaration {
+        inflation: "2".into(),
+        padding: "1/1024".into(),
+        maximum_work: 3_954_534_051,
+    };
+    let result = verification::local_check(&p, &input, &candidate, &residual, &declaration).unwrap();
+    assert_eq!(
+        result.verdict,
+        LocalVerdict::Included,
+        "norm={} radius={} inflation={}",
+        result.jacobian_norm,
+        result.image_radius,
+        result.inflation_radius
+    );
+    assert_eq!(
+        (
+            result.work,
+            result.inflation_radius.as_str(),
+            result.image_radius.as_str(),
+            result.jacobian_norm.as_str()
+        ),
+        (
+            3_954_534_051,
+            "385543179193/77355582226432",
+            "587447/1073741824",
+            "16690803/4294967296"
+        )
+    );
+    for cap in [3_954_534_051, 3_954_534_050] {
+        let limited = LocalDeclaration {
+            maximum_work: cap,
+            ..declaration.clone()
+        };
+        assert_eq!(
+            verification::local_check(&p, &input, &candidate, &residual, &limited).is_ok(),
+            cap == 3_954_534_051
+        );
+    }
+    let replayed = verification::replay_local(&p, &input, &candidate, &residual, &declaration, &result).unwrap();
+    assert_eq!(replayed.asserted, result.asserted);
+    assert!(replayed.work <= declaration.maximum_work);
+    for mutation in [2, 0, 1] {
+        let mut changed = result.clone();
+        match mutation {
+            0 => changed.preconditioner[0][0] = "2".into(),
+            1 => changed.domain[0].upper = "2".into(),
+            _ => changed.asserted[0].upper = "2".into(),
+        }
+        assert!(verification::replay_local(&p, &input, &candidate, &residual, &declaration, &changed).is_err());
+    }
+    let mut changed = input.clone();
+    changed.depth_mass[0] = "1".into();
+    assert!(verification::evaluate_box(&p, &changed, &candidate).is_err());
+    assert!(verification::local_check(&p, &changed, &candidate, &residual, &declaration).is_err());
+    let touching = touching_declaration(&p, &input, &result);
+    let result = verification::local_check(&p, &input, &candidate, &residual, &touching).unwrap();
+    assert!(result.domain.iter().any(|v| v.lower == input.wall.upper));
+    assert!(!result.above_wall);
+    assert_eq!(result.verdict, LocalVerdict::Unresolved);
+    let derivatives: Vec<_> = result
+        .primitives
+        .iter()
+        .filter(|r| matches!(r.query.nodes[r.query.target], Node::GeneralizedDerivative(_, _)))
+        .collect();
+    assert_eq!(derivatives.len(), 16);
+    assert!(derivatives.iter().any(|r| {
+        let bounds = r.evidence.bounds.as_ref().unwrap();
+        r.query.coordinates[0].lower == input.wall.upper
+            && (bounds.lower().is_zero() || bounds.lower().is_negative())
+            && !bounds.upper().is_negative()
+            && r.evidence
+                .attachment
+                .as_ref()
+                .unwrap()
+                .schemas
+                .iter()
+                .any(|s| s.name == "enclosure.clamp-generalized")
+    }));
+    assert!(
+        result
+            .primitives
+            .iter()
+            .filter(|r| r.query.nodes.iter().any(|n| matches!(n, Node::Clamp(_, _))))
+            .all(|r| !r.query.nodes.iter().any(|n| matches!(n, Node::Derivative(_, _))))
+    );
+}
+
 /// Claim: Three unsorted widths produce reference target enclosures with independently separated gain-equation endpoint signs; the target identity holds the previous wall and replay checks the same defining inputs.
 /// ´claim:numerics:reference-wall-encloses-independent-gain-root´
 /// ´test:integration:reference-wall-oracle´

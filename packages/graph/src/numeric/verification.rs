@@ -2,7 +2,11 @@
 //! (´[ROOT-alg:design:residual]´)
 
 mod arithmetic;
+mod dual;
+mod local;
 mod map;
+
+pub use local::{local_check, replay_local};
 
 use super::Error;
 use arithmetic::{Arithmetic, magnitude};

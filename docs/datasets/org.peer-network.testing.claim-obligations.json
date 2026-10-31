@@ -1198,7 +1198,8 @@
         "EPOCH::claim:compiler:enclosed-wall-solve-binds-fence-map-and-residual",
         "GRAPH::claim:numerics:enclosed-wall-clamp-retains-independent-coordinate",
         "EPOCH::claim:compiler:two-map-verification-retains-frozen-fixture",
-        "GRAPH::claim:numerics:two-map-reference-keeps-box-and-residual-evidence"
+        "GRAPH::claim:numerics:two-map-reference-keeps-box-and-residual-evidence",
+        "GRAPH::claim:numerics:local-inclusion-retains-generalized-derivatives"
       ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Assigned domain bite, with evidence review in bite 11",

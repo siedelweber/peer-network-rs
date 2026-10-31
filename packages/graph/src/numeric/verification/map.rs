@@ -323,7 +323,7 @@ pub(super) fn prepare(engine: &mut Engine<'_>, input: &VerificationInput) -> Res
     })
 }
 
-fn image(
+pub(super) fn image(
     engine: &mut Engine<'_>,
     input: &VerificationInput,
     coordinates: &[Range],

@@ -109,3 +109,42 @@ pub struct TwoMapRecord {
     pub enclosure: Vec<crate::primitive::Range>,
     pub assembly_work: u64,
 }
+
+/// Inflation and a separate measured allowance for a corroborating local check.
+/// (´[ROOT-alg:design:residual]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LocalDeclaration {
+    pub inflation: String,
+    pub padding: String,
+    pub maximum_work: u64,
+}
+
+/// A local inclusion never replaces the global residual certificate.
+/// (´[ROOT-alg:design:residual]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum LocalVerdict {
+    Included,
+    Unresolved,
+}
+
+/// Reconstructible interval forward derivatives and the rational Krawczyk image.
+/// The preconditioner is the declared identity, with denominator one.
+/// (´[ROOT-alg:design:residual]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LocalRecord {
+    pub declaration: LocalDeclaration,
+    pub active: Vec<usize>,
+    pub center: Vec<crate::primitive::Range>,
+    pub domain: Vec<crate::primitive::Range>,
+    pub preconditioner: Vec<Vec<String>>,
+    pub preconditioner_denominator: String,
+    pub jacobian: Vec<Vec<crate::primitive::Range>>,
+    pub asserted: Vec<crate::primitive::Range>,
+    pub jacobian_norm: String,
+    pub inflation_radius: String,
+    pub image_radius: String,
+    pub above_wall: bool,
+    pub verdict: LocalVerdict,
+    pub primitives: Vec<PrimitiveRecord>,
+    pub work: u64,
+}

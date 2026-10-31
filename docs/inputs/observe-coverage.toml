@@ -43,8 +43,8 @@ generators = 41
 
 [[rows]]
 name = "pn-graph"
-operations = 40
-instrumented = 33
+operations = 42
+instrumented = 35
 exceptions = 7
 helpers = 0
 generators = 58
@@ -71,7 +71,7 @@ operations = 109
 instrumented = 41
 exceptions = 68
 helpers = 0
-generators = 131
+generators = 134
 
 [[rows]]
 name = "pn-wallet"
