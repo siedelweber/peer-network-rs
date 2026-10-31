@@ -1746,6 +1746,14 @@
       "review": "Compares sparse emitted transport with an independent dense rational operator on two noncommuting hops and proves reversing the hops changes the oracle. It checks one emission application, a zero-emission identity row, equal standing rates and paired sums in two closed clusters. Seven malformed-input controls refuse, as does a finite cell limit of one. Export ceilings, empty domains and irrational holds are not exercised here."
     },
     {
+      "operation": "pn-epoch::solve::two_map_box",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:two-map-verification-retains-frozen-fixture",
+      "before": "",
+      "after": "Claim: The four-Actor frozen fixture exports its exact source counts, rates and base into a separate full-emission box verification route. Two independently replayed maps retain the evaluated fence and image-first residual beside the one-map bound, without replacing the default solve.",
+      "review": "The unsorted four-Actor frozen fixture exports rational source counts, rates and exact bases without changing its package. Point and box evaluations replay, with literal box Work N/N-minus-one controls and both residual radii pinned."
+    },
+    {
       "operation": "pn-epoch::support::support_refusals",
       "path": "packages/epoch/tests/support.rs",
       "claim": "EPOCH::claim:compiler:support-keeps-structural-refusals-and-numeric-holds-distinct",
@@ -2240,6 +2248,14 @@
       "before": "",
       "after": "Claim: Seven unsorted reference stopping widths have literal cumulative Work boundaries at N and N minus one; ordered query and bisection charges accompany the six-step enclosure at width 1/128.",
       "review": "Seven unsorted stopping widths measure the ordered reference inversion schedule and complete production allowance. Work is deterministic for these declarations and no general performance bound follows."
+    },
+    {
+      "operation": "pn-graph::numeric::verification_box",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:two-map-reference-keeps-box-and-residual-evidence",
+      "before": "",
+      "after": "Claim: The separately declared five-Actor reference map checks its lower-wall fence, carries affine source-rate uncertainty and the independent wall through two complete box evaluations, and independently replays both maps and the image-first residual radius. The finite witness does not compare unpublished corpus figures.",
+      "review": "The exact five-Actor reference definitions are transcribed independently. Full source-rate wall uncertainty and independent map coordinates survive both evaluations and replay. Literal box Work N/N-minus-one controls and changed box/radius refusals are finite scoped evidence; published values remain unavailable."
     },
     {
       "operation": "pn-graph::properties::generated_partitions",

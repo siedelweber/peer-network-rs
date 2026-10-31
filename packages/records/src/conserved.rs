@@ -46,3 +46,66 @@ pub struct ResidualRound {
     pub candidate_work: u64,
     pub work: u64,
 }
+
+/// Exact reference source parameters: rate = intercept + slope times the defining wall.
+/// This verification carrier does not replace a frozen charged price.
+/// (´[ROOT-alg:design:residual]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct VerificationSource {
+    pub name: String,
+    pub count: String,
+    pub intercept: String,
+    pub slope: String,
+}
+
+/// A positive off-diagonal base score is the square root of this exact radicand.
+/// (´[ROOT-alg:design:transport]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct VerificationEdge {
+    pub source: String,
+    pub target: String,
+    pub radicand: String,
+}
+
+/// Separately declared full-emission verification map; all lists retain their input order.
+/// The wall is a checked defining enclosure supplied by the owning composition.
+/// (´[ROOT-alg:design:residual]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct VerificationInput {
+    pub sources: Vec<VerificationSource>,
+    pub edges: Vec<VerificationEdge>,
+    pub wall: crate::primitive::Range,
+    pub shape: Vec<String>,
+    pub depth_mass: Vec<String>,
+    pub retention: String,
+    pub strength: String,
+    pub endpoint_bits: u32,
+}
+
+/// Independently reconstructed box map with its scalar evidence and charged composition.
+/// (´[ROOT-alg:design:residual]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct BoxMapRecord {
+    pub input: VerificationInput,
+    pub coordinates: Vec<crate::primitive::Range>,
+    pub image: Vec<crate::primitive::Range>,
+    pub hull: Vec<crate::primitive::Range>,
+    pub inner_hull: Vec<crate::primitive::Range>,
+    pub singleton: Vec<bool>,
+    pub fence: crate::primitive::Range,
+    pub contraction: String,
+    pub primitives: Vec<PrimitiveRecord>,
+    pub work: u64,
+}
+
+/// Image-first residual bound around the exact y=F(z), with a distinct one-map comparison.
+/// (´[ROOT-alg:design:residual]´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct TwoMapRecord {
+    pub first: BoxMapRecord,
+    pub second: BoxMapRecord,
+    pub one_map_radius: String,
+    pub radius: String,
+    pub enclosure: Vec<crate::primitive::Range>,
+    pub assembly_work: u64,
+}

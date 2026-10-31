@@ -7655,6 +7655,56 @@
       "claim": "ROOT::sig:design:epoch",
       "mode": "instrumented",
       "shape": "shape-epoch"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification.rs",
+      "item": "numeric::verification::evaluate_box",
+      "owner": "GRAPH",
+      "signature": "fn evaluate_box (p : & Procedure , input : & VerificationInput , coordinates : & [Range]) -> Result < BoxMapRecord , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification.rs",
+      "item": "numeric::verification::replay_box",
+      "owner": "GRAPH",
+      "signature": "fn replay_box (p : & Procedure , input : & VerificationInput , coordinates : & [Range] , record : & BoxMapRecord ,) -> Result < BoxMapRecord , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification.rs",
+      "item": "numeric::verification::two_map",
+      "owner": "GRAPH",
+      "signature": "fn two_map (p : & Procedure , input : & VerificationInput , candidate : & [Range]) -> Result < TwoMapRecord , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification.rs",
+      "item": "numeric::verification::replay_two_map",
+      "owner": "GRAPH",
+      "signature": "fn replay_two_map (p : & Procedure , input : & VerificationInput , candidate : & [Range] , record : & TwoMapRecord ,) -> Result < TwoMapRecord , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/conserved/verification.rs",
+      "item": "conserved::verification::verification_declaration",
+      "owner": "EPOCH",
+      "signature": "fn verification_declaration (bound : & BoundProcedure < '_ > , rung : & str , endpoint_bits : u32) -> Result < VerificationInput , Error >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
     }
   ],
   "metrics": [
@@ -14867,6 +14917,61 @@
         "secret_flow": "certified-primitives-public",
         "exposure_consumers": "certified-primitives-public"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::evaluate_box",
+      "body": "{ map :: run (p , input , coordinates , None) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::replay_box",
+      "body": "{ if & record . input != input || record . coordinates != coordinates { return Err (Error :: Declaration) ; } map :: run (p , input , coordinates , Some (record)) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::two_map",
+      "body": "{ let first = evaluate_box (p , input , candidate) ? ; let second = evaluate_box (p , input , & first . image) ? ; assemble (p , first , second) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::replay_two_map",
+      "body": "{ let first = replay_box (p , input , candidate , & record . first) ? ; let second = replay_box (p , input , & first . image , & record . second) ? ; let result = assemble (p , first , second) ? ; if result . radius != record . radius || result . one_map_radius != record . one_map_radius || result . enclosure != record . enclosure { return Err (Error :: Declaration) ; } Ok (result) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/conserved/verification.rs::conserved::verification::verification_declaration",
+      "body": "{ bound . preflight () ? ; let (state , p) = bound . inputs () ; let (fence , _) = crate :: fence :: prepare (bound) ? ; let profile = p . fence . as_ref () . ok_or (Error :: Scope) ? ; if ! p . grid . iter () . any (| v | v == rung) || profile . inverse_wall && bound . enclosed_wall () . is_none () { return Err (Error :: Scope) ; } let frozen = state . package () . input () . inputs . last () . ok_or (Error :: Scope) ? ; let mut b = Budget :: new (p . enclosure . as_ref () . ok_or (Error :: Scope) ? . operation . clone ()) ? ; let mut sources = Vec :: new () ; let mut edges = Vec :: new () ; let mut retention = None ; for (name , row) in & state . view () . base . rows { let source = & state . view () . support . sources [name] ; if Rational :: parse (& source . emission , & mut b) ? != Rational :: parse (\"1\" , & mut b) ? { return Err (Error :: Scope) ; } sources . push (VerificationSource { name : name . clone () , count : state . view () . ledger . counts [& Address (name . clone ())] . 0 . to_string () , intercept : source . reduced_rate . clone () , slope : \"0\" . into () , }) ; for (target , entry) in row { let BaseScore :: Exact (value) = & entry . score else { return Err (Error :: Scope) ; } ; let value = Rational :: parse (value , & mut b) ? ; if name == target { if retention . as_ref () . is_some_and (| r | r != & value) { return Err (Error :: Scope) ; } retention = Some (value) ; } else if ! value . is_zero () { edges . push (VerificationEdge { source : name . clone () , target : target . clone () , radicand : value . mul (& value , & mut b) ? . exact_string (& mut b) ? , }) ; } } } let depth = state . view () . support . by_depth . keys () . next_back () . copied () . unwrap_or (0) ; let shape = profile . shape . iter () . take (depth) . map (| name | Ok (crate :: constant (frozen . constants () , name , & mut b) ? . exact_string (& mut b) ?)) . collect :: < Result < Vec < _ > , Error > > () ? ; let depth_mass = frozen . parameters () . depth_mass . iter () . take (depth) . map (| name | Ok (crate :: constant (frozen . constants () , name , & mut b) ? . exact_string (& mut b) ?)) . collect :: < Result < Vec < _ > , Error > > () ? ; Ok (VerificationInput { sources , edges , wall : bound . enclosed_wall () . cloned () . unwrap_or (Range { lower : fence . wall . clone () , upper : fence . wall , }) , shape , depth_mass , retention : retention . ok_or (Error :: Scope) ? . exact_string (& mut b) ? , strength : rung . into () , endpoint_bits , }) }",
+      "class_decision": "reference-wall-public",
+      "item_premise": "Only public rational declarations, ordered boxes and bounded scalar evidence are consumed and returned. Replay reconstructs mathematical questions; no secret or authenticated publication input is admitted.",
+      "assessments": {
+        "full_recording": "certified-primitives-public",
+        "secret_flow": "certified-primitives-public",
+        "exposure_consumers": "certified-primitives-public"
+      }
     }
   ],
   "generators": [
@@ -18640,6 +18745,51 @@
       "syntax": "# [derive (Debug , thiserror :: Error)]",
       "expansion_review": "Structural Clone, Copy, Debug and equality derives expose only public reference inputs and evidence. Error derives format public refusal variants and convert the declared nested public errors. No generated entry point mutates the frozen procedure or charged price.",
       "class_decision": "reference-wall-public"
+    },
+    {
+      "item": "conserved::VerificationSource",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Only public exact fixture declarations, ordered coordinate boxes, scalar evidence and Work totals are derived. No authentication or publication encoding is introduced."
+    },
+    {
+      "item": "conserved::VerificationEdge",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Only public exact fixture declarations, ordered coordinate boxes, scalar evidence and Work totals are derived. No authentication or publication encoding is introduced."
+    },
+    {
+      "item": "conserved::VerificationInput",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Only public exact fixture declarations, ordered coordinate boxes, scalar evidence and Work totals are derived. No authentication or publication encoding is introduced."
+    },
+    {
+      "item": "conserved::BoxMapRecord",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Only public exact fixture declarations, ordered coordinate boxes, scalar evidence and Work totals are derived. No authentication or publication encoding is introduced."
+    },
+    {
+      "item": "conserved::TwoMapRecord",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "conserved-public-evaluation",
+      "expansion_review": "Only public exact fixture declarations, ordered coordinate boxes, scalar evidence and Work totals are derived. No authentication or publication encoding is introduced."
     }
   ],
   "reviewed_types": [
@@ -19766,6 +19916,36 @@
       "syntax": "# [doc = \" One declared precision's complete proposal prefix and residual construction.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct ResidualRound { pub proposals : Vec < MapRecord > , pub certified : MapRecord , pub residual : String , pub contraction : String , pub radius : String , pub standing : BTreeMap < String , Bounds > , pub candidate_work : u64 , pub work : u64 , }"
     },
     {
+      "item": "conserved::VerificationSource",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" Exact reference source parameters: rate = intercept + slope times the defining wall.\"] # [doc = \" This verification carrier does not replace a frozen charged price.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct VerificationSource { pub name : String , pub count : String , pub intercept : String , pub slope : String , }"
+    },
+    {
+      "item": "conserved::VerificationEdge",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" A positive off-diagonal base score is the square root of this exact radicand.\"] # [doc = \" (´[ROOT-alg:design:transport]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct VerificationEdge { pub source : String , pub target : String , pub radicand : String , }"
+    },
+    {
+      "item": "conserved::VerificationInput",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" Separately declared full-emission verification map; all lists retain their input order.\"] # [doc = \" The wall is a checked defining enclosure supplied by the owning composition.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct VerificationInput { pub sources : Vec < VerificationSource > , pub edges : Vec < VerificationEdge > , pub wall : crate :: primitive :: Range , pub shape : Vec < String > , pub depth_mass : Vec < String > , pub retention : String , pub strength : String , pub endpoint_bits : u32 , }"
+    },
+    {
+      "item": "conserved::BoxMapRecord",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" Independently reconstructed box map with its scalar evidence and charged composition.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BoxMapRecord { pub input : VerificationInput , pub coordinates : Vec < crate :: primitive :: Range > , pub image : Vec < crate :: primitive :: Range > , pub hull : Vec < crate :: primitive :: Range > , pub inner_hull : Vec < crate :: primitive :: Range > , pub singleton : Vec < bool > , pub fence : crate :: primitive :: Range , pub contraction : String , pub primitives : Vec < PrimitiveRecord > , pub work : u64 , }"
+    },
+    {
+      "item": "conserved::TwoMapRecord",
+      "package": "pn-records",
+      "path": "packages/records/src/conserved.rs",
+      "syntax": "# [doc = \" Image-first residual bound around the exact y=F(z), with a distinct one-map comparison.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct TwoMapRecord { pub first : BoxMapRecord , pub second : BoxMapRecord , pub one_map_radius : String , pub radius : String , pub enclosure : Vec < crate :: primitive :: Range > , pub assembly_work : u64 , }"
+    },
+    {
       "item": "numerics::NumericError",
       "package": "pn-records",
       "path": "packages/records/src/numerics.rs",
@@ -20718,6 +20898,24 @@
       "package": "pn-graph",
       "path": "packages/graph/src/numeric/activation.rs",
       "syntax": "# [doc = \" Formula inputs retained beside the original scalar query and checked attachment.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evaluation { pub input : Request , pub primitive : PrimitiveRecord , }"
+    },
+    {
+      "item": "numeric::verification::arithmetic::Arithmetic",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification/arithmetic.rs",
+      "syntax": "pub (super) struct Arithmetic { pub budget : Budget , pub bits : u32 , }"
+    },
+    {
+      "item": "numeric::verification::map::Engine",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification/map.rs",
+      "syntax": "pub (super) struct Engine < 'arithmetic > { pub arithmetic : Arithmetic , pub policy : & 'arithmetic Procedure , pub supplied : Option < & 'arithmetic [PrimitiveRecord] > , pub records : Vec < PrimitiveRecord > , }"
+    },
+    {
+      "item": "numeric::verification::map::Prepared",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/verification/map.rs",
+      "syntax": "pub (super) struct Prepared { pub rates : Vec < Interval > , pub counts : Vec < Interval > , pub base : Vec < Vec < Interval > > , pub support : Vec < BTreeSet < usize > > , pub hull : Vec < Range > , pub inner_hull : Vec < Range > , pub fence : Range , pub contraction : String , }"
     },
     {
       "item": "numeric::wall::Error",
@@ -21871,10 +22069,15 @@
       "premises": "Public reference definitions and complete rational numerical evidence only. The immutable charged price is never replaced. Scalar queries and full returned evidence are recorded; no secret, publication encoder or subscriber is introduced.",
       "membership": {
         "explicit": [
+          "pn-epoch::packages/epoch/src/conserved/verification.rs::conserved::verification::verification_declaration",
           "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::consume",
           "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::evaluate",
           "pn-epoch::packages/epoch/src/wall.rs::wall::BoundReference < '_ >::replay",
           "pn-epoch::packages/epoch/src/wall.rs::wall::bind",
+          "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::evaluate_box",
+          "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::replay_box",
+          "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::replay_two_map",
+          "pn-graph::packages/graph/src/numeric/verification.rs::numeric::verification::two_map",
           "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::check_declaration",
           "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::evaluate",
           "pn-graph::packages/graph/src/numeric/wall.rs::numeric::wall::replay"

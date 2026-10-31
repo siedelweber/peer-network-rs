@@ -3,6 +3,7 @@
 
 pub mod activation;
 mod scope;
+pub mod verification;
 pub mod wall;
 
 use nrz_cas::{

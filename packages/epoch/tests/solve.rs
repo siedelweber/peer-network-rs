@@ -1525,6 +1525,59 @@ fn conserved_state() -> pn_epoch::compiler::CompiledState {
     depths(&state, &["third", "third", "third", "zero"])
 }
 
+/// Claim: The four-Actor frozen fixture exports its exact source counts, rates and base into a separate full-emission box verification route. Two independently replayed maps retain the evaluated fence and image-first residual beside the one-map bound, without replacing the default solve.
+/// ´claim:compiler:two-map-verification-retains-frozen-fixture´
+/// ´test:integration:two-map-box´
+#[test]
+fn two_map_box() {
+    use pn_graph::numeric::verification;
+    let state = conserved_state();
+    let mut p = fence_procedure(&state);
+    p.precision = Precision::AbsoluteWidthBits(vec![16]);
+    p.grid = vec!["1/4".into(), "0".into()];
+    p.maximum_iterations = 2;
+    p.maximum_work = 20_000_000_000;
+    p.maximum_solve_work = p.maximum_work;
+    p.maximum_replay_work = p.maximum_work;
+    let policy = p.enclosure.as_mut().unwrap();
+    policy.refinement.precision = 16;
+    policy.refinement.reduction_ceiling = 2;
+    policy.operation.work = p.maximum_work;
+    policy.operation.arithmetic_steps = 1_000_000_000;
+    policy.operation.literal_bytes = 4096;
+    policy.store = policy.operation.clone();
+    let bound = bind_procedure(&state, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+    let input = pn_epoch::conserved::verification_declaration(&bound, "1/4", 32).unwrap();
+    let candidate = vec![
+        pn_records::primitive::Range {
+            lower: "43".into(),
+            upper: "43".into()
+        };
+        4
+    ];
+    let result = verification::two_map(&p, &input, &candidate).unwrap();
+    let checked = verification::replay_two_map(&p, &input, &candidate, &result).unwrap();
+    assert_eq!(result.enclosure, checked.enclosure);
+    assert_eq!(
+        (
+            result.first.work,
+            result.second.work,
+            result.one_map_radius.as_str(),
+            result.radius.as_str()
+        ),
+        (394_358_227, 411_904_756, "115395727595/4302372864", "12934495/4302372864")
+    );
+    for cap in [411_904_755, 411_904_756] {
+        let mut limited = p.clone();
+        limited.maximum_work = cap;
+        limited.enclosure.as_mut().unwrap().operation.work = cap;
+        assert_eq!(
+            verification::evaluate_box(&limited, &input, &result.first.image).is_ok(),
+            cap == 411_904_756
+        );
+    }
+}
+
 fn endpoint_pair(a: Fraction, b: Fraction, budget: &mut nrz_cas::limits::Budget) -> nrz_cas::enclosure::Interval {
     nrz_cas::enclosure::Interval::new(
         nrz_cas::Rational::parse(&format!("{}/{}", a.0, a.1), budget).unwrap(),

@@ -92,6 +92,106 @@ fn wall_input() -> pn_records::wall::Inputs {
     }
 }
 
+fn verification_policy() -> Procedure {
+    let mut p = wall_policy();
+    p.precision = Precision::AbsoluteWidthBits(vec![16]);
+    p.maximum_work = 20_000_000_000;
+    let policy = p.enclosure.as_mut().unwrap();
+    policy.refinement.precision = 16;
+    policy.operation.work = p.maximum_work;
+    policy.operation.arithmetic_steps = 1_000_000_000;
+    policy.operation.literal_bytes = 4096;
+    policy.operation.output_bytes = 32 * 1024 * 1024;
+    policy.store = policy.operation.clone();
+    p
+}
+
+fn verification_reference() -> pn_records::conserved::VerificationInput {
+    use pn_records::conserved::{VerificationEdge, VerificationInput, VerificationSource};
+    VerificationInput {
+        sources: [
+            ("carol", "10", "6/5", "-1/10"),
+            ("alice", "12", "7/6", "-1/6"),
+            ("eve", "8", "9/8", "0"),
+            ("bob", "11", "13/11", "-1/11"),
+            ("dave", "2", "1", "0"),
+        ]
+        .into_iter()
+        .map(|(name, count, intercept, slope)| VerificationSource {
+            name: name.into(),
+            count: count.into(),
+            intercept: intercept.into(),
+            slope: slope.into(),
+        })
+        .collect(),
+        edges: [
+            ("carol", "eve", "5372/10000"),
+            ("alice", "bob", "7462/10000"),
+            ("bob", "dave", "468/1000"),
+            ("dave", "eve", "5976/10000"),
+            ("alice", "carol", "4032/10000"),
+            ("carol", "dave", "6536/10000"),
+            ("bob", "carol", "5994/10000"),
+            ("alice", "eve", "1575/10000"),
+            ("bob", "eve", "2562/10000"),
+        ]
+        .into_iter()
+        .map(|(source, target, radicand)| VerificationEdge {
+            source: source.into(),
+            target: target.into(),
+            radicand: radicand.into(),
+        })
+        .collect(),
+        wall: range("1/2", "65/128"),
+        shape: ["1", "1/2", "1/4", "1/8"].map(str::to_owned).to_vec(),
+        depth_mass: ["1/2", "1/4", "1/8", "1/8"].map(str::to_owned).to_vec(),
+        retention: "1".into(),
+        strength: "1".into(),
+        endpoint_bits: 32,
+    }
+}
+
+/// Claim: The separately declared five-Actor reference map checks its lower-wall fence, carries affine source-rate uncertainty and the independent wall through two complete box evaluations, and independently replays both maps and the image-first residual radius. The finite witness does not compare unpublished corpus figures.
+/// ´claim:numerics:two-map-reference-keeps-box-and-residual-evidence´
+/// ´test:integration:verification-box´
+#[test]
+fn verification_box() {
+    use pn_graph::numeric::verification;
+    let p = verification_policy();
+    let input = verification_reference();
+    let candidate = vec![range("11/10", "11/10"); 5];
+    let result = verification::two_map(&p, &input, &candidate).unwrap();
+    let checked = verification::replay_two_map(&p, &input, &candidate, &result).unwrap();
+    assert_eq!(result.enclosure, checked.enclosure);
+    assert_eq!(
+        (
+            result.first.work,
+            result.second.work,
+            result.one_map_radius.as_str(),
+            result.radius.as_str()
+        ),
+        (528_817_445, 1_347_009_880, "252865445/9442820096", "27962035/18885640192")
+    );
+    let wall = pn_graph::numeric::wall::evaluate(&wall_policy(), &wall_input()).unwrap();
+    assert_eq!(wall.target.as_ref(), Some(&input.wall));
+    for cap in [1_347_009_879, 1_347_009_880] {
+        let mut limited = p.clone();
+        limited.maximum_work = cap;
+        limited.enclosure.as_mut().unwrap().operation.work = cap;
+        let actual = verification::evaluate_box(&limited, &input, &result.first.image);
+        assert_eq!(actual.is_ok(), cap == 1_347_009_880);
+    }
+    for mutation in [1, 0] {
+        let mut changed = result.clone();
+        if mutation == 0 {
+            changed.second.coordinates[0].upper = "2".into();
+        } else {
+            changed.radius = "0".into();
+        }
+        assert!(verification::replay_two_map(&p, &input, &candidate, &changed).is_err());
+    }
+}
+
 /// Claim: Three unsorted widths produce reference target enclosures with independently separated gain-equation endpoint signs; the target identity holds the previous wall and replay checks the same defining inputs.
 /// ´claim:numerics:reference-wall-encloses-independent-gain-root´
 /// ´test:integration:reference-wall-oracle´

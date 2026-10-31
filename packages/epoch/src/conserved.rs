@@ -5,6 +5,9 @@ mod arithmetic;
 mod driver;
 mod map;
 mod residual;
+mod verification;
+
+pub use verification::verification_declaration;
 
 use crate::solve::BoundProcedure;
 use nrz_cas::{Rational, limits::Budget};
