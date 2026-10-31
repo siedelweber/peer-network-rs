@@ -3099,10 +3099,10 @@
     },
     {
       "claims": [],
-      "closing_condition": "Join measured schedule controls and independent brackets to the implemented evaluation policy before its use in cut 6-f.",
+      "closing_condition": "Join the scoped schedule controls and independent brackets to the conserved-map and residual evidence when the policy is used in cut 6-f.",
       "closing_step": "Solve cost design and cut 6-f evidence integration",
       "hold": "ROOT::open:design:numeric-backend",
-      "missing": "Evaluation-local sharing, resource boundaries and integration into the declared residual procedure remain to be witnessed.",
+      "missing": "Integrating the checked evaluation-local schedule and argument-bound-based policy selection into the conserved map and declared residual procedure remains. Scoped constant-sharing, memo, replay and resource-boundary controls now exist; they supply no integrated solve certificate.",
       "name": "ROOT::dec:design:activation-evaluation-policy",
       "owner": "Numeric kernel implementer and numerical-evidence reviewer",
       "path": "docs/design/implementation.md",
