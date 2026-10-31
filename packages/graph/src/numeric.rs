@@ -1,6 +1,7 @@
 //! Certified scalar requests in fresh stores with independently replayable attachments.
 //! (´def:numerics:primitive-adapter´)
 
+pub mod activation;
 mod scope;
 
 use nrz_cas::{
@@ -186,22 +187,27 @@ fn run(
         schemas(&evidence.schemas)?;
     }
     let mut budget = Budget::new(policy.operation.clone())?;
-    let (mut cas, request) = scope::build(procedure, query, &mut budget)?;
+    run_budget(procedure, query, evidence, interrupt_at, &mut budget)
+}
+
+fn run_budget(
+    procedure: &Procedure,
+    query: &Query,
+    evidence: Option<&Attachment>,
+    interrupt_at: Option<u64>,
+    budget: &mut Budget,
+) -> Result<PrimitiveEvidence, Error> {
+    let policy = procedure.enclosure.as_ref().ok_or(Error::Unsupported)?;
+    let (mut cas, request) = scope::build(procedure, query, budget)?;
     let mut interrupt = |usage: nrz_cas::limits::BudgetUsage| interrupt_at.is_some_and(|limit| usage.work >= limit);
     let report = if let Some(evidence) = evidence {
-        cas.check_enclosure(
-            &request,
-            policy.refinement,
-            &evidence.certificate,
-            &mut budget,
-            &mut interrupt,
-        )
-        .map_err(|fault| match fault.kind {
-            nrz_cas::FaultKind::Invalid(_) => Error::InvalidCertificate(fault),
-            nrz_cas::FaultKind::Exhausted { .. } => Error::Backend(fault),
-        })?
+        cas.check_enclosure(&request, policy.refinement, &evidence.certificate, budget, &mut interrupt)
+            .map_err(|fault| match fault.kind {
+                nrz_cas::FaultKind::Invalid(_) => Error::InvalidCertificate(fault),
+                nrz_cas::FaultKind::Exhausted { .. } => Error::Backend(fault),
+            })?
     } else {
-        cas.enclose(&request, policy.refinement, &mut budget, &mut interrupt)?
+        cas.enclose(&request, policy.refinement, budget, &mut interrupt)?
     };
     let result = mapped(
         report,

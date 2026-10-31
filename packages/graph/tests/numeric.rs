@@ -439,3 +439,259 @@ fn primitive_limits() {
     let (a, b) = tight_log(Q(2, 1));
     contains_oracle(&beta, a.mul(Q(2, 1)), b.mul(Q(2, 1)));
 }
+
+// Independent directed fixed-grid computation, using integral/binomial brackets
+// and integer root comparisons rather than the backend's analytic series.
+#[derive(Clone, Copy, Debug)]
+struct I(Q, Q);
+impl I {
+    fn point(value: Q) -> Self {
+        Self(value, value)
+    }
+    fn rounded(a: Q, b: Q) -> Self {
+        Self(a.round(24, false), b.round(24, true))
+    }
+    fn add(self, b: Self) -> Self {
+        Self::rounded(self.0.add(b.0), self.1.add(b.1))
+    }
+    fn sub(self, b: Self) -> Self {
+        Self::rounded(self.0.add(b.1.neg()), self.1.add(b.0.neg()))
+    }
+    fn mul(self, b: Self) -> Self {
+        let values = [self.0.mul(b.0), self.0.mul(b.1), self.1.mul(b.0), self.1.mul(b.1)];
+        let (mut low, mut high) = (values[0], values[0]);
+        for value in values {
+            if value.le(low) {
+                low = value;
+            }
+            if high.le(value) {
+                high = value;
+            }
+        }
+        Self::rounded(low, high)
+    }
+    fn div(self, b: Self) -> Self {
+        assert!(b.0.0 > 0);
+        self.mul(Self::rounded(Q(1, 1).div(b.1), Q(1, 1).div(b.0)))
+    }
+    fn root(self, degree: u32) -> Self {
+        fn endpoint(x: Q, degree: u32, upper: bool) -> Q {
+            assert!(x.0 >= 0 && x.0 < 8_i128.pow(degree) * x.1);
+            let scale = 1_i128 << 24;
+            let target = x.0 * scale.pow(degree);
+            let (mut low, mut high) = (0_i128, 8 * scale);
+            while high - low > 1 {
+                let middle = high.midpoint(low);
+                if middle.pow(degree) * x.1 <= target {
+                    low = middle;
+                } else {
+                    high = middle;
+                }
+            }
+            Q::new(low + i128::from(upper && low.pow(degree) * x.1 != target), scale)
+        }
+        Self(endpoint(self.0, degree, false), endpoint(self.1, degree, true))
+    }
+    fn sigmoid(self) -> Self {
+        let one = Q(1, 1);
+        let (a, _) = tight_exp(self.0);
+        let (_, b) = tight_exp(self.1);
+        Self::rounded(a.div(one.add(a)), b.div(one.add(b)))
+    }
+    fn tanh(self) -> Self {
+        let one = Q(1, 1);
+        let (a, _) = tight_exp(self.0.mul(Q(2, 1)));
+        let (_, b) = tight_exp(self.1.mul(Q(2, 1)));
+        Self::rounded(a.add(one.neg()).div(a.add(one)), b.add(one.neg()).div(b.add(one)))
+    }
+}
+
+fn independent_activation(x: Q, clean: bool, gain: bool) -> I {
+    let one = I::point(Q(1, 1));
+    let (log_lower, log_upper) = tight_log(Q(2, 1));
+    let beta = I::rounded(log_lower.mul(Q(2, 1)), log_upper.mul(Q(2, 1)));
+    let eta = I::point(if clean { Q(0, 1) } else { Q(1, 400) });
+    let denominator = I::point(Q(1, 1).add(x));
+    let p = I::point(x.div(Q(1, 1).add(x)));
+    let core = |p: I| {
+        let t = p.tanh();
+        beta.mul(p).sigmoid().mul(t.mul(one.sub(eta.mul(t))).root(2))
+    };
+    if gain {
+        let t = p.tanh();
+        let slope = one.sub(t.mul(t));
+        let kernel = beta
+            .mul(one.sub(beta.mul(p).sigmoid()))
+            .add(slope.div(I::point(Q(2, 1)).mul(t)))
+            .sub(eta.mul(slope).div(I::point(Q(2, 1)).mul(one.sub(eta.mul(t)))));
+        let gain = kernel.div(denominator.mul(denominator));
+        if clean { gain } else { gain.mul(I::point(Q(1, 4))) }
+    } else {
+        core(p).div(core(one)).root(2).root(2)
+    }
+}
+
+fn activation_request(text: &str, quantity: pn_graph::numeric::activation::Quantity) -> pn_graph::numeric::activation::Request {
+    pn_graph::numeric::activation::Request {
+        standing: range(text, text),
+        bleed_squared: "1/400".into(),
+        wall: None,
+        quantity,
+    }
+}
+
+fn activation_policy() -> Procedure {
+    let mut p = procedure();
+    p.maximum_work = 200_000_000;
+    let policy = p.enclosure.as_mut().unwrap();
+    policy.store.work = p.maximum_work;
+    policy.operation.work = p.maximum_work;
+    // The composed original expression's certificate preflight exceeds the
+    // primitive default's one MiB. This is the fixture's declared ceiling.
+    policy.store.output_bytes = 32 * 1024 * 1024;
+    policy.operation.output_bytes = policy.store.output_bytes;
+    policy.store.arithmetic_steps = 5_000_000;
+    policy.operation.arithmetic_steps = policy.store.arithmetic_steps;
+    // Full-box interval division loses correlation between x and 1+x; its
+    // outward endpoints can exceed the exact p range. Retain the declared
+    // reduction headroom rather than substituting a point-domain estimate.
+    policy.refinement.reduction_ceiling = 4;
+    policy.refinement.checking_work = 30_000_000;
+    p
+}
+
+fn activation_checked(input: &pn_graph::numeric::activation::Request) -> (Q, Q) {
+    use pn_graph::numeric::activation;
+    let p = activation_policy();
+    let result = activation::evaluate(&p, input, None);
+    assert!(result.is_ok(), "{input:?}: {result:?}");
+    let result = result.unwrap();
+    assert!(
+        matches!(result.primitive.evidence.outcome, Outcome::Bound | Outcome::Indecisive(_)),
+        "{result:?}"
+    );
+    let replayed = activation::replay(&p, input, result.primitive.evidence.attachment.as_ref().unwrap(), None).unwrap();
+    assert_eq!(replayed.primitive.evidence.bounds, result.primitive.evidence.bounds);
+    assert_eq!(result.input, *input);
+    endpoints(&result.primitive.evidence)
+}
+
+/// Claim: Responsive activation uses the normalized deployed core and its fourth root; independent directed integral, binomial and integer-root brackets lie inside the checked bounds on six unsorted standing inputs. Deployed reduced-standing gain and the clean full-core screen have distinct checked bounds on three positive inputs, without claiming a fence or a solve.
+/// ´claim:numerics:activation-and-gain-agree-with-independent-brackets´
+/// ´test:integration:activation-oracles´
+#[test]
+fn activation_oracles() {
+    use pn_graph::numeric::activation::Quantity;
+    for text in ["2", "0", "1/4", "8", "1", "1/2"] {
+        let (a, b) = activation_checked(&activation_request(text, Quantity::Responsive));
+        let oracle = independent_activation(Q::parse(text), false, false);
+        assert!(a.le(oracle.0) && oracle.1.le(b), "{text}: {a:?} {oracle:?} {b:?}");
+        if text == "0" {
+            assert_eq!((a, b), (Q(0, 1), Q(0, 1)));
+        } else {
+            assert!(a.0 > 0 && b.le(Q(1, 1)));
+        }
+    }
+    for text in ["2", "1/2", "1"] {
+        let deployed = activation_checked(&activation_request(text, Quantity::ResponsiveLogGain));
+        let clean = activation_checked(&activation_request(text, Quantity::CleanScreenLogGain));
+        for (bounds, is_clean) in [(deployed, false), (clean, true)] {
+            let oracle = independent_activation(Q::parse(text), is_clean, true);
+            assert!(
+                bounds.0.le(oracle.0) && oracle.1.le(bounds.1),
+                "{text}: {bounds:?} {oracle:?}"
+            );
+        }
+        assert!(deployed.1.le(clean.0));
+    }
+}
+
+/// Claim: The wall clamp keeps the same below-wall value and zero generalized gain, retains the zero-to-responsive generalized join on touching and crossing boxes, and composes non-dyadic hop powers from the exact strength times shape. Expected-input replay rejects a changed wall; invalid domains and deterministic interruption carry no mathematical verdict.
+/// ´claim:numerics:activation-clamp-keeps-generalized-wall-gain´
+/// ´test:integration:activation-walls´
+#[test]
+fn activation_walls() {
+    use pn_graph::numeric::activation::{self, Quantity};
+    let mut input = activation_request("0", Quantity::Clamped);
+    input.wall = Some("1".into());
+    let wall_value = activation_checked(&input);
+    for (a, b) in [("1/4", "1/2"), ("2", "3"), ("1/2", "1"), ("1/2", "2")] {
+        input.standing = range(a, b);
+        input.quantity = Quantity::Clamped;
+        let values = activation_checked(&input);
+        let at_wall = Q(1, 1);
+        let lower_x = if Q::parse(a).le(at_wall) { at_wall } else { Q::parse(a) };
+        let upper_x = if Q::parse(b).le(at_wall) { at_wall } else { Q::parse(b) };
+        assert!(values.0.le(independent_activation(lower_x, false, false).0));
+        assert!(independent_activation(upper_x, false, false).1.le(values.1));
+        if b == "1/2" {
+            assert_eq!(values, wall_value);
+        }
+        input.quantity = Quantity::GeneralizedLogGain;
+        let slopes = activation_checked(&input);
+        if b == "1/2" {
+            assert_eq!(slopes, (Q(0, 1), Q(0, 1)));
+        }
+        if a == "1/2" {
+            let oracle = independent_activation(Q(1, 1), false, true);
+            assert!(slopes.0.le(Q(0, 1)) && oracle.1.le(slopes.1));
+        }
+        if a == "2" {
+            assert!(slopes.0.le(independent_activation(Q(3, 1), false, true).0));
+            assert!(independent_activation(Q(2, 1), false, true).1.le(slopes.1));
+        }
+    }
+    input.standing = range("1/2", "1/2");
+    input.quantity = Quantity::Hop {
+        strength: "2/3".into(),
+        shape: "1/2".into(),
+    };
+    let hop = activation_checked(&input);
+    let oracle = independent_activation(Q(1, 1), false, false).root(3);
+    assert!(hop.0.le(oracle.0) && oracle.1.le(hop.1));
+    let mut zero_hop = input.clone();
+    zero_hop.quantity = Quantity::Hop {
+        strength: "0".into(),
+        shape: "17/3".into(),
+    };
+    assert_eq!(activation_checked(&zero_hop), (Q(1, 1), Q(1, 1)));
+    let policy = activation_policy();
+    let result = activation::evaluate(&policy, &input, None).unwrap();
+    assert!(matches!(result.primitive.query.nodes.last(), Some(Node::PositivePower(_, exponent)) if exponent == "1/3"));
+    activation_refusals(input, &result);
+}
+
+fn activation_refusals(mut input: pn_graph::numeric::activation::Request, result: &pn_graph::numeric::activation::Evaluation) {
+    use pn_graph::numeric::activation;
+    let policy = activation_policy();
+    let mut bounded = policy.clone();
+    let limits = bounded.enclosure.as_mut().unwrap();
+    limits.store.output_bytes = 1_048_576;
+    limits.operation.output_bytes = 1_048_576;
+    let exhausted = activation::evaluate(&bounded, &input, None).unwrap();
+    assert_eq!(exhausted.primitive.evidence.outcome, Outcome::Exhausted);
+    assert!(exhausted.primitive.evidence.bounds.is_none());
+    assert!(matches!(
+        exhausted.primitive.evidence.resource_fault.unwrap().kind,
+        nrz_cas::FaultKind::Exhausted {
+            budget: nrz_cas::limits::BudgetKind::OutputBytes,
+            ..
+        }
+    ));
+    input.wall = Some("2".into());
+    assert!(activation::replay(&policy, &input, result.primitive.evidence.attachment.as_ref().unwrap(), None).is_err());
+    assert_eq!(
+        activation::evaluate(&policy, &input, Some(0))
+            .unwrap()
+            .primitive
+            .evidence
+            .outcome,
+        Outcome::Interrupted
+    );
+    for (standing, wall, bleed) in [("-1", "1", "1/400"), ("1", "0", "1/400"), ("1", "1", "1")] {
+        input.standing = range(standing, standing);
+        input.wall = Some(wall.into());
+        input.bleed_squared = bleed.into();
+        assert!(activation::evaluate(&policy, &input, None).is_err());
+    }
+}

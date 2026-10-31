@@ -1542,7 +1542,7 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::solve::procedure_binding", "pn-epoch::solve::procedure_records", "pn-epoch::solve::evidence_records", "pn-epoch::solve::transport_oracle", "pn-epoch::solve::anchor_tables"]
+cases = ["pn-epoch::solve::procedure_binding", "pn-epoch::solve::procedure_records", "pn-epoch::solve::evidence_records", "pn-epoch::solve::transport_oracle", "pn-epoch::solve::anchor_tables", "pn-epoch::solve::real_base"]
 
 [[rows]]
 kind = "suite"
@@ -1553,4 +1553,4 @@ level = "public-surface"
 implementation = "pn-graph-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-graph::numeric::primitive_oracles", "pn-graph::numeric::primitive_domains", "pn-graph::numeric::primitive_replay", "pn-graph::numeric::primitive_limits"]
+cases = ["pn-graph::numeric::primitive_oracles", "pn-graph::numeric::primitive_domains", "pn-graph::numeric::primitive_replay", "pn-graph::numeric::primitive_limits", "pn-graph::numeric::activation_oracles", "pn-graph::numeric::activation_walls"]

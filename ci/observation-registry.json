@@ -7279,6 +7279,36 @@
       "claim": "ROOT::sig:design:graph",
       "mode": "instrumented",
       "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation.rs",
+      "item": "numeric::activation::evaluate",
+      "owner": "GRAPH",
+      "signature": "fn evaluate (procedure : & Procedure , input : & Request , interrupt_at : Option < u64 >) -> Result < Evaluation , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation.rs",
+      "item": "numeric::activation::replay",
+      "owner": "GRAPH",
+      "signature": "fn replay (procedure : & Procedure , input : & Request , evidence : & Attachment , interrupt_at : Option < u64 > ,) -> Result < Evaluation , Error >",
+      "claim": "ROOT::sig:design:graph",
+      "mode": "instrumented",
+      "shape": "shape-graph"
+    },
+    {
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/real_base.rs",
+      "item": "real_base::evaluate",
+      "owner": "EPOCH",
+      "signature": "fn evaluate (bound : & BoundProcedure < '_ > , source : & str , target : & str , interrupt_at : Option < u64 > ,) -> Result < Evaluation , ProcedureError >",
+      "claim": "ROOT::sig:design:epoch",
+      "mode": "instrumented",
+      "shape": "shape-epoch"
     }
   ],
   "metrics": [
@@ -14139,6 +14169,39 @@
         "secret_flow": "certified-primitives-public",
         "exposure_consumers": "certified-primitives-public"
       }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::evaluate",
+      "body": "{ run (procedure , input , None , interrupt_at) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::replay",
+      "body": "{ run (procedure , input , Some (evidence) , interrupt_at) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
+    },
+    {
+      "operation": "pn-epoch::packages/epoch/src/real_base.rs::real_base::evaluate",
+      "body": "{ bound . preflight () ? ; let (state , procedure) = bound . inputs () ; let original = state . view () . base . rows . get (source) . and_then (| row | row . get (target)) . ok_or (ProcedureError :: BaseEntry) ? . clone () ; let BaseScore :: Held { exact_part , terms } = & original . score else { return Ok (Evaluation { original , primitive : None , }) ; } ; let mut nodes = vec ! [Node :: Rational (exact_part . clone ())] ; let mut sum = 0 ; for term in terms { let radicand = nodes . len () ; nodes . push (Node :: Rational (term . radicand . clone ())) ; nodes . push (Node :: SquareRoot (radicand)) ; nodes . push (Node :: Rational (term . domain_factor . clone ())) ; nodes . push (Node :: Multiply (radicand + 1 , radicand + 2)) ; nodes . push (Node :: Add (sum , radicand + 3)) ; sum = radicand + 4 ; } let query = Query { coordinates : Vec :: new () , nodes , target : sum , goal : Goal :: Width , } ; let evidence = pn_graph :: numeric :: evaluate (procedure , & query , interrupt_at) ? ; let precision = procedure . enclosure . as_ref () . ok_or (ProcedureError :: Unsupported) ? . refinement . precision ; Ok (Evaluation { original , primitive : Some (PrimitiveRecord { query , precision , evidence , }) , }) }",
+      "class_decision": "activation-base-public",
+      "item_premise": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "assessments": {
+        "full_recording": "activation-base-public",
+        "secret_flow": "activation-base-public",
+        "exposure_consumers": "activation-base-public"
+      }
     }
   ],
   "generators": [
@@ -17678,6 +17741,42 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "solve-public-records",
       "expansion_review": "Debug, Clone and equality carry only the public declared stopping category; no private field or publication encoding is derived."
+    },
+    {
+      "item": "numeric::activation::Quantity",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "activation-base-public",
+      "expansion_review": "Debug, Clone and equality retain only the public formula request and numerical evidence or the frozen public base entry. No secret bytes, digest or publication encoding is derived."
+    },
+    {
+      "item": "numeric::activation::Request",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "activation-base-public",
+      "expansion_review": "Debug, Clone and equality retain only the public formula request and numerical evidence or the frozen public base entry. No secret bytes, digest or publication encoding is derived."
+    },
+    {
+      "item": "numeric::activation::Evaluation",
+      "kind": "derive",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "activation-base-public",
+      "expansion_review": "Debug, Clone and equality retain only the public formula request and numerical evidence or the frozen public base entry. No secret bytes, digest or publication encoding is derived."
+    },
+    {
+      "item": "real_base::Evaluation",
+      "kind": "derive",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/real_base.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "activation-base-public",
+      "expansion_review": "Debug, Clone and equality retain only the public formula request and numerical evidence or the frozen public base entry. No secret bytes, digest or publication encoding is derived."
     }
   ],
   "reviewed_types": [
@@ -19644,6 +19743,24 @@
       "syntax": "# [doc = \" Shared finalization metadata copied from the owning validated act.\"] # [doc = \" Projection metadata retains the published stamp; observer-specific recomputation\"] # [doc = \" and stamp evidence are joined here from the owning immutable history snapshot.\"] # [doc = \" Neither field is an authored identity or a canonical publication encoding.\"] # [doc = \" (´def:formation:act-metadata´)\"] # [derive (Clone , Copy , Debug , PartialEq , Eq)] # [non_exhaustive] pub struct ActMetadata { # [doc = \" Retained epoch-qualified published placement.\"] pub position : Position , # [doc = \" Retained host attachment, never recomputed by formation.\"] pub logical_time : u64 , }"
     },
     {
+      "item": "numeric::activation::Quantity",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation.rs",
+      "syntax": "# [doc = \" Distinct formula requests; a generalized slope is never a smooth derivative.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Quantity { Responsive , Clamped , Hop { strength : String , shape : String } , ResponsiveLogGain , CleanScreenLogGain , GeneralizedLogGain , }"
+    },
+    {
+      "item": "numeric::activation::Request",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation.rs",
+      "syntax": "# [doc = \" Public reduced-standing box and declared squared bleed; a wall is an exact rational.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Request { pub standing : Range , pub bleed_squared : String , pub wall : Option < String > , pub quantity : Quantity , }"
+    },
+    {
+      "item": "numeric::activation::Evaluation",
+      "package": "pn-graph",
+      "path": "packages/graph/src/numeric/activation.rs",
+      "syntax": "# [doc = \" Formula inputs retained beside the original scalar query and checked attachment.\"] # [doc = \" (´def:numerics:activation´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evaluation { pub input : Request , pub primitive : PrimitiveRecord , }"
+    },
+    {
       "item": "numeric::Error",
       "package": "pn-graph",
       "path": "packages/graph/src/numeric.rs",
@@ -20103,7 +20220,7 @@
       "item": "solve::ProcedureError",
       "package": "pn-epoch",
       "path": "packages/epoch/src/solve.rs",
-      "syntax": "# [doc = \" Binding refusals differ from numerical comparison outcomes.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ProcedureError { # [error (\"procedure boundary, edition or name differs from frozen package\")] Binding , # [error (\"procedure publication verification refused\")] Publication , # [error (\"procedure records: {0}\")] Record (# [from] RecordError) , # [error (\"nonlinear backend is not admitted\")] Unsupported , # [error (\"numerical preflight: {0}\")] Numeric (# [from] pn_graph :: numeric :: Error) , }"
+      "syntax": "# [doc = \" Binding refusals differ from numerical comparison outcomes.\"] # [doc = \" (´def:compiler:solve-binding´)\"] # [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)] pub enum ProcedureError { # [error (\"procedure boundary, edition or name differs from frozen package\")] Binding , # [error (\"base entry is absent from the frozen compiler output\")] BaseEntry , # [error (\"procedure publication verification refused\")] Publication , # [error (\"procedure records: {0}\")] Record (# [from] RecordError) , # [error (\"nonlinear backend is not admitted\")] Unsupported , # [error (\"numerical preflight: {0}\")] Numeric (# [from] pn_graph :: numeric :: Error) , }"
     },
     {
       "item": "support::SourceEmission",
@@ -20194,6 +20311,12 @@
       "package": "pn-epoch",
       "path": "packages/epoch/src/anchor.rs",
       "syntax": "# [derive (Debug)] struct Arithmetic { budget : Budget , zero : Rational , one : Rational , }"
+    },
+    {
+      "item": "real_base::Evaluation",
+      "package": "pn-epoch",
+      "path": "packages/epoch/src/real_base.rs",
+      "syntax": "# [doc = \" Exact entries remain exact; held entries retain their complete source and checked evidence.\"] # [doc = \" (´def:compiler:real-base´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Evaluation { pub original : BaseEntry , pub primitive : Option < PrimitiveRecord > , }"
     },
     {
       "item": "ContentRequest",
@@ -20689,6 +20812,18 @@
           "pn-graph::packages/graph/src/numeric.rs::numeric::preflight",
           "pn-graph::packages/graph/src/numeric.rs::numeric::evaluate",
           "pn-graph::packages/graph/src/numeric.rs::numeric::replay"
+        ]
+      }
+    },
+    {
+      "name": "activation-base-public",
+      "status": "reviewer-confirmed",
+      "premises": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "membership": {
+        "explicit": [
+          "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::evaluate",
+          "pn-graph::packages/graph/src/numeric/activation.rs::numeric::activation::replay",
+          "pn-epoch::packages/epoch/src/real_base.rs::real_base::evaluate"
         ]
       }
     }
@@ -22722,6 +22857,11 @@
       "status": "reviewer-confirmed",
       "premises": "Read the fresh-store builder, closed schema inventory, exact rational conversion, checked outcome mapping and receiving-store replay. All fields are public numeric declarations or evidence. Wrong original goals and corrupted certificates refuse; trace supplies no mathematical premise.",
       "negative_probe": "GRAPH::claim:numerics:primitive-replay-binds-scope-and-outcome"
+    },
+    "activation-base-public": {
+      "status": "reviewer-confirmed",
+      "premises": "Public reduced-standing boxes, squared bleed, rational walls, hop strength and shape, declared limits and frozen public compiler entries only. Typed results retain public cells, radicands, factors, scalar queries, checked bounds and operational refusals; no secret, subscriber or publication encoder enters this boundary.",
+      "negative_probe": "GRAPH::claim:numerics:activation-clamp-keeps-generalized-wall-gain"
     }
   }
 }

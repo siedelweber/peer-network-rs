@@ -4277,7 +4277,8 @@
         "pn-epoch::solve::procedure_records",
         "pn-epoch::solve::evidence_records",
         "pn-epoch::solve::transport_oracle",
-        "pn-epoch::solve::anchor_tables"
+        "pn-epoch::solve::anchor_tables",
+        "pn-epoch::solve::real_base"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
@@ -4293,7 +4294,9 @@
         "pn-graph::numeric::primitive_oracles",
         "pn-graph::numeric::primitive_domains",
         "pn-graph::numeric::primitive_replay",
-        "pn-graph::numeric::primitive_limits"
+        "pn-graph::numeric::primitive_limits",
+        "pn-graph::numeric::activation_oracles",
+        "pn-graph::numeric::activation_walls"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",

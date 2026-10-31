@@ -1666,6 +1666,14 @@
       "review": "Accepts the supplied valid declaration and rejects empty, missing-zero, ascending, repeated-value and negative rung grids. It rejects zero work or iteration limits, margin one, endpoint grid zero, empty or descending precision requests, an empty primitive set and an empty backend name. These are declaration checks, not package binding or numerical evaluation."
     },
     {
+      "operation": "pn-epoch::solve::real_base",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:real-base-enclosures-retain-frozen-provenance",
+      "before": "",
+      "after": "Claim: Six unsorted reaction denominators preserve every frozen base entry and its cells, radicands and domain factors while attaching replayable enclosures to irrational terms. Independent integer-square brackets lie inside those bounds; rational-root entries stay exact, and ledger, support and compiler output remain unchanged. No standing or rung is computed.",
+      "review": "Six unsorted reaction denominators produce 24 frozen entry requests: 21 exact entries remain exact and three irrational entries obtain replayable bounds containing independent integer-square brackets. Original entries, cells, radicands, factors and the whole compiler view are unchanged; missing entries refuse. No standing, accepted rung or nonlinear transport is computed."
+    },
+    {
       "operation": "pn-epoch::solve::transport_oracle",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:exact-transport-agrees-with-dense-rational-oracle",
@@ -2048,6 +2056,22 @@
       "before": "",
       "after": "Claim: Six shared word-vector cases execute the records-level partition through the public API with independently owned expectations and complete per-case results; both consumers observe one implementation rather than asserting independent implementations.",
       "review": "Read the exact assertions and their fixtures. Set unions and direct parent incidence supply independently authored partition expectations; whole-act records validation is a premise. This witness supplies no authenticated family formation, common-marker selection, title or settlement verdict."
+    },
+    {
+      "operation": "pn-graph::numeric::activation_oracles",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:activation-and-gain-agree-with-independent-brackets",
+      "before": "",
+      "after": "Claim: Responsive activation uses the normalized deployed core and its fourth root; independent directed integral, binomial and integer-root brackets lie inside the checked bounds on six unsorted standing inputs. Deployed reduced-standing gain and the clean full-core screen have distinct checked bounds on three positive inputs, without claiming a fence or a solve.",
+      "review": "Six unsorted standing points test the normalized fourth-root value against independent directed integral logarithm, binomial exponential and integer-root brackets inside the checked result. Three positive points separately test deployed and clean log gains against an independently transcribed derivative formula and separate their bounds. All twelve requests replay from expected inputs. This finite reference-profile witness proves no fence, profile admission or solve."
+    },
+    {
+      "operation": "pn-graph::numeric::activation_walls",
+      "path": "packages/graph/tests/numeric.rs",
+      "claim": "GRAPH::claim:numerics:activation-clamp-keeps-generalized-wall-gain",
+      "before": "",
+      "after": "Claim: The wall clamp keeps the same below-wall value and zero generalized gain, retains the zero-to-responsive generalized join on touching and crossing boxes, and composes non-dyadic hop powers from the exact strength times shape. Expected-input replay rejects a changed wall; invalid domains and deterministic interruption carry no mathematical verdict.",
+      "review": "Fifteen distinct formula requests cover one below-wall anchor, four box placements for values and generalized gains, a one-third applied exponent, a zero exponent, changed-wall replay, and three invalid-domain requests. Independent brackets check value endpoints and responsive gains; below-wall value and zero gain are exact branch controls. Interruption has no verdict. A separate policy with only the output ceiling reduced to one MiB retains an explicit no-bound OutputBytes exhaustion. No smooth derivative or wall inversion is admitted."
     },
     {
       "operation": "pn-graph::numeric::primitive_domains",

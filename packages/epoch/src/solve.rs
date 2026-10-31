@@ -25,6 +25,8 @@ pub struct BoundProcedure<'a> {
 pub enum ProcedureError {
     #[error("procedure boundary, edition or name differs from frozen package")]
     Binding,
+    #[error("base entry is absent from the frozen compiler output")]
+    BaseEntry,
     #[error("procedure publication verification refused")]
     Publication,
     #[error("procedure records: {0}")]

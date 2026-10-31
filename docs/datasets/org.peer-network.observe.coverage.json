@@ -40,19 +40,19 @@
     },
     {
       "exceptions": 6,
-      "generators": 35,
+      "generators": 36,
       "helpers": 0,
-      "instrumented": 19,
+      "instrumented": 20,
       "name": "pn-epoch",
-      "operations": 25
+      "operations": 26
     },
     {
       "exceptions": 0,
-      "generators": 51,
+      "generators": 54,
       "helpers": 0,
-      "instrumented": 16,
+      "instrumented": 18,
       "name": "pn-graph",
-      "operations": 16
+      "operations": 18
     },
     {
       "exceptions": 18,

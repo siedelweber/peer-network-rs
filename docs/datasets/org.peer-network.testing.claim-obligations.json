@@ -1168,6 +1168,9 @@
     },
     {
       "claims": [
+        "EPOCH::claim:compiler:real-base-enclosures-retain-frozen-provenance",
+        "GRAPH::claim:numerics:activation-and-gain-agree-with-independent-brackets",
+        "GRAPH::claim:numerics:activation-clamp-keeps-generalized-wall-gain",
         "GRAPH::claim:numerics:primitive-bounds-agree-with-independent-oracles",
         "GRAPH::claim:numerics:primitive-domains-keep-generalized-slopes-distinct",
         "GRAPH::claim:numerics:primitive-replay-binds-scope-and-outcome",

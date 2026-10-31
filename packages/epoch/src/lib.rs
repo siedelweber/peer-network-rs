@@ -254,3 +254,7 @@ pub mod compiler;
 /// Exact rational transport support, without nonlinear evaluation.
 /// (´def:compiler:exact-anchor´)
 pub mod anchor;
+
+/// Checked real base entries with the frozen source and support preserved.
+/// (´def:compiler:real-base´)
+pub mod real_base;

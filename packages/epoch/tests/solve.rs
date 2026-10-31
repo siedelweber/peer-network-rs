@@ -638,3 +638,125 @@ fn anchor_tables() {
         assert!(terms.iter().all(|term| term.radicand == "1/2"));
     }
 }
+
+fn base_procedure(state: &pn_epoch::compiler::CompiledState) -> Procedure {
+    let mut input = declaration(state);
+    input.backend = "nrz-cas".into();
+    input.precision = Precision::AbsoluteWidthBits(vec![4]);
+    input.maximum_work = 10_000_000;
+    let limits = Limits {
+        work: input.maximum_work,
+        ..Limits::default()
+    };
+    input.enclosure = Some(pn_records::primitive::EnclosurePolicy {
+        store: limits.clone(),
+        operation: limits,
+        refinement: nrz_cas::enclosure::RefinementPolicy {
+            version: 1,
+            precision: 4,
+            grid_ceiling: 64,
+            rounds: 2,
+            reduction_ceiling: 4,
+            term_ceiling: 64,
+            checking_work: 1_000_000,
+        },
+    });
+    input
+}
+
+fn base_root_bracket(x: Fraction) -> (Fraction, Fraction) {
+    assert!(x.0 >= 0 && x.0 < 4 * x.1);
+    let grid = 1_i128 << 16;
+    let (mut low, mut high) = (0_i128, 2 * grid);
+    while high - low > 1 {
+        let middle = low.midpoint(high);
+        if middle * middle * x.1 <= x.0 * grid * grid {
+            low = middle;
+        } else {
+            high = middle;
+        }
+    }
+    (Fraction::new(low, grid), Fraction::new(high, grid))
+}
+
+fn check_real_base(bound: &pn_epoch::solve::BoundProcedure<'_>) -> (usize, usize) {
+    use pn_epoch::base::BaseScore;
+    let (state, procedure) = bound.inputs();
+    let (mut exact, mut held) = (0, 0);
+    for (source, row) in &state.view().base.rows {
+        for (target, original) in row {
+            let result = pn_epoch::real_base::evaluate(bound, source, target, None).unwrap();
+            assert_eq!(result.original, *original);
+            match &original.score {
+                BaseScore::Exact(_) => {
+                    exact += 1;
+                    assert!(result.primitive.is_none());
+                }
+                BaseScore::Held { exact_part, terms } => {
+                    held += 1;
+                    let record = result.primitive.unwrap();
+                    assert_eq!(record.evidence.outcome, pn_records::primitive::Outcome::Bound);
+                    let replayed =
+                        pn_graph::numeric::replay(procedure, &record.query, record.evidence.attachment.as_ref().unwrap(), None)
+                            .unwrap();
+                    assert_eq!(replayed.bounds, record.evidence.bounds);
+                    let mut oracle = (Fraction::parse(exact_part), Fraction::parse(exact_part));
+                    for term in terms {
+                        assert!(original.cells.contains(&term.cell));
+                        let (a, b) = base_root_bracket(Fraction::parse(&term.radicand));
+                        let factor = Fraction::parse(&term.domain_factor);
+                        oracle = (oracle.0.plus(a.times(factor)), oracle.1.plus(b.times(factor)));
+                    }
+                    let bounds = record.evidence.bounds.unwrap();
+                    let mut budget = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+                    let lower = Fraction::parse(&bounds.lower().exact_string(&mut budget).unwrap());
+                    let upper = Fraction::parse(&bounds.upper().exact_string(&mut budget).unwrap());
+                    assert!(!lower.order(oracle.0).is_gt() && !oracle.1.order(upper).is_gt());
+                    assert!(lower.0 > 0);
+                }
+            }
+        }
+    }
+    (exact, held)
+}
+
+/// Claim: Six unsorted reaction denominators preserve every frozen base entry and its cells, radicands and domain factors while attaching replayable enclosures to irrational terms. Independent integer-square brackets lie inside those bounds; rational-root entries stay exact, and ledger, support and compiler output remain unchanged. No standing or rung is computed.
+/// ´claim:compiler:real-base-enclosures-retain-frozen-provenance´
+/// ´test:integration:real-base´
+#[test]
+fn real_base() {
+    let (mut exact, mut held) = (0, 0);
+    for denominator in [2, 9, 3, 4, 5, 1] {
+        let mut acts = joined::anchors();
+        let mut opinion = joined::act("Opinion", "seller", 2, 1);
+        opinion
+            .body
+            .quantities
+            .iter_mut()
+            .find(|(name, _)| name == "reaction.denominator")
+            .unwrap()
+            .1
+            .value = denominator;
+        acts.push(opinion);
+        let state = compile_final_state(
+            &joined::package(&acts, 2, &[("seller", "100"), ("buyer", "100"), ("third", "100")]),
+            &joined::Verifier,
+            &mut joined::numeric(),
+            Limits::default(),
+            10000,
+        )
+        .unwrap();
+        let before = state.view().clone();
+        let procedure = base_procedure(&state);
+        let bound = bind_procedure(&state, procedure.clone(), &Published(procedure), Limits::default()).unwrap();
+        let counts = check_real_base(&bound);
+        exact += counts.0;
+        held += counts.1;
+        assert_eq!(state.view(), &before);
+        assert_eq!(
+            pn_epoch::real_base::evaluate(&bound, "absent", "buyer", None),
+            Err(ProcedureError::BaseEntry)
+        );
+    }
+    assert_eq!((exact, held), (21, 3));
+}
