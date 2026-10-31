@@ -71,7 +71,7 @@ operations = 109
 instrumented = 41
 exceptions = 68
 helpers = 0
-generators = 112
+generators = 113
 
 [[rows]]
 name = "pn-wallet"

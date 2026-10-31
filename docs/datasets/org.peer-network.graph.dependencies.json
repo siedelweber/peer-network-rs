@@ -37,6 +37,14 @@
       "notice": "Existing workspace dependency obligations",
       "role": "Existing workspace dependency inherited for diagnostic Registration weights; no canonical publication encoding",
       "version": "1.0.229"
+    },
+    {
+      "features": [],
+      "license": "AGPL-3.0-only",
+      "name": "nrz-cas",
+      "notice": "packages/records/NOTICE-NUMERIC",
+      "role": "Workspace numeric dependency for the certified scalar enclosure adapter; no additional features",
+      "version": "0.1.0"
     }
   ]
 }

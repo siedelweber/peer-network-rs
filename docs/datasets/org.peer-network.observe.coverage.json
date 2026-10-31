@@ -72,7 +72,7 @@
     },
     {
       "exceptions": 68,
-      "generators": 112,
+      "generators": 113,
       "helpers": 0,
       "instrumented": 41,
       "name": "pn-records",

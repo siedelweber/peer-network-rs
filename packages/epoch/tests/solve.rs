@@ -8,8 +8,8 @@ use pn_epoch::{
     solve::{ProcedureError, ProcedureVerifier, bind_procedure},
 };
 use pn_records::solve::{
-    Attempt, Bounds, Completion, Equality, Evidence, Precision, Primitive, Procedure, RecordError, Residual, validate_evidence,
-    validate_procedure,
+    Attempt, AttemptStop, Bounds, Completion, Equality, Evidence, Precision, Primitive, Procedure, RecordError, Residual,
+    validate_evidence, validate_procedure,
 };
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -187,15 +187,21 @@ fn interval(lower: &str, upper: &str) -> Bounds {
     }
 }
 fn attempt(rung: &str, range: Bounds, completion: Completion) -> Attempt {
+    let stop = match completion {
+        Completion::Pass | Completion::Fail => AttemptStop::ComparisonSeparated,
+        Completion::Indecisive => AttemptStop::PrecisionSequenceExhausted,
+        Completion::Interrupted => AttemptStop::Interrupted,
+    };
     Attempt {
         rung: rung.into(),
         margined_fence: range,
         work: 10,
         completion,
+        stop,
     }
 }
 
-/// Claim: Supplied evidence records distinguish proved bound separation, completed straddling with actual consumed Work and interruption; reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii; and never attach a residual result to an interrupted attempt. These are consistency checks, not validation of the supplied map evaluations.
+/// Claim: Supplied evidence records require compatible verdict and stopping categories, refuse a Work-limit straddle below the declared cap, accept a declared exhausted precision sequence with actual consumed Work, and distinguish interruption. They reject malformed hulls, out-of-order or post-completion attempts and inconsistent residual radii, and attach no residual to interruption. These are structural consistency checks; they do not certify execution of the declared sequence or the supplied map evaluations.
 /// ´claim:compiler:solve-transcripts-separate-verdicts-from-interruption´
 /// ´test:integration:evidence-records´
 #[test]
@@ -219,6 +225,20 @@ fn evidence_records() {
     let mut partial_work = evidence.clone();
     partial_work.attempts[0].work = 9;
     validate_evidence(&procedure, &partial_work, Limits::default()).unwrap();
+    partial_work.attempts[0].stop = AttemptStop::WorkLimit;
+    assert_eq!(
+        validate_evidence(&procedure, &partial_work, Limits::default()),
+        Err(RecordError::Attempt)
+    );
+    partial_work.attempts[0].work = 10;
+    validate_evidence(&procedure, &partial_work, Limits::default()).unwrap();
+    for stop in [AttemptStop::ComparisonSeparated, AttemptStop::Interrupted] {
+        partial_work.attempts[0].stop = stop;
+        assert_eq!(
+            validate_evidence(&procedure, &partial_work, Limits::default()),
+            Err(RecordError::Attempt)
+        );
+    }
     let mut failed = evidence.clone();
     failed.attempts[0] = attempt("1", interval("11/10", "6/5"), Completion::Fail);
     validate_evidence(&procedure, &failed, Limits::default()).unwrap();
@@ -235,8 +255,14 @@ fn evidence_records() {
         let mut bad = evidence.clone();
         match case {
             0 => bad.hull.insert("a".into(), interval("2", "1")).map(|_| ()).unwrap(),
-            1 => bad.attempts[0].completion = Completion::Fail,
-            2 => bad.attempts[0].completion = Completion::Pass,
+            1 => {
+                bad.attempts[0].completion = Completion::Fail;
+                bad.attempts[0].stop = AttemptStop::ComparisonSeparated;
+            }
+            2 => {
+                bad.attempts[0].completion = Completion::Pass;
+                bad.attempts[0].stop = AttemptStop::ComparisonSeparated;
+            }
             3 => bad.attempts[0].work = 11,
             4 => bad.attempts[0].rung = "0".into(),
             5 => bad.attempts.push(attempt("0", interval("0", "0"), Completion::Pass)),

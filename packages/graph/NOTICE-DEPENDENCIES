@@ -1,5 +1,9 @@
 pn-graph dependency notices
 
+nrz-cas 0.1.0 — AGPL-3.0-only
+The workspace numeric source, revision and licence notice are retained in
+packages/records/NOTICE-NUMERIC. pn-graph enables no additional features.
+
 petgraph 0.8.3 — MIT OR Apache-2.0; MIT licence chosen
 Source: https://static.crates.io/crates/petgraph/petgraph-0.8.3.crate
 Registry archive SHA-256: 8701b58ea97060d5e5b155d383a69952a60943f0e6dfe30b04c287beb0b27455

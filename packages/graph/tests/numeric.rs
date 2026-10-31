@@ -104,8 +104,12 @@ impl Q {
         self.0 * b.1 <= b.0 * self.1
     }
     fn grid(self, upper: bool) -> Self {
-        let n = self.0 * 64;
-        Self::new(n.div_euclid(self.1) + i128::from(upper && n.rem_euclid(self.1) != 0), 64)
+        self.round(6, upper)
+    }
+    fn round(self, bits: u32, upper: bool) -> Self {
+        let scale = 1_i128 << bits;
+        let n = self.0 * scale;
+        Self::new(n.div_euclid(self.1) + i128::from(upper && n.rem_euclid(self.1) != 0), scale)
     }
 }
 fn endpoints(result: &pn_records::primitive::PrimitiveEvidence) -> (Q, Q) {
@@ -137,6 +141,59 @@ fn oracle_contains(input: &Query, lower: Q, upper: Q) {
         lower.grid(false).le(a) && b.le(upper.grid(true)),
         "{lower:?} <= {a:?} <= {b:?} <= {upper:?}"
     );
+}
+fn contains_oracle(input: &Query, lower: Q, upper: Q) {
+    let (a, b) = endpoints(&checked(input));
+    assert!(
+        a.le(lower) && lower.le(upper) && upper.le(b),
+        "{a:?} <= {lower:?} <= {upper:?} <= {b:?}"
+    );
+}
+
+// Directed integer rounding on a fixed grid bounds every product in the
+// independent binomial oracle; it shares no analytic series with the backend.
+fn rounded_power(mut base: Q, mut exponent: u32, upper: bool) -> Q {
+    let mut result = Q(1, 1);
+    while exponent != 0 {
+        if exponent % 2 == 1 {
+            result = result.mul(base).round(32, upper);
+        }
+        exponent /= 2;
+        if exponent != 0 {
+            base = base.mul(base).round(32, upper);
+        }
+    }
+    result
+}
+
+fn tight_exp(x: Q) -> (Q, Q) {
+    let one = Q(1, 1);
+    if x.0 < 0 {
+        let (a, b) = tight_exp(x.neg());
+        return (one.div(b), one.div(a));
+    }
+    let h = x.div(Q(4096, 1));
+    (
+        rounded_power(one.add(h), 4096, false),
+        one.div(rounded_power(one.add(h.neg()), 4096, false)),
+    )
+}
+
+fn tight_log(x: Q) -> (Q, Q) {
+    if x.le(Q(1, 1)) {
+        if x == Q(1, 1) {
+            return (Q(0, 1), Q(0, 1));
+        }
+        let (a, b) = tight_log(Q(1, 1).div(x));
+        return (b.neg(), a.neg());
+    }
+    let h = x.add(Q(-1, 1)).div(Q(4096, 1));
+    let (mut lower, mut upper) = (Q(0, 1), Q(0, 1));
+    for i in 0..4096 {
+        lower = lower.add(h.div(Q(1, 1).add(h.mul(Q(i + 1, 1)))).round(32, false));
+        upper = upper.add(h.div(Q(1, 1).add(h.mul(Q(i, 1)))).round(32, true));
+    }
+    (lower, upper)
 }
 fn exp_bracket(x: Q) -> (Q, Q) {
     let one = Q(1, 1);
@@ -178,19 +235,38 @@ fn primitive_oracles() {
     for text in ["2", "1/2", "1", "3/2"] {
         let (a, b) = log_bracket(Q::parse(text));
         oracle_contains(&query(vec![Node::Rational(text.into()), Node::Logarithm(0)]), a, b);
+        let (a, b) = tight_log(Q::parse(text));
+        contains_oracle(&query(vec![Node::Rational(text.into()), Node::Logarithm(0)]), a, b);
     }
     for text in ["1/2", "-1/4", "0", "-1/2", "1/4"] {
         let x = Q::parse(text);
         let (a, b) = exp_bracket(x);
         oracle_contains(&query(vec![Node::Rational(text.into()), Node::Exponential(0)]), a, b);
+        let (tight_a, tight_b) = tight_exp(x);
+        contains_oracle(
+            &query(vec![Node::Rational(text.into()), Node::Exponential(0)]),
+            tight_a,
+            tight_b,
+        );
         let one = Q(1, 1);
         oracle_contains(
             &query(vec![Node::Rational(text.into()), Node::Sigmoid(0)]),
             a.div(one.add(a)),
             b.div(one.add(b)),
         );
+        contains_oracle(
+            &query(vec![Node::Rational(text.into()), Node::Sigmoid(0)]),
+            tight_a.div(one.add(tight_a)),
+            tight_b.div(one.add(tight_b)),
+        );
         let (a, b) = exp_bracket(x.mul(Q(2, 1)));
         oracle_contains(
+            &query(vec![Node::Rational(text.into()), Node::Tanh(0)]),
+            a.add(Q(-1, 1)).div(a.add(one)),
+            b.add(Q(-1, 1)).div(b.add(one)),
+        );
+        let (a, b) = tight_exp(x.mul(Q(2, 1)));
+        contains_oracle(
             &query(vec![Node::Rational(text.into()), Node::Tanh(0)]),
             a.add(Q(-1, 1)).div(a.add(one)),
             b.add(Q(-1, 1)).div(b.add(one)),
@@ -360,4 +436,6 @@ fn primitive_limits() {
     let beta = query(vec![Node::Rational("2".into()), Node::Logarithm(0), Node::Multiply(0, 1)]);
     let (a, b) = log_bracket(Q(2, 1));
     oracle_contains(&beta, a.mul(Q(2, 1)), b.mul(Q(2, 1)));
+    let (a, b) = tight_log(Q(2, 1));
+    contains_oracle(&beta, a.mul(Q(2, 1)), b.mul(Q(2, 1)));
 }

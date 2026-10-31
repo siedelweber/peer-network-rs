@@ -79,6 +79,16 @@ pub enum Completion {
     Interrupted,
 }
 
+/// Declared reason an attempt stops; this assertion is not numerical evidence.
+/// (´def:numerics:solve-records´)
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum AttemptStop {
+    ComparisonSeparated,
+    PrecisionSequenceExhausted,
+    WorkLimit,
+    Interrupted,
+}
+
 /// A completed comparison or an interrupted attempt; the fence is already margined.
 /// (´def:numerics:solve-records´)
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -87,6 +97,7 @@ pub struct Attempt {
     pub margined_fence: Bounds,
     pub work: u64,
     pub completion: Completion,
+    pub stop: AttemptStop,
 }
 
 /// Supplied residual premises and claimed radius, not a checked map evaluation.
@@ -142,6 +153,16 @@ fn bounds(input: &Bounds, budget: &mut Budget) -> Result<(Rational, Rational), R
         return Err(RecordError::Bounds);
     }
     Ok((lower, upper))
+}
+
+fn declared_stop(procedure: &Procedure, attempt: &Attempt) -> bool {
+    match (&attempt.completion, &attempt.stop) {
+        (Completion::Pass | Completion::Fail, AttemptStop::ComparisonSeparated)
+        | (Completion::Indecisive, AttemptStop::PrecisionSequenceExhausted)
+        | (Completion::Interrupted, AttemptStop::Interrupted) => true,
+        (Completion::Indecisive, AttemptStop::WorkLimit) => attempt.work == procedure.maximum_work,
+        _ => false,
+    }
 }
 
 /// Validate only the declared procedure's finite structural contract.
@@ -226,6 +247,7 @@ pub fn validate_evidence(procedure: &Procedure, input: &Evidence, limits: Limits
     let mut passed = false;
     for (attempt, rung) in input.attempts.iter().zip(&procedure.grid) {
         if stopped
+            || !declared_stop(procedure, attempt)
             || attempt.work > procedure.maximum_work
             || Rational::parse(&attempt.rung, &mut budget)?
                 .compare(&Rational::parse(rung, &mut budget)?, &mut budget)?

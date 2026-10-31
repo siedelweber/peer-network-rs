@@ -13966,7 +13966,7 @@
     },
     {
       "operation": "pn-records::packages/records/src/solve.rs::solve::validate_evidence",
-      "body": "{ validate_procedure (procedure , limits . clone ()) ? ; let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; for range in input . hull . values () { bounds (range , & mut budget) ? ; } if input . attempts . is_empty () || input . attempts . len () > procedure . grid . len () { return Err (RecordError :: Attempt) ; } let mut stopped = false ; let mut passed = false ; for (attempt , rung) in input . attempts . iter () . zip (& procedure . grid) { if stopped || attempt . work > procedure . maximum_work || Rational :: parse (& attempt . rung , & mut budget) ? . compare (& Rational :: parse (rung , & mut budget) ? , & mut budget) ? . is_ne () { return Err (RecordError :: Attempt) ; } let (lower , upper) = bounds (& attempt . margined_fence , & mut budget) ? ; match attempt . completion { Completion :: Pass if ! upper . compare (& one , & mut budget) ? . is_gt () => { stopped = true ; passed = true ; } Completion :: Fail if lower . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Indecisive if ! lower . compare (& one , & mut budget) ? . is_gt () && upper . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Interrupted => { stopped = true ; } _ => return Err (RecordError :: Attempt) , } } if ! stopped { return Err (RecordError :: Attempt) ; } if let Some (residual) = & input . residual { if ! passed || residual . candidate . keys () . ne (input . hull . keys ()) { return Err (RecordError :: Residual) ; } for (actor , point) in & residual . candidate { let point = nonnegative (point , & mut budget) ? ; let (lower , upper) = bounds (& input . hull [actor] , & mut budget) ? ; if point . compare (& lower , & mut budget) ? . is_lt () || point . compare (& upper , & mut budget) ? . is_gt () { return Err (RecordError :: Residual) ; } } let c = nonnegative (& residual . contraction_upper , & mut budget) ? ; if ! c . compare (& one , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } let r = nonnegative (& residual . residual_upper , & mut budget) ? ; let required = r . div (& one . sub (& c , & mut budget) ? , & mut budget) ? ; if nonnegative (& residual . radius , & mut budget) ? . compare (& required , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } } Ok (()) }",
+      "body": "{ validate_procedure (procedure , limits . clone ()) ? ; let mut budget = Budget :: new (limits) ? ; let one = Rational :: parse (\"1\" , & mut budget) ? ; for range in input . hull . values () { bounds (range , & mut budget) ? ; } if input . attempts . is_empty () || input . attempts . len () > procedure . grid . len () { return Err (RecordError :: Attempt) ; } let mut stopped = false ; let mut passed = false ; for (attempt , rung) in input . attempts . iter () . zip (& procedure . grid) { if stopped || ! declared_stop (procedure , attempt) || attempt . work > procedure . maximum_work || Rational :: parse (& attempt . rung , & mut budget) ? . compare (& Rational :: parse (rung , & mut budget) ? , & mut budget) ? . is_ne () { return Err (RecordError :: Attempt) ; } let (lower , upper) = bounds (& attempt . margined_fence , & mut budget) ? ; match attempt . completion { Completion :: Pass if ! upper . compare (& one , & mut budget) ? . is_gt () => { stopped = true ; passed = true ; } Completion :: Fail if lower . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Indecisive if ! lower . compare (& one , & mut budget) ? . is_gt () && upper . compare (& one , & mut budget) ? . is_gt () => { } Completion :: Interrupted => { stopped = true ; } _ => return Err (RecordError :: Attempt) , } } if ! stopped { return Err (RecordError :: Attempt) ; } if let Some (residual) = & input . residual { if ! passed || residual . candidate . keys () . ne (input . hull . keys ()) { return Err (RecordError :: Residual) ; } for (actor , point) in & residual . candidate { let point = nonnegative (point , & mut budget) ? ; let (lower , upper) = bounds (& input . hull [actor] , & mut budget) ? ; if point . compare (& lower , & mut budget) ? . is_lt () || point . compare (& upper , & mut budget) ? . is_gt () { return Err (RecordError :: Residual) ; } } let c = nonnegative (& residual . contraction_upper , & mut budget) ? ; if ! c . compare (& one , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } let r = nonnegative (& residual . residual_upper , & mut budget) ? ; let required = r . div (& one . sub (& c , & mut budget) ? , & mut budget) ? ; if nonnegative (& residual . radius , & mut budget) ? . compare (& required , & mut budget) ? . is_lt () { return Err (RecordError :: Residual) ; } } Ok (()) }",
       "class_decision": "solve-public-records",
       "item_premise": "The entire public input and consistency outcome is recorded, or inherited by immutable access from the binding operation.",
       "assessments": {
@@ -17669,6 +17669,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq , thiserror :: Error)]",
       "class_decision": "certified-primitives-public",
       "expansion_review": "Debug, Clone and structural equality retain only public numeric inputs, limits and typed evidence; error conversion preserves a public backend fault. No secret, digest or publication encoder is derived."
+    },
+    {
+      "item": "solve::AttemptStop",
+      "kind": "derive",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
+      "class_decision": "solve-public-records",
+      "expansion_review": "Debug, Clone and equality carry only the public declared stopping category; no private field or publication encoding is derived."
     }
   ],
   "reviewed_types": [
@@ -18993,10 +19002,16 @@
       "syntax": "# [doc = \" Completion distinguishes a stopped command from a mathematical verdict.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum Completion { Pass , Fail , Indecisive , Interrupted , }"
     },
     {
+      "item": "solve::AttemptStop",
+      "package": "pn-records",
+      "path": "packages/records/src/solve.rs",
+      "syntax": "# [doc = \" Declared reason an attempt stops; this assertion is not numerical evidence.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub enum AttemptStop { ComparisonSeparated , PrecisionSequenceExhausted , WorkLimit , Interrupted , }"
+    },
+    {
       "item": "solve::Attempt",
       "package": "pn-records",
       "path": "packages/records/src/solve.rs",
-      "syntax": "# [doc = \" A completed comparison or an interrupted attempt; the fence is already margined.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attempt { pub rung : String , pub margined_fence : Bounds , pub work : u64 , pub completion : Completion , }"
+      "syntax": "# [doc = \" A completed comparison or an interrupted attempt; the fence is already margined.\"] # [doc = \" (´def:numerics:solve-records´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct Attempt { pub rung : String , pub margined_fence : Bounds , pub work : u64 , pub completion : Completion , pub stop : AttemptStop , }"
     },
     {
       "item": "solve::Residual",
