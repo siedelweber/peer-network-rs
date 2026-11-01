@@ -472,6 +472,10 @@ def numeric_correspondence():
                    - value(f'buildgraph-entry-before-selection-{kind}') for sample in ('first', 'second')]
         equal(value(f'buildgraph-admission-{kind}-increase-lower'), min(changes))
         equal(value(f'buildgraph-admission-{kind}-increase-upper'), max(changes))
+    equal(value('buildgraph-admission-obligation-count'),
+          value('buildgraph-admission-supported-obligation-count')
+          + value('buildgraph-admission-failed-obligation-count')
+          + value('buildgraph-admission-held-obligation-count'))
     properties = json.loads(Path('docs/datasets/org.peer-network.harness.properties.json').read_text())['rows']
     compiler = next(row for row in properties if row.get('name') == 'pn-epoch::compiler::compiler_generated')
     equal(value('epoch-property-draw-count'), compiler['cases'])

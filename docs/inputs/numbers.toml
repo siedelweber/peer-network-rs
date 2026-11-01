@@ -5683,3 +5683,149 @@ unit = "dimensionless"
 display = "exact"
 exact_digits = 30
 
+[[rows]]
+id = "num:numbers:buildgraph-admission-fresh-wall"
+value = "268.630"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-fresh-user"
+value = "257.917"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-fresh-system"
+value = "126.049"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-fresh-busy-cores"
+value = "28.509"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-reused-wall"
+value = "293.560"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-reused-user"
+value = "238.111"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-reused-system"
+value = "99.881"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-reused-busy-cores"
+value = "37.308"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-tracked-file-count"
+value = "613"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-case-count"
+value = "2580"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-passed-case-count"
+value = "98"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-held-case-count"
+value = "14"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-claim-site-count"
+value = "1070"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-claim-count"
+value = "1000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-obligation-count"
+value = "176"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-supported-obligation-count"
+value = "62"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-held-obligation-count"
+value = "114"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-failed-case-count"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-failed-obligation-count"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-excluded-file-count"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-census-defect-count"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30

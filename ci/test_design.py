@@ -200,6 +200,7 @@ class Correspondence(unittest.TestCase):
                                 ('projected-solve-slow-seconds', '61.5'),
                                 ('enclosed-wall-mandatory-work', '993'),
                                 ('buildgraph-admission-user-increase-lower', '1.1'),
+                                ('buildgraph-admission-obligation-count', '175'),
                                 ('epoch-recipient-history-count', '21'),
                                 ('epoch-invitation-radicand', '0.56' + '1'),
                                 ('epoch-family-presentation-count', '23'),

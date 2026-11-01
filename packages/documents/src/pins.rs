@@ -1559,9 +1559,51 @@ pub enum NumberId {
     NumbersBuildgraphRustdocFreshSerialBuildCount,
     /// Registry id: num:numbers:buildgraph-rustdoc-fresh-parallel-build-count.
     NumbersBuildgraphRustdocFreshParallelBuildCount,
+    /// Registry id: num:numbers:buildgraph-admission-fresh-wall.
+    NumbersBuildgraphAdmissionFreshWall,
+    /// Registry id: num:numbers:buildgraph-admission-fresh-user.
+    NumbersBuildgraphAdmissionFreshUser,
+    /// Registry id: num:numbers:buildgraph-admission-fresh-system.
+    NumbersBuildgraphAdmissionFreshSystem,
+    /// Registry id: num:numbers:buildgraph-admission-fresh-busy-cores.
+    NumbersBuildgraphAdmissionFreshBusyCores,
+    /// Registry id: num:numbers:buildgraph-admission-reused-wall.
+    NumbersBuildgraphAdmissionReusedWall,
+    /// Registry id: num:numbers:buildgraph-admission-reused-user.
+    NumbersBuildgraphAdmissionReusedUser,
+    /// Registry id: num:numbers:buildgraph-admission-reused-system.
+    NumbersBuildgraphAdmissionReusedSystem,
+    /// Registry id: num:numbers:buildgraph-admission-reused-busy-cores.
+    NumbersBuildgraphAdmissionReusedBusyCores,
+    /// Registry id: num:numbers:buildgraph-admission-tracked-file-count.
+    NumbersBuildgraphAdmissionTrackedFileCount,
+    /// Registry id: num:numbers:buildgraph-admission-case-count.
+    NumbersBuildgraphAdmissionCaseCount,
+    /// Registry id: num:numbers:buildgraph-admission-passed-case-count.
+    NumbersBuildgraphAdmissionPassedCaseCount,
+    /// Registry id: num:numbers:buildgraph-admission-held-case-count.
+    NumbersBuildgraphAdmissionHeldCaseCount,
+    /// Registry id: num:numbers:buildgraph-admission-claim-site-count.
+    NumbersBuildgraphAdmissionClaimSiteCount,
+    /// Registry id: num:numbers:buildgraph-admission-claim-count.
+    NumbersBuildgraphAdmissionClaimCount,
+    /// Registry id: num:numbers:buildgraph-admission-obligation-count.
+    NumbersBuildgraphAdmissionObligationCount,
+    /// Registry id: num:numbers:buildgraph-admission-supported-obligation-count.
+    NumbersBuildgraphAdmissionSupportedObligationCount,
+    /// Registry id: num:numbers:buildgraph-admission-held-obligation-count.
+    NumbersBuildgraphAdmissionHeldObligationCount,
+    /// Registry id: num:numbers:buildgraph-admission-failed-case-count.
+    NumbersBuildgraphAdmissionFailedCaseCount,
+    /// Registry id: num:numbers:buildgraph-admission-failed-obligation-count.
+    NumbersBuildgraphAdmissionFailedObligationCount,
+    /// Registry id: num:numbers:buildgraph-admission-excluded-file-count.
+    NumbersBuildgraphAdmissionExcludedFileCount,
+    /// Registry id: num:numbers:buildgraph-admission-census-defect-count.
+    NumbersBuildgraphAdmissionCensusDefectCount,
 }
 
-const OFFSETS: [(usize, usize); 778] = [
+const OFFSETS: [(usize, usize); 799] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2340,6 +2382,27 @@ const OFFSETS: [(usize, usize); 778] = [
     (122_354, 122_355),
     (122_498, 122_499),
     (122_644, 122_645),
+    (122_776, 122_783),
+    (122_908, 122_915),
+    (123_042, 123_049),
+    (123_180, 123_186),
+    (123_318, 123_325),
+    (123_451, 123_458),
+    (123_586, 123_592),
+    (123_724, 123_730),
+    (123_869, 123_872),
+    (124_003, 124_007),
+    (124_145, 124_147),
+    (124_283, 124_285),
+    (124_422, 124_426),
+    (124_558, 124_562),
+    (124_699, 124_702),
+    (124_849, 124_851),
+    (124_993, 124_996),
+    (125_134, 125_135),
+    (125_279, 125_280),
+    (125_420, 125_421),
+    (125_561, 125_562),
 ];
 
 impl NumberId {
