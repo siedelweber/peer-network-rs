@@ -57,6 +57,13 @@ class Correspondence(unittest.TestCase):
         path = self.root/'supplied-values.json'
         path.write_text(json.dumps(supplied))
         published_correspondence(rows)
+        tag_path = path.parent/'TAG'
+        for tag in (None, 'network-v0.31.0', ''):
+            if tag is not None:
+                tag_path.write_text(tag)
+            with self.assertRaisesRegex(ValueError, 'external TAG'):
+                published_correspondence(rows, path)
+        tag_path.write_text('network-v0.31.1\n')
         published_correspondence(rows, path)
         for field in ('paper_key', 'paper_tag'):
             changed = json.loads(json.dumps(rows))

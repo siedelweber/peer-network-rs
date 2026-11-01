@@ -576,16 +576,6 @@ fn completion_probes() {
     let mut outside_family = acts;
     outside_family[0].legs[0].target = joined::named("prof", "moved");
     assert!(!role_completion_allowed(&outside_family, true, true));
-    // The countermodels with identical public observations have distinct purposes.
-    // Hence a unique actual-purpose inference is not supported by these inputs.
-    assert_eq!(
-        BTreeSet::from([
-            format!("{:?}", Purpose::SeparateRoles),
-            format!("{:?}", Purpose::ConcentrateStanding)
-        ])
-        .len(),
-        2
-    );
 }
 
 fn receiving(showcase: bool) {

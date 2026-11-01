@@ -100,6 +100,10 @@ fn floor_decisions() {
             exhausted.compare_floor(&wall, Floor::RationalThreeThirtySevenths),
             Ok(FloorComparison::Indecisive)
         );
+        assert_eq!(
+            exhausted.charged_price(&wall, &nu, Floor::RationalThreeThirtySevenths),
+            Err(NumericError::Indecisive)
+        );
     }
 }
 

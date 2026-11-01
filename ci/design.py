@@ -386,6 +386,9 @@ def published_correspondence(rows, path=None):
         if row.get('paper_key') != expected[name] or row.get('paper_tag') != PAPER_TAG:
             raise ValueError('published registry: missing or mismatched paper key/tag')
     if path is not None:
+        tag_path = Path(path).parent/'TAG'
+        if not tag_path.is_file() or tag_path.read_text().strip() != PAPER_TAG:
+            raise ValueError('published registry: missing or mismatched external TAG')
         supplied = json.loads(Path(path).read_text())
         if supplied.get('schema') != 'peer-values-1':
             raise ValueError('published registry: unsupported external values schema')
