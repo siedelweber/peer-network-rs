@@ -1202,12 +1202,12 @@
         "GRAPH::claim:numerics:local-inclusion-retains-generalized-derivatives",
         "GRAPH::claim:certificate:certified-residuals-enclose-the-selected-solution",
         "RECORDS::claim:numerics:boundary-comparisons-remain-sound-or-indecisive",
-        "EPOCH::claim:compiler:certified-splits-retain-hop-premises-and-displacement",
-        "EPOCH::claim:compiler:saturated-burn-can-lower-own-standing",
-        "EPOCH::claim:compiler:saturated-burn-can-lower-reached-standing",
-        "EPOCH::claim:compiler:depleted-burn-can-lower-anchor-recipient",
-        "EPOCH::claim:compiler:burn-rung-switch-retains-finite-loss-bound",
-        "EPOCH::claim:compiler:sole-contributor-burn-increases-throughout-path"
+        "EPOCH::claim:standing:certified-splits-retain-hop-premises-and-displacement",
+        "EPOCH::claim:standing:saturated-burn-can-lower-own-standing",
+        "EPOCH::claim:standing:saturated-burn-can-lower-reached-standing",
+        "EPOCH::claim:standing:depleted-burn-can-lower-anchor-recipient",
+        "EPOCH::claim:standing:burn-rung-switch-retains-finite-loss-bound",
+        "EPOCH::claim:standing:sole-contributor-burn-increases-throughout-path"
       ],
       "closing_condition": "Attach test-site evidence with reviewed premises and passing source/configuration-matched results for the supported surface.",
       "closing_step": "Remaining bite 6 close slices; unrestricted integrated corpus remains bite 11",

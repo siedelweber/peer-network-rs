@@ -360,6 +360,13 @@ register = "EPOCH::sec:rungs:area-rungs"
 contract = "EPOCH::amend:compiler:fence-evidence"
 
 [[rows]]
+owner = "EPOCH"
+area = "standing"
+stake = "Dropping comparison premises can turn a scoped standing response into an unsupported equality or monotonicity guarantee."
+register = "EPOCH::sec:standing:area-standing"
+contract = "EPOCH::amend:compiler:solve-record-evidence"
+
+[[rows]]
 owner = "GRAPH"
 area = "certificate"
 stake = "A residual radius detached from its centre, map or contraction can falsely enclose the selected equilibrium."

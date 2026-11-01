@@ -364,6 +364,13 @@
       "stake": "Treating an unresolved comparison or operational interruption as a passing fence can select an uncertified rung."
     },
     {
+      "area": "standing",
+      "contract": "EPOCH::amend:compiler:solve-record-evidence",
+      "owner": "EPOCH",
+      "register": "EPOCH::sec:standing:area-standing",
+      "stake": "Dropping comparison premises can turn a scoped standing response into an unsupported equality or monotonicity guarantee."
+    },
+    {
       "area": "certificate",
       "contract": "GRAPH::sec:certificate:area-certificate",
       "owner": "GRAPH",

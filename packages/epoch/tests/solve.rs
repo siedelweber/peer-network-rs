@@ -763,35 +763,35 @@ fn burn_case(case: &str) {
 }
 
 /// Claim: The unsorted complete-history own-burn pair preserves counts, base, publication and full emission at the same positive passing rung, yet certified standing decreases. Replayed box transport bounds its finite shock and displacement; the declared smooth-regime feedback majorant uses the certified largest direct forcing at another Actor, not the own forcing.
-/// ´claim:compiler:saturated-burn-can-lower-own-standing´
+/// ´claim:standing:saturated-burn-can-lower-own-standing´
 /// ´test:integration:burn-own´
 #[test]
 fn burn_own() {
     burn_case("own");
 }
 /// Claim: The unsorted complete-history sibling pair changes only one accepted burn and preserves counts, base, publication and saturated emission at the same positive passing rung. Certified reached standing decreases; replayed box transport checks the finite response bounds and the largest-direct-forcing feedback majorant.
-/// ´claim:compiler:saturated-burn-can-lower-reached-standing´
+/// ´claim:standing:saturated-burn-can-lower-reached-standing´
 /// ´test:integration:burn-sibling´
 #[test]
 fn burn_sibling() {
     burn_case("sibling");
 }
 /// Claim: The unsorted complete-history depleted-source pair changes only one accepted burn. Both full rungs fail and both anchors pass; emission changes and the certified reached recipient decreases. The complete signed shock, not fixed-emission direct forcing, bounds the finite response.
-/// ´claim:compiler:depleted-burn-can-lower-anchor-recipient´
+/// ´claim:standing:depleted-burn-can-lower-anchor-recipient´
 /// ´test:integration:burn-depleted´
 #[test]
 fn burn_depleted() {
     burn_case("depleted");
 }
 /// Claim: The unsorted complete-history positive-burn pair preserves counts, base and saturated emission but changes the selected rung from a passing full rung to a passing anchor after a full-rung failure. Certified own standing decreases, and replayed transport checks the complete shock and finite response bound.
-/// ´claim:compiler:burn-rung-switch-retains-finite-loss-bound´
+/// ´claim:standing:burn-rung-switch-retains-finite-loss-bound´
 /// ´test:integration:burn-switch´
 #[test]
 fn burn_switch() {
     burn_case("switch");
 }
 /// Claim: The unsorted complete-history sole-contributor pair changes only one accepted burn. Fixed self-only support and an affine source-rate segment strictly above the wall establish the premise throughout the path; both full rungs pass and exact own standing increases with its rate. No positive direction is asserted outside that regime.
-/// ´claim:compiler:sole-contributor-burn-increases-throughout-path´
+/// ´claim:standing:sole-contributor-burn-increases-throughout-path´
 /// ´test:integration:burn-monotone´
 #[test]
 fn burn_monotone() {
@@ -1141,7 +1141,7 @@ fn split_projected_bound(
 }
 
 /// Claim: Two unsorted proportional complete-history splits are certified and replayed under a common declared policy per comparison. The self-only pair selects full strength and satisfies the all-state compiled hop refinement, preserving each member and the outside coordinate. The fold/export pair selects the anchor, fails that identity and strictly lowers the outside coordinate. Independent exact hop normalization and projected residual bounds retain their premises; unconditional split equality is rejected. These finite cases establish no burn, annotation or general funded-partition guarantee.
-/// ´claim:compiler:certified-splits-retain-hop-premises-and-displacement´
+/// ´claim:standing:certified-splits-retain-hop-premises-and-displacement´
 /// ´test:integration:certified-splits´
 #[test]
 fn certified_splits() {
