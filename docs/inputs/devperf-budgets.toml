@@ -271,17 +271,17 @@ numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 [[rows]]
 name = "calibrated-burn-sibling-case"
 category = "case"
-budget_ms = 10500
+budget_ms = 5000
 scope = "one pn-epoch::solve::burn_sibling case"
-reason = "The saturated sibling pair retains the declared precision, independent solve replay, finite box shock and largest-direct-forcing feedback majorant."
+reason = "The saturated sibling retains the measured sign floor and preceding failed-sign solves, independent replay, finite box shock and largest-direct-forcing feedback majorant; only identical activation requests under the same policy share checked factors."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "calibrated-burn-switch-case"
 category = "case"
-budget_ms = 5500
+budget_ms = 3750
 scope = "one pn-epoch::solve::burn_switch case"
-reason = "The burn pair retains both rung searches, the changed accepted rung, independent solve replay and the full finite-response transport."
+reason = "The burn switch retains the measured full-rung separation floor and preceding indecisive-rung control, both complete solves, independent replay and full finite-response transport."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]

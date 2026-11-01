@@ -174,12 +174,13 @@ fn burn_state(case: &str, after: bool) -> pn_epoch::compiler::CompiledState {
 fn burn_policy(state: &pn_epoch::compiler::CompiledState, case: &str) -> Procedure {
     use NumberId as N;
     let mut p = fence_procedure(state);
-    let precision = if matches!(case, "depleted" | "monotone") {
-        N::NumbersBurnAnchorPrecision
-    } else if case == "own" {
-        N::NumbersBurnOwnPrecision
-    } else {
-        N::NumbersBurnSaturatedPrecision
+    let precision = match case {
+        "depleted" => N::NumbersBurnDepletedPrecision,
+        "monotone" => N::NumbersBurnMonotonePrecision,
+        "own" => N::NumbersBurnOwnPrecision,
+        "sibling" => N::NumbersBurnSiblingPrecision,
+        "switch" => N::NumbersBurnSwitchPrecision,
+        _ => unreachable!(),
     };
     p.precision = Precision::AbsoluteWidthBits(vec![u32::try_from(precision.integer()).unwrap()]);
     p.grid = vec!["1".into(), "0".into()];
@@ -725,26 +726,87 @@ fn burn_history_size(before: &pn_epoch::compiler::CompiledState, case: &str) {
     );
 }
 
+fn standing_floor_control(
+    before: &pn_epoch::compiler::CompiledState,
+    after: &pn_epoch::compiler::CompiledState,
+    policy: &Procedure,
+    case: &str,
+) {
+    if case == "own" {
+        return;
+    }
+    let mut p = policy.clone();
+    let bits = p.enclosure.as_ref().unwrap().refinement.precision - 1;
+    p.precision = Precision::AbsoluteWidthBits(vec![bits]);
+    p.enclosure.as_mut().unwrap().refinement.precision = bits;
+    if bits < 2 {
+        for state in [before, after] {
+            let bound = bind_procedure(state, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+            let fence = pn_epoch::fence::search(&bound, None).unwrap();
+            assert!(matches!(
+                pn_epoch::conserved::solve(&bound, &fence),
+                Err(pn_epoch::conserved::Error::Scope)
+            ));
+        }
+        return;
+    }
+    let a = bind_procedure(before, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+    let b = bind_procedure(after, p.clone(), &Published(p), Limits::default()).unwrap();
+    let fa = pn_epoch::fence::search(&a, None).unwrap();
+    let fb = pn_epoch::fence::search(&b, None).unwrap();
+    if case == "switch" {
+        assert_eq!(fb.evidence.attempts[0].completion, pn_records::solve::Completion::Indecisive);
+        assert_eq!(fb.selected.as_deref(), Some("0"));
+        return;
+    }
+    burn_rungs(&fa, false);
+    burn_rungs(&fb, false);
+    let ra = pn_epoch::conserved::solve(&a, &fa).unwrap();
+    let rb = pn_epoch::conserved::solve(&b, &fb).unwrap();
+    let old = ra.rounds.last().unwrap();
+    let new = rb.rounds.last().unwrap();
+    let mut budget = nrz_cas::limits::Budget::new(a.inputs().1.enclosure.as_ref().unwrap().operation.clone()).unwrap();
+    if case == "sibling" {
+        let response = burn_sub(
+            &burn_range(&new.standing["i"], &mut budget),
+            &burn_range(&old.standing["i"], &mut budget),
+            &mut budget,
+        );
+        assert!(!response.upper().is_negative());
+    } else {
+        assert_eq!(case, "raise");
+        let transported = burn_box_transport(after, b.inputs().1, &new.certified, &old.standing, &mut budget);
+        let names: Vec<_> = after.view().base.rows.keys().collect();
+        let shock: Vec<_> = names
+            .iter()
+            .zip(&transported.standing)
+            .map(|(name, image)| burn_sub(image, &burn_range(&old.standing[*name], &mut budget), &mut budget))
+            .collect();
+        let (_, _, _, losses) = burn_finite_bounds(b.inputs().1, &fb, &names, (old, new), &shock, &mut budget);
+        let target = names.iter().position(|name| name.as_str() == "i").unwrap();
+        assert!(!losses[target].is_zero());
+    }
+}
+
 fn burn_case(case: &str) {
     use NumberId as N;
-    let (
-        [
-            old_lo,
-            old_hi,
-            new_lo,
-            new_hi,
-            delta_lo,
-            delta_hi,
-            old_work,
-            new_work,
-            displacement_pin,
-        ],
-        loss_pin,
-    ) = burn_pins(case);
+    let (pins, loss_pin) = burn_pins(case);
+    let [
+        old_lo,
+        old_hi,
+        new_lo,
+        new_hi,
+        delta_lo,
+        delta_hi,
+        old_work,
+        new_work,
+        displacement_pin,
+    ] = pins;
     let before = burn_state(case, false);
     let after = burn_state(case, true);
     burn_premises(&before, &after, case);
     let p = burn_policy(&before, case);
+    standing_floor_control(&before, &after, &p, case);
     let a = bind_procedure(&before, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
     let b = bind_procedure(&after, p.clone(), &Published(p), Limits::default()).unwrap();
     let fa = pn_epoch::fence::search(&a, None).unwrap();
@@ -770,7 +832,7 @@ fn burn_case(case: &str) {
         // Counterexamples refuse an unconditional monotonicity or recovery claim.
         assert!(response.upper().is_negative());
     }
-    let mut activations = (case == "own").then(|| BurnActivations {
+    let mut activations = matches!(case, "own" | "sibling").then(|| BurnActivations {
         policy: a.inputs().1.clone(),
         results: Vec::new(),
     });
@@ -4037,10 +4099,16 @@ fn act_response_state(case: &str, after: bool) -> pn_epoch::compiler::CompiledSt
     .unwrap()
 }
 
-fn act_response_policy(state: &pn_epoch::compiler::CompiledState) -> Procedure {
+fn act_response_policy(state: &pn_epoch::compiler::CompiledState, case: &str) -> Procedure {
     use NumberId as N;
     let mut p = fence_procedure(state);
-    let bits = u32::try_from(N::NumbersActResponsePrecision.integer()).unwrap();
+    let precision = match case {
+        "raise" | "lower" => N::NumbersActDirectionsPrecision,
+        "emission" => N::NumbersActEmissionPrecision,
+        "switch" => N::NumbersActSwitchPrecision,
+        _ => unreachable!(),
+    };
+    let bits = u32::try_from(precision.integer()).unwrap();
     p.precision = Precision::AbsoluteWidthBits(vec![bits]);
     p.grid = vec!["1".into(), "0".into()];
     p.endpoint_grid = N::NumbersActResponseEndpointGrid.value().into();
@@ -4133,7 +4201,10 @@ fn act_response_case(case: &str) -> String {
     let before = act_response_state(case, false);
     let after = act_response_state(case, true);
     act_response_premises(&before, &after, case);
-    let p = act_response_policy(&before);
+    let p = act_response_policy(&before, case);
+    if case != "lower" {
+        standing_floor_control(&before, &after, &p, if case == "switch" { "act-switch" } else { case });
+    }
     let a = bind_procedure(&before, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
     let b = bind_procedure(&after, p.clone(), &Published(p), Limits::default()).unwrap();
     let fa = pn_epoch::fence::search(&a, None).unwrap();

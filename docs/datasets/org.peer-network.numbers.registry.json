@@ -5333,19 +5333,6 @@
     },
     {
       "display": "exact",
-      "exact": "4",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:burn-anchor-precision",
-      "num": "4",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "4"
-    },
-    {
-      "display": "exact",
       "exact": "16",
       "exact_digits": 24,
       "exact_exact": true,
@@ -5450,47 +5437,59 @@
     },
     {
       "display": "floor",
+      "exact": "704/211",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-depleted-standing-before-lower",
       "magnitude": -12,
       "num": "3.336 492 890 995",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "3668512729641/1099511627776"
+      "value": "704/211"
     },
     {
       "display": "ceiling",
+      "exact": "704/211",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-depleted-standing-before-upper",
       "magnitude": -12,
       "num": "3.336 492 890 996",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "1834256364821/549755813888"
+      "value": "704/211"
     },
     {
       "display": "floor",
+      "exact": "29 367/8 825",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-depleted-standing-after-lower",
       "magnitude": -12,
-      "num": "3.327 705 382 435",
+      "num": "3.327 705 382 436",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "3658850761801/1099511627776"
+      "value": "29367/8825"
     },
     {
       "display": "ceiling",
+      "exact": "29 367/8 825",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-depleted-standing-after-upper",
       "magnitude": -12,
       "num": "3.327 705 382 437",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "1829425380901/549755813888"
+      "value": "29367/8825"
     },
     {
       "display": "floor",
@@ -5604,25 +5603,31 @@
     },
     {
       "display": "floor",
+      "exact": "21/10",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-monotone-standing-after-lower",
       "magnitude": -12,
-      "num": "2.099 999 999 999",
-      "num_exact": false,
-      "num_relation": "≥",
+      "num": "2.100 000 000 000",
+      "num_exact": true,
+      "num_relation": "=",
       "unit": "dimensionless",
-      "value": "2308974418329/1099511627776"
+      "value": "21/10"
     },
     {
       "display": "ceiling",
+      "exact": "21/10",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-monotone-standing-after-upper",
       "magnitude": -12,
-      "num": "2.100 000 000 001",
-      "num_exact": false,
-      "num_relation": "≤",
+      "num": "2.100 000 000 000",
+      "num_exact": true,
+      "num_relation": "=",
       "unit": "dimensionless",
-      "value": "1154487209165/549755813888"
+      "value": "21/10"
     },
     {
       "display": "floor",
@@ -5651,29 +5656,29 @@
     },
     {
       "display": "exact",
-      "exact": "39 696 995",
+      "exact": "36 514 329",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-monotone-solve-before-work",
-      "num": "39 696 995",
+      "num": "36 514 329",
       "num_exact": true,
       "num_relation": "=",
       "unit": "Work",
-      "value": "39696995"
+      "value": "36514329"
     },
     {
       "display": "exact",
-      "exact": "55 353 108",
+      "exact": "50 824 450",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-monotone-solve-after-work",
-      "num": "55 353 108",
+      "num": "50 824 450",
       "num_exact": true,
       "num_relation": "=",
       "unit": "Work",
-      "value": "55353108"
+      "value": "50824450"
     },
     {
       "display": "ceiling",
@@ -5869,220 +5874,226 @@
     },
     {
       "display": "floor",
-      "exact": "822 544 904 377/274 877 906 944",
+      "exact": "822 538 438 425/274 877 906 944",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-sibling-standing-before-lower",
       "magnitude": -12,
-      "num": "2.992 400 930 004",
+      "num": "2.992 377 407 008",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "822544904377/274877906944"
+      "value": "822538438425/274877906944"
     },
     {
       "display": "ceiling",
-      "exact": "51 409 056 657/17 179 869 184",
       "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
       "id": "num:numbers:burn-sibling-standing-before-upper",
       "magnitude": -12,
-      "num": "2.992 400 937 772",
+      "num": "2.992 424 567 527",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "51409056657/17179869184"
+      "value": "1645102803619/549755813888"
     },
     {
       "display": "floor",
       "exact_digits": 24,
       "id": "num:numbers:burn-sibling-standing-after-lower",
       "magnitude": -12,
-      "num": "2.992 260 970 354",
+      "num": "2.992 228 235 773",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "3290025730245/1099511627776"
+      "value": "3289989738193/1099511627776"
     },
     {
       "display": "ceiling",
+      "exact": "411 257 713 709/137 438 953 472",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-sibling-standing-after-upper",
       "magnitude": -12,
-      "num": "2.992 260 991 670",
+      "num": "2.992 293 693 453",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "3290025753681/1099511627776"
+      "value": "411257713709/137438953472"
     },
     {
       "display": "floor",
-      "exact": "-153 895 803/1 099 511 627 776",
+      "exact": "-215 869 045/1 099 511 627 776",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-sibling-response-lower",
       "magnitude": -12,
-      "num": "-0.000 139 967 418",
+      "num": "-0.000 196 331 753",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "-153895803/1099511627776"
+      "value": "-215869045/1099511627776"
     },
     {
       "display": "ceiling",
-      "exact": "-153 863 827/1 099 511 627 776",
+      "exact": "-23 011 007/274 877 906 944",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-sibling-response-upper",
       "magnitude": -12,
-      "num": "-0.000 139 938 335",
+      "num": "-0.000 083 713 555",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "-153863827/1099511627776"
+      "value": "-23011007/274877906944"
     },
     {
       "display": "exact",
-      "exact": "553 118 857",
+      "exact": "187 664 854",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-sibling-solve-before-work",
-      "num": "553 118 857",
+      "num": "187 664 854",
       "num_exact": true,
       "num_relation": "=",
       "unit": "Work",
-      "value": "553118857"
+      "value": "187664854"
     },
     {
       "display": "exact",
-      "exact": "574 714 880",
+      "exact": "198 531 635",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-sibling-solve-after-work",
-      "num": "574 714 880",
+      "num": "198 531 635",
       "num_exact": true,
       "num_relation": "=",
       "unit": "Work",
-      "value": "574714880"
+      "value": "198531635"
     },
     {
       "display": "ceiling",
       "exact_digits": 24,
       "id": "num:numbers:burn-sibling-displacement-upper",
       "magnitude": -12,
-      "num": "0.096 883 459 542",
+      "num": "0.096 921 650 501",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "106524490305/1099511627776"
+      "value": "368982337075/3807016648704"
     },
     {
       "display": "ceiling",
-      "exact": "8 186 752 527/274 877 906 944",
+      "exact_digits": 24,
+      "id": "num:numbers:burn-sibling-target-loss-upper",
+      "magnitude": -12,
+      "num": "0.029 821 871 516",
+      "num_exact": false,
+      "num_relation": "≤",
+      "unit": "dimensionless",
+      "value": "59523654670333295/1995973144715722752"
+    },
+    {
+      "display": "ceiling",
+      "exact": "81 892 811 163/549 755 813 888",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
-      "id": "num:numbers:burn-sibling-target-loss-upper",
-      "magnitude": -12,
-      "num": "0.029 783 232 193",
-      "num_exact": false,
-      "num_relation": "≤",
-      "unit": "dimensionless",
-      "value": "8186752527/274877906944"
-    },
-    {
-      "display": "ceiling",
-      "exact_digits": 24,
       "id": "num:numbers:burn-sibling-feedback-upper",
       "magnitude": -12,
-      "num": "0.148 961 948 998",
+      "num": "0.148 962 155 733",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "163785395019/1099511627776"
+      "value": "81892811163/549755813888"
     },
     {
       "display": "floor",
       "exact_digits": 24,
       "id": "num:numbers:burn-sibling-direct-own-lower",
       "magnitude": -12,
-      "num": "0.335 455 319 190",
+      "num": "0.335 455 182 838",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "368837024049/1099511627776"
+      "value": "368836874129/1099511627776"
     },
     {
       "display": "ceiling",
+      "exact": "92 209 300 191/274 877 906 944",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-sibling-direct-own-upper",
       "magnitude": -12,
-      "num": "0.335 455 319 211",
+      "num": "0.335 455 479 912",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "368837024071/1099511627776"
+      "value": "92209300191/274877906944"
     },
     {
       "display": "floor",
       "exact_digits": 24,
       "id": "num:numbers:burn-sibling-direct-maximum-lower",
       "magnitude": -12,
-      "num": "0.335 455 319 190",
+      "num": "0.335 455 182 838",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "368837024049/1099511627776"
+      "value": "368836874129/1099511627776"
     },
     {
       "display": "ceiling",
+      "exact": "92 209 300 191/274 877 906 944",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-sibling-direct-maximum-upper",
       "magnitude": -12,
-      "num": "0.335 455 319 211",
+      "num": "0.335 455 479 912",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "368837024071/1099511627776"
+      "value": "92209300191/274877906944"
     },
     {
       "display": "floor",
       "exact_digits": 24,
       "id": "num:numbers:burn-switch-standing-before-lower",
       "magnitude": -12,
-      "num": "4.402 176 556 252",
+      "num": "4.402 174 405 080",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "2420122155561/549755813888"
+      "value": "1210060486471/274877906944"
     },
     {
       "display": "ceiling",
       "exact_digits": 24,
       "id": "num:numbers:burn-switch-standing-before-upper",
       "magnitude": -12,
-      "num": "4.402 176 647 678",
+      "num": "4.402 178 799 112",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "4840244411645/1099511627776"
+      "value": "1210061694293/274877906944"
     },
     {
       "display": "floor",
       "exact_digits": 24,
       "id": "num:numbers:burn-switch-standing-after-lower",
       "magnitude": -12,
-      "num": "4.401 494 341 732",
+      "num": "4.401 494 341 733",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "4839494208325/1099511627776"
+      "value": "169006263690597776452/38397473805237903125"
     },
     {
       "display": "ceiling",
@@ -6093,48 +6104,48 @@
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "2419747104163/549755813888"
+      "value": "169006263690597776452/38397473805237903125"
     },
     {
       "display": "floor",
-      "exact": "-93 775 415/137 438 953 472",
+      "exact": "-752 568 847/1 099 511 627 776",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-switch-response-lower",
       "magnitude": -12,
-      "num": "-0.000 682 305 945",
+      "num": "-0.000 684 457 380",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "-93775415/137438953472"
+      "value": "-752568847/1099511627776"
     },
     {
       "display": "ceiling",
-      "exact": "-187 525 699/274 877 906 944",
+      "exact": "-373 868 779/549 755 813 888",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-switch-response-upper",
       "magnitude": -12,
-      "num": "-0.000 682 214 518",
+      "num": "-0.000 680 063 347",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "-187525699/274877906944"
+      "value": "-373868779/549755813888"
     },
     {
       "display": "exact",
-      "exact": "493 431 623",
+      "exact": "326 337 808",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-switch-solve-before-work",
-      "num": "493 431 623",
+      "num": "326 337 808",
       "num_exact": true,
       "num_relation": "=",
       "unit": "Work",
-      "value": "493431623"
+      "value": "326337808"
     },
     {
       "display": "exact",
@@ -6151,53 +6162,59 @@
     },
     {
       "display": "ceiling",
-      "exact": "8 895 814 271/1 099 511 627 776",
+      "exact": "2 224 545 669/274 877 906 944",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-switch-displacement-upper",
       "magnitude": -12,
-      "num": "0.008 090 695 948",
+      "num": "0.008 092 850 000",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "8895814271/1099511627776"
+      "value": "2224545669/274877906944"
     },
     {
       "display": "ceiling",
-      "exact": "93 775 415/137 438 953 472",
+      "exact": "752 568 847/1 099 511 627 776",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-switch-target-loss-upper",
       "magnitude": -12,
-      "num": "0.000 682 305 945",
+      "num": "0.000 684 457 380",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "93775415/137438953472"
+      "value": "752568847/1099511627776"
     },
     {
       "display": "ceiling",
+      "exact": "806 113/2 621 440",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-saturated-contraction-upper",
       "magnitude": -12,
-      "num": "0.307 507 512 167",
+      "num": "0.307 507 705 689",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "3381080852557/10995116277760"
+      "value": "806113/2621440"
     },
     {
       "display": "ceiling",
+      "exact": "806 113/1 815 327",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:burn-saturated-feedback-factor-upper",
       "magnitude": -12,
-      "num": "0.444 058 986 299",
+      "num": "0.444 059 389 851",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "3381080852557/7614035425203"
+      "value": "806113/1815327"
     },
     {
       "display": "exact",
@@ -6903,19 +6920,6 @@
     },
     {
       "display": "exact",
-      "exact": "8",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:act-response-precision",
-      "num": "8",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "8"
-    },
-    {
-      "display": "exact",
       "exact": "1/65 536",
       "exact_digits": 24,
       "exact_exact": true,
@@ -7036,120 +7040,123 @@
       "exact_digits": 24,
       "id": "num:numbers:act-response-emission-standing-before-lower",
       "magnitude": -12,
-      "num": "2.300 175 700 544",
+      "num": "1.935 299 097 069",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "481427456800854791540192409521/209300296793325055170024767488"
+      "value": "14464728775597/7474156732416"
     },
     {
       "display": "ceiling",
+      "exact": "48 186 653 043/17 923 637 248",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:act-response-emission-standing-before-upper",
       "magnitude": -12,
-      "num": "2.311 723 866 285",
+      "num": "2.688 441 658 145",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "34072554954833777789/14739024609199063040"
+      "value": "48186653043/17923637248"
     },
     {
       "display": "floor",
+      "exact": "86 852 405 819/76 190 859 264",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:act-response-emission-standing-after-lower",
       "magnitude": -12,
-      "num": "1.329 466 656 494",
+      "num": "1.139 932 094 978",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "1707021884920154857767041/1283989994469393130782720"
+      "value": "86852405819/76190859264"
     },
     {
       "display": "ceiling",
       "exact_digits": 24,
       "id": "num:numbers:act-response-emission-standing-after-upper",
       "magnitude": -12,
-      "num": "1.337 476 013 946",
+      "num": "1.521 324 057 289",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "4981279546450593187709242681/3724387947531543904701972480"
+      "value": "21240726174739/13961999794176"
     },
     {
       "display": "floor",
       "exact_digits": 24,
       "id": "num:numbers:act-response-emission-response-lower",
       "magnitude": -12,
-      "num": "-0.982 257 209 791",
+      "num": "-1.548 509 563 168",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "-1080003223631/1099511627776"
+      "value": "-1702604270425/1099511627776"
     },
     {
       "display": "ceiling",
+      "exact": "-227 585 184 923/549 755 813 888",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:act-response-emission-response-upper",
       "magnitude": -12,
-      "num": "-0.962 699 686 598",
+      "num": "-0.413 975 039 778",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "-1058499499471/1099511627776"
+      "value": "-227585184923/549755813888"
     },
     {
       "display": "ceiling",
-      "exact": "11 077 395 887/8 321 499 136",
       "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
       "id": "num:numbers:act-response-emission-displacement-upper",
       "magnitude": -12,
-      "num": "1.331 177 917 099",
+      "num": "1.914 830 296 300",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "11077395887/8321499136"
+      "value": "7631995887995/3985729650688"
     },
     {
       "display": "ceiling",
-      "exact": "11 077 395 887/8 321 499 136",
       "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
       "id": "num:numbers:act-response-emission-target-loss-upper",
       "magnitude": -12,
-      "num": "1.331 177 917 099",
+      "num": "1.914 830 296 300",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "11077395887/8321499136"
+      "value": "7631995887995/3985729650688"
     },
     {
       "display": "exact",
-      "exact": "115 391 099",
+      "exact": "93 488 278",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-emission-solve-before-work",
-      "num": "115 391 099",
+      "num": "93 488 278",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "115391099"
+      "value": "93488278"
     },
     {
       "display": "exact",
-      "exact": "113 212 330",
+      "exact": "94 827 401",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-emission-solve-after-work",
-      "num": "113 212 330",
+      "num": "94 827 401",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "113212330"
+      "value": "94827401"
     },
     {
       "display": "floor",
@@ -7181,107 +7188,104 @@
     },
     {
       "display": "floor",
-      "exact": "40 782 331 749/22 601 101 312",
+      "exact": "16 570 802 495/9 219 014 656",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-lower-standing-after-lower",
       "magnitude": -12,
-      "num": "1.804 440 022 015",
+      "num": "1.797 459 176 856",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "40782331749/22601101312"
+      "value": "16570802495/9219014656"
     },
     {
       "display": "ceiling",
       "exact_digits": 24,
       "id": "num:numbers:act-response-lower-standing-after-upper",
       "magnitude": -12,
-      "num": "1.806 372 334 848",
+      "num": "1.813 635 409 081",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "25149839204704227/13922843435724800"
+      "value": "128325473625147/70755937484800"
     },
     {
       "display": "floor",
-      "exact": "-107 510 234 861/549 755 813 888",
+      "exact": "-111 347 995 073/549 755 813 888",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-lower-response-lower",
       "magnitude": -12,
-      "num": "-0.195 559 977 985",
+      "num": "-0.202 540 823 144",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "-107510234861/549755813888"
+      "value": "-111347995073/549755813888"
     },
     {
       "display": "ceiling",
-      "exact": "-106 447 934 647/549 755 813 888",
       "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
       "id": "num:numbers:act-response-lower-response-upper",
       "magnitude": -12,
-      "num": "-0.193 627 665 152",
+      "num": "-0.186 364 590 918",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "-106447934647/549755813888"
+      "value": "-204910034721/1099511627776"
     },
     {
       "display": "ceiling",
-      "exact": "1 280/491",
+      "exact": "400/153",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-lower-displacement-upper",
       "magnitude": -12,
-      "num": "2.606 924 643 585",
+      "num": "2.614 379 084 968",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "1280/491"
+      "value": "400/153"
     },
     {
       "display": "ceiling",
       "exact_digits": 24,
       "id": "num:numbers:act-response-lower-target-loss-upper",
       "magnitude": -12,
-      "num": "0.302 907 466 697",
+      "num": "0.316 571 491 379",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "20440961043817/67482526154752"
+      "value": "53255327476321/168225279049728"
     },
     {
       "display": "exact",
-      "exact": "74 545 773",
+      "exact": "69 232 777",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-lower-solve-before-work",
-      "num": "74 545 773",
+      "num": "69 232 777",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "74545773"
+      "value": "69232777"
     },
     {
       "display": "exact",
-      "exact": "121 523 154",
+      "exact": "111 581 146",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-lower-solve-after-work",
-      "num": "121 523 154",
+      "num": "111 581 146",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "121523154"
+      "value": "111581146"
     },
     {
       "display": "floor",
@@ -7313,90 +7317,93 @@
     },
     {
       "display": "floor",
+      "exact": "753 783 666 805/282 403 487 744",
       "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
       "id": "num:numbers:act-response-raise-standing-after-lower",
       "magnitude": -12,
-      "num": "2.692 897 999 949",
+      "num": "2.669 172 653 732",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "13020411971973/4835092889600"
+      "value": "753783666805/282403487744"
     },
     {
       "display": "ceiling",
       "exact_digits": 24,
       "id": "num:numbers:act-response-raise-standing-after-upper",
       "magnitude": -12,
-      "num": "2.699 553 606 907",
+      "num": "2.723 323 229 516",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "682245954760980383/252725470246502400"
+      "value": "25721965829216593/9445065334308864"
     },
     {
       "display": "floor",
-      "exact_digits": 24,
-      "id": "num:numbers:act-response-raise-response-lower",
-      "magnitude": -12,
-      "num": "0.192 897 999 949",
-      "num_exact": false,
-      "num_relation": "≥",
-      "unit": "dimensionless",
-      "value": "212093593919/1099511627776"
-    },
-    {
-      "display": "ceiling",
-      "exact": "109 705 755 579/549 755 813 888",
+      "exact": "23 250 912 485/137 438 953 472",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
-      "id": "num:numbers:act-response-raise-response-upper",
+      "id": "num:numbers:act-response-raise-response-lower",
       "magnitude": -12,
-      "num": "0.199 553 606 907",
+      "num": "0.169 172 653 731",
       "num_exact": false,
-      "num_relation": "≤",
+      "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "109705755579/549755813888"
+      "value": "23250912485/137438953472"
     },
     {
       "display": "ceiling",
-      "exact": "2 048/491",
+      "exact_digits": 24,
+      "id": "num:numbers:act-response-raise-response-upper",
+      "magnitude": -12,
+      "num": "0.223 323 229 516",
+      "num_exact": false,
+      "num_relation": "≤",
+      "unit": "dimensionless",
+      "value": "245546487605/1099511627776"
+    },
+    {
+      "display": "ceiling",
+      "exact": "640/153",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-raise-displacement-upper",
       "magnitude": -12,
-      "num": "4.171 079 429 736",
+      "num": "4.183 006 535 948",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "2048/491"
+      "value": "640/153"
     },
     {
       "display": "exact",
-      "exact": "67 480 024",
+      "exact": "62 635 711",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-raise-solve-before-work",
-      "num": "67 480 024",
+      "num": "62 635 711",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "67480024"
+      "value": "62635711"
     },
     {
       "display": "exact",
-      "exact": "100 155 642",
+      "exact": "93 392 757",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-raise-solve-after-work",
-      "num": "100 155 642",
+      "num": "93 392 757",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "100155642"
+      "value": "93392757"
     },
     {
       "display": "floor",
@@ -7492,16 +7499,16 @@
     },
     {
       "display": "exact",
-      "exact": "79 900 765",
+      "exact": "65 116 073",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-switch-solve-before-work",
-      "num": "79 900 765",
+      "num": "65 116 073",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "79900765"
+      "value": "65116073"
     },
     {
       "display": "exact",
@@ -7518,31 +7525,31 @@
     },
     {
       "display": "ceiling",
-      "exact": "21/512",
+      "exact": "7/160",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-directions-contraction-upper",
       "magnitude": -12,
-      "num": "0.041 015 625 000",
+      "num": "0.043 750 000 000",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "21/512"
+      "value": "7/160"
     },
     {
       "display": "ceiling",
-      "exact": "35/128",
+      "exact": "11/40",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:act-response-emission-contraction-upper",
       "magnitude": -12,
-      "num": "0.273 437 500 000",
+      "num": "0.275 000 000 000",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "35/128"
+      "value": "11/40"
     },
     {
       "display": "exact",
@@ -11238,6 +11245,149 @@
       "num_relation": "=",
       "unit": "bytes",
       "value": "1048576"
+    },
+    {
+      "display": "exact",
+      "exact": "18",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:burn-sibling-precision",
+      "num": "18",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "18"
+    },
+    {
+      "display": "exact",
+      "exact": "27",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:burn-switch-precision",
+      "num": "27",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "27"
+    },
+    {
+      "display": "exact",
+      "exact": "2",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:burn-depleted-precision",
+      "num": "2",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "2"
+    },
+    {
+      "display": "exact",
+      "exact": "2",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:burn-monotone-precision",
+      "num": "2",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "2"
+    },
+    {
+      "display": "exact",
+      "exact": "5",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:act-directions-precision",
+      "num": "5",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "5"
+    },
+    {
+      "display": "exact",
+      "exact": "2",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:act-emission-precision",
+      "num": "2",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "2"
+    },
+    {
+      "display": "exact",
+      "exact": "2",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:act-switch-precision",
+      "num": "2",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "2"
+    },
+    {
+      "display": "exact",
+      "exact": "3.620 010",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:burn-sibling-floor-wall-seconds",
+      "num": "3.620 010",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "3.620010"
+    },
+    {
+      "display": "exact",
+      "exact": "3.223 848",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:burn-sibling-floor-cpu-seconds",
+      "num": "3.223 848",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "3.223848"
+    },
+    {
+      "display": "exact",
+      "exact": "2.492 792",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:burn-switch-floor-wall-seconds",
+      "num": "2.492 792",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "2.492792"
+    },
+    {
+      "display": "exact",
+      "exact": "2.487 646",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:burn-switch-floor-cpu-seconds",
+      "num": "2.487 646",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "2.487646"
     }
   ]
 }

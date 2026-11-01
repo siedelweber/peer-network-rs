@@ -834,15 +834,15 @@
       "scope": "one pn-epoch::solve::burn_monotone case"
     },
     {
-      "budget_ms": 10500,
+      "budget_ms": 5000,
       "category": "case",
       "name": "calibrated-burn-sibling-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "10 500",
+          "exact": "5 000",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "10 500",
+          "num": "5 000",
           "num_exact": true,
           "num_relation": "="
         }
@@ -853,19 +853,19 @@
           "exact_digits": 32
         }
       },
-      "reason": "The saturated sibling pair retains the declared precision, independent solve replay, finite box shock and largest-direct-forcing feedback majorant.",
+      "reason": "The saturated sibling retains the measured sign floor and preceding failed-sign solves, independent replay, finite box shock and largest-direct-forcing feedback majorant; only identical activation requests under the same policy share checked factors.",
       "scope": "one pn-epoch::solve::burn_sibling case"
     },
     {
-      "budget_ms": 5500,
+      "budget_ms": 3750,
       "category": "case",
       "name": "calibrated-burn-switch-case",
       "number_forms": {
         "budget_ms": {
-          "exact": "5 500",
+          "exact": "3 750",
           "exact_exact": true,
           "exact_relation": "=",
-          "num": "5 500",
+          "num": "3 750",
           "num_exact": true,
           "num_relation": "="
         }
@@ -876,7 +876,7 @@
           "exact_digits": 32
         }
       },
-      "reason": "The burn pair retains both rung searches, the changed accepted rung, independent solve replay and the full finite-response transport.",
+      "reason": "The burn switch retains the measured full-rung separation floor and preceding indecisive-rung control, both complete solves, independent replay and full finite-response transport.",
       "scope": "one pn-epoch::solve::burn_switch case"
     },
     {
