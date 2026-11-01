@@ -14,6 +14,10 @@ use pn_records::{
 };
 use std::collections::BTreeSet;
 
+fn wall_floor_rational() -> String {
+    pins::DesignConstantId::EpochWallFloorRational.value().to_owned()
+}
+
 fn procedure() -> Procedure {
     let limits = Limits {
         work: 20_000_000,
@@ -555,10 +559,11 @@ fn reference_wall_branches() {
     use pn_graph::numeric::wall;
     use pn_records::wall::{Previous, Verdict};
     let p = wall_policy();
+    let floor = wall_floor_rational();
     for (previous, deadband, hold, capped, delivered) in [
         ("1", "0", false, true, "3/4"),
-        ("3/37", "0", true, false, "3/37"),
-        ("1/10", "0", false, false, "3/37"),
+        (floor.as_str(), "0", true, false, floor.as_str()),
+        ("1/10", "0", false, false, floor.as_str()),
         ("6/37", "1/2", true, false, "6/37"),
     ] {
         for (door, valid) in [("1", Verdict::Pass), ("1/100", Verdict::Fail)] {
@@ -599,17 +604,17 @@ fn reference_floor_binding() {
     let mut input = wall_input();
     input.width = "1/8".into();
     input.bracket = range("1/16", "1/8");
-    input.previous = Previous::Rational("3/37".into());
+    input.previous = Previous::Rational(wall_floor_rational());
     let record = wall::evaluate(&p, &input).unwrap();
     assert!(!record.indecisive);
     let target = record.target.as_ref().unwrap();
-    assert!(Q::parse(&target.upper).le(Q(3, 37)));
+    assert!(Q::parse(&target.upper).le(Q::parse(&wall_floor_rational())));
     let required = Q(128, 75);
     assert!(!independent_activation(Q::parse(&target.lower), false, true).0.le(required));
     assert!(!required.le(independent_activation(Q::parse(&target.upper), false, true).1));
     let branches = record.branches.as_ref().unwrap();
     assert!(branches.floor_binding && branches.deadband_hold);
-    assert_eq!(branches.delivered, range("3/37", "3/37"));
+    assert_eq!(branches.delivered, range(&wall_floor_rational(), &wall_floor_rational()));
     assert_eq!(wall::replay(&p, &input, &record).unwrap().branches, record.branches);
     input.floor = Floor::Ridge;
     assert_eq!(wall::evaluate(&p, &input), Err(Error::Ridge));

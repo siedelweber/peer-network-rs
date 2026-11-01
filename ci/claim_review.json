@@ -582,8 +582,8 @@
       "path": "packages/cli-common/src/observation/tests.rs",
       "claim": "CLICOMMON::claim:cli:large-content-is-addressed-once",
       "before": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt existing content is refused rather than trusted.",
-      "after": "Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from fresh written bytes rather than trusted, without file or directory synchronization or a durability promise.",
-      "review": "Read the exact assertions: digest reuse and corrupt-object replacement remain the predicates; the witness promises no artifact durability."
+      "after": "Claim: Above the inline byte threshold, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from fresh written bytes rather than trusted, without file or directory synchronization or a durability promise.",
+      "review": "The same above-threshold payload, verified content, reuse and corrupt-object repair assertions remain. The gloss names the limit by role; the public limit is pinned by the documents integration test."
     },
     {
       "operation": "cli-common::observation::tests::counter_contention",
@@ -696,6 +696,14 @@
       "before": "Claim: A saturated ordinary queue cannot consume the reserved metric-summary slot; rendezvous-controlled delivery observes the summary before draining the queued ordinary records, without extending a timeout.",
       "after": "Claim: A saturated ordinary queue cannot consume diagnostic, metric-summary, export-summary or drain-request capacity; rendezvous-controlled delivery observes these records and acknowledges the drain without extending a timeout.",
       "review": "Read the blocked-writer rendezvous: fill the ordinary queue, admit a diagnostic, both terminal summaries and an independent drain request, release the writer and wait on explicit acknowledgments. The test asserts delivery and zero loss without a wall-clock oracle."
+    },
+    {
+      "operation": "cli-common::observation::tests::trace_burst_capacity",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:trace-bursts-fit-the-bounded-queue",
+      "before": "Claim: A 241-record trace burst including its reserved metric summary survives a completely stalled writer without blocking the producer or losing records; final delivery counts equal captured rows after a rendezvous releases the writer.",
+      "after": "Claim: The declared trace burst including its reserved metric summary survives a completely stalled writer without blocking the producer or losing records; final delivery counts equal captured rows after a rendezvous releases the writer.",
+      "review": "The same stalled-writer rendezvous, finite burst, delivered count and zero-loss assertions remain. The ordinary-record count comes from the typed observation fixture dataset; the reserved summary and final status determine the expected totals. The displayed delivered count is derived from that operand by the design check. The gloss states the delivery property without copying the fixture count."
     },
     {
       "operation": "cli-common::observation::tests::wallet_owner_accounting",
@@ -1646,8 +1654,8 @@
       "path": "packages/epoch/tests/compiler.rs",
       "claim": "EPOCH::claim:compiler:recorded-permutations-preserve-joined-results",
       "before": "Claim: A recorded finite seed corpus permutes raw accepted-set presentation across every family and settlement, and reverses two independent Invitation placements. The verified package's joined result is identical, including holds; every Invitation identity remains counted. This is scoped compiler determinism, not universal partition invariance.",
-      "after": "Claim: All 24 accepted-set presentations of each of nineteen family fixtures reach validation unchanged, producing 456 distinct histories and equal joined views. Twenty compliant interleavings of two settlement chains and 24 mixed-family placements preserve compiled values; chain and time evidence are checked against each changed input separately. This is finite compiler determinism, not universal partition invariance.",
-      "review": "The validator-retained identities are asserted in supplied order. Exhaustive presentation keys count 456 distinct histories, mixed-family placement keys count 24, and the two three-act settlement chains have all 20 compliant interleavings. Published chain and time evidence are checked against each changed input before comparing compiler values; presentation-only comparisons retain all evidence."
+      "after": "Claim: Every accepted-set presentation of each authored family fixture reaches validation unchanged, producing distinct histories and equal joined views. Every compliant interleaving of the declared settlement chains and every mixed-family placement preserves compiled values; chain and time evidence are checked against each changed input separately. This is finite compiler determinism, not universal partition invariance.",
+      "review": "The validator-retained identities are asserted in supplied order. Exhaustive presentation keys, mixed-family placement keys and compliant settlement-chain interleavings retain their typed expected counts. Published chain and time evidence are checked against each changed input before comparing compiler values; presentation-only comparisons retain all evidence. The gloss states the property without copying those numeric pins."
     },
     {
       "operation": "pn-epoch::compiler::compiler_splits",

@@ -105,7 +105,7 @@ fn compile(acts: &[CandidateAct], rates: &BTreeMap<String, Fraction>) -> Compile
     }
     let nu = Fraction::parse(N::NumbersPartitionNumeraire.value());
     // This is the tagged structural floor, not a fixture-selected wall.
-    let wall = Fraction::parse("3/37");
+    let wall = Fraction::parse(&wall_floor_rational());
     let burns: Vec<_> = counts
         .iter()
         .rev()
@@ -115,7 +115,7 @@ fn compile(acts: &[CandidateAct], rates: &BTreeMap<String, Fraction>) -> Compile
         })
         .collect();
     let borrowed: Vec<_> = burns.iter().map(|(name, amount)| (*name, amount.as_str())).collect();
-    compile_funded(acts, &borrowed, "3/37")
+    compile_funded(acts, &borrowed, &wall_floor_rational())
 }
 
 fn compile_funded(acts: &[CandidateAct], borrowed: &[(&str, &str)], wall_text: &str) -> CompiledState {
@@ -436,7 +436,7 @@ fn admitted(state: &CompiledState, record: &SolveRecord) {
     assert!(u64::try_from(acts.len()).unwrap() <= N::NumbersPartitionActCapacity.integer());
     let mut budget = Budget::new(limits()).unwrap();
     let mut sum = Rational::parse("0", &mut budget).unwrap();
-    let wall = Rational::parse("3/37", &mut budget).unwrap();
+    let wall = Rational::parse(&wall_floor_rational(), &mut budget).unwrap();
     for act in acts {
         let lower = Rational::parse(&result.standing[&act.id().author].lower, &mut budget).unwrap();
         assert!(lower.compare(&wall, &mut budget).unwrap().is_ge());
@@ -525,7 +525,7 @@ fn receiving_pairs(f: Receiving, state: &CompiledState, record: &SolveRecord, re
             .fold(Fraction(0, 1), Fraction::plus)
             .times(count);
         let balance = Fraction::parse(state.view().ledger.balances[&Address((*name).clone())].exact());
-        let price = Fraction::parse("3/37").times(Fraction::parse(N::NumbersPartitionNumeraire.value()));
+        let price = Fraction::parse(&wall_floor_rational()).times(Fraction::parse(N::NumbersPartitionNumeraire.value()));
         let capacity = if count.order(balance.over(price)).is_lt() {
             count
         } else {
@@ -893,7 +893,7 @@ fn partition_box_transport(
                         upper: coordinate.upper().exact_string(budget).unwrap(),
                     },
                     bleed_squared: NumberId::NumbersReferenceSquaredBleed.value().into(),
-                    wall: Some("3/37".into()),
+                    wall: Some(wall_floor_rational()),
                     wall_enclosure: None,
                     quantity: Quantity::Hop {
                         strength: template.rung.clone(),
@@ -1325,7 +1325,7 @@ fn conservation_state() -> CompiledState {
         append(&mut acts, "Opinion", source, target);
     }
     acts.reverse();
-    let wall = Fraction::parse("3/37");
+    let wall = Fraction::parse(&wall_floor_rational());
     compile(
         &acts,
         &BTreeMap::from([
@@ -1661,7 +1661,7 @@ fn sibling_outside_paths() {
         );
         assert!(
             Fraction::parse(&state.view().support.ranges["j"].minimum)
-                .order(Fraction::parse("3/37"))
+                .order(Fraction::parse(&wall_floor_rational()))
                 .is_gt()
         );
     }

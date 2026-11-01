@@ -179,6 +179,7 @@ fn compare(path: &Path, bytes: &[u8], write: bool) -> Result<bool> {
 fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
     let mut projections = Vec::new();
     let mut namespaces = BTreeSet::new();
+    let mut numeric_input = None;
     for path in files(&root.join("docs/inputs"))? {
         if path.extension().is_none_or(|ext| ext != "toml") {
             return Err(format!("input carrier: expected TOML: {}", path.display()).into());
@@ -187,16 +188,25 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
         let mut dataset = envelope::input(&input).map_err(|error| format!("{}: {error}", path.display()))?;
         numbers::project(&mut dataset)?;
         if dataset.namespace == numbers::NAMESPACE {
-            projections.push((
-                root.join("packages/documents/src/pins.rs"),
-                numbers::pins(&dataset, &input)?.into_bytes(),
-            ));
+            numeric_input = Some((dataset.clone(), input));
         }
         if !namespaces.insert(dataset.namespace.clone()) {
             return Err(format!("duplicate dataset: {}", dataset.namespace).into());
         }
         let destination = root.join("docs/datasets").join(format!("{}.json", dataset.namespace));
         projections.push((destination, envelope::bytes(&dataset)?));
+    }
+    if let Some((dataset, input)) = numeric_input {
+        let carrier = projections
+            .iter()
+            .find(|(path, _)| {
+                path.file_name()
+                    .is_some_and(|name| name == "org.peer-network.design.constants.json")
+            })
+            .map(|(_, bytes)| std::str::from_utf8(bytes))
+            .transpose()?;
+        let pins = numbers::pins(&dataset, &input, carrier)?.into_bytes();
+        projections.push((root.join("packages/documents/src/pins.rs"), pins));
     }
     let expected: BTreeSet<_> = projections.iter().map(|(path, _)| path.clone()).collect();
     let mut findings = Vec::new();

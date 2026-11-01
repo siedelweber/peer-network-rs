@@ -300,13 +300,13 @@ fn public_content_encoding() {
     assert_eq!(content::structured(&largest), json!({"atom":largest}));
 }
 
-/// Claim: Above 64 KiB, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from fresh written bytes rather than trusted, without file or directory synchronization or a durability promise.
+/// Claim: Above the inline byte threshold, a complete JSON value becomes a digest-verified artifact reference; repeat publication reuses one object and corrupt content is atomically repaired from fresh written bytes rather than trusted, without file or directory synchronization or a durability promise.
 /// ´claim:cli:large-content-is-addressed-once´
 /// ´test:unit:content-artifact-publication´
 #[test]
 fn content_artifact_publication() {
     let directory = tempfile::tempdir().unwrap();
-    let original = json!({"payload":"x".repeat(65_536)});
+    let original = json!({"payload":"x".repeat(INLINE_BYTES)});
     let mut first = original.clone();
     content::compact(&mut first, directory.path()).unwrap();
     let artifact = &first["payload"]["artifact"];
@@ -357,7 +357,7 @@ fn artifact_root_survives_directory_change() {
         let changed = initial.join("changed");
         std::fs::create_dir(&changed).unwrap();
         std::env::set_current_dir(&changed).unwrap();
-        observation.emit(json!({"kind":"trace","payload":"x".repeat(65_536)}));
+        observation.emit(json!({"kind":"trace","payload":"x".repeat(INLINE_BYTES)}));
         let (done, drained) = mpsc::sync_channel(1);
         observation.flush_sender.send(done).unwrap();
         observation.sender.send(Message::Wake).unwrap();
@@ -554,7 +554,7 @@ fn status_after_stalled_delivery() {
     assert_eq!(status["drain_unavailable"], 0);
 }
 
-/// Claim: A 241-record trace burst including its reserved metric summary survives a completely stalled writer without blocking the producer or losing records; final delivery counts equal captured rows after a rendezvous releases the writer.
+/// Claim: The declared trace burst including its reserved metric summary survives a completely stalled writer without blocking the producer or losing records; final delivery counts equal captured rows after a rendezvous releases the writer.
 /// ´claim:cli:trace-bursts-fit-the-bounded-queue´
 /// ´test:unit:trace-burst-capacity´
 #[test]
@@ -579,6 +579,20 @@ fn trace_burst_capacity() {
             Ok(())
         }
     }
+    let fixtures: Value = serde_json::from_str(include_str!(
+        "../../../../docs/datasets/org.peer-network.observe.fixtures.json"
+    ))
+    .unwrap();
+    let ordinary = fixtures["rows"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["name"] == "trace-burst")
+        .unwrap()["ordinary_records"]
+        .as_u64()
+        .unwrap();
+    // A reserved metric summary is delivered too; the final status is not delivered content.
+    let delivered = ordinary + 1;
     let capture = Capture::default();
     let (entered, entry) = mpsc::sync_channel(1);
     let (release, released) = mpsc::sync_channel(1);
@@ -596,7 +610,7 @@ fn trace_burst_capacity() {
     observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
     observation.emit(json!({"kind":"trace","public":0}));
     entry.recv_timeout(Duration::from_secs(30)).unwrap();
-    for index in 1..240 {
+    for index in 1..ordinary {
         observation.emit(json!({"kind":"trace","public":index}));
     }
     assert_eq!(observation.lost.load(Ordering::Relaxed), 0);
@@ -608,10 +622,10 @@ fn trace_burst_capacity() {
         .filter(|row| !row.is_empty())
         .map(|row| serde_json::from_slice(row).unwrap())
         .collect();
-    assert_eq!(rows.len(), 242);
+    assert_eq!(rows.len(), usize::try_from(delivered).unwrap() + 1);
     let status = rows.last().unwrap();
     assert_eq!(status["kind"], "observation_status");
-    assert_eq!(status["delivered_records"], 241);
+    assert_eq!(status["delivered_records"], delivered);
     assert_eq!(status["lost_records"], 0);
     assert_eq!(status["delivered_records"], rows.len() - 1);
 }
@@ -1492,7 +1506,7 @@ fn metric_registry() {
         metrics::counter!("records__root__sig__design__records__started_operations", "operation" => "unregistered").increment(1);
     });
     let observed = recorder.snapshot(false);
-    assert!(serde_json::to_vec(&observed).unwrap().len() < 65_536);
+    assert!(serde_json::to_vec(&observed).unwrap().len() < INLINE_BYTES);
     assert_eq!(observed["instruments"].as_array().unwrap().len(), 2);
     let snapshot = recorder.snapshot(true);
     let rows = snapshot["instruments"].as_array().unwrap();

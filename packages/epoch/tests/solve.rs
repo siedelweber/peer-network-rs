@@ -9,6 +9,10 @@ mod joined;
 #[path = "solve/partitions.rs"]
 mod partitions;
 
+fn wall_floor_rational() -> String {
+    pins::DesignConstantId::EpochWallFloorRational.value().to_owned()
+}
+
 fn burn_reference(acts: &mut Vec<pn_records::CandidateAct>, source: &str, target: &str, count: u64) {
     for _ in 0..count {
         let sequence = u64::try_from(acts.len()).unwrap() + 1;
@@ -1547,7 +1551,7 @@ fn enclosed_refusals(
         Err(pn_epoch::conserved::Error::Scope)
     ));
     let mut input = enclosed_definition();
-    input.previous = pn_records::wall::Previous::Rational("3/37".into());
+    input.previous = pn_records::wall::Previous::Rational(wall_floor_rational());
     let checked = reference::bind(bound, input.clone(), &PublishedReference(input)).unwrap();
     let capped = checked.evaluate().unwrap();
     assert!(matches!(
@@ -1608,7 +1612,7 @@ fn reference_wall_binding() {
         maximum_work: NumberId::NumbersZeroWidthReferenceWorkCeiling.integer(),
         maximum_replay_work: NumberId::NumbersZeroWidthReferenceWorkCeiling.integer(),
         floor: Floor::Rational,
-        previous: Previous::Rational("3/37".into()),
+        previous: Previous::Rational(wall_floor_rational()),
         door: "1".into(),
         absolute_cap: "1/4".into(),
         relative_cap: "1/2".into(),

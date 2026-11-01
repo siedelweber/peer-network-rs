@@ -139,7 +139,7 @@ class Correspondence(unittest.TestCase):
         shutil.copytree(REPOSITORY / 'docs/datasets', self.root / 'docs/datasets')
         (self.root / 'docs/inputs').mkdir()
         shutil.copy(REPOSITORY / 'docs/inputs/numbers.toml', self.root / 'docs/inputs/numbers.toml')
-        for name in ('devperf-budgets', 'devperf-measurements', 'devperf-registry', 'devperf-close-measurements'):
+        for name in ('devperf-budgets', 'devperf-measurements', 'devperf-registry', 'devperf-close-measurements', 'observe-fixtures'):
             shutil.copy(REPOSITORY / f'docs/inputs/{name}.toml', self.root / f'docs/inputs/{name}.toml')
         (self.root / '.linter').mkdir()
         shutil.copy(REPOSITORY / '.linter/owners.toml', self.root / '.linter/owners.toml')
@@ -204,6 +204,7 @@ class Correspondence(unittest.TestCase):
                                 ('buildgraph-admission-obligation-count', '175'),
                                 ('devperf-profile-default-test-median', '6.9'),
                                 ('devperf-record-margin-percent', '40'),
+                                ('observe-burst-delivered-record-count', '240'),
                                 ('epoch-recipient-history-count', '21'),
                                 ('epoch-invitation-radicand', '0.56' + '1'),
                                 ('epoch-family-presentation-count', '23'),
@@ -221,6 +222,15 @@ class Correspondence(unittest.TestCase):
             result = self.check()
             self.assertNotEqual(result.returncode, 0, name)
             self.assertIn('derived rate differs', result.stderr)
+        source.write_text(source_original)
+        for invalid in ('3/2', '-1'):
+            changed = re.sub(r'(id = "num:numbers:epoch-settlement-chain-count"\nvalue = ")[^"]+',
+                             lambda match: match[1] + invalid, source_original)
+            self.assertNotEqual(changed, source_original)
+            source.write_text(changed)
+            result = self.check()
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('chain count must be a nonnegative integer', result.stderr)
         source.write_text(source_original)
         sample = next(row['value'] for row in original['rows'] if row['id'] == 'num:numbers:rate-fast-sample-seconds')
         source.write_text(source.read_text().replace('value = '+json.dumps(sample), 'value = "1"'))

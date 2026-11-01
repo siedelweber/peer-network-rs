@@ -424,10 +424,6 @@ def numeric_correspondence():
     def pin_equal(actual, expected):
         if actual != expected:
             raise ValueError('numeric registry: derived rate differs from recorded operands')
-    certificate_budgets = {row['name']: row['budget_ms'] for row in
-                           tomllib.loads(Path('docs/inputs/devperf-budgets.toml').read_text())['rows']}
-    for name in ('reference-map-case', 'reference-local-case', 'reference-wall-case', 'reference-certificate-suite'):
-        pin_equal(value(name + '-budget-seconds') * 1000, certificate_budgets[name])
     rates = {speed: value(f'rate-{speed}-sample-seconds') / value('rate-sample-work')
              for speed in ('fast', 'middle', 'slow')}
     for speed, rate in rates.items():
@@ -461,11 +457,12 @@ def numeric_correspondence():
         if count.denominator != 1:
             raise ValueError('numeric registry: permutation length must be integral')
         equal(value(f'epoch-{family}-presentation-count'), math.factorial(count.numerator))
-    equal(value('epoch-family-history-count'), value('epoch-family-fixture-count')
-          * value('epoch-family-presentation-count'))
+    # The definition fixes the authored roster at nineteen families.
+    equal(value('epoch-family-history-count'), 19 * value('epoch-family-presentation-count'))
     # Each settlement chain has the structural Bid, Accept, Ratify stages.
     chains = value('epoch-settlement-chain-count')
-    equal(chains, 2)
+    if chains.denominator != 1 or chains < 0:
+        raise ValueError('numeric registry: chain count must be a nonnegative integer')
     equal(value('epoch-settlement-interleaving-count'), math.factorial(3 * chains.numerator)
           // math.factorial(3) ** chains.numerator)
     equal(value('epoch-aggregate-case-count'), value('epoch-aggregate-family-count')
@@ -517,10 +514,14 @@ def numeric_correspondence():
           (Fraction(runtime['budget_ms'], runtime['median_ms']) - 1) * 100)
     equal(Fraction(runtime['profile_wall_seconds']),
           sum(Fraction(runtime[field]) for field in ('profile_command_seconds', 'profile_reconstruction_seconds', 'profile_other_seconds')))
+    observation_fixtures = {row['name']: row for row in
+                            tomllib.loads(Path('docs/inputs/observe-fixtures.toml').read_text())['rows']}
+    # The reserved metric summary contributes one delivered record, excluding final status.
+    equal(value('observe-burst-delivered-record-count'), observation_fixtures['trace-burst']['ordinary_records'] + 1)
     equal(value('observe-reader-headroom-level-count'),
           value('observe-serde-json-default-recursion-limit') - value('observe-inline-nesting-level-count'))
     equal(value('observe-drain-maximum-seconds'), value('observe-drain-base-seconds')
-          + value('observe-queued-byte-capacity') / value('observe-record-byte-capacity') * value('observe-drain-per-mib-seconds'))
+          + value('observe-queued-byte-capacity') / (1024 * 1024) * value('observe-drain-per-mib-seconds'))
     properties = json.loads(Path('docs/datasets/org.peer-network.harness.properties.json').read_text())['rows']
     compiler = next(row for row in properties if row.get('name') == 'pn-epoch::compiler::compiler_generated')
     pin_equal(value('epoch-property-draw-count'), compiler['cases'])

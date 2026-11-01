@@ -1,0 +1,30 @@
+{
+  "namespace": "org.peer-network.observe.fixtures",
+  "version": [
+    1,
+    0,
+    0
+  ],
+  "rows": [
+    {
+      "name": "trace-burst",
+      "number_forms": {
+        "ordinary_records": {
+          "exact": "240",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "240",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "ordinary_records": {
+          "display": "exact",
+          "exact_digits": 3
+        }
+      },
+      "ordinary_records": 240
+    }
+  ]
+}

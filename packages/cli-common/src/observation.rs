@@ -644,10 +644,7 @@ impl Observation {
         // share stderr and its write lock; the final write can block there.
         let charged = self.queued_bytes.load(Ordering::Relaxed);
         let millis = (DRAIN_BASE_SECONDS
-            + charged
-                .div_ceil(RECORD_LIMIT as u64)
-                .min((CAPTURE_LIMIT / RECORD_LIMIT) as u64)
-                * DRAIN_SECONDS_PER_MIB)
+            + charged.div_ceil(1024 * 1024).min((CAPTURE_LIMIT / (1024 * 1024)) as u64) * DRAIN_SECONDS_PER_MIB)
             * 1000;
         self.flush_for(Duration::from_millis(millis));
         let publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);

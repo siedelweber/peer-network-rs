@@ -43,6 +43,10 @@ fn observation_number_pins() -> Result<()> {
     use pins::NumberId;
     for (actual, id) in [
         (observation::RECORD_LIMIT, NumberId::NumbersObserveRecordByteCapacity),
+        (
+            cli_common::observation_export::CAPACITY,
+            NumberId::NumbersObserveBridgeQueueRecordCapacity,
+        ),
         (observation::INLINE_BYTES, NumberId::NumbersObserveInlineByteThreshold),
         (observation::INLINE_NESTING, NumberId::NumbersObserveInlineNestingLevelCount),
         (observation::CAPTURE_LIMIT, NumberId::NumbersObserveQueuedByteCapacity),
@@ -62,6 +66,12 @@ fn observation_number_pins() -> Result<()> {
     assert_eq!(
         observation::DRAIN_SECONDS_PER_MIB,
         NumberId::NumbersObserveDrainPerMibSeconds.integer()
+    );
+    let drain = cli_common::observation_export::COLLECTION_TIMEOUT;
+    let exact_seconds = format!("{}.{:09}", drain.as_secs(), drain.subsec_nanos());
+    assert_eq!(
+        exact_seconds.trim_end_matches('0').trim_end_matches('.'),
+        NumberId::NumbersObserveBridgeDrainSeconds.value()
     );
     let depth = usize::try_from(NumberId::NumbersObserveSerdeJsonDefaultRecursionLimit.integer())?;
     let nested = |depth| format!("{}0{}", "[".repeat(depth), "]".repeat(depth));
@@ -155,6 +165,18 @@ fn carrier_number_forms(root: &Path) -> Result<()> {
 #[test]
 fn number_registry() -> Result<()> {
     observation_number_pins()?;
+    let constants: serde_json::Value =
+        serde_json::from_str(include_str!("../../../docs/datasets/org.peer-network.design.constants.json"))?;
+    let floor = constants["rows"]
+        .as_array()
+        .ok_or("constant rows")?
+        .iter()
+        .find(|row| row["id"] == "const.epoch.wall_floor_rational")
+        .ok_or("floor declaration")?;
+    assert_eq!(
+        pins::DesignConstantId::EpochWallFloorRational.value(),
+        floor["definition"]["expr"].as_str().ok_or("floor expression")?
+    );
     let input: toml::Value = toml::from_str(include_str!("../../../docs/inputs/numbers.toml"))?;
     let rows = input["rows"].as_array().ok_or("registry rows")?;
     let pin = rows

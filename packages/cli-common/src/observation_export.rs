@@ -20,7 +20,10 @@ use opentelemetry_sdk::trace::{SdkTracerProvider, Span, SpanData, SpanExporter, 
 
 use crate::secrets::{PrivateString, SecretBox};
 
-const CAPACITY: usize = 64;
+/// Bounded exporter queue slots, independent of ordinary observation delivery.
+pub const CAPACITY: usize = 64;
+/// Maximum wait for the exporter collection rendezvous.
+pub const COLLECTION_TIMEOUT: Duration = Duration::from_millis(100);
 
 /// Admitted transport receives a public OTLP request and a protected credential.
 /// It must preserve secret typing in retained state and errors, enforce its own
@@ -277,7 +280,7 @@ impl Bridge {
     }
     pub(super) fn flush(&self) {
         let (done, wait) = mpsc::sync_channel(1);
-        if self.sender.try_send(Message::Collect(done)).is_err() || wait.recv_timeout(Duration::from_millis(100)).is_err() {
+        if self.sender.try_send(Message::Collect(done)).is_err() || wait.recv_timeout(COLLECTION_TIMEOUT).is_err() {
             self.lost.fetch_add(1, Ordering::Relaxed);
         }
     }

@@ -3674,13 +3674,6 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:epoch-family-fixture-count"
-value = "19"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
 id = "num:numbers:epoch-family-fixture-act-count"
 value = "4"
 unit = "dimensionless"
@@ -4347,36 +4340,6 @@ exact_digits = 24
 # Reference-certificate tier budget quantities.
 
 [[rows]]
-id = "num:numbers:reference-map-case-budget-seconds"
-value = "15"
-unit = "seconds"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-local-case-budget-seconds"
-value = "60"
-unit = "seconds"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-case-budget-seconds"
-value = "25"
-unit = "seconds"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-certificate-suite-budget-seconds"
-value = "90"
-unit = "seconds"
-display = "exact"
-exact_digits = 24
-
-# Receiving and partition comparison quantities.
-
-[[rows]]
 id = "num:numbers:partition-numeraire"
 value = "1/10"
 unit = "dimensionless"
@@ -4596,13 +4559,6 @@ exact_digits = 100
 [[rows]]
 id = "num:numbers:receiving-showcase-focused-seconds"
 value = "6"
-unit = "seconds"
-display = "exact"
-exact_digits = 100
-
-[[rows]]
-id = "num:numbers:receiving-showcase-case-budget-seconds"
-value = "15"
 unit = "seconds"
 display = "exact"
 exact_digits = 100

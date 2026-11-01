@@ -1,0 +1,7 @@
+namespace = "org.peer-network.observe.fixtures"
+version = [1, 0, 0]
+
+[[rows]]
+name = "trace-burst"
+ordinary_records = 240
+numeric_display = { ordinary_records = { display = "exact", exact_digits = 3 } }

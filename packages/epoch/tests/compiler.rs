@@ -535,16 +535,14 @@ fn placement_corpus() {
     assert_eq!(history.non_compliance(), []);
 }
 
-/// Claim: All 24 accepted-set presentations of each of nineteen family fixtures reach validation unchanged, producing 456 distinct histories and equal joined views. Twenty compliant interleavings of two settlement chains and 24 mixed-family placements preserve compiled values; chain and time evidence are checked against each changed input separately. This is finite compiler determinism, not universal partition invariance.
+/// Claim: Every accepted-set presentation of each authored family fixture reaches validation unchanged, producing distinct histories and equal joined views. Every compliant interleaving of the declared settlement chains and every mixed-family placement preserves compiled values; chain and time evidence are checked against each changed input separately. This is finite compiler determinism, not universal partition invariance.
 /// ´claim:compiler:recorded-permutations-preserve-joined-results´
 /// ´test:integration:compiler-properties´
 #[test]
 fn compiler_properties() {
     let mut distinct = BTreeSet::new();
-    assert_eq!(
-        FAMILIES.len(),
-        usize::try_from(N::NumbersEpochFamilyFixtureCount.integer()).unwrap()
-    );
+    // The authored family roster is fixed by the definition.
+    assert_eq!(FAMILIES.len(), 19);
     for (family, _, _) in FAMILIES {
         let acts = family_case(family);
         assert_eq!(
