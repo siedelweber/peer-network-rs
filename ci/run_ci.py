@@ -120,6 +120,8 @@ def main(module):
 
     class Result(unittest.TextTestResult):
         def startTest(self, test):
+            from calibrate import case_usage
+            self.cpu_started = case_usage()
             self.started = time.monotonic()
             self.outcome = 'passed'
             self.failure_text = ''
@@ -158,10 +160,13 @@ def main(module):
             super().addSubTest(test, subtest, err)
 
         def stopTest(self, test):
+            from calibrate import case_usage, case_cpu
+            cpu = case_cpu(self.cpu_started, case_usage())
             ledger.finish('ci::'+test.id(), self.outcome, self.failure_text)
             duration = (time.monotonic()-self.started)*1000
             raw = event('ci::'+test.id(), registry.levels[declared['level']]['budget'], duration,
                         self.outcome, source, CONFIGURATION)
+            raw.update(cpu)
             if raw['operation'] == SERVICE_CASE:
                 raw.update(reason=selection['reason'], selection_inputs=selection['inputs'],
                            selection_admission=os.environ.get('PN_BUILDGRAPH_ADMISSION', '0'))

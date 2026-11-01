@@ -32,6 +32,51 @@ def result(registry):
 
 
 class Harness(unittest.TestCase):
+    def calibration_cpu(self):
+        import json
+        import os
+        from pathlib import Path
+        import sys
+        import tempfile
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from calibrate import case_runner, case_cpu, join_cpu, comparison
+        self.assertEqual(case_cpu((2, 3), (5, 7)), dict(own_user_s=3, own_sys_s=4,
+                         cpu_scope='case-process-and-reaped-descendants'))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)
+            for status in (0, 7):
+                env = dict(PN_CALIBRATION_CASE_CPU=directory, PN_HARNESS_SOURCE='current',
+                           NEXTEST_BINARY_ID='example', NEXTEST_TEST_NAME='case')
+                usage = [SimpleNamespace(ru_utime=2, ru_stime=3), SimpleNamespace(ru_utime=5, ru_stime=7)]
+                with patch.dict(os.environ, env), patch('calibrate.resource.getrusage', side_effect=usage):
+                    self.assertEqual(case_runner([sys.executable, '-c', f'raise SystemExit({status})']), status)
+                record = dict(operation='example::case', outcome='passed' if status == 0 else 'failed', duration_ms=1)
+                join_cpu([record], path, 'current')
+                self.assertEqual((record['own_user_s'], record['own_sys_s']), (3, 4))
+                self.assertGreaterEqual(record['duration_ms'], 0)
+                with self.assertRaisesRegex(StructuralError, 'identity'):
+                    join_cpu([record], path, 'other')
+                original, = path.glob('*.json')
+                duplicate = path/'duplicate.json'
+                duplicate.write_text(original.read_text())
+                with self.assertRaisesRegex(StructuralError, 'union'):
+                    join_cpu([record], path, 'current')
+                duplicate.unlink()
+                value = json.loads(original.read_text());value['own_user_s'] = -1
+                original.write_text(json.dumps(value))
+                with self.assertRaisesRegex(StructuralError, 'negative'):
+                    join_cpu([record], path, 'current')
+                original.unlink()
+                with self.assertRaisesRegex(StructuralError, 'union'):
+                    join_cpu([record], path, 'current')
+        record = dict(operation='pn-epoch::solve::fixture', scope='case')
+        before, after = [dict(source=source, records=[record]) for source in ('before', 'after')]
+        for paths, changed in ((['packages/epoch/tests/common/joined.rs'], True), (['docs/inputs/numbers.toml'], False)):
+            result = comparison(before, after, paths)
+            self.assertEqual(result['source_range'], 'before..after')
+            self.assertEqual(result['cases'][0]['code_changed'], changed)
+
     def test_wallet_commit_isolation(self):
         """Claim: Wallet conformance reads a clean checkout of its source commit even when its parent is dirty before cloning and changes during execution; identical committed inputs yield identical result artifacts, each published by atomic replacement to a distinct step-owned path without modifying shared findings.
         ´claim:harness:wallet-inputs-are-commit-scoped´
@@ -200,7 +245,7 @@ assert (root/'payload').read_text() == 'committed'
             self.assertEqual(len(output.getvalue().splitlines()), len(records))
 
     def test_reference_tier(self):
-        """Claim: Explicit reference-tier groups retain case identity, level, implementation and outcome while applying declared case budgets. Fast budgets stay unchanged; absent policies, invalid budgets, changed result budgets and missing or duplicate grouped completions refuse. Interleaved case arrivals bound each group's own wall envelope.
+        """Claim: Explicit reference-tier groups retain case identity, level, implementation and outcome while applying declared case budgets. Fast budgets stay unchanged; absent policies, invalid budgets, changed result budgets and missing or duplicate grouped completions refuse. Interleaved case arrivals bound each group's own wall envelope. Calibration joins each measured nextest case's CPU and wall to its source and outcome, refuses missing, duplicate, negative or stale CPU evidence, and names the source range and conservative code-change flags in comparisons.
         ´claim:harness:reference-tier-retains-required-case-evidence´
         ´test:integration:test-reference-tier´
         """
@@ -252,6 +297,7 @@ assert (root/'payload').read_text() == 'committed'
                         [dict(calibrated[0], outcome='held'), calibrated[1]]):
             with self.assertRaises(StructuralError):
                 complete(registry, invalid)
+        self.calibration_cpu()
         thresholds = declarations()
         start = thresholds['unit']['budget_ms']
         fast_end = thresholds['crate']['budget_ms']

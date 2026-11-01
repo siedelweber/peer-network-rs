@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import resource
+import shlex
 import subprocess
 import sys
 import time
@@ -17,6 +18,74 @@ from isolation import workspace
 from run_ci import publish_wallet
 from run_tests import contract_events, doctest_events, instant, nextest_events, split_main
 from properties import environment as property_environment
+
+
+def case_usage():
+    """Process and reaped-child CPU; serial Python cases have no sibling case."""
+    own = resource.getrusage(resource.RUSAGE_SELF)
+    children = resource.getrusage(resource.RUSAGE_CHILDREN)
+    return own.ru_utime + children.ru_utime, own.ru_stime + children.ru_stime
+
+
+def case_cpu(before, after):
+    return dict(own_user_s=after[0]-before[0], own_sys_s=after[1]-before[1],
+                cpu_scope='case-process-and-reaped-descendants')
+
+
+def case_runner(argv):
+    """Meter the single nextest child, excluding this Python runner's startup."""
+    name = os.environ.get('NEXTEST_TEST_NAME')
+    if name is None:
+        os.execv(argv[0], argv)
+    before = resource.getrusage(resource.RUSAGE_CHILDREN)
+    started = time.monotonic()
+    result = subprocess.run(argv, check=False)
+    elapsed = time.monotonic()-started
+    after = resource.getrusage(resource.RUSAGE_CHILDREN)
+    row = dict(operation=os.environ['NEXTEST_BINARY_ID']+'::'+name,
+               source=os.environ['PN_HARNESS_SOURCE'], status=result.returncode,
+               duration_ms=elapsed*1000, own_user_s=after.ru_utime-before.ru_utime,
+               own_sys_s=after.ru_stime-before.ru_stime,
+               cpu_scope='case-process-and-reaped-descendants')
+    destination = Path(os.environ['PN_CALIBRATION_CASE_CPU'])/f'{os.getpid()}.json'
+    with destination.open('x') as output:
+        json.dump(row, output)
+    return result.returncode if result.returncode >= 0 else 128-result.returncode
+
+
+def join_cpu(cases, directory, source):
+    measured = [json.loads(path.read_text()) for path in directory.glob('*.json')]
+    by_case = {row['operation']:row for row in measured}
+    if len(by_case) != len(measured) or set(by_case) != {row['operation'] for row in cases}:
+        raise StructuralError('calibration case CPU union differs')
+    for case in cases:
+        row = by_case[case['operation']]
+        if row['source'] != source or (row['status'] == 0) != (case['outcome'] == 'passed'):
+            raise StructuralError('calibration case CPU identity or outcome differs')
+        if any(row[key] < 0 for key in ('duration_ms', 'own_user_s', 'own_sys_s')):
+            raise StructuralError('calibration case CPU is negative')
+        case['runner_duration_ms'] = case['duration_ms']
+        case.update({key:row[key] for key in ('duration_ms', 'own_user_s', 'own_sys_s', 'cpu_scope')})
+
+
+def comparison(before, after, changed):
+    """Flag package-code changes conservatively, not as a causal attribution."""
+    old = {row['operation']:row for row in before['records'] if row.get('scope') == 'case'}
+    rows = []
+    for row in after['records']:
+        if row.get('scope') != 'case' or row['operation'] not in old:
+            continue
+        operation = row['operation']
+        package = operation.split('::')[0].removeprefix('pn-')
+        paths = [path for path in changed if path.startswith(f'packages/{package}/')
+                 or path in {'ci/calibrate.py', 'ci/run_ci.py', 'ci/run_tests.py'}
+                 or operation.startswith('ci::'+Path(path).stem+'.')]
+        rows.append(dict(operation=operation, before=old[operation], after=row,
+                         code_changed=bool(paths), changed_paths=paths,
+                         declaration_changes=[path for path in changed if path.startswith('docs/inputs/')]))
+    return dict(source_before=before['source'], source_after=after['source'],
+                source_range=before['source']+'..'+after['source'], changed_files=changed,
+                change_scope='conservative package or harness code; not causal attribution', cases=rows)
 
 
 def selection(inventory, cases):
@@ -159,6 +228,14 @@ def run():
             else:
                 raise StructuralError('unknown calibration runner')
             suite_env = dict(env)
+            if runner == 'nextest':
+                cpu_directory = (directory/f'case-cpu-{len(contexts)}').resolve()
+                cpu_directory.mkdir()
+                suite_env['PN_CALIBRATION_CASE_CPU'] = str(cpu_directory)
+                runner_key = 'CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUNNER'
+                if suite_env.get(runner_key):
+                    raise StructuralError('calibration cannot replace an existing target runner')
+                suite_env[runner_key] = shlex.join([sys.executable, '-B', str(Path(__file__).resolve()), '--case'])
             if runner == 'ci':
                 # The whole calibration already owns this committed tree. No
                 # other suite runs during its mutation and restoration probes.
@@ -172,6 +249,7 @@ def run():
                 raise StructuralError('calibration interrupted; remaining suites were not started')
             if runner == 'nextest':
                 cases = nextest_events(text, inventory, {}, source, CONFIGURATION, registry, set(suite['cases']))
+                join_cpu(cases, cpu_directory, source)
             elif runner == 'doctest':
                 cases = doctest_events(text, source, CONFIGURATION, registry, set(suite['cases']))
             else:
@@ -192,6 +270,10 @@ def run():
             records += cases
             records.append(registry.suite_event(name, context['wall_s']*1000, 'failed' if code else 'passed', source))
         records += contract_events(contracts, registry, source, records)
+        for row in records:
+            if row.get('scope') == 'case' and 'cpu_scope' not in row:
+                row.update(own_user_s=None, own_sys_s=None,
+                           cpu_scope='unavailable-within-shared-parent; suite CPU is not case CPU')
         alone(contexts)
         status |= complete(registry, records)
     finally:
@@ -213,6 +295,14 @@ def run():
 
 
 def main():
+    if sys.argv[1:2] == ['--case']:
+        return case_runner(sys.argv[2:])
+    if sys.argv[1:2] == ['--compare'] and len(sys.argv) == 4:
+        before, after = [json.loads(Path(path).read_text()) for path in sys.argv[2:]]
+        changed = subprocess.run(['git', 'diff', '--name-only', before['source'], after['source']],
+                                 capture_output=True, text=True, check=True).stdout.splitlines()
+        print(json.dumps(comparison(before, after, changed), sort_keys=True))
+        return 0
     if sys.argv[1:] == ['--owned']:
         return run()
     if sys.argv[1:]:
