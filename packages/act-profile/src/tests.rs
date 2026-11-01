@@ -495,6 +495,11 @@ fn commitment_trace_privacy() {
         std::fs::remove_dir_all(&artifacts).unwrap();
         let status: Vec<_> = records.iter().filter(|row| row["kind"] == "observation_status").collect();
         assert_eq!(status.len(), 1);
+        assert!(
+            status[0]["attempted_records"].as_u64().unwrap() <= u64::try_from(cli_common::observation::QUEUE_RECORDS).unwrap(),
+            "{level}/{recipe}: {}",
+            status[0]
+        );
         assert_eq!(status[0]["lost_records"], 0, "{level}/{recipe}: {}", status[0]);
         assert_eq!(status[0]["undelivered_records"], 0);
         assert!(status[0]["delivered_records"].as_u64().unwrap() > 0);
