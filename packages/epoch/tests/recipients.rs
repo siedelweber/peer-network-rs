@@ -1,3 +1,7 @@
+#[path = "../../documents/src/pins.rs"]
+pub mod pins;
+use pins::NumberId as N;
+
 use std::collections::BTreeMap;
 
 use nrz_cas::limits::Limits;
@@ -340,7 +344,8 @@ fn handshake(buyer: &str, seller: &str, sequence: u64, epoch: u64) -> Vec<Candid
 /// ´test:integration:recipient-settlements´
 #[test]
 fn recipient_settlements() {
-    for case in 0..11 {
+    let mut histories = 0;
+    for case in 0..N::NumbersEpochRecipientScenarioCount.integer() {
         let mut inputs = settlement();
         let (mut accept, mut ratify) = ("buyer", "seller");
         match case {
@@ -410,7 +415,14 @@ fn recipient_settlements() {
         let reversed: Vec<_> = history(&inputs).acts().iter().map(|act| act.id().clone()).collect();
         assert_ne!(forward, reversed);
         assert_eq!(recipients(&inputs, 4), results);
+        let presentations = [&forward, &reversed];
+        assert_eq!(
+            presentations.len(),
+            usize::try_from(N::NumbersEpochRecipientPresentationCount.integer()).unwrap()
+        );
+        histories += u64::try_from(presentations.len()).unwrap();
     }
+    assert_eq!(histories, N::NumbersEpochRecipientHistoryCount.integer());
     for index in [5, 6] {
         for coordinate in [0, 2] {
             let mut inputs = settlement();
@@ -458,7 +470,19 @@ fn recipient_cumulative() {
 #[test]
 fn invitation_netting() {
     use pn_epoch::coefficients::{CoefficientError, coefficient};
-    for (u, f, denominator, positive, pair) in [(8, 7, 10, None, ("4/5", "7/10")), (1, 1, 2, Some("1/2"), ("1/2", "1/2"))] {
+    for (u, f, denominator, positive, pair) in [
+        (
+            8,
+            7,
+            10,
+            None,
+            (
+                N::NumbersEpochInvitationUrgency.value(),
+                N::NumbersEpochInvitationFormality.value(),
+            ),
+        ),
+        (1, 1, 2, Some("1/2"), ("1/2", "1/2")),
+    ] {
         let make = |author, sequence, epoch, sign: i64| {
             let mut input = act("Invitation", author, sequence, epoch);
             input.body.quantities[0].1.value = sign * u;
@@ -491,7 +515,7 @@ fn invitation_netting() {
                     Ok(value.into())
                 } else {
                     Err(CoefficientError::Irrational {
-                        radicand: "14/25".into(),
+                        radicand: N::NumbersEpochInvitationRadicand.value().into(),
                     })
                 };
                 assert_eq!(coefficient(&row.cell, Limits::default()), expected);

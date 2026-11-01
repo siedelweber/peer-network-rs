@@ -1,4 +1,5 @@
 mod common;
+pub use common::pins;
 
 use common::fixture;
 use pn_epoch::{InputError, bind_inputs};

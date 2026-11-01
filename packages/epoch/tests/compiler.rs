@@ -1,4 +1,7 @@
+use common::pins::NumberId as N;
+
 mod common;
+pub use common::pins;
 #[path = "common/joined.rs"]
 mod joined;
 use joined::{Verifier, act, anchors, coordinates, id, numeric, package, settlement};
@@ -462,6 +465,10 @@ fn placement_corpus() {
     }
     let expected = compile(&mixed, 1);
     let mut distinct = BTreeSet::new();
+    assert_eq!(
+        mixed[3..].len(),
+        usize::try_from(N::NumbersEpochMixedTailActCount.integer()).unwrap()
+    );
     for tail in permutations(&mixed[3..]) {
         let mut acts = anchors();
         acts.extend(tail);
@@ -470,11 +477,18 @@ fn placement_corpus() {
         distinct.insert(history_key(&result));
         assert_eq!(placement_values(&result), placement_values(&expected));
     }
-    assert_eq!(distinct.len(), 24);
+    assert_eq!(
+        distinct.len(),
+        usize::try_from(N::NumbersEpochMixedPresentationCount.integer()).unwrap()
+    );
     let mut prefix = anchors();
     prefix.push(act("Owner", "seller", 4, 1));
     let first = joined::handshake("buyer", "seller", 5, 2);
     let second = joined::handshake("third", "seller", 8, 2);
+    assert_eq!(
+        [&first, &second].len(),
+        usize::try_from(N::NumbersEpochSettlementChainCount.integer()).unwrap()
+    );
     let mut expected = None;
     let mut distinct = BTreeSet::new();
     // All twenty shuffles of two three-act chains, preserving each Bid < Accept < Ratify.
@@ -497,7 +511,10 @@ fn placement_corpus() {
         let values = placement_values(&result);
         assert_eq!(&values, expected.get_or_insert_with(|| values.clone()));
     }
-    assert_eq!(distinct.len(), 20);
+    assert_eq!(
+        distinct.len(),
+        usize::try_from(N::NumbersEpochSettlementInterleavingCount.integer()).unwrap()
+    );
     // Accept before its Bid still replays, but cannot pass the fault-free placement check above.
     let mut misordered = prefix;
     misordered.extend(first.iter().cloned());
@@ -522,8 +539,20 @@ fn placement_corpus() {
 #[test]
 fn compiler_properties() {
     let mut distinct = BTreeSet::new();
+    assert_eq!(
+        FAMILIES.len(),
+        usize::try_from(N::NumbersEpochFamilyFixtureCount.integer()).unwrap()
+    );
     for (family, _, _) in FAMILIES {
         let acts = family_case(family);
+        assert_eq!(
+            acts.len(),
+            usize::try_from(N::NumbersEpochFamilyFixtureActCount.integer()).unwrap()
+        );
+        assert_eq!(
+            permutations(&acts).len(),
+            usize::try_from(N::NumbersEpochFamilyPresentationCount.integer()).unwrap()
+        );
         let expected = compile(&acts, 1);
         for permuted in permutations(&acts) {
             let result = compile(&permuted, 1);
@@ -531,7 +560,10 @@ fn compiler_properties() {
             assert_eq!(result.view(), expected.view());
         }
     }
-    assert_eq!(distinct.len(), 456);
+    assert_eq!(
+        distinct.len(),
+        usize::try_from(N::NumbersEpochFamilyHistoryCount.integer()).unwrap()
+    );
     placement_corpus();
     generated_literal_corpus();
     let acts = aggregate_case("Invitation", 2, 0);
@@ -613,9 +645,14 @@ fn aggregate_table(family: &str, members: usize, coordinate: usize, state: &Comp
 
 fn generated_literal_corpus() {
     let mut distinct = BTreeSet::new();
-    for family in ["Opinion", "Reference", "Invitation"] {
-        for members in 1..=3 {
-            for coordinate in 0..3 {
+    let families = ["Opinion", "Reference", "Invitation"];
+    assert_eq!(
+        families.len(),
+        usize::try_from(N::NumbersEpochAggregateFamilyCount.integer()).unwrap()
+    );
+    for family in families {
+        for members in 1..=usize::try_from(N::NumbersEpochAggregateMemberMaximum.integer()).unwrap() {
+            for coordinate in 0..usize::try_from(N::NumbersEpochAggregateCoordinateCount.integer()).unwrap() {
                 let acts = aggregate_case(family, members, coordinate);
                 let result = compile(&acts, 1);
                 aggregate_table(family, members, coordinate, &result);
@@ -623,7 +660,10 @@ fn generated_literal_corpus() {
             }
         }
     }
-    assert_eq!(distinct.len(), 27);
+    assert_eq!(
+        distinct.len(),
+        usize::try_from(N::NumbersEpochAggregateCaseCount.integer()).unwrap()
+    );
 }
 
 use pn_testkit::proptest::{self, prelude::*};
@@ -638,6 +678,9 @@ fn configuration() -> proptest::test_runner::Config {
         ),
         Err(error) => panic!("invalid consumer seed: {error}"),
     }
+    if std::env::var_os("PN_HARNESS_SOURCE").is_some() {
+        assert_eq!(u64::from(config.cases), N::NumbersEpochPropertyDrawCount.integer());
+    }
     config
 }
 
@@ -647,7 +690,7 @@ proptest! {
     /// ´claim:compiler:generated-packages-match-the-literal-compiler-table´
     /// ´test:integration:compiler-generated´
     #[test]
-    fn compiler_generated(family in 0_usize..3, members in 1_usize..4, coordinate in 0_usize..3, words in proptest::collection::vec(any::<u64>(), 1..8)) {
+    fn compiler_generated(family in 0_usize..usize::try_from(N::NumbersEpochAggregateFamilyCount.integer()).unwrap(), members in 1_usize..=usize::try_from(N::NumbersEpochAggregateMemberMaximum.integer()).unwrap(), coordinate in 0_usize..usize::try_from(N::NumbersEpochAggregateCoordinateCount.integer()).unwrap(), words in proptest::collection::vec(any::<u64>(), 1..8)) {
         let family = ["Opinion", "Reference", "Invitation"][family];
         let mut acts = aggregate_case(family, members, coordinate);
         for word in words {

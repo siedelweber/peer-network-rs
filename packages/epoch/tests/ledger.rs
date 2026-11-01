@@ -1,4 +1,7 @@
+use common::pins::NumberId as N;
+
 mod common;
+pub use common::pins;
 
 use pn_epoch::{
     CompilerInputs, bind_inputs,
@@ -286,6 +289,10 @@ fn fractional_own_balances() {
         ExactLimits::default(),
     )
     .unwrap();
+    assert_eq!(
+        result.balances.len(),
+        usize::try_from(N::NumbersEpochLedgerAddressCount.integer()).unwrap()
+    );
     assert_eq!(result.balances[&a].exact(), "1");
     assert_eq!(result.balances[&b].exact(), "3/2");
     let insolvent = validate_history(&[first, second, registration_for("address-2", 2, 3)], &[]).unwrap();

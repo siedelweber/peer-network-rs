@@ -1,5 +1,4 @@
-#[path = "../../documents/src/pins.rs"]
-pub mod pins;
+pub use common::pins;
 use pins::NumberId;
 
 mod common;
@@ -1505,7 +1504,7 @@ fn enclosed_fence(bound: &pn_epoch::solve::BoundProcedure<'_>, fence: &pn_epoch:
             let record = &fence.evidence.primitives[*index];
             let input = pn_graph::numeric::activation::fence::Inputs {
                 wall: "1/2".into(),
-                bleed_squared: "1/400".into(),
+                bleed_squared: NumberId::NumbersReferenceSquaredBleed.value().into(),
                 width: "1".into(),
                 margin: "5/4".into(),
                 cumulative_tilt: if attempt.rung == "1" { "15/8" } else { "15/16" }.into(),
@@ -1995,7 +1994,11 @@ fn transport_oracle() {
     let h2 = vec![vec![o, z, z], vec![o, o, z], vec![z, z, o]];
     let hops = vec![h1, h2];
     let mass = vec![half, half];
-    let emission = vec![half, z, o];
+    let emission = vec![
+        half,
+        Fraction(i128::from(NumberId::NumbersEpochTransportEmptyEmission.integer()), 1),
+        o,
+    ];
     let expected = dense_operator(&hops, &mass, &emission);
     assert_ne!(
         expected,
@@ -2383,7 +2386,12 @@ fn check_real_base(bound: &pn_epoch::solve::BoundProcedure<'_>) -> (usize, usize
 #[test]
 fn real_base() {
     let (mut exact, mut held) = (0, 0);
-    for denominator in [2, 9, 3, 4, 5, 1] {
+    let denominators = [2, 9, 3, 4, 5, 1];
+    assert_eq!(
+        denominators.len(),
+        usize::try_from(NumberId::NumbersEpochRealBaseDenominatorCount.integer()).unwrap()
+    );
+    for denominator in denominators {
         let mut acts = joined::anchors();
         let mut opinion = joined::act("Opinion", "seller", 2, 1);
         opinion
@@ -3105,7 +3113,8 @@ fn check_kernel_work(p: &Procedure, map: &pn_records::conserved::MapRecord) {
 }
 
 fn check_activation_work(p: &Procedure, map: &pn_records::conserved::MapRecord) {
-    let mut session = pn_graph::numeric::activation::sharing::Session::new(p, "1/400").unwrap();
+    let mut session =
+        pn_graph::numeric::activation::sharing::Session::new(p, NumberId::NumbersReferenceSquaredBleed.value()).unwrap();
     let prefix = session.work();
     let value = map.point.values().next().unwrap().clone();
     let request = pn_graph::numeric::activation::Request {
@@ -3113,7 +3122,7 @@ fn check_activation_work(p: &Procedure, map: &pn_records::conserved::MapRecord) 
             lower: value.clone(),
             upper: value.clone(),
         },
-        bleed_squared: "1/400".into(),
+        bleed_squared: NumberId::NumbersReferenceSquaredBleed.value().into(),
         wall: Some("2".into()),
         wall_enclosure: None,
         quantity: pn_graph::numeric::activation::Quantity::Clamped,
@@ -3126,7 +3135,9 @@ fn check_activation_work(p: &Procedure, map: &pn_records::conserved::MapRecord) 
     );
     for cap in [13_888_467, 13_888_466] {
         let policy = work_policy(p, cap);
-        let mut session = pn_graph::numeric::activation::sharing::Session::new(&policy, "1/400").unwrap();
+        let mut session =
+            pn_graph::numeric::activation::sharing::Session::new(&policy, NumberId::NumbersReferenceSquaredBleed.value())
+                .unwrap();
         assert_eq!(session.evaluate(&request).is_ok(), cap == 13_888_467);
     }
 }
@@ -3747,7 +3758,7 @@ fn check_prefix_pins() {
             p.enclosure.as_mut().unwrap().refinement.precision = precision;
             p.maximum_work = cap;
             p.enclosure.as_mut().unwrap().operation.work = cap;
-            let result = pn_graph::numeric::activation::sharing::Session::new(&p, "1/400");
+            let result = pn_graph::numeric::activation::sharing::Session::new(&p, NumberId::NumbersReferenceSquaredBleed.value());
             assert_eq!(result.is_ok(), cap == expected);
             if let Ok(session) = result {
                 assert_eq!(session.work(), expected);

@@ -3,6 +3,7 @@
 from collections import Counter
 import hashlib
 import json
+import math
 from fractions import Fraction
 from pathlib import Path
 import re
@@ -86,7 +87,7 @@ def bare_mint_pattern(labels):
 def check_numeric_word_fragments(paths):
     """Keep structural number-word compounds intact in migrated rendered prose."""
     pattern = re.compile(r'\b(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)-[0-9]+\b'
-                         r'|\b[0-9]+-(?:map|Actor|capable|unit|endpoint|proposal|width|minute)\b'
+                         r'|\b[0-9]+-(?:map|Actor|capable|unit|endpoint|proposal|width|minute|half|source|hop|mass)\b'
                          r'|(?<![\w\u202f.])1-Work\b'
                          r'|\b(?:precision|wall|minus)-[0-9]+\b'
                          r'|\b[0-9]+ (?:half|quarter)\b|\bx=\s+[0-9]+\b', re.IGNORECASE)
@@ -271,6 +272,27 @@ def numeric_correspondence():
           * (value('certified-map-work') - value('solve-certifying-prefix-work'))
           + value('projection-actor-scale')
           * (value('proposal-arithmetic-work') + value('residual-arithmetic-work')))
+    equal(value('epoch-recipient-history-count'), value('epoch-recipient-scenario-count')
+          * value('epoch-recipient-presentation-count'))
+    equal(value('epoch-invitation-radicand'), value('epoch-invitation-urgency')
+          * value('epoch-invitation-formality'))
+    for family, operand in (('family', 'family-fixture'), ('mixed', 'mixed-tail')):
+        count = value(f'epoch-{operand}-act-count')
+        if count.denominator != 1:
+            raise ValueError('numeric registry: permutation length must be integral')
+        equal(value(f'epoch-{family}-presentation-count'), math.factorial(count.numerator))
+    equal(value('epoch-family-history-count'), value('epoch-family-fixture-count')
+          * value('epoch-family-presentation-count'))
+    # Each settlement chain has the structural Bid, Accept, Ratify stages.
+    chains = value('epoch-settlement-chain-count')
+    equal(chains, 2)
+    equal(value('epoch-settlement-interleaving-count'), math.factorial(3 * chains.numerator)
+          // math.factorial(3) ** chains.numerator)
+    equal(value('epoch-aggregate-case-count'), value('epoch-aggregate-family-count')
+          * value('epoch-aggregate-member-maximum') * value('epoch-aggregate-coordinate-count'))
+    properties = json.loads(Path('docs/datasets/org.peer-network.harness.properties.json').read_text())['rows']
+    compiler = next(row for row in properties if row.get('name') == 'pn-epoch::compiler::compiler_generated')
+    equal(value('epoch-property-draw-count'), compiler['cases'])
     projected = json.loads(Path('docs/datasets/org.peer-network.numbers.registry.json').read_text())['rows']
     if len(projected) != len(rows):
         raise ValueError('numeric registry: projection census differs')
@@ -302,12 +324,12 @@ def numeric_correspondence():
         if admitted and (Fraction(view['exact'].replace('\u202f', '')) != number
                          or view['exact_exact'] is not True or view.get('exact_relation') != '='):
             raise ValueError('numeric registry: exact form differs')
-    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=24 displays={len(projected)}')
+    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=32 displays={len(projected)}')
 
 
 if __name__ == '__main__':
     validate()
     numeric_correspondence()
     check_numeric_word_fragments([path for path in tracked_paths()
-                                  if path.as_posix() == 'docs/design/implementation.md'
+                                  if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md'}
                                   or path.is_relative_to('docs/templates') and path.suffix == '.j2'])

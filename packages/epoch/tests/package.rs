@@ -1,6 +1,7 @@
 #[path = "common/allocation.rs"]
 mod allocation;
 mod common;
+pub use common::pins;
 
 #[path = "common/package.rs"]
 mod package_inputs;

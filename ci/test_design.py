@@ -88,7 +88,15 @@ class Correspondence(unittest.TestCase):
         for name, truncated in [('solve-rate-lower-milliseconds-per-million', '1.895'),
                                 ('solve-rate-upper-milliseconds-per-million', '1.969'),
                                 ('projected-solve-fast-seconds', '59.1'),
-                                ('projected-solve-slow-seconds', '61.5')]:
+                                ('projected-solve-slow-seconds', '61.5'),
+                                ('epoch-recipient-history-count', '21'),
+                                ('epoch-invitation-radicand', '0.56' + '1'),
+                                ('epoch-family-presentation-count', '23'),
+                                ('epoch-mixed-presentation-count', '23'),
+                                ('epoch-family-history-count', '455'),
+                                ('epoch-settlement-interleaving-count', '19'),
+                                ('epoch-aggregate-case-count', '26'),
+                                ('epoch-property-draw-count', '255')]:
             changed = re.sub(r'(id = "num:numbers:' + name + r'"\nvalue = ")[^"]+',
                              lambda match: match[1] + truncated, source_original)
             self.assertNotEqual(changed, source_original)
@@ -115,12 +123,19 @@ class Correspondence(unittest.TestCase):
         self.assertEqual(self.check().returncode, 0)
         for fragment in ('twenty-4', '1-map', '2-map', '4-Actor', '5-Actor', '0-capable',
                          '1 half', '1 quarter', 'N/N-minus-1', 'precision-4', '1-Work',
-                         '8-unit', '2-endpoint', '2-proposal', '0-width', '1-minute', 'wall-2', 'x= 1'):
+                         '8-unit', '2-endpoint', '2-proposal', '0-width', '1-minute', 'wall-2', 'x= 1', '1-half', '3-source', '1-hop', '0-mass'):
             path.write_text(fragment + '\n')
             result = self.check()
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('numeric word fragment', result.stderr)
         path.write_text('precision-four one-Work eight-unit two-endpoint two-proposal zero-width one-minute\n')
+        readme = self.root / 'packages/epoch/README.md'
+        readme.parent.mkdir(parents=True)
+        readme.write_text('twenty-4')
+        git(self.root, 'add', 'packages/epoch/README.md')
+        self.assertNotEqual(self.check().returncode, 0)
+        readme.write_text('twenty-four one-half two-map')
+        self.assertEqual(self.check().returncode, 0)
         template = self.root / 'docs/templates/fixture.md.j2'
         template.parent.mkdir(parents=True)
         template.write_text('{{ "1\N{NARROW NO-BREAK SPACE}024" }} {{ "}}\N{NARROW NO-BREAK SPACE}" }}\n')

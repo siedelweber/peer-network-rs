@@ -1,6 +1,9 @@
+use common::pins::NumberId as N;
+
 #[path = "common/allocation.rs"]
 mod allocation;
 mod common;
+pub use common::pins;
 #[path = "common/support.rs"]
 mod support_fixture;
 
@@ -28,10 +31,14 @@ fn support_tables() {
     let saved = ledger.clone();
     let base = compile_base(&inputs, &history, &Verifier, ExactLimits::default()).unwrap();
     let result = compile_support(&inputs, &price, &ledger, &base, &mut numeric, ExactLimits::default(), 1000).unwrap();
+    assert_eq!(
+        result.sources.len(),
+        usize::try_from(N::NumbersEpochSupportSourceCount.integer()).unwrap()
+    );
     for (actor, rate, emission, retained) in [
-        ("address-2", "1", "1/2", "1/2"),
-        ("address-3", "0", "0", "1"),
-        ("address-4", "4", "1", "0"),
+        ("address-2", "1", N::NumbersEpochSupportPartialEmission.value(), "1/2"),
+        ("address-3", "0", N::NumbersEpochSupportEmptyEmission.value(), "1"),
+        ("address-4", "4", N::NumbersEpochSupportSaturatedEmission.value(), "0"),
     ] {
         let row = &result.sources[actor];
         assert_eq!(
@@ -46,7 +53,13 @@ fn support_tables() {
     ]);
     let mut two = one.clone();
     two.insert("address-2".into(), targets(&["address-2", "address-3", "address-4"]));
-    assert_eq!(result.by_depth, BTreeMap::from([(1, one), (2, two)]));
+    assert_eq!(
+        result.by_depth,
+        BTreeMap::from([
+            (usize::try_from(N::NumbersEpochSupportNearDepth.integer()).unwrap(), one),
+            (usize::try_from(N::NumbersEpochSupportFarDepth.integer()).unwrap(), two)
+        ])
+    );
     assert_eq!(
         result.emitted,
         BTreeMap::from([
@@ -85,8 +98,22 @@ fn support_tables() {
         );
     }
     let depth_two = allocation::inputs_for_depth(&["zero", "one", "zero"]);
+    let omitted = depth_two
+        .constants()
+        .content()
+        .constants
+        .iter()
+        .find_map(|entry| match entry {
+            pn_records::constants::ConstantDefinition::Literal { name, value } if name == "zero" => Some(value.exact()),
+            _ => None,
+        })
+        .unwrap();
+    assert_eq!(omitted, N::NumbersEpochSupportOmittedDepthMass.value());
     let sparse = compile_support(&depth_two, &price, &ledger, &base, &mut numeric, ExactLimits::default(), 1000).unwrap();
-    assert_eq!(sparse.by_depth.keys().copied().collect::<Vec<_>>(), [2]);
+    assert_eq!(
+        sparse.by_depth.keys().copied().collect::<Vec<_>>(),
+        [usize::try_from(N::NumbersEpochSupportFarDepth.integer()).unwrap()]
+    );
     assert_eq!(sparse.emitted, result.emitted);
 }
 
@@ -121,7 +148,7 @@ fn support_refusals() {
         .counts
         .get_mut(&pn_records::burn::Address("address-2".into()))
         .unwrap()
-        .0 = 0;
+        .0 = N::NumbersEpochSupportRefusedCount.integer();
     assert_eq!(
         compile_support(&inputs, &price, &missing, &base, &mut numeric, ExactLimits::default(), 1000),
         Err(SupportError::Ledger)

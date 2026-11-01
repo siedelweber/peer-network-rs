@@ -1,6 +1,9 @@
+use common::pins::NumberId as N;
+
 #[path = "common/allocation.rs"]
 mod allocation;
 mod common;
+pub use common::pins;
 
 use allocation::{Verifier, acts, history, inputs};
 use pn_epoch::base::{BaseError, BaseScore, compile_base};
@@ -43,6 +46,10 @@ fn base_tables() {
         ("address-4", BTreeMap::from([("address-4", BaseScore::Exact("2".into()))])),
     ]);
     assert_eq!(actual, expected);
+    assert_eq!(
+        actual.len(),
+        usize::try_from(N::NumbersEpochBaseActorCount.integer()).unwrap()
+    );
     assert_eq!(base.rows["address-2"]["address-3"].cells.len(), 2);
     for offset in 0..acts.len() {
         let mut permuted = acts.clone();

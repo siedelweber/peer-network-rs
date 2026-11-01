@@ -4,6 +4,7 @@
 mod allocation;
 #[path = "../tests/common/mod.rs"]
 mod common;
+pub use common::pins;
 #[path = "../tests/common/joined.rs"]
 mod joined;
 #[path = "../tests/common/package.rs"]

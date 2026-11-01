@@ -1,4 +1,5 @@
 mod common;
+pub use common::pins;
 
 use nrz_cas::limits::Limits;
 use pn_epoch::cells::{CellError, fold_cells};

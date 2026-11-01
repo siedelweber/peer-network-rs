@@ -1,3 +1,6 @@
+#[path = "../../../documents/src/pins.rs"]
+pub mod pins;
+
 use std::collections::BTreeMap;
 
 use pn_epoch::{FamilyProfile, ParameterInput};
@@ -28,7 +31,7 @@ pub(crate) fn fixture() -> (Declaration, EditionInput, ParameterInput) {
         ("third", "1/3"),
         ("rest", "2/3"),
         ("hops", "4"),
-        ("bleed", "1/400"),
+        ("bleed", pins::NumberId::NumbersReferenceSquaredBleed.value()),
     ]
     .into_iter()
     .map(|(name, value)| ConstantDefinition::Literal {

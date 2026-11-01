@@ -1029,9 +1029,71 @@ pub enum NumberId {
     NumbersBurnFullEmission,
     /// Registry id: num:numbers:burn-singleton-width.
     NumbersBurnSingletonWidth,
+    /// Registry id: num:numbers:epoch-ledger-address-count.
+    NumbersEpochLedgerAddressCount,
+    /// Registry id: num:numbers:epoch-recipient-scenario-count.
+    NumbersEpochRecipientScenarioCount,
+    /// Registry id: num:numbers:epoch-recipient-presentation-count.
+    NumbersEpochRecipientPresentationCount,
+    /// Registry id: num:numbers:epoch-recipient-history-count.
+    NumbersEpochRecipientHistoryCount,
+    /// Registry id: num:numbers:epoch-invitation-urgency.
+    NumbersEpochInvitationUrgency,
+    /// Registry id: num:numbers:epoch-invitation-formality.
+    NumbersEpochInvitationFormality,
+    /// Registry id: num:numbers:epoch-invitation-radicand.
+    NumbersEpochInvitationRadicand,
+    /// Registry id: num:numbers:epoch-base-actor-count.
+    NumbersEpochBaseActorCount,
+    /// Registry id: num:numbers:epoch-support-partial-emission.
+    NumbersEpochSupportPartialEmission,
+    /// Registry id: num:numbers:epoch-support-empty-emission.
+    NumbersEpochSupportEmptyEmission,
+    /// Registry id: num:numbers:epoch-support-saturated-emission.
+    NumbersEpochSupportSaturatedEmission,
+    /// Registry id: num:numbers:epoch-family-fixture-count.
+    NumbersEpochFamilyFixtureCount,
+    /// Registry id: num:numbers:epoch-family-fixture-act-count.
+    NumbersEpochFamilyFixtureActCount,
+    /// Registry id: num:numbers:epoch-family-presentation-count.
+    NumbersEpochFamilyPresentationCount,
+    /// Registry id: num:numbers:epoch-family-history-count.
+    NumbersEpochFamilyHistoryCount,
+    /// Registry id: num:numbers:epoch-mixed-tail-act-count.
+    NumbersEpochMixedTailActCount,
+    /// Registry id: num:numbers:epoch-mixed-presentation-count.
+    NumbersEpochMixedPresentationCount,
+    /// Registry id: num:numbers:epoch-settlement-chain-count.
+    NumbersEpochSettlementChainCount,
+    /// Registry id: num:numbers:epoch-settlement-interleaving-count.
+    NumbersEpochSettlementInterleavingCount,
+    /// Registry id: num:numbers:epoch-aggregate-family-count.
+    NumbersEpochAggregateFamilyCount,
+    /// Registry id: num:numbers:epoch-aggregate-member-maximum.
+    NumbersEpochAggregateMemberMaximum,
+    /// Registry id: num:numbers:epoch-aggregate-coordinate-count.
+    NumbersEpochAggregateCoordinateCount,
+    /// Registry id: num:numbers:epoch-aggregate-case-count.
+    NumbersEpochAggregateCaseCount,
+    /// Registry id: num:numbers:epoch-property-draw-count.
+    NumbersEpochPropertyDrawCount,
+    /// Registry id: num:numbers:epoch-real-base-denominator-count.
+    NumbersEpochRealBaseDenominatorCount,
+    /// Registry id: num:numbers:epoch-support-source-count.
+    NumbersEpochSupportSourceCount,
+    /// Registry id: num:numbers:epoch-support-near-depth.
+    NumbersEpochSupportNearDepth,
+    /// Registry id: num:numbers:epoch-support-far-depth.
+    NumbersEpochSupportFarDepth,
+    /// Registry id: num:numbers:epoch-support-omitted-depth-mass.
+    NumbersEpochSupportOmittedDepthMass,
+    /// Registry id: num:numbers:epoch-support-refused-count.
+    NumbersEpochSupportRefusedCount,
+    /// Registry id: num:numbers:epoch-transport-empty-emission.
+    NumbersEpochTransportEmptyEmission,
 }
 
-const OFFSETS: [(usize, usize); 513] = [
+const OFFSETS: [(usize, usize); 544] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -1545,6 +1607,37 @@ const OFFSETS: [(usize, usize); 513] = [
     (76835, 76836),
     (76954, 76955),
     (77075, 77076),
+    (77230, 77231),
+    (77361, 77363),
+    (77497, 77498),
+    (77627, 77629),
+    (77753, 77756),
+    (77882, 77886),
+    (78011, 78016),
+    (78138, 78139),
+    (78269, 78272),
+    (78400, 78401),
+    (78533, 78534),
+    (78660, 78662),
+    (78792, 78793),
+    (78924, 78926),
+    (79052, 79055),
+    (79181, 79182),
+    (79312, 79314),
+    (79442, 79443),
+    (79578, 79580),
+    (79708, 79709),
+    (79839, 79840),
+    (79972, 79973),
+    (80099, 80101),
+    (80226, 80229),
+    (80362, 80363),
+    (80489, 80490),
+    (80614, 80615),
+    (80738, 80739),
+    (80871, 80872),
+    (80999, 81000),
+    (81130, 81131),
 ];
 
 impl NumberId {
