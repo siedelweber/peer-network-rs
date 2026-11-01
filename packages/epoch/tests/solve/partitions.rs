@@ -1542,10 +1542,10 @@ fn sibling_state(after: bool, coupled: bool) -> CompiledState {
     )
 }
 
-fn sibling_solve(state: &CompiledState, memo: &mut FenceMemo) -> (Procedure, SolveRecord) {
+fn sibling_solve(state: &CompiledState, memo: &mut FenceMemo, precision: NumberId) -> (Procedure, SolveRecord) {
     let mut p = policy(state);
     p.grid = vec![N::NumbersSiblingStrength.value().into(), "0".into()];
-    let precision = u32::try_from(N::NumbersSiblingPrecision.integer()).unwrap();
+    let precision = u32::try_from(precision.integer()).unwrap();
     p.precision = Precision::AbsoluteWidthBits(vec![precision]);
     p.enclosure.as_mut().unwrap().refinement.precision = precision;
     p.endpoint_grid = N::NumbersSiblingEndpointGrid.value().into();
@@ -1592,8 +1592,8 @@ fn sibling_outside_paths() {
                 .is_gt()
         );
     }
-    let (p, old) = sibling_solve(&before, &mut memo);
-    let (_, new) = sibling_solve(&after, &mut memo);
+    let (p, old) = sibling_solve(&before, &mut memo, N::NumbersSiblingPrecision);
+    let (_, new) = sibling_solve(&after, &mut memo, N::NumbersSiblingPrecision);
     let old = old.rounds.last().unwrap();
     let new = new.rounds.last().unwrap();
     let mut budget = Budget::new(limits()).unwrap();
@@ -1648,8 +1648,8 @@ fn sibling_isolated_control(memo: &mut FenceMemo) {
         assert_eq!(state.view().base.rows["j"].len(), 1);
         assert!(state.view().base.rows["j"].contains_key("j"));
     }
-    let (_, old) = sibling_solve(&before, memo);
-    let (_, new) = sibling_solve(&after, memo);
+    let (_, old) = sibling_solve(&before, memo, N::NumbersSiblingControlPrecision);
+    let (_, new) = sibling_solve(&after, memo, N::NumbersSiblingControlPrecision);
     for (record, rate) in [(&old, N::NumbersPartitionLowRate), (&new, N::NumbersSiblingRaisedRate)] {
         let standing = &record.rounds.last().unwrap().standing["j"];
         assert_eq!(standing.lower, rate.value());

@@ -1357,9 +1357,11 @@ pub enum NumberId {
     NumbersPartitionPositivePrecision,
     /// Registry id: num:numbers:partition-anchor-precision.
     NumbersPartitionAnchorPrecision,
+    /// Registry id: num:numbers:sibling-control-precision.
+    NumbersSiblingControlPrecision,
 }
 
-const OFFSETS: [(usize, usize); 677] = [
+const OFFSETS: [(usize, usize); 678] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2029,14 +2031,15 @@ const OFFSETS: [(usize, usize); 677] = [
     (104_529, 104_533),
     (104_656, 104_657),
     (104_786, 104_789),
-    (104_906, 104_912),
-    (105_032, 105_033),
-    (105_151, 105_153),
-    (105_275, 105_283),
-    (105_406, 105_421),
-    (105_560, 105_574),
-    (105_721, 105_723),
-    (105_850, 105_851),
+    (104_906, 104_911),
+    (105_031, 105_032),
+    (105_150, 105_152),
+    (105_274, 105_282),
+    (105_405, 105_421),
+    (105_560, 105_575),
+    (105_722, 105_724),
+    (105_851, 105_852),
+    (106_030, 106_031),
 ];
 
 impl NumberId {

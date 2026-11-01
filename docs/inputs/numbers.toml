@@ -4875,7 +4875,7 @@ exact_digits = 100
 
 [[rows]]
 id = "num:numbers:sibling-strength"
-value = "1/1024"
+value = "1/512"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 100
@@ -4889,7 +4889,7 @@ exact_digits = 100
 
 [[rows]]
 id = "num:numbers:sibling-precision"
-value = "30"
+value = "28"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 100
@@ -4903,7 +4903,7 @@ exact_digits = 100
 
 [[rows]]
 id = "num:numbers:sibling-response-lower"
-value = "-933/1073741824"
+value = "-2387/1073741824"
 unit = "dimensionless"
 display = "floor"
 exact_digits = 100
@@ -4911,7 +4911,7 @@ magnitude = -12
 
 [[rows]]
 id = "num:numbers:sibling-response-upper"
-value = "-243/536870912"
+value = "-447/1073741824"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
@@ -4926,6 +4926,15 @@ exact_digits = 100
 
 [[rows]]
 id = "num:numbers:partition-anchor-precision"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+# Structural sibling-control evaluation allowance.
+
+[[rows]]
+id = "num:numbers:sibling-control-precision"
 value = "2"
 unit = "dimensionless"
 display = "exact"

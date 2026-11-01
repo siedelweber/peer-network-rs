@@ -8533,16 +8533,16 @@
     },
     {
       "display": "exact",
-      "exact": "1/1 024",
+      "exact": "1/512",
       "exact_digits": 100,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:sibling-strength",
-      "num": "1/1 024",
+      "num": "1/512",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "1/1024"
+      "value": "1/512"
     },
     {
       "display": "exact",
@@ -8559,16 +8559,16 @@
     },
     {
       "display": "exact",
-      "exact": "30",
+      "exact": "28",
       "exact_digits": 100,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:sibling-precision",
-      "num": "30",
+      "num": "28",
       "num_exact": true,
       "num_relation": "=",
       "unit": "dimensionless",
-      "value": "30"
+      "value": "28"
     },
     {
       "display": "exact",
@@ -8585,31 +8585,31 @@
     },
     {
       "display": "floor",
-      "exact": "-933/1 073 741 824",
+      "exact": "-2 387/1 073 741 824",
       "exact_digits": 100,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:sibling-response-lower",
       "magnitude": -12,
-      "num": "-0.000 000 868 924",
+      "num": "-0.000 002 223 067",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "-933/1073741824"
+      "value": "-2387/1073741824"
     },
     {
       "display": "ceiling",
-      "exact": "-243/536 870 912",
+      "exact": "-447/1 073 741 824",
       "exact_digits": 100,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:sibling-response-upper",
       "magnitude": -12,
-      "num": "-0.000 000 452 622",
+      "num": "-0.000 000 416 301",
       "num_exact": false,
       "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "-243/536870912"
+      "value": "-447/1073741824"
     },
     {
       "display": "exact",
@@ -8631,6 +8631,19 @@
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:partition-anchor-precision",
+      "num": "2",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "2"
+    },
+    {
+      "display": "exact",
+      "exact": "2",
+      "exact_digits": 100,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:sibling-control-precision",
       "num": "2",
       "num_exact": true,
       "num_relation": "=",
