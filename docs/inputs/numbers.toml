@@ -5829,3 +5829,295 @@ value = "0"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-compact-main-log-bytes"
+value = "393126"
+unit = "bytes"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-reviewed-main-log-bytes"
+value = "245438225"
+unit = "bytes"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-compact-documents-steps-seconds"
+value = "9.660407"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-reviewed-documents-steps-seconds"
+value = "3.80"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-prior-warm-gate-seconds"
+value = "58.187"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-prior-warm-steps-user-seconds"
+value = "61.557"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-prior-warm-steps-system-seconds"
+value = "34.326"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-complete-accounting-gate-seconds"
+value = "59.889"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-complete-accounting-user-seconds"
+value = "84.745"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-complete-accounting-system-seconds"
+value = "48.895"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-complete-accounting-repeat-seconds"
+value = "52.189"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-complete-accounting-repeat-user-seconds"
+value = "63.712"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-complete-accounting-repeat-system-seconds"
+value = "34.957"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-failed-development-first-seconds"
+value = "121.195"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-failed-development-second-seconds"
+value = "327.977"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-complete-accounting-pressure"
+value = "0.0114"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-complete-accounting-repeat-pressure"
+value = "0.0149"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-lane-first-cpu-seconds"
+value = "99"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-lane-second-cpu-seconds"
+value = "134"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-former-warm-budget-seconds"
+value = "90"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-nullable-count-warm-ratio"
+value = "70669892/33340387"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 30
+magnitude = -1
+
+[[rows]]
+id = "num:numbers:devperf-former-warm-margin-percent"
+value = "1003700/19963"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 30
+magnitude = 1
+
+[[rows]]
+id = "num:numbers:devperf-record-margin-percent"
+value = "2300/57"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 30
+magnitude = 1
+
+[[rows]]
+id = "num:numbers:devperf-complete-accounting-throttled-period-count"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-nullable-oracle-pattern-count"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:devperf-profile-default-test-median"
+value = "6.987"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-profile-debugless-test-median"
+value = "7.573"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-profile-optimized-test-median"
+value = "4.571"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-profile-default-documents-median"
+value = "0.678"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-profile-debugless-documents-median"
+value = "0.603"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-profile-optimized-documents-median"
+value = "0.357"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-profile-before-edit-median"
+value = "0.627"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-profile-after-edit-median"
+value = "0.475"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-runner-default-cargo-median"
+value = "6.926"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-runner-default-nextest-median"
+value = "5.655"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-runner-gate-cargo-median"
+value = "4.642"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-runner-gate-nextest-median"
+value = "4.87"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-runner-gate-overhead-seconds"
+value = "0.228"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-bundled-link-edit-median"
+value = "0.691"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-system-link-edit-median"
+value = "3.251"
+unit = "seconds"
+display = "exact"
+exact_digits = 40
+
+[[rows]]
+id = "num:numbers:devperf-runtime-calibration-median-margin-percent"
+value = "136300/4137"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 40
+magnitude = -2
+

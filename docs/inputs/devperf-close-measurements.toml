@@ -15,6 +15,7 @@ loadavg = "77.27 152.07 180.94 47/9265 3131970"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "initial-2"
@@ -30,6 +31,7 @@ loadavg = "77.27 152.07 180.94 51/9265 3131972"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "initial-3"
@@ -45,6 +47,7 @@ loadavg = "77.27 152.07 180.94 49/9265 3131974"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "initial-4"
@@ -60,6 +63,7 @@ loadavg = "77.27 152.07 180.94 51/9265 3131976"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "initial-5"
@@ -75,6 +79,7 @@ loadavg = "77.27 152.07 180.94 48/9267 3131982"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "initial-6"
@@ -90,6 +95,7 @@ loadavg = "77.27 152.07 180.94 48/9267 3131984"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "initial-7"
@@ -105,6 +111,7 @@ loadavg = "77.27 152.07 180.94 48/9265 3131986"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "initial-8"
@@ -120,6 +127,7 @@ loadavg = "77.27 152.07 180.94 49/9265 3131988"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "initial-9"
@@ -135,6 +143,7 @@ loadavg = "77.27 152.07 180.94 51/9265 3131990"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "initial-10"
@@ -150,6 +159,7 @@ loadavg = "77.27 152.07 180.94 52/9265 3131992"
 context = "Selected CPU idle before campaign: 96 percent; shared node remains active; no concurrent lane build or gate."
 level = "integration"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "warmed-pair-1"
@@ -162,12 +172,15 @@ utc = "2026-10-23T13:09:33.642573Z"
 cpu = 31
 priority_nice = 19
 loadavg = "46.40 63.56 121.90 39/9206 496407"
-context = "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate."
+context = "Selected CPU idle before campaign: [[selected_cpu_idle_percent]] percent; shared node remains active; no concurrent lane build or gate."
 level = "unit"
 assessment = "inconclusive regression comparison; single observations, not five scheduled quiet samples"
 child_cpu_ms = "34.915000"
 involuntary_context_switches = 4
 node_idle_percent = "64.52"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 }, selected_cpu_idle_percent = { display = "exact", exact_digits = 32 } }
+selected_cpu_idle_percent = 98
+numeric_text = ["context"]
 
 [[rows]]
 name = "warmed-pair-2"
@@ -186,6 +199,7 @@ assessment = "inconclusive regression comparison; single observations, not five 
 child_cpu_ms = "72.416000"
 involuntary_context_switches = 4
 node_idle_percent = "64.55"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "warmed-pair-3"
@@ -204,6 +218,7 @@ assessment = "inconclusive regression comparison; single observations, not five 
 child_cpu_ms = "57.466000"
 involuntary_context_switches = 4
 node_idle_percent = "65.93"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "warmed-pair-4"
@@ -222,6 +237,7 @@ assessment = "inconclusive regression comparison; single observations, not five 
 child_cpu_ms = "57.080000"
 involuntary_context_switches = 4
 node_idle_percent = "66.02"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "warmed-pair-5"
@@ -240,6 +256,7 @@ assessment = "inconclusive regression comparison; single observations, not five 
 child_cpu_ms = "1.973000"
 involuntary_context_switches = 6
 node_idle_percent = "68.75"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "warmed-pair-6"
@@ -258,6 +275,7 @@ assessment = "inconclusive regression comparison; single observations, not five 
 child_cpu_ms = "2.349000"
 involuntary_context_switches = 5
 node_idle_percent = "62.86"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "warmed-pair-7"
@@ -276,6 +294,7 @@ assessment = "inconclusive regression comparison; single observations, not five 
 child_cpu_ms = "2.052000"
 involuntary_context_switches = 7
 node_idle_percent = "80.00"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "warmed-pair-8"
@@ -294,6 +313,7 @@ assessment = "inconclusive regression comparison; single observations, not five 
 child_cpu_ms = "2.382000"
 involuntary_context_switches = 7
 node_idle_percent = "61.90"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "warmed-pair-9"
@@ -312,6 +332,7 @@ assessment = "inconclusive regression comparison; single observations, not five 
 child_cpu_ms = "80.862000"
 involuntary_context_switches = 4
 node_idle_percent = "66.00"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "warmed-pair-10"
@@ -330,3 +351,4 @@ assessment = "inconclusive regression comparison; single observations, not five 
 child_cpu_ms = "10.062000"
 involuntary_context_switches = 6
 node_idle_percent = "67.60"
+numeric_display = { duration_ms = { display = "exact", exact_digits = 32 } }

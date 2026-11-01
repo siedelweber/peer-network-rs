@@ -38,6 +38,85 @@ fn fixture() -> Result<tempfile::TempDir> {
     Ok(directory)
 }
 
+fn carrier_number_forms(root: &Path) -> Result<()> {
+    let input = root.join("docs/inputs/items.toml");
+    let original = concat!(
+        "namespace = \"org.peer-network.test.items\"\nversion = [1, 0, 0]\n[[rows]]\nname = \"alpha\"\n",
+        "count = 12345\nrate = \"-1/3\"\nsamples = [1.25, 2345]\ntext = \"Count [[count]], bound [[rate:relation]], samples [[samples]], reference [[third:relation]].\"\n",
+        "numeric_display = { count = { display = \"exact\", exact_digits = 5 }, rate = { display = \"floor\", magnitude = -2, exact_digits = 1 }, samples = { display = \"exact\", exact_digits = 8 } }\n",
+        "numeric_refs = { third = { dataset = \"org.peer-network.numbers.registry\", key = \"id\", row = \"num:test:third\" } }\n"
+    );
+    fs::write(&input, original)?;
+    documents::run(root, Operation::Generate { check: false })?;
+    let template = root.join("docs/templates/docs/result.md.j2");
+    let source = "{% set item = row('org.peer-network.test.items', name='alpha') %}{{ item.text | number_text(item) }}";
+    fs::write(&template, source)?;
+    documents::run(root, Operation::Write)?;
+    let displayed = fs::read_to_string(root.join("docs/result.md"))?;
+    fs::write(&input, format!("{original}numeric_text = [\"text\"]\n"))?;
+    documents::run(root, Operation::Generate { check: false })?;
+    fs::write(&template, "{{ row('org.peer-network.test.items', name='alpha').text }}")?;
+    documents::run(root, Operation::Write)?;
+    assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, displayed);
+    assert_eq!(
+        fs::read_to_string(root.join("docs/result.md"))?,
+        "Count 12\u{202f}345, bound ≥ -0.34, samples 1.25, 2\u{202f}345, reference ≈ 0.333."
+    );
+    for (expression, refusal) in [
+        ("{{ item.number_forms.rate | display('exact') }}", "omitted form"),
+        ("{{ item.number_forms.count | display('absent') }}", "unknown form"),
+        ("{{ '[[absent]]' | number_text(item) }}", "unknown numeric field"),
+        ("{{ '[[count:absent]]' | number_text(item) }}", "unknown display mode"),
+    ] {
+        fs::write(
+            &template,
+            format!("{{% set item = row('org.peer-network.test.items', name='alpha') %}}{expression}"),
+        )?;
+        assert!(
+            documents::run(root, Operation::Write)
+                .unwrap_err()
+                .to_string()
+                .contains(refusal)
+        );
+    }
+    for (from, to, refusal) in [
+        ("count = 12345", "count = true", "carrier field"),
+        ("rate = \"-1/3\"", "rate = \"1/0\"", "denominator"),
+        ("exact_digits = 5", "exact_digits = 4", "exceeds budget"),
+        ("count = { display", "absent = { display", "absent carrier field"),
+        (
+            "exact_digits = 5",
+            "exact_digits = 5, typo = 1",
+            "unknown carrier display rule field",
+        ),
+    ] {
+        fs::write(&input, original.replace(from, to))?;
+        assert!(
+            documents::run(root, Operation::Generate { check: false })
+                .unwrap_err()
+                .to_string()
+                .contains(refusal)
+        );
+    }
+    fs::write(&input, original.replace("num:test:third", "num:test:absent"))?;
+    documents::run(root, Operation::Generate { check: false })?;
+    fs::write(&template, source)?;
+    assert!(
+        documents::run(root, Operation::Write)
+            .unwrap_err()
+            .to_string()
+            .contains("reference row")
+    );
+    fs::write(&input, original)?;
+    documents::run(root, Operation::Generate { check: false })?;
+    documents::run(root, Operation::Write)?;
+    assert_eq!(
+        documents::run(root, Operation::Generate { check: true })?.findings,
+        Vec::<Finding>::new()
+    );
+    Ok(())
+}
+
 /// Claim: Registry projection uses exact rational rounding, deterministic narrow-space grouping and digit-budget omission; unknown ids and omitted forms refuse. Generated relations distinguish exact from rounded forms, typed pins read the same input without duplicated literals, and repeated generation is a fixed point.
 /// ´claim:render:number-forms-are-exactly-projected´
 /// ´test:integration:number-registry´
@@ -99,6 +178,7 @@ fn number_registry() -> Result<()> {
             Vec::<Finding>::new()
         );
     }
+    carrier_number_forms(root)?;
     Ok(())
 }
 
@@ -124,17 +204,31 @@ fn directed_number_displays() -> Result<()> {
         ("coarse-ceiling", "101", "ceiling", 2, "≤ 200"),
     ];
     let mut input = "namespace = \"org.peer-network.numbers.registry\"\nversion = [1, 0, 0]\n".to_owned();
+    let mut carriers = "namespace = \"org.peer-network.test.carriers\"\nversion = [1, 0, 0]\n".to_owned();
     for (id, value, rule, magnitude, _) in cases {
         writeln!(
             input,
             "[[rows]]\nid = \"num:test:{id}\"\nvalue = \"{value}\"\nunit = \"dimensionless\"\ndisplay = \"{rule}\"\nmagnitude = {magnitude}\nexact_digits = 8"
         )?;
     }
+    for (id, value, rule, magnitude, _) in cases {
+        writeln!(
+            carriers,
+            "[[rows]]\nname = \"{id}\"\nquantity = \"{value}\"\nnumeric_display = {{ quantity = {{ display = \"{rule}\", magnitude = {magnitude}, exact_digits = 8 }} }}"
+        )?;
+    }
+    fs::write(root.join("docs/inputs/carriers.toml"), carriers)?;
     fs::write(root.join("docs/inputs/numbers.toml"), input)?;
     documents::run(root, Operation::Generate { check: false })?;
     let template = root.join("docs/templates/docs/result.md.j2");
     for (id, _, _, _, expected) in cases {
         fs::write(&template, format!("{{{{ numrel('num:test:{id}') }}}}"))?;
+        documents::run(root, Operation::Write)?;
+        assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, expected);
+        fs::write(
+            &template,
+            format!("{{{{ row('org.peer-network.test.carriers', name='{id}').number_forms.quantity | display('num', true) }}}}"),
+        )?;
         documents::run(root, Operation::Write)?;
         assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, expected);
     }

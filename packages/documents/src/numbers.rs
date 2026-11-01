@@ -214,7 +214,7 @@ fn validate(entry: &Entry) -> Result<()> {
 )]
 pub(super) fn project(dataset: &mut Dataset) -> Result<()> {
     if dataset.namespace != NAMESPACE {
-        return Ok(());
+        return dataset_forms(dataset);
     }
     let mut ids = BTreeSet::new();
     for row in &mut dataset.rows {
@@ -223,35 +223,92 @@ pub(super) fn project(dataset: &mut Dataset) -> Result<()> {
         if !ids.insert(entry.id.clone()) {
             return Err(format!("number: duplicate id {}", entry.id).into());
         }
-        let exact = group(&entry.value);
-        let (display, is_exact) = match (entry.display.as_str(), entry.magnitude) {
-            ("exact", None) => (exact.clone(), true),
-            ("rounded" | "floor" | "ceiling", Some(magnitude)) => rounded(&entry.value, magnitude, &entry.display)?,
-            _ => return Err(format!("number: invalid display rule for {}", entry.id).into()),
-        };
-        let digits = entry.value.bytes().filter(u8::is_ascii_digit).count();
-        if entry.display == "exact" && digits > entry.exact_digits {
-            return Err(format!("number: exact display exceeds budget for {}", entry.id).into());
+        project_entry(&entry, row)?;
+    }
+    Ok(())
+}
+
+fn project_entry(entry: &Entry, row: &mut std::collections::BTreeMap<String, serde_json::Value>) -> Result<()> {
+    let exact = group(&entry.value);
+    let (display, is_exact) = match (entry.display.as_str(), entry.magnitude) {
+        ("exact", None) => (exact.clone(), true),
+        ("rounded" | "floor" | "ceiling", Some(magnitude)) => rounded(&entry.value, magnitude, &entry.display)?,
+        _ => return Err(format!("number: invalid display rule for {}", entry.id).into()),
+    };
+    let digits = entry.value.bytes().filter(u8::is_ascii_digit).count();
+    if entry.display == "exact" && digits > entry.exact_digits {
+        return Err(format!("number: exact display exceeds budget for {}", entry.id).into());
+    }
+    row.insert("num".to_owned(), json!(display));
+    row.insert("num_exact".to_owned(), json!(is_exact));
+    let relation = if is_exact {
+        "="
+    } else {
+        match entry.display.as_str() {
+            "floor" => "≥",
+            "ceiling" => "≤",
+            _ => "≈",
         }
-        row.insert("num".to_owned(), json!(display));
-        row.insert("num_exact".to_owned(), json!(is_exact));
-        let relation = if is_exact {
-            "="
-        } else {
-            match entry.display.as_str() {
-                "floor" => "≥",
-                "ceiling" => "≤",
-                _ => "≈",
-            }
+    };
+    row.insert("num_relation".to_owned(), json!(relation));
+    if digits <= entry.exact_digits {
+        row.insert("exact".to_owned(), json!(exact));
+        row.insert("exact_exact".to_owned(), json!(true));
+        row.insert("exact_relation".to_owned(), json!("="));
+    }
+    Ok(())
+}
+
+fn dataset_forms(dataset: &mut Dataset) -> Result<()> {
+    for row in &mut dataset.rows {
+        let Some(rules) = row.get("numeric_display") else {
+            continue;
         };
-        row.insert("num_relation".to_owned(), json!(relation));
-        if digits <= entry.exact_digits {
-            row.insert("exact".to_owned(), json!(exact));
-            row.insert("exact_exact".to_owned(), json!(true));
-            row.insert("exact_relation".to_owned(), json!("="));
+        let rules = rules.as_object().ok_or("number: numeric_display must be a field map")?;
+        let mut forms = serde_json::Map::new();
+        for (field, rule) in rules {
+            let value = row
+                .get(field)
+                .ok_or_else(|| format!("number: absent carrier field {field}"))?;
+            forms.insert(field.clone(), carrier_forms(value, rule)?);
+        }
+        if row
+            .insert("number_forms".to_owned(), serde_json::Value::Object(forms))
+            .is_some()
+        {
+            return Err("number: number_forms is generated, not an input field".into());
         }
     }
     Ok(())
+}
+
+fn carrier_forms(value: &serde_json::Value, rule: &serde_json::Value) -> Result<serde_json::Value> {
+    if let Some(items) = value.as_array() {
+        return items.iter().map(|item| carrier_forms(item, rule)).collect();
+    }
+    let mut fields = rule
+        .as_object()
+        .ok_or("number: carrier display rule must be a table")?
+        .clone();
+    if fields
+        .keys()
+        .any(|key| !["display", "magnitude", "exact_digits"].contains(&key.as_str()))
+    {
+        return Err("number: unknown carrier display rule field".into());
+    }
+    fields.insert("unit".to_owned(), json!("dimensionless"));
+    let exact = match value {
+        serde_json::Value::Number(number) => number.to_string(),
+        serde_json::Value::String(text) => text.clone(),
+        _ => return Err("number: carrier field must be a number, exact numeric string or array".into()),
+    };
+    fields.insert("id".to_owned(), json!("num:carrier:field"));
+    fields.insert("value".to_owned(), json!(exact));
+    let entry: Entry = serde_json::from_value(serde_json::Value::Object(fields))?;
+    validate(&entry)?;
+    let mut forms = std::collections::BTreeMap::new();
+    project_entry(&entry, &mut forms)?;
+    Ok(serde_json::to_value(forms)?)
 }
 
 fn rust_integer_literal(value: usize) -> String {

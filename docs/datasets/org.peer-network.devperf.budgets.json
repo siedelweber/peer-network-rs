@@ -10,6 +10,22 @@
       "budget_ms": 100,
       "category": "case",
       "name": "unit",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "100",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "100",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Local invariants need no service wait; small inputs keep the feedback loop immediate.",
       "scope": "one unit test"
     },
@@ -17,6 +33,22 @@
       "budget_ms": 500,
       "category": "case",
       "name": "crate",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Allow public encoding and validation while exposing accidental broad fixtures.",
       "scope": "one public-surface test"
     },
@@ -24,6 +56,22 @@
       "budget_ms": 2000,
       "category": "case",
       "name": "integration",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Allow composition and fault histories without a real-service wait.",
       "scope": "one pure or mock integration test"
     },
@@ -31,6 +79,22 @@
       "budget_ms": 2000,
       "category": "case",
       "name": "conformance",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The same predicate needs a small bounded history on every implementation.",
       "scope": "one pure or mock shared-contract case"
     },
@@ -38,6 +102,22 @@
       "budget_ms": 1000,
       "category": "case",
       "name": "property",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Bound construction and evaluation by declared sizes; shrinking is included in the campaign below.",
       "scope": "one generated property case"
     },
@@ -45,6 +125,22 @@
       "budget_ms": 10000,
       "category": "case",
       "name": "real-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "10 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Allow actual transactions, RPC and controlled settlement while exposing unnecessary sleeps.",
       "scope": "one real-service case"
     },
@@ -52,6 +148,22 @@
       "budget_ms": 5000,
       "category": "suite",
       "name": "pure-suite",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "5 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "A bounded selection of cases should stay interactive; this also covers bounded property generation and shrinking.",
       "scope": "one named pure suite or level group"
     },
@@ -59,6 +171,22 @@
       "budget_ms": 10000,
       "category": "suite",
       "name": "mock-suite",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "10 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Permit model histories and controlled fault schedules without paying service startup cost.",
       "scope": "one named mock-backed suite"
     },
@@ -66,6 +194,22 @@
       "budget_ms": 30000,
       "category": "suite",
       "name": "postgresql-suite",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "30 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "30 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Reserve time for isolated history, concurrency and restart cases on a provisioned instance.",
       "scope": "one real PostgreSQL suite"
     },
@@ -73,6 +217,22 @@
       "budget_ms": 60000,
       "category": "suite",
       "name": "elements-suite",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "60 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "60 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Allow signed blocks, depth, forks and recovery; measure controllable settlement rather than arbitrary sleep.",
       "scope": "one real Elements suite"
     },
@@ -80,6 +240,22 @@
       "budget_ms": 90000,
       "category": "suite",
       "name": "combined-suite",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "90 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "90 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Allow the combined durable and chain recovery path without hiding the cost in fast tests.",
       "scope": "one PostgreSQL and Elements end-to-end suite"
     },
@@ -87,13 +263,55 @@
       "budget_ms": 10000,
       "category": "aggregate",
       "name": "test-command",
-      "reason": "The measured quiet test step is about nine seconds; keep a small margin and investigate growth.",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "10 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_refs": {
+        "quiet_tests": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "tests_s",
+          "row": "quiet"
+        }
+      },
+      "numeric_text": [
+        "reason"
+      ],
+      "reason": "The measured quiet test step is about [[quiet_tests]] seconds; keep a small margin and investigate growth.",
       "scope": "the per-change pure and mock test command"
     },
     {
       "budget_ms": 5000,
       "category": "aggregate",
       "name": "ordinary-check",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "5 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Make repeated repository checks interactive; retained full-corpus work needs explicit registry review.",
       "scope": "one ordinary non-test gate check"
     },
@@ -101,6 +319,22 @@
       "budget_ms": 30000,
       "category": "suite",
       "name": "benchmark",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "30 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "30 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Allow warmup and multiple samples with deterministic work counts; larger campaigns need registry admission.",
       "scope": "one bounded benchmark workload campaign"
     },
@@ -108,13 +342,48 @@
       "budget_ms": 120000,
       "category": "build",
       "name": "clean-build",
-      "reason": "A two-minute initial allowance permits dependency compilation; it is a target awaiting a controlled cold measurement, not an observed result.",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "120 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "120 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "reason"
+      ],
+      "reason": "A [[budget_ms]]-millisecond initial allowance permits dependency compilation; it is a target awaiting a controlled cold measurement, not an observed result.",
       "scope": "clean workspace dev or test build"
     },
     {
       "budget_ms": 5000,
       "category": "build",
       "name": "incremental-build",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "5 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "An ordinary implementation-file edit should preserve a short feedback loop; profile and dependency fan-out are diagnosed separately.",
       "scope": "one-file incremental rebuild"
     },
@@ -122,13 +391,107 @@
       "budget_ms": 120000,
       "category": "aggregate",
       "name": "gate",
-      "reason": "Pinned-node gates of record took 81.2 s and 85.5 s; the latter used about 233 own CPU seconds at about two percent shared CPU pressure. A 120 s warning allowance gives about forty percent margin above the larger observed wall for post-import build work. Warm lane repeats are diagnostics, not the calibration workload.",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "120 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "120 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "record_first_wall_seconds": {
+          "exact": "81.2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "81.2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "record_pressure_percent": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "record_second_cpu_seconds": {
+          "exact": "233",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "233",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "record_second_wall_seconds": {
+          "exact": "85.5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "85.5",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "record_first_wall_seconds": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "record_pressure_percent": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "record_second_cpu_seconds": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "record_second_wall_seconds": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_refs": {
+        "record_margin_percent": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-record-margin-percent"
+        }
+      },
+      "numeric_text": [
+        "reason"
+      ],
+      "reason": "Pinned-node gates of record took [[record_first_wall_seconds]] s and [[record_second_wall_seconds]] s; the latter used about [[record_second_cpu_seconds]] own CPU seconds at about [[record_pressure_percent]] percent shared CPU pressure. A [[budget_ms]] ms warning allowance gives a margin [[record_margin_percent:relation]] percent margin above the larger observed wall for post-import build work. Warm lane repeats are diagnostics, not the calibration workload.",
+      "record_first_wall_seconds": "81.2",
+      "record_pressure_percent": 2,
+      "record_second_cpu_seconds": 233,
+      "record_second_wall_seconds": "85.5",
       "scope": "per-change gate on the imported tree in a fresh checkout, with its own retained node target"
     },
     {
       "budget_ms": 180000,
       "category": "aggregate",
       "name": "service-gate",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "180 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "180 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Allow the warm gate and combined real-service cases; the service matrix is separate from the fast local path.",
       "scope": "full required provisioned-service matrix"
     },
@@ -136,6 +499,22 @@
       "budget_ms": 15000,
       "category": "case",
       "name": "reference-map-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The exact reference declaration retains all Actors, edges, depths and published comparisons; the measured map and corpus cases need a bounded certificate tier.",
       "scope": "one published-fixture map or corpus case"
     },
@@ -143,6 +522,22 @@
       "budget_ms": 60000,
       "category": "case",
       "name": "reference-local-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "60 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "60 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Interval Jacobians, preconditioning, replay and mutation controls retain the full reference declaration; the local certificate is the longest measured reference case.",
       "scope": "one published-fixture local inclusion case"
     },
@@ -150,6 +545,22 @@
       "budget_ms": 25000,
       "category": "case",
       "name": "reference-wall-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "25 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "25 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The end-to-end wall consumer retains both enclosed and rational solve routes and their replay and adjacent Work controls.",
       "scope": "one enclosed-reference-wall solve case"
     },
@@ -157,6 +568,22 @@
       "budget_ms": 90000,
       "category": "suite",
       "name": "reference-certificate-suite",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "90 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "90 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Allow the exact reference cases and their refusal controls as a separately measured group while preserving the unchanged fast and gate budgets.",
       "scope": "one required reference-certificate group"
     },
@@ -164,6 +591,22 @@
       "budget_ms": 15000,
       "category": "case",
       "name": "reference-receiving-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The complete published Registration and donor multiplicities, both public histories and both annotation readings must survive compilation, solve and replay. The focused measurement is recorded in the receiving reference-tier amendment; the declared allowance also accounts for gate contention without changing any other case budget.",
       "scope": "one full-size published receiving showcase comparison"
     },
@@ -171,6 +614,22 @@
       "budget_ms": 15000,
       "category": "case",
       "name": "own-burn-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The lowest sign-certifying precision retains compilation, both solves and replayed forcing; the smaller histories tested change the response sign. This mechanism has its own allowance rather than borrowing the published-reference tier.",
       "scope": "one complete-history own-loss mechanism"
     },
@@ -178,6 +637,22 @@
       "budget_ms": 20000,
       "category": "suite",
       "name": "own-burn-suite",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "20 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "20 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Allow the mechanism case and harness overhead while retaining its separate case warning and the per-commit gate budget.",
       "scope": "the required own-loss mechanism group"
     },
@@ -185,13 +660,61 @@
       "budget_ms": 90000,
       "category": "aggregate",
       "name": "reference-gate",
-      "reason": "The longest exact local certificate needs about fifty seconds; allow the unchanged certificate cases and runner overhead in a required invocation alongside the per-commit path.",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "90 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "90 000",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "reference_case_wall_seconds": {
+          "exact": "50",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "50",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "reference_case_wall_seconds": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "reason"
+      ],
+      "reason": "The longest exact local certificate needs about [[reference_case_wall_seconds]] seconds; allow the unchanged certificate cases and runner overhead in a required invocation alongside the per-commit path.",
+      "reference_case_wall_seconds": 50,
       "scope": "required reference-certificate invocation"
     },
     {
       "budget_ms": 1000,
       "category": "case",
       "name": "calibrated-marker-recognition-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The recorded property draw count and generated lineage/burn-recognition predicates remain unchanged; reducing draws would remove declared evidence.",
       "scope": "one pn-records::properties::marker_recognition case"
     },
@@ -199,6 +722,22 @@
       "budget_ms": 1000,
       "category": "case",
       "name": "calibrated-typed-corruptions-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The recorded property draw count and typed corruption families remain unchanged; reducing draws would remove declared evidence.",
       "scope": "one pn-records::properties::typed_corruptions case"
     },
@@ -206,6 +745,22 @@
       "budget_ms": 2500,
       "category": "case",
       "name": "calibrated-act-directions-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Opposite signed complete-act comparisons retain both independently replayed solves and the finite forcing bounds at the declared precision.",
       "scope": "one pn-epoch::solve::act_directions case"
     },
@@ -213,6 +768,22 @@
       "budget_ms": 1500,
       "category": "case",
       "name": "calibrated-act-emission-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The complete accepted-act pair changes emission and retains independently replayed solves and the full finite-response transport.",
       "scope": "one pn-epoch::solve::act_emission case"
     },
@@ -220,6 +791,22 @@
       "budget_ms": 1000,
       "category": "case",
       "name": "calibrated-burn-depleted-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock.",
       "scope": "one pn-epoch::solve::burn_depleted case"
     },
@@ -227,6 +814,22 @@
       "budget_ms": 1500,
       "category": "case",
       "name": "calibrated-burn-monotone-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The sole-contributor pair retains both complete solves, independent replay and the whole-path regime premises.",
       "scope": "one pn-epoch::solve::burn_monotone case"
     },
@@ -234,6 +837,22 @@
       "budget_ms": 10500,
       "category": "case",
       "name": "calibrated-burn-sibling-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "10 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The saturated sibling pair retains the declared precision, independent solve replay, finite box shock and largest-direct-forcing feedback majorant.",
       "scope": "one pn-epoch::solve::burn_sibling case"
     },
@@ -241,6 +860,22 @@
       "budget_ms": 5500,
       "category": "case",
       "name": "calibrated-burn-switch-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "5 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The burn pair retains both rung searches, the changed accepted rung, independent solve replay and the full finite-response transport.",
       "scope": "one pn-epoch::solve::burn_switch case"
     },
@@ -248,6 +883,22 @@
       "budget_ms": 1000,
       "category": "case",
       "name": "calibrated-certified-splits-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Matched and unmatched complete histories retain their certified solves, projected residuals, hop-premise checks and counterexample bounds.",
       "scope": "one pn-epoch::solve::certified_splits case"
     },
@@ -255,6 +906,22 @@
       "budget_ms": 1500,
       "category": "case",
       "name": "calibrated-conserved-projection-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Supported and chartered depth projections retain the nonzero-depth cells, exact cell and Work pins, and refusal controls.",
       "scope": "one pn-epoch::solve::conserved_projection case"
     },
@@ -262,6 +929,22 @@
       "budget_ms": 12000,
       "category": "case",
       "name": "calibrated-conserved-residual-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "12 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "12 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The frozen fixture retains proposal-grid and iteration-cap comparisons, independent residual replay, exact Work boundaries and mutated-record refusals.",
       "scope": "one pn-epoch::solve::conserved_residual case"
     },
@@ -269,6 +952,22 @@
       "budget_ms": 1000,
       "category": "case",
       "name": "calibrated-fence-shapes-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Frozen-support shapes retain descending evaluated rung searches, independent primitive replay and width, tilt, wall and attachment refusal controls.",
       "scope": "one pn-epoch::solve::fence_shapes case"
     },
@@ -276,6 +975,22 @@
       "budget_ms": 2000,
       "category": "case",
       "name": "calibrated-compiled-conservation-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The named transport mechanisms retain derived ledger export ceilings, declared conservation-width tolerance, passing and failing precision controls and replayed nonlinear transport.",
       "scope": "one pn-epoch::solve::partitions::compiled_conservation case"
     },
@@ -283,6 +998,22 @@
       "budget_ms": 4000,
       "category": "case",
       "name": "calibrated-nonconstant-matched-split-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "4 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Real nonconstant matched transport retains its calibrated disjoint-image precision, compiled hop identities, common positive rung, solves and independent replay.",
       "scope": "one pn-epoch::solve::partitions::nonconstant_matched_split case"
     },
@@ -290,6 +1021,22 @@
       "budget_ms": 6000,
       "category": "case",
       "name": "calibrated-positive-rung-split-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "6 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "6 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The positive-rung displacement fixture retains the calibrated sign precision, its failing lower control, finite box comparisons and independent solve replay.",
       "scope": "one pn-epoch::solve::partitions::positive_rung_split case"
     },
@@ -297,6 +1044,22 @@
       "budget_ms": 2500,
       "category": "case",
       "name": "calibrated-published-isolated-acts-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The unsorted exact-rate sample family retains every complete before/after history, final-gate checks, independent solve replay and exact loss identity.",
       "scope": "one pn-epoch::solve::partitions::published_isolated_acts case"
     },
@@ -304,6 +1067,22 @@
       "budget_ms": 4500,
       "category": "case",
       "name": "calibrated-published-retained-act-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "4 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The tagged retained-source fixture retains complete before/after solves, independent replay, the calibrated strict sign and its failing lower-precision control.",
       "scope": "one pn-epoch::solve::partitions::published_retained_act case"
     },
@@ -311,6 +1090,22 @@
       "budget_ms": 1000,
       "category": "case",
       "name": "calibrated-receiving-small-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The published small receiving history retains pooled and partitioned records, complete public-input annotation equivalence and cross-replayed certificates.",
       "scope": "one pn-epoch::solve::partitions::receiving_small case"
     },
@@ -318,6 +1113,22 @@
       "budget_ms": 7000,
       "category": "case",
       "name": "calibrated-sibling-outside-paths-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "7 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "7 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The coupled negative response retains its calibrated precision and endpoint grid, the failing lower control, independent replay and the separate structural control.",
       "scope": "one pn-epoch::solve::partitions::sibling_outside_paths case"
     },
@@ -325,6 +1136,22 @@
       "budget_ms": 5500,
       "category": "case",
       "name": "calibrated-two-map-box-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "5 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The frozen four-Actor fixture retains its declared box-map precision, both certified maps, independent replay and adjacent Work-limit controls.",
       "scope": "one pn-epoch::solve::two_map_box case"
     },
@@ -332,6 +1159,22 @@
       "budget_ms": 3000,
       "category": "case",
       "name": "calibrated-activation-costs-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "3 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Cold composed requests retain independent Work, output-byte and arithmetic-step success/refusal boundaries; reusing a warm result would change the charged request.",
       "scope": "one pn-graph::numeric::activation_costs case"
     },
@@ -339,6 +1182,22 @@
       "budget_ms": 2000,
       "category": "case",
       "name": "calibrated-activation-endpoints-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Wall placements and activation quantities retain direct and monotone evaluations, independent endpoint brackets, generalized joins and powered-source premises.",
       "scope": "one pn-graph::numeric::activation_endpoints case"
     },
@@ -346,6 +1205,22 @@
       "budget_ms": 1000,
       "category": "case",
       "name": "calibrated-activation-oracles-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Unsorted scalar compositions retain independent value and derivative oracle brackets and cold certified evaluation at the declared policy.",
       "scope": "one pn-graph::numeric::activation_oracles case"
     },
@@ -353,6 +1228,22 @@
       "budget_ms": 1500,
       "category": "case",
       "name": "calibrated-activation-walls-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The wall placements retain activation, gain and generalized-kink controls under the complete declared policy.",
       "scope": "one pn-graph::numeric::activation_walls case"
     },
@@ -360,6 +1251,22 @@
       "budget_ms": 1000,
       "category": "case",
       "name": "calibrated-enclosed-wall-clamp-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The wall-coordinate interval retains independently sampled rational clamps, crossing generalized slopes and changed-enclosure replay refusal.",
       "scope": "one pn-graph::numeric::enclosed_wall_clamp case"
     },
@@ -367,6 +1274,22 @@
       "budget_ms": 3000,
       "category": "case",
       "name": "calibrated-evaluation-costs-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "3 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Reduction, root/log-exp endpoint and sharing-prefix cases retain every cold Work success/refusal boundary and distinguish preparation from memo hits.",
       "scope": "one pn-graph::numeric::evaluation_costs case"
     },
@@ -374,6 +1297,22 @@
       "budget_ms": 2000,
       "category": "case",
       "name": "calibrated-reference-wall-branches-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "Certified inverse-wall branches retain the floor, door, policy and deadband comparisons and their independently replayed queries.",
       "scope": "one pn-graph::numeric::reference_wall_branches case"
     },
@@ -381,6 +1320,22 @@
       "budget_ms": 2000,
       "category": "case",
       "name": "calibrated-reference-wall-controls-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The inverse-wall controls retain both wrong-sign bracket refusals, indecisive stopping and changed query or attachment replay refusals.",
       "scope": "one pn-graph::numeric::reference_wall_controls case"
     },
@@ -388,6 +1343,22 @@
       "budget_ms": 3000,
       "category": "case",
       "name": "calibrated-reference-wall-oracle-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "3 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The tagged gain fixture retains certified bisection, independent endpoint signs and replay at the declared stopping width and precision.",
       "scope": "one pn-graph::numeric::reference_wall_oracle case"
     },
@@ -395,6 +1366,22 @@
       "budget_ms": 5500,
       "category": "case",
       "name": "calibrated-reference-wall-work-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "5 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "reason": "The stopping-width family retains cumulative cold Work pins and all adjacent success/refusal boundaries; sharing completed inversions would invalidate those measurements.",
       "scope": "one pn-graph::numeric::reference_wall_work case"
     }

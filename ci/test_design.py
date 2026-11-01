@@ -139,7 +139,8 @@ class Correspondence(unittest.TestCase):
         shutil.copytree(REPOSITORY / 'docs/datasets', self.root / 'docs/datasets')
         (self.root / 'docs/inputs').mkdir()
         shutil.copy(REPOSITORY / 'docs/inputs/numbers.toml', self.root / 'docs/inputs/numbers.toml')
-        shutil.copy(REPOSITORY / 'docs/inputs/devperf-budgets.toml', self.root / 'docs/inputs/devperf-budgets.toml')
+        for name in ('devperf-budgets', 'devperf-measurements', 'devperf-registry', 'devperf-close-measurements'):
+            shutil.copy(REPOSITORY / f'docs/inputs/{name}.toml', self.root / f'docs/inputs/{name}.toml')
         (self.root / '.linter').mkdir()
         shutil.copy(REPOSITORY / '.linter/owners.toml', self.root / '.linter/owners.toml')
         shutil.copy(REPOSITORY / '.linter/environments.toml', self.root / '.linter/environments.toml')
@@ -201,6 +202,8 @@ class Correspondence(unittest.TestCase):
                                 ('enclosed-wall-mandatory-work', '993'),
                                 ('buildgraph-admission-user-increase-lower', '1.1'),
                                 ('buildgraph-admission-obligation-count', '175'),
+                                ('devperf-profile-default-test-median', '6.9'),
+                                ('devperf-record-margin-percent', '40'),
                                 ('epoch-recipient-history-count', '21'),
                                 ('epoch-invitation-radicand', '0.56' + '1'),
                                 ('epoch-family-presentation-count', '23'),
@@ -264,6 +267,13 @@ class Correspondence(unittest.TestCase):
         git(self.root, 'add', 'adr/024-build-graph.md')
         self.assertNotEqual(self.check().returncode, 0)
         record.write_text(original + '\none-minute\n')
+        self.assertEqual(self.check().returncode, 0)
+        record = self.root / 'adr/021-development-performance.md'
+        original = record.read_text()
+        record.write_text(original + '\ntwenty-4\n')
+        git(self.root, 'add', 'adr/021-development-performance.md')
+        self.assertNotEqual(self.check().returncode, 0)
+        record.write_text(original + '\ntwenty-four\n')
         self.assertEqual(self.check().returncode, 0)
         template = self.root / 'docs/templates/fixture.md.j2'
         template.parent.mkdir(parents=True)

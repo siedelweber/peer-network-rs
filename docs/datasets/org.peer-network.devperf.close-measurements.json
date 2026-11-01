@@ -18,6 +18,22 @@
       "level": "unit",
       "loadavg": "77.27 152.07 180.94 47/9265 3131970",
       "name": "initial-1",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "34.039 848",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "34.039 848",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.049432Z"
     },
@@ -33,6 +49,22 @@
       "level": "unit",
       "loadavg": "77.27 152.07 180.94 51/9265 3131972",
       "name": "initial-2",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "70.951 361",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "70.951 361",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.124975Z"
     },
@@ -48,6 +80,22 @@
       "level": "unit",
       "loadavg": "77.27 152.07 180.94 49/9265 3131974",
       "name": "initial-3",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "56.111 330",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "56.111 330",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.185380Z"
     },
@@ -63,6 +111,22 @@
       "level": "unit",
       "loadavg": "77.27 152.07 180.94 51/9265 3131976",
       "name": "initial-4",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "55.019 226",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "55.019 226",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.244647Z"
     },
@@ -78,6 +142,22 @@
       "level": "unit",
       "loadavg": "77.27 152.07 180.94 48/9267 3131982",
       "name": "initial-5",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "24.728 838",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "24.728 838",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.273932Z"
     },
@@ -93,6 +173,22 @@
       "level": "unit",
       "loadavg": "77.27 152.07 180.94 48/9267 3131984",
       "name": "initial-6",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "3.280 483",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3.280 483",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.282004Z"
     },
@@ -108,6 +204,22 @@
       "level": "unit",
       "loadavg": "77.27 152.07 180.94 48/9265 3131986",
       "name": "initial-7",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "0.521 307",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0.521 307",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.286602Z"
     },
@@ -123,6 +235,22 @@
       "level": "unit",
       "loadavg": "77.27 152.07 180.94 49/9265 3131988",
       "name": "initial-8",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "0.548 257",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0.548 257",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.291569Z"
     },
@@ -138,6 +266,22 @@
       "level": "unit",
       "loadavg": "77.27 152.07 180.94 51/9265 3131990",
       "name": "initial-9",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "78.302 951",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "78.302 951",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.374137Z"
     },
@@ -153,6 +297,22 @@
       "level": "integration",
       "loadavg": "77.27 152.07 180.94 52/9265 3131992",
       "name": "initial-10",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "106.820 049",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "106.820 049",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T12:43:50.487043Z"
     },
@@ -163,7 +323,7 @@
       "case": "regexp::tests::nullable_counted_membership_20_equivalent",
       "child_cpu_ms": "34.915000",
       "configuration": "historical gate profile",
-      "context": "Selected CPU idle before campaign: 98 percent; shared node remains active; no concurrent lane build or gate.",
+      "context": "Selected CPU idle before campaign: [[selected_cpu_idle_percent]] percent; shared node remains active; no concurrent lane build or gate.",
       "cpu": 31,
       "duration_ms": "33.340387",
       "involuntary_context_switches": 4,
@@ -171,7 +331,39 @@
       "loadavg": "46.40 63.56 121.90 39/9206 496407",
       "name": "warmed-pair-1",
       "node_idle_percent": "64.52",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "33.340 387",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "33.340 387",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "selected_cpu_idle_percent": {
+          "exact": "98",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "98",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "selected_cpu_idle_percent": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "priority_nice": 19,
+      "selected_cpu_idle_percent": 98,
       "utc": "2026-10-23T13:09:33.642573Z"
     },
     {
@@ -189,6 +381,22 @@
       "loadavg": "46.40 63.56 121.90 39/9282 496418",
       "name": "warmed-pair-2",
       "node_idle_percent": "64.55",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "70.669 892",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "70.669 892",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T13:09:33.792001Z"
     },
@@ -207,6 +415,22 @@
       "loadavg": "46.40 63.56 121.90 32/9206 496427",
       "name": "warmed-pair-3",
       "node_idle_percent": "65.93",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "55.883 924",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "55.883 924",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T13:09:33.911099Z"
     },
@@ -225,6 +449,22 @@
       "loadavg": "46.40 63.56 121.90 36/9214 496431",
       "name": "warmed-pair-4",
       "node_idle_percent": "66.02",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "55.580 675",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "55.580 675",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T13:09:34.029325Z"
     },
@@ -243,6 +483,22 @@
       "loadavg": "46.40 63.56 121.90 37/9211 496435",
       "name": "warmed-pair-5",
       "node_idle_percent": "68.75",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "2.550 657",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2.550 657",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T13:09:34.054606Z"
     },
@@ -261,6 +517,22 @@
       "loadavg": "46.40 63.56 121.90 38/9208 496439",
       "name": "warmed-pair-6",
       "node_idle_percent": "62.86",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "1.649 051",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1.649 051",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T13:09:34.066186Z"
     },
@@ -279,6 +551,22 @@
       "loadavg": "46.40 63.56 121.90 35/9208 496443",
       "name": "warmed-pair-7",
       "node_idle_percent": "80.00",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "0.636 526",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0.636 526",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T13:09:34.074626Z"
     },
@@ -297,6 +585,22 @@
       "loadavg": "46.40 63.56 121.90 35/9208 496447",
       "name": "warmed-pair-8",
       "node_idle_percent": "61.90",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "0.610 447",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0.610 447",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T13:09:34.083820Z"
     },
@@ -315,6 +619,22 @@
       "loadavg": "46.40 63.56 121.90 38/9208 496451",
       "name": "warmed-pair-9",
       "node_idle_percent": "66.00",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "79.368 025",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "79.368 025",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T13:09:34.248798Z"
     },
@@ -333,6 +653,22 @@
       "loadavg": "46.40 63.56 121.90 37/9210 496461",
       "name": "warmed-pair-10",
       "node_idle_percent": "67.60",
+      "number_forms": {
+        "duration_ms": {
+          "exact": "106.554 115",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "106.554 115",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "duration_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "priority_nice": 19,
       "utc": "2026-10-23T13:09:34.474063Z"
     }

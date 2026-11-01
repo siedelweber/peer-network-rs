@@ -12,6 +12,58 @@
       "gate_high_s": 58,
       "gate_low_s": 50,
       "name": "quiet",
+      "number_forms": {
+        "correspondence_s": {
+          "exact": "20",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "20",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "gate_high_s": {
+          "exact": "58",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "58",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "gate_low_s": {
+          "exact": "50",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "50",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "tests_s": {
+          "exact": "9",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "9",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "correspondence_s": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "gate_high_s": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "gate_low_s": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "tests_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "source": "Verification gate STEP and RUN-REPORT log artifacts from quiet runs on the shared compute node over the documentation-only corpus",
       "status": "approximate measured range; controlled baseline dossier still required",
       "tests_s": 9
@@ -23,6 +75,58 @@
       "gate_high_s": 260,
       "gate_low_s": 50,
       "name": "contention",
+      "number_forms": {
+        "correspondence_high_s": {
+          "exact": "95",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "95",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "gate_high_s": {
+          "exact": "260",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "260",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "gate_low_s": {
+          "exact": "50",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "50",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "tests_high_s": {
+          "exact": "60",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "60",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "correspondence_high_s": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "gate_high_s": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "gate_low_s": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "tests_high_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "source": "Verification gate STEP and RUN-REPORT log artifacts from contended runs on the shared compute node over the documentation-only corpus",
       "status": "contention context, not replacement budgets",
       "tests_high_s": 60,
@@ -33,6 +137,46 @@
       "before_bite": 1,
       "category": "policy",
       "name": "comparison",
+      "number_forms": {
+        "absolute_ms": {
+          "exact": "100",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "100",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "relative_percent": {
+          "exact": "20",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "20",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "samples": {
+          "exact": "5",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "absolute_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "relative_percent": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
       "relative_percent": 20,
       "samples": 5,
       "status": "declared comparison policy; not a measurement"
@@ -40,8 +184,63 @@
     {
       "cache": "existing target; initial contents unverified; compilation observed",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [50.94]; CPU PSI avg10 samples [5.77]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        5.77
+      ],
+      "load1_samples": [
+        50.94
+      ],
       "name": "baseline-gate-0",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "5.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.77",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "50.94",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.94",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "444.702",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "444.702",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         444.702
       ]
@@ -49,8 +248,141 @@
     {
       "cache": "target populated by preceding gate",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [48.9, 232.28, 164.75, 120.76]; CPU PSI avg10 samples [47.35, 43.72, 16.65, 7.16]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        47.35,
+        43.72,
+        16.65,
+        7.16
+      ],
+      "load1_samples": [
+        48.9,
+        232.28,
+        164.75,
+        120.76
+      ],
       "name": "baseline-gate-1",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "47.35",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "47.35",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "43.72",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "43.72",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.65",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.65",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "7.16",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "7.16",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "48.9",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "48.9",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "232.28",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "232.28",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "164.75",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "164.75",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "120.76",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "120.76",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "188.883",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "188.883",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "59.205",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "59.205",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "48.85",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "48.85",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "50.659",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.659",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         188.883,
         59.205,
@@ -61,8 +393,63 @@
     {
       "cache": "empty target; dependency cache populated",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [79.81]; CPU PSI avg10 samples [1.69]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        1.69
+      ],
+      "load1_samples": [
+        79.81
+      ],
       "name": "baseline-default-test-build-2",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "1.69",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.69",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "79.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "79.81",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "13.172",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.172",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         13.172
       ]
@@ -70,8 +457,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [73.51, 73.51, 73.51, 73.51, 73.51]; CPU PSI avg10 samples [0.5, 0.5, 0.5, 0.41, 0.41]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        0.5,
+        0.5,
+        0.5,
+        0.41,
+        0.41
+      ],
+      "load1_samples": [
+        73.51,
+        73.51,
+        73.51,
+        73.51,
+        73.51
+      ],
       "name": "baseline-default-test-build-3",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "0.5",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.5",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.5",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.5",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.5",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.5",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.41",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "73.51",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "73.51",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "73.51",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "73.51",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "73.51",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "73.51",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "73.51",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "73.51",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "73.51",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "73.51",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.249",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.249",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.24",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.24",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.241",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.241",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.241",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.241",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.239",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.239",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.249,
         0.24,
@@ -83,8 +629,63 @@
     {
       "cache": "empty target; dependency cache populated",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [73.51]; CPU PSI avg10 samples [0.41]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        0.41
+      ],
+      "load1_samples": [
+        73.51
+      ],
       "name": "baseline-default-clippy-4",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "0.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.41",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "73.51",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "73.51",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "10.548",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "10.548",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         10.548
       ]
@@ -92,8 +693,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [68.45, 68.45, 68.45, 68.45, 68.45]; CPU PSI avg10 samples [0.15, 0.12, 0.12, 0.12, 0.12]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        0.15,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "load1_samples": [
+        68.45,
+        68.45,
+        68.45,
+        68.45,
+        68.45
+      ],
       "name": "baseline-default-clippy-5",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "0.15",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.15",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.12",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.12",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.12",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.12",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.12",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.12",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.12",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.12",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "68.45",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "68.45",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "68.45",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "68.45",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "68.45",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "68.45",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "68.45",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "68.45",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "68.45",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "68.45",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.301",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.301",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.282",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.282",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.288",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.288",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.314",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.314",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.275",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.275",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.301,
         0.282,
@@ -105,8 +865,63 @@
     {
       "cache": "empty target; dependency cache populated",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [66.89]; CPU PSI avg10 samples [0.12]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        0.12
+      ],
+      "load1_samples": [
+        66.89
+      ],
       "name": "baseline-default-documents-6",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "0.12",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.12",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "66.89",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "66.89",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "11.773",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "11.773",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         11.773
       ]
@@ -114,8 +929,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [65.14, 65.14, 65.14, 65.14, 65.14]; CPU PSI avg10 samples [4.95, 4.95, 4.95, 4.95, 9.49]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        4.95,
+        4.95,
+        4.95,
+        4.95,
+        9.49
+      ],
+      "load1_samples": [
+        65.14,
+        65.14,
+        65.14,
+        65.14,
+        65.14
+      ],
       "name": "baseline-default-documents-7",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "4.95",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.95",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.95",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.95",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.95",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.95",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.95",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.95",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "9.49",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "9.49",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "65.14",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65.14",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "65.14",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65.14",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "65.14",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65.14",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "65.14",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65.14",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "65.14",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65.14",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.178",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.178",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.183",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.183",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.188",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.188",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.176",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.176",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.182",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.182",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.178,
         0.183,
@@ -127,8 +1101,63 @@
     {
       "cache": "warm dependencies; test binaries compiled",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [65.14]; CPU PSI avg10 samples [9.49]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        9.49
+      ],
+      "load1_samples": [
+        65.14
+      ],
       "name": "baseline-default-tests-8",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "9.49",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "9.49",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "65.14",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65.14",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "19.699",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.699",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         19.699
       ]
@@ -136,8 +1165,141 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [63.97, 62.61, 62.25, 61.26]; CPU PSI avg10 samples [8.53, 11.51, 15.44, 18.56]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        8.53,
+        11.51,
+        15.44,
+        18.56
+      ],
+      "load1_samples": [
+        63.97,
+        62.61,
+        62.25,
+        61.26
+      ],
       "name": "baseline-default-tests-9",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "8.53",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "8.53",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "11.51",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "11.51",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "15.44",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.44",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "18.56",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.56",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "63.97",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.97",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "62.61",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "62.61",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "62.25",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "62.25",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "61.26",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "61.26",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "6.879",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.879",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.844",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.844",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.865",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.865",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.878",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.878",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         6.879,
         6.844,
@@ -148,8 +1310,167 @@
     {
       "cache": "warm one-file edit packages/documents/src/main.rs",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [59.88, 59.41, 59.41, 59.41, 60.5]; CPU PSI avg10 samples [18.59, 19.57, 19.57, 18.92, 20.2]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        18.59,
+        19.57,
+        19.57,
+        18.92,
+        20.2
+      ],
+      "load1_samples": [
+        59.88,
+        59.41,
+        59.41,
+        59.41,
+        60.5
+      ],
       "name": "baseline-default-edit-10",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "18.59",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.59",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.57",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.57",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.57",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.57",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "18.92",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.92",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "20.2",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "20.2",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "59.88",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "59.88",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "59.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "59.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "59.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "59.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "59.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "59.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "60.5",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "60.5",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.592",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.592",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.582",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.582",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.654",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.654",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.69",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.69",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.627",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.627",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.592,
         0.582,
@@ -161,8 +1482,167 @@
     {
       "cache": "restore original source",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [59.41, 59.41, 59.41, 59.41, 60.5]; CPU PSI avg10 samples [18.59, 19.57, 18.92, 18.92, 20.2]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        18.59,
+        19.57,
+        18.92,
+        18.92,
+        20.2
+      ],
+      "load1_samples": [
+        59.41,
+        59.41,
+        59.41,
+        59.41,
+        60.5
+      ],
       "name": "baseline-default-restore-11",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "18.59",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.59",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.57",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.57",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "18.92",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.92",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "18.92",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.92",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "20.2",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "20.2",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "59.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "59.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "59.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "59.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "59.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "59.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "59.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "59.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "60.5",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "60.5",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.609",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.609",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.636",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.636",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.653",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.653",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.647",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.647",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.643",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.643",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.609,
         0.636,
@@ -174,8 +1654,63 @@
     {
       "cache": "empty target; dependency cache populated",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [60.5]; CPU PSI avg10 samples [21.43]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        21.43
+      ],
+      "load1_samples": [
+        60.5
+      ],
       "name": "baseline-candidate-test-build-12",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "21.43",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.43",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "60.5",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "60.5",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "23.664",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "23.664",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         23.664
       ]
@@ -183,8 +1718,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [50.82, 50.82, 50.82, 50.82, 50.82]; CPU PSI avg10 samples [16.81, 16.81, 16.81, 16.81, 16.81]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        16.81,
+        16.81,
+        16.81,
+        16.81,
+        16.81
+      ],
+      "load1_samples": [
+        50.82,
+        50.82,
+        50.82,
+        50.82,
+        50.82
+      ],
       "name": "baseline-candidate-test-build-13",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "16.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.81",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.81",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.81",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.81",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.81",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "50.82",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.82",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "50.82",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.82",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "50.82",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.82",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "50.82",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.82",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "50.82",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.82",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.34",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.34",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.26",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.26",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.255",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.255",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.265",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.265",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.298",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.298",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.34,
         0.26,
@@ -196,8 +1890,63 @@
     {
       "cache": "empty target; dependency cache populated",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [50.82]; CPU PSI avg10 samples [19.02]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        19.02
+      ],
+      "load1_samples": [
+        50.82
+      ],
       "name": "baseline-candidate-clippy-14",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "19.02",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.02",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "50.82",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.82",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "11.928",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "11.928",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         11.928
       ]
@@ -205,8 +1954,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [51.39, 51.39, 51.39, 51.39, 51.39]; CPU PSI avg10 samples [14.79, 14.79, 14.79, 14.79, 14.79]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        14.79,
+        14.79,
+        14.79,
+        14.79,
+        14.79
+      ],
+      "load1_samples": [
+        51.39,
+        51.39,
+        51.39,
+        51.39,
+        51.39
+      ],
       "name": "baseline-candidate-clippy-15",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "14.79",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "14.79",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "14.79",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "14.79",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "14.79",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "14.79",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "14.79",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "14.79",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "14.79",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "14.79",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "51.39",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "51.39",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "51.39",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "51.39",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "51.39",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "51.39",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "51.39",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "51.39",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "51.39",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "51.39",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.295",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.295",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.302",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.302",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.297",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.297",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.291",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.291",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.424",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.424",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.295,
         0.302,
@@ -218,8 +2126,63 @@
     {
       "cache": "empty target; dependency cache populated",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [51.39]; CPU PSI avg10 samples [17.0]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        17.0
+      ],
+      "load1_samples": [
+        51.39
+      ],
       "name": "baseline-candidate-documents-16",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "17.0",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "17.0",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "51.39",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "51.39",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "15.448",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.448",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         15.448
       ]
@@ -227,8 +2190,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [50.77, 50.77, 50.77, 50.77, 50.77]; CPU PSI avg10 samples [21.75, 19.44, 19.44, 19.44, 19.44]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        21.75,
+        19.44,
+        19.44,
+        19.44,
+        19.44
+      ],
+      "load1_samples": [
+        50.77,
+        50.77,
+        50.77,
+        50.77,
+        50.77
+      ],
       "name": "baseline-candidate-documents-17",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "21.75",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.75",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.44",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.44",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.44",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.44",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.44",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.44",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.44",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.44",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "50.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.77",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "50.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.77",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "50.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.77",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "50.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.77",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "50.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.77",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.183",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.183",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.17",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.17",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.171",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.171",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.169",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.169",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.164",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.164",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.183,
         0.17,
@@ -240,8 +2362,63 @@
     {
       "cache": "warm dependencies; test binaries compiled",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [50.77]; CPU PSI avg10 samples [19.44]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        19.44
+      ],
+      "load1_samples": [
+        50.77
+      ],
       "name": "baseline-candidate-tests-18",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "19.44",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.44",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "50.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "50.77",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "19.874",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.874",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         19.874
       ]
@@ -249,8 +2426,141 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [51.79, 51.0, 56.05, 54.28]; CPU PSI avg10 samples [13.89, 10.77, 11.47, 16.24]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        13.89,
+        10.77,
+        11.47,
+        16.24
+      ],
+      "load1_samples": [
+        51.79,
+        51.0,
+        56.05,
+        54.28
+      ],
       "name": "baseline-candidate-tests-19",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "13.89",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.89",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "10.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "10.77",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "11.47",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "11.47",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.24",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.24",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "51.79",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "51.79",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "51.0",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "51.0",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "56.05",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "56.05",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "54.28",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "54.28",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "5.001",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.001",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "5.381",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.381",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.898",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.898",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "5.201",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.201",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         5.001,
         5.381,
@@ -261,8 +2571,167 @@
     {
       "cache": "warm one-file edit packages/documents/src/main.rs",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [54.18, 54.18, 53.6, 53.6, 53.6]; CPU PSI avg10 samples [14.84, 16.68, 16.68, 16.68, 16.74]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        14.84,
+        16.68,
+        16.68,
+        16.68,
+        16.74
+      ],
+      "load1_samples": [
+        54.18,
+        54.18,
+        53.6,
+        53.6,
+        53.6
+      ],
       "name": "baseline-candidate-edit-20",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "14.84",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "14.84",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.68",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.68",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.68",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.68",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.68",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.68",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.74",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.74",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "54.18",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "54.18",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "54.18",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "54.18",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "53.6",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "53.6",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "53.6",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "53.6",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "53.6",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "53.6",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.475",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.475",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.478",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.478",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.474",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.474",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.468",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.468",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.482",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.482",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.475,
         0.478,
@@ -274,8 +2743,167 @@
     {
       "cache": "restore original source",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [54.18, 53.6, 53.6, 53.6, 53.6]; CPU PSI avg10 samples [14.84, 16.68, 16.68, 16.74, 16.74]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        14.84,
+        16.68,
+        16.68,
+        16.74,
+        16.74
+      ],
+      "load1_samples": [
+        54.18,
+        53.6,
+        53.6,
+        53.6,
+        53.6
+      ],
       "name": "baseline-candidate-restore-21",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "14.84",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "14.84",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.68",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.68",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.68",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.68",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.74",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.74",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.74",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.74",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "54.18",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "54.18",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "53.6",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "53.6",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "53.6",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "53.6",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "53.6",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "53.6",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "53.6",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "53.6",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.505",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.505",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.539",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.539",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.444",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.444",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.452",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.452",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.461",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.461",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.505,
         0.539,
@@ -287,8 +2915,167 @@
     {
       "cache": "warm unchanged corpus",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [54.56, 46.85, 53.05, 63.41, 89.49]; CPU PSI avg10 samples [22.05, 23.12, 22.34, 19.62, 13.58]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        22.05,
+        23.12,
+        22.34,
+        19.62,
+        13.58
+      ],
+      "load1_samples": [
+        54.56,
+        46.85,
+        53.05,
+        63.41,
+        89.49
+      ],
       "name": "comparison-design-before-0",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "22.05",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "22.05",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "23.12",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "23.12",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "22.34",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "22.34",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.62",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.62",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.58",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.58",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "54.56",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "54.56",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "46.85",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "46.85",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "53.05",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "53.05",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "63.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "89.49",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "89.49",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "26.123",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "26.123",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "25.903",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "25.903",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "28.599",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "28.599",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "25.87",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "25.87",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "26.643",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "26.643",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         26.123,
         25.903,
@@ -300,8 +3087,167 @@
     {
       "cache": "warm unchanged corpus",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [46.85, 53.05, 63.41, 89.49, 98.29]; CPU PSI avg10 samples [23.12, 22.34, 19.62, 13.58, 15.52]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        23.12,
+        22.34,
+        19.62,
+        13.58,
+        15.52
+      ],
+      "load1_samples": [
+        46.85,
+        53.05,
+        63.41,
+        89.49,
+        98.29
+      ],
       "name": "comparison-design-after-1",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "23.12",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "23.12",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "22.34",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "22.34",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.62",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.62",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.58",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.58",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "15.52",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.52",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "46.85",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "46.85",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "53.05",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "53.05",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "63.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "89.49",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "89.49",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "98.29",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "98.29",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.249",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.249",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.245",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.245",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.257",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.257",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.25",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.25",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.282",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.282",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.249,
         0.245,
@@ -313,8 +3259,63 @@
     {
       "cache": "empty target; dependencies offline",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [104.19]; CPU PSI avg10 samples [15.52]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        15.52
+      ],
+      "load1_samples": [
+        104.19
+      ],
       "name": "comparison-default-paired-build-2",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "15.52",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.52",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "104.19",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "104.19",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "14.379",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "14.379",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         14.379
       ]
@@ -322,8 +3323,63 @@
     {
       "cache": "test artifacts warm; doctest preparation",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [96.17]; CPU PSI avg10 samples [17.65]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        17.65
+      ],
+      "load1_samples": [
+        96.17
+      ],
       "name": "comparison-default-doctest-warmup-3",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "17.65",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "17.65",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "96.17",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "96.17",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "2.89",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2.89",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         2.89
       ]
@@ -331,8 +3387,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [96.39, 92.26, 91.41, 79.91, 99.44]; CPU PSI avg10 samples [17.71, 19.04, 11.29, 16.68, 17.03]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        17.71,
+        19.04,
+        11.29,
+        16.68,
+        17.03
+      ],
+      "load1_samples": [
+        96.39,
+        92.26,
+        91.41,
+        79.91,
+        99.44
+      ],
       "name": "comparison-default-libtest-4",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "17.71",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "17.71",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.04",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.04",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "11.29",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "11.29",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.68",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.68",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "17.03",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "17.03",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "96.39",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "96.39",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "92.26",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "92.26",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "91.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "91.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "79.91",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "79.91",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "99.44",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "99.44",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "6.855",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.855",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "7.91",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "7.91",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.803",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.803",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.926",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.926",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.955",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.955",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         6.855,
         7.91,
@@ -344,8 +3559,167 @@
     {
       "cache": "warm unchanged target; includes doctests",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [91.24, 96.49, 83.56, 86.25, 91.87]; CPU PSI avg10 samples [15.97, 9.05, 13.02, 19.06, 16.03]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        15.97,
+        9.05,
+        13.02,
+        19.06,
+        16.03
+      ],
+      "load1_samples": [
+        91.24,
+        96.49,
+        83.56,
+        86.25,
+        91.87
+      ],
       "name": "comparison-default-nextest-5",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "15.97",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.97",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "9.05",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "9.05",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.02",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.02",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.06",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.06",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.03",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.03",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "91.24",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "91.24",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "96.49",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "96.49",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "83.56",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "83.56",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "86.25",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "86.25",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "91.87",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "91.87",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "5.655",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.655",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "5.494",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.494",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "5.763",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.763",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.186",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.186",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "5.539",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.539",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         5.655,
         5.494,
@@ -357,8 +3731,63 @@
     {
       "cache": "empty target; dependencies offline",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [97.88]; CPU PSI avg10 samples [18.05]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        18.05
+      ],
+      "load1_samples": [
+        97.88
+      ],
       "name": "comparison-candidate-paired-build-6",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "18.05",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.05",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "97.88",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "97.88",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "17.021",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "17.021",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         17.021
       ]
@@ -366,8 +3795,63 @@
     {
       "cache": "test artifacts warm; doctest preparation",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [94.79]; CPU PSI avg10 samples [17.97]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        17.97
+      ],
+      "load1_samples": [
+        94.79
+      ],
       "name": "comparison-candidate-doctest-warmup-7",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "17.97",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "17.97",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "94.79",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "94.79",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "2.869",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2.869",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         2.869
       ]
@@ -375,8 +3859,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [90.56, 87.91, 93.0, 86.41, 98.85]; CPU PSI avg10 samples [21.75, 21.78, 17.45, 16.73, 16.83]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        21.75,
+        21.78,
+        17.45,
+        16.73,
+        16.83
+      ],
+      "load1_samples": [
+        90.56,
+        87.91,
+        93.0,
+        86.41,
+        98.85
+      ],
       "name": "comparison-candidate-libtest-8",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "21.75",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.75",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "21.78",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.78",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "17.45",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "17.45",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.73",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.73",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.83",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.83",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "90.56",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "90.56",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "87.91",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "87.91",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "93.0",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "93.0",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "86.41",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "86.41",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "98.85",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "98.85",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "4.557",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.557",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.775",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.775",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.642",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.642",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.819",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.819",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.609",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.609",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         4.557,
         6.775,
@@ -388,8 +4031,167 @@
     {
       "cache": "warm unchanged target; includes doctests",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [87.55, 89.52, 89.32, 93.26, 103.66]; CPU PSI avg10 samples [20.84, 18.96, 18.88, 15.82, 21.81]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        20.84,
+        18.96,
+        18.88,
+        15.82,
+        21.81
+      ],
+      "load1_samples": [
+        87.55,
+        89.52,
+        89.32,
+        93.26,
+        103.66
+      ],
       "name": "comparison-candidate-nextest-9",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "20.84",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "20.84",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "18.96",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.96",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "18.88",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.88",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "15.82",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.82",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "21.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.81",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "87.55",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "87.55",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "89.52",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "89.52",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "89.32",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "89.32",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "93.26",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "93.26",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "103.66",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "103.66",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "4.959",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.959",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "5.376",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.376",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.87",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.87",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.611",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.611",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.265",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.265",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         4.959,
         5.376,
@@ -401,8 +4203,63 @@
     {
       "cache": "empty target; dependencies offline",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [73.74]; CPU PSI avg10 samples [18.31]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        18.31
+      ],
+      "load1_samples": [
+        73.74
+      ],
       "name": "isolation-defaults-cold-0",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "18.31",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.31",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "73.74",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "73.74",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "15.198",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.198",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         15.198
       ]
@@ -410,8 +4267,63 @@
     {
       "cache": "warm binaries; includes doctest preparation",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [71.53]; CPU PSI avg10 samples [18.26]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        18.26
+      ],
+      "load1_samples": [
+        71.53
+      ],
       "name": "isolation-defaults-warmup-1",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "18.26",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.26",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "71.53",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "71.53",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "6.799",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.799",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         6.799
       ]
@@ -419,8 +4331,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [68.2, 65.31, 58.37, 55.62, 61.77]; CPU PSI avg10 samples [10.17, 6.32, 12.63, 20.36, 21.58]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        10.17,
+        6.32,
+        12.63,
+        20.36,
+        21.58
+      ],
+      "load1_samples": [
+        68.2,
+        65.31,
+        58.37,
+        55.62,
+        61.77
+      ],
       "name": "isolation-defaults-test-2",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "10.17",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "10.17",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.32",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.32",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "12.63",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "12.63",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "20.36",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "20.36",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "21.58",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.58",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "68.2",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "68.2",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "65.31",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65.31",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "58.37",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "58.37",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "55.62",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "55.62",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "61.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "61.77",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "6.862",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.862",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "7.119",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "7.119",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.735",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.735",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "7.046",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "7.046",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.987",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.987",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         6.862,
         7.119,
@@ -432,8 +4503,63 @@
     {
       "cache": "warm dependencies; production documents build",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [62.59]; CPU PSI avg10 samples [14.21]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        14.21
+      ],
+      "load1_samples": [
+        62.59
+      ],
       "name": "isolation-defaults-documents-warmup-3",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "14.21",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "14.21",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "62.59",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "62.59",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "8.768",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "8.768",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         8.768
       ]
@@ -441,8 +4567,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [64.57, 64.57, 64.57, 64.57, 64.57]; CPU PSI avg10 samples [15.09, 15.09, 13.81, 13.81, 13.81]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        15.09,
+        15.09,
+        13.81,
+        13.81,
+        13.81
+      ],
+      "load1_samples": [
+        64.57,
+        64.57,
+        64.57,
+        64.57,
+        64.57
+      ],
       "name": "isolation-defaults-documents-4",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "15.09",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.09",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "15.09",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.09",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.81",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.81",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.81",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "64.57",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.57",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64.57",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.57",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64.57",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.57",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64.57",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.57",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64.57",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.57",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.672",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.672",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.668",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.668",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.678",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.678",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.688",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.688",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.694",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.694",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.672,
         0.668,
@@ -454,8 +4739,63 @@
     {
       "cache": "empty target; dependencies offline",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [65.17]; CPU PSI avg10 samples [16.01]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        16.01
+      ],
+      "load1_samples": [
+        65.17
+      ],
       "name": "isolation-debugless-cold-5",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "16.01",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.01",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "65.17",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65.17",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "15.366",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.366",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         15.366
       ]
@@ -463,8 +4803,63 @@
     {
       "cache": "warm binaries; includes doctest preparation",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [64.99]; CPU PSI avg10 samples [13.19]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        13.19
+      ],
+      "load1_samples": [
+        64.99
+      ],
       "name": "isolation-debugless-warmup-6",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "13.19",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.19",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "64.99",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.99",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "7.252",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "7.252",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         7.252
       ]
@@ -472,8 +4867,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [65.07, 74.74, 76.88, 77.85, 74.42]; CPU PSI avg10 samples [12.23, 18.66, 16.84, 17.14, 12.37]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        12.23,
+        18.66,
+        16.84,
+        17.14,
+        12.37
+      ],
+      "load1_samples": [
+        65.07,
+        74.74,
+        76.88,
+        77.85,
+        74.42
+      ],
       "name": "isolation-debugless-test-7",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "12.23",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "12.23",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "18.66",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "18.66",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.84",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.84",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "17.14",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "17.14",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "12.37",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "12.37",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "65.07",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "65.07",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "74.74",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "74.74",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "76.88",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "76.88",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "77.85",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "77.85",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "74.42",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "74.42",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "10.115",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "10.115",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "7.573",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "7.573",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "7.339",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "7.339",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.455",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.455",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "9.672",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "9.672",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         10.115,
         7.573,
@@ -485,8 +5039,63 @@
     {
       "cache": "warm dependencies; production documents build",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [68.68]; CPU PSI avg10 samples [20.13]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        20.13
+      ],
+      "load1_samples": [
+        68.68
+      ],
       "name": "isolation-debugless-documents-warmup-8",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "20.13",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "20.13",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "68.68",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "68.68",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "7.121",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "7.121",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         7.121
       ]
@@ -494,8 +5103,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [63.18, 63.18, 63.18, 63.18, 63.18]; CPU PSI avg10 samples [24.56, 24.56, 24.56, 25.72, 25.72]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        24.56,
+        24.56,
+        24.56,
+        25.72,
+        25.72
+      ],
+      "load1_samples": [
+        63.18,
+        63.18,
+        63.18,
+        63.18,
+        63.18
+      ],
       "name": "isolation-debugless-documents-9",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "24.56",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "24.56",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "24.56",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "24.56",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "24.56",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "24.56",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "25.72",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "25.72",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "25.72",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "25.72",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "63.18",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.18",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "63.18",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.18",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "63.18",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.18",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "63.18",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.18",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "63.18",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.18",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.635",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.635",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.615",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.615",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.561",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.561",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.565",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.565",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.603",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.603",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.635,
         0.615,
@@ -507,8 +5275,63 @@
     {
       "cache": "empty target; dependencies offline",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [63.18]; CPU PSI avg10 samples [22.33]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        22.33
+      ],
+      "load1_samples": [
+        63.18
+      ],
       "name": "isolation-optimized-cold-10",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "22.33",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "22.33",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "63.18",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.18",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "23.529",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "23.529",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         23.529
       ]
@@ -516,8 +5339,63 @@
     {
       "cache": "warm binaries; includes doctest preparation",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [69.92]; CPU PSI avg10 samples [24.07]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        24.07
+      ],
+      "load1_samples": [
+        69.92
+      ],
       "name": "isolation-optimized-warmup-11",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "24.07",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "24.07",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "69.92",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "69.92",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "5.076",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.076",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         5.076
       ]
@@ -525,8 +5403,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [71.53, 69.89, 67.17, 68.44, 66.08]; CPU PSI avg10 samples [23.78, 21.99, 20.44, 19.81, 16.54]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        23.78,
+        21.99,
+        20.44,
+        19.81,
+        16.54
+      ],
+      "load1_samples": [
+        71.53,
+        69.89,
+        67.17,
+        68.44,
+        66.08
+      ],
       "name": "isolation-optimized-test-12",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "23.78",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "23.78",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "21.99",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.99",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "20.44",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "20.44",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "19.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "19.81",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "16.54",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.54",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "71.53",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "71.53",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "69.89",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "69.89",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "67.17",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "67.17",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "68.44",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "68.44",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "66.08",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "66.08",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "4.823",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.823",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.498",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.498",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.836",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.836",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.571",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.571",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "4.406",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "4.406",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         4.823,
         4.498,
@@ -538,8 +5575,63 @@
     {
       "cache": "warm dependencies; production documents build",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [64.07]; CPU PSI avg10 samples [11.09]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        11.09
+      ],
+      "load1_samples": [
+        64.07
+      ],
       "name": "isolation-optimized-documents-warmup-13",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "11.09",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "11.09",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "64.07",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.07",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "7.923",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "7.923",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         7.923
       ]
@@ -547,8 +5639,167 @@
     {
       "cache": "warm unchanged target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [62.79, 62.79, 60.16, 60.16, 60.16]; CPU PSI avg10 samples [16.91, 13.84, 13.84, 13.84, 13.84]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        16.91,
+        13.84,
+        13.84,
+        13.84,
+        13.84
+      ],
+      "load1_samples": [
+        62.79,
+        62.79,
+        60.16,
+        60.16,
+        60.16
+      ],
       "name": "isolation-optimized-documents-14",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "16.91",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "16.91",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.84",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.84",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.84",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.84",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.84",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.84",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "13.84",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "13.84",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "62.79",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "62.79",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "62.79",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "62.79",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "60.16",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "60.16",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "60.16",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "60.16",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "60.16",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "60.16",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.347",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.347",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.347",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.347",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.357",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.357",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.373",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.373",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.36",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.36",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.347,
         0.347,
@@ -560,8 +5811,63 @@
     {
       "cache": "empty target; dependencies offline",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [71.46]; CPU PSI avg10 samples [5.89]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        5.89
+      ],
+      "load1_samples": [
+        71.46
+      ],
       "name": "linker-bundled-link-cold-0",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "5.89",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "5.89",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "71.46",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "71.46",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "11.2",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "11.2",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         11.2
       ]
@@ -569,8 +5875,167 @@
     {
       "cache": "warm comment-only edit in documents main; link args retained",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [64.47, 64.47, 64.47, 64.47, 64.47]; CPU PSI avg10 samples [1.77, 1.77, 1.45, 1.45, 1.45]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        1.77,
+        1.77,
+        1.45,
+        1.45,
+        1.45
+      ],
+      "load1_samples": [
+        64.47,
+        64.47,
+        64.47,
+        64.47,
+        64.47
+      ],
       "name": "linker-bundled-link-edit-1",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "1.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.77",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "1.77",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.77",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "1.45",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.45",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "1.45",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.45",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "1.45",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.45",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "64.47",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.47",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64.47",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.47",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64.47",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.47",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64.47",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.47",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "64.47",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.47",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "0.675",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.675",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.735",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.735",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.688",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.688",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.746",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.746",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.691",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.691",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         0.675,
         0.735,
@@ -582,8 +6047,63 @@
     {
       "cache": "empty target; dependencies offline",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [64.47]; CPU PSI avg10 samples [1.19]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        1.19
+      ],
+      "load1_samples": [
+        64.47
+      ],
       "name": "linker-system-link-cold-2",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "1.19",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.19",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "64.47",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.47",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "15.291",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "15.291",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         15.291
       ]
@@ -591,8 +6111,167 @@
     {
       "cache": "warm comment-only edit in documents main; link args retained",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [64.19, 63.38, 61.75, 61.75, 60.32]; CPU PSI avg10 samples [1.87, 2.67, 2.27, 1.85, 6.15]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        1.87,
+        2.67,
+        2.27,
+        1.85,
+        6.15
+      ],
+      "load1_samples": [
+        64.19,
+        63.38,
+        61.75,
+        61.75,
+        60.32
+      ],
       "name": "linker-system-link-edit-3",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "1.87",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.87",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "2.67",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2.67",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "2.27",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2.27",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "1.85",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.85",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "6.15",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "6.15",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "64.19",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "64.19",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "63.38",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "63.38",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "61.75",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "61.75",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "61.75",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "61.75",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "60.32",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "60.32",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "3.81",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "3.81",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "3.335",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "3.335",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "2.721",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2.721",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "2.886",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "2.886",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "3.251",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "3.251",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         3.81,
         3.335,
@@ -604,8 +6283,167 @@
     {
       "cache": "warm unchanged gate target",
       "category": "foundation-sample",
-      "context": "Shared node; load1 samples [27.13, 28.5, 29.42, 32.3, 35.05]; CPU PSI avg10 samples [0.11, 0.01, 1.71, 0.3, 0.08]; exits zero. Not a replacement quiet regression baseline.",
+      "context": "Shared node; load1 samples ([[load1_samples]]); CPU PSI avg10 samples ([[cpu_psi_avg10_samples]]); exits zero. Not a replacement quiet regression baseline.",
+      "cpu_psi_avg10_samples": [
+        0.11,
+        0.01,
+        1.71,
+        0.3,
+        0.08
+      ],
+      "load1_samples": [
+        27.13,
+        28.5,
+        29.42,
+        32.3,
+        35.05
+      ],
       "name": "after-gate-after-0",
+      "number_forms": {
+        "cpu_psi_avg10_samples": [
+          {
+            "exact": "0.11",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.11",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.01",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.01",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "1.71",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "1.71",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.3",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.3",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "0.08",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "0.08",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "load1_samples": [
+          {
+            "exact": "27.13",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "27.13",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "28.5",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "28.5",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "29.42",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "29.42",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "32.3",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "32.3",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "35.05",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "35.05",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ],
+        "samples_s": [
+          {
+            "exact": "21.287",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.287",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "21.536",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.536",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "22.037",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "22.037",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "21.236",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.236",
+            "num_exact": true,
+            "num_relation": "="
+          },
+          {
+            "exact": "21.166",
+            "exact_exact": true,
+            "exact_relation": "=",
+            "num": "21.166",
+            "num_exact": true,
+            "num_relation": "="
+          }
+        ]
+      },
+      "numeric_display": {
+        "cpu_psi_avg10_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "load1_samples": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "samples_s": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_text": [
+        "context"
+      ],
       "samples_s": [
         21.287,
         21.536,
@@ -615,14 +6453,330 @@
       ]
     },
     {
-      "cache": "Hold sccache until provisioned and measured. It is absent and was not adopted. Current default cold test, clippy and documents builds measured 13.172, 10.548 and 11.773 seconds, with unchanged warm medians below 0.3 seconds; the candidate cold test build was 23.664 seconds in that campaign. These costs do not justify requesting compiler-cache provisioning for this workspace now. Reconsider when clean build fan-out or repeated cross-checkout compilation makes a measurable cache benefit plausible.",
+      "cache": "Hold sccache until provisioned and measured. It is absent and was not adopted. Current default cold test, clippy and documents builds measured [[baseline_default_test_build_2]], [[baseline_default_clippy_4]] and [[baseline_default_documents_6]] seconds, with unchanged warm medians below [[warm_median_upper_seconds]] seconds; the candidate cold test build was [[baseline_candidate_test_build_12]] seconds in that campaign. These costs do not justify requesting compiler-cache provisioning for this workspace now. Reconsider when clean build fan-out or repeated cross-checkout compilation makes a measurable cache benefit plausible.",
       "category": "decision",
-      "context": "All campaigns used the same locked dependency corpus offline on the x86_64 Linux node, nightly Rust 1.101.0 with LLVM 23.1.4, default features, 256 reported CPUs and a cgroup CPU quota equivalent to 62.25 CPUs. Each measured configuration used its own target directory; cold means empty target with the dependency cache and filesystem page cache already populated, not a machine cache flush. Each target was removed after recording its samples. Normal priority was retained because lowering scheduling priority on the shared contended node would distort comparisons. Load, CPU/I/O/memory pressure, quota and throttling counters are retained before and after every sample; concurrent jobs were recorded at campaign start, while per-process attribution and service versions are unavailable or inapplicable to this pure workspace. No quiet baseline is replaced: shared-node comparison evidence remains distinct from the five-quiet-sample regression policy. Historical contended and quiet ranges remain above.",
+      "context": "All campaigns used the same locked dependency corpus offline on the x86_64 Linux node, nightly Rust 1.101.0 with LLVM 23.1.4, default features, [[reported_cpu_count]] reported CPUs and a cgroup CPU quota equivalent to [[cpu_quota]] CPUs. Each measured configuration used its own target directory; cold means empty target with the dependency cache and filesystem page cache already populated, not a machine cache flush. Each target was removed after recording its samples. Normal priority was retained because lowering scheduling priority on the shared contended node would distort comparisons. Load, CPU/I/O/memory pressure, quota and throttling counters are retained before and after every sample; concurrent jobs were recorded at campaign start, while per-process attribution and service versions are unavailable or inapplicable to this pure workspace. No quiet baseline is replaced: shared-node comparison evidence remains distinct from the [[comparison_samples]]-quiet-sample regression policy. Historical contended and quiet ranges remain above.",
+      "cpu_quota": "62.25",
+      "debugless_optimization": 0,
+      "debugless_optimization_debug": 0,
+      "default_optimization": 0,
+      "default_optimization_debug": 2,
+      "gate_debug_information": 0,
+      "gate_optimization": 1,
+      "ignored_case_count": 0,
+      "inventory_case_count": 1689,
       "license": "crates.io records cargo-nextest 0.9.149 as Apache-2.0 OR MIT, with repository github.com/nextest-rs/nextest. crates.io is the licence source of record. It runs on the compute node as a tool and is neither linked into nor distributed with any package.",
-      "linker": "Keep the toolchain default bundled LLVM linker without repository rustflags. The target specification names gnu-lld-cc with its linker self-contained, and observed link arguments select the toolchain gcc-ld path and -fuse-ld=lld. Corrected cold documents builds measured 11.200 seconds with the default and 15.291 seconds with the system linker selected by disabling the lld feature. Five comment-only relink samples had medians 0.691 and 3.251 seconds. The initial obsolete print-link-args instrumentation failed and is excluded; corrected --print link-args measurements all passed. No system lld installation or linker override is needed.",
+      "linker": "Keep the toolchain default bundled LLVM linker without repository rustflags. The target specification names gnu-lld-cc with its linker self-contained, and observed link arguments select the toolchain gcc-ld path and -fuse-ld=lld. Corrected cold documents builds measured [[linker_bundled_link_cold_0]] seconds with the default and [[linker_system_link_cold_2]] seconds with the system linker selected by disabling the lld feature. Five comment-only relink samples had medians [[bundled_link_edit_median]] and [[system_link_edit_median]] seconds. The initial obsolete print-link-args instrumentation failed and is excluded; corrected --print link-args measurements all passed. No system lld installation or linker override is needed.",
       "name": "foundation-decisions",
-      "profile": "Adopt a named gate profile inheriting dev with optimization level 1, debug information 0, debug assertions true and overflow checks true. Ordinary dev and test retain their debugging defaults, and release is unchanged. In the one-setting-at-a-time campaign, median warm test times were 6.987 seconds at optimization 0/debug 2, 7.573 seconds at optimization 0/debug 0 with variable contention, and 4.571 seconds at optimization 1/debug 0; median document checks were 0.678, 0.603 and 0.357 seconds. Cold test builds were 15.198, 15.366 and 23.529 seconds. Removing debug information alone is not claimed to speed test execution. The chosen gate profile trades a bounded cold cost and gate-only symbols for recurring execution and link savings; debugging remains available through the unchanged dev/test profiles. The independent profile campaign measured comment-only documents rebuild medians of 0.627 seconds before and 0.475 seconds after; this measures front-end and relink cost, not a changed implementation workload.",
-      "runner": "Use the provisioned cargo-nextest 0.9.149 on the measured x86_64 Linux node, with the versioned libtest-json-plus 0.1 stream, retries zero, no fail-fast and no slow-timeout termination. It builds the inventory once and reuses its binaries. Default-profile paired medians including separate doctests were 6.926 seconds with Cargo and 5.655 seconds with nextest; under the chosen gate profile they were 4.642 and 4.870 seconds. Process isolation and structured case accounting cost 0.228 seconds against the optimized Cargo runner in that series, while the combined profile/runner remains faster than the starting path. A controlled two-case capture probe retained one pass, one failure, both measured durations and the failure text, returning the original failure status. JUnit was rejected because it emits offset timestamps; the selected JSON stream has durations and no instants. Only the observer adds UTC instants ending Z. Captured stdout is retained in untracked raw evidence and never copied into timing findings. The current inventory has 1689 non-doctest cases and zero ignored cases; the adapter still accounts explicitly for ignored declarations. Platform measurements establish this node only, not unmeasured targets."
+      "number_forms": {
+        "cpu_quota": {
+          "exact": "62.25",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "62.25",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "debugless_optimization": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "debugless_optimization_debug": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "default_optimization": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "default_optimization_debug": {
+          "exact": "2",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "gate_debug_information": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "gate_optimization": {
+          "exact": "1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "ignored_case_count": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "inventory_case_count": {
+          "exact": "1 689",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 689",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "optimized_optimization": {
+          "exact": "1",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "optimized_optimization_debug": {
+          "exact": "0",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "reported_cpu_count": {
+          "exact": "256",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "256",
+          "num_exact": true,
+          "num_relation": "="
+        },
+        "warm_median_upper_seconds": {
+          "exact": "0.3",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "0.3",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "cpu_quota": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "debugless_optimization": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "debugless_optimization_debug": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "default_optimization": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "default_optimization_debug": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "gate_debug_information": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "gate_optimization": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "ignored_case_count": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "inventory_case_count": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "optimized_optimization": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "optimized_optimization_debug": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "reported_cpu_count": {
+          "display": "exact",
+          "exact_digits": 32
+        },
+        "warm_median_upper_seconds": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "numeric_refs": {
+        "baseline_candidate_test_build_12": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples_s",
+          "index": 0,
+          "row": "baseline-candidate-test-build-12"
+        },
+        "baseline_default_clippy_4": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples_s",
+          "index": 0,
+          "row": "baseline-default-clippy-4"
+        },
+        "baseline_default_documents_6": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples_s",
+          "index": 0,
+          "row": "baseline-default-documents-6"
+        },
+        "baseline_default_test_build_2": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples_s",
+          "index": 0,
+          "row": "baseline-default-test-build-2"
+        },
+        "bundled_link_edit_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-bundled-link-edit-median"
+        },
+        "comparison_samples": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples",
+          "row": "comparison"
+        },
+        "isolation_debugless_cold_5": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples_s",
+          "index": 0,
+          "row": "isolation-debugless-cold-5"
+        },
+        "isolation_defaults_cold_0": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples_s",
+          "index": 0,
+          "row": "isolation-defaults-cold-0"
+        },
+        "isolation_optimized_cold_10": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples_s",
+          "index": 0,
+          "row": "isolation-optimized-cold-10"
+        },
+        "linker_bundled_link_cold_0": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples_s",
+          "index": 0,
+          "row": "linker-bundled-link-cold-0"
+        },
+        "linker_system_link_cold_2": {
+          "dataset": "org.peer-network.devperf.measurements",
+          "field": "samples_s",
+          "index": 0,
+          "row": "linker-system-link-cold-2"
+        },
+        "profile_after_edit_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-profile-after-edit-median"
+        },
+        "profile_before_edit_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-profile-before-edit-median"
+        },
+        "profile_debugless_documents_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-profile-debugless-documents-median"
+        },
+        "profile_debugless_test_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-profile-debugless-test-median"
+        },
+        "profile_default_documents_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-profile-default-documents-median"
+        },
+        "profile_default_test_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-profile-default-test-median"
+        },
+        "profile_optimized_documents_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-profile-optimized-documents-median"
+        },
+        "profile_optimized_test_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-profile-optimized-test-median"
+        },
+        "runner_default_cargo_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-runner-default-cargo-median"
+        },
+        "runner_default_nextest_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-runner-default-nextest-median"
+        },
+        "runner_gate_cargo_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-runner-gate-cargo-median"
+        },
+        "runner_gate_nextest_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-runner-gate-nextest-median"
+        },
+        "runner_overhead": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-runner-gate-overhead-seconds"
+        },
+        "system_link_edit_median": {
+          "dataset": "org.peer-network.numbers.registry",
+          "key": "id",
+          "row": "num:numbers:devperf-system-link-edit-median"
+        }
+      },
+      "numeric_text": [
+        "profile",
+        "runner",
+        "linker",
+        "cache",
+        "context"
+      ],
+      "optimized_optimization": 1,
+      "optimized_optimization_debug": 0,
+      "profile": "Adopt a named gate profile inheriting dev with optimization level [[gate_optimization]], debug information [[gate_debug_information]], debug assertions true and overflow checks true. Ordinary dev and test retain their debugging defaults, and release is unchanged. In the one-setting-at-a-time campaign, median warm test times were [[profile_default_test_median]] seconds at optimization [[default_optimization]]/debug [[default_optimization_debug]], [[profile_debugless_test_median]] seconds at optimization [[debugless_optimization]]/debug [[debugless_optimization_debug]] with variable contention, and [[profile_optimized_test_median]] seconds at optimization [[optimized_optimization]]/debug [[optimized_optimization_debug]]; median document checks were [[profile_default_documents_median]], [[profile_debugless_documents_median]] and [[profile_optimized_documents_median]] seconds. Cold test builds were [[isolation_defaults_cold_0]], [[isolation_debugless_cold_5]] and [[isolation_optimized_cold_10]] seconds. Removing debug information alone is not claimed to speed test execution. The chosen gate profile trades a bounded cold cost and gate-only symbols for recurring execution and link savings; debugging remains available through the unchanged dev/test profiles. The independent profile campaign measured comment-only documents rebuild medians of [[profile_before_edit_median]] seconds before and [[profile_after_edit_median]] seconds after; this measures front-end and relink cost, not a changed implementation workload.",
+      "reported_cpu_count": 256,
+      "runner": "Use the provisioned cargo-nextest 0.9.149 on the measured x86_64 Linux node, with the versioned libtest-json-plus 0.1 stream, retries zero, no fail-fast and no slow-timeout termination. It builds the inventory once and reuses its binaries. Default-profile paired medians including separate doctests were [[runner_default_cargo_median]] seconds with Cargo and [[runner_default_nextest_median]] seconds with nextest; under the chosen gate profile they were [[runner_gate_cargo_median]] and [[runner_gate_nextest_median]] seconds. Process isolation and structured case accounting cost [[runner_overhead]] seconds against the optimized Cargo runner in that series, while the combined profile/runner remains faster than the starting path. A controlled two-case capture probe retained one pass, one failure, both measured durations and the failure text, returning the original failure status. JUnit was rejected because it emits offset timestamps; the selected JSON stream has durations and no instants. Only the observer adds UTC instants ending Z. Captured stdout is retained in untracked raw evidence and never copied into timing findings. The current inventory has [[inventory_case_count]] non-doctest cases and [[ignored_case_count]] ignored cases; the adapter still accounts explicitly for ignored declarations. Platform measurements establish this node only, not unmeasured targets.",
+      "warm_median_upper_seconds": "0.3"
     }
   ]
 }

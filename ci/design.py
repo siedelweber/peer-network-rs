@@ -406,7 +406,10 @@ def numeric_correspondence():
     values = {row['id']: Fraction(row['value']) for row in rows}
     def value(name):
         return values['num:numbers:' + name]
+    derived = 0
     def equal(actual, expected):
+        nonlocal derived
+        derived += 1
         if actual != expected:
             raise ValueError('numeric registry: derived rate differs from recorded operands')
     for wall in ('enclosed', 'rational'):
@@ -418,10 +421,13 @@ def numeric_correspondence():
     for regime, depths in (('supported', value('frozen-supported-depth-count')), ('chartered', 4)):
         equal(value(f'projected-{regime}-cell-count'), value('solve-projection-actor-count') ** 2
               * (depths + 3))
+    def pin_equal(actual, expected):
+        if actual != expected:
+            raise ValueError('numeric registry: derived rate differs from recorded operands')
     certificate_budgets = {row['name']: row['budget_ms'] for row in
                            tomllib.loads(Path('docs/inputs/devperf-budgets.toml').read_text())['rows']}
     for name in ('reference-map-case', 'reference-local-case', 'reference-wall-case', 'reference-certificate-suite'):
-        equal(value(name + '-budget-seconds') * 1000, certificate_budgets[name])
+        pin_equal(value(name + '-budget-seconds') * 1000, certificate_budgets[name])
     rates = {speed: value(f'rate-{speed}-sample-seconds') / value('rate-sample-work')
              for speed in ('fast', 'middle', 'slow')}
     for speed, rate in rates.items():
@@ -476,9 +482,44 @@ def numeric_correspondence():
           value('buildgraph-admission-supported-obligation-count')
           + value('buildgraph-admission-failed-obligation-count')
           + value('buildgraph-admission-held-obligation-count'))
+    measurements = {row['name']: row for row in tomllib.loads(Path('docs/inputs/devperf-measurements.toml').read_text())['rows']}
+    budgets = {row['name']: row for row in tomllib.loads(Path('docs/inputs/devperf-budgets.toml').read_text())['rows']}
+    registry = {row['name']: row for row in tomllib.loads(Path('docs/inputs/devperf-registry.toml').read_text())['rows']}
+    closing = {row['name']: row for row in tomllib.loads(Path('docs/inputs/devperf-close-measurements.toml').read_text())['rows']}
+    for quantity, source in (
+        ('devperf-profile-default-test-median', 'isolation-defaults-test-2'),
+        ('devperf-profile-debugless-test-median', 'isolation-debugless-test-7'),
+        ('devperf-profile-optimized-test-median', 'isolation-optimized-test-12'),
+        ('devperf-profile-default-documents-median', 'isolation-defaults-documents-4'),
+        ('devperf-profile-debugless-documents-median', 'isolation-debugless-documents-9'),
+        ('devperf-profile-optimized-documents-median', 'isolation-optimized-documents-14'),
+        ('devperf-profile-before-edit-median', 'baseline-default-edit-10'),
+        ('devperf-profile-after-edit-median', 'baseline-candidate-edit-20'),
+        ('devperf-runner-default-cargo-median', 'comparison-default-libtest-4'),
+        ('devperf-runner-default-nextest-median', 'comparison-default-nextest-5'),
+        ('devperf-runner-gate-cargo-median', 'comparison-candidate-libtest-8'),
+        ('devperf-runner-gate-nextest-median', 'comparison-candidate-nextest-9'),
+        ('devperf-bundled-link-edit-median', 'linker-bundled-link-edit-1'),
+        ('devperf-system-link-edit-median', 'linker-system-link-edit-3'),
+    ):
+        operands = sorted(Fraction(str(sample)) for sample in measurements[source]['samples_s'])
+        equal(value(quantity), (operands[(len(operands) - 1) // 2] + operands[len(operands) // 2]) / 2)
+    equal(value('devperf-runner-gate-overhead-seconds'), value('devperf-runner-gate-nextest-median')
+          - value('devperf-runner-gate-cargo-median'))
+    equal(value('devperf-record-margin-percent'),
+          (Fraction(budgets['gate']['budget_ms'], 1000) / Fraction(budgets['gate']['record_second_wall_seconds']) - 1) * 100)
+    equal(value('devperf-former-warm-margin-percent'),
+          (value('devperf-former-warm-budget-seconds') / value('devperf-complete-accounting-gate-seconds') - 1) * 100)
+    equal(value('devperf-nullable-count-warm-ratio'),
+          Fraction(str(closing['warmed-pair-2']['duration_ms'])) / Fraction(str(closing['warmed-pair-1']['duration_ms'])))
+    runtime = registry['observation-runtime']
+    equal(value('devperf-runtime-calibration-median-margin-percent'),
+          (Fraction(runtime['budget_ms'], runtime['median_ms']) - 1) * 100)
+    equal(Fraction(runtime['profile_wall_seconds']),
+          sum(Fraction(runtime[field]) for field in ('profile_command_seconds', 'profile_reconstruction_seconds', 'profile_other_seconds')))
     properties = json.loads(Path('docs/datasets/org.peer-network.harness.properties.json').read_text())['rows']
     compiler = next(row for row in properties if row.get('name') == 'pn-epoch::compiler::compiler_generated')
-    equal(value('epoch-property-draw-count'), compiler['cases'])
+    pin_equal(value('epoch-property-draw-count'), compiler['cases'])
     projected = json.loads(Path('docs/datasets/org.peer-network.numbers.registry.json').read_text())['rows']
     if len(projected) != len(rows):
         raise ValueError('numeric registry: projection census differs')
@@ -510,7 +551,7 @@ def numeric_correspondence():
         if admitted and (Fraction(view['exact'].replace('\u202f', '')) != number
                          or view['exact_exact'] is not True or view.get('exact_relation') != '='):
             raise ValueError('numeric registry: exact form differs')
-    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=43 displays={len(projected)}')
+    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived={derived} displays={len(projected)}')
 
 
 if __name__ == '__main__':
@@ -518,5 +559,5 @@ if __name__ == '__main__':
     numeric_correspondence()
     check_rendered_spacing(tracked_paths(), whole_tree=True, parent=parent_rendered_spacing())
     check_numeric_word_fragments([path for path in tracked_paths()
-                                  if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md', 'adr/024-build-graph.md'}
+                                  if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md', 'adr/024-build-graph.md', 'adr/021-development-performance.md'}
                                   or path.is_relative_to('docs/templates') and path.suffix == '.j2'])

@@ -18,6 +18,170 @@ fn number(value: &Value) -> std::result::Result<String, Error> {
     }
 }
 
+fn display(value: &Value, form: Option<&str>, relation: Option<bool>) -> std::result::Result<String, Error> {
+    let form = form.unwrap_or("num");
+    if !["num", "exact"].contains(&form) {
+        return Err(failure(format!("display: unknown form {form}")));
+    }
+    let text = value.get_attr(form)?;
+    let text = text
+        .as_str()
+        .ok_or_else(|| failure(format!("display: omitted form {form}")))?;
+    let exact = value.get_attr(&format!("{form}_exact"))?;
+    let exact = if exact == Value::from(true) {
+        true
+    } else if exact == Value::from(false) {
+        false
+    } else {
+        return Err(failure("display: absent exactness"));
+    };
+    if relation.unwrap_or(false) {
+        let symbol = value.get_attr(&format!("{form}_relation"))?;
+        let symbol = symbol
+            .as_str()
+            .filter(|symbol| {
+                if exact {
+                    *symbol == "="
+                } else {
+                    ["≈", "≤", "≥"].contains(symbol)
+                }
+            })
+            .ok_or_else(|| failure("display: absent or inconsistent relation"))?;
+        Ok(format!("{symbol} {text}"))
+    } else {
+        Ok(text.to_owned())
+    }
+}
+
+fn carrier_fields(
+    record: &Value,
+    datasets: &BTreeMap<String, Dataset>,
+    used: &Mutex<BTreeSet<String>>,
+) -> std::result::Result<Value, Error> {
+    let record = serde_json::to_value(record).map_err(|error| failure(error.to_string()))?;
+    let mut forms = record
+        .get("number_forms")
+        .and_then(serde_json::Value::as_object)
+        .cloned()
+        .unwrap_or_default();
+    if let Some(references) = record.get("numeric_refs") {
+        for (alias, reference) in references
+            .as_object()
+            .ok_or_else(|| failure("number_text: expected reference map"))?
+        {
+            let namespace = reference
+                .get("dataset")
+                .and_then(serde_json::Value::as_str)
+                .ok_or_else(|| failure("number_text: absent reference dataset"))?;
+            let key = reference.get("key").and_then(serde_json::Value::as_str).unwrap_or("name");
+            let name = reference
+                .get("row")
+                .and_then(serde_json::Value::as_str)
+                .ok_or_else(|| failure("number_text: absent reference row"))?;
+            let dataset = datasets
+                .get(namespace)
+                .ok_or_else(|| failure("number_text: unknown reference dataset"))?;
+            let matches: Vec<_> = dataset
+                .rows
+                .iter()
+                .filter(|row| row.get(key).and_then(serde_json::Value::as_str) == Some(name))
+                .collect();
+            let [row] = matches.as_slice() else {
+                return Err(failure("number_text: unknown or ambiguous reference row"));
+            };
+            let value = if let Some(field) = reference.get("field").and_then(serde_json::Value::as_str) {
+                row.get("number_forms")
+                    .and_then(|fields| fields.get(field))
+                    .cloned()
+                    .ok_or_else(|| failure("number_text: absent projected reference field"))?
+            } else if namespace == crate::numbers::NAMESPACE {
+                serde_json::to_value(row).map_err(|error| failure(error.to_string()))?
+            } else {
+                return Err(failure("number_text: absent reference field"));
+            };
+            let value = if let Some(index) = reference.get("index") {
+                let index = index
+                    .as_u64()
+                    .and_then(|index| usize::try_from(index).ok())
+                    .ok_or_else(|| failure("number_text: invalid reference index"))?;
+                value
+                    .get(index)
+                    .cloned()
+                    .ok_or_else(|| failure("number_text: absent reference element"))?
+            } else {
+                value
+            };
+            if forms.insert(alias.clone(), value).is_some() {
+                return Err(failure("number_text: duplicate local and referenced field"));
+            }
+            used.lock()
+                .map_err(|_| failure("dataset census lock poisoned"))?
+                .insert(namespace.to_owned());
+        }
+    }
+    Ok(Value::from(Serde(forms)))
+}
+
+fn number_text(text: &str, forms: &Value) -> std::result::Result<String, Error> {
+    let mut result = String::new();
+    let mut remaining = text;
+    while let Some((prefix, suffix)) = remaining.split_once("[[") {
+        result.push_str(prefix);
+        let (field, tail) = suffix
+            .split_once("]]")
+            .ok_or_else(|| failure("number_text: unclosed field"))?;
+        let (field, mode) = field.split_once(':').unwrap_or((field, "num"));
+        let (form, relation) = match mode {
+            "num" => (None, None),
+            "exact" => (Some("exact"), None),
+            "relation" => (None, Some(true)),
+            _ => return Err(failure("number_text: unknown display mode")),
+        };
+        let values = forms.get_attr(field)?;
+        if values.is_undefined() {
+            return Err(failure(format!("number_text: unknown numeric field {field}")));
+        }
+        if values.kind() == minijinja::value::ValueKind::Seq {
+            let rendered = values
+                .try_iter()?
+                .map(|value| display(&value, form, relation))
+                .collect::<std::result::Result<Vec<_>, _>>()?;
+            result.push_str(&rendered.join(", "));
+        } else {
+            result.push_str(&display(&values, form, relation)?);
+        }
+        remaining = tail;
+    }
+    result.push_str(remaining);
+    Ok(result)
+}
+
+fn present_row(
+    row: &BTreeMap<String, serde_json::Value>,
+    datasets: &BTreeMap<String, Dataset>,
+    used: &Mutex<BTreeSet<String>>,
+) -> std::result::Result<Value, Error> {
+    let Some(fields) = row.get("numeric_text") else {
+        return Ok(Value::from(Serde(row)));
+    };
+    let fields = fields
+        .as_array()
+        .ok_or_else(|| failure("number_text: expected text field list"))?;
+    let forms = carrier_fields(&Value::from(Serde(row)), datasets, used)?;
+    let mut view = row.clone();
+    for field in fields {
+        let field = field
+            .as_str()
+            .ok_or_else(|| failure("number_text: expected text field name"))?;
+        let text = row
+            .get(field)
+            .and_then(serde_json::Value::as_str)
+            .ok_or_else(|| failure("number_text: absent text field"))?;
+        view.insert(field.to_owned(), serde_json::Value::String(number_text(text, &forms)?));
+    }
+    Ok(Value::from(Serde(view)))
+}
+
 fn exhibit(text: &str, labels: &Value) -> std::result::Result<String, Error> {
     let mut rendered = text.to_owned();
     for label in labels.try_iter()? {
@@ -29,6 +193,34 @@ fn exhibit(text: &str, labels: &Value) -> std::result::Result<String, Error> {
 
 fn split(value: &str, separator: &str) -> Vec<String> {
     value.split(separator).map(str::to_owned).collect()
+}
+
+fn present_rows(
+    dataset: &Dataset,
+    datasets: &BTreeMap<String, Dataset>,
+    used: &Mutex<BTreeSet<String>>,
+) -> std::result::Result<Value, Error> {
+    let views = dataset
+        .rows
+        .iter()
+        .map(|row| present_row(row, datasets, used))
+        .collect::<std::result::Result<Vec<_>, _>>()?;
+    Ok(Value::from(Serde(views)))
+}
+
+fn install_numeric_text(
+    environment: &mut Environment<'_>,
+    datasets: &Arc<BTreeMap<String, Dataset>>,
+    used: &Arc<Mutex<BTreeSet<String>>>,
+) {
+    environment.add_filter("number", number);
+    environment.add_filter("display", display);
+    let text_data = Arc::clone(datasets);
+    let text_used = Arc::clone(used);
+    environment.add_filter("number_text", move |text: String, record: Value| {
+        let forms = carrier_fields(&record, &text_data, &text_used)?;
+        number_text(&text, &forms)
+    });
 }
 
 fn install_registry(
@@ -172,12 +364,13 @@ pub fn render(
                 })
                 .collect();
             match matches.as_slice() {
-                [row] => Ok(Value::from(Serde(row))),
+                [row] => present_row(row, &row_data, &row_used),
                 [] => Err(failure(format!("absent row: {name}: {criteria:?}"))),
                 _ => Err(failure(format!("ambiguous row: {name}: {criteria:?}"))),
             }
         },
     );
+    install_numeric_text(&mut environment, &datasets, &used);
     let collection_usage = Arc::clone(&used);
     install_registry(&mut environment, Arc::clone(&datasets), Arc::clone(&used));
     environment.add_function("rows", move |name: String| -> std::result::Result<Value, Error> {
@@ -195,7 +388,7 @@ pub fn render(
             .lock()
             .map_err(|_| failure("dataset census lock poisoned"))?
             .insert(name);
-        Ok(Value::from(Serde(&dataset.rows)))
+        present_rows(dataset, &datasets, &collection_usage)
     });
     environment.add_function(
         "require",
@@ -203,7 +396,7 @@ pub fn render(
             if condition { Ok(String::new()) } else { Err(failure(message)) }
         },
     );
-    environment.add_filter("number", number);
+
     environment.add_filter("split", split);
     environment.add_filter("exhibit", exhibit);
     environment.add_filter("toml_string", |value: String| toml::Value::String(value).to_string());

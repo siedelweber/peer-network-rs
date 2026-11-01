@@ -1601,9 +1601,91 @@ pub enum NumberId {
     NumbersBuildgraphAdmissionExcludedFileCount,
     /// Registry id: num:numbers:buildgraph-admission-census-defect-count.
     NumbersBuildgraphAdmissionCensusDefectCount,
+    /// Registry id: num:numbers:devperf-compact-main-log-bytes.
+    NumbersDevperfCompactMainLogBytes,
+    /// Registry id: num:numbers:devperf-reviewed-main-log-bytes.
+    NumbersDevperfReviewedMainLogBytes,
+    /// Registry id: num:numbers:devperf-compact-documents-steps-seconds.
+    NumbersDevperfCompactDocumentsStepsSeconds,
+    /// Registry id: num:numbers:devperf-reviewed-documents-steps-seconds.
+    NumbersDevperfReviewedDocumentsStepsSeconds,
+    /// Registry id: num:numbers:devperf-prior-warm-gate-seconds.
+    NumbersDevperfPriorWarmGateSeconds,
+    /// Registry id: num:numbers:devperf-prior-warm-steps-user-seconds.
+    NumbersDevperfPriorWarmStepsUserSeconds,
+    /// Registry id: num:numbers:devperf-prior-warm-steps-system-seconds.
+    NumbersDevperfPriorWarmStepsSystemSeconds,
+    /// Registry id: num:numbers:devperf-complete-accounting-gate-seconds.
+    NumbersDevperfCompleteAccountingGateSeconds,
+    /// Registry id: num:numbers:devperf-complete-accounting-user-seconds.
+    NumbersDevperfCompleteAccountingUserSeconds,
+    /// Registry id: num:numbers:devperf-complete-accounting-system-seconds.
+    NumbersDevperfCompleteAccountingSystemSeconds,
+    /// Registry id: num:numbers:devperf-complete-accounting-repeat-seconds.
+    NumbersDevperfCompleteAccountingRepeatSeconds,
+    /// Registry id: num:numbers:devperf-complete-accounting-repeat-user-seconds.
+    NumbersDevperfCompleteAccountingRepeatUserSeconds,
+    /// Registry id: num:numbers:devperf-complete-accounting-repeat-system-seconds.
+    NumbersDevperfCompleteAccountingRepeatSystemSeconds,
+    /// Registry id: num:numbers:devperf-failed-development-first-seconds.
+    NumbersDevperfFailedDevelopmentFirstSeconds,
+    /// Registry id: num:numbers:devperf-failed-development-second-seconds.
+    NumbersDevperfFailedDevelopmentSecondSeconds,
+    /// Registry id: num:numbers:devperf-complete-accounting-pressure.
+    NumbersDevperfCompleteAccountingPressure,
+    /// Registry id: num:numbers:devperf-complete-accounting-repeat-pressure.
+    NumbersDevperfCompleteAccountingRepeatPressure,
+    /// Registry id: num:numbers:devperf-lane-first-cpu-seconds.
+    NumbersDevperfLaneFirstCpuSeconds,
+    /// Registry id: num:numbers:devperf-lane-second-cpu-seconds.
+    NumbersDevperfLaneSecondCpuSeconds,
+    /// Registry id: num:numbers:devperf-former-warm-budget-seconds.
+    NumbersDevperfFormerWarmBudgetSeconds,
+    /// Registry id: num:numbers:devperf-nullable-count-warm-ratio.
+    NumbersDevperfNullableCountWarmRatio,
+    /// Registry id: num:numbers:devperf-former-warm-margin-percent.
+    NumbersDevperfFormerWarmMarginPercent,
+    /// Registry id: num:numbers:devperf-record-margin-percent.
+    NumbersDevperfRecordMarginPercent,
+    /// Registry id: num:numbers:devperf-complete-accounting-throttled-period-count.
+    NumbersDevperfCompleteAccountingThrottledPeriodCount,
+    /// Registry id: num:numbers:devperf-nullable-oracle-pattern-count.
+    NumbersDevperfNullableOraclePatternCount,
+    /// Registry id: num:numbers:devperf-profile-default-test-median.
+    NumbersDevperfProfileDefaultTestMedian,
+    /// Registry id: num:numbers:devperf-profile-debugless-test-median.
+    NumbersDevperfProfileDebuglessTestMedian,
+    /// Registry id: num:numbers:devperf-profile-optimized-test-median.
+    NumbersDevperfProfileOptimizedTestMedian,
+    /// Registry id: num:numbers:devperf-profile-default-documents-median.
+    NumbersDevperfProfileDefaultDocumentsMedian,
+    /// Registry id: num:numbers:devperf-profile-debugless-documents-median.
+    NumbersDevperfProfileDebuglessDocumentsMedian,
+    /// Registry id: num:numbers:devperf-profile-optimized-documents-median.
+    NumbersDevperfProfileOptimizedDocumentsMedian,
+    /// Registry id: num:numbers:devperf-profile-before-edit-median.
+    NumbersDevperfProfileBeforeEditMedian,
+    /// Registry id: num:numbers:devperf-profile-after-edit-median.
+    NumbersDevperfProfileAfterEditMedian,
+    /// Registry id: num:numbers:devperf-runner-default-cargo-median.
+    NumbersDevperfRunnerDefaultCargoMedian,
+    /// Registry id: num:numbers:devperf-runner-default-nextest-median.
+    NumbersDevperfRunnerDefaultNextestMedian,
+    /// Registry id: num:numbers:devperf-runner-gate-cargo-median.
+    NumbersDevperfRunnerGateCargoMedian,
+    /// Registry id: num:numbers:devperf-runner-gate-nextest-median.
+    NumbersDevperfRunnerGateNextestMedian,
+    /// Registry id: num:numbers:devperf-runner-gate-overhead-seconds.
+    NumbersDevperfRunnerGateOverheadSeconds,
+    /// Registry id: num:numbers:devperf-bundled-link-edit-median.
+    NumbersDevperfBundledLinkEditMedian,
+    /// Registry id: num:numbers:devperf-system-link-edit-median.
+    NumbersDevperfSystemLinkEditMedian,
+    /// Registry id: num:numbers:devperf-runtime-calibration-median-margin-percent.
+    NumbersDevperfRuntimeCalibrationMedianMarginPercent,
 }
 
-const OFFSETS: [(usize, usize); 799] = [
+const OFFSETS: [(usize, usize); 840] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2403,6 +2485,47 @@ const OFFSETS: [(usize, usize); 799] = [
     (125_279, 125_280),
     (125_420, 125_421),
     (125_561, 125_562),
+    (125_692, 125_698),
+    (125_821, 125_830),
+    (125_961, 125_969),
+    (126_103, 126_107),
+    (126_232, 126_238),
+    (126_369, 126_375),
+    (126_508, 126_514),
+    (126_648, 126_654),
+    (126_788, 126_794),
+    (126_930, 126_936),
+    (127_072, 127_078),
+    (127_219, 127_225),
+    (127_368, 127_374),
+    (127_508, 127_515),
+    (127_650, 127_657),
+    (127_787, 127_793),
+    (127_936, 127_942),
+    (128_072, 128_074),
+    (128_199, 128_202),
+    (128_330, 128_332),
+    (128_459, 128_476),
+    (128_627, 128_640),
+    (128_785, 128_792),
+    (128_958, 128_959),
+    (129_096, 129_097),
+    (129_232, 129_237),
+    (129_368, 129_373),
+    (129_504, 129_509),
+    (129_643, 129_648),
+    (129_784, 129_789),
+    (129_925, 129_930),
+    (130_058, 130_063),
+    (130_190, 130_195),
+    (130_324, 130_329),
+    (130_460, 130_465),
+    (130_591, 130_596),
+    (130_724, 130_728),
+    (130_858, 130_863),
+    (130_989, 130_994),
+    (131_119, 131_124),
+    (131_267, 131_278),
 ];
 
 impl NumberId {
