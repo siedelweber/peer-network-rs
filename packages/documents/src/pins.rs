@@ -1359,9 +1359,25 @@ pub enum NumberId {
     NumbersPartitionAnchorPrecision,
     /// Registry id: num:numbers:sibling-control-precision.
     NumbersSiblingControlPrecision,
+    /// Registry id: num:numbers:partition-comparison-precision.
+    NumbersPartitionComparisonPrecision,
+    /// Registry id: num:numbers:conservation-relative-width-tolerance.
+    NumbersConservationRelativeWidthTolerance,
+    /// Registry id: num:numbers:conservation-failed-precision.
+    NumbersConservationFailedPrecision,
+    /// Registry id: num:numbers:conservation-solvent-row-width.
+    NumbersConservationSolventRowWidth,
+    /// Registry id: num:numbers:conservation-depleted-row-width.
+    NumbersConservationDepletedRowWidth,
+    /// Registry id: num:numbers:conservation-count-total-width.
+    NumbersConservationCountTotalWidth,
+    /// Registry id: num:numbers:conservation-balance-total-width.
+    NumbersConservationBalanceTotalWidth,
+    /// Registry id: num:numbers:conservation-failed-solvent-row-width.
+    NumbersConservationFailedSolventRowWidth,
 }
 
-const OFFSETS: [(usize, usize); 678] = [
+const OFFSETS: [(usize, usize); 686] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2040,6 +2056,14 @@ const OFFSETS: [(usize, usize); 678] = [
     (105_722, 105_724),
     (105_851, 105_852),
     (106_030, 106_031),
+    (106_229, 106_231),
+    (106_369, 106_375),
+    (106_505, 106_506),
+    (106_637, 106_713),
+    (106_863, 106_950),
+    (107_099, 107_205),
+    (107_356, 107_465),
+    (107_621, 107_673),
 ];
 
 impl NumberId {

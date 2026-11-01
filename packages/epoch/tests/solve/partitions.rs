@@ -941,7 +941,7 @@ fn partition_difference(
     budget: &mut Budget,
 ) -> nrz_cas::enclosure::Interval {
     use nrz_cas::enclosure::Interval;
-    let bits = u32::try_from(N::NumbersPartitionPrecision.integer()).unwrap();
+    let bits = u32::try_from(N::NumbersPartitionComparisonPrecision.integer()).unwrap();
     let a = a.coarsen(bits, budget).unwrap();
     let b = b.coarsen(bits, budget).unwrap();
     Interval::new(
@@ -1295,7 +1295,10 @@ fn nonconstant_matched_split() {
 fn partition_upper(value: &nrz_cas::Rational, budget: &mut Budget) -> String {
     nrz_cas::enclosure::Interval::singleton(value, budget)
         .unwrap()
-        .coarsen(u32::try_from(N::NumbersPartitionPrecision.integer()).unwrap(), budget)
+        .coarsen(
+            u32::try_from(N::NumbersPartitionComparisonPrecision.integer()).unwrap(),
+            budget,
+        )
         .unwrap()
         .upper()
         .exact_string(budget)
@@ -1344,6 +1347,26 @@ fn contains_exact(value: &nrz_cas::enclosure::Interval, exact: &Rational, budget
     assert!(!value.upper().compare(exact, budget).unwrap().is_lt());
 }
 
+fn conservation_width_fits(value: &nrz_cas::enclosure::Interval, exact: &Rational, budget: &mut Budget) -> bool {
+    let tolerance = Rational::parse(N::NumbersConservationRelativeWidthTolerance.value(), budget).unwrap();
+    let width = value.upper().sub(value.lower(), budget).unwrap();
+    !width
+        .compare(&exact.mul(&tolerance, budget).unwrap(), budget)
+        .unwrap()
+        .is_gt()
+}
+
+fn conservation_total(value: &nrz_cas::enclosure::Interval, exact: &Rational, pin: Option<NumberId>, budget: &mut Budget) {
+    contains_exact(value, exact, budget);
+    assert!(
+        conservation_width_fits(value, exact, budget),
+        "conservation relative width tolerance"
+    );
+    let width = value.upper().sub(value.lower(), budget).unwrap();
+    let expected = Rational::parse(pin.map_or("0", NumberId::value), budget).unwrap();
+    assert_eq!(width, expected);
+}
+
 fn conservation_checks(state: &CompiledState, map: &pn_records::conserved::MapRecord) {
     let mut budget = Budget::new(limits()).unwrap();
     let one = Rational::parse("1", &mut budget).unwrap();
@@ -1367,7 +1390,17 @@ fn conservation_checks(state: &CompiledState, map: &pn_records::conserved::MapRe
             &mut budget,
         );
         let row = &output.emitted[source];
-        contains_exact(&enclosed_sum(row.values().cloned(), &mut budget), &one, &mut budget);
+        let pin = if map.rung == "0" {
+            None
+        } else {
+            match name.as_str() {
+                "a" => Some(N::NumbersConservationSolventRowWidth),
+                "b" => Some(N::NumbersConservationDepletedRowWidth),
+                "c" => None,
+                _ => panic!("declared conservation source"),
+            }
+        };
+        conservation_total(&enclosed_sum(row.values().cloned(), &mut budget), &one, pin, &mut budget);
         let exported = partition_product(
             &enclosed_sum(
                 row.iter()
@@ -1390,9 +1423,10 @@ fn conservation_checks(state: &CompiledState, map: &pn_records::conserved::MapRe
             assert_eq!(input.emission[source].lower(), &zero);
         }
     }
-    contains_exact(
+    conservation_total(
         &enclosed_sum(output.denominator.iter().cloned(), &mut budget),
         &count,
+        (map.rung != "0").then_some(N::NumbersConservationCountTotalWidth),
         &mut budget,
     );
     let transported_balance = partition_product(
@@ -1400,7 +1434,12 @@ fn conservation_checks(state: &CompiledState, map: &pn_records::conserved::MapRe
         &nrz_cas::enclosure::Interval::singleton(&nu, &mut budget).unwrap(),
         &mut budget,
     );
-    contains_exact(&transported_balance, &balance, &mut budget);
+    conservation_total(
+        &transported_balance,
+        &balance,
+        (map.rung != "0").then_some(N::NumbersConservationBalanceTotalWidth),
+        &mut budget,
+    );
     // The only cluster is the complete closed cycle; no row has an external target.
     assert!(
         output
@@ -1497,7 +1536,11 @@ fn compiled_conservation() {
     let map = &record.rounds.last().unwrap().certified;
     assert_ne!(map.primitives, Vec::new());
     conservation_checks(&state, map);
+    conservation_coarse_refusal(&state, &p);
     let mut anchor_policy = p;
+    let bits = u32::try_from(N::NumbersPartitionAnchorPrecision.integer()).unwrap();
+    anchor_policy.precision = Precision::AbsoluteWidthBits(vec![bits]);
+    anchor_policy.enclosure.as_mut().unwrap().refinement.precision = bits;
     anchor_policy.grid = vec!["0".into()];
     let bound = bind_procedure(&state, anchor_policy.clone(), &Published(anchor_policy), limits()).unwrap();
     let search = pn_epoch::fence::search(&bound, None).unwrap();
@@ -1512,6 +1555,32 @@ fn compiled_conservation() {
     conservation_checks(&state, map);
     conservation_anchor_oracle(&state, map);
     assert_eq!(state.view(), &before);
+}
+
+fn conservation_coarse_refusal(state: &CompiledState, policy: &Procedure) {
+    let mut p = policy.clone();
+    let bits = u32::try_from(N::NumbersConservationFailedPrecision.integer()).unwrap();
+    p.precision = Precision::AbsoluteWidthBits(vec![bits]);
+    p.enclosure.as_mut().unwrap().refinement.precision = bits;
+    let bound = bind_procedure(state, p.clone(), &Published(p), limits()).unwrap();
+    let search = pn_epoch::fence::search(&bound, None).unwrap();
+    assert_eq!(search.selected.as_deref(), Some(N::NumbersConservationStrength.value()));
+    assert_eq!(search.evidence.attempts.len(), 1);
+    assert_eq!(search.evidence.attempts[0].completion, Completion::Pass);
+    assert_eq!(search.operational_stop, None);
+    let record = pn_epoch::conserved::solve(&bound, &search).unwrap();
+    pn_epoch::conserved::replay(&bound, &record).unwrap();
+    let map = &record.rounds.last().unwrap().certified;
+    let source = state.view().base.rows.keys().position(|name| name == "a").unwrap();
+    let mut budget = Budget::new(limits()).unwrap();
+    let row = enclosed_sum(map.transport.emitted[source].values().cloned(), &mut budget);
+    let one = Rational::parse("1", &mut budget).unwrap();
+    contains_exact(&row, &one, &mut budget);
+    assert!(!conservation_width_fits(&row, &one, &mut budget));
+    assert_eq!(
+        row.upper().sub(row.lower(), &mut budget).unwrap(),
+        Rational::parse(N::NumbersConservationFailedSolventRowWidth.value(), &mut budget).unwrap()
+    );
 }
 
 fn sibling_state(after: bool, coupled: bool) -> CompiledState {

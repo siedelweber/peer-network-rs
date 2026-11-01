@@ -4861,7 +4861,7 @@ exact_digits = 100
 
 [[rows]]
 id = "num:numbers:conservation-precision"
-value = "2"
+value = "9"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 100
@@ -4939,3 +4939,66 @@ value = "2"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 100
+
+# Conservation sensitivity and independent comparison coarsening.
+
+[[rows]]
+id = "num:numbers:partition-comparison-precision"
+value = "22"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:conservation-relative-width-tolerance"
+value = "1/1024"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:conservation-failed-precision"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:conservation-solvent-row-width"
+value = "196396673160554638361698191757799197/321585625680024469493369038608856514560"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:conservation-depleted-row-width"
+value = "48761059757846647842305738027610853402571/159598952053331309414826296708598502644744192"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:conservation-count-total-width"
+value = "941008430946011456115832099606566084188427848915219/513518642380405460194559359049153783902893812911964160"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:conservation-balance-total-width"
+value = "7814226939942245737322448794792873464799444535294101/31666982946791670045331160474697816674011785129571123200"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:conservation-failed-solvent-row-width"
+value = "259953969913693253097751/212816904092773800896102400"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 200
