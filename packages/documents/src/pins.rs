@@ -1683,9 +1683,89 @@ pub enum NumberId {
     NumbersDevperfSystemLinkEditMedian,
     /// Registry id: num:numbers:devperf-runtime-calibration-median-margin-percent.
     NumbersDevperfRuntimeCalibrationMedianMarginPercent,
+    /// Registry id: num:numbers:observe-historical-queue-record-capacity.
+    NumbersObserveHistoricalQueueRecordCapacity,
+    /// Registry id: num:numbers:observe-bridge-queue-record-capacity.
+    NumbersObserveBridgeQueueRecordCapacity,
+    /// Registry id: num:numbers:observe-historical-core-drain-seconds.
+    NumbersObserveHistoricalCoreDrainSeconds,
+    /// Registry id: num:numbers:observe-bridge-drain-seconds.
+    NumbersObserveBridgeDrainSeconds,
+    /// Registry id: num:numbers:observe-inline-byte-threshold.
+    NumbersObserveInlineByteThreshold,
+    /// Registry id: num:numbers:observe-queued-byte-capacity.
+    NumbersObserveQueuedByteCapacity,
+    /// Registry id: num:numbers:observe-reserved-summary-slot-count.
+    NumbersObserveReservedSummarySlotCount,
+    /// Registry id: num:numbers:observe-reserved-diagnostic-slot-count.
+    NumbersObserveReservedDiagnosticSlotCount,
+    /// Registry id: num:numbers:observe-inline-nesting-level-count.
+    NumbersObserveInlineNestingLevelCount,
+    /// Registry id: num:numbers:observe-reader-headroom-level-count.
+    NumbersObserveReaderHeadroomLevelCount,
+    /// Registry id: num:numbers:observe-serde-json-default-recursion-limit.
+    NumbersObserveSerdeJsonDefaultRecursionLimit,
+    /// Registry id: num:numbers:observe-drain-base-seconds.
+    NumbersObserveDrainBaseSeconds,
+    /// Registry id: num:numbers:observe-drain-per-mib-seconds.
+    NumbersObserveDrainPerMibSeconds,
+    /// Registry id: num:numbers:observe-drain-maximum-seconds.
+    NumbersObserveDrainMaximumSeconds,
+    /// Registry id: num:numbers:observe-queue-record-capacity.
+    NumbersObserveQueueRecordCapacity,
+    /// Registry id: num:numbers:observe-burst-delivered-record-count.
+    NumbersObserveBurstDeliveredRecordCount,
+    /// Registry id: num:numbers:observe-prior-artifact-reference-count.
+    NumbersObservePriorArtifactReferenceCount,
+    /// Registry id: num:numbers:observe-prior-artifact-object-count.
+    NumbersObservePriorArtifactObjectCount,
+    /// Registry id: num:numbers:observe-current-artifact-reference-count.
+    NumbersObserveCurrentArtifactReferenceCount,
+    /// Registry id: num:numbers:observe-current-artifact-object-count.
+    NumbersObserveCurrentArtifactObjectCount,
+    /// Registry id: num:numbers:observe-prior-inline-stream-bytes.
+    NumbersObservePriorInlineStreamBytes,
+    /// Registry id: num:numbers:observe-current-inline-stream-bytes.
+    NumbersObserveCurrentInlineStreamBytes,
+    /// Registry id: num:numbers:observe-storage-capture-attempt-limit.
+    NumbersObserveStorageCaptureAttemptLimit,
+    /// Registry id: num:numbers:observe-prior-inline-nesting-level-count.
+    NumbersObservePriorInlineNestingLevelCount,
+    /// Registry id: num:numbers:observe-calibration-prior-run-1-wall-seconds.
+    NumbersObserveCalibrationPriorRun1WallSeconds,
+    /// Registry id: num:numbers:observe-calibration-prior-run-1-cpu-seconds.
+    NumbersObserveCalibrationPriorRun1CpuSeconds,
+    /// Registry id: num:numbers:observe-calibration-prior-run-1-shared-cores.
+    NumbersObserveCalibrationPriorRun1SharedCores,
+    /// Registry id: num:numbers:observe-calibration-prior-run-1-pressure-percent.
+    NumbersObserveCalibrationPriorRun1PressurePercent,
+    /// Registry id: num:numbers:observe-calibration-prior-run-2-wall-seconds.
+    NumbersObserveCalibrationPriorRun2WallSeconds,
+    /// Registry id: num:numbers:observe-calibration-prior-run-2-cpu-seconds.
+    NumbersObserveCalibrationPriorRun2CpuSeconds,
+    /// Registry id: num:numbers:observe-calibration-prior-run-2-shared-cores.
+    NumbersObserveCalibrationPriorRun2SharedCores,
+    /// Registry id: num:numbers:observe-calibration-prior-run-2-pressure-percent.
+    NumbersObserveCalibrationPriorRun2PressurePercent,
+    /// Registry id: num:numbers:observe-calibration-prior-run-3-wall-seconds.
+    NumbersObserveCalibrationPriorRun3WallSeconds,
+    /// Registry id: num:numbers:observe-calibration-prior-run-3-cpu-seconds.
+    NumbersObserveCalibrationPriorRun3CpuSeconds,
+    /// Registry id: num:numbers:observe-calibration-prior-run-3-shared-cores.
+    NumbersObserveCalibrationPriorRun3SharedCores,
+    /// Registry id: num:numbers:observe-calibration-prior-run-3-pressure-percent.
+    NumbersObserveCalibrationPriorRun3PressurePercent,
+    /// Registry id: num:numbers:observe-calibration-current-run-1-shared-cores.
+    NumbersObserveCalibrationCurrentRun1SharedCores,
+    /// Registry id: num:numbers:observe-calibration-current-run-2-shared-cores.
+    NumbersObserveCalibrationCurrentRun2SharedCores,
+    /// Registry id: num:numbers:observe-calibration-current-run-3-shared-cores.
+    NumbersObserveCalibrationCurrentRun3SharedCores,
+    /// Registry id: num:numbers:observe-record-byte-capacity.
+    NumbersObserveRecordByteCapacity,
 }
 
-const OFFSETS: [(usize, usize); 840] = [
+const OFFSETS: [(usize, usize); 880] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2526,6 +2606,46 @@ const OFFSETS: [(usize, usize); 840] = [
     (130_989, 130_994),
     (131_119, 131_124),
     (131_267, 131_278),
+    (131_435, 131_437),
+    (131_573, 131_575),
+    (131_712, 131_715),
+    (131_837, 131_840),
+    (131_963, 131_968),
+    (132_088, 132_096),
+    (132_223, 132_224),
+    (132_362, 132_363),
+    (132_497, 132_499),
+    (132_634, 132_636),
+    (132_778, 132_781),
+    (132_907, 132_908),
+    (133_031, 133_032),
+    (133_155, 133_157),
+    (133_280, 133_284),
+    (133_420, 133_423),
+    (133_561, 133_565),
+    (133_700, 133_702),
+    (133_842, 133_845),
+    (133_982, 133_983),
+    (134_116, 134_122),
+    (134_249, 134_255),
+    (134_384, 134_385),
+    (134_525, 134_527),
+    (134_671, 134_676),
+    (134_813, 134_819),
+    (134_957, 134_962),
+    (135_110, 135_115),
+    (135_259, 135_264),
+    (135_401, 135_407),
+    (135_545, 135_550),
+    (135_698, 135_703),
+    (135_847, 135_852),
+    (135_989, 135_995),
+    (136_133, 136_138),
+    (136_286, 136_291),
+    (136_437, 136_442),
+    (136_588, 136_594),
+    (136_740, 136_746),
+    (136_875, 136_882),
 ];
 
 impl NumberId {

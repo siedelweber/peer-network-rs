@@ -8,6 +8,7 @@ instrumented = 30
 exceptions = 80
 helpers = 3
 generators = 42
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "documents"
@@ -16,6 +17,7 @@ instrumented = 14
 exceptions = 6
 helpers = 0
 generators = 11
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "execwrap"
@@ -24,6 +26,7 @@ instrumented = 8
 exceptions = 4
 helpers = 0
 generators = 11
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "pn-act-profile"
@@ -32,6 +35,7 @@ instrumented = 8
 exceptions = 3
 helpers = 0
 generators = 6
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "pn-epoch"
@@ -40,6 +44,7 @@ instrumented = 32
 exceptions = 6
 helpers = 0
 generators = 41
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "pn-graph"
@@ -48,6 +53,7 @@ instrumented = 35
 exceptions = 7
 helpers = 0
 generators = 58
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "pn-host"
@@ -56,6 +62,7 @@ instrumented = 22
 exceptions = 18
 helpers = 0
 generators = 13
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "pn-interchange"
@@ -64,6 +71,7 @@ instrumented = 119
 exceptions = 35
 helpers = 1
 generators = 91
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "pn-records"
@@ -72,6 +80,7 @@ instrumented = 41
 exceptions = 68
 helpers = 0
 generators = 134
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }
 
 [[rows]]
 name = "pn-wallet"
@@ -80,3 +89,4 @@ instrumented = 6
 exceptions = 23
 helpers = 0
 generators = 21
+numeric_display = { operations = { display = "exact", exact_digits = 32 }, instrumented = { display = "exact", exact_digits = 32 }, exceptions = { display = "exact", exact_digits = 32 }, helpers = { display = "exact", exact_digits = 32 }, generators = { display = "exact", exact_digits = 32 } }

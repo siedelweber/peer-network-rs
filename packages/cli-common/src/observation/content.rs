@@ -6,9 +6,11 @@ use std::path::{Path, PathBuf};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
-const INLINE_BYTES: usize = 65_536;
+/// Maximum inline encoded public-content bytes.
+pub const INLINE_BYTES: usize = 65_536;
 // Leave envelope and reference headroom below serde_json's default 128 levels.
-pub(super) const INLINE_NESTING: usize = 96;
+/// Nesting threshold at which public content becomes an addressed object.
+pub const INLINE_NESTING: usize = 96;
 
 /// Convert the available Debug value grammar into tagged JSON structure.
 /// Justified: Representation runs inside the labelled observation delivery operation and must not recursively observe itself.

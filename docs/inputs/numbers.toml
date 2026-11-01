@@ -6121,3 +6121,283 @@ display = "rounded"
 exact_digits = 40
 magnitude = -2
 
+[[rows]]
+id = "num:numbers:observe-historical-queue-record-capacity"
+value = "64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-bridge-queue-record-capacity"
+value = "64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-historical-core-drain-seconds"
+value = "0.1"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-bridge-drain-seconds"
+value = "0.1"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-inline-byte-threshold"
+value = "65536"
+unit = "bytes"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-queued-byte-capacity"
+value = "67108864"
+unit = "bytes"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-reserved-summary-slot-count"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-reserved-diagnostic-slot-count"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-inline-nesting-level-count"
+value = "96"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-reader-headroom-level-count"
+value = "32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-serde-json-default-recursion-limit"
+value = "128"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-drain-base-seconds"
+value = "1"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-drain-per-mib-seconds"
+value = "1"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-drain-maximum-seconds"
+value = "65"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-queue-record-capacity"
+value = "1024"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-burst-delivered-record-count"
+value = "241"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-prior-artifact-reference-count"
+value = "9356"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-prior-artifact-object-count"
+value = "85"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-current-artifact-reference-count"
+value = "441"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-current-artifact-object-count"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-prior-inline-stream-bytes"
+value = "600000"
+unit = "bytes"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-current-inline-stream-bytes"
+value = "902000"
+unit = "bytes"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-storage-capture-attempt-limit"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-prior-inline-nesting-level-count"
+value = "32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-1-wall-seconds"
+value = "8.356"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-1-cpu-seconds"
+value = "12.455"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-1-shared-cores"
+value = "3.760"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-1-pressure-percent"
+value = "0.548"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-2-wall-seconds"
+value = "9.104"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-2-cpu-seconds"
+value = "13.644"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-2-shared-cores"
+value = "2.598"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-2-pressure-percent"
+value = "0.514"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-3-wall-seconds"
+value = "9.808"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-3-cpu-seconds"
+value = "14.687"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-3-shared-cores"
+value = "1.504"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-prior-run-3-pressure-percent"
+value = "1.094"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-current-run-1-shared-cores"
+value = "3.380"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-current-run-2-shared-cores"
+value = "24.607"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:observe-calibration-current-run-3-shared-cores"
+value = "17.144"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+
+[[rows]]
+id = "num:numbers:observe-record-byte-capacity"
+value = "1048576"
+unit = "bytes"
+display = "exact"
+exact_digits = 7

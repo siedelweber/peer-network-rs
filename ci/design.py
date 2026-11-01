@@ -517,6 +517,10 @@ def numeric_correspondence():
           (Fraction(runtime['budget_ms'], runtime['median_ms']) - 1) * 100)
     equal(Fraction(runtime['profile_wall_seconds']),
           sum(Fraction(runtime[field]) for field in ('profile_command_seconds', 'profile_reconstruction_seconds', 'profile_other_seconds')))
+    equal(value('observe-reader-headroom-level-count'),
+          value('observe-serde-json-default-recursion-limit') - value('observe-inline-nesting-level-count'))
+    equal(value('observe-drain-maximum-seconds'), value('observe-drain-base-seconds')
+          + value('observe-queued-byte-capacity') / value('observe-record-byte-capacity') * value('observe-drain-per-mib-seconds'))
     properties = json.loads(Path('docs/datasets/org.peer-network.harness.properties.json').read_text())['rows']
     compiler = next(row for row in properties if row.get('name') == 'pn-epoch::compiler::compiler_generated')
     pin_equal(value('epoch-property-draw-count'), compiler['cases'])
@@ -559,5 +563,5 @@ if __name__ == '__main__':
     numeric_correspondence()
     check_rendered_spacing(tracked_paths(), whole_tree=True, parent=parent_rendered_spacing())
     check_numeric_word_fragments([path for path in tracked_paths()
-                                  if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md', 'adr/024-build-graph.md', 'adr/021-development-performance.md'}
+                                  if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md', 'adr/024-build-graph.md', 'adr/021-development-performance.md', 'adr/016-observability.md'}
                                   or path.is_relative_to('docs/templates') and path.suffix == '.j2'])

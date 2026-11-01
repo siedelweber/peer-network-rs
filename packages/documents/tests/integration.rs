@@ -38,6 +38,38 @@ fn fixture() -> Result<tempfile::TempDir> {
     Ok(directory)
 }
 
+fn observation_number_pins() -> Result<()> {
+    use cli_common::observation;
+    use pins::NumberId;
+    for (actual, id) in [
+        (observation::RECORD_LIMIT, NumberId::NumbersObserveRecordByteCapacity),
+        (observation::INLINE_BYTES, NumberId::NumbersObserveInlineByteThreshold),
+        (observation::INLINE_NESTING, NumberId::NumbersObserveInlineNestingLevelCount),
+        (observation::CAPTURE_LIMIT, NumberId::NumbersObserveQueuedByteCapacity),
+        (observation::QUEUE_RECORDS, NumberId::NumbersObserveQueueRecordCapacity),
+        (observation::SUMMARY_RECORDS, NumberId::NumbersObserveReservedSummarySlotCount),
+        (
+            observation::DIAGNOSTIC_RECORDS,
+            NumberId::NumbersObserveReservedDiagnosticSlotCount,
+        ),
+    ] {
+        assert_eq!(u64::try_from(actual)?, id.integer());
+    }
+    assert_eq!(
+        observation::DRAIN_BASE_SECONDS,
+        NumberId::NumbersObserveDrainBaseSeconds.integer()
+    );
+    assert_eq!(
+        observation::DRAIN_SECONDS_PER_MIB,
+        NumberId::NumbersObserveDrainPerMibSeconds.integer()
+    );
+    let depth = usize::try_from(NumberId::NumbersObserveSerdeJsonDefaultRecursionLimit.integer())?;
+    let nested = |depth| format!("{}0{}", "[".repeat(depth), "]".repeat(depth));
+    assert!(serde_json::from_str::<serde_json::Value>(&nested(depth - 1)).is_ok());
+    assert!(serde_json::from_str::<serde_json::Value>(&nested(depth)).is_err());
+    Ok(())
+}
+
 fn carrier_number_forms(root: &Path) -> Result<()> {
     let input = root.join("docs/inputs/items.toml");
     let original = concat!(
@@ -122,6 +154,7 @@ fn carrier_number_forms(root: &Path) -> Result<()> {
 /// ´test:integration:number-registry´
 #[test]
 fn number_registry() -> Result<()> {
+    observation_number_pins()?;
     let input: toml::Value = toml::from_str(include_str!("../../../docs/inputs/numbers.toml"))?;
     let rows = input["rows"].as_array().ok_or("registry rows")?;
     let pin = rows

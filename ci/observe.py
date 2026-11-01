@@ -241,7 +241,9 @@ def main():
             for package in sorted(result['by_package']):
                 modes=Counter(row['mode'] for row in registry['operations'] if row['package']==package)
                 summary.append(dict(name=package,operations=result['by_package'][package],instrumented=modes['instrumented'],exceptions=modes['exception'],helpers=modes['reviewed-helper'],generators=sum(row['package']==package for row in registry['generators'])))
-            if tomllib.loads(Path('docs/inputs/observe-coverage.toml').read_text())['rows']!=summary:
+            declared = tomllib.loads(Path('docs/inputs/observe-coverage.toml').read_text())['rows']
+            counts = [{key: value for key, value in row.items() if key != 'numeric_display'} for row in declared]
+            if counts != summary:
                 raise StructuralError('rendered operation census declaration differs')
             Path('.lane/observation-coverage.json').write_text(json.dumps({'source':data['source'],**result},indent=2)+'\n')
             print('OBSERVATION-COVERAGE '+json.dumps(result,sort_keys=True))

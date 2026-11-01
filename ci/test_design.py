@@ -275,6 +275,13 @@ class Correspondence(unittest.TestCase):
         self.assertNotEqual(self.check().returncode, 0)
         record.write_text(original + '\ntwenty-four\n')
         self.assertEqual(self.check().returncode, 0)
+        record = self.root / 'adr/016-observability.md'
+        original = record.read_text()
+        record.write_text(original + '\n1-minute\n')
+        git(self.root, 'add', 'adr/016-observability.md')
+        self.assertNotEqual(self.check().returncode, 0)
+        record.write_text(original + '\none-minute\n')
+        self.assertEqual(self.check().returncode, 0)
         template = self.root / 'docs/templates/fixture.md.j2'
         template.parent.mkdir(parents=True)
         template.write_text('{{ "1\N{NARROW NO-BREAK SPACE}024" }} {{ "}}\N{NARROW NO-BREAK SPACE}" }}\n')

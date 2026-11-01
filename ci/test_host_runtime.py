@@ -19,6 +19,12 @@ from unittest.mock import patch
 from test_observe_runtime import expanded, distribution, witness
 
 
+# The fixture and its displayed administrative bound share the registry input.
+CAPTURE_ATTEMPTS = int(next(row['value'] for row in tomllib.loads(
+    Path('docs/inputs/numbers.toml').read_text())['rows']
+    if row['id'] == 'num:numbers:observe-storage-capture-attempt-limit'))
+
+
 def private_occurs(value, text):
     # A port token must not mistake an unrelated clock fraction for reachability.
     return bool(re.search(r'(?<![\d.])'+re.escape(value)+r'(?![\d.])',text)) if value.isdecimal() else value in text
@@ -77,7 +83,7 @@ def capture_complete(status):
     return status['lost_records']==0 and status['undelivered_records']==0 and status['in_flight_records']==0, accounting
 
 
-def traced_capture(test, command, env, level, validate, attempts=3, prefix='storage'):
+def traced_capture(test, command, env, level, validate, attempts=CAPTURE_ATTEMPTS, prefix='storage'):
     """The child writes observations to a file, so its delivery never waits on this reader; a capture that still
     counts loss is retaken, at most three times. Every attempt is checked and reported before selection."""
     for attempt in range(1,attempts+1):
@@ -178,7 +184,7 @@ def storage_retake_control(test, command, env, validate, statements):
     print(f'STORAGE-RETAKE-CONTROL injected=capture-discard attempts={len(calls)} statements={len(statements)} catalogue=present finding=retained')
 
 
-def sentinel_control(test, command, env, found, prefix, attempts=3):
+def sentinel_control(test, command, env, found, prefix, attempts=CAPTURE_ATTEMPTS):
     """A positive control reads its child's trace from a file, as every capture does, and selects its evidence
     by the capture's own accounting. An attempt in which the sentinel is found detects it whatever its loss, since
     a delivered record proves the value reached observation; a complete attempt without it is a detection failure;

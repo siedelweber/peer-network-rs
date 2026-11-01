@@ -25,10 +25,22 @@ use crate::observation_metrics::{JsonRecorder, STEMS, estimate};
 
 mod content;
 
-const RECORD_LIMIT: usize = 1024 * 1024;
-const CAPTURE_LIMIT: usize = 64 * 1024 * 1024;
+/// Maximum encoded bytes in one delivered record.
+pub const RECORD_LIMIT: usize = 1024 * 1024;
+/// Maximum serialized byte charge held by ordinary delivery.
+pub const CAPTURE_LIMIT: usize = 64 * 1024 * 1024;
 /// Ordinary delivery slots; the independent queued-byte limit also applies.
 pub const QUEUE_RECORDS: usize = 1024;
+/// Inline public-content limits used before content addressing.
+pub use content::{INLINE_BYTES, INLINE_NESTING};
+/// Reserved final-summary slots, independent of ordinary delivery.
+pub const SUMMARY_RECORDS: usize = 2;
+/// Reserved diagnostic slots, independent of ordinary delivery.
+pub const DIAGNOSTIC_RECORDS: usize = 8;
+/// Base exit-drain allowance before the queued-byte charge.
+pub const DRAIN_BASE_SECONDS: u64 = 1;
+/// Additional exit-drain allowance per queued MiB rounded upward.
+pub const DRAIN_SECONDS_PER_MIB: u64 = 1;
 static GLOBAL: OnceLock<Observation> = OnceLock::new();
 
 /// Preserve public bytes as tagged UTF-8 or base64 for observation.
@@ -450,9 +462,9 @@ impl Observation {
         bridge: Option<Arc<crate::observation_export::Bridge>>,
     ) -> io::Result<Self> {
         let (sender, receiver) = mpsc::sync_channel(QUEUE_RECORDS);
-        let (summary_sender, summary_receiver) = mpsc::sync_channel::<Value>(2);
+        let (summary_sender, summary_receiver) = mpsc::sync_channel::<Value>(SUMMARY_RECORDS);
         let (flush_sender, flush_receiver) = mpsc::sync_channel::<SyncSender<()>>(1);
-        let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Value>(8);
+        let (diagnostic_sender, diagnostic_receiver) = mpsc::sync_channel::<Value>(DIAGNOSTIC_RECORDS);
         let lost = Arc::new(AtomicU64::new(0));
         let worker_lost = lost.clone();
         let loss_causes = Arc::new(LossCauses::default());
@@ -631,7 +643,12 @@ impl Observation {
         // from queued undelivered records. Shipped records and final status
         // share stderr and its write lock; the final write can block there.
         let charged = self.queued_bytes.load(Ordering::Relaxed);
-        let millis = 1000 + charged.div_ceil(1024 * 1024).min(64) * 1000;
+        let millis = (DRAIN_BASE_SECONDS
+            + charged
+                .div_ceil(RECORD_LIMIT as u64)
+                .min((CAPTURE_LIMIT / RECORD_LIMIT) as u64)
+                * DRAIN_SECONDS_PER_MIB)
+            * 1000;
         self.flush_for(Duration::from_millis(millis));
         let publication = self.publication.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         self.closing.store(true, Ordering::Release);
