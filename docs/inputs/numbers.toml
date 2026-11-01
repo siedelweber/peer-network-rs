@@ -4849,3 +4849,70 @@ value = "23"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Integrated conservation fixture quantities.
+
+[[rows]]
+id = "num:numbers:conservation-strength"
+value = "1/64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:conservation-precision"
+value = "12"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:conservation-depletion-ratio"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:sibling-strength"
+value = "1/1024"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:sibling-raised-rate"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:sibling-precision"
+value = "32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:sibling-endpoint-grid"
+value = "1/16777216"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:sibling-response-lower"
+value = "-1205409/1099511627776"
+unit = "dimensionless"
+display = "floor"
+exact_digits = 100
+magnitude = -12
+
+[[rows]]
+id = "num:numbers:sibling-response-upper"
+value = "-963/4294967296"
+unit = "dimensionless"
+display = "ceiling"
+exact_digits = 100
+magnitude = -12

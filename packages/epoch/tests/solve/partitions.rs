@@ -1185,3 +1185,388 @@ fn partition_upper(value: &nrz_cas::Rational, budget: &mut Budget) -> String {
         .exact_string(budget)
         .unwrap()
 }
+
+fn conservation_policy(state: &CompiledState) -> Procedure {
+    let mut p = policy(state);
+    p.grid = vec![N::NumbersConservationStrength.value().into(), "0".into()];
+    p.precision = Precision::AbsoluteWidthBits(vec![u32::try_from(N::NumbersConservationPrecision.integer()).unwrap()]);
+    p.enclosure.as_mut().unwrap().refinement.precision = u32::try_from(N::NumbersConservationPrecision.integer()).unwrap();
+    p.maximum_iterations = N::NumbersPartitionProposalCap.integer();
+    p
+}
+
+fn conservation_state() -> CompiledState {
+    let mut acts = Vec::new();
+    for (source, target) in [("a", "b"), ("b", "c"), ("c", "a")] {
+        append(&mut acts, "Registration", source, source);
+        append(&mut acts, "Opinion", source, target);
+    }
+    acts.reverse();
+    let wall = Fraction::parse("3/37");
+    compile(
+        &acts,
+        &BTreeMap::from([
+            ("a".into(), Fraction::parse(N::NumbersPartitionLowRate.value())),
+            (
+                "b".into(),
+                wall.times(Fraction::parse(N::NumbersConservationDepletionRatio.value())),
+            ),
+            ("c".into(), Fraction(0, 1)),
+        ]),
+    )
+}
+
+fn enclosed_sum(values: impl Iterator<Item = nrz_cas::enclosure::Interval>, budget: &mut Budget) -> nrz_cas::enclosure::Interval {
+    values.fold(
+        nrz_cas::enclosure::Interval::singleton(&Rational::parse("0", budget).unwrap(), budget).unwrap(),
+        |sum, value| partition_sum(&sum, &value, budget),
+    )
+}
+
+fn contains_exact(value: &nrz_cas::enclosure::Interval, exact: &Rational, budget: &mut Budget) {
+    assert!(!value.lower().compare(exact, budget).unwrap().is_gt());
+    assert!(!value.upper().compare(exact, budget).unwrap().is_lt());
+}
+
+fn conservation_checks(state: &CompiledState, map: &pn_records::conserved::MapRecord) {
+    let mut budget = Budget::new(limits()).unwrap();
+    let one = Rational::parse("1", &mut budget).unwrap();
+    let zero = Rational::parse("0", &mut budget).unwrap();
+    let input = &map.transport_input;
+    let output = &map.transport;
+    let names: Vec<_> = state.view().base.rows.keys().collect();
+    let nu = Rational::parse(N::NumbersPartitionNumeraire.value(), &mut budget).unwrap();
+    let mut count = zero.clone();
+    let mut balance = zero.clone();
+    for (source, name) in names.iter().enumerate() {
+        let address = Address((*name).clone());
+        let n = Rational::parse(&state.view().ledger.counts[&address].0.to_string(), &mut budget).unwrap();
+        let b = Rational::parse(state.view().ledger.balances[&address].exact(), &mut budget).unwrap();
+        count = count.add(&n, &mut budget).unwrap();
+        balance = balance.add(&b, &mut budget).unwrap();
+        contains_exact(&input.counts[source], &n, &mut budget);
+        contains_exact(
+            &input.rates[source],
+            &b.div(&nu.mul(&n, &mut budget).unwrap(), &mut budget).unwrap(),
+            &mut budget,
+        );
+        let row = &output.emitted[source];
+        contains_exact(&enclosed_sum(row.values().cloned(), &mut budget), &one, &mut budget);
+        let exported = partition_product(
+            &enclosed_sum(
+                row.iter()
+                    .filter(|(target, _)| **target != source)
+                    .map(|(_, value)| value.clone()),
+                &mut budget,
+            ),
+            &input.counts[source],
+            &mut budget,
+        );
+        let ceiling = conservation_capacity(state, &n, &b, &input.emission[source], &mut budget);
+        assert!(!exported.upper().compare(&ceiling, &mut budget).unwrap().is_gt());
+        if *name == "c" {
+            assert!(
+                row.iter()
+                    .all(|(target, value)| *target == source || value.lower().is_zero() && value.upper().is_zero())
+            );
+            assert_eq!(row[&source].lower(), &one);
+            assert_eq!(row[&source].upper(), &one);
+            assert_eq!(input.emission[source].lower(), &zero);
+        }
+    }
+    contains_exact(
+        &enclosed_sum(output.denominator.iter().cloned(), &mut budget),
+        &count,
+        &mut budget,
+    );
+    let transported_balance = partition_product(
+        &enclosed_sum(output.numerator.iter().cloned(), &mut budget),
+        &nrz_cas::enclosure::Interval::singleton(&nu, &mut budget).unwrap(),
+        &mut budget,
+    );
+    contains_exact(&transported_balance, &balance, &mut budget);
+    // The only cluster is the complete closed cycle; no row has an external target.
+    assert!(
+        output
+            .emitted
+            .iter()
+            .all(|row| row.keys().all(|target| *target < names.len()))
+    );
+    let a = names.iter().position(|name| name.as_str() == "a").unwrap();
+    let b = names.iter().position(|name| name.as_str() == "b").unwrap();
+    let c = names.iter().position(|name| name.as_str() == "c").unwrap();
+    assert!(input.emission[b].lower().compare(&zero, &mut budget).unwrap().is_gt());
+    assert!(input.emission[b].upper().compare(&one, &mut budget).unwrap().is_lt());
+    // Source a traverses depleted b. Emission belongs to a, not to each relay.
+    assert!(output.raw[a][&c].lower().compare(&zero, &mut budget).unwrap().is_gt());
+    assert_eq!(output.raw[a][&c], output.emitted[a][&c]);
+    assert!(output.emitted[a][&b].lower().compare(&zero, &mut budget).unwrap().is_gt());
+    assert!(output.emitted[b][&b].lower().compare(&zero, &mut budget).unwrap().is_gt());
+    assert!(output.denominator[b].lower().compare(&zero, &mut budget).unwrap().is_gt());
+    assert!(
+        output.denominator[c]
+            .lower()
+            .compare(input.counts[c].upper(), &mut budget)
+            .unwrap()
+            .is_gt()
+    );
+    assert!(output.standing[c].lower().compare(&zero, &mut budget).unwrap().is_gt());
+}
+
+fn conservation_capacity(
+    state: &CompiledState,
+    count: &Rational,
+    balance: &Rational,
+    emission: &nrz_cas::enclosure::Interval,
+    budget: &mut Budget,
+) -> Rational {
+    let price = Rational::parse(state.package().input().prices[0].price().exact(), budget).unwrap();
+    let affordable = balance.div(&price, budget).unwrap();
+    let capacity = if affordable.compare(count, budget).unwrap().is_lt() {
+        affordable
+    } else {
+        count.clone()
+    };
+    assert_eq!(emission.lower(), emission.upper());
+    assert_eq!(emission.lower().mul(count, budget).unwrap(), capacity);
+    capacity
+}
+
+fn conservation_anchor_oracle(state: &CompiledState, map: &pn_records::conserved::MapRecord) {
+    let names: Vec<_> = state.view().base.rows.keys().collect();
+    let zero = Fraction(0, 1);
+    let base: Vec<Vec<_>> = names
+        .iter()
+        .map(|source| {
+            names
+                .iter()
+                .map(|target| {
+                    state.view().base.rows[*source].get(*target).map_or(zero, |entry| {
+                        let pn_epoch::base::BaseScore::Exact(score) = &entry.score else {
+                            panic!("exact fixture base")
+                        };
+                        Fraction::parse(score)
+                    })
+                })
+                .collect()
+        })
+        .collect();
+    let input = &map.transport_input;
+    let mass: Vec<_> = input.depth_mass.iter().map(split_exact).collect();
+    let emission: Vec<_> = input.emission.iter().map(split_exact).collect();
+    let expected = dense_operator(&vec![base; mass.len()], &mass, &emission);
+    for (row, exact) in map.transport.emitted.iter().zip(expected) {
+        for (target, value) in exact.iter().enumerate() {
+            assert_eq!(row.get(&target).map_or(zero, split_exact), *value);
+        }
+    }
+}
+
+/// Claim: A compiled closed cycle with a saturated source, depleted relay and zero-emission source retains frozen ledger pairs through certified positive-rung transport and replay; row and pair-total enclosures contain their exact conserved values, export ceilings and positive incoming retention hold, and its zero-tilt operator equals independent dense rational products. This finite transport witness does not assert final writing admission or individual-standing conservation.
+/// ´claim:standing:compiled-conservation-retains-emission-and-pair-totals´
+/// ´test:integration:compiled-conservation´
+#[test]
+fn compiled_conservation() {
+    let state = conservation_state();
+    let before = state.view().clone();
+    let p = conservation_policy(&state);
+    let bound = bind_procedure(&state, p.clone(), &Published(p.clone()), limits()).unwrap();
+    let search = pn_epoch::fence::search(&bound, None).unwrap();
+    assert_eq!(search.selected.as_deref(), Some(N::NumbersConservationStrength.value()));
+    assert_eq!(search.evidence.attempts.len(), 1);
+    assert_eq!(search.evidence.attempts[0].completion, Completion::Pass);
+    assert_eq!(search.operational_stop, None);
+    let record = pn_epoch::conserved::solve(&bound, &search).unwrap();
+    pn_epoch::conserved::replay(&bound, &record).unwrap();
+    let map = &record.rounds.last().unwrap().certified;
+    assert_ne!(map.primitives, Vec::new());
+    conservation_checks(&state, map);
+    let mut anchor_policy = p;
+    anchor_policy.grid = vec!["0".into()];
+    let bound = bind_procedure(&state, anchor_policy.clone(), &Published(anchor_policy), limits()).unwrap();
+    let search = pn_epoch::fence::search(&bound, None).unwrap();
+    assert_eq!(search.selected.as_deref(), Some("0"));
+    let anchor = pn_epoch::conserved::solve(&bound, &search).unwrap();
+    pn_epoch::conserved::replay(&bound, &anchor).unwrap();
+    let map = &anchor.rounds.last().unwrap().certified;
+    assert_ne!(
+        map.transport.emitted,
+        record.rounds.last().unwrap().certified.transport.emitted
+    );
+    conservation_checks(&state, map);
+    conservation_anchor_oracle(&state, map);
+    assert_eq!(state.view(), &before);
+}
+
+fn sibling_state(after: bool, coupled: bool) -> CompiledState {
+    let mut acts = Vec::new();
+    for source in ["u", "i", "j"] {
+        append(&mut acts, "Registration", source, source);
+    }
+    for target in ["i", "j"] {
+        if coupled || target == "i" {
+            append(&mut acts, "Opinion", "u", target);
+        }
+    }
+    acts.reverse();
+    compile(
+        &acts,
+        &BTreeMap::from([
+            ("u".into(), Fraction::parse(N::NumbersPartitionHighRate.value())),
+            ("i".into(), Fraction::parse(N::NumbersPartitionLowRate.value())),
+            (
+                "j".into(),
+                Fraction::parse(if after {
+                    N::NumbersSiblingRaisedRate.value()
+                } else {
+                    N::NumbersPartitionLowRate.value()
+                }),
+            ),
+        ]),
+    )
+}
+
+fn sibling_solve(state: &CompiledState) -> (Procedure, SolveRecord) {
+    let mut p = policy(state);
+    p.grid = vec![N::NumbersSiblingStrength.value().into(), "0".into()];
+    let precision = u32::try_from(N::NumbersSiblingPrecision.integer()).unwrap();
+    p.precision = Precision::AbsoluteWidthBits(vec![precision]);
+    p.enclosure.as_mut().unwrap().refinement.precision = precision;
+    p.endpoint_grid = N::NumbersSiblingEndpointGrid.value().into();
+    p.maximum_iterations = N::NumbersPartitionPositiveProposalCap.integer();
+    let bound = bind_procedure(state, p.clone(), &Published(p.clone()), limits()).unwrap();
+    let search = pn_epoch::fence::search(&bound, None).unwrap();
+    assert_eq!(search.selected.as_deref(), Some(N::NumbersSiblingStrength.value()));
+    assert_eq!(search.evidence.attempts.len(), 1);
+    assert_eq!(search.evidence.attempts[0].completion, Completion::Pass);
+    assert_eq!(search.operational_stop, None);
+    let record = pn_epoch::conserved::solve(&bound, &search).unwrap();
+    pn_epoch::conserved::replay(&bound, &record).unwrap();
+    (p, record)
+}
+
+/// Claim: The declared saturated sibling graph has no transport path from the changed burner to the target, yet its matched certified burn histories decrease the target at one common positive passing rung. Replayed maps with only the sibling coordinate changed also decrease that target. The checked absorbing sinks, positive source allocations, ordered source rates and above-wall sibling meet the sibling-response proposition; selected-path independence does not imply conserved-map independence or entrywise derivative domination.
+/// ´claim:standing:sibling-response-refuses-selected-path-independence´
+/// ´test:integration:sibling-outside-paths´
+#[test]
+fn sibling_outside_paths() {
+    let before = sibling_state(false, true);
+    let after = sibling_state(true, true);
+    sibling_pair_premises(&before, &after);
+    for state in [&before, &after] {
+        assert_eq!(state.view().base.rows.len(), 3);
+        for name in ["i", "j"] {
+            assert_eq!(state.view().base.rows[name].len(), 1);
+            assert!(state.view().base.rows[name].contains_key(name));
+        }
+        assert_eq!(state.view().base.rows["u"].len(), 3);
+        assert!(state.view().base.rows["u"].contains_key("i"));
+        assert!(state.view().base.rows["u"].contains_key("j"));
+        assert!(!state.view().support.contributors["i"].contains("j"));
+        assert!(state.view().support.sources.values().all(|source| source.emission == "1"));
+        assert!(
+            Fraction::parse(&state.view().support.sources["u"].reduced_rate)
+                .order(Fraction::parse(&state.view().support.sources["i"].reduced_rate))
+                .is_gt()
+        );
+        assert!(
+            Fraction::parse(&state.view().support.ranges["j"].minimum)
+                .order(Fraction::parse("3/37"))
+                .is_gt()
+        );
+    }
+    let (p, old) = sibling_solve(&before);
+    let (_, new) = sibling_solve(&after);
+    let old = old.rounds.last().unwrap();
+    let new = new.rounds.last().unwrap();
+    let mut budget = Budget::new(limits()).unwrap();
+    let response = burn_sub(
+        &burn_range(&new.standing["i"], &mut budget),
+        &burn_range(&old.standing["i"], &mut budget),
+        &mut budget,
+    );
+    assert!(response.upper().is_negative());
+    burn_pin_interval(
+        &response,
+        N::NumbersSiblingResponseLower,
+        N::NumbersSiblingResponseUpper,
+        &mut budget,
+    );
+    let bound = bind_procedure(&before, p.clone(), &Published(p), limits()).unwrap();
+    let mut point = old.certified.point.clone();
+    point.insert("j".into(), N::NumbersPartitionLowRate.value().into());
+    let low =
+        pn_epoch::conserved::evaluate_map(&bound, N::NumbersSiblingStrength.value(), &point, old.certified.precision).unwrap();
+    point.insert("j".into(), N::NumbersSiblingRaisedRate.value().into());
+    let high =
+        pn_epoch::conserved::evaluate_map(&bound, N::NumbersSiblingStrength.value(), &point, old.certified.precision).unwrap();
+    pn_epoch::conserved::replay_map(&bound, &low).unwrap();
+    pn_epoch::conserved::replay_map(&bound, &high).unwrap();
+    assert!(
+        burn_sub(
+            &burn_range(&high.image["i"], &mut budget),
+            &burn_range(&low.image["i"], &mut budget),
+            &mut budget
+        )
+        .upper()
+        .is_negative()
+    );
+    // A selected direct u->i path reads u and i only: its inputs are identical.
+    for name in ["u", "i"] {
+        assert_eq!(low.point[name], high.point[name]);
+    }
+    sibling_isolated_control();
+}
+
+fn sibling_isolated_control() {
+    let before = sibling_state(false, false);
+    let after = sibling_state(true, false);
+    sibling_pair_premises(&before, &after);
+    for state in [&before, &after] {
+        // There is neither a transport edge nor a shared normalization row
+        // linking j to the closed u,i subsystem, at any supported hop.
+        for name in ["u", "i"] {
+            assert!(!state.view().base.rows[name].contains_key("j"));
+        }
+        assert_eq!(state.view().base.rows["j"].len(), 1);
+        assert!(state.view().base.rows["j"].contains_key("j"));
+    }
+    let (_, old) = sibling_solve(&before);
+    let (_, new) = sibling_solve(&after);
+    for (record, rate) in [(&old, N::NumbersPartitionLowRate), (&new, N::NumbersSiblingRaisedRate)] {
+        let standing = &record.rounds.last().unwrap().standing["j"];
+        assert_eq!(standing.lower, rate.value());
+        assert_eq!(standing.lower, standing.upper);
+    }
+    for name in ["u", "i"] {
+        assert_eq!(
+            old.rounds.last().unwrap().standing[name],
+            new.rounds.last().unwrap().standing[name]
+        );
+    }
+}
+
+fn sibling_pair_premises(before: &CompiledState, after: &CompiledState) {
+    assert_eq!(
+        before.package().input().history.acts(),
+        after.package().input().history.acts()
+    );
+    assert_eq!(before.package().input().prices, after.package().input().prices);
+    assert_eq!(
+        before.package().input().inputs[0].parameters(),
+        after.package().input().inputs[0].parameters()
+    );
+    assert!(
+        Fraction::parse(after.view().ledger.balances[&Address("j".into())].exact())
+            .order(Fraction::parse(before.view().ledger.balances[&Address("j".into())].exact()))
+            .is_gt()
+    );
+    assert_eq!(before.view().base, after.view().base);
+    assert_eq!(before.view().ledger.counts, after.view().ledger.counts);
+    for name in ["u", "i"] {
+        assert_eq!(
+            before.view().ledger.balances[&Address(name.into())],
+            after.view().ledger.balances[&Address(name.into())]
+        );
+    }
+}

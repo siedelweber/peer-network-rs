@@ -1168,6 +1168,8 @@
     },
     {
       "claims": [
+        "EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals",
+        "EPOCH::claim:standing:sibling-response-refuses-selected-path-independence",
         "EPOCH::claim:compiler:endpoint-transport-contains-dense-rational-oracle",
         "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes",
         "EPOCH::claim:compiler:projected-residual-replays-conserved-map",
@@ -1221,7 +1223,7 @@
       "closing_step": "Remaining bite 6 close slices; unrestricted integrated corpus remains bite 11",
       "evidence_paragraph": "EPOCH::amend:compiler:solve-record-evidence",
       "hold": "ROOT::open:testing:obligation-evidence",
-      "missing": "Held for structurally unreached burn, the published isolated self-resolved-act family and retained-source own increase, independent review of fixture predicates and claim text across the compiler, solver and integrated corpus, integrated compiled nonlinear conservation, and required harness tiers joined to identical source, configuration, contract edition and implementation. The receiving, completion-premise, annotation, distinct-target, positive-rung and nonconstant matched split witnesses now join the scoped burn and accepted-act evidence. Negative probes refuse actual-purpose inference, unrestricted strategic-history completion, equality of different split records, universal response signs and unconditional own-balance recovery. No guild-policy recovery guarantee is established. Also held: budget review of recorded gate-wall and case excesses under rule:design:development-budgets; backend soundness, supported-platform and deterministic-refinement review under verif:design:fence-residual-cases; and review joining the bite-5 compiler prerequisites to these declared-verifier witnesses. Public evidence authentication and publication remain separate obligations.",
+      "missing": "Held for the published isolated self-resolved-act family and retained-source own increase, independent review of fixture predicates and claim text across the compiler, solver and integrated corpus, required harness tiers joined to identical source, configuration, contract edition and implementation. The receiving, completion-premise, annotation, distinct-target, positive-rung and nonconstant matched split witnesses join the scoped burn and accepted-act evidence; the sibling-without-path counterexample and compiled closed-cycle conservation add their finite operator scope. Negative probes refuse actual-purpose inference, unrestricted strategic-history completion, equality of different split records, universal response signs and unconditional own-balance recovery. No guild-policy recovery guarantee is established. Also held: budget review of recorded gate-wall and case excesses under rule:design:development-budgets; backend soundness, supported-platform and deterministic-refinement review under verif:design:fence-residual-cases; and review joining the bite-5 compiler prerequisites to these declared-verifier witnesses. Public evidence authentication and publication remain separate obligations.",
       "name": "ROOT::gate:design:bite-6",
       "owner": "Domain implementer and repository reviewer",
       "path": "docs/design/implementation.md",
@@ -2516,6 +2518,8 @@
     },
     {
       "claims": [
+        "EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals",
+        "EPOCH::claim:standing:sibling-response-refuses-selected-path-independence",
         "EPOCH::claim:standing:small-receiving-annotations-preserve-public-evidence",
         "EPOCH::claim:standing:showcase-receiving-retains-scoped-concentration",
         "EPOCH::claim:standing:distinct-target-split-retains-pair-displacement",
@@ -2526,7 +2530,7 @@
       "closing_step": "Bites 5 and 6 scoped witnesses, with integrated evidence review in bite 11",
       "evidence_paragraph": "EPOCH::amend:compiler:solve-record-evidence",
       "hold": "ROOT::open:design:core-standing-properties",
-      "missing": "Held for structurally unreached burn, the published isolated self-resolved-act family and retained-source own increase, independent review of fixture predicates and claim text across the compiler, solver and integrated corpus, integrated compiled nonlinear conservation, and required harness tiers joined to identical source, configuration, contract edition and implementation. The receiving, completion-premise, annotation, distinct-target, positive-rung and nonconstant matched split witnesses now join the scoped burn and accepted-act evidence. Negative probes refuse actual-purpose inference, unrestricted strategic-history completion, equality of different split records, universal response signs and unconditional own-balance recovery. No guild-policy recovery guarantee is established.",
+      "missing": "Held for the published isolated self-resolved-act family and retained-source own increase, independent review of fixture predicates and claim text across the compiler, solver and integrated corpus, required harness tiers joined to identical source, configuration, contract edition and implementation. The receiving, completion-premise, annotation, distinct-target, positive-rung and nonconstant matched split witnesses join the scoped burn and accepted-act evidence; the sibling-without-path counterexample and compiled closed-cycle conservation add their finite operator scope. Negative probes refuse actual-purpose inference, unrestricted strategic-history completion, equality of different split records, universal response signs and unconditional own-balance recovery. No guild-policy recovery guarantee is established.",
       "name": "ROOT::verif:design:core-standing-properties",
       "owner": "pn-epoch implementer and repository reviewer",
       "path": "docs/design/implementation.md",

@@ -1850,6 +1850,14 @@
       "review": "Three differently weighted frozen graphs with equal contributing ranges yield identical fence transcripts. Two depth profiles distinguish cumulative deepest-supported shape from a weighted average. Exact zero-width, empty and anchor cases and exact comparisons retain their earlier controls. Frozen-package replay checks every retained request; three distinct width, tilt and wall mutations refuse both as changed queries and as substituted valid attachments."
     },
     {
+      "operation": "pn-epoch::solve::partitions::compiled_conservation",
+      "path": "packages/epoch/tests/solve/partitions.rs",
+      "claim": "EPOCH::claim:standing:compiled-conservation-retains-emission-and-pair-totals",
+      "before": "",
+      "after": "Claim: A compiled closed cycle with a saturated source, depleted relay and zero-emission source retains frozen ledger pairs through certified positive-rung transport and replay; row and pair-total enclosures contain their exact conserved values, export ceilings and positive incoming retention hold, and its zero-tilt operator equals independent dense rational products. This finite transport witness does not assert final writing admission or individual-standing conservation.",
+      "review": "A reversed complete-act cycle is compiled once with one saturated source, one depleted relay and one zero-emission source. The certified positive-rung and exact anchor records independently replay. Transport enclosures retain row units and the frozen count and balance totals, incoming mass and self retention. Each export ceiling is independently recomputed as min(count, balance/charged price) from the frozen ledger and rational price, and the map emission must agree with that capacity. Exact anchor entries equal independent dense rational hop products. These are operator witnesses on the compiled frozen inputs, not final admission or conservation of individual standings."
+    },
+    {
       "operation": "pn-epoch::solve::partitions::distinct_target_split",
       "path": "packages/epoch/tests/solve/partitions.rs",
       "claim": "EPOCH::claim:standing:distinct-target-split-retains-pair-displacement",
@@ -1888,6 +1896,14 @@
       "before": "",
       "after": "Claim: The tagged small receiving comparison is compiled, certified and replayed with unchanged donor acts and proportional participant pairs. Legitimate-role and strategic-purpose annotations of each identical public record give identical compiled views and solve records. The different pooled and partitioned records strictly increase retained standing under the checked receiving premises; annotation equality supplies no equality of those records or inference of actual intent.",
       "review": "Both public histories are reconstructed and independently compiled and solved under each purpose annotation, then cross-replayed. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. This site additionally refuses violated semantic assumptions, a public scope attestation and an outside-family donor target. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal."
+    },
+    {
+      "operation": "pn-epoch::solve::partitions::sibling_outside_paths",
+      "path": "packages/epoch/tests/solve/partitions.rs",
+      "claim": "EPOCH::claim:standing:sibling-response-refuses-selected-path-independence",
+      "before": "",
+      "after": "Claim: The declared saturated sibling graph has no transport path from the changed burner to the target, yet its matched certified burn histories decrease the target at one common positive passing rung. Replayed maps with only the sibling coordinate changed also decrease that target. The checked absorbing sinks, positive source allocations, ordered source rates and above-wall sibling meet the sibling-response proposition; selected-path independence does not imply conserved-map independence or entrywise derivative domination.",
+      "review": "The complete histories change only one source balance. Both sinks are absorbing, both source allocations are positive, emission is saturated, the upstream rate exceeds the target rate, and the sibling hull clears the wall. There is no sibling-to-target transport support. Both independently replayed solves select the same positive passing rung and certify a negative target response. Two additional replayed maps change only the sibling coordinate and certify a negative target image response, while the selected direct path inputs are identical. The proposition supplies the derivative sign under these structural premises; finite differences are not claimed as a numerical derivative certificate. A separate control removes the shared normalization edge and checks identical enclosures in the structurally independent subsystem under the same one-burn comparison; it does not infer independence from transport support alone."
     },
     {
       "operation": "pn-epoch::solve::procedure_binding",

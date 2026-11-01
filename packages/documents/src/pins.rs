@@ -1335,9 +1335,27 @@ pub enum NumberId {
     NumbersBurnOwnPrecision,
     /// Registry id: num:numbers:burn-own-failed-precision.
     NumbersBurnOwnFailedPrecision,
+    /// Registry id: num:numbers:conservation-strength.
+    NumbersConservationStrength,
+    /// Registry id: num:numbers:conservation-precision.
+    NumbersConservationPrecision,
+    /// Registry id: num:numbers:conservation-depletion-ratio.
+    NumbersConservationDepletionRatio,
+    /// Registry id: num:numbers:sibling-strength.
+    NumbersSiblingStrength,
+    /// Registry id: num:numbers:sibling-raised-rate.
+    NumbersSiblingRaisedRate,
+    /// Registry id: num:numbers:sibling-precision.
+    NumbersSiblingPrecision,
+    /// Registry id: num:numbers:sibling-endpoint-grid.
+    NumbersSiblingEndpointGrid,
+    /// Registry id: num:numbers:sibling-response-lower.
+    NumbersSiblingResponseLower,
+    /// Registry id: num:numbers:sibling-response-upper.
+    NumbersSiblingResponseUpper,
 }
 
-const OFFSETS: [(usize, usize); 666] = [
+const OFFSETS: [(usize, usize); 675] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2004,6 +2022,15 @@ const OFFSETS: [(usize, usize); 666] = [
     (104_099, 104_112),
     (104_248, 104_250),
     (104_375, 104_377),
+    (104_545, 104_549),
+    (104_672, 104_674),
+    (104_803, 104_806),
+    (104_923, 104_929),
+    (105_049, 105_050),
+    (105_168, 105_170),
+    (105_292, 105_302),
+    (105_425, 105_447),
+    (105_586, 105_601),
 ];
 
 impl NumberId {
