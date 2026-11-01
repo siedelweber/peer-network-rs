@@ -51,7 +51,7 @@ def exercise(case):
             return result
 
         write('.linter/shape.toml', 'namespace="org.fixture.shape"\nversion=[1,0,0]\nuniverse="tracked-exclusive"\nignore=[{name="run",pattern=\'%s".lane/" *VCHAR\'}]\n')
-        write('.linter/owners.toml', 'namespace="org.fixture.owners"\nversion=[1,0,0]\nowners=["ROOT"]\npartitions=[{name="all",owner="ROOT",pattern="1*VCHAR"}]\nmay_cite=[]\n')
+        write('.linter/owners.toml', 'namespace="org.fixture.owners"\nversion=[1,0,0]\nroot_owner="ROOT"\nowners=["ROOT"]\npartitions=[{name="all",owner="ROOT",pattern="1*VCHAR"}]\nmay_cite=[]\n')
         write('.linter/policies.toml', 'namespace="org.fixture.policies"\nversion=[1,0,0]\npolicies=[]\n')
         write('.linter/environments.toml', 'namespace="org.fixture.environments"\nversion=[1,0,0]\nenvironments=[]\nreserved_kinds=[]\n')
         write('.linter/lists.toml', 'namespace="class.linter.lists"\nversion=[1,0,0]\n')

@@ -17,6 +17,7 @@ class Tree:
         self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name)
         self.write('.linter/owners.toml', '''namespace="org.example.linter.owners"
 version=[1,0,0]
+root_owner="ROOT"
 owners=["ROOT","PEER"]
 partitions=[{name="root",owner="ROOT",pattern='(%s"root/" *VCHAR / %s"Cargo.toml")'},{name="peer",owner="PEER",pattern='%s"peer/" *VCHAR'},{name="data",owner="ROOT",pattern='%s".linter/" *VCHAR'}]
 may_cite=[{owner="PEER",target="ROOT"}]

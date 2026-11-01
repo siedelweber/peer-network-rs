@@ -265,8 +265,8 @@ def check(root, graph_path, report_path):
     if not linter:
         raise ValueError('LINTER_BIN must name the deployed linter')
     result = run([linter, 'census', '--root', str(root), '--declared', str(declared),
-                  '--excluded', str(excluded), '--pattern', PATTERN, '--report', str(census_path),
-                  '--stamp', str(stamp_path)])
+                  '--excluded', str(excluded), '--pattern', PATTERN, '--write-report', str(census_path),
+                  '--write-stamp', str(stamp_path)])
     census = json.loads(census_path.read_text()) if census_path.exists() else {}
     print(f'BUILD-CENSUS tracked={census.get("tracked", "unavailable")} declared={census.get("declared", "unavailable")} excluded={census.get("excluded", "unavailable")} findings={census.get("failures", "unavailable")} exit={result.returncode}', flush=True)
     status = int(bool(findings) or result.returncode != 0 or not census.get('clean'))
