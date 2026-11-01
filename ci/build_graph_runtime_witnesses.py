@@ -60,11 +60,15 @@ def runtime_delegation(case):
         'observation-runtime':'python3 -B ci/run_ci.py test_observe_runtime',
         'host-observation-runtime':'python3 -B ci/run_ci.py test_host_runtime',
         'wallet-conformance':'python3 -B ci/run_ci.py test_wallet_boundary',
-        'wallet-elements-stop':'python3 -B ci/wallet_elements.py stop --root "$PN_WALLET_TEST_ROOT"',
+        'wallet-elements-stop':'python3 -B ci/wallet_elements.py stop-report --root "$PN_WALLET_TEST_ROOT"',
         'host-postgresql-stop':'python3 -B ci/host_postgresql.py stop --root "$PN_HOST_TEST_ROOT"',
         'harness-matrix':'python3 -B ci/harness.py --matrix',
         'claim-evidence':'python3 -B ci/claims.py --fail-respellings',
     }
+    expected.update({'test-build':'python3 -B ci/run_tests.py prepare',
+                     'reference-certificates':'python3 -B ci/run_tests.py reference-certificate',
+                     'service-tests':'python3 -B ci/run_tests.py service',
+                     'test-evidence':'python3 -B ci/run_tests.py merge'})
     stops={'wallet-elements-stop','host-postgresql-stop'}
     case.assertEqual({n:c for n,c in roster(repository) if n in expected},expected)
     rows=tomllib.loads((repository/'docs/inputs/build-graph-slices.toml').read_text())['rows']
@@ -179,7 +183,7 @@ sys.exit(status)
                 case.assertEqual(results['measurement']['findings'][0]['verdict_effect'],'none')
     interrupted_gate(case, repository)
     print(f'RUNTIME-WITNESS-WALL seconds={time.monotonic()-started:.6f} scenario_setups=1 signal_setups=1 scenarios=8 routes=2')
-    print('RUNTIME-DELEGATION commands=11 delegated=9 cleanup=shell fixtures=equal sibling-failure=retained holds=retained')
+    print(f'RUNTIME-DELEGATION commands={len(expected)} delegated={len(expected)-len(stops)} cleanup=shell fixtures=equal sibling-failure=retained holds=retained')
 
 
 def service_instances(case):
@@ -272,7 +276,7 @@ def interrupted_gate(case, repository):
     checker=repository/'ci/build_graph.py'
     entry=(repository/'ci/gate.sh').read_text()
     traps=entry[entry.index("trap 'python3"):entry.index('gate_started=')]
-    runners=entry[entry.index('run_step() {'):entry.index('# Meson owns the serial roster;')]
+    runners=entry[entry.index('run_step() {'):entry.index('# Meson owns the roster and dependencies;')]
     with tempfile.TemporaryDirectory() as directory:
         root=Path(directory)
         listener=socket.socket(socket.AF_UNIX)
@@ -403,6 +407,7 @@ print('FIXTURE '+action)
         case.assertEqual(result.returncode,2,result.stdout)
         case.assertFalse(report_path(build,'compile').exists())
         print('BUILD-COMPLETION missing-target=refused missing-report=refused duplicate=refused stale-run=refused stale-configuration=refused')
+    concurrent_completion(case)
 
 
 def capture_evidence(case):
@@ -529,3 +534,48 @@ def daemon_cpu_control(case):
         (root/'10/stat').unlink()
         with case.assertRaisesRegex(ValueError, 'vanished'):
             daemon_cpu(pidfile,root,100)
+
+
+def concurrent_completion(case):
+    """Two synchronized producers may finish in either order; joins require both."""
+    from types import SimpleNamespace
+    from unittest.mock import patch
+    from build_graph import bound_history, schedule
+    commands = [('left', 'true'), ('right', 'true'), ('join', 'true')]
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        (root/'.lane').mkdir()
+        (root/'.lane/gate-steps.tsv').write_text('')
+        (root/'meson.build').write_text(declaration(commands)+
+            "gate_dependencies = {\n'left': [], 'right': [], 'join': ['left', 'right'],\n}\n")
+        (root/'fixture.py').write_text("""import pathlib,sys,time
+name=sys.argv[1];root=pathlib.Path('.lane');start=time.time()
+(root/(name+'.started')).touch()
+if name!='join':
+    deadline=time.monotonic()+30
+    while not all((root/(n+'.started')).exists() for n in ('left','right')):
+        if time.monotonic()>deadline:raise RuntimeError('independent executor did not start')
+        time.sleep(.01)
+else:
+    assert all((root/('completed-'+n+'.tsv')).exists() for n in ('left','right'))
+status=7 if name=='left' else 0
+(root/('completed-'+name+'.tsv')).write_text(f'{name}\\t{status}\\t{start}\\t{time.time()}\\n')
+raise SystemExit(status)
+""")
+        env = {'BASH_FUNC_run_graph%%': '() { python3 -B fixture.py "$1"; failed=$?; }',
+               'BASH_FUNC_gate_signal%%': '() { exit "$1"; }'}
+        registry = SimpleNamespace(tiers={'fast': {'jobs': 2}})
+        with patch.dict(os.environ, env), patch('harness.load', return_value=registry), patch('build_graph.tier_summary'):
+            case.assertEqual(schedule(root), 1)
+        history = (root/'.lane/gate-steps.tsv').read_text().splitlines()
+        case.assertEqual({line.split('\t')[0] for line in history[:2]}, {'left', 'right'})
+        case.assertEqual(history[-1].split('\t')[0], 'join')
+        case.assertEqual(len(bound_history(root, 'join', history)), 2)
+        case.assertEqual(bound_history(root, 'join', history), bound_history(root, 'join', list(reversed(history[:2]))))
+        with case.assertRaisesRegex(ValueError, 'missing or out-of-order'):
+            bound_history(root, 'join', history[:1])
+        with case.assertRaisesRegex(ValueError, 'duplicate'):
+            bound_history(root, 'join', history+history[:1])
+        with case.assertRaisesRegex(ValueError, 'out-of-order'):
+            bound_history(root, 'join', [history[-1], *history[:2]])
+        print('BUILD-CONCURRENCY jobs=2 independent=overlapping failure=retained join=ordered missing=refused duplicate=refused')

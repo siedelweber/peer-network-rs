@@ -196,6 +196,35 @@ class WalletBoundary(unittest.TestCase):
                 else:
                     self.assertEqual(diagnostic.getvalue(), '')
 
+        # A slow success is retained in the test root and printed at shutdown,
+        # independent of whether the caller consumes its captured stderr.
+        from contextlib import redirect_stdout
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)/'wallet'; root.mkdir()
+            connection = MagicMock()
+            response = connection.getresponse.return_value
+            response.status = 200
+            response.read.return_value = json.dumps(dict(jsonrpc='2.0', id=1, result='fixture')).encode()
+            config = dict(port=1, producer='private credential sentinel', rpc_log=str(root/'wallet-rpc.log'), case='fixture::wallet')
+            output = io.StringIO()
+            with patch.object(wallet_elements.http.client, 'HTTPConnection', return_value=connection), \
+                 patch.object(wallet_elements.time, 'monotonic', side_effect=[100, 110.25]), \
+                 patch.dict(os.environ, CARGO_TARGET_DIR=directory, PN_FLAKE_LEDGER=str(Path(directory)/'gate-flakes.jsonl'), PN_GATE_SOURCE='fixture-source'), \
+                 redirect_stderr(io.StringIO()), redirect_stdout(output):
+                self.assertEqual(wallet_elements.rpc(config, 'createwallet'), 'fixture')
+                wallet_elements.report_rpc(root)
+            connection.request.assert_called_once()
+            retained = (root/'wallet-rpc.log').read_text()
+            self.assertIn('WALLET-RPC class=administrative method=createwallet outcome=success wall_s=10.250000', retained)
+            self.assertIn(retained, output.getvalue())
+            row, = [json.loads(line) for line in (Path(directory)/'gate-flakes.jsonl').read_text().splitlines()]
+            self.assertEqual((row['event'], row['commit'], row['case'], row['duration_s']),
+                             ('slow-success', 'fixture-source', 'fixture::wallet', 10.25))
+            self.assertEqual(row['steady_bound_s'], wallet_elements.RPC_TIMEOUT)
+            self.assertEqual(row['administrative_bound_s'], wallet_elements.RPC_ADMIN_TIMEOUT)
+            self.assertNotIn('private credential sentinel', retained+output.getvalue())
+
     def test_codec_pins(self):
         """Claim: Every registry package of the wallet's normal and build closure carries its reviewed archive checksum in the lockfile, and both built C archives export exactly the reviewed module families, with ECDH, SCHNORRSIG, EXTRAKEYS and ELLSWIFT in secp256k1-sys and SURJECTIONPROOF, GENERATOR, RANGEPROOF, ECDSA_ADAPTOR and WHITELIST in secp256k1-zkp-sys; a changed checksum, a missing module, an unreviewed module or an unknown family refuses.
         ´claim:discipline:wallet-codec-pins-match-review´

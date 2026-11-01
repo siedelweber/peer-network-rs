@@ -76,7 +76,7 @@
 | ci::test_design | active | integration | ci-python | fast | 8 |
 | ci::test_devperf | active | unit | ci-python | fast | 14 |
 | ci::test_discipline | active | integration | ci-python | fast | 30 |
-| ci::test_harness | active | unit | ci-python | fast | 13 |
+| ci::test_harness | active | unit | ci-python | fast | 14 |
 | planned-burn | held | held | none | service | 0 |
 | planned-graph | held | held | none | fast | 0 |
 | planned-ledger | held | held | none | fast | 0 |

@@ -15,7 +15,7 @@ subdir('packages')
 subdir('vendor')
 
 # Each delegated command has its own always-run target. The retained entry
-# invokes them in roster order; current-run predecessor reports enforce it.
+# dispatches the configured executor under declared completion dependencies.
 graph_python = find_program('python3')
 graph_adapter = files(meson.project_source_root() / 'ci/build_graph.py')
 configure_file(input: meson.project_source_root() / 'docs/inputs/build-graph-slices.toml',

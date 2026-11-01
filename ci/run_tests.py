@@ -40,7 +40,7 @@ def milliseconds(value):
     return value * 1000
 
 
-def nextest_events(text, inventory, metadata, source, configuration, registry=None):
+def nextest_events(text, inventory, metadata, source, configuration, registry=None, selected=None):
     registry = registry or load_registry()
     expected = {}
     for binary, suite in inventory['rust-suites'].items():
@@ -54,6 +54,10 @@ def nextest_events(text, inventory, metadata, source, configuration, registry=No
             level = registry.case_budget(operation)
             expected[raw_name] = (operation, level, details['ignored'])
     registry.roster('nextest', [v[0] for v in expected.values()])
+    if selected is not None:
+        if not selected <= {value[0] for value in expected.values()}:
+            raise StructuralError('tier selection exceeds the full inventory')
+        expected = {key: value for key, value in expected.items() if value[0] in selected}
     records = []
     seen = set()
     started = set()
@@ -122,7 +126,7 @@ def doctest_events(text, source, configuration, registry=None):
     return [join_case(registry, r, source, configuration) for r in records]
 
 
-def invoke(argv, stdout, stderr, env=None):
+def invoke(argv, stdout, stderr, env=None, observer=None):
     """Capture raw output and observer offsets in ms since invocation, not instants."""
     start = time.monotonic()
     observations = []
@@ -131,7 +135,9 @@ def invoke(argv, stdout, stderr, env=None):
             stdout.write(line)
             if line.startswith('{'):
                 try:
-                    observations.append({'offset_ms': (time.monotonic()-start)*1000, 'item': json.loads(line)})
+                    item = json.loads(line)
+                    observations.append({'offset_ms': (time.monotonic()-start)*1000, 'item': item})
+                    if observer is not None: observer(item)
                 except ValueError:
                     pass  # The authoritative stream parser reports malformed evidence.
         result = subprocess.CompletedProcess(argv, process.wait())
@@ -151,14 +157,14 @@ def contract_events(directory, registry, source, parents):
     return joined
 
 
-def suite_events(observations, inventory, registry, source, runner):
+def suite_events(observations, inventory, registry, source, runner, selected=None):
     starts = {}
     spans = {}
     outcomes = {}
     doc_start = None
     doc_names = set()
     doc_ids = doctest_identities({o['item']['name'] for o in observations if o['item'].get('type') == 'test'}) if runner == 'doctest' else {}
-    grouped = {name for name, suite in registry.suites.items() if suite.get('case_span')}
+    grouped = {name for name, suite in registry.suites.items() if suite.get('case_span') and (selected is None or set(suite['cases']) <= selected)}
     identities = {f"{suite['package-name']}::{suite['binary-name']}${case}": f'{binary}::{case}'
                   for binary, suite in inventory.get('rust-suites', {}).items() for case in suite.get('testcases', {})}
     case_starts = {}
@@ -221,10 +227,133 @@ def suite_events(observations, inventory, registry, source, runner):
         intervals = spans[name]
         spans[name] = [(min(a for a, _ in intervals), max(b for _, b in intervals))]
     return [registry.suite_event(name, inclusive_ms(spans.get(name, [])), outcomes.get(name, 'incomplete'), source)
-            for name, suite in registry.suites.items() if suite.get('runner') == runner and suite['status'] == 'active']
+            for name, suite in registry.suites.items() if suite.get('runner') == runner and suite['status'] == 'active' and (selected is None or set(suite['cases']) <= selected)]
 
 
-def main():
+def invocation_tier(suite):
+    return suite['tier'] if suite['tier'] in {'reference-certificate', 'service'} else 'fast'
+
+
+def split_main(action):
+    """Build one complete inventory, execute disjoint tiers, require their union."""
+    run = Path('.lane/tier-tests')
+    source = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+    registry = load_registry()
+    from flake_ledger import Session
+    ledger = Session(source)
+    raw_cases = {}
+    def observe(item):
+        if item.get('type') != 'test' or item.get('name') not in raw_cases: return
+        case = raw_cases[item['name']]
+        if item.get('event') == 'started': ledger.begin(case)
+        elif item.get('event') in {'ok', 'failed'}:
+            ledger.finish(case, 'failed' if item['event'] == 'failed' else 'passed', str(item.get('stdout', item.get('message', ''))))
+    policy = Path(__file__).with_name('nextest.toml')
+    records = []
+    def execute(name, argv, budget='ordinary-check', env=None):
+        start = time.monotonic()
+        with (run/(name+'.stdout')).open('w') as out, (run/(name+'.stderr')).open('w') as err:
+            result = invoke(argv, out, err, env, observe)
+        wall = time.monotonic()-start
+        (run/(name+'.observations.json')).write_text(json.dumps(result.observations))
+        record = event(name, budget, wall*1000, f'exit:{result.returncode}', source, CONFIGURATION)
+        if action in {'service', 'reference-certificate'}:
+            record['tier'] = action
+            record['applicable_budgets'] = [budget, registry.tiers[action]['invocation_budget']]
+        records.append(record)
+        print(f'OPERATION={name} STATUS={result.returncode} WALL={wall:.6f}s', flush=True)
+        if result.returncode:
+            print((run/(name+'.stderr')).read_text(), file=sys.stderr)
+            print((run/(name+'.stdout')).read_text(), file=sys.stderr)
+        return result.returncode
+    if action == 'prepare':
+        run.mkdir(parents=True, exist_ok=True)
+        (run/'manifest.json').unlink(missing_ok=True)
+        for name in ('fast', 'service', 'reference-certificate'):
+            (run/(name+'.result.json')).unlink(missing_ok=True)
+        version = execute('version', ['cargo', 'nextest', '--version'])
+        if version or (run/'version.stdout').read_text().strip().split()[:2] != ['cargo-nextest', '0.9.149']:
+            raise StructuralError('cargo-nextest version must be exactly 0.9.149')
+        status = execute('metadata', ['cargo', 'metadata', '--no-deps', '--locked', '--offline', '--format-version=1'])
+        status |= execute('build', ['cargo', 'nextest', 'list', '--workspace', '--locked', '--offline',
+            '--cargo-profile', 'gate', '--features', 'pn-wallet/fuzzing', '--config-file', str(policy),
+            '--profile', 'default', '--user-config-file', 'none', '--list-type', 'binaries-only', '--message-format', 'json'], 'incremental-build')
+        if status: return status
+        status = execute('inventory', ['cargo', 'nextest', 'list', '--binaries-metadata', str(run/'build.stdout'),
+            '--config-file', str(policy), '--profile', 'default', '--user-config-file', 'none', '--message-format', 'json'])
+        if status: return status
+        inventory = json.loads((run/'inventory.stdout').read_text())
+        registry.roster('nextest', [f'{binary}::{case}' for binary, suite in inventory['rust-suites'].items() for case in suite['testcases']])
+        (run/'contracts').mkdir(exist_ok=True)
+        (run/'manifest.json').write_text(json.dumps(dict(source=source, configuration=CONFIGURATION,
+            run=os.environ.get('PN_BUILDGRAPH_RUN'), records=records)))
+        return 0
+    manifest = json.loads((run/'manifest.json').read_text())
+    if any(manifest[key] != value for key, value in dict(source=source, configuration=CONFIGURATION,
+            run=os.environ.get('PN_BUILDGRAPH_RUN')).items()):
+        raise StructuralError('stale test inventory invocation')
+    inventory = json.loads((run/'inventory.stdout').read_text())
+    raw_cases.update({f"{suite['package-name']}::{suite['binary-name']}${case}": f'{binary}::{case}'
+        for binary, suite in inventory['rust-suites'].items() for case in suite['testcases']})
+    if action == 'merge':
+        records = list(manifest['records'])
+        status = 0
+        for tier in ('fast', 'reference-certificate', 'service'):
+            result = json.loads((run/(tier+'.result.json')).read_text())
+            if result['manifest'] != manifest or result['tier'] != tier:
+                raise StructuralError('stale or mismatched required tier')
+            status |= result['status']
+            records += result['records']
+        cases = [row for row in records if row.get('scope') == 'case']
+        registry.roster('nextest', [row['operation'] for row in cases if registry.cases[row['operation']]['runner'] == 'nextest'])
+        registry.roster('doctest', [row['operation'] for row in cases if registry.cases[row['operation']]['runner'] == 'doctest'])
+        if any(row['outcome'] not in {'passed', 'failed'} for row in cases):
+            raise StructuralError('required invocation omitted or ignored a case')
+        records += contract_events(run/'contracts', registry, source, cases)
+        Path('.lane/performance-events.jsonl').write_text(''.join(json.dumps(row)+'\n' for row in records))
+        print(f'REQUIRED-TIERS joined=3 cases={len(cases)} exactly_once=true status={status}')
+        return status
+    if action not in {'fast', 'service', 'reference-certificate'}:
+        raise StructuralError('unknown required invocation')
+    selected = {name for name, suite in registry.cases.items() if suite['runner'] == 'nextest' and invocation_tier(suite) == action}
+    if not selected: raise StructuralError('required invocation is empty')
+    expressions = []
+    for binary, suite in inventory['rust-suites'].items():
+        if all(f'{binary}::{case}' in selected for case in suite['testcases']):
+            expressions.append(f'binary_id(={binary})')
+            continue
+        for case in suite['testcases']:
+            if f'{binary}::{case}' in selected:
+                expressions.append(f'(binary_id(={binary}) & test(={case}))')
+    config = policy.read_text().replace('dir = ".lane/nextest"', 'dir = '+json.dumps(str(run.resolve()/action)))
+    config_path = run/(action+'.toml'); config_path.write_text(config)
+    env = {**{key:value for key,value in os.environ.items() if not key.startswith('PROPTEST_')},
+           **property_environment(registry.properties, source), 'NEXTEST_EXPERIMENTAL_LIBTEST_JSON':'1',
+           'PN_CONTRACT_RESULTS':str((run/'contracts').resolve()), 'PN_HARNESS_SOURCE':source,
+           'PN_HARNESS_CONFIGURATION':CONFIGURATION, 'PN_HARNESS_UTC':instant()}
+    budget = {'fast':'test-command', 'service':'service-gate', 'reference-certificate':'reference-gate'}[action]
+    status = execute(action, ['cargo', 'nextest', 'run', '--config-file', str(config_path), '--user-config-file', 'none',
+        '--profile', 'default', '--retries', '0', '--no-fail-fast', '--ignore-default-filter', '--run-ignored', 'default',
+        '--message-format', 'libtest-json-plus', '--message-format-version', '0.1',
+        '--binaries-metadata', str(run/'build.stdout'), '-E', ' | '.join(expressions)], budget, env)
+    records += nextest_events((run/(action+'.stdout')).read_text(), inventory, {}, source, CONFIGURATION, registry, selected)
+    records += suite_events(json.loads((run/(action+'.observations.json')).read_text()), inventory, registry, source, 'nextest', selected)
+    if action == 'fast':
+        status |= execute('doctests', ['cargo', 'test', '--workspace', '--doc', '--locked', '--offline', '--profile', 'gate',
+            '--no-fail-fast', '--', '-Z', 'unstable-options', '--format', 'json', '--report-time'], 'incremental-build')
+        docs = doctest_events((run/'doctests.stdout').read_text(), source, CONFIGURATION, registry)
+        for row in docs:
+            ledger.begin(row['operation'])
+            ledger.finish(row['operation'], row['outcome'], (run/'doctests.stdout').read_text() if row['outcome'] == 'failed' else '')
+        records += docs
+        records += suite_events(json.loads((run/'doctests.observations.json').read_text()), {}, registry, source, 'doctest')
+    (run/(action+'.result.json')).write_text(json.dumps(dict(manifest=manifest, tier=action, status=status, records=records)))
+    return status
+
+
+def main(action=None):
+    if action is not None:
+        return split_main(action)
     policy_path = Path(__file__).with_name('nextest.toml')
     run = Path('.lane/performance') / uuid.uuid4().hex
     run.mkdir(parents=True)
@@ -313,4 +442,4 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else None))

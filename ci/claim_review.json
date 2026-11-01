@@ -130,6 +130,14 @@
       "review": "Read the denied and allowed controls for each host configuration and authentication accessor alongside the existing Clippy controls."
     },
     {
+      "operation": "ci::test_harness.Harness.test_flake_ledger",
+      "path": "ci/test_harness.py",
+      "claim": "ROOT::claim:harness:flake-ledger-retains-recurrences",
+      "before": "",
+      "after": "Claim: Required failures retain commit, case, error and node load; a later required execution reports its retry and result, a repeated failure is a recurrence, and a passing slow call remains a finding without becoming a failed test.",
+      "review": "Read durable failure, retry, recurring failure, later success and slow-success rows across fresh ledger sessions. The witness checks exact commit, case, error and node-load fields and retains successful outcomes."
+    },
+    {
       "operation": "ci::test_harness.Harness.test_interchange_manifest",
       "path": "ci/test_harness.py",
       "claim": "ROOT::claim:harness:interchange-structure-is-declared",
@@ -226,6 +234,14 @@
       "review": "Read actual Meson configuration reuse and mismatch setup through its recorded introspection version, alongside the unchanged census fault battery."
     },
     {
+      "operation": "ci::test_linter_entry.Conformance.test_build_graph_completion",
+      "path": "ci/test_linter_entry.py",
+      "claim": "ROOT::claim:discipline:build-graph-completion-is-current-and-exact",
+      "before": "Claim: The entry takes its complete serial roster from Meson, retaining only census and service shutdown outside delegation; fresh and reused target executions preserve fixture cases, features, document bytes and statuses, execute each step once, and refuse missing targets, missing final reports, duplicate completions and stale run or configuration joins.",
+      "after": "Claim: The entry takes its complete command roster and completion dependencies from Meson, retaining only census and service shutdown outside delegation; fresh and reused target executions preserve fixture cases, features, document bytes and statuses, execute each step once, and refuse missing targets, missing final reports, duplicate completions and stale run or configuration joins. Independent producers overlap under the declared job bound, a failed producer remains failed, and a join refuses missing, duplicated or prematurely ordered dependency reports.",
+      "review": "Read the existing fresh and reused adapter assertions unchanged, then the synchronized independent producers, retained failed status and required join. Missing, duplicated and premature dependency histories refuse; current report identity remains checked on both routes."
+    },
+    {
       "operation": "ci::test_linter_entry.Conformance.test_build_graph_delegation",
       "path": "ci/test_linter_entry.py",
       "claim": "ROOT::claim:discipline:build-graph-delegation-preserves-results",
@@ -262,8 +278,8 @@
       "path": "ci/test_linter_entry.py",
       "claim": "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
       "before": "Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; interrupted or graph-refused execution still reaches the shell stop and exit cleanup, and all eleven runtime roster commands retain their text.",
-      "after": "Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; graph-refused execution still reaches shell stops, and SIGTERM during a Ninja command reaps its command tree and performs root-keyed exit cleanup without touching a sibling root; all eleven runtime roster commands retain their text.",
-      "review": "Read the socket readiness handshake, SIGTERM delivery to the shell carrying the real traps, process reaping and separate owned-root versus sibling-root assertions; the retained graph-refusal fixture checks explicit stops independently."
+      "after": "Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; graph-refused execution still reaches shell stops, and SIGTERM during a Ninja command reaps its command tree and performs root-keyed exit cleanup without touching a sibling root; the runtime roster names each required invocation and retains explicit shutdown and evidence joins.",
+      "review": "The command roster now includes inventory construction and disjoint required invocations with an evidence merge; shutdown additionally publishes public RPC timings. The existing refusal, sibling failure, hold, measurement and interrupted cleanup assertions are unchanged."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_service_ownership",
@@ -455,7 +471,7 @@
       "claim": "ROOT::claim:discipline:wallet-fixture-ports-survive-time-wait",
       "before": "",
       "after": "Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay.",
-      "review": "Read the allocator over real sockets: a server-closed connection left in TIME_WAIT, a live listener, a port taken before a real daemon launch, and the harness entry's public cause line. This witnesses allocation and launch retry for this account's fixtures, not a lock shared with other accounts."
+      "review": "Read the allocator over real sockets: a server-closed connection left in TIME_WAIT, a live listener, a port taken before a real daemon launch, and the harness entry's public cause line. This witnesses allocation and launch retry for this account's fixtures, not a lock shared with other accounts. Read the retained port and ownership assertions, legacy keypool and method-selected socket bounds, and one-call outcomes without retries. A mocked slow success is written in its fixture root, published on success, and joined to the persistent ledger without private credentials."
     },
     {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary",

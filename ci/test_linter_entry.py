@@ -247,7 +247,7 @@ class Conformance(unittest.TestCase):
         cargo_delegation(self)
 
     def test_runtime_delegation(self):
-        """Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; graph-refused execution still reaches shell stops, and SIGTERM during a Ninja command reaps its command tree and performs root-keyed exit cleanup without touching a sibling root; all eleven runtime roster commands retain their text.
+        """Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; graph-refused execution still reaches shell stops, and SIGTERM during a Ninja command reaps its command tree and performs root-keyed exit cleanup without touching a sibling root; the runtime roster names each required invocation and retains explicit shutdown and evidence joins.
         ´claim:discipline:runtime-delegation-preserves-evidence´
         ´test:integration:test-runtime-delegation´
         """
@@ -263,7 +263,7 @@ class Conformance(unittest.TestCase):
         service_instances(self)
 
     def test_build_graph_completion(self):
-        """Claim: The entry takes its complete serial roster from Meson, retaining only census and service shutdown outside delegation; fresh and reused target executions preserve fixture cases, features, document bytes and statuses, execute each step once, and refuse missing targets, missing final reports, duplicate completions and stale run or configuration joins.
+        """Claim: The entry takes its complete command roster and completion dependencies from Meson, retaining only census and service shutdown outside delegation; fresh and reused target executions preserve fixture cases, features, document bytes and statuses, execute each step once, and refuse missing targets, missing final reports, duplicate completions and stale run or configuration joins. Independent producers overlap under the declared job bound, a failed producer remains failed, and a join refuses missing, duplicated or prematurely ordered dependency reports.
         ´claim:discipline:build-graph-completion-is-current-and-exact´
         ´test:integration:test-build-graph-completion´
         """

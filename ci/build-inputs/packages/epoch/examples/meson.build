@@ -1,7 +1,7 @@
 # Explicit compiler observation fixture and its consumers.
 local_inputs = [
   ['ci/build-inputs/packages/epoch/examples/meson.build', 'build-graph', ''],
-  ['packages/epoch/examples/epoch_observation.rs', 'fmt,clippy,nursery-advisory,minimal,rustdoc,tests,benchmarks,observation-build,observation-runtime,harness-registry,claim-evidence,observation-syntax,token,hash-citations,linter,suppressions,printing', ''],
+  ['packages/epoch/examples/epoch_observation.rs', 'fmt,clippy,nursery-advisory,minimal,rustdoc,test-build,reference-certificates,service-tests,test-evidence,tests,benchmarks,observation-build,observation-runtime,harness-registry,claim-evidence,observation-syntax,token,hash-citations,linter,suppressions,printing', ''],
 ]
 foreach row : local_inputs
   graph_files += files(meson.project_source_root() / row[0])

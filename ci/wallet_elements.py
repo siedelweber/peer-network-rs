@@ -139,8 +139,22 @@ def rpc(config, method, params=None, credential=None, refusal=False, detail=Fals
     finally:
         connection.close()
         if administrative:
-            print(f'WALLET-RPC class=administrative method={method} outcome={outcome} '
-                  f'wall_s={time.monotonic() - started:.6f} socket_bound_s={timeout}', file=sys.stderr, flush=True)
+            elapsed = time.monotonic() - started
+            line = (f'WALLET-RPC class=administrative method={method} outcome={outcome} '
+                    f'wall_s={elapsed:.6f} socket_bound_s={timeout}')
+            print(line, file=sys.stderr, flush=True)
+            if config.get('rpc_log'):
+                case = config.get('case', os.environ.get('PN_GATE_CASE', 'wallet-elements-start'))
+                source = os.environ.get('PN_GATE_SOURCE', 'standalone')
+                with Path(config['rpc_log']).open('a') as stream:
+                    stream.write(line+f' commit={source} case={case} node_load='+json.dumps(list(os.getloadavg()))+'\n')
+                    if outcome == 'success' and elapsed > RPC_TIMEOUT:
+                        from flake_ledger import Session
+                        row = Session(source).record('slow-success', case, 'administrative call exceeded steady-state socket bound',
+                            method=method, outcome=outcome, duration_s=elapsed, steady_bound_s=RPC_TIMEOUT,
+                            administrative_bound_s=timeout, finding='recurrence')
+                        stream.write('FLAKE-LEDGER '+json.dumps(row, sort_keys=True)+'\n')
+
 
 
 def write_private(path, value):
@@ -183,7 +197,8 @@ def start(root):
     tried = []
     while True:
         with port_selection(exclude=tried) as port:
-            config = dict(port=port, producer=producer)
+            config = dict(port=port, producer=producer, rpc_log=str(root/'wallet-rpc.log'),
+                          case=os.environ.get('PN_GATE_CASE', 'wallet-elements-start'))
             write_private(root/'producer.json', config)
             lines = ['chain=' + profile['chain'], 'server=1', 'rpcauth=' + auth, 'rpcwhitelistdefault=0',
                      'signblockscript=' + bytes(profile['challenge']).hex(), 'rpccookiefile=' + str(root/'cookie'),
@@ -505,9 +520,19 @@ def advance(root, blocks, replace, exclude):
         sign_block(root, exclude)
 
 
+def report_rpc(root):
+    """Publish retained administrative timings even after successful shutdown."""
+    roots = [root, *sorted(child for child in root.parent.iterdir() if child.is_dir() and
+                          child.name.startswith(('wallet-signed-', 'wallet-rotation-', 'wallet-settlement-')))]
+    for directory in roots:
+        path = directory/'wallet-rpc.log'
+        if path.exists():
+            print(path.read_text(), end='', flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['start', 'signed', 'settlement', 'burn', 'advance', 'stop', 'stop-all', 'restart'])
+    parser.add_argument('action', choices=['start', 'signed', 'settlement', 'burn', 'advance', 'stop', 'stop-all', 'restart', 'report-rpc', 'stop-report'])
     parser.add_argument('--root', required=True, type=Path)
     parser.add_argument('--units', type=int, default=0)
     parser.add_argument('--blocks', type=int, default=0)
@@ -531,6 +556,13 @@ def main():
             for child in root.parent.iterdir():
                 if child.is_dir() and child.name.startswith(('wallet-signed-', 'wallet-rotation-', 'wallet-settlement-')):
                     stop(child)
+        elif args.action == 'stop-report':
+            try:
+                stop(root)
+            finally:
+                report_rpc(root)
+        elif args.action == 'report-rpc':
+            report_rpc(root)
         elif args.action == 'burn':
             burn(root, args.units)
         elif args.action == 'advance':

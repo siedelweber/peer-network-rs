@@ -289,6 +289,10 @@ fn producer(action: &str, directory: &std::path::Path, arguments: &[&str]) -> st
         .args(["-B", "ci/wallet_elements.py", action, "--root"])
         .arg(directory)
         .args(arguments)
+        .env(
+            "PN_GATE_CASE",
+            format!("pn-wallet::rpc::{}", std::thread::current().name().unwrap_or("unnamed")),
+        )
         .current_dir(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../.."))
         .output()
         .unwrap()

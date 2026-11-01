@@ -45,6 +45,8 @@ class Registry:
             if level.get('budget') not in declared or declared[level['budget']]['category'] != 'case':
                 raise StructuralError('unknown level budget')
         for tier in self.tiers.values():
+            if 'invocation_budget' in tier and (tier['invocation_budget'] not in declared or declared[tier['invocation_budget']]['category'] != 'aggregate'):
+                raise StructuralError('unknown tier invocation budget')
             if tier.get('status') not in {'active', 'held'} or (tier['status'] == 'held' and not tier.get('reason')):
                 raise StructuralError('invalid tier declaration')
             if tier.get('case_budget_policy') not in {None, 'declared-suite'}:
@@ -113,6 +115,10 @@ class Registry:
         if len(actual) != len(set(actual)) or set(actual) != expected:
             raise StructuralError(f'{runner}: case inventory differs; missing={sorted(expected-set(actual))} extra={sorted(set(actual)-expected)}')
 
+    def aggregate_budgets(self, tier):
+        budget = self.tiers[tier].get('invocation_budget')
+        return [budget] if budget and tier in {'service', 'reference-certificate'} else ['test-command', 'gate']
+
     def join(self, record, source, configuration=CONFIGURATION):
         from properties import validate
         validate(record, self.properties)
@@ -125,7 +131,7 @@ class Registry:
         fields = dict(source=source, configuration=configuration, level=suite['level'],
                       suite=suite['name'], implementation=suite['implementation'], tier=suite['tier'],
                       evidence=implementation['evidence'], budget=budget,
-                      applicable_budgets=[budget, suite['budget'], 'test-command', 'gate'])
+                      applicable_budgets=[budget, suite['budget'], *self.aggregate_budgets(suite['tier'])])
         fields.update({key: suite[key] for key in ('contract_edition', 'claim', 'claim_owner', 'parent_case') if key in suite})
         for key, value in fields.items():
             if key in record and record[key] != value:
@@ -138,7 +144,7 @@ class Registry:
         return dict(operation='suite::'+name, scope='suite', suite=name, level=suite['level'],
                     implementation=suite['implementation'], tier=suite['tier'], evidence=impl['evidence'],
                     source=source, configuration=CONFIGURATION, budget=suite['budget'],
-                    applicable_budgets=[suite['budget'], 'test-command', 'gate'], duration_ms=duration_ms,
+                    applicable_budgets=[suite['budget'], *self.aggregate_budgets(suite['tier'])], duration_ms=duration_ms,
                     outcome=outcome, owner='foundation implementer')
 
     def matrix(self, records, source):

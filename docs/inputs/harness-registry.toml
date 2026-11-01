@@ -73,12 +73,18 @@ edition = "0.1"
 [[rows]]
 kind = "tier"
 name = "fast"
+steps = ["build-graph", "fixed-point-generate", "fixed-point-write", "fixed-point-clean", "test-build", "toolchain", "discipline-tests", "harness-registry", "harness-tests", "testkit-guard", "testkit-tests", "claim-tests", "observation-tests", "devperf-tests", "build-policy", "cargo-config", "vendor-set", "member-lints", "design-correspondence", "design-tests", "linter", "token", "hash-citations", "suppressions", "printing", "tests", "cargo-config-measurement", "fmt", "clippy", "nursery-advisory", "minimal", "rustdoc", "datasets", "documents", "determinism-datasets", "determinism-documents", "benchmarks", "observation-build", "observation-runtime", "observation-parser"]
+jobs = 8
+finalize_steps = ["test-evidence", "test-budgets", "harness-matrix", "claim-evidence", "observation-syntax"]
+invocation_budget = "gate"
 status = "active"
 reason = "per-change local and process evidence"
 
 [[rows]]
 kind = "tier"
 name = "service"
+steps = ["host-postgresql-start", "wallet-elements-start", "service-tests", "host-observation-build", "host-observation-runtime", "wallet-conformance", "wallet-elements-stop", "host-postgresql-stop", "linter-entry-tests"]
+invocation_budget = "service-gate"
 status = "active"
 reason = "The gate owns PostgreSQL 19 RC 1 for transport and library storage evidence and Elements 29.4.1 RC 1 for wallet read evidence; executable activation, admitted epoch transactions and other service integrations remain held."
 
@@ -519,7 +525,7 @@ level = "unit"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_harness.Harness.test_reference_tier", "ci::test_harness.Harness.test_case_level_declaration", "ci::test_harness.Harness.test_doctest_identity", "ci::test_harness.Harness.test_doctest_inventory", "ci::test_harness.Harness.test_dropped_case", "ci::test_harness.Harness.test_ignored_case", "ci::test_harness.Harness.test_interchange_manifest", "ci::test_harness.Harness.test_missing_level", "ci::test_harness.Harness.test_mock_as_real", "ci::test_harness.Harness.test_nextest_suite_span", "ci::test_harness.Harness.test_service_hold", "ci::test_harness.Harness.test_stale_source", "ci::test_harness.Harness.test_unregistered_implementation"]
+cases = ["ci::test_harness.Harness.test_flake_ledger", "ci::test_harness.Harness.test_reference_tier", "ci::test_harness.Harness.test_case_level_declaration", "ci::test_harness.Harness.test_doctest_identity", "ci::test_harness.Harness.test_doctest_inventory", "ci::test_harness.Harness.test_dropped_case", "ci::test_harness.Harness.test_ignored_case", "ci::test_harness.Harness.test_interchange_manifest", "ci::test_harness.Harness.test_missing_level", "ci::test_harness.Harness.test_mock_as_real", "ci::test_harness.Harness.test_nextest_suite_span", "ci::test_harness.Harness.test_service_hold", "ci::test_harness.Harness.test_stale_source", "ci::test_harness.Harness.test_unregistered_implementation"]
 
 [[rows]]
 kind = "suite"
@@ -1558,6 +1564,8 @@ cases = ["pn-graph::numeric::primitive_oracles", "pn-graph::numeric::primitive_d
 [[rows]]
 kind = "tier"
 name = "reference-certificate"
+steps = ["reference-certificates"]
+invocation_budget = "reference-gate"
 status = "active"
 case_budget_policy = "declared-suite"
 reason = "Full-size exact reference declarations and certificate controls retain their own measured case and suite budgets; every case remains required in the gate."
@@ -1633,4 +1641,3 @@ budget = "own-burn-suite"
 case_budget = "own-burn-case"
 case_span = true
 cases = ["pn-epoch::solve::burn_own"]
-

@@ -123,7 +123,7 @@
       "category": "aggregate",
       "name": "gate",
       "reason": "Pinned-node gates of record took 81.2 s and 85.5 s; the latter used about 233 own CPU seconds at about two percent shared CPU pressure. A 120 s warning allowance gives about forty percent margin above the larger observed wall for post-import build work. Warm lane repeats are diagnostics, not the calibration workload.",
-      "scope": "gate of record on the imported tree in a fresh checkout, with its own retained node target"
+      "scope": "per-change gate on the imported tree in a fresh checkout, with its own retained node target"
     },
     {
       "budget_ms": 180000,
@@ -180,6 +180,13 @@
       "name": "own-burn-suite",
       "reason": "Allow the mechanism case and harness overhead while retaining its separate case warning and the per-commit gate budget.",
       "scope": "the required own-loss mechanism group"
+    },
+    {
+      "budget_ms": 90000,
+      "category": "aggregate",
+      "name": "reference-gate",
+      "reason": "The longest exact local certificate needs about fifty seconds; allow the unchanged certificate cases and runner overhead in a required invocation alongside the per-commit path.",
+      "scope": "required reference-certificate invocation"
     }
   ]
 }

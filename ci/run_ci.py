@@ -2,6 +2,7 @@
 
 import json
 import os
+import shutil
 from pathlib import Path
 import sys
 import time
@@ -21,7 +22,46 @@ def flatten(suite):
             yield test
 
 
+def isolated_wallet(module):
+    """Mutation and compile-failure witnesses own a checkout and a Cargo target."""
+    from build_graph import cancellable, tracked
+    import hashlib
+    root = Path.cwd()
+    tree = root/'.lane/wallet-conformance-tree'
+    if tree.exists(): shutil.rmtree(tree)
+    source = source_id()
+    inputs = tracked(root)
+    def digests(directory):
+        return {name: hashlib.sha256((directory/name).read_bytes()).hexdigest() for name in inputs}
+    before = digests(root)
+    for argv in (['git', 'clone', '--quiet', '--shared', '--no-hardlinks', '--no-checkout', str(root), str(tree)],
+                 ['git', '-C', str(tree), 'checkout', '--quiet', source]):
+        started = time.monotonic()
+        result = cancellable(argv)
+        print(f'WALLET-ISOLATION tool=git wall={time.monotonic()-started:.6f}s status={result.returncode}', flush=True)
+        if result.returncode: return result.returncode
+    if digests(tree) != before:
+        raise StructuralError('isolated wallet input differs from the gate checkout')
+    (tree/'.lane').mkdir()
+    target = Path(os.environ['CARGO_TARGET_DIR']).resolve()
+    env = dict(os.environ, PN_WALLET_CONFORMANCE_ISOLATED='1', CARGO_TARGET_DIR=str(target/'wallet-conformance'),
+               PN_FLAKE_LEDGER=str(target/'gate-flakes.jsonl'))
+    result = cancellable([sys.executable, '-B', 'ci/run_ci.py', module], cwd=tree, env=env)
+    if digests(root) != before:
+        raise StructuralError('wallet invocation changed the gate checkout')
+    print('WALLET-ISOLATION inputs=equal parent=unchanged target=separate', flush=True)
+    for name in ('harness-ci-test_wallet_boundary.jsonl', 'wallet-rpc-compile-fail.log'):
+        path = tree/'.lane'/name
+        if path.exists(): shutil.copyfile(path, root/'.lane'/name)
+    findings = tree/'.lane/performance-findings.jsonl'
+    if findings.exists():
+        with (root/'.lane/performance-findings.jsonl').open('a') as output: output.write(findings.read_text())
+    return result.returncode
+
+
 def main(module):
+    if module == 'test_wallet_boundary' and os.environ.get('PN_GATE_PARALLEL') == '1' and os.environ.get('PN_WALLET_CONFORMANCE_ISOLATED') != '1':
+        return isolated_wallet(module)
     registry = load()
     source = source_id()
     suite_name = 'ci::' + module
@@ -30,6 +70,8 @@ def main(module):
     inventory = ['ci::'+test.id() for test in flatten(suite)]
     if len(inventory) != len(set(inventory)) or set(inventory) != set(declared['cases']):
         raise StructuralError('CI inventory differs from declared suite cases')
+    from flake_ledger import Session
+    ledger = Session(source)
     records = []
     from build_graph_evidence import SERVICE_CASE, service_selection
     if SERVICE_CASE in inventory:
@@ -46,14 +88,19 @@ def main(module):
         def startTest(self, test):
             self.started = time.monotonic()
             self.outcome = 'passed'
+            self.failure_text = ''
+            ledger.begin('ci::'+test.id())
+            os.environ['PN_GATE_CASE'] = 'ci::'+test.id()
             super().startTest(test)
 
         def addFailure(self, test, err):
             self.outcome = 'failed'
+            self.failure_text = self._exc_info_to_string(err, test)
             super().addFailure(test, err)
 
         def addError(self, test, err):
             self.outcome = 'failed'
+            self.failure_text = self._exc_info_to_string(err, test)
             super().addError(test, err)
 
         def addSkip(self, test, reason):
@@ -62,18 +109,22 @@ def main(module):
 
         def addExpectedFailure(self, test, err):
             self.outcome = 'failed'
+            self.failure_text = self._exc_info_to_string(err, test)
             super().addExpectedFailure(test, err)
 
         def addUnexpectedSuccess(self, test):
             self.outcome = 'failed'
+            self.failure_text = 'unexpected success of a required expected-failure case'
             super().addUnexpectedSuccess(test)
 
         def addSubTest(self, test, subtest, err):
             if err is not None:
                 self.outcome = 'failed'
+                self.failure_text = self._exc_info_to_string(err, test)
             super().addSubTest(test, subtest, err)
 
         def stopTest(self, test):
+            ledger.finish('ci::'+test.id(), self.outcome, self.failure_text)
             duration = (time.monotonic()-self.started)*1000
             raw = event('ci::'+test.id(), registry.levels[declared['level']]['budget'], duration,
                         self.outcome, source, CONFIGURATION)

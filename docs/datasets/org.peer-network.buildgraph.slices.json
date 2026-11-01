@@ -260,6 +260,26 @@
       "name": "printing",
       "reason": "Policy, corpus, document or checker evidence; preserve the current command and serial report edge.",
       "slice": 2
+    },
+    {
+      "name": "test-build",
+      "reason": "Required invocation with a current inventory and exact evidence join.",
+      "slice": 4
+    },
+    {
+      "name": "reference-certificates",
+      "reason": "Required invocation with a current inventory and exact evidence join.",
+      "slice": 4
+    },
+    {
+      "name": "service-tests",
+      "reason": "Required invocation with a current inventory and exact evidence join.",
+      "slice": 4
+    },
+    {
+      "name": "test-evidence",
+      "reason": "Required invocation with a current inventory and exact evidence join.",
+      "slice": 4
     }
   ]
 }

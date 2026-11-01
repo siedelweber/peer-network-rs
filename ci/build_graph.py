@@ -1,6 +1,7 @@
 """Fresh tracked-file and step incidence checks for the Meson gate skeleton."""
 
 import argparse
+import concurrent.futures
 import ast
 from collections import Counter
 import hashlib
@@ -69,6 +70,52 @@ def roster(root):
     return result
 
 
+def dependencies(root):
+    """Read declared completion edges; older fixture graphs retain their chain."""
+    source = (root/'meson.build').read_text()
+    match = re.search(r'^gate_dependencies = (\{.*?^\})', source, re.M | re.S)
+    names = [name for name, _ in roster(root)]
+    if not match:
+        return {name: names[index-1:index] for index, name in enumerate(names)}
+    edges = ast.literal_eval(match[1])
+    if set(edges) != set(names):
+        raise ValueError('dependency declaration differs from roster')
+    for name, parents in edges.items():
+        if (not isinstance(parents, list) or len(parents) != len(set(parents)) or
+                any(parent not in names[:names.index(name)] for parent in parents)):
+            raise ValueError('unknown, repeated or non-topological dependency: '+name)
+    return edges
+
+
+def predecessors(root, step):
+    edges = dependencies(root)
+    found = set()
+    def visit(name):
+        for parent in edges[name]:
+            if parent not in found:
+                found.add(parent)
+                visit(parent)
+    visit(step)
+    return [name for name, _ in roster(root) if name in found]
+
+
+def bound_history(root, step, history):
+    names = [name for name, _ in roster(root)]
+    fields = [line.split('\t') for line in history]
+    if (any(len(row) != 4 for row in fields) or len({row[0] for row in fields}) != len(fields)
+            or any(row[0] not in names for row in fields)):
+        raise ValueError('malformed or duplicate current step reports: '+step)
+    rows = {row[0]: line for row, line in zip(fields, history)}
+    required = predecessors(root, step)
+    if any(name not in rows for name in required):
+        raise ValueError('missing or out-of-order current step reports: '+step)
+    edges = dependencies(root)
+    for index, row in enumerate(fields):
+        if not set(edges[row[0]]) <= {earlier[0] for earlier in fields[:index]}:
+            raise ValueError('out-of-order current step reports: '+step)
+    return [rows[name] for name in required]
+
+
 def plan(root):
     """Emit the serial entry from the same declaration, never a second roster."""
     # Planning must survive a bad slice assignment: configuration then refuses
@@ -113,7 +160,7 @@ def finish(root):
     names = [name for name, _ in roster(root)]
     history = (root/'.lane/gate-steps.tsv').read_text().splitlines()
     fields = [line.split('\t') for line in history]
-    if any(len(row) != 4 for row in fields) or [row[0] for row in fields] != names:
+    if any(len(row) != 4 for row in fields) or len(fields) != len(names) or {row[0] for row in fields} != set(names):
         raise ValueError('final roster is missing, duplicated or out of order')
     graph = json.loads((root/'.lane/build-graph/gate-graph.json').read_text())
     if [(row['name'], row['command']) for row in graph['steps']] != roster(root):
@@ -132,7 +179,7 @@ def finish(root):
             bound = request['context']
             expected = dict(run=os.environ.get('PN_BUILDGRAPH_RUN'), source=source,
                             configuration=configuration, graph=identity(graph),
-                            history=identity(history[:index]), step=name,
+                            history=identity(bound_history(root, name, history)), step=name,
                             command=dict(roster(root))[name])
             if any(bound[key] != value for key, value in expected.items()) or result['status'] != int(status):
                 raise ValueError('stale final report: '+name)
@@ -157,10 +204,11 @@ def configure(args):
         path, consumers, producer = value.split('\t')
         inputs.append(dict(path=path, consumers=consumers.split(',') if consumers else [], producer=producer))
     steps = []
+    edges = dependencies(Path(args.root))
     for value in args.step:
         name, command, previous = value.split('\t')
         steps.append(dict(name=name, command=command,
-                          needs=[previous] if previous else [],
+                          needs=edges[name],
                           report=f'.lane/gate-{name}.log'))
     products = []
     for value in args.product:
@@ -195,15 +243,14 @@ def incidence(root, graph):
     if [(s['name'], s['command']) for s in steps] != expected:
         findings.append('step roster or command differs from Meson declaration')
     names = {name for name, _ in expected}
-    previous = ''
+    edges = dependencies(root)
     reports = []
     for step in steps:
-        if step['needs'] != ([previous] if previous else []):
+        if step['needs'] != edges[step['name']]:
             findings.append('report predecessor differs: '+step['name'])
         if step['report'] != f".lane/gate-{step['name']}.log":
             findings.append('report identity differs: '+step['name'])
         reports.append(step['report'])
-        previous = step['name']
     if graph.get('final_inputs') != reports:
         findings.append('final report consumer does not cover the roster')
     produced = set()
@@ -215,6 +262,8 @@ def incidence(root, graph):
         produced.add(path)
         if producer not in order or not consumers or any(c not in order or order.get(producer, len(expected)) >= order[c] for c in consumers):
             findings.append('invalid run product edge: '+path)
+        elif producer != 'entry' and any(c != 'finalize' and producer not in predecessors(root, c) for c in consumers):
+            findings.append('missing run product dependency: '+path)
     paths = [row['path'] for row in graph['inputs']]
     for path, count in Counter(paths).items():
         if count != 1:
@@ -316,7 +365,7 @@ PUBLIC_CONFIGURATION = ('PATH', 'CARGO_HOME', 'CARGO_TARGET_DIR', 'RUSTUP_HOME',
                         'CARGO_ENCODED_RUSTFLAGS', 'LINTER_BIN', 'PN_MESON_BIN',
                         'PN_POSTGRESQL_BIN', 'PN_ELEMENTS_BIN', 'TMPDIR',
                         'PN_OBSERVE_ARTIFACT_DIR', 'PN_OBSERVE_LEVEL',
-                        'PN_HOST_TEST_ROOT', 'PN_WALLET_TEST_ROOT', 'PN_BUILDGRAPH_ADMISSION')
+                        'PN_HOST_TEST_ROOT', 'PN_WALLET_TEST_ROOT', 'PN_BUILDGRAPH_ADMISSION', 'PN_GATE_PARALLEL')
 
 
 def selected(root):
@@ -338,7 +387,7 @@ def report_path(build, step):
 
 
 def context(root, graph, step):
-    """Bind a command to this invocation, configuration, inputs and serial prefix."""
+    """Bind a command to this invocation, configuration, inputs and completed dependency reports."""
     names = [name for name, _ in roster(root)]
     if [(s['name'], s['command']) for s in graph['steps']] != roster(root):
         raise ValueError('configured command roster differs from entry')
@@ -349,9 +398,9 @@ def context(root, graph, step):
         raise ValueError('missing current gate invocation')
     source = subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
     history = (root/'.lane/gate-steps.tsv').read_text().splitlines()
-    fields = [line.split('\t') for line in history]
-    if any(len(row) != 4 for row in fields) or [row[0] for row in fields] != names[:names.index(step)]:
-        raise ValueError('missing or out-of-order current step reports: '+step)
+    if any(line.split('\t')[0] == step for line in history):
+        raise ValueError('step already completed in this invocation: '+step)
+    history = bound_history(root, step, history)
     inputs = []
     # The migrated Meson targets consume graph_files: a deliberately
     # conservative tracked envelope including their runner and list helpers.
@@ -422,9 +471,10 @@ def delegate(root, step):
     # Predecessor edges mean ordered completion, not success: the legacy entry
     # continues independent checks after refusal. A missing/stale report is
     # structural, and every raw refusal remains in the gate's aggregate.
+    required = set(predecessors(root, step))
     for line in (root/'.lane/gate-steps.tsv').read_text().splitlines():
         name, status, _, _ = line.split('\t')
-        if name not in delegated:
+        if name not in delegated or name not in required:
             continue
         prior = json.loads(report_path(build, name).read_text())
         request = prior['request']
@@ -443,7 +493,13 @@ def delegate(root, step):
     env = dict(os.environ, PN_BUILDGRAPH_REQUEST=str(request_path))
     prepared = time.monotonic()
     cpu = resource.getrusage(resource.RUSAGE_CHILDREN)
-    driver = cancellable(['ninja', '-C', str(build), str(output.relative_to(build))],
+    if 'gate-'+step+'.json' not in (build/'build.ninja').read_text():
+        raise ValueError('missing configured Meson target: '+step)
+    argv = ([sys.executable, '-B', str(root/'ci/build_graph.py'), 'execute', '--root', str(root),
+             '--graph', str(build/'gate-graph.json'), '--report', str(output)]
+            if os.environ.get('PN_GATE_PARALLEL') == '1' and 'gate_dependencies = {' in (root/'meson.build').read_text() else
+            ['ninja', '-C', str(build), str(output.relative_to(build))])
+    driver = cancellable(argv,
                             env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     used = resource.getrusage(resource.RUSAGE_CHILDREN)
     (requests/(nonce+'.timing.json')).write_text(json.dumps(dict(
@@ -456,6 +512,95 @@ def delegate(root, step):
     sys.stdout.buffer.write(content)
     sys.stdout.buffer.flush()
     return result['status']
+
+
+def tier_summary(root, registry, worker_statuses):
+    from devperf import budgets
+    from gate_resources import cpu_from_log, raw_sample, joined, compact
+    declared = budgets(root/'docs/inputs/devperf-budgets.toml')
+    fields = [line.split('\t') for line in (root/'.lane/gate-steps.tsv').read_text().splitlines()]
+    groups = {name: registry.tiers[name]['steps'] for name in ('fast', 'service', 'reference-certificate')}
+    groups['finalize'] = registry.tiers['fast']['finalize_steps']
+    if Counter(name for group in groups.values() for name in group) != Counter(row[0] for row in fields):
+        raise ValueError('tier step partition differs from the exact roster')
+    reports = {}
+    gate_start = raw_sample(root/'.lane/gate-resource-start.raw')
+    for tier, names in groups.items():
+        selected_rows = [row for row in fields if row[0] in names]
+        first = min(selected_rows, key=lambda row: float(row[2]))
+        last = max(selected_rows, key=lambda row: float(row[3]))
+        start = gate_start if tier == 'fast' else raw_sample(root/f'.lane/gate-{first[0]}-resource-start.raw')
+        end = raw_sample(root/f'.lane/gate-{last[0]}-resource-end.raw')
+        wall = float(last[3])-(gate_start['epoch_seconds'] if tier == 'fast' else float(first[2]))
+        values = [cpu_from_log((root/f'.lane/gate-{row[0]}.log').read_text().splitlines()) for row in selected_rows]
+        own = [sum(pair[i] for pair in values) if all(pair[i] is not None for pair in values) else None for i in (0,1)]
+        budget = registry.tiers[tier]['invocation_budget'] if tier != 'finalize' else None
+        status = int(any(int(row[1]) or worker_statuses[row[0]] for row in selected_rows))
+        measurement = joined(start, end, wall)
+        reports[tier] = dict(wall=wall, started=start['epoch_seconds'], ended=end['epoch_seconds'], status=status,
+            budget=budget, own_user_s=own[0], own_sys_s=own[1], steps=names, resources=measurement)
+        limit = declared[budget]['budget_ms']/1000 if budget else None
+        print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} '
+              f'own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
+        if budget:
+            result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,
+                '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
+                '--budget', budget, '--findings', '.lane/performance-findings.jsonl'], cwd=root)
+            if result.returncode: raise ValueError('tier performance reporting refused')
+    (root/'.lane/gate-tiers.json').write_text(json.dumps(reports, indent=2)+'\n')
+
+
+def schedule(root):
+    """Bound independent executors; only the scheduler publishes completions."""
+    from harness import load
+    registry = load()
+    jobs = registry.tiers['fast']['jobs']
+    if type(jobs) is not int or jobs <= 0:
+        raise ValueError('gate jobs must be a positive declared integer')
+    commands = dict(roster(root))
+    edges = dependencies(root)
+    remaining = list(commands)
+    completed = set()
+    active = {}
+    children = {}
+    worker_statuses = {}
+    failed = 0
+    def terminate(number, frame):
+        for child in children.values():
+            try: os.killpg(child.pid, number)
+            except ProcessLookupError: pass
+        for child in children.values(): child.wait()
+        raise SystemExit(128+number)
+    for number in (signal.SIGTERM, signal.SIGINT): signal.signal(number, terminate)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
+        while remaining or active:
+            for name in list(remaining):
+                if len(active) == jobs: break
+                if not set(edges[name]) <= completed: continue
+                target = 'run_step' if name in SHELL_STEPS else 'run_graph'
+                command = f'{target} {name} {commands[name]}; exit "$failed"'
+                log = (root/f'.lane/schedule-{name}.log').open('wb')
+                child = subprocess.Popen(['bash', '-c',
+                    "failed=0; statuses=(); active_pid=; trap 'gate_signal 143' TERM; trap 'gate_signal 130' INT; "+command],
+                    cwd=root, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+                children[name] = child
+                active[pool.submit(child.wait)] = (name, log)
+                remaining.remove(name)
+            if not active: raise ValueError('dependency graph made no progress')
+            done, _ = concurrent.futures.wait(active, return_when=concurrent.futures.FIRST_COMPLETED)
+            for future in done:
+                name, log = active.pop(future)
+                log.close()
+                worker_statuses[name] = future.result()
+                failed |= int(worker_statuses[name] != 0)
+                del children[name]
+                row = (root/f'.lane/completed-{name}.tsv').read_text()
+                with (root/'.lane/gate-steps.tsv').open('a') as output: output.write(row)
+                print((root/f'.lane/schedule-{name}.log').read_text(), end='', flush=True)
+                completed.add(name)
+    tier_summary(root, registry, worker_statuses)
+    print(f'BUILD-SCHEDULE jobs={jobs} steps={len(completed)} exactly_once=true')
+    return failed
 
 
 def resource_line(root, line):
@@ -486,6 +631,7 @@ def main():
     create = sub.add_parser('configure')
     create.add_argument('--graph', required=True)
     create.add_argument('--pattern', required=True)
+    create.add_argument('--root', default='.')
     create.add_argument('--input', action='append', default=[])
     create.add_argument('--step', action='append', default=[])
     create.add_argument('--product', action='append', default=[])
@@ -496,6 +642,9 @@ def main():
     sub.add_parser('gate')
     sub.add_parser('plan')
     sub.add_parser('finish')
+    sub.add_parser('schedule')
+    sub.add_parser('parallel-declared')
+    sub.add_parser('tier-wall')
     supervisor = sub.add_parser('supervise')
     supervisor.add_argument('command', nargs=argparse.REMAINDER)
     measurements=sub.add_parser('resource-lines')
@@ -512,6 +661,13 @@ def main():
     if args.action == 'plan':
         print(plan(Path.cwd()), end='')
         return 0
+    if args.action == 'parallel-declared':
+        return int('gate_dependencies = {' not in Path('meson.build').read_text())
+    if args.action == 'tier-wall':
+        print(json.loads(Path('.lane/gate-tiers.json').read_text())['fast']['wall'])
+        return 0
+    if args.action == 'schedule':
+        return schedule(Path.cwd())
     if args.action == 'finish':
         return finish(Path.cwd())
     if args.action == 'supervise':

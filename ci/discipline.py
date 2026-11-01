@@ -427,7 +427,7 @@ def main():
     mode = sys.argv[1]
     if mode == "tests":
         from run_tests import main as run_tests
-        return run_tests()
+        return run_tests("fast") if os.environ.get("PN_GATE_PARALLEL") == "1" else run_tests()
     if mode == "fmt":
         command = ["cargo", "fmt"]
         for package in workspace_packages():

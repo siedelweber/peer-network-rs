@@ -32,6 +32,39 @@ def result(registry):
 
 
 class Harness(unittest.TestCase):
+    def test_flake_ledger(self):
+        """Claim: Required failures retain commit, case, error and node load; a later required execution reports its retry and result, a repeated failure is a recurrence, and a passing slow call remains a finding without becoming a failed test.
+        ´claim:harness:flake-ledger-retains-recurrences´
+        ´test:integration:test-flake-ledger´
+        """
+        import io
+        import json
+        import tempfile
+        from contextlib import redirect_stdout
+        from pathlib import Path
+        from unittest.mock import patch
+        from flake_ledger import Session
+        with tempfile.TemporaryDirectory() as directory, redirect_stdout(io.StringIO()) as output, patch('os.getloadavg', return_value=(1, 2, 3)):
+            path = Path(directory)/'ledger.jsonl'
+            first = Session('before', path)
+            self.assertIsNone(first.begin('fixture::case'))
+            first.finish('fixture::case', 'failed', 'socket timeout')
+            later = Session('after', path)
+            retry = later.begin('fixture::case')
+            self.assertEqual((retry['commit'], retry['previous_commit'], retry['case'], retry['error'], retry['node_load']),
+                             ('after', 'before', 'fixture::case', 'socket timeout', [1, 2, 3]))
+            self.assertEqual(later.finish('fixture::case', 'failed', 'socket timeout')['finding'], 'recurrence')
+            passing = Session('fixed', path)
+            self.assertIsNotNone(passing.begin('fixture::case'))
+            self.assertEqual(passing.finish('fixture::case', 'passed')['outcome'], 'passed')
+            self.assertIsNone(Session('next', path).begin('fixture::case'))
+            slow = passing.record('slow-success', 'fixture::setup', 'steady bound exceeded', outcome='success', finding='recurrence')
+            self.assertEqual(slow['outcome'], 'success')
+            records = [json.loads(line) for line in path.read_text().splitlines()]
+            self.assertEqual([row['event'] for row in records],
+                             ['failure', 'retry', 'failure', 'retry', 'retry-result', 'slow-success'])
+            self.assertEqual(len(output.getvalue().splitlines()), len(records))
+
     def test_reference_tier(self):
         """Claim: Explicit reference-tier groups retain case identity, level, implementation and outcome while applying declared case budgets. Fast budgets stay unchanged; absent policies, invalid budgets, changed result budgets and missing or duplicate grouped completions refuse. Interleaved case arrivals bound each group's own wall envelope.
         ´claim:harness:reference-tier-retains-required-case-evidence´
@@ -82,6 +115,23 @@ class Harness(unittest.TestCase):
                                  inventory, {}, 'current', CONFIGURATION, registry)
         self.assertEqual({r['operation']: r['budget'] for r in records},
                          {'example::fast': 'unit', 'example::slow': 'integration'})
+        # Separate invocations preserve the union and reject a foreign result.
+        tier_records = []
+        for selected in ({'example::fast'}, {'example::slow'}):
+            subset = [row for row in observations if 'example::'+row['item']['name'].split('$')[1] in selected]
+            stream = '\n'.join(json.dumps(row['item']) for row in subset)
+            tier_records += nextest_events(stream, inventory, {}, 'current', CONFIGURATION, registry, selected)
+            measured = suite_events(subset, inventory, registry, 'current', 'nextest', selected)
+            self.assertEqual(len(measured), 1)
+            with self.assertRaisesRegex(StructuralError, 'unknown test result'):
+                nextest_events('\n'.join(json.dumps(row['item']) for row in observations),
+                               inventory, {}, 'current', CONFIGURATION, registry, selected)
+        registry.roster('nextest', [row['operation'] for row in tier_records])
+        self.assertEqual(sorted(({k:v for k,v in row.items() if k != 'utc'} for row in tier_records), key=lambda row: row['operation']),
+                         sorted(({k:v for k,v in row.items() if k != 'utc'} for row in records), key=lambda row: row['operation']))
+        for invalid in (tier_records[:-1], tier_records+tier_records[:1]):
+            with self.assertRaisesRegex(StructuralError, 'inventory differs'):
+                registry.roster('nextest', [row['operation'] for row in invalid])
         spans = suite_events(observations, inventory, registry, 'current', 'nextest')
         self.assertEqual({r['suite']: r['duration_ms'] for r in spans},
                          {'example': fast_end-start, 'reference': slow_end-start})

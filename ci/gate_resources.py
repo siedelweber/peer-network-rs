@@ -24,7 +24,7 @@ def compact(resource, owned=None):
     usage=resource['node_load_deltas'].get('cpu.stat.usage_usec')
     wall=resource.get('wall_seconds')
     cores='unavailable' if usage is None or wall is None or wall<=0 else f'{usage/1e6/wall:.3f}'
-    return 'scope='+scope+' node_cores='+cores+' samples='+json.dumps(samples,separators=(',',':'))+' psi_avg='+json.dumps(averages,separators=(',',':'))+' psi='+json.dumps({k:round(v,6) if v is not None else None for k,v in resource['node_pressure_fraction'].items()},separators=(',',':'))
+    return 'scope='+scope+' interval_scope=gate node_cores='+cores+' samples='+json.dumps(samples,separators=(',',':'))+' psi_avg='+json.dumps(averages,separators=(',',':'))+' psi='+json.dumps({k:round(v,6) if v is not None else None for k,v in resource['node_pressure_fraction'].items()},separators=(',',':'))
 
 
 def seconds(value):

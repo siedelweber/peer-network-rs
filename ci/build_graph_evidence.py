@@ -78,7 +78,7 @@ def capture(root, gate_log):
     names = [name for name, _ in commands]
     lines = (lane/'gate-steps.tsv').read_text().splitlines()
     fields = [line.split('\t') for line in lines]
-    if any(len(row) != 4 for row in fields) or [row[0] for row in fields] != names:
+    if any(len(row) != 4 for row in fields) or len(fields) != len(names) or {row[0] for row in fields} != set(names):
         raise ValueError('retained roster is incomplete, repeated or out of order')
     if [(row['name'], row['command']) for row in graph['steps']] != commands:
         raise ValueError('retained configured commands differ')
@@ -104,7 +104,7 @@ def capture(root, gate_log):
         configuration = context['configuration'] if configuration is None else configuration
         run = context['run'] if run is None else run
         expected = dict(source=source, run=run, configuration=configuration, graph=identity(graph),
-                        history=identity(lines[:index]), step=name, command=dict(commands)[name])
+                        history=identity(__import__('build_graph').bound_history(root, name, lines)), step=name, command=dict(commands)[name])
         if any(context.get(key) != value for key, value in expected.items()) or data['status'] != int(status):
             raise ValueError('retained report has a stale join: '+name)
         reports[name] = dict(context=context, nonce=request['nonce'], status=data['status'])
@@ -131,7 +131,7 @@ def capture(root, gate_log):
     actions = re.findall(r'^BUILD-MESON .* action=(\S+)$', (lane/'gate-build-graph.log').read_text(), re.M)
     if len(actions) != 1 or actions[0] not in ('setup', 'reuse'):
         raise ValueError('pair requires one fresh setup or unchanged reuse')
-    return dict(schema=1, source=source, roster=commands, statuses=statuses, verdict=int(verdicts[0]),
+    return dict(schema=1, source=source, roster=commands, statuses=sorted(statuses, key=lambda row: names.index(row[0])), verdict=int(verdicts[0]),
                 configuration=configuration, documents=documents, features=features, matrix=stable(matrix),
                 claims=stable(claims), cases=cases, reports=reports, setup=dict(action=actions[0], stamp=setup.stat().st_mtime_ns,
                 directory=str(setup.parent.parent), information=json.loads(setup.read_text())))

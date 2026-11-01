@@ -76,16 +76,79 @@
       "name": "ci-composition-services"
     },
     {
+      "finalize_steps": [
+        "test-evidence",
+        "test-budgets",
+        "harness-matrix",
+        "claim-evidence",
+        "observation-syntax"
+      ],
+      "invocation_budget": "gate",
+      "jobs": 8,
       "kind": "tier",
       "name": "fast",
       "reason": "per-change local and process evidence",
-      "status": "active"
+      "status": "active",
+      "steps": [
+        "build-graph",
+        "fixed-point-generate",
+        "fixed-point-write",
+        "fixed-point-clean",
+        "test-build",
+        "toolchain",
+        "discipline-tests",
+        "harness-registry",
+        "harness-tests",
+        "testkit-guard",
+        "testkit-tests",
+        "claim-tests",
+        "observation-tests",
+        "devperf-tests",
+        "build-policy",
+        "cargo-config",
+        "vendor-set",
+        "member-lints",
+        "design-correspondence",
+        "design-tests",
+        "linter",
+        "token",
+        "hash-citations",
+        "suppressions",
+        "printing",
+        "tests",
+        "cargo-config-measurement",
+        "fmt",
+        "clippy",
+        "nursery-advisory",
+        "minimal",
+        "rustdoc",
+        "datasets",
+        "documents",
+        "determinism-datasets",
+        "determinism-documents",
+        "benchmarks",
+        "observation-build",
+        "observation-runtime",
+        "observation-parser"
+      ]
     },
     {
+      "invocation_budget": "service-gate",
       "kind": "tier",
       "name": "service",
       "reason": "The gate owns PostgreSQL 19 RC 1 for transport and library storage evidence and Elements 29.4.1 RC 1 for wallet read evidence; executable activation, admitted epoch transactions and other service integrations remain held.",
-      "status": "active"
+      "status": "active",
+      "steps": [
+        "host-postgresql-start",
+        "wallet-elements-start",
+        "service-tests",
+        "host-observation-build",
+        "host-observation-runtime",
+        "wallet-conformance",
+        "wallet-elements-stop",
+        "host-postgresql-stop",
+        "linter-entry-tests"
+      ]
     },
     {
       "kind": "tier",
@@ -2529,6 +2592,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_harness.Harness.test_flake_ledger",
         "ci::test_harness.Harness.test_reference_tier",
         "ci::test_harness.Harness.test_case_level_declaration",
         "ci::test_harness.Harness.test_doctest_identity",
@@ -4346,10 +4410,14 @@
     },
     {
       "case_budget_policy": "declared-suite",
+      "invocation_budget": "reference-gate",
       "kind": "tier",
       "name": "reference-certificate",
       "reason": "Full-size exact reference declarations and certificate controls retain their own measured case and suite budgets; every case remains required in the gate.",
-      "status": "active"
+      "status": "active",
+      "steps": [
+        "reference-certificates"
+      ]
     },
     {
       "budget": "reference-certificate-suite",

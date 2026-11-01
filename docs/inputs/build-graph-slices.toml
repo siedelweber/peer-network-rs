@@ -255,3 +255,23 @@ reason = "Policy, corpus, document or checker evidence; preserve the current com
 name = "printing"
 slice = 2
 reason = "Policy, corpus, document or checker evidence; preserve the current command and serial report edge."
+
+[[rows]]
+name = "test-build"
+slice = 4
+reason = "Required invocation with a current inventory and exact evidence join."
+
+[[rows]]
+name = "reference-certificates"
+slice = 4
+reason = "Required invocation with a current inventory and exact evidence join."
+
+[[rows]]
+name = "service-tests"
+slice = 4
+reason = "Required invocation with a current inventory and exact evidence join."
+
+[[rows]]
+name = "test-evidence"
+slice = 4
+reason = "Required invocation with a current inventory and exact evidence join."

@@ -53,7 +53,9 @@ gate_resource_sample .lane/gate-resource-start.raw "$resource_root" 2>/dev/null 
 times > .lane/gate-cpu-start.raw
 : > .lane/gate-steps.tsv
 source_id=$(time git rev-parse HEAD)
+export PN_GATE_SOURCE="$source_id"
 export CARGO_NET_OFFLINE=true
+unset PN_WALLET_CONFORMANCE_ISOLATED
 rm -f .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json
 run_step() {
     local name=$1
@@ -70,12 +72,18 @@ run_step() {
     gate_resource_sample ".lane/gate-${name}-resource-end.raw" "$resource_root" 2>/dev/null || true
     wall=$(awk -v s="$started" -v e="$ended" 'BEGIN { printf "%.6f", e-s }')
     cat ".lane/gate-${name}.log"
-    printf '%s\t%s\t%s\t%s\n' "$name" "$status" "$started" "$ended" >> .lane/gate-steps.tsv
+    if [ "${PN_GATE_PARALLEL:-0}" = 1 ]; then
+        printf '%s\t%s\t%s\t%s\n' "$name" "$status" "$started" "$ended" > ".lane/completed-${name}.tsv"
+    else
+        printf '%s\t%s\t%s\t%s\n' "$name" "$status" "$started" "$ended" >> .lane/gate-steps.tsv
+    fi
     statuses+=("$name=$status/${wall}s")
     if [ "$status" -ne 0 ]; then failed=1; fi
     # Reporting has its own structural status; elapsed time never changes status.
     local budget=ordinary-check
     if [ "$name" = tests ]; then budget=test-command; fi
+    if [ "$name" = reference-certificates ]; then budget=reference-gate; fi
+    if [ "$name" = service-tests ]; then budget=service-gate; fi
     if [ "$name" = observation-runtime ]; then budget=pure-suite; fi
     case "$name" in
         clippy|nursery-advisory|minimal|rustdoc|fixed-point-generate|fixed-point-write|datasets|documents|determinism-datasets|determinism-documents|cargo-config-measurement|discipline-tests|benchmarks|observation-syntax|observation-build|host-observation-build|observation-parser) budget=incremental-build ;;
@@ -93,11 +101,22 @@ run_graph() {
         run_step "$name" python3 -B ci/build_graph.py delegate "$name"
     fi
 }
-# Meson owns the serial roster; the shell retains resources and unconditional cleanup.
-if python3 -B ci/build_graph.py plan > .lane/gate-plan.sh; then
-    source .lane/gate-plan.sh
+# Meson owns the roster and dependencies; the shell retains resources and cleanup.
+# A fixture without a parallel declaration retains the controlled serial route.
+if python3 -B ci/build_graph.py parallel-declared; then
+    export PN_GATE_PARALLEL=1
+    export resource_root source_id
+    export -f run_step run_graph gate_resource_sample gate_signal
+    python3 -B ci/build_graph.py schedule &
+    active_pid=$!
+    wait "$active_pid" || failed=1
+    active_pid=
 else
-    failed=1
+    if python3 -B ci/build_graph.py plan > .lane/gate-plan.sh; then
+        source .lane/gate-plan.sh
+    else
+        failed=1
+    fi
 fi
 if ! python3 -B ci/build_graph.py finish; then failed=1; fi
 grep 'Checking documents' .lane/gate-clippy.log || true
@@ -105,6 +124,12 @@ grep '^SUITE=' .lane/gate-tests.log || true
 cat .lane/gate-toolchain.log
 grep 'NURSERY-WITNESS-FINDINGS=' .lane/gate-discipline-tests.log || true
 grep 'NURSERY-FINDINGS=' .lane/gate-nursery-advisory.log || true
+if [ "${PN_GATE_PARALLEL:-0}" = 1 ]; then
+    while IFS=$'\t' read -r name status started ended; do
+        wall=$(awk -v s="$started" -v e="$ended" 'BEGIN { printf "%.6f", e-s }')
+        statuses+=("$name=$status/${wall}s")
+    done < .lane/gate-steps.tsv
+fi
 printf 'STEP-SUMMARY %s\n' "${statuses[*]}"
 python3 ci/discipline.py diagnostics
 gate_ended=$(date -u +%s.%N)
@@ -119,7 +144,12 @@ else
     done < .lane/gate-steps.tsv
     printf 'GATE-RESOURCES WALL=%ss own_user_s=unavailable own_sys_s=unavailable node_load=unavailable sampler=unavailable\n' "$gate_wall"
 fi
-python3 -B ci/devperf.py --operation gate --duration-s "$gate_wall" --outcome "exit:$failed" \
+if [ "${PN_GATE_PARALLEL:-0}" = 1 ]; then
+    budget_wall=$(python3 -B ci/build_graph.py tier-wall)
+else
+    budget_wall=$gate_wall
+fi
+python3 -B ci/devperf.py --operation gate --duration-s "$budget_wall" --outcome "exit:$failed" \
     --source "$source_id" --budget gate --findings .lane/performance-findings.jsonl
 if [ "$?" -ne 0 ]; then failed=1; fi
 printf 'GATE-EXIT=%s\n' "$failed"
