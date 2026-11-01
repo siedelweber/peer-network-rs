@@ -2733,7 +2733,8 @@
     {
       "budget": "pure-suite",
       "cases": [
-        "documents::census::tests::record_name_boundary"
+        "documents::census::tests::record_name_boundary",
+        "documents::numbers::tests::rust_integer_boundaries"
       ],
       "implementation": "documents-rust",
       "kind": "suite",

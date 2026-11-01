@@ -700,7 +700,7 @@ level = "unit"
 implementation = "documents-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["documents::census::tests::record_name_boundary"]
+cases = ["documents::census::tests::record_name_boundary", "documents::numbers::tests::rust_integer_boundaries"]
 
 [[rows]]
 kind = "suite"

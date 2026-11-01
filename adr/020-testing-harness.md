@@ -93,7 +93,7 @@
 | pn-testkit | active | unit | pn-testkit-rust | fast | 4 |
 | pn-testkit::public | active | public-surface | pn-testkit-rust | fast | 1 |
 | pn-testkit::integration | active | integration | pn-testkit-rust | fast | 1 |
-| documents | active | unit | documents-rust | fast | 1 |
+| documents | active | unit | documents-rust | fast | 2 |
 | documents::public | active | public-surface | documents-rust | fast | 1 |
 | cli-common::public | active | public-surface | cli-common-rust | fast | 1 |
 | execwrap::public | active | public-surface | execwrap-rust | fast | 1 |
