@@ -927,7 +927,9 @@ fn storage_scaling() {
     runtime().block_on(async {
         let mut store = store("storage-scaling.json").await;
         let mut count = 0;
-        for size in [10, 100, 2000] {
+        // Keep the full two-order growth mechanism; the separate growth case
+        // retains the large-row execution plans.
+        for size in [1, 10, 100] {
             while count < size {
                 let key = format!("unrelated-{count}");
                 store.append_effective_successor(version(Family::Rule, &key, "one", 100, Some(7)), None).await.unwrap();

@@ -1430,6 +1430,1087 @@
       },
       "reason": "The remaining scalar, activation, clamp and replay controls retain cold resource boundaries; tagged full-production inverse-wall cases execute separately in the reference tier. The allowance includes serial runner overhead and measured headroom.",
       "scope": "complete pn-graph::numeric suite"
+    },
+    {
+      "budget_ms": 12000,
+      "category": "case",
+      "name": "calibrated-design-numeric-correspondence-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "12 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "12 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Every numeric projection mutation retains a fresh optimized whole-checker execution, exact rational operands, published-key controls and truncated-derived-value refusals.",
+      "scope": "one ci::test_design.Correspondence.test_numeric_correspondence case"
+    },
+    {
+      "budget_ms": 20000,
+      "category": "case",
+      "name": "calibrated-design-numeric-word-fragments-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "20 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "20 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete malformed-word and template-separator matrix retains fresh optimized whole-checker executions for every refusal and accepted structural control.",
+      "scope": "one ci::test_design.Correspondence.test_numeric_word_fragments case"
+    },
+    {
+      "budget_ms": 6000,
+      "category": "case",
+      "name": "calibrated-design-release-tags-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "6 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "6 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete release-tag matrix retains fresh optimized checks across tracked text kinds, deliberate source fixtures, case changes and binary boundaries.",
+      "scope": "one ci::test_design.Correspondence.test_release_tags case"
+    },
+    {
+      "budget_ms": 6000,
+      "category": "case",
+      "name": "calibrated-design-rendered-continuations-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "6 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "6 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Every accepted and refused Markdown block shape retains a fresh optimized whole-checker execution and its exact diagnostic assertions.",
+      "scope": "one ci::test_design.Correspondence.test_rendered_continuations case"
+    },
+    {
+      "budget_ms": 4000,
+      "category": "case",
+      "name": "calibrated-design-rendered-spacing-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "4 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Spacing controls retain optimized full checks, real import-base histories, per-file ceiling growth refusals and stale-exception retirement.",
+      "scope": "one ci::test_design.Correspondence.test_rendered_spacing case"
+    },
+    {
+      "budget_ms": 3000,
+      "category": "case",
+      "name": "calibrated-design-tracked-prose-boundaries-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "3 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Tracked document and template mutations retain fresh optimized whole-checker execution, bare-mint refusals and the vendored-source exclusion.",
+      "scope": "one ci::test_design.Correspondence.test_tracked_prose_boundaries case"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "case",
+      "name": "calibrated-discipline-secret-carrier-traits-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Compiler checks retain each forbidden secret trait and the permitted carrier controls in real fixture crates.",
+      "scope": "one ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits case"
+    },
+    {
+      "budget_ms": 1500,
+      "category": "case",
+      "name": "calibrated-harness-host-commit-isolation-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the host isolation witness.",
+      "scope": "one ci::test_harness.Harness.test_host_commit_isolation case"
+    },
+    {
+      "budget_ms": 1500,
+      "category": "case",
+      "name": "calibrated-harness-wallet-commit-isolation-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the wallet isolation witness.",
+      "scope": "one ci::test_harness.Harness.test_wallet_commit_isolation case"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "case",
+      "name": "calibrated-host-runtime-independent-instances-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Independent real PostgreSQL instances retain deep-root socket placement, port ownership, sibling survival and complete cleanup checks.",
+      "scope": "one ci::test_host_runtime.HostRuntime.test_independent_instances case"
+    },
+    {
+      "budget_ms": 7500,
+      "category": "case",
+      "name": "calibrated-host-runtime-statement-type-boundary-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "7 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "7 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Source traversal and renamed-driver controls retain the actual compiler refusal for inline SQL at the closed Statement boundary.",
+      "scope": "one ci::test_host_runtime.HostRuntime.test_statement_type_boundary case"
+    },
+    {
+      "budget_ms": 6000,
+      "category": "case",
+      "name": "calibrated-host-runtime-storage-statements-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "6 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "6 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real child processes retain complete storage statement observations and the refusal when bootstrap is omitted on a retake.",
+      "scope": "one ci::test_host_runtime.HostRuntime.test_storage_statements case"
+    },
+    {
+      "budget_ms": 6000,
+      "category": "case",
+      "name": "calibrated-linter-entry-build-graph-census-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "6 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "6 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete tracked-input census retains real linter projections and all missing, mismatched and undeclared source controls.",
+      "scope": "one ci::test_linter_entry.Conformance.test_build_graph_census case"
+    },
+    {
+      "budget_ms": 4000,
+      "category": "case",
+      "name": "calibrated-linter-entry-build-graph-completion-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "4 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Fresh and reused Meson executions retain dependency, duplicate, stale-result and concurrent-completion controls.",
+      "scope": "one ci::test_linter_entry.Conformance.test_build_graph_completion case"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "case",
+      "name": "calibrated-linter-entry-build-graph-delegation-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Both graph routes retain real configured targets, source and feature bindings, and command-output refusal controls.",
+      "scope": "one ci::test_linter_entry.Conformance.test_build_graph_delegation case"
+    },
+    {
+      "budget_ms": 6000,
+      "category": "case",
+      "name": "calibrated-linter-entry-cargo-delegation-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "6 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "6 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real Cargo fixture builds retain feature identity, compiler-refusal and documentation-output comparisons across both routes.",
+      "scope": "one ci::test_linter_entry.Conformance.test_cargo_delegation case"
+    },
+    {
+      "budget_ms": 18000,
+      "category": "case",
+      "name": "calibrated-linter-entry-runtime-delegation-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "18 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "18 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The runtime route matrix retains real harness joins, failed startup and tests, stale evidence, unavailable measurements and signal-driven cleanup.",
+      "scope": "one ci::test_linter_entry.Conformance.test_runtime_delegation case"
+    },
+    {
+      "budget_ms": 60000,
+      "category": "case",
+      "name": "calibrated-linter-entry-service-ownership-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "60 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "60 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Both routes retain paired real PostgreSQL and Elements instances, distinct endpoints and processes, sibling survival and owned shutdown.",
+      "scope": "one ci::test_linter_entry.Conformance.test_service_ownership case"
+    },
+    {
+      "budget_ms": 4000,
+      "category": "case",
+      "name": "calibrated-observe-runtime-epoch-inputs-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "4 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Every declared epoch input observation mode retains real child execution, result comparison and complete observation accounting.",
+      "scope": "one ci::test_observe_runtime.Processes.test_epoch_inputs case"
+    },
+    {
+      "budget_ms": 10000,
+      "category": "case",
+      "name": "calibrated-observe-runtime-four-mode-results-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "10 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete observation-mode matrix retains real child results, trace payload and loss checks, and disabled-observation equivalence.",
+      "scope": "one ci::test_observe_runtime.Processes.test_four_mode_results case"
+    },
+    {
+      "budget_ms": 10000,
+      "category": "case",
+      "name": "calibrated-observe-runtime-title-suite-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "10 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "10 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete title observation suite retains each real child mode, public outcome comparison and finalized trace evidence.",
+      "scope": "one ci::test_observe_runtime.Processes.test_title_suite case"
+    },
+    {
+      "budget_ms": 3000,
+      "category": "case",
+      "name": "calibrated-testkit-consumer-seed-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "3 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The committed property declarations and full source census retain actual inner and consumer-qualified identities, replay evidence and changed-seed refusal.",
+      "scope": "one ci::test_testkit.PropertyDeclarations.test_consumer_seed case"
+    },
+    {
+      "budget_ms": 3000,
+      "category": "case",
+      "name": "calibrated-testkit-property-seed-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "3 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "3 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The committed property declarations and full source census retain dependency validation, runner environment and missing-seed refusal.",
+      "scope": "one ci::test_testkit.SupportGuard.test_property_seed case"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "case",
+      "name": "calibrated-wallet-boundary-confinement-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Every source and adapter mutation retains real Cargo identity resolution and full confinement checks; only unchanged pure lexical masks are reused by complete source text.",
+      "scope": "one ci::test_wallet_boundary.WalletBoundary.test_confinement case"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "case",
+      "name": "calibrated-wallet-boundary-dependency-features-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Actual Cargo metadata and production dependency trees retain the renamed and moved-dependency controls and every reviewed feature check.",
+      "scope": "one ci::test_wallet_boundary.WalletBoundary.test_dependency_features case"
+    },
+    {
+      "budget_ms": 4000,
+      "category": "case",
+      "name": "calibrated-documents-integration-repository-fixed-point-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "4 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "4 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The full repository generator and renderer fixed point retains every committed input and output comparison.",
+      "scope": "one documents::integration::repository_fixed_point case"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "calibrated-act-profile-commitment-trace-privacy-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete recipe and observation-mode matrix retains independent child collectors, authenticated artifact expansion, fixed digests and zero-loss accounting.",
+      "scope": "one pn-act-profile::tests::commitment_trace_privacy case"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "calibrated-host-postgresql-real-cancellation-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real PostgreSQL cancellation retains the deliberate query-start wait, cancellation delivery and subsequent connection usability.",
+      "scope": "one pn-host::postgresql::real_cancellation case"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "calibrated-host-postgresql-relay-throughput-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The public relay throughput fixture retains its complete framed transfer and server result checks.",
+      "scope": "one pn-host::postgresql::relay_throughput case"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "calibrated-host-scram-ceiling-login-progress-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The real ceiling-cost derivation remains active while a current-thread executor must forward a public relay frame.",
+      "scope": "one pn-host::scram::tests::ceiling_login_progress case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-host-scram-derivation-cost-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The derivation cost fixture retains real password derivations at the declared iteration boundaries and ceiling.",
+      "scope": "one pn-host::scram::tests::derivation_cost case"
+    },
+    {
+      "budget_ms": 250,
+      "category": "case",
+      "name": "calibrated-host-scram-derivation-permits-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "250",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "250",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The permit witness retains its timed non-progress controls before and after cancellation, blocked derivations and eventual permit return.",
+      "scope": "one pn-host::scram::tests::derivation_permits case"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-competing-writers-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Competing real storage writers retain transactional conflict and committed-history checks.",
+      "scope": "one pn-host::storage::tests::storage_competing_writers case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-contract-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The storage contract retains the complete in-memory and PostgreSQL boundary and history comparison.",
+      "scope": "one pn-host::storage::tests::storage_contract case"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-growth-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The large retained-history campaign keeps all declared row scales, chain and live-key axes, real execution plans and independently checked results.",
+      "scope": "one pn-host::storage::tests::storage_growth case"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-historical-constants-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The real storage fixture retains historical-constant identity checks across retained editions and boundaries.",
+      "scope": "one pn-host::storage::tests::storage_historical_constants case"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-rebuild-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real storage reconstruction retains its complete committed-history and rebuilt-boundary comparisons.",
+      "scope": "one pn-host::storage::tests::storage_rebuild case"
+    },
+    {
+      "budget_ms": 500,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-runtime-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real storage observation retains dedicated fixture bootstrap, closed statements and deterministic returned values.",
+      "scope": "one pn-host::storage::tests::storage_runtime case"
+    },
+    {
+      "budget_ms": 2500,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-scaling-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "2 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "2 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The reduced fixture retains the full stated range of unrelated-history growth, selected-row identities, separate audit and excluded-corruption control.",
+      "scope": "one pn-host::storage::tests::storage_scaling case"
+    },
+    {
+      "budget_ms": 1500,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-schema-identity-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real PostgreSQL schema inspection retains every mismatched index property, exact refusal and preservation check before a valid reopen.",
+      "scope": "one pn-host::storage::tests::storage_schema_identity case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-host-storage-storage-tamper-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Both adapters retain every deletion, closure, overlap and payload-tampering control, with selected-boundary and full-audit distinctions.",
+      "scope": "one pn-host::storage::tests::storage_tamper case"
+    },
+    {
+      "budget_ms": 5000,
+      "category": "case",
+      "name": "calibrated-wallet-rpc-rotation-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "5 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real Elements wallet rotation retains authenticated reads before and after credential changes and stale-credential refusal.",
+      "scope": "one pn-wallet::rpc::rotation case"
+    },
+    {
+      "budget_ms": 20000,
+      "category": "case",
+      "name": "calibrated-wallet-rpc-settlement-forks-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "20 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "20 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The real Elements chain campaign retains its declared settlements, fork transitions, public ancestry and checked wallet results.",
+      "scope": "one pn-wallet::rpc::settlement_forks case"
+    },
+    {
+      "budget_ms": 5000,
+      "category": "case",
+      "name": "calibrated-wallet-rpc-signed-reads-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "5 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "5 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Real Elements setup and signed reads retain their complete public transaction and authentication checks.",
+      "scope": "one pn-wallet::rpc::signed_reads case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-wallet-rpc-cookie-descriptor-cases-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "1 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "1 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The descriptor witness retains the exhaustive file-mode sweep, ownership and link checks, descriptor mutation and rotated-read controls.",
+      "scope": "one pn-wallet::rpc_cookie::tests::descriptor_cases case"
+    },
+    {
+      "budget_ms": 300,
+      "category": "case",
+      "name": "calibrated-wallet-rpc-http-acquisition-cases-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "300",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "300",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The HTTP acquisition witness retains all framing refusals and the deliberate slow-progress exchange crossing its unchanged focused deadline.",
+      "scope": "one pn-wallet::rpc_http::tests::acquisition_cases case"
+    },
+    {
+      "budget_ms": 7500,
+      "category": "case",
+      "name": "calibrated-wallet-wire-wire-compatibility-case",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "7 500",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "7 500",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The complete wire corpus retains all status, framing, bound, timeout, settlement and shutdown cases with the focused exchange deadline unchanged.",
+      "scope": "one pn-wallet::wire::wire_compatibility case"
     }
   ]
 }

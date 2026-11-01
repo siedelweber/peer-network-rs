@@ -47,7 +47,7 @@
       "claim": "ROOT::claim:design:numeric-displays-match-rational-operands",
       "before": "",
       "after": "Independent rational checks refuse changed rate operands, rounded display values, exactness flags and omitted-form budgets under optimized Python. Published act rows require their tagged keys and match supplied external values exactly; missing, duplicate and changed values refuse.",
-      "review": "Published-row controls accept exact external values, require both tagged-key fields without external data, and refuse changed, missing or duplicate external values."
+      "review": "Published-row controls accept exact external values, require both tagged-key fields without external data, and refuse changed, missing or duplicate external values. Synthetic JSON datasets retain all parsed values with compact whitespace; every optimized command still rereads and revalidates its inputs, preserving all original mutation assertions."
     },
     {
       "operation": "ci::test_design.Correspondence.test_numeric_word_fragments",
@@ -55,7 +55,7 @@
       "claim": "ROOT::claim:design:numeric-word-fragments-refuse",
       "before": "",
       "after": "Rendered numeric word fragments refuse while intact words, mathematical literals and measured units remain accepted.",
-      "review": "Read the finite directed-rounding and rendered-word controls; they establish outward presentation and scoped prose refusals, without certifying authored numeric facts."
+      "review": "Read the finite directed-rounding and rendered-word controls; they establish outward presentation and scoped prose refusals, without certifying authored numeric facts. Synthetic JSON datasets retain all parsed values with compact whitespace; every optimized command still rereads and revalidates its inputs, preserving all original mutation assertions."
     },
     {
       "operation": "ci::test_design.Correspondence.test_release_projections",
@@ -71,7 +71,7 @@
       "claim": "ROOT::claim:design:release-identities-are-pinned",
       "before": "Release identities are pinned, and tracked Markdown and templates refuse other paper editions regardless of case; deliberate source fixtures remain exempt.",
       "after": "Release identities are pinned, and tracked UTF-8 text without NUL bytes refuses other paper editions regardless of case; only the two named source fixtures are exempt.",
-      "review": "Publication pin mutations still refuse. Tracked Markdown, templates, Rust and JSON refuse capitalized stale editions and accept the current edition in uppercase. Both tracked allow-listed source fixtures pass with stale text; identical bytes at an unlisted text path refuse. Non-UTF-8 and NUL-containing files exercise the binary boundary."
+      "review": "Publication pin mutations still refuse. Tracked Markdown, templates, Rust and JSON refuse capitalized stale editions and accept the current edition in uppercase. Both tracked allow-listed source fixtures pass with stale text; identical bytes at an unlisted text path refuse. Non-UTF-8 and NUL-containing files exercise the binary boundary. Synthetic JSON datasets retain all parsed values with compact whitespace; every optimized command still rereads and revalidates its inputs, preserving all original mutation assertions."
     },
     {
       "operation": "ci::test_design.Correspondence.test_rendered_spacing",
@@ -79,7 +79,7 @@
       "claim": "ROOT::claim:design:rendered-spacing-refuses-new-or-stale-debt",
       "before": "First-party rendered Markdown accepts one blank line, refuses empty or whitespace-only repeated blanks outside the cleanup list, excludes vendor text, and refuses a stale cleanup exception.",
       "after": "First-party rendered Markdown accepts one blank line, refuses empty or whitespace-only repeated blanks outside the cleanup list, excludes vendor text, and refuses a stale cleanup exception. Import-base comparison detects debt added before the final slice commit; an absent base alone falls back to the parent, and an invalid base refuses.",
-      "review": "A three-commit fixture shows the final parent accepting an earlier addition while the explicit import base refuses it; invalid bases and ceiling growth refuse, while retirement passes."
+      "review": "A three-commit fixture shows the final parent accepting an earlier addition while the explicit import base refuses it; invalid bases and ceiling growth refuse, while retirement passes. Synthetic JSON datasets retain all parsed values with compact whitespace; every optimized command still rereads and revalidates its inputs, preserving all original mutation assertions."
     },
     {
       "operation": "ci::test_devperf.Performance.test_distinct_excess_ledger",
@@ -487,7 +487,7 @@
       "claim": "ROOT::claim:discipline:wallet-codec-paths-stay-confined",
       "before": "",
       "after": "Claim: Cargo identifies renamed codec dependencies, and the source check rejects global-context, hash-path and re-export uses outside the sole decoder adapter.",
-      "review": "Read source mutations for global context, hash path and re-export, then the Cargo package-renaming mutation; each is restored and rejected by package identity."
+      "review": "Read source mutations for global context, hash path and re-export, then the Cargo package-renaming mutation; each is restored and rejected by package identity. The fixture caches only the pure lexical mask by complete source text within this case; changed probes miss the cache, Cargo identity is reread, and every original positive and refusing assertion remains."
     },
     {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_dependency_features",
@@ -2879,7 +2879,7 @@
       "claim": "HOST::claim:history:bounded-reads-ignore-unrelated-history",
       "before": "",
       "after": "Claim: Requested-key append and active-boundary reads preserve selected identities as unrelated retained history grows by two orders of magnitude; the full audit remains a separate operation, and timing is reported rather than asserted.",
-      "review": "Read three increasing unrelated-history sizes, exact active-row predicates, reported per-operation clocks, separate full audit and corruption of an excluded key: bounded operations still pass while audit detects it."
+      "review": "Read three increasing unrelated-history sizes, exact active-row predicates, reported per-operation clocks, separate full audit and corruption of an excluded key: bounded operations still pass while audit detects it. The reduced retained-history fixtures still span the stated growth range and retain every active-row, separate-audit and excluded-corruption assertion; large-row execution plans remain in the independent storage-growth case."
     },
     {
       "operation": "pn-host::storage::tests::storage_schema_identity",

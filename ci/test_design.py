@@ -47,6 +47,13 @@ def git(root, *args):
     print(f'git {args[0]} wall={time.monotonic() - started:.6f}s status={result.returncode}')
 
 
+def compact_json_fixture(source, destination):
+    """Keep every dataset value without repeating pretty-print scan work."""
+    value = json.loads(Path(source).read_text())
+    Path(destination).write_text(json.dumps(value, ensure_ascii=False, separators=(',', ':'))+'\n')
+    return destination
+
+
 class Correspondence(unittest.TestCase):
     def published_registry(self):
         import tomllib
@@ -143,7 +150,7 @@ class Correspondence(unittest.TestCase):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
         self.root = Path(self.directory.name)
-        shutil.copytree(REPOSITORY / 'docs/datasets', self.root / 'docs/datasets')
+        shutil.copytree(REPOSITORY / 'docs/datasets', self.root / 'docs/datasets', copy_function=compact_json_fixture)
         (self.root / 'docs/inputs').mkdir()
         shutil.copy(REPOSITORY / 'docs/inputs/numbers.toml', self.root / 'docs/inputs/numbers.toml')
         for name in ('devperf-budgets', 'devperf-measurements', 'devperf-registry', 'devperf-close-measurements', 'observe-fixtures'):

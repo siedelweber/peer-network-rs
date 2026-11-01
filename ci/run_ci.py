@@ -114,7 +114,7 @@ def main(module):
         selection = service_selection(Path.cwd(), os.environ.get('PN_BUILDGRAPH_ADMISSION') == '1')
         print('BUILD-SERVICE-SELECTION '+json.dumps(selection | dict(source=source, admission=os.environ.get('PN_BUILDGRAPH_ADMISSION', '0')), sort_keys=True), flush=True)
         if not selection['run']:
-            raw = event(SERVICE_CASE, registry.levels[declared['level']]['budget'], None,
+            raw = event(SERVICE_CASE, registry.case_budget(SERVICE_CASE), None,
                         'held', source, CONFIGURATION)
             raw.update(hold=selection['hold'], reason=selection['reason'], selection_inputs=selection['inputs'])
             records.append(join_case(registry, raw, source, CONFIGURATION))
@@ -166,7 +166,7 @@ def main(module):
             cpu = case_cpu(self.cpu_started, case_usage())
             ledger.finish('ci::'+test.id(), self.outcome, self.failure_text)
             duration = (time.monotonic()-self.started)*1000
-            raw = event('ci::'+test.id(), registry.levels[declared['level']]['budget'], duration,
+            raw = event('ci::'+test.id(), registry.case_budget('ci::'+test.id()), duration,
                         self.outcome, source, CONFIGURATION)
             raw.update(cpu)
             if raw['operation'] == SERVICE_CASE:

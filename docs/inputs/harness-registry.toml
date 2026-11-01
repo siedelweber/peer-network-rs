@@ -128,6 +128,8 @@ implementation = "documents-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["documents::integration::atomic_refresh", "documents::integration::clean_result", "documents::integration::control_records", "documents::integration::dataset_mutation", "documents::integration::declaration_authority", "documents::integration::empty_root", "documents::integration::exhibited_labels", "documents::integration::finding_status", "documents::integration::git_required", "documents::integration::io_paths", "documents::integration::json_model", "documents::integration::named_refusals", "documents::integration::paired_census", "documents::integration::premise_refusals", "documents::integration::protected_outputs", "documents::integration::record_authority", "documents::integration::record_observed_row", "documents::integration::record_row_key", "documents::integration::registry_relation", "documents::integration::release_premises", "documents::integration::repository_fixed_point", "documents::integration::number_registry", "documents::integration::directed_number_displays", "documents::integration::runtime_error", "documents::integration::stale_rendering", "documents::integration::template_fragments", "documents::integration::terminal_refusal", "documents::integration::text_output", "documents::integration::tracked_census", "documents::integration::vendor_census"]
+case_budgets = { "documents::integration::repository_fixed_point" = "calibrated-documents-integration-repository-fixed-point-case" }
+case_budget_reasons = { "documents::integration::repository_fixed_point" = "The full repository generator and renderer fixed point retains every committed input and output comparison." }
 
 [[rows]]
 kind = "suite"
@@ -493,6 +495,8 @@ implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
 cases = ["ci::test_design.Correspondence.test_rendered_continuations", "ci::test_design.Correspondence.test_rendered_spacing", "ci::test_design.Correspondence.test_empty_selections", "ci::test_design.Correspondence.test_indexed_mint_predicate", "ci::test_design.Correspondence.test_pinned_decisions_under_optimization", "ci::test_design.Correspondence.test_release_projections", "ci::test_design.Correspondence.test_release_tags", "ci::test_design.Correspondence.test_numeric_correspondence", "ci::test_design.Correspondence.test_numeric_word_fragments", "ci::test_design.Correspondence.test_tracked_prose_boundaries"]
+case_budgets = { "ci::test_design.Correspondence.test_numeric_correspondence" = "calibrated-design-numeric-correspondence-case", "ci::test_design.Correspondence.test_numeric_word_fragments" = "calibrated-design-numeric-word-fragments-case", "ci::test_design.Correspondence.test_release_tags" = "calibrated-design-release-tags-case", "ci::test_design.Correspondence.test_rendered_continuations" = "calibrated-design-rendered-continuations-case", "ci::test_design.Correspondence.test_rendered_spacing" = "calibrated-design-rendered-spacing-case", "ci::test_design.Correspondence.test_tracked_prose_boundaries" = "calibrated-design-tracked-prose-boundaries-case" }
+case_budget_reasons = { "ci::test_design.Correspondence.test_numeric_correspondence" = "Every numeric projection mutation retains a fresh optimized whole-checker execution, exact rational operands, published-key controls and truncated-derived-value refusals.", "ci::test_design.Correspondence.test_numeric_word_fragments" = "The complete malformed-word and template-separator matrix retains fresh optimized whole-checker executions for every refusal and accepted structural control.", "ci::test_design.Correspondence.test_release_tags" = "The complete release-tag matrix retains fresh optimized checks across tracked text kinds, deliberate source fixtures, case changes and binary boundaries.", "ci::test_design.Correspondence.test_rendered_continuations" = "Every accepted and refused Markdown block shape retains a fresh optimized whole-checker execution and its exact diagnostic assertions.", "ci::test_design.Correspondence.test_rendered_spacing" = "Spacing controls retain optimized full checks, real import-base histories, per-file ceiling growth refusals and stale-exception retirement.", "ci::test_design.Correspondence.test_tracked_prose_boundaries" = "Tracked document and template mutations retain fresh optimized whole-checker execution, bare-mint refusals and the vendored-source exclusion." }
 
 [[rows]]
 kind = "suite"
@@ -515,6 +519,8 @@ implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
 cases = ["ci::test_discipline.HashCitations.test_act_profile_vector_corruptions", "ci::test_discipline.HashCitations.test_artifact_vector", "ci::test_discipline.HashCitations.test_hash_accounting", "ci::test_discipline.HashCitations.test_numeric_registry_fields", "ci::test_discipline.HashCitations.test_hash_carrier", "ci::test_discipline.HashCitations.test_hash_tracked_cli", "ci::test_discipline.HashCitations.test_hex_additional_identity_context", "ci::test_discipline.HashCitations.test_hex_boundary", "ci::test_discipline.HashCitations.test_hex_claim_sites", "ci::test_discipline.HashCitations.test_hex_context_accounting", "ci::test_discipline.HashCitations.test_hex_context_word_and_line_boundaries", "ci::test_discipline.HashCitations.test_hex_full_identifiers", "ci::test_discipline.HashCitations.test_hex_identity_context", "ci::test_discipline.HashCitations.test_hex_words", "ci::test_discipline.HashCitations.test_interchange_literal_boundaries", "ci::test_discipline.HashCitations.test_public_git_locator", "ci::test_discipline.SourceDiscipline.test_build_policy", "ci::test_discipline.SourceDiscipline.test_cargo_config", "ci::test_discipline.SourceDiscipline.test_controlled_stream_boundaries", "ci::test_discipline.SourceDiscipline.test_external_test_modules", "ci::test_discipline.SourceDiscipline.test_literals", "ci::test_discipline.SourceDiscipline.test_member_lints", "ci::test_discipline.SourceDiscipline.test_nursery_warning", "ci::test_discipline.SourceDiscipline.test_other_test_items", "ci::test_discipline.SourceDiscipline.test_printing", "ci::test_discipline.SourceDiscipline.test_suppressions", "ci::test_discipline.SourceDiscipline.test_toolchain_versions", "ci::test_discipline.WorkspaceChecks.test_discovered_members", "ci::test_discipline.WorkspaceChecks.test_http_admission", "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits"]
+case_budgets = { "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits" = "calibrated-discipline-secret-carrier-traits-case" }
+case_budget_reasons = { "ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits" = "Compiler checks retain each forbidden secret trait and the permitted carrier controls in real fixture crates." }
 
 [[rows]]
 kind = "suite"
@@ -526,6 +532,8 @@ implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
 cases = ["ci::test_harness.Harness.test_wallet_commit_isolation", "ci::test_harness.Harness.test_host_commit_isolation", "ci::test_harness.Harness.test_flake_ledger", "ci::test_harness.Harness.test_reference_tier", "ci::test_harness.Harness.test_case_level_declaration", "ci::test_harness.Harness.test_doctest_identity", "ci::test_harness.Harness.test_doctest_inventory", "ci::test_harness.Harness.test_dropped_case", "ci::test_harness.Harness.test_ignored_case", "ci::test_harness.Harness.test_interchange_manifest", "ci::test_harness.Harness.test_missing_level", "ci::test_harness.Harness.test_mock_as_real", "ci::test_harness.Harness.test_nextest_suite_span", "ci::test_harness.Harness.test_service_hold", "ci::test_harness.Harness.test_stale_source", "ci::test_harness.Harness.test_unregistered_implementation"]
+case_budgets = { "ci::test_harness.Harness.test_host_commit_isolation" = "calibrated-harness-host-commit-isolation-case", "ci::test_harness.Harness.test_wallet_commit_isolation" = "calibrated-harness-wallet-commit-isolation-case" }
+case_budget_reasons = { "ci::test_harness.Harness.test_host_commit_isolation" = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the host isolation witness.", "ci::test_harness.Harness.test_wallet_commit_isolation" = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the wallet isolation witness." }
 
 [[rows]]
 kind = "suite"
@@ -773,6 +781,8 @@ implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
 cases = ["ci::test_testkit.PropertyDeclarations.test_consumer_seed", "ci::test_testkit.PropertyDeclarations.test_source_seed", "ci::test_testkit.PropertyDeclarations.test_undeclared_property", "ci::test_testkit.SupportGuard.test_benchmark_correctness", "ci::test_testkit.SupportGuard.test_benchmark_regression", "ci::test_testkit.SupportGuard.test_benchmark_streams", "ci::test_testkit.SupportGuard.test_benchmark_terminal", "ci::test_testkit.SupportGuard.test_property_seed", "ci::test_testkit.SupportGuard.test_support_edges"]
+case_budgets = { "ci::test_testkit.PropertyDeclarations.test_consumer_seed" = "calibrated-testkit-consumer-seed-case", "ci::test_testkit.SupportGuard.test_property_seed" = "calibrated-testkit-property-seed-case" }
+case_budget_reasons = { "ci::test_testkit.PropertyDeclarations.test_consumer_seed" = "The committed property declarations and full source census retain actual inner and consumer-qualified identities, replay evidence and changed-seed refusal.", "ci::test_testkit.SupportGuard.test_property_seed" = "The committed property declarations and full source census retain dependency validation, runner environment and missing-seed refusal." }
 
 [[rows]]
 kind = "suite"
@@ -847,6 +857,8 @@ implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
 cases = ["ci::test_observe_runtime.Processes.test_cutoff_capture_interval", "ci::test_observe_runtime.Processes.test_burn_entry", "ci::test_observe_runtime.Processes.test_numeric_entry", "ci::test_observe_runtime.Processes.test_generated_records_refusals", "ci::test_observe_runtime.Processes.test_epoch_inputs", "ci::test_observe_runtime.Processes.test_graph_partition", "ci::test_observe_runtime.Processes.test_graph_registration", "ci::test_observe_runtime.Processes.test_graph_formation", "ci::test_observe_runtime.Processes.test_title_suite", "ci::test_observe_runtime.Processes.test_graph_dependency", "ci::test_observe_runtime.Processes.test_interchange_refusal", "ci::test_observe_runtime.Processes.test_four_mode_results", "ci::test_observe_runtime.Processes.test_records_entry", "ci::test_observe_runtime.Processes.test_records_replay", "ci::test_observe_runtime.Processes.test_rendezvous_failures"]
+case_budgets = { "ci::test_observe_runtime.Processes.test_epoch_inputs" = "calibrated-observe-runtime-epoch-inputs-case", "ci::test_observe_runtime.Processes.test_four_mode_results" = "calibrated-observe-runtime-four-mode-results-case", "ci::test_observe_runtime.Processes.test_title_suite" = "calibrated-observe-runtime-title-suite-case" }
+case_budget_reasons = { "ci::test_observe_runtime.Processes.test_epoch_inputs" = "Every declared epoch input observation mode retains real child execution, result comparison and complete observation accounting.", "ci::test_observe_runtime.Processes.test_four_mode_results" = "The complete observation-mode matrix retains real child results, trace payload and loss checks, and disabled-observation equivalence.", "ci::test_observe_runtime.Processes.test_title_suite" = "The complete title observation suite retains each real child mode, public outcome comparison and finalized trace evidence." }
 
 [[rows]]
 kind = "suite"
@@ -870,6 +882,8 @@ implementation = "ci-composition-services"
 tier = "service"
 budget = "combined-suite"
 cases = ["ci::test_linter_entry.Conformance.test_asset_inventory", "ci::test_linter_entry.Conformance.test_build_graph_census", "ci::test_linter_entry.Conformance.test_build_graph_completion", "ci::test_linter_entry.Conformance.test_build_graph_delegation", "ci::test_linter_entry.Conformance.test_build_graph_slice_assignment", "ci::test_linter_entry.Conformance.test_cargo_delegation", "ci::test_linter_entry.Conformance.test_runtime_delegation", "ci::test_linter_entry.Conformance.test_service_ownership", "ci::test_linter_entry.Conformance.test_service_selection", "ci::test_linter_entry.Conformance.test_retained_gate_equivalence", "ci::test_linter_entry.Conformance.test_duplicate_locations", "ci::test_linter_entry.Conformance.test_generated_citations", "ci::test_linter_entry.Conformance.test_import_forms", "ci::test_linter_entry.Conformance.test_missing_tracked_source", "ci::test_linter_entry.Conformance.test_near_misses", "ci::test_linter_entry.Conformance.test_no_form_span", "ci::test_linter_entry.Conformance.test_non_parenthesized_import", "ci::test_linter_entry.Conformance.test_occurrence_forms", "ci::test_linter_entry.Conformance.test_projection_fixed_point", "ci::test_linter_entry.Conformance.test_reserved_warrant", "ci::test_linter_entry.Conformance.test_resolution", "ci::test_linter_entry.Conformance.test_scoped_projection", "ci::test_linter_entry.Conformance.test_traversal_order", "ci::test_linter_entry.Conformance.test_unregistered_prefix", "ci::test_linter_entry.Conformance.test_warrant_species"]
+case_budgets = { "ci::test_linter_entry.Conformance.test_build_graph_census" = "calibrated-linter-entry-build-graph-census-case", "ci::test_linter_entry.Conformance.test_build_graph_completion" = "calibrated-linter-entry-build-graph-completion-case", "ci::test_linter_entry.Conformance.test_build_graph_delegation" = "calibrated-linter-entry-build-graph-delegation-case", "ci::test_linter_entry.Conformance.test_cargo_delegation" = "calibrated-linter-entry-cargo-delegation-case", "ci::test_linter_entry.Conformance.test_runtime_delegation" = "calibrated-linter-entry-runtime-delegation-case", "ci::test_linter_entry.Conformance.test_service_ownership" = "calibrated-linter-entry-service-ownership-case" }
+case_budget_reasons = { "ci::test_linter_entry.Conformance.test_build_graph_census" = "The complete tracked-input census retains real linter projections and all missing, mismatched and undeclared source controls.", "ci::test_linter_entry.Conformance.test_build_graph_completion" = "Fresh and reused Meson executions retain dependency, duplicate, stale-result and concurrent-completion controls.", "ci::test_linter_entry.Conformance.test_build_graph_delegation" = "Both graph routes retain real configured targets, source and feature bindings, and command-output refusal controls.", "ci::test_linter_entry.Conformance.test_cargo_delegation" = "Real Cargo fixture builds retain feature identity, compiler-refusal and documentation-output comparisons across both routes.", "ci::test_linter_entry.Conformance.test_runtime_delegation" = "The runtime route matrix retains real harness joins, failed startup and tests, stale evidence, unavailable measurements and signal-driven cleanup.", "ci::test_linter_entry.Conformance.test_service_ownership" = "Both routes retain paired real PostgreSQL and Elements instances, distinct endpoints and processes, sibling survival and owned shutdown." }
 
 [[rows]]
 kind = "implementation"
@@ -1096,6 +1110,8 @@ implementation = "pn-host-postgresql"
 tier = "service"
 budget = "pure-suite"
 cases = ["pn-host::postgresql::real_transports", "pn-host::postgresql::real_authentication_refusals", "pn-host::postgresql::real_cancellation", "pn-host::postgresql::private_server_echo", "pn-host::postgresql::serialization_conflict", "pn-host::postgresql::connection_loss_and_drop", "pn-host::postgresql::relay_throughput", "pn-host::postgresql::outbound_refusal"]
+case_budgets = { "pn-host::postgresql::real_cancellation" = "calibrated-host-postgresql-real-cancellation-case", "pn-host::postgresql::relay_throughput" = "calibrated-host-postgresql-relay-throughput-case" }
+case_budget_reasons = { "pn-host::postgresql::real_cancellation" = "Real PostgreSQL cancellation retains the deliberate query-start wait, cancellation delivery and subsequent connection usability.", "pn-host::postgresql::relay_throughput" = "The public relay throughput fixture retains its complete framed transfer and server result checks." }
 
 [[rows]]
 kind = "suite"
@@ -1107,6 +1123,8 @@ implementation = "pn-host-postgresql"
 tier = "service"
 budget = "postgresql-suite"
 cases = ["ci::test_host_runtime.HostRuntime.test_statement_type_boundary", "ci::test_host_runtime.HostRuntime.test_storage_statements", "ci::test_host_runtime.HostRuntime.test_storage_restart", "ci::test_host_runtime.HostRuntime.test_independent_instances", "ci::test_host_runtime.HostRuntime.test_required_postgresql_directory", "ci::test_host_runtime.HostRuntime.test_dependency_pins", "ci::test_host_runtime.HostRuntime.test_public_transport", "ci::test_host_runtime.HostRuntime.test_sensitive_result_control", "ci::test_host_runtime.HostRuntime.test_binary_reachability_control"]
+case_budgets = { "ci::test_host_runtime.HostRuntime.test_independent_instances" = "calibrated-host-runtime-independent-instances-case", "ci::test_host_runtime.HostRuntime.test_statement_type_boundary" = "calibrated-host-runtime-statement-type-boundary-case", "ci::test_host_runtime.HostRuntime.test_storage_statements" = "calibrated-host-runtime-storage-statements-case" }
+case_budget_reasons = { "ci::test_host_runtime.HostRuntime.test_independent_instances" = "Independent real PostgreSQL instances retain deep-root socket placement, port ownership, sibling survival and complete cleanup checks.", "ci::test_host_runtime.HostRuntime.test_statement_type_boundary" = "Source traversal and renamed-driver controls retain the actual compiler refusal for inline SQL at the closed Statement boundary.", "ci::test_host_runtime.HostRuntime.test_storage_statements" = "Real child processes retain complete storage statement observations and the refusal when bootstrap is omitted on a retake." }
 
 [[rows]]
 kind = "suite"
@@ -1129,6 +1147,8 @@ implementation = "pn-host-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-host::secret::tests::length_metadata", "pn-host::config::tests::secret_json_grammar", "pn-host::tests::wire_filter_boundary", "pn-host::tests::relay_refusals", "pn-host::scram::tests::ceiling_login_progress", "pn-host::scram::tests::derivation_permits", "pn-host::scram::tests::derivation_cost"]
+case_budgets = { "pn-host::scram::tests::ceiling_login_progress" = "calibrated-host-scram-ceiling-login-progress-case", "pn-host::scram::tests::derivation_cost" = "calibrated-host-scram-derivation-cost-case", "pn-host::scram::tests::derivation_permits" = "calibrated-host-scram-derivation-permits-case" }
+case_budget_reasons = { "pn-host::scram::tests::ceiling_login_progress" = "The real ceiling-cost derivation remains active while a current-thread executor must forward a public relay frame.", "pn-host::scram::tests::derivation_cost" = "The derivation cost fixture retains real password derivations at the declared iteration boundaries and ceiling.", "pn-host::scram::tests::derivation_permits" = "The permit witness retains its timed non-progress controls before and after cancellation, blocked derivations and eventual permit return." }
 
 [[rows]]
 kind = "suite"
@@ -1151,6 +1171,8 @@ implementation = "pn-host-memory-and-postgresql"
 tier = "service"
 budget = "postgresql-suite"
 cases = ["pn-host::storage::tests::storage_contract", "pn-host::storage::tests::storage_competing_writers", "pn-host::storage::tests::storage_rebuild", "pn-host::storage::tests::storage_recognition_disclosure", "pn-host::storage::tests::storage_schema_identity", "pn-host::storage::tests::storage_historical_constants", "pn-host::storage::tests::storage_digest_vectors", "pn-host::storage::tests::storage_runtime", "pn-host::storage::tests::storage_restart", "pn-host::storage::tests::storage_scaling", "pn-host::storage::tests::storage_tamper", "pn-host::storage::tests::storage_growth"]
+case_budgets = { "pn-host::storage::tests::storage_competing_writers" = "calibrated-host-storage-storage-competing-writers-case", "pn-host::storage::tests::storage_contract" = "calibrated-host-storage-storage-contract-case", "pn-host::storage::tests::storage_growth" = "calibrated-host-storage-storage-growth-case", "pn-host::storage::tests::storage_historical_constants" = "calibrated-host-storage-storage-historical-constants-case", "pn-host::storage::tests::storage_rebuild" = "calibrated-host-storage-storage-rebuild-case", "pn-host::storage::tests::storage_runtime" = "calibrated-host-storage-storage-runtime-case", "pn-host::storage::tests::storage_scaling" = "calibrated-host-storage-storage-scaling-case", "pn-host::storage::tests::storage_schema_identity" = "calibrated-host-storage-storage-schema-identity-case", "pn-host::storage::tests::storage_tamper" = "calibrated-host-storage-storage-tamper-case" }
+case_budget_reasons = { "pn-host::storage::tests::storage_competing_writers" = "Competing real storage writers retain transactional conflict and committed-history checks.", "pn-host::storage::tests::storage_contract" = "The storage contract retains the complete in-memory and PostgreSQL boundary and history comparison.", "pn-host::storage::tests::storage_growth" = "The large retained-history campaign keeps all declared row scales, chain and live-key axes, real execution plans and independently checked results.", "pn-host::storage::tests::storage_historical_constants" = "The real storage fixture retains historical-constant identity checks across retained editions and boundaries.", "pn-host::storage::tests::storage_rebuild" = "Real storage reconstruction retains its complete committed-history and rebuilt-boundary comparisons.", "pn-host::storage::tests::storage_runtime" = "Real storage observation retains dedicated fixture bootstrap, closed statements and deterministic returned values.", "pn-host::storage::tests::storage_scaling" = "The reduced fixture retains the full stated range of unrelated-history growth, selected-row identities, separate audit and excluded-corruption control.", "pn-host::storage::tests::storage_schema_identity" = "Real PostgreSQL schema inspection retains every mismatched index property, exact refusal and preservation check before a valid reopen.", "pn-host::storage::tests::storage_tamper" = "Both adapters retain every deletion, closure, overlap and payload-tampering control, with selected-boundary and full-audit distinctions." }
 
 [[rows]]
 kind = "implementation"
@@ -1183,6 +1205,8 @@ implementation = "pn-wallet-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-wallet::decoder::tests::global_context_initialization", "pn-wallet::rpc::tests::attempts_and_holds", "pn-wallet::rpc::tests::projections", "pn-wallet::rpc::tests::secret_carriers", "pn-wallet::rpc_cookie::tests::grammar_cases", "pn-wallet::rpc_cookie::tests::descriptor_cases", "pn-wallet::rpc_http::tests::framing_cases", "pn-wallet::rpc_http::tests::acquisition_cases", "pn-wallet::rpc_json::tests::parser_cases", "pn-wallet::rpc_json::tests::envelope_cases", "pn-wallet::settlement::tests::pinning_depth", "pn-wallet::settlement::tests::replacement_floor", "pn-wallet::settlement::tests::outpoint_once"]
+case_budgets = { "pn-wallet::rpc_cookie::tests::descriptor_cases" = "calibrated-wallet-rpc-cookie-descriptor-cases-case", "pn-wallet::rpc_http::tests::acquisition_cases" = "calibrated-wallet-rpc-http-acquisition-cases-case" }
+case_budget_reasons = { "pn-wallet::rpc_cookie::tests::descriptor_cases" = "The descriptor witness retains the exhaustive file-mode sweep, ownership and link checks, descriptor mutation and rotated-read controls.", "pn-wallet::rpc_http::tests::acquisition_cases" = "The HTTP acquisition witness retains all framing refusals and the deliberate slow-progress exchange crossing its unchanged focused deadline." }
 
 [[rows]]
 kind = "suite"
@@ -1216,6 +1240,8 @@ implementation = "pn-wallet-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-wallet::wire::wire_compatibility"]
+case_budgets = { "pn-wallet::wire::wire_compatibility" = "calibrated-wallet-wire-wire-compatibility-case" }
+case_budget_reasons = { "pn-wallet::wire::wire_compatibility" = "The complete wire corpus retains all status, framing, bound, timeout, settlement and shutdown cases with the focused exchange deadline unchanged." }
 
 [[rows]]
 kind = "suite"
@@ -1227,6 +1253,8 @@ implementation = "pn-wallet-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary", "ci::test_wallet_boundary.WalletBoundary.test_dependency_features", "ci::test_wallet_boundary.WalletBoundary.test_codec_pins", "ci::test_wallet_boundary.WalletBoundary.test_codec_provenance", "ci::test_wallet_boundary.WalletBoundary.test_fixture_ports", "ci::test_wallet_boundary.WalletBoundary.test_case_census", "ci::test_wallet_boundary.WalletBoundary.test_confinement"]
+case_budgets = { "ci::test_wallet_boundary.WalletBoundary.test_confinement" = "calibrated-wallet-boundary-confinement-case", "ci::test_wallet_boundary.WalletBoundary.test_dependency_features" = "calibrated-wallet-boundary-dependency-features-case" }
+case_budget_reasons = { "ci::test_wallet_boundary.WalletBoundary.test_confinement" = "Every source and adapter mutation retains real Cargo identity resolution and full confinement checks; only unchanged pure lexical masks are reused by complete source text.", "ci::test_wallet_boundary.WalletBoundary.test_dependency_features" = "Actual Cargo metadata and production dependency trees retain the renamed and moved-dependency controls and every reviewed feature check." }
 
 [[rows]]
 kind = "suite"
@@ -1238,6 +1266,8 @@ implementation = "pn-wallet-elements"
 tier = "service"
 budget = "pure-suite"
 cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals", "pn-wallet::rpc::authentication_refusals", "pn-wallet::rpc::observations", "pn-wallet::rpc::generic_negative", "pn-wallet::rpc::rotation", "pn-wallet::rpc::signed_reads", "pn-wallet::rpc::reader_limit_hold", "pn-wallet::rpc::settlement_forks"]
+case_budgets = { "pn-wallet::rpc::rotation" = "calibrated-wallet-rpc-rotation-case", "pn-wallet::rpc::settlement_forks" = "calibrated-wallet-rpc-settlement-forks-case", "pn-wallet::rpc::signed_reads" = "calibrated-wallet-rpc-signed-reads-case" }
+case_budget_reasons = { "pn-wallet::rpc::rotation" = "Real Elements wallet rotation retains authenticated reads before and after credential changes and stale-credential refusal.", "pn-wallet::rpc::settlement_forks" = "The real Elements chain campaign retains its declared settlements, fork transitions, public ancestry and checked wallet results.", "pn-wallet::rpc::signed_reads" = "Real Elements setup and signed reads retain their complete public transaction and authentication checks." }
 
 [[rows]]
 kind = "implementation"
@@ -1464,6 +1494,8 @@ implementation = "pn-act-profile-rust"
 tier = "fast"
 budget = "pure-suite"
 cases = ["pn-act-profile::tests::commitment_trace_privacy", "pn-act-profile::tests::fixed_recipes_and_controls", "pn-act-profile::tests::proposal_projection_vectors", "pn-act-profile::tests::opened_replay"]
+case_budgets = { "pn-act-profile::tests::commitment_trace_privacy" = "calibrated-act-profile-commitment-trace-privacy-case" }
+case_budget_reasons = { "pn-act-profile::tests::commitment_trace_privacy" = "The complete recipe and observation-mode matrix retains independent child collectors, authenticated artifact expansion, fixed digests and zero-loss accounting." }
 
 [[rows]]
 kind = "suite"

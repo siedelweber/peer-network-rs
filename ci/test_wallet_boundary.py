@@ -318,6 +318,12 @@ class WalletBoundary(unittest.TestCase):
         ´claim:discipline:wallet-codec-paths-stay-confined´
         ´test:integration:test-confinement´
         """
+        from functools import lru_cache
+        from unittest.mock import patch
+        import wallet_boundary
+        # Only a pure lexical transform is reused, keyed by all source bytes.
+        # Every changed probe is masked afresh; Cargo identity is never cached.
+        self.enterContext(patch('wallet_boundary.rust_mask', lru_cache(maxsize=256)(wallet_boundary.rust_mask)))
         self.assertTrue(check())
         source=Path('packages/wallet/src/lib.rs')
         original=source.read_bytes()

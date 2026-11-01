@@ -283,7 +283,36 @@ assert (root/'payload').read_text() == 'committed'
                              ['failure', 'retry', 'failure', 'retry', 'retry-result', 'slow-success'])
             self.assertEqual(len(output.getvalue().splitlines()), len(records))
 
+    def ci_case_budget_emission(self):
+        import io
+        import json
+        import os
+        from contextlib import chdir, redirect_stderr, redirect_stdout
+        from pathlib import Path
+        import tempfile
+        from unittest.mock import patch
+        from build_graph_evidence import SERVICE_CASE
+        import run_ci
+        for held in (False, True):
+            operation = SERVICE_CASE if held else 'ci::fixture.case'
+            data = rows(runner='ci', case=operation)
+            data[-1].update(name='ci::fixture', case_budgets={operation: 'integration'},
+                            case_budget_reasons={operation: 'Retained fixture work.'})
+            registry = Registry(data, declarations())
+            case = unittest.FunctionTestCase(lambda: None)
+            case.id = lambda: operation.removeprefix('ci::')
+            suite = unittest.TestSuite([case])
+            with tempfile.TemporaryDirectory() as directory, chdir(directory), redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                Path('docs/inputs').mkdir(parents=True)
+                Path('docs/inputs/devperf-registry.toml').write_text('rows = []\n')
+                with patch.dict(os.environ, {'PN_GATE_PARALLEL': '0', 'PN_CALIBRATION': '0', 'PN_FLAKE_LEDGER': str(Path(directory)/'ledger.jsonl')}), patch('run_ci.load', return_value=registry), patch('run_ci.source_id', return_value='current'), patch.object(unittest.defaultTestLoader, 'loadTestsFromName', return_value=suite), patch('run_ci.budgets', return_value=declarations()), patch('run_ci.report'), patch('build_graph_evidence.service_selection', return_value=dict(run=False, hold='rule:buildgraph:service-selection', reason='unchanged', inputs=[])):
+                    self.assertEqual(run_ci.main('fixture'), 0)
+                record = json.loads(Path('.lane/harness-ci-fixture.jsonl').read_text().splitlines()[0])
+                self.assertEqual((record['operation'], record['budget'], record['outcome']),
+                                 (operation, 'integration', 'held' if held else 'passed'))
+
     def calibrated_case_budgets(self):
+        self.ci_case_budget_emission()
         data = rows(case='example::fast')
         data[-1]['cases'].append('example::calibrated')
         data[-1]['case_budgets'] = {'example::calibrated': 'integration'}

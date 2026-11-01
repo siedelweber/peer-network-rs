@@ -475,3 +475,379 @@ budget_ms = 15000
 scope = "complete pn-graph::numeric suite"
 reason = "The remaining scalar, activation, clamp and replay controls retain cold resource boundaries; tagged full-production inverse-wall cases execute separately in the reference tier. The allowance includes serial runner overhead and measured headroom."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-design-numeric-correspondence-case"
+category = "case"
+budget_ms = 12000
+scope = "one ci::test_design.Correspondence.test_numeric_correspondence case"
+reason = "Every numeric projection mutation retains a fresh optimized whole-checker execution, exact rational operands, published-key controls and truncated-derived-value refusals."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-design-numeric-word-fragments-case"
+category = "case"
+budget_ms = 20000
+scope = "one ci::test_design.Correspondence.test_numeric_word_fragments case"
+reason = "The complete malformed-word and template-separator matrix retains fresh optimized whole-checker executions for every refusal and accepted structural control."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-design-release-tags-case"
+category = "case"
+budget_ms = 6000
+scope = "one ci::test_design.Correspondence.test_release_tags case"
+reason = "The complete release-tag matrix retains fresh optimized checks across tracked text kinds, deliberate source fixtures, case changes and binary boundaries."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-design-rendered-continuations-case"
+category = "case"
+budget_ms = 6000
+scope = "one ci::test_design.Correspondence.test_rendered_continuations case"
+reason = "Every accepted and refused Markdown block shape retains a fresh optimized whole-checker execution and its exact diagnostic assertions."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-design-rendered-spacing-case"
+category = "case"
+budget_ms = 4000
+scope = "one ci::test_design.Correspondence.test_rendered_spacing case"
+reason = "Spacing controls retain optimized full checks, real import-base histories, per-file ceiling growth refusals and stale-exception retirement."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-design-tracked-prose-boundaries-case"
+category = "case"
+budget_ms = 3000
+scope = "one ci::test_design.Correspondence.test_tracked_prose_boundaries case"
+reason = "Tracked document and template mutations retain fresh optimized whole-checker execution, bare-mint refusals and the vendored-source exclusion."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-discipline-secret-carrier-traits-case"
+category = "case"
+budget_ms = 15000
+scope = "one ci::test_discipline.WorkspaceChecks.test_secret_carrier_traits case"
+reason = "Compiler checks retain each forbidden secret trait and the permitted carrier controls in real fixture crates."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-harness-host-commit-isolation-case"
+category = "case"
+budget_ms = 1500
+scope = "one ci::test_harness.Harness.test_host_commit_isolation case"
+reason = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the host isolation witness."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-harness-wallet-commit-isolation-case"
+category = "case"
+budget_ms = 1500
+scope = "one ci::test_harness.Harness.test_wallet_commit_isolation case"
+reason = "Real Git histories, parent-only import refs, moving-root barriers, atomic evidence publication and parent garbage collection remain in the wallet isolation witness."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-runtime-independent-instances-case"
+category = "case"
+budget_ms = 15000
+scope = "one ci::test_host_runtime.HostRuntime.test_independent_instances case"
+reason = "Independent real PostgreSQL instances retain deep-root socket placement, port ownership, sibling survival and complete cleanup checks."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-runtime-statement-type-boundary-case"
+category = "case"
+budget_ms = 7500
+scope = "one ci::test_host_runtime.HostRuntime.test_statement_type_boundary case"
+reason = "Source traversal and renamed-driver controls retain the actual compiler refusal for inline SQL at the closed Statement boundary."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-runtime-storage-statements-case"
+category = "case"
+budget_ms = 6000
+scope = "one ci::test_host_runtime.HostRuntime.test_storage_statements case"
+reason = "Real child processes retain complete storage statement observations and the refusal when bootstrap is omitted on a retake."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-linter-entry-build-graph-census-case"
+category = "case"
+budget_ms = 6000
+scope = "one ci::test_linter_entry.Conformance.test_build_graph_census case"
+reason = "The complete tracked-input census retains real linter projections and all missing, mismatched and undeclared source controls."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-linter-entry-build-graph-completion-case"
+category = "case"
+budget_ms = 4000
+scope = "one ci::test_linter_entry.Conformance.test_build_graph_completion case"
+reason = "Fresh and reused Meson executions retain dependency, duplicate, stale-result and concurrent-completion controls."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-linter-entry-build-graph-delegation-case"
+category = "case"
+budget_ms = 15000
+scope = "one ci::test_linter_entry.Conformance.test_build_graph_delegation case"
+reason = "Both graph routes retain real configured targets, source and feature bindings, and command-output refusal controls."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-linter-entry-cargo-delegation-case"
+category = "case"
+budget_ms = 6000
+scope = "one ci::test_linter_entry.Conformance.test_cargo_delegation case"
+reason = "Real Cargo fixture builds retain feature identity, compiler-refusal and documentation-output comparisons across both routes."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-linter-entry-runtime-delegation-case"
+category = "case"
+budget_ms = 18000
+scope = "one ci::test_linter_entry.Conformance.test_runtime_delegation case"
+reason = "The runtime route matrix retains real harness joins, failed startup and tests, stale evidence, unavailable measurements and signal-driven cleanup."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-linter-entry-service-ownership-case"
+category = "case"
+budget_ms = 60000
+scope = "one ci::test_linter_entry.Conformance.test_service_ownership case"
+reason = "Both routes retain paired real PostgreSQL and Elements instances, distinct endpoints and processes, sibling survival and owned shutdown."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-observe-runtime-epoch-inputs-case"
+category = "case"
+budget_ms = 4000
+scope = "one ci::test_observe_runtime.Processes.test_epoch_inputs case"
+reason = "Every declared epoch input observation mode retains real child execution, result comparison and complete observation accounting."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-observe-runtime-four-mode-results-case"
+category = "case"
+budget_ms = 10000
+scope = "one ci::test_observe_runtime.Processes.test_four_mode_results case"
+reason = "The complete observation-mode matrix retains real child results, trace payload and loss checks, and disabled-observation equivalence."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-observe-runtime-title-suite-case"
+category = "case"
+budget_ms = 10000
+scope = "one ci::test_observe_runtime.Processes.test_title_suite case"
+reason = "The complete title observation suite retains each real child mode, public outcome comparison and finalized trace evidence."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-testkit-consumer-seed-case"
+category = "case"
+budget_ms = 3000
+scope = "one ci::test_testkit.PropertyDeclarations.test_consumer_seed case"
+reason = "The committed property declarations and full source census retain actual inner and consumer-qualified identities, replay evidence and changed-seed refusal."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-testkit-property-seed-case"
+category = "case"
+budget_ms = 3000
+scope = "one ci::test_testkit.SupportGuard.test_property_seed case"
+reason = "The committed property declarations and full source census retain dependency validation, runner environment and missing-seed refusal."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-wallet-boundary-confinement-case"
+category = "case"
+budget_ms = 15000
+scope = "one ci::test_wallet_boundary.WalletBoundary.test_confinement case"
+reason = "Every source and adapter mutation retains real Cargo identity resolution and full confinement checks; only unchanged pure lexical masks are reused by complete source text."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-wallet-boundary-dependency-features-case"
+category = "case"
+budget_ms = 15000
+scope = "one ci::test_wallet_boundary.WalletBoundary.test_dependency_features case"
+reason = "Actual Cargo metadata and production dependency trees retain the renamed and moved-dependency controls and every reviewed feature check."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-documents-integration-repository-fixed-point-case"
+category = "case"
+budget_ms = 4000
+scope = "one documents::integration::repository_fixed_point case"
+reason = "The full repository generator and renderer fixed point retains every committed input and output comparison."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-act-profile-commitment-trace-privacy-case"
+category = "case"
+budget_ms = 500
+scope = "one pn-act-profile::tests::commitment_trace_privacy case"
+reason = "The complete recipe and observation-mode matrix retains independent child collectors, authenticated artifact expansion, fixed digests and zero-loss accounting."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-postgresql-real-cancellation-case"
+category = "case"
+budget_ms = 500
+scope = "one pn-host::postgresql::real_cancellation case"
+reason = "Real PostgreSQL cancellation retains the deliberate query-start wait, cancellation delivery and subsequent connection usability."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-postgresql-relay-throughput-case"
+category = "case"
+budget_ms = 500
+scope = "one pn-host::postgresql::relay_throughput case"
+reason = "The public relay throughput fixture retains its complete framed transfer and server result checks."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-scram-ceiling-login-progress-case"
+category = "case"
+budget_ms = 500
+scope = "one pn-host::scram::tests::ceiling_login_progress case"
+reason = "The real ceiling-cost derivation remains active while a current-thread executor must forward a public relay frame."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-scram-derivation-cost-case"
+category = "case"
+budget_ms = 1000
+scope = "one pn-host::scram::tests::derivation_cost case"
+reason = "The derivation cost fixture retains real password derivations at the declared iteration boundaries and ceiling."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-scram-derivation-permits-case"
+category = "case"
+budget_ms = 250
+scope = "one pn-host::scram::tests::derivation_permits case"
+reason = "The permit witness retains its timed non-progress controls before and after cancellation, blocked derivations and eventual permit return."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-storage-storage-competing-writers-case"
+category = "case"
+budget_ms = 500
+scope = "one pn-host::storage::tests::storage_competing_writers case"
+reason = "Competing real storage writers retain transactional conflict and committed-history checks."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-storage-storage-contract-case"
+category = "case"
+budget_ms = 1000
+scope = "one pn-host::storage::tests::storage_contract case"
+reason = "The storage contract retains the complete in-memory and PostgreSQL boundary and history comparison."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-storage-storage-growth-case"
+category = "case"
+budget_ms = 15000
+scope = "one pn-host::storage::tests::storage_growth case"
+reason = "The large retained-history campaign keeps all declared row scales, chain and live-key axes, real execution plans and independently checked results."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-storage-storage-historical-constants-case"
+category = "case"
+budget_ms = 500
+scope = "one pn-host::storage::tests::storage_historical_constants case"
+reason = "The real storage fixture retains historical-constant identity checks across retained editions and boundaries."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-storage-storage-rebuild-case"
+category = "case"
+budget_ms = 500
+scope = "one pn-host::storage::tests::storage_rebuild case"
+reason = "Real storage reconstruction retains its complete committed-history and rebuilt-boundary comparisons."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-storage-storage-runtime-case"
+category = "case"
+budget_ms = 500
+scope = "one pn-host::storage::tests::storage_runtime case"
+reason = "Real storage observation retains dedicated fixture bootstrap, closed statements and deterministic returned values."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-storage-storage-scaling-case"
+category = "case"
+budget_ms = 2500
+scope = "one pn-host::storage::tests::storage_scaling case"
+reason = "The reduced fixture retains the full stated range of unrelated-history growth, selected-row identities, separate audit and excluded-corruption control."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-storage-storage-schema-identity-case"
+category = "case"
+budget_ms = 1500
+scope = "one pn-host::storage::tests::storage_schema_identity case"
+reason = "Real PostgreSQL schema inspection retains every mismatched index property, exact refusal and preservation check before a valid reopen."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-host-storage-storage-tamper-case"
+category = "case"
+budget_ms = 1000
+scope = "one pn-host::storage::tests::storage_tamper case"
+reason = "Both adapters retain every deletion, closure, overlap and payload-tampering control, with selected-boundary and full-audit distinctions."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-wallet-rpc-rotation-case"
+category = "case"
+budget_ms = 5000
+scope = "one pn-wallet::rpc::rotation case"
+reason = "Real Elements wallet rotation retains authenticated reads before and after credential changes and stale-credential refusal."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-wallet-rpc-settlement-forks-case"
+category = "case"
+budget_ms = 20000
+scope = "one pn-wallet::rpc::settlement_forks case"
+reason = "The real Elements chain campaign retains its declared settlements, fork transitions, public ancestry and checked wallet results."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-wallet-rpc-signed-reads-case"
+category = "case"
+budget_ms = 5000
+scope = "one pn-wallet::rpc::signed_reads case"
+reason = "Real Elements setup and signed reads retain their complete public transaction and authentication checks."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-wallet-rpc-cookie-descriptor-cases-case"
+category = "case"
+budget_ms = 1000
+scope = "one pn-wallet::rpc_cookie::tests::descriptor_cases case"
+reason = "The descriptor witness retains the exhaustive file-mode sweep, ownership and link checks, descriptor mutation and rotated-read controls."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-wallet-rpc-http-acquisition-cases-case"
+category = "case"
+budget_ms = 300
+scope = "one pn-wallet::rpc_http::tests::acquisition_cases case"
+reason = "The HTTP acquisition witness retains all framing refusals and the deliberate slow-progress exchange crossing its unchanged focused deadline."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-wallet-wire-wire-compatibility-case"
+category = "case"
+budget_ms = 7500
+scope = "one pn-wallet::wire::wire_compatibility case"
+reason = "The complete wire corpus retains all status, framing, bound, timeout, settlement and shutdown cases with the focused exchange deadline unchanged."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
