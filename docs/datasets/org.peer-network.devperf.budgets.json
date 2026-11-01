@@ -131,6 +131,34 @@
       "name": "service-gate",
       "reason": "Allow the warm gate and combined real-service cases; the service matrix is separate from the fast local path.",
       "scope": "full required provisioned-service matrix"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "case",
+      "name": "reference-map-case",
+      "reason": "The exact reference declaration retains all Actors, edges, depths and published comparisons; the measured map and corpus cases need a bounded certificate tier.",
+      "scope": "one published-fixture map or corpus case"
+    },
+    {
+      "budget_ms": 60000,
+      "category": "case",
+      "name": "reference-local-case",
+      "reason": "Interval Jacobians, preconditioning, replay and mutation controls retain the full reference declaration; the local certificate is the longest measured reference case.",
+      "scope": "one published-fixture local inclusion case"
+    },
+    {
+      "budget_ms": 25000,
+      "category": "case",
+      "name": "reference-wall-case",
+      "reason": "The end-to-end wall consumer retains both enclosed and rational solve routes and their replay and adjacent Work controls.",
+      "scope": "one enclosed-reference-wall solve case"
+    },
+    {
+      "budget_ms": 90000,
+      "category": "suite",
+      "name": "reference-certificate-suite",
+      "reason": "Allow the exact reference cases and their refusal controls as a separately measured group while preserving the unchanged fast and gate budgets.",
+      "scope": "one required reference-certificate group"
     }
   ]
 }

@@ -2931,7 +2931,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-upstream-count"
-value = "3000"
+value = "2500"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
@@ -2952,7 +2952,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-export-multiplicity"
-value = "3000"
+value = "2500"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
@@ -3254,7 +3254,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-standing-before-lower"
-value = "2965940535357/1099511627776"
+value = "2946128423607/1099511627776"
 unit = "dimensionless"
 display = "floor"
 magnitude = -12
@@ -3262,7 +3262,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-standing-before-upper"
-value = "2965940567481/1099511627776"
+value = "2946128499583/1099511627776"
 unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
@@ -3270,7 +3270,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-standing-after-lower"
-value = "2965900268499/1099511627776"
+value = "2946120923191/1099511627776"
 unit = "dimensionless"
 display = "floor"
 magnitude = -12
@@ -3278,7 +3278,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-standing-after-upper"
-value = "2965900290825/1099511627776"
+value = "2946120928399/1099511627776"
 unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
@@ -3286,7 +3286,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-response-lower"
-value = "-20149491/549755813888"
+value = "-947049/137438953472"
 unit = "dimensionless"
 display = "floor"
 magnitude = -12
@@ -3294,7 +3294,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-response-upper"
-value = "-10061133/274877906944"
+value = "-936901/137438953472"
 unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
@@ -3302,21 +3302,21 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-solve-before-work"
-value = "1722522363"
+value = "1727882275"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-solve-after-work"
-value = "1703120348"
+value = "1735806305"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-displacement-upper"
-value = "116826840419/1099511627776"
+value = "7270508079/68719476736"
 unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
@@ -3324,7 +3324,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-target-loss-upper"
-value = "17875863759/549755813888"
+value = "35569084937/1099511627776"
 unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
@@ -3332,7 +3332,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-feedback-upper"
-value = "59855253/549755813888"
+value = "143029803/1099511627776"
 unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
@@ -3340,7 +3340,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-direct-own-lower"
-value = "18059/34359738368"
+value = "405313/549755813888"
 unit = "dimensionless"
 display = "floor"
 magnitude = -12
@@ -3348,7 +3348,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-direct-own-upper"
-value = "577889/1099511627776"
+value = "810627/1099511627776"
 unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
@@ -3356,7 +3356,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-direct-maximum-lower"
-value = "269582439/1099511627776"
+value = "161048201/549755813888"
 unit = "dimensionless"
 display = "floor"
 magnitude = -12
@@ -3364,7 +3364,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-direct-maximum-upper"
-value = "269582441/1099511627776"
+value = "322096405/1099511627776"
 unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
@@ -3584,7 +3584,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-own-act-count"
-value = "9305"
+value = "7805"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
@@ -4355,5 +4355,35 @@ exact_digits = 24
 id = "num:numbers:act-response-supported-depth-count"
 value = "1"
 unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+# Reference-certificate tier budget quantities.
+
+[[rows]]
+id = "num:numbers:reference-map-case-budget-seconds"
+value = "15"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-local-case-budget-seconds"
+value = "60"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-case-budget-seconds"
+value = "25"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-certificate-suite-budget-seconds"
+value = "90"
+unit = "seconds"
 display = "exact"
 exact_digits = 24

@@ -257,6 +257,10 @@ def numeric_correspondence():
     for regime, depths in (('supported', value('frozen-supported-depth-count')), ('chartered', 4)):
         equal(value(f'projected-{regime}-cell-count'), value('solve-projection-actor-count') ** 2
               * (depths + 3))
+    certificate_budgets = {row['name']: row['budget_ms'] for row in
+                           tomllib.loads(Path('docs/inputs/devperf-budgets.toml').read_text())['rows']}
+    for name in ('reference-map-case', 'reference-local-case', 'reference-wall-case', 'reference-certificate-suite'):
+        equal(value(name + '-budget-seconds') * 1000, certificate_budgets[name])
     rates = {speed: value(f'rate-{speed}-sample-seconds') / value('rate-sample-work')
              for speed in ('fast', 'middle', 'slow')}
     for speed, rate in rates.items():
@@ -336,7 +340,7 @@ def numeric_correspondence():
         if admitted and (Fraction(view['exact'].replace('\u202f', '')) != number
                          or view['exact_exact'] is not True or view.get('exact_relation') != '='):
             raise ValueError('numeric registry: exact form differs')
-    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=39 displays={len(projected)}')
+    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=43 displays={len(projected)}')
 
 
 if __name__ == '__main__':

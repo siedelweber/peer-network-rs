@@ -47,6 +47,10 @@ class Registry:
         for tier in self.tiers.values():
             if tier.get('status') not in {'active', 'held'} or (tier['status'] == 'held' and not tier.get('reason')):
                 raise StructuralError('invalid tier declaration')
+            if tier.get('case_budget_policy') not in {None, 'declared-suite'}:
+                raise StructuralError('unknown tier case budget policy')
+            if tier.get('case_budget_policy') and not tier.get('reason'):
+                raise StructuralError('tier case budget policy requires a reason')
         for implementation in self.implementations.values():
             if implementation.get('evidence') not in {'pure', 'vendor', 'mock', 'real'}:
                 raise StructuralError('unknown implementation evidence class')
@@ -72,6 +76,14 @@ class Registry:
                 raise StructuralError('mock implementation requires mock-suite budget')
             if suite.get('runner') not in {'nextest', 'doctest', 'ci', 'contract', 'benchmark'}:
                 raise StructuralError('unknown suite runner')
+            tier_budget = self.tiers[suite['tier']].get('case_budget_policy') == 'declared-suite'
+            if tier_budget:
+                if suite.get('case_budget') not in declared or declared[suite['case_budget']]['category'] != 'case':
+                    raise StructuralError('tier requires a declared case budget')
+            elif 'case_budget' in suite:
+                raise StructuralError('case budget override requires a declared tier policy')
+            if 'case_span' in suite and (suite['case_span'] is not True or suite['runner'] != 'nextest'):
+                raise StructuralError('case span requires an explicit nextest group')
             overrides=suite.get('case_levels',{})
             reasons=suite.get('case_level_reasons',{})
             if not isinstance(overrides,dict) or not isinstance(reasons,dict) or set(overrides)!=set(reasons) or not set(overrides)<=set(suite['cases']):
@@ -87,6 +99,10 @@ class Registry:
         for suite in self.suites.values():
             if suite.get('runner') == 'contract' and (suite.get('parent_case') not in self.cases or not suite.get('contract_edition') or not suite.get('claim')):
                 raise StructuralError('contract case mapping lacks parent, edition or establishing claim')
+
+    def case_budget(self, name):
+        suite = self.cases[name]
+        return suite.get('case_budget', self.levels[suite['level']]['budget'])
 
     def expected(self, runner):
         return {name for name, suite in self.cases.items() if suite['runner'] == runner}
@@ -105,11 +121,11 @@ class Registry:
             raise StructuralError(f'unregistered case: {name}')
         suite = self.cases[name]
         implementation = self.implementations[suite['implementation']]
-        level = self.levels[suite['level']]
+        budget = self.case_budget(name)
         fields = dict(source=source, configuration=configuration, level=suite['level'],
                       suite=suite['name'], implementation=suite['implementation'], tier=suite['tier'],
-                      evidence=implementation['evidence'], budget=level['budget'],
-                      applicable_budgets=[level['budget'], suite['budget'], 'test-command', 'gate'])
+                      evidence=implementation['evidence'], budget=budget,
+                      applicable_budgets=[budget, suite['budget'], 'test-command', 'gate'])
         fields.update({key: suite[key] for key in ('contract_edition', 'claim', 'claim_owner', 'parent_case') if key in suite})
         for key, value in fields.items():
             if key in record and record[key] != value:

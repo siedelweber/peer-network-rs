@@ -2529,6 +2529,7 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "ci::test_harness.Harness.test_reference_tier",
         "ci::test_harness.Harness.test_case_level_declaration",
         "ci::test_harness.Harness.test_doctest_identity",
         "ci::test_harness.Harness.test_doctest_inventory",
@@ -4277,6 +4278,7 @@
     },
     {
       "budget": "pure-suite",
+      "case_span": true,
       "cases": [
         "pn-epoch::solve::procedure_binding",
         "pn-epoch::solve::procedure_records",
@@ -4291,7 +4293,6 @@
         "pn-epoch::solve::conserved_residual",
         "pn-epoch::solve::conserved_projection",
         "pn-epoch::solve::reference_wall_binding",
-        "pn-epoch::solve::enclosed_wall_solve",
         "pn-epoch::solve::two_map_box",
         "pn-epoch::solve::certified_splits",
         "pn-epoch::solve::burn_own",
@@ -4313,6 +4314,7 @@
     },
     {
       "budget": "pure-suite",
+      "case_span": true,
       "cases": [
         "pn-graph::numeric::primitive_oracles",
         "pn-graph::numeric::primitive_domains",
@@ -4328,10 +4330,7 @@
         "pn-graph::numeric::reference_wall_work",
         "pn-graph::numeric::reference_wall_controls",
         "pn-graph::numeric::reference_wall_branches",
-        "pn-graph::numeric::enclosed_wall_clamp",
-        "pn-graph::numeric::verification_box",
-        "pn-graph::numeric::verification_local",
-        "pn-graph::numeric::verification_corpus"
+        "pn-graph::numeric::enclosed_wall_clamp"
       ],
       "implementation": "pn-graph-rust",
       "kind": "suite",
@@ -4340,6 +4339,59 @@
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
+    },
+    {
+      "case_budget_policy": "declared-suite",
+      "kind": "tier",
+      "name": "reference-certificate",
+      "reason": "Full-size exact reference declarations and certificate controls retain their own measured case and suite budgets; every case remains required in the gate.",
+      "status": "active"
+    },
+    {
+      "budget": "reference-certificate-suite",
+      "case_budget": "reference-map-case",
+      "case_span": true,
+      "cases": [
+        "pn-graph::numeric::verification_box",
+        "pn-graph::numeric::verification_corpus"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-graph::reference-maps",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "reference-certificate"
+    },
+    {
+      "budget": "reference-certificate-suite",
+      "case_budget": "reference-local-case",
+      "case_span": true,
+      "cases": [
+        "pn-graph::numeric::verification_local"
+      ],
+      "implementation": "pn-graph-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-graph::reference-local",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "reference-certificate"
+    },
+    {
+      "budget": "reference-certificate-suite",
+      "case_budget": "reference-wall-case",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::enclosed_wall_solve"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::reference-wall",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "reference-certificate"
     }
   ]
 }

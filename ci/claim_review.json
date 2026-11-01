@@ -138,6 +138,14 @@
       "review": "Read the secret-aware encoding dependency edge and isolated complete trace children; public encoding remains unchanged, private fixed values are compared without recording their content, and the manifest admits only the declared production dependency."
     },
     {
+      "operation": "ci::test_harness.Harness.test_reference_tier",
+      "path": "ci/test_harness.py",
+      "claim": "ROOT::claim:harness:reference-tier-retains-required-case-evidence",
+      "before": "",
+      "after": "Claim: Explicit reference-tier groups retain case identity, level, implementation and outcome while applying declared case budgets. Fast budgets stay unchanged; absent policies, invalid budgets, changed result budgets and missing or duplicate grouped completions refuse. Interleaved case arrivals bound each group's own wall envelope.",
+      "review": "The synthetic fast and reference groups share a binary while preserving their case identities and implementation. The test checks explicit budget selection, unchanged fast scope, refusal of missing policy or budget and a wrong budget category, rejection of changed result budgets, independently measured group spans and refusal of dropped or duplicated completions. It does not establish a performance target or permit skipping a required case."
+    },
+    {
       "operation": "ci::test_host_runtime.HostRuntime.test_binary_reachability_control",
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:binary-endpoint-results-are-detected",

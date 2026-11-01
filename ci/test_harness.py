@@ -32,6 +32,65 @@ def result(registry):
 
 
 class Harness(unittest.TestCase):
+    def test_reference_tier(self):
+        """Claim: Explicit reference-tier groups retain case identity, level, implementation and outcome while applying declared case budgets. Fast budgets stay unchanged; absent policies, invalid budgets, changed result budgets and missing or duplicate grouped completions refuse. Interleaved case arrivals bound each group's own wall envelope.
+        ´claim:harness:reference-tier-retains-required-case-evidence´
+        ´test:integration:test-reference-tier´
+        """
+        from run_tests import nextest_events, suite_events
+        data = rows(case='example::fast')
+        data[-1]['case_span'] = True
+        slow = dict(data[-1], name='reference', tier='reference',
+                    case_budget='integration', cases=['example::slow'])
+        policy = dict(kind='tier', name='reference', status='active',
+                      case_budget_policy='declared-suite', reason='Exact reference fixture.')
+        data.extend([policy, slow])
+        registry = Registry(data, declarations())
+        self.assertEqual(registry.case_budget('example::fast'), 'unit')
+        self.assertEqual(registry.case_budget('example::slow'), 'integration')
+        joined = registry.join(dict(operation='example::slow', outcome='passed'), 'current')
+        self.assertEqual((joined['level'], joined['implementation'], joined['tier'], joined['outcome']),
+                         ('unit', 'example', 'reference', 'passed'))
+        with self.assertRaisesRegex(StructuralError, 'budget'):
+            registry.join(dict(joined, budget='unit'), 'current')
+        for mutation in ('policy', 'missing', 'category'):
+            invalid = copy.deepcopy(data)
+            if mutation == 'policy':
+                del invalid[-2]['case_budget_policy']
+            elif mutation == 'missing':
+                del invalid[-1]['case_budget']
+            else:
+                invalid[-1]['case_budget'] = 'pure-suite'
+            with self.assertRaises(StructuralError):
+                Registry(invalid, declarations())
+        inventory = {'rust-suites': {'example': {'package-name': 'example',
+                     'binary-name': 'example', 'kind': 'lib',
+                     'testcases': {'fast': {'ignored': False}, 'slow': {'ignored': False}}}}}
+        thresholds = declarations()
+        start = thresholds['unit']['budget_ms']
+        fast_end = thresholds['crate']['budget_ms']
+        slow_end = thresholds['integration']['budget_ms']
+        def observation(case, event, offset):
+            return dict(offset_ms=offset, item=dict(type='test', event=event,
+                        name=f'example::example${case}', exec_time=(offset-start)/1000))
+        observations = [observation('fast', 'started', start),
+                        observation('slow', 'started', start),
+                        observation('fast', 'ok', fast_end),
+                        observation('slow', 'ok', slow_end)]
+        import json
+        records = nextest_events('\n'.join(json.dumps(row['item']) for row in observations),
+                                 inventory, {}, 'current', CONFIGURATION, registry)
+        self.assertEqual({r['operation']: r['budget'] for r in records},
+                         {'example::fast': 'unit', 'example::slow': 'integration'})
+        spans = suite_events(observations, inventory, registry, 'current', 'nextest')
+        self.assertEqual({r['suite']: r['duration_ms'] for r in spans},
+                         {'example': fast_end-start, 'reference': slow_end-start})
+        self.assertTrue(all(row['status']=='passed' for row in registry.matrix(records+spans, 'current')
+                            if row['suite'] is not None))
+        for invalid in (observations[:-1], observations+[observations[-1]]):
+            with self.assertRaises(StructuralError):
+                suite_events(invalid, inventory, registry, 'current', 'nextest')
+
     def test_case_level_declaration(self):
         """Claim: An explicit integration case retains its binary suite and implementation while receiving the integration budget; undeclared case identities, absent levels and missing premises cannot create overrides.
         ´claim:harness:case-levels-are-explicit-within-binaries´

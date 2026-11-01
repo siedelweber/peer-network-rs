@@ -51,7 +51,7 @@ def nextest_events(text, inventory, metadata, source, configuration, registry=No
             operation = f'{binary}::{name}'
             if operation not in registry.cases:
                 raise StructuralError(f'unregistered case: {operation}')
-            level = registry.levels[registry.cases[operation]['level']]['budget']
+            level = registry.case_budget(operation)
             expected[raw_name] = (operation, level, details['ignored'])
     registry.roster('nextest', [v[0] for v in expected.values()])
     records = []
@@ -158,8 +158,29 @@ def suite_events(observations, inventory, registry, source, runner):
     doc_start = None
     doc_names = set()
     doc_ids = doctest_identities({o['item']['name'] for o in observations if o['item'].get('type') == 'test'}) if runner == 'doctest' else {}
+    grouped = {name for name, suite in registry.suites.items() if suite.get('case_span')}
+    identities = {f"{suite['package-name']}::{suite['binary-name']}${case}": f'{binary}::{case}'
+                  for binary, suite in inventory.get('rust-suites', {}).items() for case in suite.get('testcases', {})}
+    case_starts = {}
+    case_finished = set()
     for observation in observations:
         item, offset = observation['item'], observation['offset_ms']
+        if runner == 'nextest' and item.get('type') == 'test':
+            operation = identities.get(item.get('name'))
+            case = registry.cases.get(operation)
+            if case and case['name'] in grouped:
+                name = case['name']
+                if item['event'] == 'started':
+                    if operation in case_starts:
+                        raise StructuralError('repeated grouped case start')
+                    case_starts[operation] = offset
+                elif item['event'] in {'ok', 'failed'}:
+                    if operation not in case_starts or operation in case_finished:
+                        raise StructuralError('unpaired grouped case completion')
+                    case_finished.add(operation)
+                    spans.setdefault(name, []).append((case_starts[operation], offset))
+                    outcomes[name] = 'failed' if item['event'] == 'failed' or outcomes.get(name) == 'failed' else 'passed'
+            continue
         if runner == 'doctest':
             if item.get('type') == 'suite' and item.get('event') == 'started':
                 doc_start, doc_names = offset, set()
@@ -181,7 +202,7 @@ def suite_events(observations, inventory, registry, source, runner):
         if len(names) != 1:
             raise StructuralError('unknown suite in nextest stream')
         name = names[0]
-        if name not in registry.suites:  # Empty Cargo targets have no cases.
+        if name not in registry.suites or name in grouped:  # Empty targets or explicitly grouped cases.
             continue
         if item['event'] == 'started':
             if name in starts:
@@ -192,6 +213,13 @@ def suite_events(observations, inventory, registry, source, runner):
                 raise StructuralError('unpaired suite completion')
             spans[name] = [(starts[name], offset)]
             outcomes[name] = 'passed' if item['event'] == 'ok' else 'failed'
+    for name in grouped:
+        if registry.suites[name].get('runner') != runner:
+            continue
+        if set(registry.suites[name]['cases']) - case_finished:
+            raise StructuralError('grouped suite lacks completed required cases')
+        intervals = spans[name]
+        spans[name] = [(min(a for a, _ in intervals), max(b for _, b in intervals))]
     return [registry.suite_event(name, inclusive_ms(spans.get(name, [])), outcomes.get(name, 'incomplete'), source)
             for name, suite in registry.suites.items() if suite.get('runner') == runner and suite['status'] == 'active']
 

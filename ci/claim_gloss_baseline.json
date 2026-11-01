@@ -86,6 +86,7 @@
     "ci::test_harness.Harness.test_missing_level": "A missing level is structural, preventing an undeclared scope from borrowing evidence.",
     "ci::test_harness.Harness.test_mock_as_real": "Mock evidence cannot be relabelled as real service evidence and discharge its hold.",
     "ci::test_harness.Harness.test_nextest_suite_span": "Interleaved suite arrivals retain their own envelope, never summed case work.",
+    "ci::test_harness.Harness.test_reference_tier": "",
     "ci::test_harness.Harness.test_service_hold": "An unavailable service tier remains visibly held even when all fast cases pass.",
     "ci::test_harness.Harness.test_stale_source": "A result for another source cannot certify the current tree.",
     "ci::test_harness.Harness.test_unregistered_implementation": "An unknown implementation cannot supply evidence under an admitted identity.",

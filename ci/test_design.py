@@ -55,6 +55,7 @@ class Correspondence(unittest.TestCase):
         shutil.copytree(REPOSITORY / 'docs/datasets', self.root / 'docs/datasets')
         (self.root / 'docs/inputs').mkdir()
         shutil.copy(REPOSITORY / 'docs/inputs/numbers.toml', self.root / 'docs/inputs/numbers.toml')
+        shutil.copy(REPOSITORY / 'docs/inputs/devperf-budgets.toml', self.root / 'docs/inputs/devperf-budgets.toml')
         (self.root / '.linter').mkdir()
         shutil.copy(REPOSITORY / '.linter/owners.toml', self.root / '.linter/owners.toml')
         shutil.copy(REPOSITORY / '.linter/environments.toml', self.root / '.linter/environments.toml')
