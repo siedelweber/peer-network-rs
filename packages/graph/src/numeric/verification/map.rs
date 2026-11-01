@@ -435,6 +435,7 @@ pub(super) fn run(
         hull: prepared.hull,
         inner_hull: prepared.inner_hull,
         singleton: prepared.support.iter().map(|v| v.len() == 1).collect(),
+        support: prepared.support.iter().map(|v| v.iter().copied().collect()).collect(),
         fence: prepared.fence,
         contraction: prepared.contraction,
         primitives: engine.records,
@@ -445,6 +446,7 @@ pub(super) fn run(
             || r.hull != result.hull
             || r.inner_hull != result.inner_hull
             || r.singleton != result.singleton
+            || r.support != result.support
             || r.fence != result.fence
             || r.contraction != result.contraction
             || r.primitives.len() != result.primitives.len()

@@ -92,6 +92,7 @@ pub struct BoxMapRecord {
     pub hull: Vec<crate::primitive::Range>,
     pub inner_hull: Vec<crate::primitive::Range>,
     pub singleton: Vec<bool>,
+    pub support: Vec<Vec<usize>>,
     pub fence: crate::primitive::Range,
     pub contraction: String,
     pub primitives: Vec<PrimitiveRecord>,

@@ -20063,7 +20063,7 @@
       "item": "conserved::BoxMapRecord",
       "package": "pn-records",
       "path": "packages/records/src/conserved.rs",
-      "syntax": "# [doc = \" Independently reconstructed box map with its scalar evidence and charged composition.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BoxMapRecord { pub input : VerificationInput , pub coordinates : Vec < crate :: primitive :: Range > , pub image : Vec < crate :: primitive :: Range > , pub hull : Vec < crate :: primitive :: Range > , pub inner_hull : Vec < crate :: primitive :: Range > , pub singleton : Vec < bool > , pub fence : crate :: primitive :: Range , pub contraction : String , pub primitives : Vec < PrimitiveRecord > , pub work : u64 , }"
+      "syntax": "# [doc = \" Independently reconstructed box map with its scalar evidence and charged composition.\"] # [doc = \" (´[ROOT-alg:design:residual]´)\"] # [derive (Clone , Debug , PartialEq , Eq)] pub struct BoxMapRecord { pub input : VerificationInput , pub coordinates : Vec < crate :: primitive :: Range > , pub image : Vec < crate :: primitive :: Range > , pub hull : Vec < crate :: primitive :: Range > , pub inner_hull : Vec < crate :: primitive :: Range > , pub singleton : Vec < bool > , pub support : Vec < Vec < usize > > , pub fence : crate :: primitive :: Range , pub contraction : String , pub primitives : Vec < PrimitiveRecord > , pub work : u64 , }"
     },
     {
       "item": "conserved::TwoMapRecord",

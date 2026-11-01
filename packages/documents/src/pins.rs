@@ -441,9 +441,115 @@ pub enum NumberId {
     NumbersFixtureCountSixty,
     /// Registry id: num:numbers:fixture-count-thirty.
     NumbersFixtureCountThirty,
+    /// Registry id: num:numbers:corpus-published-1.
+    NumbersCorpusPublished1,
+    /// Registry id: num:numbers:corpus-published-2.
+    NumbersCorpusPublished2,
+    /// Registry id: num:numbers:corpus-published-3.
+    NumbersCorpusPublished3,
+    /// Registry id: num:numbers:corpus-published-4.
+    NumbersCorpusPublished4,
+    /// Registry id: num:numbers:corpus-published-5.
+    NumbersCorpusPublished5,
+    /// Registry id: num:numbers:corpus-published-6.
+    NumbersCorpusPublished6,
+    /// Registry id: num:numbers:corpus-published-7.
+    NumbersCorpusPublished7,
+    /// Registry id: num:numbers:corpus-published-8.
+    NumbersCorpusPublished8,
+    /// Registry id: num:numbers:corpus-published-9.
+    NumbersCorpusPublished9,
+    /// Registry id: num:numbers:corpus-published-10.
+    NumbersCorpusPublished10,
+    /// Registry id: num:numbers:corpus-published-11.
+    NumbersCorpusPublished11,
+    /// Registry id: num:numbers:corpus-published-12.
+    NumbersCorpusPublished12,
+    /// Registry id: num:numbers:corpus-published-13.
+    NumbersCorpusPublished13,
+    /// Registry id: num:numbers:corpus-published-14.
+    NumbersCorpusPublished14,
+    /// Registry id: num:numbers:corpus-published-15.
+    NumbersCorpusPublished15,
+    /// Registry id: num:numbers:corpus-published-16.
+    NumbersCorpusPublished16,
+    /// Registry id: num:numbers:corpus-published-17.
+    NumbersCorpusPublished17,
+    /// Registry id: num:numbers:corpus-published-18.
+    NumbersCorpusPublished18,
+    /// Registry id: num:numbers:corpus-published-19.
+    NumbersCorpusPublished19,
+    /// Registry id: num:numbers:corpus-published-20.
+    NumbersCorpusPublished20,
+    /// Registry id: num:numbers:corpus-published-21.
+    NumbersCorpusPublished21,
+    /// Registry id: num:numbers:corpus-published-22.
+    NumbersCorpusPublished22,
+    /// Registry id: num:numbers:corpus-published-23.
+    NumbersCorpusPublished23,
+    /// Registry id: num:numbers:corpus-published-24.
+    NumbersCorpusPublished24,
+    /// Registry id: num:numbers:corpus-rate-carol-lo.
+    NumbersCorpusRateCarolLo,
+    /// Registry id: num:numbers:corpus-rate-carol-hi.
+    NumbersCorpusRateCarolHi,
+    /// Registry id: num:numbers:corpus-hull-carol-lo.
+    NumbersCorpusHullCarolLo,
+    /// Registry id: num:numbers:corpus-hull-carol-hi.
+    NumbersCorpusHullCarolHi,
+    /// Registry id: num:numbers:corpus-count-carol.
+    NumbersCorpusCountCarol,
+    /// Registry id: num:numbers:corpus-rate-alice-lo.
+    NumbersCorpusRateAliceLo,
+    /// Registry id: num:numbers:corpus-rate-alice-hi.
+    NumbersCorpusRateAliceHi,
+    /// Registry id: num:numbers:corpus-hull-alice-lo.
+    NumbersCorpusHullAliceLo,
+    /// Registry id: num:numbers:corpus-hull-alice-hi.
+    NumbersCorpusHullAliceHi,
+    /// Registry id: num:numbers:corpus-count-alice.
+    NumbersCorpusCountAlice,
+    /// Registry id: num:numbers:corpus-rate-eve-lo.
+    NumbersCorpusRateEveLo,
+    /// Registry id: num:numbers:corpus-rate-eve-hi.
+    NumbersCorpusRateEveHi,
+    /// Registry id: num:numbers:corpus-hull-eve-lo.
+    NumbersCorpusHullEveLo,
+    /// Registry id: num:numbers:corpus-hull-eve-hi.
+    NumbersCorpusHullEveHi,
+    /// Registry id: num:numbers:corpus-count-eve.
+    NumbersCorpusCountEve,
+    /// Registry id: num:numbers:corpus-rate-bob-lo.
+    NumbersCorpusRateBobLo,
+    /// Registry id: num:numbers:corpus-rate-bob-hi.
+    NumbersCorpusRateBobHi,
+    /// Registry id: num:numbers:corpus-hull-bob-lo.
+    NumbersCorpusHullBobLo,
+    /// Registry id: num:numbers:corpus-hull-bob-hi.
+    NumbersCorpusHullBobHi,
+    /// Registry id: num:numbers:corpus-count-bob.
+    NumbersCorpusCountBob,
+    /// Registry id: num:numbers:corpus-rate-dave-lo.
+    NumbersCorpusRateDaveLo,
+    /// Registry id: num:numbers:corpus-rate-dave-hi.
+    NumbersCorpusRateDaveHi,
+    /// Registry id: num:numbers:corpus-hull-dave-lo.
+    NumbersCorpusHullDaveLo,
+    /// Registry id: num:numbers:corpus-hull-dave-hi.
+    NumbersCorpusHullDaveHi,
+    /// Registry id: num:numbers:corpus-count-dave.
+    NumbersCorpusCountDave,
+    /// Registry id: num:numbers:corpus-width-lo.
+    NumbersCorpusWidthLo,
+    /// Registry id: num:numbers:corpus-width-hi.
+    NumbersCorpusWidthHi,
+    /// Registry id: num:numbers:corpus-residual-radius-upper.
+    NumbersCorpusResidualRadiusUpper,
+    /// Registry id: num:numbers:corpus-local-radius-upper.
+    NumbersCorpusLocalRadiusUpper,
 }
 
-const OFFSETS: [(usize, usize); 219] = [
+const OFFSETS: [(usize, usize); 272] = [
     (125, 132),
     (241, 248),
     (374, 378),
@@ -663,6 +769,59 @@ const OFFSETS: [(usize, usize); 219] = [
     (30751, 30753),
     (30872, 30874),
     (30994, 30996),
+    (31114, 31265),
+    (31401, 31552),
+    (31688, 31838),
+    (31974, 32122),
+    (32258, 32375),
+    (32511, 32654),
+    (32790, 32941),
+    (33077, 33230),
+    (33366, 33517),
+    (33654, 33805),
+    (33942, 34093),
+    (34230, 34381),
+    (34518, 34669),
+    (34806, 34959),
+    (35096, 35247),
+    (35384, 35533),
+    (35670, 35823),
+    (35960, 36109),
+    (36246, 36399),
+    (36536, 36687),
+    (36824, 36975),
+    (37112, 37261),
+    (37398, 37549),
+    (37686, 37837),
+    (37975, 38128),
+    (38266, 38419),
+    (38557, 38708),
+    (38846, 38999),
+    (39135, 39137),
+    (39275, 39426),
+    (39564, 39715),
+    (39853, 40004),
+    (40142, 40293),
+    (40429, 40431),
+    (40567, 40570),
+    (40706, 40709),
+    (40845, 40846),
+    (40982, 41135),
+    (41269, 41270),
+    (41406, 41557),
+    (41693, 41844),
+    (41980, 42131),
+    (42267, 42418),
+    (42552, 42554),
+    (42691, 42692),
+    (42829, 42830),
+    (42967, 42968),
+    (43105, 43258),
+    (43393, 43394),
+    (43527, 43679),
+    (43812, 43964),
+    (44110, 44201),
+    (44344, 44433),
 ];
 
 impl NumberId {

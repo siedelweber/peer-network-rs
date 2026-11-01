@@ -170,6 +170,9 @@ fn verification_box() {
     let result = verification::two_map(&p, &input, &candidate).unwrap();
     let checked = verification::replay_two_map(&p, &input, &candidate, &result).unwrap();
     assert_eq!(result.enclosure, checked.enclosure);
+    let mut changed_support = result.first.clone();
+    changed_support.support[0].clear();
+    assert!(verification::replay_box(&p, &input, &candidate, &changed_support).is_err());
     assert_eq!(
         (
             result.first.work,
@@ -258,7 +261,7 @@ fn touching_declaration(
     }
 }
 
-/// Claim: The unsorted reference declaration independently replays its image-first residual and a separate interval-forward local inclusion. A changed depth mass, asserted coordinate, preconditioner or box refuses; a wall-touching inflation retains generalized scalar derivatives and no local inclusion verdict.
+/// Claim: The unsorted reference declaration independently replays its image-first residual and a separate interval-forward local inclusion. An unnormalized depth mass, changed asserted coordinate, preconditioner or box refuses; a wall-touching inflation retains generalized scalar derivatives and no local inclusion verdict.
 /// ´claim:numerics:local-inclusion-retains-generalized-derivatives´
 /// ´test:integration:verification-local´
 #[test]

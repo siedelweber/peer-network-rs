@@ -1542,7 +1542,7 @@ fn conserved_state() -> pn_epoch::compiler::CompiledState {
     depths(&state, &["third", "third", "third", "zero"])
 }
 
-/// Claim: The four-Actor frozen fixture exports its exact source counts, rates and base into a separate full-emission box verification route. Two independently replayed maps retain the evaluated fence and image-first residual beside the one-map bound, without replacing the default solve.
+/// Claim: The separate full-emission box verification of the four-Actor frozen fixture independently replays two maps and their image-first residual. The finite witness pins point and box Work and both residual radii, including success and refusal at adjacent box Work allowances.
 /// ´claim:compiler:two-map-verification-retains-frozen-fixture´
 /// ´test:integration:two-map-box´
 #[test]

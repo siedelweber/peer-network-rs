@@ -1774,8 +1774,8 @@
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:two-map-verification-retains-frozen-fixture",
       "before": "",
-      "after": "Claim: The four-Actor frozen fixture exports its exact source counts, rates and base into a separate full-emission box verification route. Two independently replayed maps retain the evaluated fence and image-first residual beside the one-map bound, without replacing the default solve.",
-      "review": "The unsorted four-Actor frozen fixture exports rational source counts, rates and exact bases without changing its package. Point and box evaluations replay, with literal box Work N/N-minus-one controls and both residual radii pinned."
+      "after": "Claim: The separate full-emission box verification of the four-Actor frozen fixture independently replays two maps and their image-first residual. The finite witness pins point and box Work and both residual radii, including success and refusal at adjacent box Work allowances.",
+      "review": "The four-Actor witness checks replay, point and box Work, both residual radii, and adjacent box allowance success/refusal. It does not assert exported input fields or execute the default solve."
     },
     {
       "operation": "pn-epoch::support::support_refusals",
@@ -2294,8 +2294,8 @@
       "path": "packages/graph/tests/numeric.rs",
       "claim": "GRAPH::claim:numerics:local-inclusion-retains-generalized-derivatives",
       "before": "",
-      "after": "Claim: The unsorted reference declaration independently replays its image-first residual and a separate interval-forward local inclusion. A changed depth mass, asserted coordinate, preconditioner or box refuses; a wall-touching inflation retains generalized scalar derivatives and no local inclusion verdict.",
-      "review": "The exact unsorted reference declaration has a separate interval-forward local inclusion with an identity rational preconditioner. Reconstructed box, preconditioner and asserted image mutations refuse, as does an invalid depth mass. An exactly touching inflation retains generalized slopes and remains unresolved. Literal local Work controls measure only this declared fixture; published agreement remains pending."
+      "after": "Claim: The unsorted reference declaration independently replays its image-first residual and a separate interval-forward local inclusion. An unnormalized depth mass, changed asserted coordinate, preconditioner or box refuses; a wall-touching inflation retains generalized scalar derivatives and no local inclusion verdict.",
+      "review": "The mutated mass is unnormalized and refuses; normalized alternate declarations are not covered. Changed asserted image, preconditioner and box refuse independently, and an exactly touching inflation retains generalized slopes without inclusion."
     },
     {
       "operation": "pn-graph::properties::generated_partitions",

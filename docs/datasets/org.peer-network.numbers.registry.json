@@ -2388,6 +2388,558 @@
       "num_exact": true,
       "unit": "dimensionless",
       "value": "30"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-1",
+      "magnitude": -12,
+      "num": "0.501 854 851 477",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "250927425738473888861741368970320969988646825074039496451178482151187942819/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-2",
+      "magnitude": -12,
+      "num": "0.501 854 851 477",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "250927425738473888861741368970320969988646825074039496451178482151187942961/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-3",
+      "magnitude": -12,
+      "num": "0.149 814 514 852",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "74907257426152611113825863102967903001135317492596050354882151784881205653/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-4",
+      "magnitude": -12,
+      "num": "0.149 814 514 852",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "2996290297046104444553034524118716120045412699703842014195286071395248231/20000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-5",
+      "magnitude": -12,
+      "num": "0.000 000 000 000",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "14529966121662466844609137066561219529377/250000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-6",
+      "magnitude": -12,
+      "num": "0.000 000 000 000",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "3066254181021229128478478673909297559195/154008415986242880224369876774687554472119026646131473486596719276728986968474460503806170769353943212"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-7",
+      "magnitude": -12,
+      "num": "1.123 297 328 320",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "280824332079934064151629193278089535287868642768639427334871742037467162257/250000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-8",
+      "magnitude": -12,
+      "num": "1.123 297 328 320",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "1123297328319736256606516773112358141151474571074557709339486968149868649063/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-9",
+      "magnitude": -12,
+      "num": "1.083 024 191 421",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-10",
+      "magnitude": -12,
+      "num": "1.083 024 191 421",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-11",
+      "magnitude": -12,
+      "num": "1.118 885 507 440",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "559442753720072326272561844025180458771772376060791094447332114059563492423/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-12",
+      "magnitude": -12,
+      "num": "1.118 885 507 440",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "223777101488028930509024737610072183508708950424316437778932845623825396973/200000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-13",
+      "magnitude": -12,
+      "num": "1.108 594 928 730",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "221718985746048721368645652815925026799241993646055823424105839322877941327/200000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-14",
+      "magnitude": -12,
+      "num": "1.108 594 928 730",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "1108594928730243606843228264079625133996209968230279117120529196614389706673/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-15",
+      "magnitude": -12,
+      "num": "1.118 446 672 097",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "279611668024175928092197991827989438471414042619796953345452392906209879683/250000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-16",
+      "magnitude": -12,
+      "num": "1.118 446 672 097",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "27961166802417592809219799182798943847141404261979695334545239290620987969/25000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-17",
+      "magnitude": -12,
+      "num": "1.118 885 507 440",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "1118885507440144652545123688050360917543544752121582188894664226286468435717/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-18",
+      "magnitude": -12,
+      "num": "1.118 885 507 440",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "22377710148802893050902473761007218350870895042431643777893284525729383973/20000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-19",
+      "magnitude": -12,
+      "num": "1.108 594 928 730",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "1108594928730243606843228264079625133996209968230279117120529193608892122323/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-20",
+      "magnitude": -12,
+      "num": "1.108 594 928 730",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "554297464365121803421614132039812566998104984115139558560264596804446477867/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-21",
+      "magnitude": -12,
+      "num": "1.118 446 672 097",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "223689334419340742473758393462391550777131234095837562676361917831851797043/200000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-22",
+      "magnitude": -12,
+      "num": "1.118 446 672 097",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "27961166802417592809219799182798943847141404261979695334545239728981503691/25000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-23",
+      "magnitude": -12,
+      "num": "1.123 297 328 320",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "224659465663947251321303354622471628230294914214911541867897392641136444739/200000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-published-24",
+      "magnitude": -12,
+      "num": "1.123 297 328 320",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "561648664159868128303258386556179070575737285537278854669743481602841580933/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-rate-carol-lo",
+      "magnitude": -12,
+      "num": "1.149 814 514 852",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "1149814514852305222227651726205935806002270634985192100709764303569762411407/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-rate-carol-hi",
+      "magnitude": -12,
+      "num": "1.149 814 514 852",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-hull-carol-lo",
+      "magnitude": -12,
+      "num": "1.083 024 191 421",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-hull-carol-hi",
+      "magnitude": -12,
+      "num": "1.149 814 514 852",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact": "10",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-count-carol",
+      "magnitude": -12,
+      "num": "10.000 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "10"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-rate-alice-lo",
+      "magnitude": -12,
+      "num": "1.083 024 191 421",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-rate-alice-hi",
+      "magnitude": -12,
+      "num": "1.083 024 191 421",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-hull-alice-lo",
+      "magnitude": -12,
+      "num": "1.083 024 191 421",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-hull-alice-hi",
+      "magnitude": -12,
+      "num": "1.083 024 191 421",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact": "12",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-count-alice",
+      "magnitude": -12,
+      "num": "12.000 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "12"
+    },
+    {
+      "display": "rounded",
+      "exact": "9/8",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-rate-eve-lo",
+      "magnitude": -12,
+      "num": "1.125 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "9/8"
+    },
+    {
+      "display": "rounded",
+      "exact": "9/8",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-rate-eve-hi",
+      "magnitude": -12,
+      "num": "1.125 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "9/8"
+    },
+    {
+      "display": "rounded",
+      "exact": "1",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-hull-eve-lo",
+      "magnitude": -12,
+      "num": "1.000 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "1"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-hull-eve-hi",
+      "magnitude": -12,
+      "num": "1.149 814 514 852",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact": "8",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-count-eve",
+      "magnitude": -12,
+      "num": "8.000 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "8"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-rate-bob-lo",
+      "magnitude": -12,
+      "num": "1.136 195 013 502",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "568097506751047828285296239184516275455577561356905500322620137986255641549/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-rate-bob-hi",
+      "magnitude": -12,
+      "num": "1.136 195 013 502",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "284048753375523914142648119592258137727788780678452750161310068993127820781/250000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-hull-bob-lo",
+      "magnitude": -12,
+      "num": "1.083 024 191 421",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-hull-bob-hi",
+      "magnitude": -12,
+      "num": "1.136 195 013 502",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "284048753375523914142648119592258137727788780678452750161310068993127820781/250000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact": "11",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-count-bob",
+      "magnitude": -12,
+      "num": "11.000 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "11"
+    },
+    {
+      "display": "rounded",
+      "exact": "1",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-rate-dave-lo",
+      "magnitude": -12,
+      "num": "1.000 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "1"
+    },
+    {
+      "display": "rounded",
+      "exact": "1",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-rate-dave-hi",
+      "magnitude": -12,
+      "num": "1.000 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "1"
+    },
+    {
+      "display": "rounded",
+      "exact": "1",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-hull-dave-lo",
+      "magnitude": -12,
+      "num": "1.000 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "1"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-hull-dave-hi",
+      "magnitude": -12,
+      "num": "1.149 814 514 852",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact": "2",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "id": "num:numbers:corpus-count-dave",
+      "magnitude": -12,
+      "num": "2.000 000 000 000",
+      "num_exact": true,
+      "unit": "dimensionless",
+      "value": "2"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-width-lo",
+      "magnitude": -12,
+      "num": "0.149 814 514 852",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "149814514852305222227651726205935806002270634985192100709764303569762411407/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-width-hi",
+      "magnitude": -12,
+      "num": "0.149 814 514 852",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-residual-radius-upper",
+      "magnitude": -70,
+      "num": "0.000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 019 909 653 4",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "19909653387353/1000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "display": "rounded",
+      "exact_digits": 24,
+      "id": "num:numbers:corpus-local-radius-upper",
+      "magnitude": -70,
+      "num": "0.000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 017 534 420 6",
+      "num_exact": false,
+      "unit": "dimensionless",
+      "value": "8767210314447/500000000000000000000000000000000000000000000000000000000000000000000000000"
     }
   ]
 }
