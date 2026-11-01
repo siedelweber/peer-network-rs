@@ -55,8 +55,8 @@ times > .lane/gate-cpu-start.raw
 source_id=$(time git rev-parse HEAD)
 export PN_GATE_SOURCE="$source_id"
 export CARGO_NET_OFFLINE=true
-unset PN_WALLET_CONFORMANCE_ISOLATED PN_HOST_RUNTIME_ISOLATED
-rm -f .lane/performance-findings.jsonl .lane/performance-assessments.jsonl .lane/wallet-conformance-findings.jsonl .lane/host-observation-runtime-findings.jsonl .lane/over-budget-ledger.json .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json
+unset PN_WALLET_CONFORMANCE_ISOLATED PN_HOST_RUNTIME_ISOLATED PN_CI_ISOLATED PN_GATE_BUILD_TARGET
+rm -f .lane/ci-test_*-findings.jsonl .lane/performance-findings.jsonl .lane/performance-assessments.jsonl .lane/wallet-conformance-findings.jsonl .lane/host-observation-runtime-findings.jsonl .lane/over-budget-ledger.json .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json
 run_step() {
     local name=$1
     shift

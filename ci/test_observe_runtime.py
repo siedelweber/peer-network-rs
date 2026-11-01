@@ -141,7 +141,7 @@ class Processes(unittest.TestCase):
         """
         outputs={};outcomes={}
         for mode in ('disabled','default','trace'):
-            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/numeric_observation'),mode],mode,
+            result=compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/numeric_observation'),mode],mode,
                            os.environ|{'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'})
             self.assertEqual(result.returncode,0,result.stderr.decode())
             outputs[mode]=result.stdout
@@ -167,7 +167,7 @@ class Processes(unittest.TestCase):
         """
         outputs={};outcomes={}
         for mode in ('disabled','default','trace'):
-            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/burn_observation'),mode],mode,
+            result=compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/burn_observation'),mode],mode,
                            os.environ|{'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'})
             self.assertEqual(result.returncode,0,result.stderr.decode())
             outputs[mode]=result.stdout
@@ -195,7 +195,7 @@ class Processes(unittest.TestCase):
         samples = {}
         for mode in ('disabled', 'default', 'trace'):
             env = os.environ | {'PN_OBSERVE_LEVEL': 'trace' if mode == 'trace' else 'default'}
-            result = compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/epoch_observation'), mode], mode, env)
+            result = compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/epoch_observation'), mode], mode, env)
             self.assertEqual(result.returncode, 0, result.stderr.decode())
             samples[mode] = result.stdout
             self.assertIn(b'MissingProfile', result.stdout)
@@ -228,7 +228,7 @@ class Processes(unittest.TestCase):
         samples = {}; accounting = {}
         for mode in ('disabled', 'default', 'trace'):
             env = os.environ | {'PN_OBSERVE_LEVEL': 'trace' if mode == 'trace' else 'default'}
-            result = compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/partition_observation'), mode], mode, env)
+            result = compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/partition_observation'), mode], mode, env)
             self.assertEqual(result.returncode, 0, result.stderr.decode())
             samples[mode] = result.stdout
             self.assertEqual(json.loads(result.stdout), {'partition_cases': [
@@ -258,7 +258,7 @@ class Processes(unittest.TestCase):
         samples={};accounting={}
         for mode in ('disabled','default','trace'):
             env=os.environ | {'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'}
-            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/registration_observation'),mode],mode,env)
+            result=compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/registration_observation'),mode],mode,env)
             self.assertEqual(result.returncode,0,result.stderr.decode())
             samples[mode]=result.stdout
             values=json.loads(result.stdout)
@@ -288,7 +288,7 @@ class Processes(unittest.TestCase):
         samples={};accounting={}
         for mode in ('disabled','default','trace'):
             env=os.environ | {'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'}
-            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/formation_observation'),mode],mode,env)
+            result=compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/formation_observation'),mode],mode,env)
             self.assertEqual(result.returncode,0,result.stderr.decode())
             samples[mode]=result.stdout
             values=json.loads(result.stdout)
@@ -354,7 +354,7 @@ class Processes(unittest.TestCase):
         samples={};accounting={}
         for mode in ('disabled','default','trace'):
             env=os.environ | {'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'}
-            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/title_observation'),mode],mode,env)
+            result=compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/title_observation'),mode],mode,env)
             self.assertEqual(result.returncode,0,result.stderr.decode())
             samples[mode]=result.stdout
             values=dict(json.loads(result.stdout))
@@ -467,7 +467,7 @@ class Processes(unittest.TestCase):
         recorded_seed=seed(source_id())
         distributions={};outputs={}
         for mode in ('default','trace'):
-            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/generated_refusals')],mode,
+            result=compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/generated_refusals')],mode,
                            os.environ|{'PN_OBSERVE_LEVEL':mode,'PN_RECORDS_SEED':recorded_seed})
             self.assertEqual(result.returncode,0,result.stderr.decode())
             outputs[mode]=result.stdout
@@ -488,7 +488,7 @@ class Processes(unittest.TestCase):
         """
         distributions={}
         for mode in ('default','trace'):
-            result=compare([str(Path(os.environ['CARGO_TARGET_DIR'])/'gate/examples/interchange_observation')],mode,os.environ|{'PN_OBSERVE_LEVEL':mode})
+            result=compare([str(Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate/examples/interchange_observation')],mode,os.environ|{'PN_OBSERVE_LEVEL':mode})
             self.assertEqual(result.returncode,0,result.stderr.decode())
             rows=[json.loads(line) for line in result.stderr.splitlines()]
             summary=expanded(next(row['metrics'] for row in rows if row.get('kind')=='metric_summary'))
@@ -504,7 +504,7 @@ class Processes(unittest.TestCase):
         ´claim:discipline:records-replay-retains-observed-noncompliance´
         ´test:integration:test-records-replay´
         """
-        target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'
+        target=Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate'
         samples={};accounting={}
         for mode in ('disabled','default','trace'):
             env=os.environ | {'PN_OBSERVE_LEVEL':'trace' if mode=='trace' else 'default'}
@@ -543,7 +543,7 @@ class Processes(unittest.TestCase):
         ´claim:discipline:records-entry-is-observed-without-changing-results´
         ´test:integration:test-records-entry´
         """
-        target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'
+        target=Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate'
         artifact=Path('.lane/records-observation');artifact.mkdir(exist_ok=True)
         samples={};accounting={}
         for mode in ('disabled','default','trace'):
@@ -624,7 +624,7 @@ class Processes(unittest.TestCase):
         ´claim:discipline:four-observation-modes-preserve-command-results´
         ´test:integration:test-four-mode-results´
         """
-        target=Path(os.environ['CARGO_TARGET_DIR'])/'gate'
+        target=Path(os.environ.get('PN_GATE_BUILD_TARGET', os.environ['CARGO_TARGET_DIR']))/'gate'
         env={key:value for key,value in os.environ.items() if key!='RUST_LOG'}
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)

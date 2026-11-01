@@ -540,14 +540,15 @@ def concurrent_completion(case):
     """Two synchronized producers may finish in either order; joins require both."""
     from types import SimpleNamespace
     from unittest.mock import patch
-    from build_graph import bound_history, schedule
+    from build_graph import bound_history, dependencies, schedule
     commands = [('left', 'true'), ('right', 'true'), ('join', 'true')]
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         (root/'.lane').mkdir()
         (root/'.lane/gate-steps.tsv').write_text('')
         (root/'meson.build').write_text(declaration(commands)+
-            "gate_dependencies = {\n'left': [], 'right': [], 'join': ['left', 'right'],\n}\n")
+            "gate_dependencies = {\n'left': [], 'right': [], 'join': ['left', 'right'],\n}\n"+
+            "gate_resource_classes = {\n}\n")
         (root/'fixture.py').write_text("""import pathlib,sys,time
 name=sys.argv[1];root=pathlib.Path('.lane');start=time.time()
 (root/(name+'.started')).touch()
@@ -578,4 +579,11 @@ raise SystemExit(status)
             bound_history(root, 'join', history+history[:1])
         with case.assertRaisesRegex(ValueError, 'out-of-order'):
             bound_history(root, 'join', [history[-1], *history[:2]])
+        declaration_path = root/'meson.build'
+        original = declaration_path.read_text()
+        declaration_path.write_text(original.replace('gate_resource_classes = {', "gate_resource_classes = {\n'shared-cargo': ['left', 'right'],"))
+        with case.assertRaisesRegex(ValueError, 'unordered exclusive resource shared-cargo'):
+            dependencies(root)
+        declaration_path.write_text(declaration_path.read_text().replace("'right': []", "'right': ['left']"))
+        case.assertEqual(dependencies(root)['right'], ['left'])
         print('BUILD-CONCURRENCY jobs=2 independent=overlapping failure=retained join=ordered missing=refused duplicate=refused')

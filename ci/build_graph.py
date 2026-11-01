@@ -84,6 +84,23 @@ def dependencies(root):
         if (not isinstance(parents, list) or len(parents) != len(set(parents)) or
                 any(parent not in names[:names.index(name)] for parent in parents)):
             raise ValueError('unknown, repeated or non-topological dependency: '+name)
+    declared = re.search(r'^gate_resource_classes = (\{.*?^\})', source, re.M | re.S)
+    if not declared:
+        raise ValueError('missing exclusive resource classes')
+    classes = ast.literal_eval(declared[1])
+    if not isinstance(classes, dict):
+        raise ValueError('invalid exclusive resource declaration')
+    ancestors = {}
+    for name in names:
+        ancestors[name] = set(edges[name]).union(*(ancestors[parent] for parent in edges[name]))
+    for resource, members in classes.items():
+        if (not isinstance(resource, str) or not isinstance(members, list) or
+                len(members) != len(set(members)) or any(name not in names for name in members)):
+            raise ValueError('invalid exclusive resource class')
+        for index, left in enumerate(members):
+            for right in members[index+1:]:
+                if left not in ancestors[right] and right not in ancestors[left]:
+                    raise ValueError(f'unordered exclusive resource {resource}: {left}, {right}')
     return edges
 
 

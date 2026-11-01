@@ -65,6 +65,7 @@ class Harness(unittest.TestCase):
 root = pathlib.Path.cwd()
 assert (root/'payload').read_text() == 'committed'
 assert pathlib.Path(os.environ['PN_FLAKE_LEDGER']).parent == pathlib.Path(os.environ['CARGO_TARGET_DIR'])
+pathlib.Path(os.environ['CARGO_TARGET_DIR']).joinpath('retained').write_text('owned cache')
 with socket.socket(socket.AF_UNIX) as connection:
     connection.settimeout(30)
     connection.connect(os.environ['WALLET_WITNESS_SOCKET'])
@@ -100,6 +101,7 @@ assert (root/'payload').read_text() == 'committed'
             shared.write_bytes(b'sibling findings\n')
             names = (f'harness-ci-{module}.jsonl', compile_log, name+'-findings.jsonl')
             snapshots = []
+            payload_stamp = None
             try:
                 os.chdir(root)
                 for moving in (False, True):
@@ -147,7 +149,19 @@ assert (root/'payload').read_text() == 'committed'
                     self.assertEqual(shared.read_bytes(), b'sibling findings\n')
                     self.assertEqual((root/'payload').read_text(), 'changed during wallet execution' if moving else 'committed')
                     snapshots.append({name:(lane/name).read_bytes() for name in names})
+                    payload, = (root/'target/i').glob('*/s/payload')
+                    if payload_stamp is not None:
+                        self.assertEqual(payload.stat().st_mtime_ns, payload_stamp)
+                    payload_stamp = payload.stat().st_mtime_ns
+                    retained, = (root/'target/i').glob('*/c/*/retained')
+                    self.assertEqual(retained.read_text(), 'owned cache')
                 self.assertEqual(snapshots[0], snapshots[1])
+                from isolation import workspace
+                original_target = retained.parent
+                with patch.dict(os.environ, RUSTFLAGS='--cfg isolation_key_witness'):
+                    with workspace(root, 'host-observation-runtime' if host else 'wallet-conformance', source) as (_, target):
+                        self.assertNotEqual(target, original_target)
+                        self.assertFalse((target/'retained').exists())
             finally:
                 os.chdir(original)
         print(f'COMMIT-ISOLATION-WITNESS suite={module} clean=passed moving=passed results=identical handback=atomic sibling-findings=unchanged')

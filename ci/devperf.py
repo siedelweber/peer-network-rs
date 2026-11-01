@@ -176,6 +176,7 @@ def excess_ledger(paths, source, declared):
 def print_ledger(source, declared, root):
     paths = [root/name for name in ('performance-findings.jsonl', 'wallet-conformance-findings.jsonl',
                                    'host-observation-runtime-findings.jsonl')]
+    paths += sorted(root.glob('ci-test_*-findings.jsonl'))
     ledger = excess_ledger(paths, source, declared)
     output = root/'over-budget-ledger.json'
     output.write_text(json.dumps(ledger, sort_keys=True, indent=2)+'\n')

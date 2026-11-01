@@ -52,31 +52,22 @@ def isolated_host(module):
 
 def isolated_runtime(module, name, marker, logs):
     """Run a required suite from commit objects and publish its owned outputs."""
-    from build_graph import cancellable
+    from isolation import workspace
     root = Path.cwd()
-    prefix = 'WALLET-ISOLATION' if module == 'test_wallet_boundary' else 'HOST-ISOLATION'
-    tree = root/'.lane'/('host-tree' if module == 'test_host_runtime' else name+'-tree')
-    if tree.exists(): shutil.rmtree(tree)
     source = os.environ.get('PN_GATE_SOURCE') or source_id()
-    for argv in (['git', 'clone', '--quiet', '--shared', '--no-hardlinks', '--no-checkout', str(root), str(tree)],
-                 ['git', '-C', str(tree), 'checkout', '--quiet', '--detach', source]):
-        started = time.monotonic()
-        result = cancellable(argv)
-        print(f'{prefix} tool=git wall={time.monotonic()-started:.6f}s status={result.returncode}', flush=True)
-        if result.returncode: return result.returncode
-    for argv, expected in ((['rev-parse', 'HEAD'], source),
-                           (['status', '--porcelain', '--untracked-files=no'], '')):
-        started = time.monotonic()
-        checked = cancellable(['git', '-C', str(tree), *argv], stdout=subprocess.PIPE, text=True)
-        print(f'{prefix} tool=git verify={argv[0]} wall={time.monotonic()-started:.6f}s status={checked.returncode}', flush=True)
-        if checked.returncode or checked.stdout.strip() != expected:
-            raise StructuralError('isolated wallet checkout is not clean at the source commit')
-    (tree/'.lane').mkdir()
-    target = Path(os.environ['CARGO_TARGET_DIR']).resolve()/name
+    with workspace(root, name, source) as (tree, target):
+        return isolated_suite(module, name, marker, logs, root, source, tree, target)
+
+
+def isolated_suite(module, name, marker, logs, root, source, tree, target):
+    from build_graph import cancellable
+    prefix = 'ISOLATED-SUITE'
     env = dict(os.environ, CARGO_TARGET_DIR=str(target),
                PN_FLAKE_LEDGER=str(target/'gate-flakes.jsonl'),
                PN_OBSERVE_ARTIFACT_DIR=str(tree/'.lane/observations'))
     env[marker] = '1'
+    env['PN_CI_ISOLATED'] = module
+    env['PN_GATE_BUILD_TARGET'] = str(Path(os.environ['CARGO_TARGET_DIR']).resolve())
     if module == 'test_host_runtime':
         env['PN_HOST_TEST_ROOT'] = str(tree/'.lane/pg')
     try:
@@ -99,10 +90,12 @@ def isolated_runtime(module, name, marker, logs):
 
 
 def main(module):
-    if module == 'test_wallet_boundary' and os.environ.get('PN_GATE_PARALLEL') == '1' and os.environ.get('PN_WALLET_CONFORMANCE_ISOLATED') != '1':
-        return isolated_wallet(module)
-    if module == 'test_host_runtime' and os.environ.get('PN_GATE_PARALLEL') == '1' and os.environ.get('PN_HOST_RUNTIME_ISOLATED') != '1':
-        return isolated_host(module)
+    if (os.environ.get('PN_GATE_PARALLEL') == '1' or os.environ.get('PN_CALIBRATION') == '1') and os.environ.get('PN_CI_ISOLATED') != module:
+        if module == 'test_wallet_boundary':
+            return isolated_wallet(module)
+        if module == 'test_host_runtime':
+            return isolated_host(module)
+        return isolated_runtime(module, 'ci-'+module, 'PN_CI_CHILD', ())
     registry = load()
     source = source_id()
     suite_name = 'ci::' + module

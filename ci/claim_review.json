@@ -151,7 +151,7 @@
       "claim": "ROOT::claim:harness:host-inputs-are-commit-scoped",
       "before": "",
       "after": "Claim: Host observation uses a clean checkout of its source commit, its own target and service root, and atomic owned artifacts even while a tracked parent file changes; clean and moving parents produce identical evidence.",
-      "review": "Read the barrier-controlled clean and dirty parent executions: both use committed payloads, distinct target and service paths, and identical atomically published artifacts while preserving sibling findings."
+      "review": "Read the barrier-controlled clean and dirty parent executions: both use committed payloads, distinct target and service paths, and identical atomically published artifacts while preserving sibling findings. The common helper also preserves unchanged source timestamps and cache bytes across calls and separates targets when compiler configuration changes."
     },
     {
       "operation": "ci::test_harness.Harness.test_interchange_manifest",
@@ -175,7 +175,7 @@
       "claim": "ROOT::claim:harness:wallet-inputs-are-commit-scoped",
       "before": "",
       "after": "Claim: Wallet conformance reads a clean checkout of its source commit even when its parent is dirty before cloning and changes during execution; identical committed inputs yield identical result artifacts, each published by atomic replacement to a distinct step-owned path without modifying shared findings.",
-      "review": "The witness executes the real isolation adapter against committed fixture objects. A socket barrier admits the parent mutation only while the child is executing, without sleeps or scheduling assumptions. Dirty-before-clone and changed-during-run bytes remain outside the isolated input; clean and moving executions return identical artifacts. The publication hook checks that each destination keeps its previous complete bytes until replacement and contains the completed temporary bytes afterwards, with sibling findings unchanged. Existing wallet assertions are untouched."
+      "review": "The witness executes the real isolation adapter against committed fixture objects. A socket barrier admits the parent mutation only while the child is executing, without sleeps or scheduling assumptions. Dirty-before-clone and changed-during-run bytes remain outside the isolated input; clean and moving executions return identical artifacts. The publication hook checks that each destination keeps its previous complete bytes until replacement and contains the completed temporary bytes afterwards, with sibling findings unchanged. Existing wallet assertions are untouched. The common helper also preserves unchanged source timestamps and cache bytes across calls and separates targets when compiler configuration changes."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_binary_reachability_control",
@@ -198,8 +198,8 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:postgresql-instances-own-distinct-ports",
       "before": "",
-      "after": "Claim: Two gate-owned PostgreSQL instances coexist on distinct reserved ports and answer independently while a third gate may already be running, so fixture allocation does not depend on gate serialization.",
-      "review": "Read two simultaneously live real servers, distinct recorded ports and successful independent SELECT queries before either is stopped."
+      "after": "Claim: Two gate-owned PostgreSQL instances coexist on distinct reserved ports and answer independently while a third gate may already be running, so fixture allocation does not depend on gate serialization. Private temporary socket directories preserve Unix and TCP queries even when the fixture root would exceed the socket path limit; byte-length refusal precedes server startup, and stop removes each owned directory.",
+      "review": "Read two simultaneously live real servers, distinct recorded ports and successful independent SELECT queries over both Unix and TCP before either is stopped. The deep fixture root exceeds the former socket placement's byte limit. The witness accepts the exact limit, refuses longer ASCII and multibyte paths, and injects an overlong temporary root with no server command executed or socket directory leaked. It checks private directory modes, distinct temporary paths and removal after stop; it does not claim that every possible temporary-root path fits."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_public_transport",
@@ -263,7 +263,7 @@
       "claim": "ROOT::claim:discipline:build-graph-completion-is-current-and-exact",
       "before": "Claim: The entry takes its complete serial roster from Meson, retaining only census and service shutdown outside delegation; fresh and reused target executions preserve fixture cases, features, document bytes and statuses, execute each step once, and refuse missing targets, missing final reports, duplicate completions and stale run or configuration joins.",
       "after": "Claim: The entry takes its complete command roster and completion dependencies from Meson, retaining only census and service shutdown outside delegation; fresh and reused target executions preserve fixture cases, features, document bytes and statuses, execute each step once, and refuse missing targets, missing final reports, duplicate completions and stale run or configuration joins. Independent producers overlap under the declared job bound, a failed producer remains failed, and a join refuses missing, duplicated or prematurely ordered dependency reports.",
-      "review": "Read the existing fresh and reused adapter assertions unchanged, then the synchronized independent producers, retained failed status and required join. Missing, duplicated and premature dependency histories refuse; current report identity remains checked on both routes."
+      "review": "Read the existing fresh and reused adapter assertions unchanged, then the synchronized independent producers, retained failed status and required join. Missing, duplicated and premature dependency histories refuse; current report identity remains checked on both routes. Dependency validation additionally refuses unordered members of a declared exclusive resource class, then accepts the same members with an ordering edge."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_build_graph_delegation",

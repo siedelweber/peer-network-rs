@@ -9,7 +9,35 @@ import sys
 import tomllib
 import socket
 import time
+import tempfile
 from contextlib import contextmanager
+
+class SocketPathError(ValueError):
+    """A filesystem socket name cannot fit the platform's sockaddr_un."""
+
+def socket_path(directory, port):
+    """Reserve the terminating byte in Linux's 108-byte sun_path."""
+    path = directory / ('.s.PGSQL.' + str(port))
+    length = len(os.fsencode(path))
+    if length > 107:
+        raise SocketPathError(f'PostgreSQL socket path is {length} bytes; maximum is 107 bytes')
+    return path
+
+def allocate_socket_directory(root):
+    """Own a private socket directory outside the checkout, until fixture stop."""
+    temporary_root = os.environ.get('TMPDIR')
+    if not temporary_root:
+        raise ValueError('TMPDIR must name the PostgreSQL socket temporary root')
+    directory = Path(tempfile.mkdtemp(prefix='pg-', dir=temporary_root)).resolve()
+    try:
+        socket_path(directory, 65535)
+        marker = root / 'socket-directory'
+        marker.write_text(str(directory))
+        marker.chmod(0o600)
+    except Exception:
+        shutil.rmtree(directory)
+        raise
+    return directory
 
 @contextmanager
 def port_selection(deadline=None):
@@ -102,10 +130,16 @@ def stop(root):
     if (root/'data'/'postmaster.pid').exists():
         with (root/'fixture.log').open('ab') as log:
             command([binary_directory()/'pg_ctl', '-D', root/'data', '-m', 'immediate', '-w', 'stop'], log)
+    marker = root / 'socket-directory'
+    if marker.exists():
+        shutil.rmtree(Path(marker.read_text()))
+        marker.unlink()
 
 def restart(root):
     """Stop once, select an available port, and start once without replaying a failure."""
     deadline = time.monotonic() + 60
+    directory = Path((root / 'socket-directory').read_text())
+    socket_path(directory, 65535)
     with (root/'fixture.log').open('ab') as log:
         command([binary_directory()/'pg_ctl', '-D', root/'data', '-m', 'fast', '-w', 'stop'], log,
                 timeout=max(0, deadline-time.monotonic()))
@@ -121,7 +155,7 @@ def restart(root):
             old = data['port']
             data['port'] = str(port)
             if data['transport'] == 'unix' and data['endpoint'].endswith('.s.PGSQL.'+old):
-                data['endpoint'] = str(root/'socket'/('.s.PGSQL.'+str(port)))
+                data['endpoint'] = str(socket_path(directory, port))
             temporary = path.with_suffix('.json.tmp')
             temporary.write_text(json.dumps(data))
             temporary.chmod(0o600)
@@ -136,9 +170,10 @@ def start(root):
     if (root/'data'/'postmaster.pid').exists():
         raise RuntimeError('fixture already running; do not replace an active instance')
     if root.exists():
+        stop(root)
         shutil.rmtree(root)
     root.mkdir(mode=0o700, parents=True)
-    (root/'socket').mkdir(mode=0o700)
+    directory = allocate_socket_directory(root)
     password = 'private_password_fixture_731'
     (root/'password').write_text(password+'\n')
     (root/'password').chmod(0o600)
@@ -146,20 +181,20 @@ def start(root):
         command([binary_directory()/'initdb','-D',root/'data','--locale-provider=libc','--locale=C','--encoding=UTF8','-U','private_role_fixture_731','--auth=scram-sha-256','--pwfile',root/'password'],log)
         with port_selection() as port:
             with (root/'data'/'postgresql.conf').open('a') as config:
-                config.write("\nlisten_addresses='127.0.0.1'\nport="+str(port)+"\nunix_socket_directories='"+str(root/'socket')+"'\nmax_connections=64\nshared_buffers='16MB'\nlog_line_prefix=''\ntimezone='Pacific/Honolulu'\ndatestyle='SQL, DMY'\n")
+                config.write("\nlisten_addresses='127.0.0.1'\nport="+str(port)+"\nunix_socket_directories='"+str(directory).replace("'", "''")+"'\nmax_connections=64\nshared_buffers='16MB'\nlog_line_prefix=''\ntimezone='Pacific/Honolulu'\ndatestyle='SQL, DMY'\n")
             command([binary_directory()/'pg_ctl','-D',root/'data','-l',root/'server.log','-w','start'],log)
         env = dict(os.environ, PGPASSWORD=password)
-        command([binary_directory()/'createdb','-h',root/'socket','-p',port,'-U','private_role_fixture_731','private_database_fixture_731'],log,env)
+        command([binary_directory()/'createdb','-h',directory,'-p',port,'-U','private_role_fixture_731','private_database_fixture_731'],log,env)
         for suffix in ('storage','storage-role','storage-race','storage-rebuild','storage-schema','storage-restart','storage-constants','storage-scaling','storage-tamper','storage-growth','storage-trace-initial','storage-trace-default','storage-trace-trace'):
-            command([binary_directory()/'createdb','-h',root/'socket','-p',port,'-U','private_role_fixture_731','private_'+suffix.replace('-','_')+'_731'],log,env)
-    base = dict(transport='unix',endpoint=str(root/'socket'/('.s.PGSQL.'+str(port))),port=str(port),user='private_role_fixture_731',password=password,database='private_database_fixture_731')
+            command([binary_directory()/'createdb','-h',directory,'-p',port,'-U','private_role_fixture_731','private_'+suffix.replace('-','_')+'_731'],log,env)
+    base = dict(transport='unix',endpoint=str(socket_path(directory, port)),port=str(port),user='private_role_fixture_731',password=password,database='private_database_fixture_731')
     configurations = {
         'unix':base,
         'tcp':dict(base,transport='tcp',endpoint='127.0.0.1'),
         'wrong-password':dict(base,password='private_wrong_password_fixture_731'),
         'unknown-role':dict(base,user='private_unknown_role_fixture_731'),
         'unknown-database':dict(base,database='private_unknown_database_fixture_731'),
-        'absent-socket':dict(base,endpoint=str(root/'absent_private_socket')),
+        'absent-socket':dict(base,endpoint=str(directory/'absent')),
         # Gate servers bind only 127.0.0.1. Their own reserved port is never
         # another gate's endpoint on these distinct loopback addresses.
         'refused-port':dict(base,transport='tcp',endpoint='127.0.0.2'),
@@ -190,6 +225,9 @@ def main():
 if __name__=='__main__':
     try:
         main()
+    except SocketPathError as error:
+        print(json.dumps({'kind':'host_fixture_failure','message':str(error)}),file=sys.stderr)
+        sys.exit(1)
     except Exception:
         print(json.dumps({'kind':'host_fixture_failure','message':'PostgreSQL fixture unavailable; inspect its private log'}),file=sys.stderr)
         sys.exit(1)

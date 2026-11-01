@@ -593,15 +593,37 @@ class HostRuntime(unittest.TestCase):
         print('STORAGE-RESTART real_service=True read_without_append=True occupied_old_port=skipped launches=1')
 
     def test_independent_instances(self):
-        """Claim: Two gate-owned PostgreSQL instances coexist on distinct reserved ports and answer independently while a third gate may already be running, so fixture allocation does not depend on gate serialization.
+        """Claim: Two gate-owned PostgreSQL instances coexist on distinct reserved ports and answer independently while a third gate may already be running, so fixture allocation does not depend on gate serialization. Private temporary socket directories preserve Unix and TCP queries even when the fixture root would exceed the socket path limit; byte-length refusal precedes server startup, and stop removes each owned directory.
         ´claim:discipline:postgresql-instances-own-distinct-ports´
         ´test:integration:test-independent-instances´
         """
-        from host_postgresql import start, stop, binary_directory
-        roots=[Path('.lane/host-side-a').resolve(),Path('.lane/host-side-b').resolve()]
+        from host_postgresql import start, stop, binary_directory, socket_path, SocketPathError
+        import host_postgresql
+        deep = Path('.lane') / ('deep-checkout-' + 'x' * 80)
+        roots=[(deep/'host-side-a').resolve(),Path('.lane/host-side-b').resolve()]
+        self.assertGreater(len(os.fsencode(roots[0]/'socket'/'.s.PGSQL.42100')), 107)
+        self.assertEqual(len(os.fsencode(socket_path(Path('/' + 'x' * 91), 65535))), 107)
+        with self.assertRaisesRegex(SocketPathError, '108 bytes; maximum is 107 bytes'):
+            socket_path(Path('/' + 'x' * 92), 65535)
+        with self.assertRaisesRegex(SocketPathError, '110 bytes; maximum is 107 bytes'):
+            socket_path(Path('/' + 'é' * 47), 65535)
+        oversized = deep / 'temporary-root'
+        oversized.mkdir(parents=True, exist_ok=True)
+        refused = deep / 'refused'
+        with patch.dict(os.environ, TMPDIR=str(oversized.resolve())), patch.object(host_postgresql, 'command') as launch:
+            with self.assertRaisesRegex(SocketPathError, r'\d+ bytes; maximum is 107 bytes'):
+                start(refused)
+            launch.assert_not_called()
+        self.assertEqual(list(oversized.iterdir()), [])
+        directories = []
         try:
             for root in roots:
                 start(root)
+                directories.append(Path((root/'socket-directory').read_text()))
+            self.assertNotEqual(directories[0], directories[1])
+            for directory in directories:
+                self.assertEqual(directory.stat().st_mode & 0o777, 0o700)
+                self.assertEqual(directory.parent, Path(os.environ['TMPDIR']).resolve())
             configs=[json.loads((root/'tcp.json').read_text()) for root in roots]
             self.assertNotEqual(configs[0]['port'],configs[1]['port'])
             for config in configs:
@@ -609,10 +631,19 @@ class HostRuntime(unittest.TestCase):
                 result=subprocess.run([str(binary_directory()/'psql'),'-h',config['endpoint'],'-p',config['port'],'-U',config['user'],'-d',config['database'],'-Atc','SELECT 731'],env=env,capture_output=True,check=False)
                 self.assertEqual(result.returncode,0)
                 self.assertEqual(result.stdout,b'731\n')
-            print('HOST-INSTANCE-ISOLATION instances=2 distinct_ports=True queries=2')
+            for root in roots:
+                config=json.loads((root/'unix.json').read_text())
+                self.assertLessEqual(len(os.fsencode(config['endpoint'])), 107)
+                env=dict(os.environ,PGPASSWORD=config['password'])
+                result=subprocess.run([str(binary_directory()/'psql'),'-h',str(Path(config['endpoint']).parent),'-p',config['port'],'-U',config['user'],'-d',config['database'],'-Atc','SELECT 731'],env=env,capture_output=True,check=False)
+                self.assertEqual(result.returncode,0)
+                self.assertEqual(result.stdout,b'731\n')
+            print('HOST-INSTANCE-ISOLATION instances=2 distinct_ports=True queries=4 deep_root=True socket_bytes_bounded=True')
         finally:
             for root in reversed(roots):
                 stop(root)
+        for directory in directories:
+            self.assertFalse(directory.exists())
 
     def test_required_postgresql_directory(self):
         """Claim: An absent or empty PostgreSQL binary-directory declaration refuses by name before the gate runs any step, without exposing an endpoint or substituting a node path.

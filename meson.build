@@ -25,8 +25,8 @@ subdir('ci')
 # Single command declaration and completion dependencies for both execution routes.
 gate_steps = [
   ['build-graph', 'python3 -B ci/build_graph.py gate', ''],
-  ['fixed-point-generate', 'cargo run -p documents --locked --profile gate -- generate', 'build-graph'],
-  ['fixed-point-write', 'cargo run -p documents --locked --profile gate -- write', 'fixed-point-generate'],
+  ['fixed-point-generate', 'python3 -B ci/isolation.py generate', 'build-graph'],
+  ['fixed-point-write', 'python3 -B ci/isolation.py write', 'fixed-point-generate'],
   ['fixed-point-clean', 'python3 ci/discipline.py tree-clean', 'fixed-point-write'],
   ['test-build', 'python3 -B ci/run_tests.py prepare', 'fixed-point-clean'],
   ['host-postgresql-start', 'python3 -B ci/host_postgresql.py start --root "$PN_HOST_TEST_ROOT"', 'test-build'],
@@ -80,6 +80,10 @@ gate_steps = [
   ['harness-matrix', 'python3 -B ci/harness.py --matrix', 'observation-syntax'],
   ['claim-evidence', 'python3 -B ci/claims.py --fail-respellings', 'harness-matrix'],
 ]
+# Members of an exclusive class must be totally ordered by completion edges.
+gate_resource_classes = {
+  'shared-cargo': ['test-build', 'tests', 'cargo-config-measurement', 'fmt', 'clippy', 'nursery-advisory', 'minimal', 'rustdoc', 'datasets', 'documents', 'determinism-datasets', 'determinism-documents', 'benchmarks', 'observation-build', 'host-observation-build', 'observation-syntax'],
+}
 gate_dependencies = {
   'build-graph': [],
   'fixed-point-generate': ['build-graph'],
