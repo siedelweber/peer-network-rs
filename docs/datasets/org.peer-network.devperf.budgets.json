@@ -166,6 +166,20 @@
       "name": "reference-receiving-case",
       "reason": "The complete published Registration and donor multiplicities, both public histories and both annotation readings must survive compilation, solve and replay. The focused measurement is recorded in the receiving reference-tier amendment; the declared allowance also accounts for gate contention without changing any other case budget.",
       "scope": "one full-size published receiving showcase comparison"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "case",
+      "name": "own-burn-case",
+      "reason": "The lowest sign-certifying precision retains compilation, both solves and replayed forcing; the smaller histories tested change the response sign. This mechanism has its own allowance rather than borrowing the published-reference tier.",
+      "scope": "one complete-history own-loss mechanism"
+    },
+    {
+      "budget_ms": 20000,
+      "category": "suite",
+      "name": "own-burn-suite",
+      "reason": "Allow the mechanism case and harness overhead while retaining its separate case warning and the per-commit gate budget.",
+      "scope": "the required own-loss mechanism group"
     }
   ]
 }

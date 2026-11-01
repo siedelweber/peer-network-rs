@@ -174,6 +174,8 @@ fn burn_policy(state: &pn_epoch::compiler::CompiledState, case: &str) -> Procedu
     let mut p = fence_procedure(state);
     let precision = if matches!(case, "depleted" | "monotone") {
         N::NumbersBurnAnchorPrecision
+    } else if case == "own" {
+        N::NumbersBurnOwnPrecision
     } else {
         N::NumbersBurnSaturatedPrecision
     };
@@ -253,6 +255,37 @@ fn burn_pin_interval(
     burn_pin_upper(value.upper(), upper, budget);
 }
 
+type BurnActivationPair = (
+    pn_graph::numeric::activation::Evaluation,
+    pn_graph::numeric::activation::Evaluation,
+);
+
+struct BurnActivations {
+    policy: Procedure,
+    results: Vec<(pn_graph::numeric::activation::Request, BurnActivationPair)>,
+}
+
+fn burn_activation(
+    policy: &Procedure,
+    request: &pn_graph::numeric::activation::Request,
+    cache: Option<&mut BurnActivations>,
+) -> BurnActivationPair {
+    use pn_graph::numeric::activation;
+    if let Some(cached) = cache.as_ref() {
+        assert_eq!(policy, &cached.policy);
+        if let Some((_, result)) = cached.results.iter().find(|(key, _)| key == request) {
+            return result.clone();
+        }
+    }
+    let result = activation::evaluate(policy, request, None).unwrap();
+    let replay = activation::replay(policy, request, result.primitive.evidence.attachment.as_ref().unwrap(), None).unwrap();
+    let pair = (result, replay);
+    if let Some(cached) = cache {
+        cached.results.push((request.clone(), pair.clone()));
+    }
+    pair
+}
+
 fn burn_box_transport(
     state: &pn_epoch::compiler::CompiledState,
     policy: &Procedure,
@@ -260,8 +293,19 @@ fn burn_box_transport(
     coordinates: &BTreeMap<String, Bounds>,
     budget: &mut nrz_cas::limits::Budget,
 ) -> pn_records::transport::TransportOutput<nrz_cas::enclosure::Interval> {
+    burn_box_transport_with_activations(state, policy, template, coordinates, budget, None)
+}
+
+fn burn_box_transport_with_activations(
+    state: &pn_epoch::compiler::CompiledState,
+    policy: &Procedure,
+    template: &pn_records::conserved::MapRecord,
+    coordinates: &BTreeMap<String, Bounds>,
+    budget: &mut nrz_cas::limits::Budget,
+    mut activations: Option<&mut BurnActivations>,
+) -> pn_records::transport::TransportOutput<nrz_cas::enclosure::Interval> {
     use nrz_cas::{Rational, enclosure::Interval};
-    use pn_graph::numeric::activation::{self, Quantity, Request};
+    use pn_graph::numeric::activation::{Quantity, Request};
     use pn_records::primitive::Range;
     let names: Vec<_> = state.view().base.rows.keys().collect();
     let mut input = template.transport_input.clone();
@@ -293,9 +337,8 @@ fn burn_box_transport(
                         shape: shape.value().into(),
                     },
                 };
-                let result = activation::evaluate(policy, &request, None).unwrap();
+                let (result, replay) = burn_activation(policy, &request, activations.as_deref_mut());
                 let evidence = &result.primitive.evidence;
-                let replay = activation::replay(policy, &request, evidence.attachment.as_ref().unwrap(), None).unwrap();
                 assert_eq!(evidence.bounds, replay.primitive.evidence.bounds);
                 evidence
                     .bounds
@@ -582,9 +625,10 @@ fn burn_direct_forcing(
     p: &Procedure,
     old: &pn_records::conserved::ResidualRound,
     budget: &mut nrz_cas::limits::Budget,
+    activations: Option<&mut BurnActivations>,
 ) -> Vec<nrz_cas::enclosure::Interval> {
     let names: Vec<_> = before.view().base.rows.keys().collect();
-    let old_transport = burn_box_transport(before, p, &old.certified, &old.standing, budget);
+    let old_transport = burn_box_transport_with_activations(before, p, &old.certified, &old.standing, budget, activations);
     let burner = names.iter().position(|v| v.as_str() == "b").unwrap();
     names
         .iter()
@@ -724,7 +768,18 @@ fn burn_case(case: &str) {
         // Counterexamples refuse an unconditional monotonicity or recovery claim.
         assert!(response.upper().is_negative());
     }
-    let transported = burn_box_transport(&after, b.inputs().1, &new.certified, &old.standing, &mut budget);
+    let mut activations = (case == "own").then(|| BurnActivations {
+        policy: a.inputs().1.clone(),
+        results: Vec::new(),
+    });
+    let transported = burn_box_transport_with_activations(
+        &after,
+        b.inputs().1,
+        &new.certified,
+        &old.standing,
+        &mut budget,
+        activations.as_mut(),
+    );
     let names: Vec<_> = after.view().base.rows.keys().collect();
     let shock: Vec<_> = names
         .iter()
@@ -739,13 +794,23 @@ fn burn_case(case: &str) {
         );
         assert_eq!(
             q.exact_string(&mut budget).unwrap(),
-            N::NumbersBurnSaturatedContractionUpper.value()
+            if case == "own" {
+                N::NumbersBurnOwnContractionUpper
+            } else {
+                N::NumbersBurnSaturatedContractionUpper
+            }
+            .value()
         );
         assert_eq!(
             factor.exact_string(&mut budget).unwrap(),
-            N::NumbersBurnSaturatedFeedbackFactorUpper.value()
+            if case == "own" {
+                N::NumbersBurnOwnFeedbackFactorUpper
+            } else {
+                N::NumbersBurnSaturatedFeedbackFactorUpper
+            }
+            .value()
         );
-        let direct = burn_direct_forcing(&before, a.inputs().1, old, &mut budget);
+        let direct = burn_direct_forcing(&before, a.inputs().1, old, &mut budget, activations.as_mut());
         burn_feedback_cap(case, &before, &direct, &factor, &mut budget);
     }
     burn_pin_interval(&old_value, old_lo, old_hi, &mut budget);

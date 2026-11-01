@@ -1443,7 +1443,6 @@ evidence = "pure"
 contract = "typed commitment comparison and supplied-opening replay"
 edition = "0.1"
 
-
 [[rows]]
 kind = "suite"
 name = "pn-act-profile"
@@ -1521,7 +1520,6 @@ tier = "fast"
 budget = "pure-suite"
 cases = ["pn-epoch::package::package_bindings"]
 
-
 [[rows]]
 kind = "suite"
 name = "pn-epoch::compiler"
@@ -1543,7 +1541,7 @@ level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::solve::partitions::distinct_target_split", "pn-epoch::solve::partitions::positive_rung_split", "pn-epoch::solve::partitions::nonconstant_matched_split", "pn-epoch::solve::partitions::receiving_small", "pn-epoch::solve::procedure_binding", "pn-epoch::solve::procedure_records", "pn-epoch::solve::evidence_records", "pn-epoch::solve::transport_oracle", "pn-epoch::solve::anchor_tables", "pn-epoch::solve::real_base", "pn-epoch::solve::fence_shapes", "pn-epoch::solve::fence_refinement", "pn-epoch::solve::endpoint_transport", "pn-epoch::solve::conserved_map", "pn-epoch::solve::conserved_residual", "pn-epoch::solve::conserved_projection", "pn-epoch::solve::reference_wall_binding", "pn-epoch::solve::two_map_box", "pn-epoch::solve::certified_splits", "pn-epoch::solve::burn_own", "pn-epoch::solve::burn_sibling", "pn-epoch::solve::burn_depleted", "pn-epoch::solve::burn_switch", "pn-epoch::solve::burn_monotone", "pn-epoch::solve::act_directions", "pn-epoch::solve::act_emission", "pn-epoch::solve::act_switch"]
+cases = ["pn-epoch::solve::partitions::distinct_target_split", "pn-epoch::solve::partitions::positive_rung_split", "pn-epoch::solve::partitions::nonconstant_matched_split", "pn-epoch::solve::partitions::receiving_small", "pn-epoch::solve::procedure_binding", "pn-epoch::solve::procedure_records", "pn-epoch::solve::evidence_records", "pn-epoch::solve::transport_oracle", "pn-epoch::solve::anchor_tables", "pn-epoch::solve::real_base", "pn-epoch::solve::fence_shapes", "pn-epoch::solve::fence_refinement", "pn-epoch::solve::endpoint_transport", "pn-epoch::solve::conserved_map", "pn-epoch::solve::conserved_residual", "pn-epoch::solve::conserved_projection", "pn-epoch::solve::reference_wall_binding", "pn-epoch::solve::two_map_box", "pn-epoch::solve::certified_splits", "pn-epoch::solve::burn_sibling", "pn-epoch::solve::burn_depleted", "pn-epoch::solve::burn_switch", "pn-epoch::solve::burn_monotone", "pn-epoch::solve::act_directions", "pn-epoch::solve::act_emission", "pn-epoch::solve::act_switch"]
 
 [[rows]]
 kind = "suite"
@@ -1615,3 +1613,24 @@ budget = "reference-certificate-suite"
 case_budget = "reference-receiving-case"
 case_span = true
 cases = ["pn-epoch::solve::partitions::receiving_showcase"]
+
+[[rows]]
+kind = "tier"
+name = "mechanism-certificate"
+status = "active"
+case_budget_policy = "declared-suite"
+reason = "The smallest certified own-loss mechanism requires complete histories, signed response separation and replayed feedback bounds; it is not a published reference certificate."
+
+[[rows]]
+kind = "suite"
+name = "pn-epoch::own-burn"
+status = "active"
+runner = "nextest"
+level = "public-surface"
+implementation = "pn-epoch-rust"
+tier = "mechanism-certificate"
+budget = "own-burn-suite"
+case_budget = "own-burn-case"
+case_span = true
+cases = ["pn-epoch::solve::burn_own"]
+

@@ -4300,7 +4300,6 @@
         "pn-epoch::solve::reference_wall_binding",
         "pn-epoch::solve::two_map_box",
         "pn-epoch::solve::certified_splits",
-        "pn-epoch::solve::burn_own",
         "pn-epoch::solve::burn_sibling",
         "pn-epoch::solve::burn_depleted",
         "pn-epoch::solve::burn_switch",
@@ -4412,6 +4411,28 @@
       "runner": "nextest",
       "status": "active",
       "tier": "reference-certificate"
+    },
+    {
+      "case_budget_policy": "declared-suite",
+      "kind": "tier",
+      "name": "mechanism-certificate",
+      "reason": "The smallest certified own-loss mechanism requires complete histories, signed response separation and replayed feedback bounds; it is not a published reference certificate.",
+      "status": "active"
+    },
+    {
+      "budget": "own-burn-suite",
+      "case_budget": "own-burn-case",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::burn_own"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::own-burn",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "mechanism-certificate"
     }
   ]
 }

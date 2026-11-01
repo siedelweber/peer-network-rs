@@ -161,3 +161,18 @@ category = "case"
 budget_ms = 15000
 scope = "one full-size published receiving showcase comparison"
 reason = "The complete published Registration and donor multiplicities, both public histories and both annotation readings must survive compilation, solve and replay. The focused measurement is recorded in the receiving reference-tier amendment; the declared allowance also accounts for gate contention without changing any other case budget."
+
+[[rows]]
+name = "own-burn-case"
+category = "case"
+budget_ms = 15000
+scope = "one complete-history own-loss mechanism"
+reason = "The lowest sign-certifying precision retains compilation, both solves and replayed forcing; the smaller histories tested change the response sign. This mechanism has its own allowance rather than borrowing the published-reference tier."
+
+[[rows]]
+name = "own-burn-suite"
+category = "suite"
+budget_ms = 20000
+scope = "the required own-loss mechanism group"
+reason = "Allow the mechanism case and harness overhead while retaining its separate case warning and the per-commit gate budget."
+
