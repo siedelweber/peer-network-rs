@@ -1471,9 +1471,23 @@ pub enum NumberId {
     NumbersScalingDegradedFenceUpper,
     /// Registry id: num:numbers:scaling-product-ceiling.
     NumbersScalingProductCeiling,
+    /// Registry id: num:numbers:calibration-fixture-user-before-seconds.
+    NumbersCalibrationFixtureUserBeforeSeconds,
+    /// Registry id: num:numbers:calibration-fixture-system-before-seconds.
+    NumbersCalibrationFixtureSystemBeforeSeconds,
+    /// Registry id: num:numbers:calibration-fixture-user-after-seconds.
+    NumbersCalibrationFixtureUserAfterSeconds,
+    /// Registry id: num:numbers:calibration-fixture-system-after-seconds.
+    NumbersCalibrationFixtureSystemAfterSeconds,
+    /// Registry id: num:numbers:calibration-fixture-user-delta-seconds.
+    NumbersCalibrationFixtureUserDeltaSeconds,
+    /// Registry id: num:numbers:calibration-fixture-system-delta-seconds.
+    NumbersCalibrationFixtureSystemDeltaSeconds,
+    /// Registry id: num:numbers:calibration-fixture-refusal-status.
+    NumbersCalibrationFixtureRefusalStatus,
 }
 
-const OFFSETS: [(usize, usize); 734] = [
+const OFFSETS: [(usize, usize); 741] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2208,6 +2222,13 @@ const OFFSETS: [(usize, usize); 734] = [
     (116_284, 116_287),
     (116_416, 116_420),
     (116_544, 116_549),
+    (116_689, 116_690),
+    (116_825, 116_826),
+    (116_958, 116_959),
+    (117_093, 117_094),
+    (117_226, 117_227),
+    (117_361, 117_362),
+    (117_490, 117_491),
 ];
 
 impl NumberId {

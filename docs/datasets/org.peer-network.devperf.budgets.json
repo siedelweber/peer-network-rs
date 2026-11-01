@@ -187,6 +187,216 @@
       "name": "reference-gate",
       "reason": "The longest exact local certificate needs about fifty seconds; allow the unchanged certificate cases and runner overhead in a required invocation alongside the per-commit path.",
       "scope": "required reference-certificate invocation"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-marker-recognition-case",
+      "reason": "The recorded property draw count and generated lineage/burn-recognition predicates remain unchanged; reducing draws would remove declared evidence.",
+      "scope": "one pn-records::properties::marker_recognition case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-typed-corruptions-case",
+      "reason": "The recorded property draw count and typed corruption families remain unchanged; reducing draws would remove declared evidence.",
+      "scope": "one pn-records::properties::typed_corruptions case"
+    },
+    {
+      "budget_ms": 2500,
+      "category": "case",
+      "name": "calibrated-act-directions-case",
+      "reason": "Opposite signed complete-act comparisons retain both independently replayed solves and the finite forcing bounds at the declared precision.",
+      "scope": "one pn-epoch::solve::act_directions case"
+    },
+    {
+      "budget_ms": 1500,
+      "category": "case",
+      "name": "calibrated-act-emission-case",
+      "reason": "The complete accepted-act pair changes emission and retains independently replayed solves and the full finite-response transport.",
+      "scope": "one pn-epoch::solve::act_emission case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-burn-depleted-case",
+      "reason": "The depleted-source pair retains failed full-rung attempts, passing anchor solves, independent replay and the changed-emission finite shock.",
+      "scope": "one pn-epoch::solve::burn_depleted case"
+    },
+    {
+      "budget_ms": 1500,
+      "category": "case",
+      "name": "calibrated-burn-monotone-case",
+      "reason": "The sole-contributor pair retains both complete solves, independent replay and the whole-path regime premises.",
+      "scope": "one pn-epoch::solve::burn_monotone case"
+    },
+    {
+      "budget_ms": 10500,
+      "category": "case",
+      "name": "calibrated-burn-sibling-case",
+      "reason": "The saturated sibling pair retains the declared precision, independent solve replay, finite box shock and largest-direct-forcing feedback majorant.",
+      "scope": "one pn-epoch::solve::burn_sibling case"
+    },
+    {
+      "budget_ms": 5500,
+      "category": "case",
+      "name": "calibrated-burn-switch-case",
+      "reason": "The burn pair retains both rung searches, the changed accepted rung, independent solve replay and the full finite-response transport.",
+      "scope": "one pn-epoch::solve::burn_switch case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-certified-splits-case",
+      "reason": "Matched and unmatched complete histories retain their certified solves, projected residuals, hop-premise checks and counterexample bounds.",
+      "scope": "one pn-epoch::solve::certified_splits case"
+    },
+    {
+      "budget_ms": 1500,
+      "category": "case",
+      "name": "calibrated-conserved-projection-case",
+      "reason": "Supported and chartered depth projections retain the nonzero-depth cells, exact cell and Work pins, and refusal controls.",
+      "scope": "one pn-epoch::solve::conserved_projection case"
+    },
+    {
+      "budget_ms": 12000,
+      "category": "case",
+      "name": "calibrated-conserved-residual-case",
+      "reason": "The frozen fixture retains proposal-grid and iteration-cap comparisons, independent residual replay, exact Work boundaries and mutated-record refusals.",
+      "scope": "one pn-epoch::solve::conserved_residual case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-fence-shapes-case",
+      "reason": "Frozen-support shapes retain descending evaluated rung searches, independent primitive replay and width, tilt, wall and attachment refusal controls.",
+      "scope": "one pn-epoch::solve::fence_shapes case"
+    },
+    {
+      "budget_ms": 2000,
+      "category": "case",
+      "name": "calibrated-compiled-conservation-case",
+      "reason": "The named transport mechanisms retain derived ledger export ceilings, declared conservation-width tolerance, passing and failing precision controls and replayed nonlinear transport.",
+      "scope": "one pn-epoch::solve::partitions::compiled_conservation case"
+    },
+    {
+      "budget_ms": 4000,
+      "category": "case",
+      "name": "calibrated-nonconstant-matched-split-case",
+      "reason": "Real nonconstant matched transport retains its calibrated disjoint-image precision, compiled hop identities, common positive rung, solves and independent replay.",
+      "scope": "one pn-epoch::solve::partitions::nonconstant_matched_split case"
+    },
+    {
+      "budget_ms": 6000,
+      "category": "case",
+      "name": "calibrated-positive-rung-split-case",
+      "reason": "The positive-rung displacement fixture retains the calibrated sign precision, its failing lower control, finite box comparisons and independent solve replay.",
+      "scope": "one pn-epoch::solve::partitions::positive_rung_split case"
+    },
+    {
+      "budget_ms": 2500,
+      "category": "case",
+      "name": "calibrated-published-isolated-acts-case",
+      "reason": "The unsorted exact-rate sample family retains every complete before/after history, final-gate checks, independent solve replay and exact loss identity.",
+      "scope": "one pn-epoch::solve::partitions::published_isolated_acts case"
+    },
+    {
+      "budget_ms": 4500,
+      "category": "case",
+      "name": "calibrated-published-retained-act-case",
+      "reason": "The tagged retained-source fixture retains complete before/after solves, independent replay, the calibrated strict sign and its failing lower-precision control.",
+      "scope": "one pn-epoch::solve::partitions::published_retained_act case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-receiving-small-case",
+      "reason": "The published small receiving history retains pooled and partitioned records, complete public-input annotation equivalence and cross-replayed certificates.",
+      "scope": "one pn-epoch::solve::partitions::receiving_small case"
+    },
+    {
+      "budget_ms": 7000,
+      "category": "case",
+      "name": "calibrated-sibling-outside-paths-case",
+      "reason": "The coupled negative response retains its calibrated precision and endpoint grid, the failing lower control, independent replay and the separate structural control.",
+      "scope": "one pn-epoch::solve::partitions::sibling_outside_paths case"
+    },
+    {
+      "budget_ms": 5500,
+      "category": "case",
+      "name": "calibrated-two-map-box-case",
+      "reason": "The frozen four-Actor fixture retains its declared box-map precision, both certified maps, independent replay and adjacent Work-limit controls.",
+      "scope": "one pn-epoch::solve::two_map_box case"
+    },
+    {
+      "budget_ms": 3000,
+      "category": "case",
+      "name": "calibrated-activation-costs-case",
+      "reason": "Cold composed requests retain independent Work, output-byte and arithmetic-step success/refusal boundaries; reusing a warm result would change the charged request.",
+      "scope": "one pn-graph::numeric::activation_costs case"
+    },
+    {
+      "budget_ms": 2000,
+      "category": "case",
+      "name": "calibrated-activation-endpoints-case",
+      "reason": "Wall placements and activation quantities retain direct and monotone evaluations, independent endpoint brackets, generalized joins and powered-source premises.",
+      "scope": "one pn-graph::numeric::activation_endpoints case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-activation-oracles-case",
+      "reason": "Unsorted scalar compositions retain independent value and derivative oracle brackets and cold certified evaluation at the declared policy.",
+      "scope": "one pn-graph::numeric::activation_oracles case"
+    },
+    {
+      "budget_ms": 1500,
+      "category": "case",
+      "name": "calibrated-activation-walls-case",
+      "reason": "The wall placements retain activation, gain and generalized-kink controls under the complete declared policy.",
+      "scope": "one pn-graph::numeric::activation_walls case"
+    },
+    {
+      "budget_ms": 1000,
+      "category": "case",
+      "name": "calibrated-enclosed-wall-clamp-case",
+      "reason": "The wall-coordinate interval retains independently sampled rational clamps, crossing generalized slopes and changed-enclosure replay refusal.",
+      "scope": "one pn-graph::numeric::enclosed_wall_clamp case"
+    },
+    {
+      "budget_ms": 3000,
+      "category": "case",
+      "name": "calibrated-evaluation-costs-case",
+      "reason": "Reduction, root/log-exp endpoint and sharing-prefix cases retain every cold Work success/refusal boundary and distinguish preparation from memo hits.",
+      "scope": "one pn-graph::numeric::evaluation_costs case"
+    },
+    {
+      "budget_ms": 2000,
+      "category": "case",
+      "name": "calibrated-reference-wall-branches-case",
+      "reason": "Certified inverse-wall branches retain the floor, door, policy and deadband comparisons and their independently replayed queries.",
+      "scope": "one pn-graph::numeric::reference_wall_branches case"
+    },
+    {
+      "budget_ms": 2000,
+      "category": "case",
+      "name": "calibrated-reference-wall-controls-case",
+      "reason": "The inverse-wall controls retain both wrong-sign bracket refusals, indecisive stopping and changed query or attachment replay refusals.",
+      "scope": "one pn-graph::numeric::reference_wall_controls case"
+    },
+    {
+      "budget_ms": 3000,
+      "category": "case",
+      "name": "calibrated-reference-wall-oracle-case",
+      "reason": "The tagged gain fixture retains certified bisection, independent endpoint signs and replay at the declared stopping width and precision.",
+      "scope": "one pn-graph::numeric::reference_wall_oracle case"
+    },
+    {
+      "budget_ms": 5500,
+      "category": "case",
+      "name": "calibrated-reference-wall-work-case",
+      "reason": "The stopping-width family retains cumulative cold Work pins and all adjacent success/refusal boundaries; sharing completed inversions would invalidate those measurements.",
+      "scope": "one pn-graph::numeric::reference_wall_work case"
     }
   ]
 }

@@ -5370,3 +5370,52 @@ value = "10000"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 200
+
+[[rows]]
+id = "num:numbers:calibration-fixture-user-before-seconds"
+value = "2"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-fixture-system-before-seconds"
+value = "3"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-fixture-user-after-seconds"
+value = "5"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-fixture-system-after-seconds"
+value = "7"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-fixture-user-delta-seconds"
+value = "3"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-fixture-system-delta-seconds"
+value = "4"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-fixture-refusal-status"
+value = "7"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

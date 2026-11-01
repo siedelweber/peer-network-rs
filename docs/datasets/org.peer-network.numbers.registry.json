@@ -9410,6 +9410,97 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "10000"
+    },
+    {
+      "display": "exact",
+      "exact": "2",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-fixture-user-before-seconds",
+      "num": "2",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "2"
+    },
+    {
+      "display": "exact",
+      "exact": "3",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-fixture-system-before-seconds",
+      "num": "3",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "3"
+    },
+    {
+      "display": "exact",
+      "exact": "5",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-fixture-user-after-seconds",
+      "num": "5",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "5"
+    },
+    {
+      "display": "exact",
+      "exact": "7",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-fixture-system-after-seconds",
+      "num": "7",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "7"
+    },
+    {
+      "display": "exact",
+      "exact": "3",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-fixture-user-delta-seconds",
+      "num": "3",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "3"
+    },
+    {
+      "display": "exact",
+      "exact": "4",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-fixture-system-delta-seconds",
+      "num": "4",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "4"
+    },
+    {
+      "display": "exact",
+      "exact": "7",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-fixture-refusal-status",
+      "num": "7",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "7"
     }
   ]
 }

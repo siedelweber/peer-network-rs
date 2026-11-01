@@ -41,19 +41,27 @@ class Harness(unittest.TestCase):
         from types import SimpleNamespace
         from unittest.mock import patch
         from calibrate import case_runner, case_cpu, join_cpu, comparison
-        self.assertEqual(case_cpu((2, 3), (5, 7)), dict(own_user_s=3, own_sys_s=4,
+        import tomllib
+        inputs = tomllib.loads((Path(__file__).resolve().parent.parent/'docs/inputs/numbers.toml').read_text())['rows']
+        values = {row['id']: row['value'] for row in inputs}
+        def pin(name):
+            return int(values['num:numbers:calibration-fixture-'+name])
+        before = (pin('user-before-seconds'), pin('system-before-seconds'))
+        after = (pin('user-after-seconds'), pin('system-after-seconds'))
+        delta = (pin('user-delta-seconds'), pin('system-delta-seconds'))
+        self.assertEqual(case_cpu(before, after), dict(own_user_s=delta[0], own_sys_s=delta[1],
                          cpu_scope='case-process-and-reaped-descendants'))
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)
-            for status in (0, 7):
+            for status in (0, pin('refusal-status')):
                 env = dict(PN_CALIBRATION_CASE_CPU=directory, PN_HARNESS_SOURCE='current',
                            NEXTEST_BINARY_ID='example', NEXTEST_TEST_NAME='case')
-                usage = [SimpleNamespace(ru_utime=2, ru_stime=3), SimpleNamespace(ru_utime=5, ru_stime=7)]
+                usage = [SimpleNamespace(ru_utime=user, ru_stime=system) for user, system in (before, after)]
                 with patch.dict(os.environ, env), patch('calibrate.resource.getrusage', side_effect=usage):
                     self.assertEqual(case_runner([sys.executable, '-c', f'raise SystemExit({status})']), status)
-                record = dict(operation='example::case', outcome='passed' if status == 0 else 'failed', duration_ms=1)
+                record = dict(operation='example::case', outcome='passed' if status == 0 else 'failed', duration_ms=0)
                 join_cpu([record], path, 'current')
-                self.assertEqual((record['own_user_s'], record['own_sys_s']), (3, 4))
+                self.assertEqual((record['own_user_s'], record['own_sys_s']), delta)
                 self.assertGreaterEqual(record['duration_ms'], 0)
                 with self.assertRaisesRegex(StructuralError, 'identity'):
                     join_cpu([record], path, 'other')
@@ -244,8 +252,41 @@ assert (root/'payload').read_text() == 'committed'
                              ['failure', 'retry', 'failure', 'retry', 'retry-result', 'slow-success'])
             self.assertEqual(len(output.getvalue().splitlines()), len(records))
 
+    def calibrated_case_budgets(self):
+        data = rows(case='example::fast')
+        data[-1]['cases'].append('example::calibrated')
+        data[-1]['case_budgets'] = {'example::calibrated': 'integration'}
+        data[-1]['case_budget_reasons'] = {'example::calibrated': 'Cold independent Work boundaries.'}
+        registry = Registry(data, declarations())
+        self.assertEqual(registry.case_budget('example::fast'), 'unit')
+        self.assertEqual(registry.case_budget('example::calibrated'), 'integration')
+        result = registry.join(dict(operation='example::calibrated', outcome='passed'), 'current')
+        self.assertEqual((result['tier'], result['level'], result['implementation']), ('fast', 'unit', 'example'))
+        with self.assertRaisesRegex(StructuralError, 'budget'):
+            registry.join(dict(result, budget='unit'), 'current')
+        for mutation in ('missing-cost', 'empty-cost', 'unknown-case', 'category', 'unknown-budget', 'tier-policy'):
+            invalid = copy.deepcopy(data)
+            suite = invalid[-1]
+            if mutation == 'missing-cost':
+                suite['case_budget_reasons'] = {}
+            elif mutation == 'empty-cost':
+                suite['case_budget_reasons']['example::calibrated'] = ' '
+            elif mutation == 'unknown-case':
+                suite['case_budgets']['example::absent'] = 'integration'
+                suite['case_budget_reasons']['example::absent'] = 'Absent case.'
+            elif mutation == 'category':
+                suite['case_budgets']['example::calibrated'] = 'pure-suite'
+            elif mutation == 'unknown-budget':
+                suite['case_budgets']['example::calibrated'] = 'absent'
+            else:
+                next(row for row in invalid if row.get('kind') == 'tier')['case_budget_policy'] = 'declared-suite'
+                next(row for row in invalid if row.get('kind') == 'tier')['reason'] = 'Dedicated fixture.'
+                suite['case_budget'] = 'integration'
+            with self.assertRaises(StructuralError):
+                Registry(invalid, declarations())
+
     def test_reference_tier(self):
-        """Claim: Explicit reference-tier groups retain case identity, level, implementation and outcome while applying declared case budgets. Fast budgets stay unchanged; absent policies, invalid budgets, changed result budgets and missing or duplicate grouped completions refuse. Interleaved case arrivals bound each group's own wall envelope. Calibration joins each measured nextest case's CPU and wall to its source and outcome, refuses missing, duplicate, negative or stale CPU evidence, and names the source range and conservative code-change flags in comparisons.
+        """Claim: Explicit reference-tier groups retain case identity, level, implementation and outcome while applying declared case budgets. Unchanged cases retain their level budgets; independently declared case allowances require an exact case and named cost, preserve the tier, level and implementation, and cannot override a tier-declared suite budget. Absent policies, invalid budgets, changed result budgets and missing or duplicate grouped completions refuse. Interleaved case arrivals bound each group's own wall envelope. Calibration joins each measured nextest case's CPU and wall to its source and outcome, refuses missing, duplicate, negative or stale CPU evidence, and names the source range and conservative code-change flags in comparisons.
         ´claim:harness:reference-tier-retains-required-case-evidence´
         ´test:integration:test-reference-tier´
         """
@@ -298,6 +339,7 @@ assert (root/'payload').read_text() == 'committed'
             with self.assertRaises(StructuralError):
                 complete(registry, invalid)
         self.calibration_cpu()
+        self.calibrated_case_budgets()
         thresholds = declarations()
         start = thresholds['unit']['budget_ms']
         fast_end = thresholds['crate']['budget_ms']

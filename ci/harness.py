@@ -92,10 +92,24 @@ class Registry:
                 raise StructuralError('case level override lacks a declared case and premise')
             if any(level not in self.levels or not isinstance(reasons[name],str) or not reasons[name].strip() for name,level in overrides.items()):
                 raise StructuralError('missing case level or premise')
+            case_budgets = suite.get('case_budgets', {})
+            budget_reasons = suite.get('case_budget_reasons', {})
+            if (not isinstance(case_budgets, dict) or not isinstance(budget_reasons, dict)
+                    or set(case_budgets) != set(budget_reasons)
+                    or not set(case_budgets) <= set(suite['cases'])):
+                raise StructuralError('case budget override lacks a declared case and cost')
+            if case_budgets and tier_budget:
+                raise StructuralError('case budget cannot override a tier-declared suite budget')
+            for case, budget in case_budgets.items():
+                if (budget not in declared or declared[budget]['category'] != 'case'
+                        or not isinstance(budget_reasons[case], str) or not budget_reasons[case].strip()):
+                    raise StructuralError('missing case budget or named cost')
             for case in suite['cases']:
                 if not isinstance(case, str) or not case or case in self.cases:
                     raise StructuralError('duplicate or malformed registered case')
                 self.cases[case] = dict(suite,level=overrides.get(case,suite['level']))
+                if case in case_budgets:
+                    self.cases[case]['case_budget'] = case_budgets[case]
         if not set(self.properties).issubset(self.cases):
             raise StructuralError('unregistered property case')
         for suite in self.suites.values():
