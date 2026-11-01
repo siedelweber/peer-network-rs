@@ -713,6 +713,7 @@ proptest! {
 /// ´test:integration:compiler-contract´
 #[test]
 fn compiler_contract() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     for case in boundary::BOUNDARY_CASES {
         let mut fixture = boundary::boundary_fixture(case);
         let package = boundary::boundary_package(&fixture);
@@ -853,6 +854,7 @@ fn compiler_contract_view(state: &CompiledState, fixture: &boundary::BoundaryFix
 /// ´test:integration:ledger-contract´
 #[test]
 fn ledger_contract() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     use nrz_cas::{Rational, limits::Budget};
     use pn_epoch::ledger::{LedgerError, compile_ledger};
     use pn_records::numerics::ExactLimits;

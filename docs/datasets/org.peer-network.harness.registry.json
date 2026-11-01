@@ -4406,6 +4406,7 @@
       },
       "case_span": true,
       "cases": [
+        "pn-epoch::solve::standing_scope",
         "pn-epoch::solve::evaluated_scaling",
         "pn-epoch::solve::partitions::published_isolated_acts",
         "pn-epoch::solve::partitions::published_retained_act",

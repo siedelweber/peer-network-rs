@@ -159,7 +159,7 @@
 | pn-epoch::support | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::package | active | public-surface | pn-epoch-rust | fast | 1 |
 | planned-compiler | active | public-surface | pn-epoch-rust | fast | 5 |
-| planned-numeric | active | public-surface | pn-epoch-rust | fast | 31 |
+| planned-numeric | active | public-surface | pn-epoch-rust | fast | 32 |
 | pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 15 |
 | pn-graph::reference-maps | active | public-surface | pn-graph-rust | reference-certificate | 2 |
 | pn-graph::reference-local | active | public-surface | pn-graph-rust | reference-certificate | 1 |

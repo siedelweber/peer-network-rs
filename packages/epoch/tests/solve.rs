@@ -896,6 +896,7 @@ fn burn_case(case: &str) {
 /// ´test:integration:burn-own´
 #[test]
 fn burn_own() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     burn_case("own");
 }
 /// Claim: The unsorted complete-history sibling pair changes only one accepted burn and preserves counts, base, publication and saturated emission at the same positive passing rung. Certified reached standing decreases; replayed box transport checks the finite response bounds and the largest-direct-forcing feedback majorant.
@@ -903,6 +904,7 @@ fn burn_own() {
 /// ´test:integration:burn-sibling´
 #[test]
 fn burn_sibling() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     burn_case("sibling");
 }
 /// Claim: The unsorted complete-history depleted-source pair changes only one accepted burn. Both full rungs fail and both anchors pass; emission changes and the certified reached recipient decreases. The complete signed shock, not fixed-emission direct forcing, bounds the finite response.
@@ -910,6 +912,7 @@ fn burn_sibling() {
 /// ´test:integration:burn-depleted´
 #[test]
 fn burn_depleted() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     burn_case("depleted");
 }
 /// Claim: The unsorted complete-history positive-burn pair preserves counts, base and saturated emission but changes the selected rung from a passing full rung to a passing anchor after a full-rung failure. Certified own standing decreases, and replayed transport checks the complete shock and finite response bound.
@@ -917,6 +920,7 @@ fn burn_depleted() {
 /// ´test:integration:burn-switch´
 #[test]
 fn burn_switch() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     burn_case("switch");
 }
 /// Claim: The unsorted complete-history sole-contributor pair changes only one accepted burn. Fixed self-only support and an affine source-rate segment strictly above the wall establish the premise throughout the path; both full rungs pass and exact own standing increases with its rate. No positive direction is asserted outside that regime.
@@ -924,6 +928,7 @@ fn burn_switch() {
 /// ´test:integration:burn-monotone´
 #[test]
 fn burn_monotone() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     burn_case("monotone");
 }
 
@@ -1271,6 +1276,7 @@ fn split_projected_bound(
 /// ´test:integration:certified-splits´
 #[test]
 fn certified_splits() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     use NumberId as N;
     for exporting in [true, false] {
         let coarse = split_state(false, exporting);
@@ -2111,6 +2117,7 @@ fn sparse(rows: &[Vec<Fraction>]) -> pn_records::transport::Matrix<Fraction> {
 /// ´test:integration:transport-oracle´
 #[test]
 fn transport_oracle() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     use pn_graph::transport::exact_transport;
     use pn_records::transport::{KernelError, TransportInput};
     let z = Fraction(0, 1);
@@ -4345,6 +4352,7 @@ fn act_response_pins(case: &str) -> [NumberId; 9] {
 /// ´test:integration:act-directions´
 #[test]
 fn act_directions() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     assert_eq!(act_response_case("raise"), act_response_case("lower"));
 }
 
@@ -4353,6 +4361,7 @@ fn act_directions() {
 /// ´test:integration:act-emission´
 #[test]
 fn act_emission() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     act_response_case("emission");
 }
 
@@ -4361,5 +4370,32 @@ fn act_emission() {
 /// ´test:integration:act-switch´
 #[test]
 fn act_switch() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     act_response_case("switch");
+}
+
+/// Claim: The finite standing witness set in the standing-witness join, the joined compiler prerequisite, and the compiled-conservation and transport witnesses retain their scoped premises, bounds and refusals at each declared fixture, policy and precision. Preserve means this finite evidence join, not invariance; the standing negative-probe index excludes universal split invariance, burn monotonicity, own recovery, act direction, contraction-only sign, purpose inference, unrestricted strategic completion, individual-standing conservation, unconditional rehabilitation, guild-funded recovery, randomized consumer guarantees, unbounded families, real-chain integration and deployment authentication.
+/// Scope and exclusions: (´[ROOT-rec:design:standing-witness-join]´) and (´[ROOT-cav:design:standing-negative-probe-index]´).
+/// This site replays the self-only compiled anchor and exact transport; companion sites supply the other members of the required execution join.
+/// ´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´
+/// ´test:integration:standing-scope´
+#[test]
+fn standing_scope() {
+    let state = split_state(false, false);
+    let frozen = state.view().clone();
+    let p = split_policy(&state);
+    let bound = bind_procedure(&state, p.clone(), &Published(p), Limits::default()).unwrap();
+    let fence = pn_epoch::fence::search(&bound, None).unwrap();
+    burn_rungs(&fence, false);
+    let solved = pn_epoch::conserved::solve(&bound, &fence).unwrap();
+    let checked = pn_epoch::conserved::replay(&bound, &solved).unwrap();
+    assert_eq!(solved.rounds.len(), checked.rounds.len());
+    for (produced, replayed) in solved.rounds.iter().zip(&checked.rounds) {
+        assert_eq!(produced.standing, replayed.standing);
+        assert_eq!(produced.radius, replayed.radius);
+        assert_eq!(produced.contraction, replayed.contraction);
+        assert_eq!(produced.residual, replayed.residual);
+    }
+    assert_eq!(state.view(), &frozen);
+    transport_oracle();
 }

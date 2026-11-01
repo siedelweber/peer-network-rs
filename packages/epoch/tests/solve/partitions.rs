@@ -602,6 +602,7 @@ fn receiving(showcase: bool) {
 /// ´test:integration:receiving-small´
 #[test]
 fn receiving_small() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     receiving(false);
     completion_probes();
 }
@@ -611,6 +612,7 @@ fn receiving_small() {
 /// ´test:integration:receiving-showcase´
 #[test]
 fn receiving_showcase() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     receiving(true);
 }
 
@@ -834,6 +836,7 @@ fn exporting(case: ExportCase, memo: &mut FenceMemo) -> (CompiledState, Compiled
 /// ´test:integration:distinct-target-split´
 #[test]
 fn distinct_target_split() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     let (before, after, old, new) = exporting(ExportCase::Distinct, &mut FenceMemo::default());
     distinct_bound(&before, &after, &old, &new);
 }
@@ -1127,6 +1130,7 @@ fn positive_pins(raise: bool) -> [NumberId; 6] {
 /// ´test:integration:positive-rung-split´
 #[test]
 fn positive_rung_split() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     let mut memo = FenceMemo::default();
     for case in [ExportCase::Raise, ExportCase::Lower] {
         let (before, after, old, new) = exporting(case, &mut memo);
@@ -1204,6 +1208,7 @@ fn matched_coefficients(before: &CompiledState, after: &CompiledState) {
 /// ´test:integration:nonconstant-matched-split´
 #[test]
 fn nonconstant_matched_split() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     let (before, after, old, new) = exporting(ExportCase::Matched, &mut FenceMemo::default());
     matched_coefficients(&before, &after);
     let old = old.rounds.last().unwrap();
@@ -1516,6 +1521,7 @@ fn conservation_anchor_oracle(state: &CompiledState, map: &pn_records::conserved
 /// ´test:integration:compiled-conservation´
 #[test]
 fn compiled_conservation() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     let state = conservation_state();
     let before = state.view().clone();
     let p = conservation_policy(&state);
@@ -1629,6 +1635,7 @@ fn sibling_solve(state: &CompiledState, memo: &mut FenceMemo, precision: NumberI
 /// ´test:integration:sibling-outside-paths´
 #[test]
 fn sibling_outside_paths() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     let mut memo = FenceMemo::default();
     let before = sibling_state(false, true);
     let after = sibling_state(true, true);
@@ -1910,6 +1917,7 @@ fn published_act_contains(value: &nrz_cas::enclosure::Interval, id: NumberId, bu
 /// ´test:integration:published-isolated-acts´
 #[test]
 fn published_isolated_acts() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     for rate in [
         N::NumbersActFamilyExtremeRate,
         N::NumbersActFamilyLowRationalRate,
@@ -1997,6 +2005,7 @@ fn published_isolated_acts() {
 /// ´test:integration:published-retained-act´
 #[test]
 fn published_retained_act() {
+    // Aggregate scope: (´claim:standing:split-and-burn-witnesses-preserve-scoped-guarantees´).
     let old = published_act_state(true, N::NumbersPublishedActRetainedHighRate, false);
     let new = published_act_state(true, N::NumbersPublishedActRetainedHighRate, true);
     published_act_premises(&old, &new, "a");
