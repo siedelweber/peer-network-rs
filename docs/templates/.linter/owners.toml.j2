@@ -1,8 +1,8 @@
 namespace = "org.peer-network.linter.owners"
 version = [1, 0, 0]
-root_owner = "ROOT"
+{% set declaration = row('org.peer-network.linter.owners', name='declaration') %}{{ require(declaration.root_owner in declaration.owners, 'root owner must name a declared owner') }}root_owner = {{ declaration.root_owner | toml_string }}
 
-{% set declaration = row('org.peer-network.linter.owners', name='declaration') %}owners = [{% for owner in declaration.owners %}{{ owner | toml_string }}{% if not loop.last %}, {% endif %}{% endfor %}]
+owners = [{% for owner in declaration.owners %}{{ owner | toml_string }}{% if not loop.last %}, {% endif %}{% endfor %}]
 imports = [{% for item in declaration.imports %}{ owner = {{ item.owner | toml_string }}, registry = {{ item.registry | toml_string }} }{% if not loop.last %}, {% endif %}{% endfor %}]
 partitions = [
 {% for item in declaration.partitions %}  { name = {{ item.name | toml_string }}, owner = {{ item.owner | toml_string }}, pattern = {{ item.pattern | toml_string }} },

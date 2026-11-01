@@ -367,7 +367,10 @@ fn declaration_authority() -> Result<()> {
         let mut data: serde_json::Value = serde_json::from_str(&original)?;
         match dataset {
             "reserved" => data["rows"][0]["kinds"][0] = needle.into(),
-            "owners" => data["rows"][0]["owners"][0] = needle.into(),
+            "owners" => {
+                data["rows"][0]["owners"][0] = needle.into();
+                data["rows"][0]["root_owner"] = needle.into();
+            }
             _ => {
                 let row = data["rows"]
                     .as_array_mut()
@@ -384,6 +387,24 @@ fn declaration_authority() -> Result<()> {
         assert!(fs::read_to_string(root.join("adr/001-label-calculus.md"))?.contains(needle));
         fs::write(path, original)?;
     }
+    let path = root.join("docs/datasets/org.peer-network.linter.owners.json");
+    let mut data: serde_json::Value = serde_json::from_str(&fs::read_to_string(&path)?)?;
+    data["rows"][0]["root_owner"] = "DOCUMENTS".into();
+    write_dataset(&path, &data)?;
+    documents::run(root, Operation::Write)?;
+    assert!(fs::read_to_string(root.join(".linter/owners.toml"))?.contains("root_owner = \"DOCUMENTS\""));
+    assert!(fs::read_to_string(root.join("adr/001-label-calculus.md"))?.contains("declares root owner DOCUMENTS"));
+    data["rows"][0]["root_owner"] = "UNDECLARED".into();
+    write_dataset(&path, &data)?;
+    let result = documents::run(root, Operation::Write);
+    assert!(result.is_err());
+    assert!(
+        result
+            .err()
+            .ok_or("expected refusal")?
+            .to_string()
+            .contains("root owner must name a declared owner")
+    );
     Ok(())
 }
 

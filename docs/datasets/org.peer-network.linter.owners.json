@@ -302,7 +302,8 @@
           "owner": "ACTPROFILE",
           "pattern": "%s\"packages/act-profile/\" *VCHAR"
         }
-      ]
+      ],
+      "root_owner": "ROOT"
     }
   ]
 }
