@@ -8,6 +8,7 @@ use serde::Serialize;
 
 mod census;
 mod envelope;
+mod numbers;
 mod registry;
 mod rendering;
 mod workspace;
@@ -182,7 +183,15 @@ fn generate(root: &Path, write: bool) -> Result<Vec<Finding>> {
         if path.extension().is_none_or(|ext| ext != "toml") {
             return Err(format!("input carrier: expected TOML: {}", path.display()).into());
         }
-        let dataset = envelope::input(&read(&path)?).map_err(|error| format!("{}: {error}", path.display()))?;
+        let input = read(&path)?;
+        let mut dataset = envelope::input(&input).map_err(|error| format!("{}: {error}", path.display()))?;
+        numbers::project(&mut dataset)?;
+        if dataset.namespace == numbers::NAMESPACE {
+            projections.push((
+                root.join("packages/documents/src/pins.rs"),
+                numbers::pins(&dataset, &input)?.into_bytes(),
+            ));
+        }
         if !namespaces.insert(dataset.namespace.clone()) {
             return Err(format!("duplicate dataset: {}", dataset.namespace).into());
         }

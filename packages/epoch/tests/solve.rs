@@ -1,3 +1,7 @@
+#[path = "../../documents/src/pins.rs"]
+pub mod pins;
+use pins::NumberId;
+
 mod common;
 #[path = "common/joined.rs"]
 mod joined;
@@ -75,7 +79,7 @@ fn enclosed_policy(state: &pn_epoch::compiler::CompiledState, inverse: bool) -> 
     p.grid = vec!["1".into(), "1/2".into(), "0".into()];
     p.endpoint_grid = "1/128".into();
     p.maximum_iterations = 2;
-    p.maximum_work = 2_000_000_000;
+    p.maximum_work = NumberId::NumbersReferenceWallMeasurementsValue7.integer();
     p.maximum_solve_work = p.maximum_work;
     p.maximum_replay_work = p.maximum_work;
     let policy = p.enclosure.as_mut().unwrap();
@@ -102,8 +106,8 @@ fn enclosed_definition() -> pn_records::wall::Inputs {
         },
         stopping_width: "1/128".into(),
         maximum_steps: 64,
-        maximum_work: 2_000_000_000,
-        maximum_replay_work: 2_000_000_000,
+        maximum_work: NumberId::NumbersReferenceWallMeasurementsValue7.integer(),
+        maximum_replay_work: NumberId::NumbersReferenceWallMeasurementsValue7.integer(),
         floor: pn_records::wall::Floor::Rational,
         previous: pn_records::wall::Previous::Target,
         door: "1".into(),
@@ -170,8 +174,8 @@ fn enclosed_wall_solve() {
         }
         let (production, replay, residuals) = if inverse {
             (
-                612_584_299,
-                380_980_787,
+                NumberId::NumbersEnclosedWallMeasurementsValue6.integer(),
+                NumberId::NumbersEnclosedWallMeasurementsValue7.integer(),
                 [
                     "5670141826438649515891619368601199708332953414052388146919623/981010981479406899837363992476113976808150623333565068647018368",
                     "158459167044379273832471725989253443784384870325214392084444336722433273594407277236757607522198685041639631556016670729113/41698426653304478132274004120036559947438140753445930447086199182362541242148577432681496137945158911327465068169836485201280",
@@ -180,8 +184,8 @@ fn enclosed_wall_solve() {
             )
         } else {
             (
-                455_927_402,
-                252_822_503,
+                NumberId::NumbersEnclosedWallMeasurementsValue8.integer(),
+                NumberId::NumbersEnclosedWallMeasurementsValue9.integer(),
                 [
                     "95835251845316451407327/17577709914569017269853056",
                     "1342422069073379924110811894088156726642243/372794307304807277232275496297520517193064960",
@@ -344,8 +348,8 @@ fn reference_wall_binding() {
         },
         stopping_width: "1/128".into(),
         maximum_steps: 64,
-        maximum_work: 200_000_000,
-        maximum_replay_work: 200_000_000,
+        maximum_work: NumberId::NumbersSolveCostMeasurementsValue16.integer(),
+        maximum_replay_work: NumberId::NumbersSolveCostMeasurementsValue16.integer(),
         floor: Floor::Rational,
         previous: Previous::Rational("3/37".into()),
         door: "1".into(),
@@ -1218,9 +1222,9 @@ fn real_base() {
 
 fn fence_procedure(state: &pn_epoch::compiler::CompiledState) -> Procedure {
     let mut p = base_procedure(state);
-    p.maximum_work = 200_000_000;
-    p.maximum_solve_work = 200_000_000;
-    p.maximum_replay_work = 200_000_000;
+    p.maximum_work = NumberId::NumbersSolveCostMeasurementsValue16.integer();
+    p.maximum_solve_work = NumberId::NumbersSolveCostMeasurementsValue16.integer();
+    p.maximum_replay_work = NumberId::NumbersSolveCostMeasurementsValue16.integer();
     p.primitives.extend([
         Primitive::Sigmoid,
         Primitive::Tanh,
@@ -1549,7 +1553,7 @@ fn two_map_box() {
     p.precision = Precision::AbsoluteWidthBits(vec![16]);
     p.grid = vec!["1/4".into(), "0".into()];
     p.maximum_iterations = 2;
-    p.maximum_work = 20_000_000_000;
+    p.maximum_work = NumberId::NumbersTwoMapMeasurementsValue20.integer();
     p.maximum_solve_work = p.maximum_work;
     p.maximum_replay_work = p.maximum_work;
     let policy = p.enclosure.as_mut().unwrap();
@@ -1578,15 +1582,23 @@ fn two_map_box() {
             result.one_map_radius.as_str(),
             result.radius.as_str()
         ),
-        (394_358_227, 411_904_756, "115395727595/4302372864", "12934495/4302372864")
+        (
+            NumberId::NumbersTwoMapMeasurementsValue14.integer(),
+            NumberId::NumbersTwoMapMeasurementsValue15.integer(),
+            NumberId::NumbersTwoMapMeasurementsValue18.value(),
+            NumberId::NumbersTwoMapMeasurementsValue19.value()
+        )
     );
-    for cap in [411_904_755, 411_904_756] {
+    for cap in [
+        NumberId::NumbersTwoMapMeasurementsValue15.integer() - 1,
+        NumberId::NumbersTwoMapMeasurementsValue15.integer(),
+    ] {
         let mut limited = p.clone();
         limited.maximum_work = cap;
         limited.enclosure.as_mut().unwrap().operation.work = cap;
         assert_eq!(
             verification::evaluate_box(&limited, &input, &result.first.image).is_ok(),
-            cap == 411_904_756
+            cap == NumberId::NumbersTwoMapMeasurementsValue15.integer()
         );
     }
 }
@@ -1758,7 +1770,7 @@ fn conserved_residual() {
     let fence = pn_epoch::fence::search(&bound, None).unwrap();
     assert_eq!(fence.selected.as_deref(), Some("1/4"));
     let result = pn_epoch::conserved::solve(&bound, &fence).unwrap();
-    assert_eq!(result.work, 115_287_737);
+    assert_eq!(result.work, NumberId::NumbersBiteSixSolveMeasurementsValue8.integer());
     let checked = pn_epoch::conserved::replay(&bound, &result).unwrap();
     assert_eq!(
         checked.rounds.last().unwrap().standing,
@@ -1802,11 +1814,17 @@ fn conserved_residual() {
     alternate.endpoint_grid = "1/4".into();
     let bound = bind_procedure(&state, alternate.clone(), &Published(alternate.clone()), Limits::default()).unwrap();
     let comparison = pn_epoch::conserved::solve(&bound, &fence).unwrap();
-    assert_eq!(comparison.work, 114_618_499);
-    for cap in [114_618_499, 114_618_498] {
+    assert_eq!(comparison.work, NumberId::NumbersBiteSixSolveMeasurementsValue26.integer());
+    for cap in [
+        NumberId::NumbersBiteSixSolveMeasurementsValue26.integer(),
+        NumberId::NumbersBiteSixSolveMeasurementsValue26.integer() - 1,
+    ] {
         let limited = work_policy(&alternate, cap);
         let bound = bind_procedure(&state, limited.clone(), &Published(limited), Limits::default()).unwrap();
-        assert_eq!(pn_epoch::conserved::solve(&bound, &fence).is_ok(), cap == 114_618_499);
+        assert_eq!(
+            pn_epoch::conserved::solve(&bound, &fence).is_ok(),
+            cap == NumberId::NumbersBiteSixSolveMeasurementsValue26.integer()
+        );
     }
 }
 
@@ -1825,13 +1843,22 @@ fn check_solve_work(
     fence: &pn_epoch::fence::Search,
     result: &pn_records::conserved::SolveRecord,
 ) {
-    for cap in [115_287_737, 115_287_736] {
+    for cap in [
+        NumberId::NumbersBiteSixSolveMeasurementsValue8.integer(),
+        NumberId::NumbersBiteSixSolveMeasurementsValue8.integer() - 1,
+    ] {
         let limited = work_policy(p, cap);
         let bound = bind_procedure(state, limited.clone(), &Published(limited), Limits::default()).unwrap();
-        assert_eq!(pn_epoch::conserved::solve(&bound, fence).is_ok(), cap == 115_287_737);
+        assert_eq!(
+            pn_epoch::conserved::solve(&bound, fence).is_ok(),
+            cap == NumberId::NumbersBiteSixSolveMeasurementsValue8.integer()
+        );
     }
     let round = &result.rounds[0];
-    assert_eq!(round.candidate_work, 64_097_175);
+    assert_eq!(
+        round.candidate_work,
+        NumberId::NumbersBiteSixSolveMeasurementsValue5.integer()
+    );
     assert_eq!(round.proposals.len(), 2);
     let repeated = &round.proposals[0];
     assert_eq!(repeated.point.len(), 4);
@@ -1849,9 +1876,9 @@ fn check_solve_work(
     assert_eq!(checked.image, repeated.image);
     assert!(checked.work <= repeated.work);
     for (map, expected) in [
-        (&round.proposals[1], 43_330_725),
-        (&round.certified, 51_033_270),
-        (&round.proposals[0], 20_450_944),
+        (&round.proposals[1], NumberId::NumbersBiteSixSolveMeasurementsValue4.integer()),
+        (&round.certified, NumberId::NumbersBiteSixSolveMeasurementsValue6.integer()),
+        (&round.proposals[0], NumberId::NumbersBiteSixSolveMeasurementsValue3.integer()),
     ] {
         assert_eq!(map.work, expected);
         for cap in [expected, expected - 1] {
@@ -1866,12 +1893,18 @@ fn check_solve_work(
 }
 
 fn check_kernel_work(p: &Procedure, map: &pn_records::conserved::MapRecord) {
-    for cap in [583_937, 583_936] {
+    for cap in [
+        NumberId::NumbersBiteSixSolveMeasurementsValue9.integer(),
+        NumberId::NumbersBiteSixSolveMeasurementsValue9.integer() - 1,
+    ] {
         let mut limits = p.enclosure.as_ref().unwrap().operation.clone();
         limits.work = cap;
         let mut budget = nrz_cas::limits::Budget::new(limits).unwrap();
         let output = pn_graph::transport::enclosed::evaluate(&map.transport_input, &mut budget, 10000);
-        assert_eq!(output.is_ok(), cap == 583_937);
+        assert_eq!(
+            output.is_ok(),
+            cap == NumberId::NumbersBiteSixSolveMeasurementsValue9.integer()
+        );
         if let Ok(output) = output {
             assert_eq!(output, map.transport);
             assert_eq!(budget.usage().work, cap);
@@ -1895,7 +1928,10 @@ fn check_activation_work(p: &Procedure, map: &pn_records::conserved::MapRecord) 
     };
     let index = session.evaluate(&request).unwrap();
     assert_eq!(session.evidence(index).unwrap().primitive.evidence.work, 8_961_551);
-    assert_eq!((prefix, session.work()), (4_924_286, 13_888_467));
+    assert_eq!(
+        (prefix, session.work()),
+        (NumberId::NumbersSolveCostMeasurementsValue1.integer(), 13_888_467)
+    );
     for cap in [13_888_467, 13_888_466] {
         let policy = work_policy(p, cap);
         let mut session = pn_graph::numeric::activation::sharing::Session::new(&policy, "1/400").unwrap();
@@ -2390,10 +2426,10 @@ fn accuracy_case(state: &pn_epoch::compiler::CompiledState, grid: &str, cap: u64
     let result = pn_epoch::conserved::solve(&bound, &accepted).unwrap();
     let round = &result.rounds[0];
     let expected = match (grid, cap) {
-        ("1/16", 2) => 115_287_737,
-        ("1/4", 1) => 71_352_757,
-        ("1/16", 1) => 71_819_896,
-        ("1/4", 2) => 114_618_499,
+        ("1/16", 2) => NumberId::NumbersBiteSixSolveMeasurementsValue8.integer(),
+        ("1/4", 1) => NumberId::NumbersBiteSixSolveMeasurementsValue18.integer(),
+        ("1/16", 1) => NumberId::NumbersBiteSixSolveMeasurementsValue25.integer(),
+        ("1/4", 2) => NumberId::NumbersBiteSixSolveMeasurementsValue26.integer(),
         _ => unreachable!(),
     };
     assert_eq!(result.work, expected);
@@ -2437,23 +2473,23 @@ fn accuracy_case(state: &pn_epoch::compiler::CompiledState, grid: &str, cap: u64
 fn assert_accuracy(round: &pn_records::conserved::ResidualRound, hull: &BTreeMap<String, Bounds>, grid: &str) {
     let (residual, radius, widths) = match grid {
         "1/16" => (
-            "883609435249115/350734766844784",
-            "4418047176245575/350734766844784",
+            NumberId::NumbersBiteSixSolveMeasurementsValue12.value(),
+            NumberId::NumbersBiteSixSolveMeasurementsValue13.value(),
             [
-                "17480737461808201588044445/816865088589551049228292",
-                "9789239633016473196927485/408432544294775524614146",
-                "9751430014794363498347005/408432544294775524614146",
-                "9656833631773836919198205/408432544294775524614146",
+                NumberId::NumbersBiteSixSolveMeasurementsValue14.value(),
+                NumberId::NumbersBiteSixSolveMeasurementsValue15.value(),
+                NumberId::NumbersBiteSixSolveMeasurementsValue16.value(),
+                NumberId::NumbersBiteSixSolveMeasurementsValue17.value(),
             ],
         ),
         "1/4" => (
-            "110976068652445/43841845855598",
-            "554880343262225/43841845855598",
+            NumberId::NumbersBiteSixSolveMeasurementsValue19.value(),
+            NumberId::NumbersBiteSixSolveMeasurementsValue20.value(),
             [
-                "4379964147582925249900990/204216272147387762307073",
-                "4914179380769986304243500/204216272147387762307073",
-                "4895274571658931454953260/204216272147387762307073",
-                "4847976380148668165378860/204216272147387762307073",
+                NumberId::NumbersBiteSixSolveMeasurementsValue21.value(),
+                NumberId::NumbersBiteSixSolveMeasurementsValue22.value(),
+                NumberId::NumbersBiteSixSolveMeasurementsValue23.value(),
+                NumberId::NumbersBiteSixSolveMeasurementsValue24.value(),
             ],
         ),
         _ => unreachable!(),
@@ -2509,7 +2545,10 @@ fn check_wall_binding() {
 
 fn check_prefix_pins() {
     let state = conserved_state();
-    for (precision, expected) in [(2, 4_219_729), (4, 4_924_286)] {
+    for (precision, expected) in [
+        (2, NumberId::NumbersBiteSixSolveMeasurementsValue11.integer()),
+        (4, NumberId::NumbersSolveCostMeasurementsValue1.integer()),
+    ] {
         for cap in [expected, expected - 1] {
             let mut p = conserved_policy(&state, "1/16");
             p.precision = Precision::AbsoluteWidthBits(vec![precision]);

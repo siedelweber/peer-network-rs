@@ -29,6 +29,45 @@ IDENTITY_CONTEXT = re.compile(r"\b(?:commit|digest|checksum|sha(?:-?(?:1|256|512
 IDENTITY_FIELD = re.compile(r'''\b(?:hash|rev|revision|tree|object)\b[ \t]*(?:[=:][ \t]*)?["'`]?\Z''', re.I)
 BARE = re.compile(r"[0-9a-f]+", re.I)
 
+NUMERIC_PATHS = ('docs/inputs/numbers.toml', 'docs/datasets/org.peer-network.numbers.registry.json')
+EXACT_NUMBER = re.compile(r'[+-]?[0-9]+(?:/[0-9]+|\.[0-9]+)?\Z')
+
+
+def numeric_registry(root, rule):
+    """Account only exact-value fields in the two declared registry carriers.
+
+    Carrier parsing validates values independently of hash recognition. Physical
+    field spans, not membership in a set of numeric strings, grant admission.
+    Consequently an identical run in a comment or another field gains nothing.
+    """
+    if rule.get('paths') != list(NUMERIC_PATHS):
+        raise ValueError('numeric registry: expected the two exact carrier paths')
+    admitted = {}
+    for name in NUMERIC_PATHS:
+        text = relative_file(root, name).read_text()
+        data = tomllib.loads(text) if name.endswith('.toml') else json.loads(text)
+        if (data.get('namespace') != 'org.peer-network.numbers.registry'
+                or not isinstance(data.get('rows'), list) or not data['rows']):
+            raise ValueError('numeric registry: malformed carrier')
+        values = []
+        for row in data['rows']:
+            value = row.get('value')
+            if (not isinstance(value, str) or not EXACT_NUMBER.fullmatch(value)
+                    or ('/' in value and not value.split('/')[1].strip('0'))):
+                raise ValueError('numeric registry: malformed exact value')
+            values.append(value)
+        # The authored carrier and deterministic JSON projection each put one
+        # unescaped value on a line. Refuse alternate lexical forms rather than
+        # accidentally assigning a neighboring field's or comment's occurrence.
+        pattern = (r'^value\s*=\s*"([+0-9./-]+)"\s*$' if name.endswith('.toml')
+                   else r'^\s*"value"\s*:\s*"([+0-9./-]+)"\s*,?\s*$')
+        fields = [(number, match) for number, line in enumerate(text.splitlines(), 1)
+                  if (match := re.fullmatch(pattern, line))]
+        if [match[1] for _, match in fields] != values:
+            raise ValueError('numeric registry: exact values require isolated canonical fields')
+        admitted[name] = {number: match.span(1) for number, match in fields}
+    return admitted
+
 
 def occurrences(text):
     """Read values, not short English words that happen to use hex letters.
@@ -401,7 +440,10 @@ def audit(root, paths, table):
         if rule["family"] in names or not rule.get("paths") or not all(isinstance(path, str) and path for path in rule["paths"]):
             raise ValueError("hash citations: duplicate family or absent paths")
         names.add(rule["family"])
-        compiled.append((rule, establish(root, rule)))
+        if rule['reader'] == 'numeric-registry' and rule['establishment'] == 'defined':
+            compiled.append((rule, numeric_registry(root, rule)))
+        else:
+            compiled.append((rule, establish(root, rule)))
     findings = []
     used = set()
     count = 0
@@ -409,10 +451,22 @@ def audit(root, paths, table):
         full = relative_file(root, path)
         # Decode one byte to one character, so binary tracked content is scanned too.
         for number, line in enumerate(full.read_bytes().decode("latin1").splitlines(), 1):
-            for match in occurrences(line):
+            numeric = [(rule, check.get(path, {}).get(number)) for rule, check in compiled
+                       if rule['reader'] == 'numeric-registry']
+            numeric = [(rule, span) for rule, span in numeric if span is not None]
+            # Count even short decimal runs in these fields: a family's use does
+            # not depend on an accidental collision with identity recognition.
+            seen = {(match.start(), match.end()): match for match in occurrences(line)}
+            for _, (start, end) in numeric:
+                for match in re.finditer(r'[0-9]+', line):
+                    if start <= match.start() and match.end() <= end:
+                        seen[(match.start(), match.end())] = match
+            for match in seen.values():
                 value = match.group()
                 count += 1
-                matches = [rule["family"] for rule, check in compiled if any(fnmatch.fnmatchcase(path, pattern) for pattern in rule["paths"]) and check(value, line)]
+                matches = [rule["family"] for rule, check in compiled if rule['reader'] != 'numeric-registry' and any(fnmatch.fnmatchcase(path, pattern) for pattern in rule["paths"]) and check(value, line)]
+                matches.extend(rule['family'] for rule, (start, end) in numeric
+                               if start <= match.start() and match.end() <= end)
                 if not matches:
                     findings.append(f"{path}:{number}: unaccounted hexadecimal value {value}")
                 else:

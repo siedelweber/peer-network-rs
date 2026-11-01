@@ -7725,6 +7725,26 @@
       "claim": "ROOT::sig:design:graph",
       "mode": "instrumented",
       "shape": "shape-graph"
+    },
+    {
+      "package": "documents",
+      "path": "packages/documents/src/numbers.rs",
+      "item": "numbers::project",
+      "owner": "DOCUMENTS",
+      "signature": "fn project (dataset : & mut Dataset) -> Result < () >",
+      "claim": "ROOT::rule:observe:spans",
+      "mode": "instrumented",
+      "shape": "shape-002"
+    },
+    {
+      "package": "documents",
+      "path": "packages/documents/src/numbers.rs",
+      "item": "numbers::pins",
+      "owner": "DOCUMENTS",
+      "signature": "fn pins (dataset : & Dataset , input : & str) -> Result < String >",
+      "claim": "ROOT::rule:observe:spans",
+      "mode": "instrumented",
+      "shape": "shape-002"
     }
   ],
   "metrics": [
@@ -10606,7 +10626,7 @@
     },
     {
       "operation": "documents::packages/documents/src/lib.rs::generate",
-      "body": "{ let mut projections = Vec :: new () ; let mut namespaces = BTreeSet :: new () ; for path in files (& root . join (\"docs/inputs\")) ? { if path . extension () . is_none_or (| ext | ext != \"toml\") { return Err (format ! (\"input carrier: expected TOML: {}\" , path . display ()) . into ()) ; } let dataset = envelope :: input (& read (& path) ?) . map_err (| error | format ! (\"{}: {error}\" , path . display ())) ? ; if ! namespaces . insert (dataset . namespace . clone ()) { return Err (format ! (\"duplicate dataset: {}\" , dataset . namespace) . into ()) ; } let destination = root . join (\"docs/datasets\") . join (format ! (\"{}.json\" , dataset . namespace)) ; projections . push ((destination , envelope :: bytes (& dataset) ?)) ; } let expected : BTreeSet < _ > = projections . iter () . map (| (path , _) | path . clone ()) . collect () ; let mut findings = Vec :: new () ; for path in files (& root . join (\"docs/datasets\")) ? { if ! expected . contains (& path) { findings . push (Finding { kind : FindingKind :: OrphanDataset , path : relative (root , & path) ? , }) ; } } for (path , bytes) in projections { if compare (& path , & bytes , write) ? { findings . push (Finding { kind : FindingKind :: StaleDataset , path : relative (root , & path) ? , }) ; } } Ok (findings) }",
+      "body": "{ let mut projections = Vec :: new () ; let mut namespaces = BTreeSet :: new () ; for path in files (& root . join (\"docs/inputs\")) ? { if path . extension () . is_none_or (| ext | ext != \"toml\") { return Err (format ! (\"input carrier: expected TOML: {}\" , path . display ()) . into ()) ; } let input = read (& path) ? ; let mut dataset = envelope :: input (& input) . map_err (| error | format ! (\"{}: {error}\" , path . display ())) ? ; numbers :: project (& mut dataset) ? ; if dataset . namespace == numbers :: NAMESPACE { projections . push ((root . join (\"packages/documents/src/pins.rs\") , numbers :: pins (& dataset , & input) ? . into_bytes () ,)) ; } if ! namespaces . insert (dataset . namespace . clone ()) { return Err (format ! (\"duplicate dataset: {}\" , dataset . namespace) . into ()) ; } let destination = root . join (\"docs/datasets\") . join (format ! (\"{}.json\" , dataset . namespace)) ; projections . push ((destination , envelope :: bytes (& dataset) ?)) ; } let expected : BTreeSet < _ > = projections . iter () . map (| (path , _) | path . clone ()) . collect () ; let mut findings = Vec :: new () ; for path in files (& root . join (\"docs/datasets\")) ? { if ! expected . contains (& path) { findings . push (Finding { kind : FindingKind :: OrphanDataset , path : relative (root , & path) ? , }) ; } } for (path , bytes) in projections { if compare (& path , & bytes , write) ? { findings . push (Finding { kind : FindingKind :: StaleDataset , path : relative (root , & path) ? , }) ; } } Ok (findings) }",
       "class_decision": "public-documents",
       "item_premise": "This body inherits the public-documents decision for generate.",
       "assessments": {
@@ -15014,6 +15034,28 @@
         "secret_flow": "certified-primitives-public",
         "exposure_consumers": "certified-primitives-public"
       }
+    },
+    {
+      "operation": "documents::packages/documents/src/numbers.rs::numbers::project",
+      "body": "{ if dataset . namespace != NAMESPACE { return Ok (()) ; } let mut ids = BTreeSet :: new () ; for row in & mut dataset . rows { let entry : Entry = serde_json :: from_value (serde_json :: to_value (& row) ?) ? ; validate (& entry) ? ; if ! ids . insert (entry . id . clone ()) { return Err (format ! (\"number: duplicate id {}\" , entry . id) . into ()) ; } let exact = group (& entry . value) ; let (display , is_exact) = match (entry . display . as_str () , entry . magnitude) { (\"exact\" , None) => (exact . clone () , true) , (\"rounded\" , Some (magnitude)) => rounded (& entry . value , magnitude) ? , _ => return Err (format ! (\"number: invalid display rule for {}\" , entry . id) . into ()) , } ; let digits = entry . value . bytes () . filter (u8 :: is_ascii_digit) . count () ; if entry . display == \"exact\" && digits > entry . exact_digits { return Err (format ! (\"number: exact display exceeds budget for {}\" , entry . id) . into ()) ; } row . insert (\"num\" . to_owned () , json ! (display)) ; row . insert (\"num_exact\" . to_owned () , json ! (is_exact)) ; if digits <= entry . exact_digits { row . insert (\"exact\" . to_owned () , json ! (exact)) ; row . insert (\"exact_exact\" . to_owned () , json ! (true)) ; } } Ok (()) }",
+      "class_decision": "public-documents",
+      "item_premise": "Registry exact inputs, generated display forms and source spans are public documentation facts, with no private or secret carrier.",
+      "assessments": {
+        "full_recording": "numeric-projection",
+        "secret_flow": "review-002",
+        "exposure_consumers": "review-003"
+      }
+    },
+    {
+      "operation": "documents::packages/documents/src/numbers.rs::numbers::pins",
+      "body": "{ let mut variants = BTreeSet :: new () ; let mut declarations = String :: new () ; let mut arms = String :: new () ; for row in & dataset . rows { let id = row . get (\"id\") . and_then (serde_json :: Value :: as_str) . ok_or (\"number: absent id\") ? ; let variant : String = id . strip_prefix (\"num:\") . unwrap_or (id) . split ([':' , '-']) . map (| word | { let mut letters = word . chars () ; letters . next () . map_or_else (String :: new , | first | first . to_ascii_uppercase () . to_string () + letters . as_str ()) }) . collect () ; if ! variants . insert (variant . clone ()) { return Err (format ! (\"number: ambiguous Rust id {id}\") . into ()) ; } let declaration = format ! (\"id = \\\"{id}\\\"\") ; let start = input . find (& declaration) . ok_or (\"number: typed ids require canonical input fields\") ? ; let rest = & input [start + declaration . len () ..] ; let prefix = \"value = \\\"\" ; let offset = rest . find (prefix) . ok_or (\"number: absent canonical value field\") ? ; let begin = start + declaration . len () + offset + prefix . len () ; let value = row . get (\"value\") . and_then (serde_json :: Value :: as_str) . ok_or (\"number: absent value\") ? ; let end = begin + value . len () ; if input . get (begin .. end) != Some (value) || ! input [end ..] . starts_with ('\"') { return Err (format ! (\"number: noncanonical value field for {id}\") . into ()) ; } writeln ! (declarations , \"    /// Registry id: {id}.\\n    {variant},\") ? ; writeln ! (arms , \"    ({begin}, {end}),\") ? ; } let count = dataset . rows . len () ; Ok (format ! (\"// Generated by the documents input projection. Values remain in the registry.\\n\\n/// A declared numeric pin; removing an id removes its variant.\\n#[derive(Clone, Copy, Debug)]\\npub enum NumberId {{\\n{declarations}}}\\n\\nconst OFFSETS: [(usize, usize); {count}] = [\\n{arms}];\\n\\nimpl NumberId {{\\n    /// Read the full-precision value from the committed registry.\\n    ///\\n    /// # Panics\\n    /// Panics only if generated offsets differ from the registry, which the fixed-point gate refuses.\\n    #[must_use]\\n    pub fn value(self) -> &'static str {{\\n        let (start, end) = OFFSETS[self as usize];\\n        include_str!(\\\"../../../docs/inputs/numbers.toml\\\")\\n            .get(start..end)\\n            .expect(\\\"registry offsets must be regenerated\\\")\\n    }}\\n\\n    /// Read an unsigned integer pin without a second literal.\\n    ///\\n    /// # Panics\\n    /// Panics only if the selected pin is not an unsigned machine integer, which a correctly typed consumer selection cannot arrange.\\n    #[must_use]\\n    pub fn integer(self) -> u64 {{\\n        self.value().parse().expect(\\\"registry pin must be an unsigned integer\\\")\\n    }}\\n}}\\n\")) }",
+      "class_decision": "public-documents",
+      "item_premise": "Registry exact inputs, generated display forms and source spans are public documentation facts, with no private or secret carrier.",
+      "assessments": {
+        "full_recording": "numeric-projection",
+        "secret_flow": "review-002",
+        "exposure_consumers": "review-003"
+      }
     }
   ],
   "generators": [
@@ -18859,6 +18901,15 @@
       "syntax": "# [derive (Clone , Debug , PartialEq , Eq)]",
       "class_decision": "conserved-public-evaluation",
       "expansion_review": "The local verification declarations, intervals and verdicts contain only public numerical evidence. Derives introduce no authenticated publication encoding or secret carrier."
+    },
+    {
+      "item": "numbers::Entry",
+      "kind": "derive",
+      "package": "documents",
+      "path": "packages/documents/src/numbers.rs",
+      "syntax": "# [derive (Debug , Deserialize)]",
+      "class_decision": "public-documents",
+      "expansion_review": "Debug and Deserialize cover public numeric declarations only; no private carriers or external effects."
     }
   ],
   "reviewed_types": [
@@ -19833,6 +19884,12 @@
       "package": "documents",
       "path": "packages/documents/src/envelope.rs",
       "syntax": "# [derive (Deserialize)] # [serde (deny_unknown_fields)] struct Input { namespace : String , version : [u64 ; 3] , rows : Vec < BTreeMap < String , toml :: Value > > , }"
+    },
+    {
+      "item": "numbers::Entry",
+      "package": "documents",
+      "path": "packages/documents/src/numbers.rs",
+      "syntax": "# [derive (Debug , Deserialize)] # [serde (deny_unknown_fields)] struct Entry { id : String , value : String , unit : String , display : String , magnitude : Option < i32 > , exact_digits : usize , }"
     },
     {
       "item": "Operation",
@@ -24225,6 +24282,11 @@
       "status": "reviewer-confirmed",
       "premises": "Read the frozen point-map builder, positive endpoint kernel and receiving replay. Only public compiler state, rational proposals, declared limits and ordered mathematical evidence enter these operations. Changed scopes, images, residuals and radii refuse. No secret material, new digest or publication encoder is introduced; observation supplies no mathematical premise.",
       "negative_probe": "EPOCH::claim:compiler:projected-residual-replays-conserved-map"
+    },
+    "numeric-projection": {
+      "status": "reviewer-confirmed",
+      "premises": "Exact numeric input values, display declarations, generated forms and source spans are public documentation data; instrumented projection and generation record complete inputs and results.",
+      "negative_probe": "ROOT::claim:discipline:semantic-review-is-bound-to-source"
     }
   }
 }

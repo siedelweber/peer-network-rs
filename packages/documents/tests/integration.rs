@@ -4,6 +4,9 @@ use std::process::Command;
 
 use documents::{Finding, FindingKind, Operation, Result};
 
+#[path = "../src/pins.rs"]
+pub mod pins;
+
 fn write_dataset(path: &Path, data: &serde_json::Value) -> Result<()> {
     fs::write(
         path,
@@ -33,6 +36,70 @@ fn fixture() -> Result<tempfile::TempDir> {
     documents::run(directory.path(), Operation::Write)?;
     git(directory.path(), &["add", "-A"])?;
     Ok(directory)
+}
+
+/// Claim: Registry projection uses exact rational rounding, deterministic narrow-space grouping and digit-budget omission; unknown ids and omitted forms refuse. Generated relations distinguish exact from rounded forms, typed pins read the same input without duplicated literals, and repeated generation is a fixed point.
+/// ´claim:render:number-forms-are-exactly-projected´
+/// ´test:integration:number-registry´
+#[test]
+fn number_registry() -> Result<()> {
+    let input: toml::Value = toml::from_str(include_str!("../../../docs/inputs/numbers.toml"))?;
+    let rows = input["rows"].as_array().ok_or("registry rows")?;
+    let pin = rows
+        .iter()
+        .find(|row| row["id"].as_str() == Some("num:numbers:bite-six-solve-measurements-value-8"))
+        .ok_or("typed pin")?;
+    assert_eq!(
+        pins::NumberId::NumbersBiteSixSolveMeasurementsValue8.value(),
+        pin["value"].as_str().ok_or("exact pin")?
+    );
+    assert!(!include_str!("../src/pins.rs").contains(pin["value"].as_str().ok_or("exact pin")?));
+    let directory = fixture()?;
+    let root = directory.path();
+    fs::create_dir_all(root.join("packages/documents/src"))?;
+    fs::write(
+        root.join("docs/inputs/numbers.toml"),
+        concat!(
+            "namespace = \"org.peer-network.numbers.registry\"\nversion = [1, 0, 0]\n",
+            "[[rows]]\nid = \"num:test:third\"\nvalue = \"1/3\"\nunit = \"dimensionless\"\ndisplay = \"rounded\"\nmagnitude = -3\nexact_digits = 1\n",
+            "[[rows]]\nid = \"num:test:half\"\nvalue = \"-5/2\"\nunit = \"dimensionless\"\ndisplay = \"rounded\"\nmagnitude = 0\nexact_digits = 2\n",
+            "[[rows]]\nid = \"num:test:integer\"\nvalue = \"1234567\"\nunit = \"Work\"\ndisplay = \"rounded\"\nmagnitude = 0\nexact_digits = 7\n",
+            "[[rows]]\nid = \"num:test:decimal\"\nvalue = \"12.345678\"\nunit = \"seconds\"\ndisplay = \"exact\"\nexact_digits = 8\n",
+            "[[rows]]\nid = \"num:test:carry\"\nvalue = \"9995\"\nunit = \"bytes\"\ndisplay = \"rounded\"\nmagnitude = 1\nexact_digits = 4\n"
+        ),
+    )?;
+    documents::run(root, Operation::Generate { check: false })?;
+    let template = root.join("docs/templates/docs/result.md.j2");
+    fs::write(
+        &template,
+        "{{ numrel('num:test:third') }}|{{ numrel('num:test:half') }}|{{ numrel('num:test:integer') }}|{{ numval('num:test:decimal', 'exact') }}|{{ numrel('num:test:carry') }}",
+    )?;
+    documents::run(root, Operation::Write)?;
+    assert_eq!(
+        fs::read_to_string(root.join("docs/result.md"))?,
+        "≈ 0.333|≈ -3|= 1\u{202f}234\u{202f}567|12.345\u{202f}678|≈ 10\u{202f}000"
+    );
+    for (text, expected) in [
+        ("{{ numval('num:test:absent') }}", "unknown or duplicate id"),
+        ("{{ numval('num:test:third', 'exact') }}", "omitted form"),
+        ("{{ numrel('num:test:third', 'exact') }}", "omitted form"),
+        ("{{ numval('num:test:third', 'other') }}", "unknown form"),
+    ] {
+        fs::write(&template, text)?;
+        assert!(
+            documents::run(root, Operation::Write)
+                .unwrap_err()
+                .to_string()
+                .contains(expected)
+        );
+    }
+    for _ in 0..2 {
+        assert_eq!(
+            documents::run(root, Operation::Generate { check: true })?.findings,
+            Vec::<Finding>::new()
+        );
+    }
+    Ok(())
 }
 
 /// Claim: Two consecutive generate-check and document-check passes report no findings on the repository, checking that committed inputs and outputs form a fixed point.

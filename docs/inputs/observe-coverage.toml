@@ -11,11 +11,11 @@ generators = 42
 
 [[rows]]
 name = "documents"
-operations = 18
-instrumented = 12
+operations = 20
+instrumented = 14
 exceptions = 6
 helpers = 0
-generators = 10
+generators = 11
 
 [[rows]]
 name = "execwrap"

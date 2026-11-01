@@ -137,6 +137,42 @@ class WorkspaceChecks(unittest.TestCase):
 
 
 class HashCitations(unittest.TestCase):
+    def test_numeric_registry_fields(self):
+        """Only validated exact-value field spans in the two registry carriers account numeric runs; identical template and non-value runs refuse, as do malformed values and widened paths.
+        ´claim:hashcitations:numeric-registry-admission-is-field-local´
+        ´test:integration:test-numeric-registry-fields´
+        """
+        from hash_citations import NUMERIC_PATHS
+        run = '1' * 40
+        rule = dict(family='numbers', group='numeric declarations', measures='exact values',
+                    producer='authored', establishment='defined', reader='numeric-registry',
+                    definition='Exact values only', paths=list(NUMERIC_PATHS))
+        table = dict(namespace='org.peer-network.ci.hash-citations', version=[1, 0, 0], rows=[rule])
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in NUMERIC_PATHS:
+                (root/name).parent.mkdir(parents=True, exist_ok=True)
+            def write(value, extra=''):
+                (root/NUMERIC_PATHS[0]).write_text('namespace = "org.peer-network.numbers.registry"\nversion = [1, 0, 0]\n[[rows]]\nid = "num:test:pin"\nvalue = '+json.dumps(value)+'\n'+extra)
+                (root/NUMERIC_PATHS[1]).write_text(json.dumps(dict(namespace='org.peer-network.numbers.registry', version=[1, 0, 0], rows=[dict(id='num:test:pin', value=value)]), indent=2)+'\n')
+            for value in (run, '-'+run, '+'+run, run+'/2', '0.'+run):
+                write(value)
+                self.assertEqual(audit(root, list(NUMERIC_PATHS), table)[0], [])
+            write(run)
+            prose = root/'template.j2'
+            prose.write_text(run)
+            self.assertTrue(any('template.j2:1: unaccounted' in finding for finding in audit(root, [*NUMERIC_PATHS, 'template.j2'], table)[0]))
+            write(run, 'note = "'+run+'"\n')
+            self.assertTrue(any('unaccounted' in finding for finding in audit(root, list(NUMERIC_PATHS), table)[0]))
+            for value in ('1/0', '1/-2', '1/+2', '1e4', 'NaN', '1.', '.1', ' 1', '1_000', '1/2/3', run+'x'):
+                write(value)
+                with self.assertRaisesRegex(ValueError, 'malformed exact value'):
+                    audit(root, list(NUMERIC_PATHS), table)
+            write(run)
+            rule['paths'] = ['docs/**']
+            with self.assertRaisesRegex(ValueError, 'exact carrier paths'):
+                audit(root, list(NUMERIC_PATHS), table)
+
     def test_act_profile_vector_corruptions(self):
         """The independent act-profile reader refuses each preimage, digest, role tag and recipe corruption, and missing or repeated vectors, including the original twenty-two controls.
         ´claim:hashcitations:act-profile-vector-corruptions-refuse´

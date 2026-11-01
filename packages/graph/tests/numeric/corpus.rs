@@ -85,10 +85,7 @@ pub(super) fn check(residual: &TwoMapRecord, local: &LocalRecord) {
     assert_eq!(published_rung, residual.first.input.strength);
     assert_eq!(published_strength, residual.first.input.strength);
     assert_eq!(published_fence_verdict, "PASS");
-    let global = number(
-        "2996290297046104444553034524118716120045412699703842014195286071395248231/25000000000000000000000000000000000000000000000000000000000000000000000000",
-        &mut budget,
-    );
+    let global = number(super::NumberId::NumbersPendingReferenceCorpusValue2.value(), &mut budget);
     let our_global = number(&residual.first.contraction, &mut budget);
     assert!(global.compare(&one, &mut budget).unwrap().is_lt());
     assert!(our_global.compare(&one, &mut budget).unwrap().is_lt());

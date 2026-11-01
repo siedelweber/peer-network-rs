@@ -16,11 +16,11 @@
     },
     {
       "exceptions": 6,
-      "generators": 10,
+      "generators": 11,
       "helpers": 0,
-      "instrumented": 12,
+      "instrumented": 14,
       "name": "documents",
-      "operations": 18
+      "operations": 20
     },
     {
       "exceptions": 4,

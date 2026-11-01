@@ -3130,6 +3130,25 @@
       "premises": "The scalar enclosure laws and frozen verified package remain premises. Finite four-Actor fixtures establish the declared evaluation-local schedule, expected-scope replay and measured cumulative Work only; they do not price arbitrary profiles or authenticate publication.",
       "realizers": [],
       "status": "scoped-supported"
+    },
+    {
+      "claims": [
+        "ROOT::claim:design:numeric-displays-match-rational-operands",
+        "DOCUMENTS::claim:render:number-forms-are-exactly-projected",
+        "DOCUMENTS::claim:render:repository-fixed-point",
+        "ROOT::claim:hashcitations:numeric-registry-admission-is-field-local"
+      ],
+      "closing_condition": "Passing current-source evidence under the recorded registry premises.",
+      "closing_step": "Numeric registry and first implementation-document migration",
+      "evidence_paragraph": "DOCUMENTS::amend:render:numeric-registry-evidence",
+      "hold": "",
+      "missing": "Outside scope: truth of authored measurements and future numeric consumers.",
+      "name": "ROOT::gate:render:numeric-correspondence",
+      "owner": "Documents implementer and repository reviewer",
+      "path": "adr/003-templated-documentation.md",
+      "premises": "Finite exact-rational rounding, grouping, omitted and unknown form refusals, typed input-backed pins, field-local scanner admission and repeated repository fixed points.",
+      "realizers": [],
+      "status": "scoped-supported"
     }
   ]
 }

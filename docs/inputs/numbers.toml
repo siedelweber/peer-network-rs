@@ -1,0 +1,1569 @@
+namespace = "org.peer-network.numbers.registry"
+version = [1, 0, 0]
+
+[[rows]]
+id = "num:numbers:refinement-value-1"
+value = "2146333"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:refinement-value-2"
+value = "2000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:provisional-carriage-bounds-value-1"
+value = "1024"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:recognition-value-1"
+value = "31"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:affinity-formation-scope-value-1"
+value = "19"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:affinity-formation-scope-value-2"
+value = "27"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:affinity-formation-scope-value-3"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:affinity-formation-scope-value-4"
+value = "2/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:publish-formation-scope-value-1"
+value = "16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:participant-formation-scope-value-1"
+value = "14"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-four-close-value-1"
+value = "512"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-five-close-value-1"
+value = "456"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-five-close-value-2"
+value = "24"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-value-1"
+value = "1/400"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-branches-value-1"
+value = "3/37"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-branches-value-2"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-branches-value-3"
+value = "15/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-branches-value-4"
+value = "5/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-branches-value-5"
+value = "1/128"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-branches-value-6"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-branches-value-7"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-1"
+value = "1/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-2"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-3"
+value = "1/20"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-4"
+value = "64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-5"
+value = "96"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-6"
+value = "65/128"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-7"
+value = "2000000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-8"
+value = "18691604"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-9"
+value = "16223174"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-10"
+value = "19867093"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-11"
+value = "20284573"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-12"
+value = "20007742"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-13"
+value = "20078015"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-14"
+value = "20292810"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-15"
+value = "20466889"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-16"
+value = "155927977"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-17"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-18"
+value = "1/16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-19"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-20"
+value = "95089873"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-21"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-22"
+value = "34929785"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-23"
+value = "6"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-24"
+value = "54797106"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-25"
+value = "1/32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-26"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-27"
+value = "115168018"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-28"
+value = "75081871"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-29"
+value = "1/64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-30"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-measurements-value-31"
+value = "135460828"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-1"
+value = "100000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-2"
+value = "32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-3"
+value = "4096"
+unit = "bytes"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-4"
+value = "256"
+unit = "bytes"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-5"
+value = "267"
+unit = "bytes"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-6"
+value = "612584299"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-7"
+value = "380980787"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-8"
+value = "455927402"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-9"
+value = "252822503"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-10"
+value = "993565086"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-11"
+value = "708749905"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-12"
+value = "5779896"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-13"
+value = "5779897"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-14"
+value = "3800123"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-15"
+value = "3800124"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-16"
+value = "3795364"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-17"
+value = "3795365"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-18"
+value = "5452089"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-19"
+value = "5452090"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-20"
+value = "3600972"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-21"
+value = "3600973"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-22"
+value = "3592852"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-measurements-value-23"
+value = "3592853"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-1"
+value = "10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-2"
+value = "12"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-3"
+value = "11"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-4"
+value = "6/5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-5"
+value = "7/6"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-6"
+value = "9/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-7"
+value = "13/11"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-8"
+value = "1/6"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-9"
+value = "1/11"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-10"
+value = "11/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-11"
+value = "43"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-12"
+value = "528817445"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-13"
+value = "1347009880"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-14"
+value = "394358227"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-15"
+value = "411904756"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-16"
+value = "252865445/9442820096"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-17"
+value = "27962035/18885640192"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-18"
+value = "115395727595/4302372864"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-19"
+value = "12934495/4302372864"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-20"
+value = "20000000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:two-map-measurements-value-21"
+value = "1000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:local-measurements-value-1"
+value = "1/1024"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:local-measurements-value-2"
+value = "3954534051"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:local-measurements-value-3"
+value = "385543179193/77355582226432"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 26
+
+[[rows]]
+id = "num:numbers:local-measurements-value-4"
+value = "16690803/4294967296"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:local-measurements-value-5"
+value = "587447/1073741824"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:pending-reference-corpus-value-1"
+value = "9877/65536"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:pending-reference-corpus-value-2"
+value = "2996290297046104444553034524118716120045412699703842014195286071395248231/25000000000000000000000000000000000000000000000000000000000000000000000000"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -75
+
+[[rows]]
+id = "num:numbers:pending-reference-corpus-value-3"
+value = "9877/81920"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-costs-value-1"
+value = "18143864"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-costs-value-2"
+value = "10057772"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-costs-value-3"
+value = "233499808"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-costs-value-4"
+value = "36"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-costs-value-5"
+value = "58374952000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-costs-value-6"
+value = "9000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-costs-value-7"
+value = "1000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-1"
+value = "4924286"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-2"
+value = "4458756"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-3"
+value = "16"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-4"
+value = "10685294"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-5"
+value = "9383042"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-6"
+value = "218608"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-7"
+value = "6182071"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-8"
+value = "6846626"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-9"
+value = "7422108"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-10"
+value = "26257086"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-11"
+value = "121672494"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-12"
+value = "5342108286"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-13"
+value = "29195960286"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-14"
+value = "38"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-15"
+value = "9002"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-16"
+value = "200000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-17"
+value = "44092286"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-18"
+value = "139507694"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-19"
+value = "9812860286"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-20"
+value = "33666712286"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-21"
+value = "80"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-22"
+value = "19004"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-23"
+value = "70349372"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-24"
+value = "261180188"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-25"
+value = "15154968572"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-26"
+value = "62862672572"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-cost-measurements-value-27"
+value = "15858856"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-1"
+value = "820620700"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-2"
+value = "1.310209327"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-3"
+value = "1.356119654"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-4"
+value = "1.453050684"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-5"
+value = "1310209327/820620700000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -9
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-6"
+value = "678059827/410310350000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -9
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-7"
+value = "363262671/205155175000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -9
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-8"
+value = "34.82"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-9"
+value = "38.51"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-10"
+value = "17201139488520561/410310350000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -3
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-11"
+value = "4769109596518353/102577587500000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -3
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-12"
+value = "79708218239075769/410310350000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -3
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-13"
+value = "22099537578835737/102577587500000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -3
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-14"
+value = "3499640051080591761/410310350000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -2
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-15"
+value = "970294262371795953/102577587500000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -2
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-16"
+value = "19126409738719393761/410310350000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -2
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-17"
+value = "5302901257951141953/102577587500000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -2
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-18"
+value = "23043100835748161/205155175000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -3
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-19"
+value = "6388825193973153/51288793750000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -3
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-20"
+value = "85550179586303369/205155175000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -3
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-21"
+value = "23719253176290537/51288793750000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -3
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-22"
+value = "4964045293356567761/205155175000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -2
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-23"
+value = "1376308590596443953/51288793750000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -2
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-24"
+value = "20590814980995369761/205155175000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -2
+
+[[rows]]
+id = "num:numbers:solve-work-rate-value-25"
+value = "5708915586175789953/51288793750000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -2
+
+[[rows]]
+id = "num:numbers:activation-evaluation-policy-value-1"
+value = "22122299"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:activation-evaluation-policy-value-2"
+value = "22147931"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:activation-evaluation-policy-value-3"
+value = "12191733"
+unit = "bytes"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:activation-evaluation-policy-value-4"
+value = "1924854"
+unit = "bytes"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:activation-evaluation-policy-value-5"
+value = "6250"
+unit = "bytes"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:activation-evaluation-policy-value-6"
+value = "6349"
+unit = "bytes"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-conserved-solve-value-1"
+value = "65"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-1"
+value = "28"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-2"
+value = "58"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-3"
+value = "20450944"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-4"
+value = "43330725"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-5"
+value = "64097175"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-6"
+value = "51033270"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-7"
+value = "157292"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-8"
+value = "115287737"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-9"
+value = "583937"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-10"
+value = "512"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-11"
+value = "4219729"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-12"
+value = "883609435249115/350734766844784"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-13"
+value = "4418047176245575/350734766844784"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-14"
+value = "17480737461808201588044445/816865088589551049228292"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-15"
+value = "9789239633016473196927485/408432544294775524614146"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-16"
+value = "9751430014794363498347005/408432544294775524614146"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-17"
+value = "9656833631773836919198205/408432544294775524614146"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-18"
+value = "71352757"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-19"
+value = "110976068652445/43841845855598"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-20"
+value = "554880343262225/43841845855598"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-21"
+value = "4379964147582925249900990/204216272147387762307073"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-22"
+value = "4914179380769986304243500/204216272147387762307073"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-23"
+value = "4895274571658931454953260/204216272147387762307073"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-24"
+value = "4847976380148668165378860/204216272147387762307073"
+unit = "dimensionless"
+display = "rounded"
+exact_digits = 24
+magnitude = -6
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-25"
+value = "71819896"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bite-six-solve-measurements-value-26"
+value = "114618499"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-1"
+value = "0.219798"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-2"
+value = "0.140376"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-3"
+value = "0.141436"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-4"
+value = "0.217242"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-5"
+value = "1.895"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-6"
+value = "1.969"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-7"
+value = "250"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-8"
+value = "315506"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-9"
+value = "31214307244"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-10"
+value = "2957555611369/50000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -1
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-11"
+value = "15365242740859/250000000000"
+unit = "seconds"
+display = "rounded"
+exact_digits = 24
+magnitude = -1
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-12"
+value = "6000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:conserved-solve-cost-scope-value-13"
+value = "7000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-slope-negative-10"
+value = "-1/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-slope-negative-6"
+value = "-1/6"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-slope-negative-11"
+value = "-1/11"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-local-padding"
+value = "0.00000000000000000000000000000000001"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 36
+
+[[rows]]
+id = "num:numbers:enclosure-exponent-bits"
+value = "63"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosure-denominator-bits"
+value = "64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:root-request-exponent"
+value = "1/3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:fixture-count-eighteen"
+value = "18"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:fixture-count-sixty"
+value = "60"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:fixture-count-thirty"
+value = "30"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

@@ -36,6 +36,7 @@ fn install_registry(
     datasets: Arc<BTreeMap<String, Dataset>>,
     used: Arc<Mutex<BTreeSet<String>>>,
 ) {
+    install_numbers(environment, &datasets, &used);
     environment.add_function("kinds_registry", move || -> std::result::Result<Value, Error> {
         let name = "org.peer-network.kinds.registry";
         let dataset = datasets.get(name).ok_or_else(|| failure(format!("absent dataset: {name}")))?;
@@ -45,6 +46,53 @@ fn install_registry(
         let view = crate::registry::view(dataset).map_err(|error| failure(error.to_string()))?;
         Ok(Value::from(Serde(view)))
     });
+}
+
+fn install_numbers(
+    environment: &mut Environment<'_>,
+    datasets: &Arc<BTreeMap<String, Dataset>>,
+    used: &Arc<Mutex<BTreeSet<String>>>,
+) {
+    for (name, relation) in [("numval", false), ("numrel", true)] {
+        let data = Arc::clone(datasets);
+        let usage = Arc::clone(used);
+        environment.add_function(
+            name,
+            move |id: String, form: Option<String>| -> std::result::Result<String, Error> {
+                let namespace = crate::numbers::NAMESPACE;
+                let dataset = data.get(namespace).ok_or_else(|| failure("absent number registry"))?;
+                usage
+                    .lock()
+                    .map_err(|_| failure("dataset census lock poisoned"))?
+                    .insert(namespace.to_owned());
+                let form = form.as_deref().unwrap_or("num");
+                if !["num", "exact"].contains(&form) {
+                    return Err(failure(format!("number: unknown form {id}.{form}")));
+                }
+                let matches: Vec<_> = dataset
+                    .rows
+                    .iter()
+                    .filter(|row| row.get("id").and_then(serde_json::Value::as_str) == Some(id.as_str()))
+                    .collect();
+                let [row] = matches.as_slice() else {
+                    return Err(failure(format!("number: unknown or duplicate id {id}")));
+                };
+                let value = row
+                    .get(form)
+                    .and_then(serde_json::Value::as_str)
+                    .ok_or_else(|| failure(format!("number: omitted form {id}.{form}")))?;
+                let exact = row
+                    .get(&format!("{form}_exact"))
+                    .and_then(serde_json::Value::as_bool)
+                    .ok_or_else(|| failure(format!("number: missing exactness {id}.{form}")))?;
+                Ok(if relation {
+                    format!("{} {value}", if exact { "=" } else { "≈" })
+                } else {
+                    value.to_owned()
+                })
+            },
+        );
+    }
 }
 
 #[tracing::instrument(

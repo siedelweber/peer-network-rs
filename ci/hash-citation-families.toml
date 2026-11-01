@@ -2,6 +2,16 @@ namespace = "org.peer-network.ci.hash-citations"
 version = [1, 0, 0]
 
 [[rows]]
+family = "number-registry-values"
+group = "first-party numeric declarations"
+measures = "Exact numeric values, not content identities"
+producer = "Authored numeric registry and documents input projection"
+establishment = "defined"
+reader = "numeric-registry"
+definition = "Only isolated value fields in the declared input and its projected dataset denote signed integers, finite exact decimals or rationals with positive denominators. Carrier parsing validates every value; the reader accounts digit runs by their field span, never by a global allow-list. Other fields and all other paths retain ordinary identity accounting."
+paths = ["docs/inputs/numbers.toml", "docs/datasets/org.peer-network.numbers.registry.json"]
+
+[[rows]]
 family = "policy-recipe-vectors"
 group = "first-party identities"
 measures = "SHA-256 of the permanent marker-policy/v1 framed fixtures"
@@ -107,7 +117,7 @@ producer = "None; published character assignments"
 establishment = "defined"
 reader = "unicode"
 definition = "Unicode assigns the scalar value; surrogate code points are excluded from scalar values."
-paths = ["ci/test_discipline.py", "packages/execwrap/src/tests/mod.rs"]
+paths = ["ci/test_discipline.py", "ci/design.py", "packages/execwrap/src/tests/mod.rs", "packages/documents/src/numbers.rs", "packages/documents/tests/integration.rs"]
 
 [[rows]]
 family = "unicode-boundaries"

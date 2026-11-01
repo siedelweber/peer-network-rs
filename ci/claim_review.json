@@ -42,6 +42,14 @@
       "review": "Read the changed carrier fixture assertions: citations now support both carriers, exhibitions cannot establish support, and property macro documentation remains an independently joined Rust carrier. Python commentary placement is delegated to the deployed linter."
     },
     {
+      "operation": "ci::test_design.Correspondence.test_numeric_correspondence",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:numeric-displays-match-rational-operands",
+      "before": "",
+      "after": "Independent rational checks refuse changed rate operands, rounded display values, exactness flags and omitted-form budgets under optimized Python.",
+      "review": "Read the scoped registry acceptance and refusal controls; these establish presentation and field-local accounting, not numerical certification of the declared values."
+    },
+    {
       "operation": "ci::test_design.Correspondence.test_release_projections",
       "path": "ci/test_design.py",
       "claim": "ROOT::claim:design:release-fields-cannot-drift",
@@ -72,6 +80,14 @@
       "before": "",
       "after": "The artifact address family recomputes its declared payload, refusing a substituted digest, changed payload or unknown recipe rather than accepting any identity-shaped literal.",
       "review": "Read the positive digest resolution and the three independently mutated digest, payload and recipe cases. Each must be refused by the family reader; no library-formatted expected digest is used by the Rust witness."
+    },
+    {
+      "operation": "ci::test_discipline.HashCitations.test_numeric_registry_fields",
+      "path": "ci/test_discipline.py",
+      "claim": "ROOT::claim:hashcitations:numeric-registry-admission-is-field-local",
+      "before": "",
+      "after": "Only validated exact-value field spans in the two registry carriers account numeric runs; identical template and non-value runs refuse, as do malformed values and widened paths.",
+      "review": "Read the scoped registry acceptance and refusal controls; these establish presentation and field-local accounting, not numerical certification of the declared values."
     },
     {
       "operation": "ci::test_discipline.HashCitations.test_public_git_locator",
@@ -1088,6 +1104,14 @@
       "before": "Claim: changing a dataset byte is detected without repairing it.",
       "after": "Claim: Changing the fixture dataset count produces exactly stale-dataset and stale-document findings without repairing the changed bytes, preserving read-only diagnosis.",
       "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "documents::integration::number_registry",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:render:number-forms-are-exactly-projected",
+      "before": "",
+      "after": "Claim: Registry projection uses exact rational rounding, deterministic narrow-space grouping and digit-budget omission; unknown ids and omitted forms refuse. Generated relations distinguish exact from rounded forms, typed pins read the same input without duplicated literals, and repeated generation is a fixed point.",
+      "review": "Read the scoped registry acceptance and refusal controls; these establish presentation and field-local accounting, not numerical certification of the declared values."
     },
     {
       "operation": "documents::integration::repository_fixed_point",

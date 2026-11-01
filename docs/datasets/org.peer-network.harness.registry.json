@@ -252,6 +252,7 @@
         "documents::integration::registry_relation",
         "documents::integration::release_premises",
         "documents::integration::repository_fixed_point",
+        "documents::integration::number_registry",
         "documents::integration::runtime_error",
         "documents::integration::stale_rendering",
         "documents::integration::template_fragments",
@@ -2444,6 +2445,7 @@
         "ci::test_design.Correspondence.test_pinned_decisions_under_optimization",
         "ci::test_design.Correspondence.test_release_projections",
         "ci::test_design.Correspondence.test_release_tags",
+        "ci::test_design.Correspondence.test_numeric_correspondence",
         "ci::test_design.Correspondence.test_tracked_prose_boundaries"
       ],
       "implementation": "ci-python",
@@ -2486,6 +2488,7 @@
         "ci::test_discipline.HashCitations.test_act_profile_vector_corruptions",
         "ci::test_discipline.HashCitations.test_artifact_vector",
         "ci::test_discipline.HashCitations.test_hash_accounting",
+        "ci::test_discipline.HashCitations.test_numeric_registry_fields",
         "ci::test_discipline.HashCitations.test_hash_carrier",
         "ci::test_discipline.HashCitations.test_hash_tracked_cli",
         "ci::test_discipline.HashCitations.test_hex_additional_identity_context",

@@ -53,6 +53,8 @@ class Correspondence(unittest.TestCase):
         self.addCleanup(self.directory.cleanup)
         self.root = Path(self.directory.name)
         shutil.copytree(REPOSITORY / 'docs/datasets', self.root / 'docs/datasets')
+        (self.root / 'docs/inputs').mkdir()
+        shutil.copy(REPOSITORY / 'docs/inputs/numbers.toml', self.root / 'docs/inputs/numbers.toml')
         (self.root / '.linter').mkdir()
         shutil.copy(REPOSITORY / '.linter/owners.toml', self.root / '.linter/owners.toml')
         shutil.copy(REPOSITORY / '.linter/environments.toml', self.root / '.linter/environments.toml')
@@ -61,6 +63,32 @@ class Correspondence(unittest.TestCase):
 
     def check(self):
         return subprocess.run([sys.executable, '-B', '-O', str(REPOSITORY / 'ci/design.py')], cwd=self.root, capture_output=True, text=True)
+
+    def test_numeric_correspondence(self):
+        """Independent rational checks refuse changed rate operands, rounded display values, exactness flags and omitted-form budgets under optimized Python.
+        ´claim:design:numeric-displays-match-rational-operands´
+        ´test:integration:test-numeric-correspondence´
+        """
+        path = self.root / 'docs/datasets/org.peer-network.numbers.registry.json'
+        original = json.loads(path.read_text())
+        self.assertEqual(self.check().returncode, 0)
+        for field, value in [('num', '0'), ('num_exact', False), ('exact_digits', 0)]:
+            changed = json.loads(json.dumps(original))
+            if field == 'exact_digits':
+                changed['rows'][0].pop('exact')
+            else:
+                changed['rows'][0][field] = value
+            path.write_text(json.dumps(changed))
+            result = self.check()
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('numeric registry:', result.stderr)
+        path.write_text(json.dumps(original))
+        source = self.root / 'docs/inputs/numbers.toml'
+        sample = next(row['value'] for row in original['rows'] if row['id'] == 'num:numbers:solve-work-rate-value-2')
+        source.write_text(source.read_text().replace('value = '+json.dumps(sample), 'value = "1"'))
+        result = self.check()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('derived rate differs', result.stderr)
 
     def test_release_tags(self):
         """Release identities are pinned, and tracked UTF-8 text without NUL bytes refuses other paper editions regardless of case; only the two named source fixtures are exempt.

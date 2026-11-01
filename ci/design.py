@@ -3,6 +3,7 @@
 from collections import Counter
 import hashlib
 import json
+from fractions import Fraction
 from pathlib import Path
 import re
 import subprocess
@@ -213,5 +214,55 @@ CRATES_PIN = '779ad51bb7a4a5d2047c0307a7bea589e3add012f8b1ceb5c79a2be3ddb1f5d5'
 BITES_PIN = '98bcd0533748b432a783e89676629088bb627f633d1009b0c2dcd5f954b191fb'
 QUESTIONS_PIN = '1aa56833a069fca9ea47fa9e902241033faed3670689a649e7fc577423eafa95'
 
+def numeric_correspondence():
+    """Derived rate pins retain the recorded samples' full rational precision."""
+    rows = tomllib.loads(Path('docs/inputs/numbers.toml').read_text())['rows']
+    values = {row['id']: Fraction(row['value']) for row in rows}
+    def value(section, index):
+        return values[f'num:numbers:{section}-value-{index}']
+    def equal(actual, expected):
+        if actual != expected:
+            raise ValueError('numeric registry: derived rate differs from recorded operands')
+    rates = [value('solve-work-rate', index) / value('solve-work-rate', 1) for index in (2, 3, 4)]
+    for index, rate in enumerate(rates, 5):
+        equal(value('solve-work-rate', index), rate * 10**6)
+    for offset, cost_index in enumerate((10, 11, 12, 13, 23, 24, 25, 26)):
+        for side, rate in enumerate((rates[0], rates[-1])):
+            equal(value('solve-work-rate', 10 + 2*offset + side), value('solve-cost-measurements', cost_index) * rate)
+    for rate_index, seconds_index in ((5, 10), (6, 11)):
+        equal(value('conserved-solve-cost-scope', seconds_index),
+              value('conserved-solve-cost-scope', 9) * value('conserved-solve-cost-scope', rate_index) / 10**9)
+    equal(value('conserved-solve-cost-scope', 9),
+          2 * (value('bite-six-solve-measurements', 11) + value('conserved-solve-cost-scope', 7)
+               * (value('bite-six-solve-measurements', 4) - value('bite-six-solve-measurements', 11)))
+          + value('solve-cost-measurements', 1) + value('conserved-solve-cost-scope', 7)
+          * (value('bite-six-solve-measurements', 6) - value('solve-cost-measurements', 1))
+          + value('conserved-solve-cost-scope', 7)
+          * (value('conserved-solve-cost-scope', 8) + value('bite-six-solve-measurements', 7)))
+    projected = json.loads(Path('docs/datasets/org.peer-network.numbers.registry.json').read_text())['rows']
+    if len(projected) != len(rows):
+        raise ValueError('numeric registry: projection census differs')
+    for entry, view in zip(rows, projected):
+        number = Fraction(entry['value'])
+        quantum = Fraction(10) ** entry.get('magnitude', 0)
+        if entry['display'] == 'rounded':
+            scaled = abs(number) / quantum
+            whole, remainder = divmod(scaled.numerator, scaled.denominator)
+            nearest = whole + (2 * remainder >= scaled.denominator)
+            expected = nearest * quantum * (-1 if number < 0 else 1)
+        else:
+            expected = number
+        if (view['id'] != entry['id'] or Fraction(view['num'].replace('\u202f', '')) != expected
+                or view['num_exact'] != (expected == number)):
+            raise ValueError('numeric registry: independent rational display comparison differs')
+        admitted = sum(c.isdigit() for c in entry['value']) <= entry['exact_digits']
+        if ('exact' in view) != admitted:
+            raise ValueError('numeric registry: exact digit budget differs')
+        if admitted and (Fraction(view['exact'].replace('\u202f', '')) != number or view['exact_exact'] is not True):
+            raise ValueError('numeric registry: exact form differs')
+    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=22 displays={len(projected)}')
+
+
 if __name__ == '__main__':
     validate()
+    numeric_correspondence()
