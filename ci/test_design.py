@@ -208,7 +208,7 @@ class Correspondence(unittest.TestCase):
         path.parent.mkdir(parents=True)
         git(self.root, 'add', '.')
         for source, accepted in [('a\n\nb\n', True), ('a\n\n\nb\n', False),
-                                 ('a\n \n\t\nb\n', False), ('a\nb\n', True)]:
+                                 ('a\n \n\t\nb\n', False), ('# Title\n\nb\n', True)]:
             path.write_text(source)
             git(self.root, 'add', 'packages/epoch/README.md')
             result = self.check()
@@ -227,6 +227,33 @@ class Correspondence(unittest.TestCase):
         with patch('pathlib.Path.read_text', return_value='a\n\nb\n'):
             with self.assertRaisesRegex(ValueError, 'remove resolved rendered-spacing exception'):
                 check_rendered_spacing([Path('README.md')], pending={'README.md'})
+
+    def test_rendered_continuations(self):
+        """Rendered paragraphs and list items refuse continuation lines while separate blocks, table rows, fenced code and front matter retain their Markdown boundaries.
+        ´claim:design:rendered-continuations-respect-block-boundaries´
+        ´test:integration:test-rendered-continuations´
+        """
+        path = self.root / 'packages/epoch/README.md'
+        path.parent.mkdir(parents=True)
+        samples = [
+            ('A paragraph.\n\nAnother paragraph.\n', True),
+            ('A paragraph\ncontinued here.\n', False),
+            ('- One item.\n- Another item.\n', True),
+            ('- One item\n  continued here.\n', False),
+            ('| A |\n|---|\n| B |\n', True),
+            ('```text\nfirst\nsecond\n```\n\nAfter.\n', True),
+            ('---\ntitle: Example\nstatus: test\n---\n\nBody.\n', True),
+            ('> Quoted paragraph\n> continued here.\n', False),
+            ('- Outer item.\n  - Inner item.\n', True),
+            ('# Heading\n\n    code\n    more code\n', True),
+        ]
+        for source, accepted in samples:
+            path.write_text(source)
+            git(self.root, 'add', 'packages/epoch/README.md')
+            result = self.check()
+            self.assertEqual(result.returncode == 0, accepted, result.stderr)
+            if not accepted:
+                self.assertIn('continuation line in rendered Markdown', result.stderr)
 
     def test_release_tags(self):
         """Release identities are pinned, and tracked UTF-8 text without NUL bytes refuses other paper editions regardless of case; only the two named source fixtures are exempt.

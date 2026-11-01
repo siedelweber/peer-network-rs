@@ -127,6 +127,57 @@ PENDING_RENDERED_SPACING = frozenset({
 })
 
 
+def rendered_continuations(source):
+    """Locate wrapped prose while keeping Markdown block boundaries distinct."""
+    result = []
+    paragraph = False
+    fence = None
+    comment = False
+    front = False
+    for number, raw in enumerate(source.splitlines(), 1):
+        line = raw.strip()
+        if number == 1 and line == '---':
+            front = True
+            continue
+        if front:
+            front = line not in {'---', '...'}
+            continue
+        if comment:
+            comment = '-->' not in line
+            continue
+        if line.startswith('<!--'):
+            comment = '-->' not in line
+            paragraph = False
+            continue
+        marker = re.match(r'(`{3,}|~{3,})', line)
+        if fence:
+            if marker and marker[1][0] == fence[0] and len(marker[1]) >= len(fence):
+                fence = None
+            continue
+        if marker:
+            fence = marker[1]
+            paragraph = False
+            continue
+        if not line:
+            paragraph = False
+            continue
+        # A quoted paragraph has the same physical-line convention as prose.
+        line = re.sub(r'^(?:>\s*)+', '', line)
+        if (not line or re.match(r'#{1,6}\s|\||(?:[-*_]\s*){3,}$|\[[^]]+\]:', line)):
+            paragraph = False
+            continue
+        if re.match(r'(?:[-+*]|[0-9]+[.)])\s', line):
+            paragraph = True
+            continue
+        if paragraph:
+            result.append(number)
+        elif raw.startswith(('    ', '\t')):
+            # An indented code block after a block boundary is not prose.
+            continue
+        paragraph = True
+    return result
+
+
 def check_rendered_spacing(paths, pending=PENDING_RENDERED_SPACING):
     """Check first-party Markdown; the explicit cleanup debt may only shrink."""
     findings = []
@@ -136,13 +187,17 @@ def check_rendered_spacing(paths, pending=PENDING_RENDERED_SPACING):
         if path.suffix != '.md' or path.is_relative_to('vendor'):
             continue
         checked += 1
-        repeated = re.search(r'\n[ \t]*\n[ \t]*\n', path.read_text())
+        source = path.read_text()
+        repeated = re.search(r'\n[ \t]*\n[ \t]*\n', source)
+        continuations = rendered_continuations(source)
         if path.as_posix() in pending:
-            if complete and not repeated:
+            if complete and not repeated and not continuations:
                 findings.append(f'{path}: remove resolved rendered-spacing exception')
             deferred += 1
-        elif repeated:
-            findings.append(f'{path}: repeated blank lines in rendered Markdown')
+        else:
+            if repeated:
+                findings.append(f'{path}: repeated blank lines in rendered Markdown')
+            findings.extend(f'{path}:{line}: continuation line in rendered Markdown' for line in continuations)
     print(f'RENDERED-SPACING files={checked} pending={deferred} refused={len(findings)}')
     if findings:
         raise ValueError('\n'.join(findings))
