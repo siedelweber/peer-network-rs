@@ -12,7 +12,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from design import PAPER_EDITION_FIXTURES, PAPER_TAG, bare_mint_pattern, check_rendered_spacing, validate
+from design import PENDING_RENDERED_SPACING, PAPER_EDITION_FIXTURES, PAPER_TAG, bare_mint_pattern, check_rendered_spacing, validate
 
 
 REPOSITORY = Path(__file__).resolve().parent.parent
@@ -83,6 +83,11 @@ class Correspondence(unittest.TestCase):
         shutil.copy(REPOSITORY / '.linter/environments.toml', self.root / '.linter/environments.toml')
         (self.root / 'Cargo.toml').write_text('[workspace]\nmembers = ["vendor/example"]\n')
         git(self.root, 'init', '--quiet')
+        for name in PENDING_RENDERED_SPACING:
+            destination = self.root / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(REPOSITORY / name, destination)
+        git(self.root, 'add', '.')
         self.checker = None
 
     def close_checker(self):
@@ -161,7 +166,7 @@ class Correspondence(unittest.TestCase):
         ´test:integration:test-numeric-word-fragments´
         """
         path = self.root / 'docs/design/implementation.md'
-        path.parent.mkdir(parents=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text('two-map four-Actor twenty-four one half x = 1 wall 2 256-byte 2000000-Work 2\N{NARROW NO-BREAK SPACE}000\N{NARROW NO-BREAK SPACE}000-Work\n')
         git(self.root, 'add', 'docs/design/implementation.md')
         self.assertEqual(self.check().returncode, 0)
@@ -226,7 +231,25 @@ class Correspondence(unittest.TestCase):
         self.assertEqual(self.check().returncode, 0)
         with patch('pathlib.Path.read_text', return_value='a\n\nb\n'):
             with self.assertRaisesRegex(ValueError, 'remove resolved rendered-spacing exception'):
-                check_rendered_spacing([Path('README.md')], pending={'README.md'})
+                check_rendered_spacing([Path('README.md')], pending={'README.md': (1, 0)})
+
+        debt = {'README.md': (1, 0)}
+        with patch('pathlib.Path.read_text', return_value='a\n\n\nb\n\n\nc\n'):
+            with self.assertRaisesRegex(ValueError, 'blank runs exceed ceiling'):
+                check_rendered_spacing([Path('README.md')], pending=debt)
+        with patch('pathlib.Path.read_text', return_value='a\nb\n\n\n'):
+            with self.assertRaisesRegex(ValueError, 'continuation lines exceed ceiling'):
+                check_rendered_spacing([Path('README.md')], pending=debt)
+        with patch('pathlib.Path.exists', return_value=True), patch('pathlib.Path.read_text', return_value='clean\n'):
+            with self.assertRaises(ValueError) as error:
+                check_rendered_spacing([Path('README.md')], pending={**debt, 'gone.md': (1, 0)}, whole_tree=True)
+            self.assertIn('gone.md: missing', str(error.exception))
+            self.assertIn('README.md: remove resolved', str(error.exception))
+        with self.assertRaisesRegex(ValueError, 'new rendered-spacing exception'):
+            check_rendered_spacing([], pending=debt, parent={})
+        with self.assertRaisesRegex(ValueError, 'increased rendered-spacing ceiling'):
+            check_rendered_spacing([], pending={'README.md': (2, 0)}, parent=debt)
+        check_rendered_spacing([], pending={}, parent=debt)
 
     def test_rendered_continuations(self):
         """Rendered paragraphs and list items refuse continuation lines while separate blocks, table rows, fenced code and front matter retain their Markdown boundaries.
@@ -279,7 +302,7 @@ class Correspondence(unittest.TestCase):
             result = self.check()
             self.assertNotEqual(result.returncode, 0)
             self.assertIn(f'{name}:1: stale paper edition Network-v0.30.1', result.stderr)
-            prose.write_text(PAPER_TAG.upper() + '\n')
+            prose.write_text(PAPER_TAG.upper() + ('\n\n\n' if name == 'README.md' else '\n'))
             result = self.check()
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn('refused=0', result.stdout)
@@ -378,7 +401,7 @@ class Correspondence(unittest.TestCase):
             result = self.check()
             self.assertNotEqual(result.returncode, 0)
             self.assertIn(f'{name}: bare paper mint', result.stderr)
-            path.write_text('``def:comparator:burn-interface``\n')
+            path.write_text('``def:comparator:burn-interface``' + ('\n\n\n' if name == 'README.md' else '\n'))
             result = self.check()
             self.assertEqual(result.returncode, 0, result.stderr)
 

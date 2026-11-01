@@ -2,6 +2,7 @@
 
 from collections import Counter
 import hashlib
+import ast
 import json
 import math
 from fractions import Fraction
@@ -108,23 +109,23 @@ def check_numeric_word_fragments(paths):
         raise ValueError('\n'.join(findings))
 
 
-# Cleanup debt only: remove a path as its template is repaired; never add one.
-# Clean pending paths are refused, so a repair must retire its exception.
-PENDING_RENDERED_SPACING = frozenset({
-    'README.md',
-    'adr/002-environment-kinds.md',
-    'adr/006-identity-adjudication.md',
-    'adr/015-durable-storage.md',
-    'adr/016-observability.md',
-    'adr/019-development-network.md',
-    'adr/021-development-performance.md',
-    'adr/023-cryptographic-base.md',
-    'adr/024-build-graph.md',
-    'docs/design/inventory.md',
-    'packages/act-profile/README.md',
-    'packages/host/README.md',
-    'packages/interchange/README.md',
-})
+# Per-path ceilings (repeated blank runs, continuation lines). Parent comparison
+# refuses new paths and increased ceilings; clean or missing paths must retire.
+PENDING_RENDERED_SPACING = {
+    'README.md': (8, 0),
+    'adr/002-environment-kinds.md': (16, 0),
+    'adr/006-identity-adjudication.md': (4, 0),
+    'adr/015-durable-storage.md': (6, 0),
+    'adr/016-observability.md': (10, 0),
+    'adr/019-development-network.md': (5, 0),
+    'adr/021-development-performance.md': (2, 0),
+    'adr/023-cryptographic-base.md': (1, 0),
+    'adr/024-build-graph.md': (5, 0),
+    'docs/design/inventory.md': (1, 0),
+    'packages/act-profile/README.md': (1, 0),
+    'packages/host/README.md': (2, 0),
+    'packages/interchange/README.md': (22, 0),
+}
 
 
 def rendered_continuations(source):
@@ -178,21 +179,52 @@ def rendered_continuations(source):
     return result
 
 
-def check_rendered_spacing(paths, pending=PENDING_RENDERED_SPACING):
-    """Check first-party Markdown; the explicit cleanup debt may only shrink."""
+def parent_rendered_spacing():
+    """Read the source commit's parent declaration without executing its code."""
+    root = Path(__file__).resolve().parent.parent
+    result = subprocess.run(['git', '-C', str(root), 'show', 'HEAD^:ci/design.py'],
+                            capture_output=True, text=True, check=True)
+    for node in ast.parse(result.stdout).body:
+        if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name)
+                and target.id == 'PENDING_RENDERED_SPACING' for target in node.targets):
+            value = node.value
+            # The predecessor represented the same debt as a set of paths.
+            if isinstance(value, ast.Call) and isinstance(value.func, ast.Name) and value.func.id == 'frozenset':
+                value = value.args[0]
+            return ast.literal_eval(value)
+    raise ValueError('parent lacks rendered-spacing declaration')
+
+
+def check_rendered_spacing(paths, pending=PENDING_RENDERED_SPACING, *, whole_tree=False, parent=None):
+    """Check per-path debt ceilings, retirement and parent-relative growth."""
     findings = []
     checked = deferred = 0
-    complete = pending <= {path.as_posix() for path in paths}
+    paths = list(paths)
+    present = {path.as_posix() for path in paths if path.exists()}
+    if parent is not None:
+        for name in sorted(set(pending) - set(parent)):
+            findings.append(f'{name}: new rendered-spacing exception against source parent')
+        if isinstance(parent, dict):
+            for name in sorted(set(pending) & set(parent)):
+                if any(now > before for now, before in zip(pending[name], parent[name])):
+                    findings.append(f'{name}: increased rendered-spacing ceiling against source parent')
+    if whole_tree:
+        findings.extend(f'{name}: missing rendered-spacing pending path' for name in sorted(set(pending) - present))
     for path in paths:
-        if path.suffix != '.md' or path.is_relative_to('vendor'):
+        if path.suffix != '.md' or path.is_relative_to('vendor') or not path.exists():
             continue
         checked += 1
         source = path.read_text()
-        repeated = re.search(r'\n[ \t]*\n[ \t]*\n', source)
+        repeated = re.findall(r'\n(?:[ \t]*\n){2,}', source)
         continuations = rendered_continuations(source)
         if path.as_posix() in pending:
-            if complete and not repeated and not continuations:
+            ceilings = pending[path.as_posix()]
+            if not repeated and not continuations:
                 findings.append(f'{path}: remove resolved rendered-spacing exception')
+            for kind, count, ceiling in zip(('blank runs', 'continuation lines'),
+                                            (len(repeated), len(continuations)), ceilings):
+                if count > ceiling:
+                    findings.append(f'{path}: rendered-spacing {kind} exceed ceiling {ceiling}: {count}')
             deferred += 1
         else:
             if repeated:
@@ -441,7 +473,7 @@ def numeric_correspondence():
 if __name__ == '__main__':
     validate()
     numeric_correspondence()
-    check_rendered_spacing(tracked_paths())
+    check_rendered_spacing(tracked_paths(), whole_tree=True, parent=parent_rendered_spacing())
     check_numeric_word_fragments([path for path in tracked_paths()
                                   if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md'}
                                   or path.is_relative_to('docs/templates') and path.suffix == '.j2'])
