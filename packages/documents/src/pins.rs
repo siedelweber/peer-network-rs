@@ -1219,10 +1219,8 @@ pub enum NumberId {
     NumbersPartitionHighRate,
     /// Registry id: num:numbers:partition-close-rate.
     NumbersPartitionCloseRate,
-    /// Registry id: num:numbers:partition-half-rung.
-    NumbersPartitionHalfRung,
-    /// Registry id: num:numbers:partition-quarter-rung.
-    NumbersPartitionQuarterRung,
+    /// Registry id: num:numbers:partition-backoff-ratio.
+    NumbersPartitionBackoffRatio,
     /// Registry id: num:numbers:partition-precision.
     NumbersPartitionPrecision,
     /// Registry id: num:numbers:partition-endpoint-grid.
@@ -1275,9 +1273,63 @@ pub enum NumberId {
     NumbersReceivingShowcaseFocusedSeconds,
     /// Registry id: num:numbers:receiving-showcase-case-budget-seconds.
     NumbersReceivingShowcaseCaseBudgetSeconds,
+    /// Registry id: num:numbers:partition-export-registrations.
+    NumbersPartitionExportRegistrations,
+    /// Registry id: num:numbers:partition-export-opinions.
+    NumbersPartitionExportOpinions,
+    /// Registry id: num:numbers:partition-matched-coordinate.
+    NumbersPartitionMatchedCoordinate,
+    /// Registry id: num:numbers:partition-positive-proposal-cap.
+    NumbersPartitionPositiveProposalCap,
+    /// Registry id: num:numbers:partition-distinct-standing-old.
+    NumbersPartitionDistinctStandingOld,
+    /// Registry id: num:numbers:partition-distinct-standing-new.
+    NumbersPartitionDistinctStandingNew,
+    /// Registry id: num:numbers:partition-distinct-gain.
+    NumbersPartitionDistinctGain,
+    /// Registry id: num:numbers:partition-literal-byte-ceiling.
+    NumbersPartitionLiteralByteCeiling,
+    /// Registry id: num:numbers:partition-distinct-ungrouped-bound.
+    NumbersPartitionDistinctUngroupedBound,
+    /// Registry id: num:numbers:partition-positive-raise-response-lower.
+    NumbersPartitionPositiveRaiseResponseLower,
+    /// Registry id: num:numbers:partition-positive-raise-response-upper.
+    NumbersPartitionPositiveRaiseResponseUpper,
+    /// Registry id: num:numbers:partition-positive-raise-pair-upper.
+    NumbersPartitionPositiveRaisePairUpper,
+    /// Registry id: num:numbers:partition-positive-raise-projected-upper.
+    NumbersPartitionPositiveRaiseProjectedUpper,
+    /// Registry id: num:numbers:partition-positive-raise-old-round-work.
+    NumbersPartitionPositiveRaiseOldRoundWork,
+    /// Registry id: num:numbers:partition-positive-raise-new-round-work.
+    NumbersPartitionPositiveRaiseNewRoundWork,
+    /// Registry id: num:numbers:partition-positive-lower-response-lower.
+    NumbersPartitionPositiveLowerResponseLower,
+    /// Registry id: num:numbers:partition-positive-lower-response-upper.
+    NumbersPartitionPositiveLowerResponseUpper,
+    /// Registry id: num:numbers:partition-positive-lower-pair-upper.
+    NumbersPartitionPositiveLowerPairUpper,
+    /// Registry id: num:numbers:partition-positive-lower-projected-upper.
+    NumbersPartitionPositiveLowerProjectedUpper,
+    /// Registry id: num:numbers:partition-positive-lower-old-round-work.
+    NumbersPartitionPositiveLowerOldRoundWork,
+    /// Registry id: num:numbers:partition-positive-lower-new-round-work.
+    NumbersPartitionPositiveLowerNewRoundWork,
+    /// Registry id: num:numbers:partition-matched-old-round-work.
+    NumbersPartitionMatchedOldRoundWork,
+    /// Registry id: num:numbers:partition-matched-new-round-work.
+    NumbersPartitionMatchedNewRoundWork,
+    /// Registry id: num:numbers:partition-matched-old-radius-upper.
+    NumbersPartitionMatchedOldRadiusUpper,
+    /// Registry id: num:numbers:partition-matched-new-radius-upper.
+    NumbersPartitionMatchedNewRadiusUpper,
+    /// Registry id: num:numbers:partition-distinct-export-old.
+    NumbersPartitionDistinctExportOld,
+    /// Registry id: num:numbers:partition-distinct-export-new.
+    NumbersPartitionDistinctExportNew,
 }
 
-const OFFSETS: [(usize, usize); 636] = [
+const OFFSETS: [(usize, usize); 662] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -1886,34 +1938,60 @@ const OFFSETS: [(usize, usize); 636] = [
     (90939, 90940),
     (91060, 91062),
     (91183, 91190),
-    (91310, 91313),
-    (91436, 91439),
-    (91559, 91561),
-    (91685, 91692),
-    (91815, 91816),
-    (91939, 91951),
-    (92071, 92080),
-    (92205, 92214),
-    (92332, 92339),
-    (92469, 92470),
-    (92601, 92602),
-    (92725, 92726),
-    (92855, 92862),
-    (92991, 92999),
-    (93130, 93135),
-    (93256, 93267),
-    (93400, 93404),
-    (93538, 93539),
-    (93665, 93668),
-    (93800, 93809),
-    (93941, 93952),
-    (94086, 94093),
-    (94217, 94235),
-    (94363, 94364),
-    (94493, 94499),
-    (94631, 94638),
-    (94767, 94768),
-    (94901, 94903),
+    (91314, 91317),
+    (91437, 91439),
+    (91563, 91570),
+    (91693, 91694),
+    (91817, 91829),
+    (91949, 91958),
+    (92083, 92092),
+    (92210, 92217),
+    (92347, 92348),
+    (92479, 92480),
+    (92603, 92604),
+    (92733, 92740),
+    (92869, 92877),
+    (93008, 93013),
+    (93134, 93145),
+    (93278, 93282),
+    (93416, 93417),
+    (93543, 93546),
+    (93678, 93687),
+    (93819, 93830),
+    (93964, 93971),
+    (94095, 94113),
+    (94241, 94242),
+    (94371, 94377),
+    (94509, 94516),
+    (94645, 94646),
+    (94779, 94781),
+    (94906, 94907),
+    (95033, 95034),
+    (95163, 95166),
+    (95298, 95299),
+    (95431, 95439),
+    (95571, 95579),
+    (95703, 95714),
+    (95845, 95849),
+    (95976, 95984),
+    (96124, 96136),
+    (96291, 96308),
+    (96461, 96474),
+    (96632, 96644),
+    (96801, 96810),
+    (96941, 96950),
+    (97081, 97099),
+    (97254, 97265),
+    (97418, 97430),
+    (97588, 97600),
+    (97757, 97766),
+    (97897, 97906),
+    (98030, 98039),
+    (98163, 98172),
+    (98298, 98309),
+    (98461, 98472),
+    (98619, 98627),
+    (98757, 98763),
 ];
 
 impl NumberId {

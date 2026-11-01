@@ -4280,6 +4280,9 @@
       "budget": "pure-suite",
       "case_span": true,
       "cases": [
+        "pn-epoch::solve::partitions::distinct_target_split",
+        "pn-epoch::solve::partitions::positive_rung_split",
+        "pn-epoch::solve::partitions::nonconstant_matched_split",
         "pn-epoch::solve::partitions::receiving_small",
         "pn-epoch::solve::procedure_binding",
         "pn-epoch::solve::procedure_records",

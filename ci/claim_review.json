@@ -1826,12 +1826,36 @@
       "review": "Three differently weighted frozen graphs with equal contributing ranges yield identical fence transcripts. Two depth profiles distinguish cumulative deepest-supported shape from a weighted average. Exact zero-width, empty and anchor cases and exact comparisons retain their earlier controls. Frozen-package replay checks every retained request; three distinct width, tilt and wall mutations refuse both as changed queries and as substituted valid attachments."
     },
     {
+      "operation": "pn-epoch::solve::partitions::distinct_target_split",
+      "path": "packages/epoch/tests/solve/partitions.rs",
+      "claim": "EPOCH::claim:standing:distinct-target-split-retains-pair-displacement",
+      "before": "",
+      "after": "Claim: A complete proportional split with unchanged distinct external recipients passes the anchor after all positive declared rungs fail. Replayed exact transport reproduces the published target gain, satisfies the pair displacement identity, satisfies the common-source total-variation bound and attains its equal-rate grouped refinement and decreases export within the unchanged fibre capacity. A changed count or split alone does not supply coordinate equality.",
+      "review": "The exact anchor compares matched complete acts, fixed recipients and proportional balances and counts, all attempted fence verdicts and replayed transport. It checks the published target gain, centred pair identity, common-source total variation bound and equality after grouping identical source rates, export decrease and the unchanged saturated capacity. No positive-rung premise is borrowed."
+    },
+    {
+      "operation": "pn-epoch::solve::partitions::nonconstant_matched_split",
+      "path": "packages/epoch/tests/solve/partitions.rs",
+      "claim": "EPOCH::claim:standing:nonconstant-matched-split-retains-hop-refinement",
+      "before": "",
+      "after": "Claim: The declared complete proportional split with capped parallel Opinion cells has exact base-score ratios that intertwine every target activation factor at every hop, matched rates and saturated emission. Both certified histories select the full rung. Independently replayed endpoint maps are nonconstant, and the certified equilibrium enclosures intersect at every lifted coordinate. Equality follows under the checked hop-refinement premises, not from finite numerical overlap alone.",
+      "review": "Exact compiled capped Opinion scores and positive diagonal scores satisfy cross-product ratios for every activation factor. Complete-act pair and emission premises are checked, both full rungs pass, and independently replayed endpoint maps strictly differ. Every lifted equilibrium coordinate intersects; the conditional equality uses the all-factor hop identity and the theorem, not that finite overlap."
+    },
+    {
+      "operation": "pn-epoch::solve::partitions::positive_rung_split",
+      "path": "packages/epoch/tests/solve/partitions.rs",
+      "claim": "EPOCH::claim:standing:positive-rung-splits-retain-displacement-premises",
+      "before": "",
+      "after": "Claim: The complete fold-and-export split with close heterogeneous source rates passes the full rung in both orientations and both histories. Certified target responses have opposite signs; replayed transport over equilibrium boxes bounds common-source total variation and projected residual displacement under matched source pairs, fixed recipients, saturated emission and absorbing targets. No unconditional split equality or response direction is inferred.",
+      "review": "Both rate orientations independently compile, select the passing full rung, solve and replay. Independent primitive replay and interval transport on the equilibrium boxes bound total variation and the projected residual after lifting the coarse box into the refined hull. Separated response intervals supply the opposite signs; no intent or equality is inferred."
+    },
+    {
       "operation": "pn-epoch::solve::partitions::receiving_showcase",
       "path": "packages/epoch/tests/solve/partitions.rs",
       "claim": "EPOCH::claim:standing:showcase-receiving-retains-scoped-concentration",
       "before": "",
       "after": "Claim: The tagged showcase receiving comparison retains its full Registration and donor multiplicities. Both annotation readings independently compile, certify and replay identically for each public record; the pooled and partitioned records differ and the retained gain satisfies the receiving concentration formula under absorbing participant rows and fixed incoming acts. This finite reproduction establishes no intent classifier or unrestricted strategic-history completion.",
-      "review": "Both public histories are reconstructed and independently compiled and solved under each purpose annotation, then cross-replayed. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. The small site additionally refuses violated semantic assumptions, a public scope attestation and an outside-family donor target. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal."
+      "review": "Both public histories are reconstructed and independently compiled and solved under each purpose annotation, then cross-replayed. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal."
     },
     {
       "operation": "pn-epoch::solve::partitions::receiving_small",
@@ -1839,7 +1863,7 @@
       "claim": "EPOCH::claim:standing:small-receiving-annotations-preserve-public-evidence",
       "before": "",
       "after": "Claim: The tagged small receiving comparison is compiled, certified and replayed with unchanged donor acts and proportional participant pairs. Legitimate-role and strategic-purpose annotations of each identical public record give identical compiled views and solve records. The different pooled and partitioned records strictly increase retained standing under the checked receiving premises; annotation equality supplies no equality of those records or inference of actual intent.",
-      "review": "Both public histories are reconstructed and independently compiled and solved under each purpose annotation, then cross-replayed. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. The small site additionally refuses violated semantic assumptions, a public scope attestation and an outside-family donor target. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal."
+      "review": "Both public histories are reconstructed and independently compiled and solved under each purpose annotation, then cross-replayed. Exact published standings and incoming counts, matched complete acts, saturated emission, absorbing participant rows, all attempted rung verdicts, capacity and the rational concentration formula are checked. This site additionally refuses violated semantic assumptions, a public scope attestation and an outside-family donor target. Private roles are comparison assumptions, not an authenticated classification, and different public histories are explicitly unequal."
     },
     {
       "operation": "pn-epoch::solve::procedure_binding",

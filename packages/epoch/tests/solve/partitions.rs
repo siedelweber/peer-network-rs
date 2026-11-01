@@ -1,5 +1,6 @@
 use super::*;
 use NumberId as N;
+use nrz_cas::{Rational, limits::Budget};
 use pn_epoch::compiler::CompiledState;
 use pn_records::{CandidateAct, burn::Address, conserved::SolveRecord};
 
@@ -81,6 +82,7 @@ fn limits() -> Limits {
         arithmetic_steps: N::NumbersPartitionArithmeticCeiling.integer(),
         output_bytes: N::NumbersPartitionOutputCeiling.integer(),
         proof_nodes: N::NumbersPartitionProofNodeCeiling.integer(),
+        literal_bytes: N::NumbersPartitionLiteralByteCeiling.integer(),
         ..Limits::default()
     }
 }
@@ -175,15 +177,27 @@ fn compile(acts: &[CandidateAct], rates: &BTreeMap<String, Fraction>) -> Compile
 
 fn policy(state: &CompiledState) -> Procedure {
     let mut p = fence_procedure(state);
+    let ratio = Fraction::parse(N::NumbersPartitionBackoffRatio.value());
+    let squared = ratio.times(ratio);
     p.grid = vec![
         "1".into(),
-        N::NumbersPartitionHalfRung.value().into(),
-        N::NumbersPartitionQuarterRung.value().into(),
+        N::NumbersPartitionBackoffRatio.value().into(),
+        format!("{}/{}", squared.0, squared.1),
         "0".into(),
     ];
     p.precision = Precision::AbsoluteWidthBits(vec![u32::try_from(N::NumbersPartitionPrecision.integer()).unwrap()]);
     p.endpoint_grid = N::NumbersPartitionEndpointGrid.value().into();
-    p.maximum_iterations = N::NumbersPartitionProposalCap.integer();
+    p.maximum_iterations = if state
+        .view()
+        .support
+        .sources
+        .values()
+        .any(|source| source.reduced_rate == N::NumbersPartitionHighRate.value())
+    {
+        N::NumbersPartitionProposalCap.integer()
+    } else {
+        N::NumbersPartitionPositiveProposalCap.integer()
+    };
     p.maximum_work = N::NumbersPartitionWorkCeiling.integer();
     p.maximum_solve_work = p.maximum_work;
     p.maximum_replay_work = p.maximum_work;
@@ -342,18 +356,23 @@ fn admitted(state: &CompiledState, record: &SolveRecord) {
     let result = record.rounds.last().unwrap();
     let acts = state.package().input().history.acts();
     assert!(u64::try_from(acts.len()).unwrap() <= N::NumbersPartitionActCapacity.integer());
-    let mut sum = Fraction(0, 1);
+    let mut budget = Budget::new(limits()).unwrap();
+    let mut sum = Rational::parse("0", &mut budget).unwrap();
+    let wall = Rational::parse("3/37", &mut budget).unwrap();
     for act in acts {
-        let lower = Fraction::parse(&result.standing[&act.id().author].lower);
-        assert!(lower.order(Fraction::parse("3/37")).is_ge());
-        sum = sum.plus(lower);
+        let lower = Rational::parse(&result.standing[&act.id().author].lower, &mut budget).unwrap();
+        assert!(lower.compare(&wall, &mut budget).unwrap().is_ge());
+        sum = sum.add(&lower, &mut budget).unwrap();
     }
+    let count = Rational::parse(&acts.len().to_string(), &mut budget).unwrap();
+    let policy = Rational::parse(N::NumbersPartitionPolicyFloor.value(), &mut budget).unwrap();
     assert!(
-        sum.over(Fraction(i128::try_from(acts.len()).unwrap(), 1))
-            .order(Fraction::parse(N::NumbersPartitionPolicyFloor.value()))
+        sum.div(&count, &mut budget)
+            .unwrap()
+            .compare(&policy, &mut budget)
+            .unwrap()
             .is_ge()
     );
-    // Compilation already debited each act from its author's recognized burn.
     assert!(
         state
             .view()
@@ -524,4 +543,645 @@ fn receiving_small() {
 #[test]
 fn receiving_showcase() {
     receiving(true);
+}
+
+#[derive(Clone, Copy, Debug)]
+enum ExportCase {
+    Distinct,
+    Lower,
+    Raise,
+    Matched,
+}
+
+fn exporting_acts(case: ExportCase, refined: bool) -> Vec<CandidateAct> {
+    let mut acts = Vec::new();
+    for index in 0..N::NumbersPartitionExportRegistrations.integer() {
+        let author = if refined && index != 0 { "moved" } else { "retained" };
+        append(&mut acts, "Registration", author, author);
+    }
+    for index in 0..N::NumbersPartitionExportOpinions.integer() {
+        let author = if refined && index != 0 { "moved" } else { "retained" };
+        let target = if matches!(case, ExportCase::Distinct) && index != 0 {
+            "target-other"
+        } else {
+            "target"
+        };
+        append(&mut acts, "Opinion", author, target);
+        if matches!(case, ExportCase::Matched) {
+            let coordinate = Fraction::parse(N::NumbersPartitionMatchedCoordinate.value());
+            for (name, quantity) in &mut acts.last_mut().unwrap().body.quantities {
+                quantity.value = i64::try_from(if name.ends_with("numerator") {
+                    coordinate.0
+                } else {
+                    coordinate.1
+                })
+                .unwrap();
+            }
+        }
+    }
+    // Each external recipient is anchored by its own Registration.
+    append(&mut acts, "Registration", "target", "target");
+    if matches!(case, ExportCase::Distinct) {
+        append(&mut acts, "Registration", "target-other", "target-other");
+    }
+    acts.reverse();
+    acts
+}
+
+fn exporting_rates(acts: &[CandidateAct], case: ExportCase) -> BTreeMap<String, Fraction> {
+    acts.iter()
+        .map(|act| {
+            let target = act.id.author.starts_with("target");
+            let id = match (case, target) {
+                (ExportCase::Distinct, true) => N::NumbersPartitionHighRate,
+                (ExportCase::Raise, false) | (ExportCase::Lower | ExportCase::Matched, true) => N::NumbersPartitionCloseRate,
+                _ => N::NumbersPartitionLowRate,
+            };
+            (act.id.author.clone(), Fraction::parse(id.value()))
+        })
+        .collect()
+}
+
+fn exporting_premises(old: &CompiledState, new: &CompiledState) {
+    assert_eq!(old.package().input().inputs, new.package().input().inputs);
+    assert_eq!(old.package().input().prices, new.package().input().prices);
+    let before = old.package().input().history.acts();
+    let after = new.package().input().history.acts();
+    assert_eq!(before.len(), after.len());
+    let by_sequence: BTreeMap<_, _> = after.iter().map(|act| (act.id().sequence, act)).collect();
+    assert_eq!(by_sequence.len(), after.len());
+    for act in before {
+        let next = by_sequence[&act.id().sequence];
+        assert_eq!(act.body(), next.body());
+        if act.id().author.starts_with("target") {
+            assert_eq!(act, next);
+        } else {
+            assert!(next.id().author == "retained" || next.id().author == "moved");
+            assert_eq!(act.id().family, next.id().family);
+            assert_eq!(act.legs()[0].source(), &joined::named("addr", &act.id().author));
+            assert_eq!(next.legs()[0].source(), &joined::named("addr", &next.id().author));
+            if act.id().family == "Opinion" {
+                assert_eq!(act.legs()[0].target(), next.legs()[0].target());
+            } else {
+                assert_eq!(next.legs()[0].target(), &joined::named("prof", &next.id().author));
+            }
+        }
+    }
+    let count = |state: &CompiledState, name: &str| state.view().ledger.counts[&Address(name.into())].0;
+    assert_eq!(count(old, "retained"), count(new, "retained") + count(new, "moved"));
+    let balance =
+        |state: &CompiledState, name: &str| Fraction::parse(state.view().ledger.balances[&Address(name.into())].exact());
+    assert_eq!(balance(old, "retained"), balance(new, "retained").plus(balance(new, "moved")));
+    for (name, source) in &new.view().support.sources {
+        let original = if name == "moved" { "retained" } else { name };
+        assert_eq!(source.reduced_rate, old.view().support.sources[original].reduced_rate);
+        assert_eq!(source.emission, "1");
+        if name.starts_with("target") {
+            assert_eq!(count(old, name), count(new, name));
+            assert_eq!(balance(old, name), balance(new, name));
+            assert_eq!(old.view().base.rows[name].keys().collect::<Vec<_>>(), vec![name]);
+            assert_eq!(new.view().base.rows[name].keys().collect::<Vec<_>>(), vec![name]);
+        }
+    }
+    for state in [old, new] {
+        assert_eq!(state.view().title.events.len(), 0);
+        assert!(state.view().support.sources.values().all(|s| s.emission == "1"));
+    }
+}
+
+fn exported(state: &CompiledState, map: &pn_records::conserved::MapRecord) -> Fraction {
+    let names: Vec<_> = map.point.keys().collect();
+    names
+        .iter()
+        .enumerate()
+        .filter(|(_, name)| !name.starts_with("target"))
+        .map(|(i, name)| {
+            let count = Fraction(i128::from(state.view().ledger.counts[&Address((*name).clone())].0), 1);
+            map.transport.emitted[i]
+                .iter()
+                .filter(|(j, _)| names[**j].starts_with("target"))
+                .map(|(_, v)| split_exact(v))
+                .fold(Fraction(0, 1), Fraction::plus)
+                .times(count)
+        })
+        .fold(Fraction(0, 1), Fraction::plus)
+}
+
+fn distinct_bound(old_state: &CompiledState, new_state: &CompiledState, old: &SolveRecord, new: &SolveRecord) {
+    let before = &old.rounds.last().unwrap().certified;
+    let after = &new.rounds.last().unwrap().certified;
+    let old_names: Vec<_> = before.point.keys().collect();
+    let new_names: Vec<_> = after.point.keys().collect();
+    let old_target = old_names.iter().position(|name| *name == "target").unwrap();
+    let new_target = new_names.iter().position(|name| *name == "target").unwrap();
+    let old_count = split_exact(&before.transport.denominator[old_target]);
+    let new_count = split_exact(&after.transport.denominator[new_target]);
+    let old_amount = split_exact(&before.transport.numerator[old_target]);
+    let new_amount = split_exact(&after.transport.numerator[new_target]);
+    let old_value = old_amount.over(old_count);
+    let new_value = new_amount.over(new_count);
+    assert_eq!(old_value, Fraction::parse(N::NumbersPartitionDistinctStandingOld.value()));
+    assert_eq!(new_value, Fraction::parse(N::NumbersPartitionDistinctStandingNew.value()));
+    let response = new_value.minus(old_value);
+    assert_eq!(response, Fraction::parse(N::NumbersPartitionDistinctGain.value()));
+    assert_eq!(
+        response,
+        new_amount
+            .minus(old_amount)
+            .minus(old_value.times(new_count.minus(old_count)))
+            .over(new_count)
+    );
+    let zero = Fraction(0, 1);
+    let weights: Vec<_> = new_names
+        .iter()
+        .enumerate()
+        .map(|(i, name)| {
+            let original = if *name == "moved" { "retained" } else { name };
+            let old_index = old_names.iter().position(|n| *n == original).unwrap();
+            let count = Fraction(i128::from(new_state.view().ledger.counts[&Address((*name).clone())].0), 1);
+            (
+                count.times(before.transport.emitted[old_index].get(&old_target).map_or(zero, split_exact)),
+                count.times(after.transport.emitted[i].get(&new_target).map_or(zero, split_exact)),
+            )
+        })
+        .collect();
+    assert_eq!(weights.iter().map(|(a, _)| *a).fold(zero, Fraction::plus), old_count);
+    assert_eq!(weights.iter().map(|(_, b)| *b).fold(zero, Fraction::plus), new_count);
+    let variation = weights
+        .iter()
+        .map(|(a, b)| {
+            let delta = b.over(new_count).minus(a.over(old_count));
+            Fraction::new(delta.0.abs(), delta.1)
+        })
+        .fold(zero, Fraction::plus)
+        .over(Fraction(2, 1));
+    assert!(variation.order(Fraction(1, 1)).is_le());
+    let width = Fraction::parse(N::NumbersPartitionHighRate.value()).minus(Fraction::parse(N::NumbersPartitionLowRate.value()));
+    let ungrouped_bound = width.times(variation);
+    assert!(response.order(ungrouped_bound).is_le());
+    assert_eq!(
+        ungrouped_bound,
+        Fraction::parse(N::NumbersPartitionDistinctUngroupedBound.value())
+    );
+    let grouped = new_names
+        .iter()
+        .zip(&weights)
+        .filter(|(name, _)| !name.starts_with("target"))
+        .map(|(_, pair)| *pair)
+        .fold((zero, zero), |(a, b), (c, d)| (a.plus(c), b.plus(d)));
+    let grouped_delta = grouped.1.over(new_count).minus(grouped.0.over(old_count));
+    let grouped_variation = Fraction::new(grouped_delta.0.abs(), grouped_delta.1);
+    assert_eq!(response, width.times(grouped_variation));
+    let old_export = exported(old_state, before);
+    let new_export = exported(new_state, after);
+    assert_eq!(old_export, Fraction::parse(N::NumbersPartitionDistinctExportOld.value()));
+    assert_eq!(new_export, Fraction::parse(N::NumbersPartitionDistinctExportNew.value()));
+    let capacity = Fraction(i128::from(old_state.view().ledger.counts[&Address("retained".into())].0), 1);
+    assert!(new_export.order(old_export).is_lt());
+    assert!(old_export.order(capacity).is_le() && new_export.0 >= 0);
+    assert!(old_export.minus(new_export).order(capacity).is_le());
+}
+
+fn exporting(case: ExportCase) -> (CompiledState, CompiledState, SolveRecord, SolveRecord) {
+    let before = exporting_acts(case, false);
+    let after = exporting_acts(case, true);
+    let old_state = compile(&before, &exporting_rates(&before, case));
+    let new_state = compile(&after, &exporting_rates(&after, case));
+    exporting_premises(&old_state, &new_state);
+    let old = solve(&old_state, matches!(case, ExportCase::Distinct));
+    let new = solve(&new_state, matches!(case, ExportCase::Distinct));
+    admitted(&old_state, &old);
+    admitted(&new_state, &new);
+    (old_state, new_state, old, new)
+}
+
+/// Claim: A complete proportional split with unchanged distinct external recipients passes the anchor after all positive declared rungs fail. Replayed exact transport reproduces the published target gain, satisfies the pair displacement identity, satisfies the common-source total-variation bound and attains its equal-rate grouped refinement and decreases export within the unchanged fibre capacity. A changed count or split alone does not supply coordinate equality.
+/// ´claim:standing:distinct-target-split-retains-pair-displacement´
+/// ´test:integration:distinct-target-split´
+#[test]
+fn distinct_target_split() {
+    let (before, after, old, new) = exporting(ExportCase::Distinct);
+    distinct_bound(&before, &after, &old, &new);
+}
+
+fn partition_box_transport(
+    state: &pn_epoch::compiler::CompiledState,
+    policy: &Procedure,
+    template: &pn_records::conserved::MapRecord,
+    coordinates: &BTreeMap<String, Bounds>,
+    budget: &mut nrz_cas::limits::Budget,
+) -> pn_records::transport::TransportOutput<nrz_cas::enclosure::Interval> {
+    use nrz_cas::{Rational, enclosure::Interval};
+    use pn_graph::numeric::activation::{self, Quantity, Request};
+    use pn_records::primitive::Range;
+    let names: Vec<_> = state.view().base.rows.keys().collect();
+    let mut input = template.transport_input.clone();
+    for (hop, shape) in input.hops.iter_mut().zip([
+        NumberId::NumbersPublishedShapeFirst,
+        NumberId::NumbersPublishedShapeSecond,
+        NumberId::NumbersPublishedShapeThird,
+        NumberId::NumbersPublishedShapeFourth,
+    ]) {
+        let factors: Vec<_> = names
+            .iter()
+            .map(|name| {
+                let coordinate = burn_range(&coordinates[*name], budget)
+                    .coarsen(u32::try_from(N::NumbersPartitionPrecision.integer()).unwrap(), budget)
+                    .unwrap();
+                let request = Request {
+                    standing: Range {
+                        lower: coordinate.lower().exact_string(budget).unwrap(),
+                        upper: coordinate.upper().exact_string(budget).unwrap(),
+                    },
+                    bleed_squared: NumberId::NumbersReferenceSquaredBleed.value().into(),
+                    wall: Some("3/37".into()),
+                    wall_enclosure: None,
+                    quantity: Quantity::Hop {
+                        strength: template.rung.clone(),
+                        shape: shape.value().into(),
+                    },
+                };
+                let result = activation::evaluate(policy, &request, None).unwrap();
+                let evidence = &result.primitive.evidence;
+                let replay = activation::replay(policy, &request, evidence.attachment.as_ref().unwrap(), None).unwrap();
+                assert_eq!(evidence.bounds, replay.primitive.evidence.bounds);
+                evidence
+                    .bounds
+                    .as_ref()
+                    .unwrap()
+                    .coarsen(u32::try_from(N::NumbersPartitionPrecision.integer()).unwrap(), budget)
+                    .unwrap()
+            })
+            .collect();
+        for (i, row) in hop.iter_mut().enumerate() {
+            for (j, entry) in row {
+                let pn_epoch::base::BaseScore::Exact(score) = &state.view().base.rows[names[i]][names[*j]].score else {
+                    panic!("rational partition base");
+                };
+                let score = Rational::parse(score, budget).unwrap();
+                *entry = if i == *j {
+                    Interval::singleton(&score, budget).unwrap()
+                } else {
+                    Interval::new(
+                        score.mul(factors[*j].lower(), budget).unwrap(),
+                        score.mul(factors[*j].upper(), budget).unwrap(),
+                        budget,
+                    )
+                    .unwrap()
+                };
+            }
+        }
+    }
+    pn_graph::transport::enclosed::evaluate(
+        &input,
+        budget,
+        usize::try_from(N::NumbersPartitionProofNodeCeiling.integer()).unwrap(),
+    )
+    .unwrap()
+}
+
+fn partition_difference(
+    a: &nrz_cas::enclosure::Interval,
+    b: &nrz_cas::enclosure::Interval,
+    budget: &mut Budget,
+) -> nrz_cas::enclosure::Interval {
+    use nrz_cas::enclosure::Interval;
+    let bits = u32::try_from(N::NumbersPartitionPrecision.integer()).unwrap();
+    let a = a.coarsen(bits, budget).unwrap();
+    let b = b.coarsen(bits, budget).unwrap();
+    Interval::new(
+        a.lower().sub(b.upper(), budget).unwrap(),
+        a.upper().sub(b.lower(), budget).unwrap(),
+        budget,
+    )
+    .unwrap()
+}
+
+fn partition_projected_bound(
+    after: &CompiledState,
+    old: &pn_records::conserved::ResidualRound,
+    new: &pn_records::conserved::ResidualRound,
+    budget: &mut Budget,
+) -> Rational {
+    let one = Rational::parse("1", budget).unwrap();
+    let new_names: Vec<_> = new.standing.keys().collect();
+    // The lifted coarse equilibrium box is already in every refined hull.
+    let lifted: BTreeMap<_, _> = new
+        .standing
+        .keys()
+        .map(|name| {
+            let original = if name == "moved" { "retained" } else { name };
+            (name.clone(), old.standing[original].clone())
+        })
+        .collect();
+    for (name, range) in &lifted {
+        let hull = &after.view().support.ranges[name];
+        let range = burn_range(range, budget);
+        assert!(
+            range
+                .lower()
+                .compare(&Rational::parse(&hull.minimum, budget).unwrap(), budget)
+                .unwrap()
+                .is_ge()
+        );
+        assert!(
+            range
+                .upper()
+                .compare(&Rational::parse(&hull.maximum, budget).unwrap(), budget)
+                .unwrap()
+                .is_le()
+        );
+    }
+    let trial = partition_box_transport(after, &policy(after), &new.certified, &lifted, budget);
+    let shocks: Vec<_> = new_names
+        .iter()
+        .zip(&trial.standing)
+        .map(|(name, image)| partition_difference(image, &burn_range(&lifted[*name], budget), budget))
+        .collect();
+    let norm = burn_maximum(&shocks, budget);
+    let contraction = Rational::parse(&new.contraction, budget).unwrap();
+    let residual_bound = norm.div(&one.sub(&contraction, budget).unwrap(), budget).unwrap();
+    for name in new_names {
+        let displacement = partition_difference(
+            &burn_range(&new.standing[name], budget),
+            &burn_range(&lifted[name], budget),
+            budget,
+        );
+        assert!(
+            burn_magnitude(&displacement, budget)
+                .compare(&residual_bound, budget)
+                .unwrap()
+                .is_le()
+        );
+    }
+    residual_bound
+}
+
+fn positive_displacement(before: &CompiledState, after: &CompiledState, old: &SolveRecord, new: &SolveRecord, raise: bool) {
+    use nrz_cas::{Rational, enclosure::Interval};
+    let mut budget = Budget::new(limits()).unwrap();
+    let old = old.rounds.last().unwrap();
+    let new = new.rounds.last().unwrap();
+    let old_transport = partition_box_transport(before, &policy(before), &old.certified, &old.standing, &mut budget);
+    let new_transport = partition_box_transport(after, &policy(after), &new.certified, &new.standing, &mut budget);
+    let old_names: Vec<_> = old.standing.keys().collect();
+    let new_names: Vec<_> = new.standing.keys().collect();
+    let old_target = old_names.iter().position(|name| *name == "target").unwrap();
+    let new_target = new_names.iter().position(|name| *name == "target").unwrap();
+    let delta = partition_difference(
+        &burn_range(&new.standing["target"], &mut budget),
+        &burn_range(&old.standing["target"], &mut budget),
+        &mut budget,
+    );
+    if raise {
+        assert!(!delta.lower().is_negative() && !delta.lower().is_zero());
+    } else {
+        assert!(delta.upper().is_negative());
+    }
+    let zero = Rational::parse("0", &mut budget).unwrap();
+    let mut variation = zero.clone();
+    let mut old_weights = Interval::singleton(&zero, &mut budget).unwrap();
+    let mut new_weights = old_weights.clone();
+    for (i, name) in new_names.iter().enumerate() {
+        let original = if *name == "moved" { "retained" } else { name };
+        let old_index = old_names.iter().position(|n| *n == original).unwrap();
+        let count = Rational::parse(
+            &after.view().ledger.counts[&Address((*name).clone())].0.to_string(),
+            &mut budget,
+        )
+        .unwrap();
+        let count = Interval::singleton(&count, &mut budget).unwrap();
+        let empty = Interval::singleton(&zero, &mut budget).unwrap();
+        let weight = partition_product(
+            old_transport.emitted[old_index].get(&old_target).unwrap_or(&empty),
+            &count,
+            &mut budget,
+        );
+        let next = partition_product(
+            new_transport.emitted[i].get(&new_target).unwrap_or(&empty),
+            &count,
+            &mut budget,
+        );
+        old_weights = partition_sum(&old_weights, &weight, &mut budget);
+        new_weights = partition_sum(&new_weights, &next, &mut budget);
+        let normalized = partition_quotient(&weight, &old_transport.denominator[old_target], &mut budget);
+        let normalized_next = partition_quotient(&next, &new_transport.denominator[new_target], &mut budget);
+        let difference = partition_difference(&normalized_next, &normalized, &mut budget);
+        variation = variation.add(&burn_magnitude(&difference, &mut budget), &mut budget).unwrap();
+    }
+    assert_eq!(old_weights, old_transport.denominator[old_target]);
+    assert_eq!(new_weights, new_transport.denominator[new_target]);
+    let two = Rational::parse("2", &mut budget).unwrap();
+    let width = Rational::parse(N::NumbersPartitionCloseRate.value(), &mut budget)
+        .unwrap()
+        .sub(
+            &Rational::parse(N::NumbersPartitionLowRate.value(), &mut budget).unwrap(),
+            &mut budget,
+        )
+        .unwrap();
+    let variation = variation.div(&two, &mut budget).unwrap();
+    let one = Rational::parse("1", &mut budget).unwrap();
+    assert!(variation.compare(&one, &mut budget).unwrap().is_lt());
+    let bound = variation.mul(&width, &mut budget).unwrap();
+    // Both enclose the true response; the difference of outer boxes may be wider.
+    let pair_box = Interval::new(bound.negated(&mut budget).unwrap(), bound.clone(), &mut budget).unwrap();
+    let scoped_delta = delta.intersection(&pair_box, &mut budget).unwrap();
+    let residual_bound = partition_projected_bound(after, old, new, &mut budget);
+    let pins = if raise {
+        [
+            N::NumbersPartitionPositiveRaiseResponseLower,
+            N::NumbersPartitionPositiveRaiseResponseUpper,
+            N::NumbersPartitionPositiveRaisePairUpper,
+            N::NumbersPartitionPositiveRaiseProjectedUpper,
+            N::NumbersPartitionPositiveRaiseOldRoundWork,
+            N::NumbersPartitionPositiveRaiseNewRoundWork,
+        ]
+    } else {
+        [
+            N::NumbersPartitionPositiveLowerResponseLower,
+            N::NumbersPartitionPositiveLowerResponseUpper,
+            N::NumbersPartitionPositiveLowerPairUpper,
+            N::NumbersPartitionPositiveLowerProjectedUpper,
+            N::NumbersPartitionPositiveLowerOldRoundWork,
+            N::NumbersPartitionPositiveLowerNewRoundWork,
+        ]
+    };
+    burn_pin_interval(&scoped_delta, pins[0], pins[1], &mut budget);
+    assert_eq!(partition_upper(&bound, &mut budget), pins[2].value());
+    assert_eq!(partition_upper(&residual_bound, &mut budget), pins[3].value());
+    assert_eq!(old.work, pins[4].integer());
+    assert_eq!(new.work, pins[5].integer());
+}
+
+/// Claim: The complete fold-and-export split with close heterogeneous source rates passes the full rung in both orientations and both histories. Certified target responses have opposite signs; replayed transport over equilibrium boxes bounds common-source total variation and projected residual displacement under matched source pairs, fixed recipients, saturated emission and absorbing targets. No unconditional split equality or response direction is inferred.
+/// ´claim:standing:positive-rung-splits-retain-displacement-premises´
+/// ´test:integration:positive-rung-split´
+#[test]
+fn positive_rung_split() {
+    for case in [ExportCase::Raise, ExportCase::Lower] {
+        let (before, after, old, new) = exporting(case);
+        positive_displacement(&before, &after, &old, &new, matches!(case, ExportCase::Raise));
+    }
+}
+fn partition_sum(
+    a: &nrz_cas::enclosure::Interval,
+    b: &nrz_cas::enclosure::Interval,
+    budget: &mut Budget,
+) -> nrz_cas::enclosure::Interval {
+    nrz_cas::enclosure::Interval::new(
+        a.lower().add(b.lower(), budget).unwrap(),
+        a.upper().add(b.upper(), budget).unwrap(),
+        budget,
+    )
+    .unwrap()
+}
+fn partition_product(
+    a: &nrz_cas::enclosure::Interval,
+    b: &nrz_cas::enclosure::Interval,
+    budget: &mut Budget,
+) -> nrz_cas::enclosure::Interval {
+    assert!(!a.lower().is_negative() && !b.lower().is_negative());
+    nrz_cas::enclosure::Interval::new(
+        a.lower().mul(b.lower(), budget).unwrap(),
+        a.upper().mul(b.upper(), budget).unwrap(),
+        budget,
+    )
+    .unwrap()
+}
+fn partition_quotient(
+    a: &nrz_cas::enclosure::Interval,
+    b: &nrz_cas::enclosure::Interval,
+    budget: &mut Budget,
+) -> nrz_cas::enclosure::Interval {
+    assert!(!a.lower().is_negative() && !b.lower().is_negative() && !b.lower().is_zero());
+    nrz_cas::enclosure::Interval::new(
+        a.lower().div(b.upper(), budget).unwrap(),
+        a.upper().div(b.lower(), budget).unwrap(),
+        budget,
+    )
+    .unwrap()
+}
+
+fn matched_coefficients(before: &CompiledState, after: &CompiledState) {
+    let score = |state: &CompiledState, source: &str, target: &str| {
+        let pn_epoch::base::BaseScore::Exact(value) = &state.view().base.rows[source][target].score else {
+            panic!("exact matched base")
+        };
+        Fraction::parse(value)
+    };
+    let old_diagonal = score(before, "retained", "retained");
+    let old_edge = score(before, "retained", "target");
+    assert_eq!(old_edge, Fraction(1, 1)); // The coarse Opinion cell reaches its cap.
+    for member in ["moved", "retained"] {
+        let diagonal = score(after, member, member);
+        let edge = score(after, member, "target");
+        assert_eq!(edge, Fraction::parse(N::NumbersPartitionMatchedCoordinate.value()));
+        assert_eq!(old_edge.times(diagonal), edge.times(old_diagonal));
+        assert_eq!(after.view().base.rows[member].len(), 2);
+    }
+    assert_eq!(before.view().base.rows["retained"].len(), 2);
+    // For every positive target factor t the row is (d, e*t)/(d+e*t).
+    // The exact cross products above prove equality for every t, at every hop;
+    // the outside row is absorbing, and the matched rates give equal emission.
+    assert_ne!(
+        before.view().support.sources["retained"].reduced_rate,
+        before.view().support.sources["target"].reduced_rate
+    );
+}
+
+/// Claim: The declared complete proportional split with capped parallel Opinion cells has exact base-score ratios that intertwine every target activation factor at every hop, matched rates and saturated emission. Both certified histories select the full rung. Independently replayed endpoint maps are nonconstant, and the certified equilibrium enclosures intersect at every lifted coordinate. Equality follows under the checked hop-refinement premises, not from finite numerical overlap alone.
+/// ´claim:standing:nonconstant-matched-split-retains-hop-refinement´
+/// ´test:integration:nonconstant-matched-split´
+#[test]
+fn nonconstant_matched_split() {
+    let (before, after, old, new) = exporting(ExportCase::Matched);
+    matched_coefficients(&before, &after);
+    let old = old.rounds.last().unwrap();
+    let new = new.rounds.last().unwrap();
+    let mut budget = Budget::new(limits()).unwrap();
+    for (name, range) in &new.standing {
+        let original = if name == "moved" { "retained" } else { name };
+        let left = burn_range(&old.standing[original], &mut budget);
+        let right = burn_range(range, &mut budget);
+        left.intersection(&right, &mut budget).unwrap();
+    }
+    let p = policy(&before);
+    let bound = bind_procedure(&before, p.clone(), &Published(p), limits()).unwrap();
+    let endpoint = |upper: bool| {
+        before
+            .view()
+            .support
+            .ranges
+            .iter()
+            .map(|(name, range)| {
+                (
+                    name.clone(),
+                    if upper { range.maximum.clone() } else { range.minimum.clone() },
+                )
+            })
+            .collect()
+    };
+    let low = pn_epoch::conserved::evaluate_map(&bound, "1", &endpoint(false), old.certified.precision).unwrap();
+    let high = pn_epoch::conserved::evaluate_map(&bound, "1", &endpoint(true), old.certified.precision).unwrap();
+    pn_epoch::conserved::replay_map(&bound, &low).unwrap();
+    pn_epoch::conserved::replay_map(&bound, &high).unwrap();
+    let next_policy = policy(&after);
+    let next_bound = bind_procedure(&after, next_policy.clone(), &Published(next_policy), limits()).unwrap();
+    for original in [&low, &high] {
+        let lifted = new
+            .standing
+            .keys()
+            .map(|name| {
+                let source = if name == "moved" { "retained" } else { name };
+                (name.clone(), original.point[source].clone())
+            })
+            .collect();
+        let refined = pn_epoch::conserved::evaluate_map(&next_bound, "1", &lifted, original.precision).unwrap();
+        pn_epoch::conserved::replay_map(&next_bound, &refined).unwrap();
+        let coarse_names: Vec<_> = original.point.keys().collect();
+        let refined_names: Vec<_> = refined.point.keys().collect();
+        let coarse_source = coarse_names.iter().position(|name| *name == "retained").unwrap();
+        let coarse_target = coarse_names.iter().position(|name| *name == "target").unwrap();
+        let refined_target = refined_names.iter().position(|name| *name == "target").unwrap();
+        assert_eq!(original.transport.normalized.len(), refined.transport.normalized.len());
+        for (old_hop, new_hop) in original.transport.normalized.iter().zip(&refined.transport.normalized) {
+            for member in ["moved", "retained"] {
+                let source = refined_names.iter().position(|name| *name == member).unwrap();
+                assert_eq!(old_hop[coarse_source][&coarse_source], new_hop[source][&source]);
+                assert_eq!(old_hop[coarse_source][&coarse_target], new_hop[source][&refined_target]);
+            }
+            assert_eq!(
+                old_hop[coarse_target][&coarse_target],
+                new_hop[refined_target][&refined_target]
+            );
+        }
+    }
+    let low = burn_range(&low.image["target"], &mut budget);
+    let high = burn_range(&high.image["target"], &mut budget);
+    assert!(
+        low.upper().compare(high.lower(), &mut budget).unwrap().is_lt()
+            || high.upper().compare(low.lower(), &mut budget).unwrap().is_lt()
+    );
+    assert_eq!(old.work, N::NumbersPartitionMatchedOldRoundWork.integer());
+    assert_eq!(new.work, N::NumbersPartitionMatchedNewRoundWork.integer());
+    burn_pin_upper(
+        &Rational::parse(&old.radius, &mut budget).unwrap(),
+        N::NumbersPartitionMatchedOldRadiusUpper,
+        &mut budget,
+    );
+    burn_pin_upper(
+        &Rational::parse(&new.radius, &mut budget).unwrap(),
+        N::NumbersPartitionMatchedNewRadiusUpper,
+        &mut budget,
+    );
+}
+
+fn partition_upper(value: &nrz_cas::Rational, budget: &mut Budget) -> String {
+    nrz_cas::enclosure::Interval::singleton(value, budget)
+        .unwrap()
+        .coarsen(u32::try_from(N::NumbersPartitionPrecision.integer()).unwrap(), budget)
+        .unwrap()
+        .upper()
+        .exact_string(budget)
+        .unwrap()
 }

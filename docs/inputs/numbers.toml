@@ -4433,15 +4433,8 @@ display = "exact"
 exact_digits = 100
 
 [[rows]]
-id = "num:numbers:partition-half-rung"
+id = "num:numbers:partition-backoff-ratio"
 value = "1/2"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 100
-
-[[rows]]
-id = "num:numbers:partition-quarter-rung"
-value = "1/4"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 100
@@ -4625,5 +4618,204 @@ exact_digits = 100
 id = "num:numbers:receiving-showcase-case-budget-seconds"
 value = "15"
 unit = "seconds"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-export-registrations"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-export-opinions"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-matched-coordinate"
+value = "2/3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-positive-proposal-cap"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-distinct-standing-old"
+value = "9278/889"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-distinct-standing-new"
+value = "1780/161"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-distinct-gain"
+value = "12666/20447"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-literal-byte-ceiling"
+value = "4096"
+unit = "bytes"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-distinct-ungrouped-bound"
+value = "4251/889"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-response-lower"
+value = "4571/8388608"
+unit = "dimensionless"
+display = "floor"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-response-upper"
+value = "915807/1677721600"
+unit = "dimensionless"
+display = "ceiling"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-pair-upper"
+value = "9159/16777216"
+unit = "dimensionless"
+display = "ceiling"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-projected-upper"
+value = "2435/4194304"
+unit = "dimensionless"
+display = "ceiling"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-old-round-work"
+value = "218678951"
+unit = "Work"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-positive-raise-new-round-work"
+value = "219194103"
+unit = "Work"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-response-lower"
+value = "-915781/1677721600"
+unit = "dimensionless"
+display = "floor"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-response-upper"
+value = "-143/262144"
+unit = "dimensionless"
+display = "ceiling"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-pair-upper"
+value = "4579/8388608"
+unit = "dimensionless"
+display = "ceiling"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-projected-upper"
+value = "1217/2097152"
+unit = "dimensionless"
+display = "ceiling"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-old-round-work"
+value = "199497637"
+unit = "Work"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-positive-lower-new-round-work"
+value = "201811355"
+unit = "Work"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-matched-old-round-work"
+value = "199497637"
+unit = "Work"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-matched-new-round-work"
+value = "200759104"
+unit = "Work"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-matched-old-radius-upper"
+value = "65/16777216"
+unit = "dimensionless"
+display = "ceiling"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-matched-new-radius-upper"
+value = "65/16777216"
+unit = "dimensionless"
+display = "ceiling"
+exact_digits = 100
+magnitude = -8
+
+[[rows]]
+id = "num:numbers:partition-distinct-export-old"
+value = "1417/625"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-distinct-export-new"
+value = "160/81"
+unit = "dimensionless"
 display = "exact"
 exact_digits = 100
