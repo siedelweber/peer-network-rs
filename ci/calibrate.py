@@ -20,15 +20,19 @@ from run_tests import contract_events, doctest_events, instant, nextest_events, 
 from properties import environment as property_environment
 
 
+USAGE_FIELDS = ('ru_utime', 'ru_stime', 'ru_majflt', 'ru_inblock', 'ru_nvcsw', 'ru_nivcsw')
+CASE_FIELDS = ('own_user_s', 'own_sys_s', *USAGE_FIELDS[2:])
+
+
 def case_usage():
     """Process and reaped-child CPU; serial Python cases have no sibling case."""
     own = resource.getrusage(resource.RUSAGE_SELF)
     children = resource.getrusage(resource.RUSAGE_CHILDREN)
-    return own.ru_utime + children.ru_utime, own.ru_stime + children.ru_stime
+    return tuple(getattr(own, key)+getattr(children, key) for key in USAGE_FIELDS)
 
 
 def case_cpu(before, after):
-    return dict(own_user_s=after[0]-before[0], own_sys_s=after[1]-before[1],
+    return dict(zip(CASE_FIELDS, (end-start for start, end in zip(before, after))),
                 cpu_scope='case-process-and-reaped-descendants')
 
 
@@ -44,9 +48,9 @@ def case_runner(argv):
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
     row = dict(operation=os.environ['NEXTEST_BINARY_ID']+'::'+name,
                source=os.environ['PN_HARNESS_SOURCE'], status=result.returncode,
-               duration_ms=elapsed*1000, own_user_s=after.ru_utime-before.ru_utime,
-               own_sys_s=after.ru_stime-before.ru_stime,
-               cpu_scope='case-process-and-reaped-descendants')
+               duration_ms=elapsed*1000,
+               **case_cpu(tuple(getattr(before, key) for key in USAGE_FIELDS),
+                          tuple(getattr(after, key) for key in USAGE_FIELDS)))
     destination = Path(os.environ['PN_CALIBRATION_CASE_CPU'])/f'{os.getpid()}.json'
     with destination.open('x') as output:
         json.dump(row, output)
@@ -62,10 +66,10 @@ def join_cpu(cases, directory, source):
         row = by_case[case['operation']]
         if row['source'] != source or (row['status'] == 0) != (case['outcome'] == 'passed'):
             raise StructuralError('calibration case CPU identity or outcome differs')
-        if any(row[key] < 0 for key in ('duration_ms', 'own_user_s', 'own_sys_s')):
+        if any(row[key] < 0 for key in ('duration_ms', *CASE_FIELDS)):
             raise StructuralError('calibration case CPU is negative')
         case['runner_duration_ms'] = case['duration_ms']
-        case.update({key:row[key] for key in ('duration_ms', 'own_user_s', 'own_sys_s', 'cpu_scope')})
+        case.update({key:row[key] for key in ('duration_ms', *CASE_FIELDS, 'cpu_scope')})
 
 
 def comparison(before, after, changed):
@@ -76,16 +80,15 @@ def comparison(before, after, changed):
         if row.get('scope') != 'case' or row['operation'] not in old:
             continue
         operation = row['operation']
-        package = operation.split('::')[0].removeprefix('pn-')
-        paths = [path for path in changed if path.startswith(f'packages/{package}/')
-                 or path in {'ci/calibrate.py', 'ci/run_ci.py', 'ci/run_tests.py'}
+        paths = [path for path in changed if path.startswith(('packages/', 'docs/inputs/', 'docs/datasets/', 'ci/'))
+                 or path in {'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml'}
                  or operation.startswith('ci::'+Path(path).stem+'.')]
         rows.append(dict(operation=operation, before=old[operation], after=row,
                          code_changed=bool(paths), changed_paths=paths,
                          declaration_changes=[path for path in changed if path.startswith('docs/inputs/')]))
     return dict(source_before=before['source'], source_after=after['source'],
                 source_range=before['source']+'..'+after['source'], changed_files=changed,
-                change_scope='conservative package or harness code; not causal attribution', cases=rows)
+                change_scope='all cases for any package, generated input/dataset or harness change; not causal attribution', cases=rows)
 
 
 def selection(inventory, cases):
@@ -272,7 +275,8 @@ def run():
         records += contract_events(contracts, registry, source, records)
         for row in records:
             if row.get('scope') == 'case' and 'cpu_scope' not in row:
-                row.update(own_user_s=None, own_sys_s=None,
+                row.update({key:None for key in CASE_FIELDS})
+                row.update(
                            cpu_scope='unavailable-within-shared-parent; suite CPU is not case CPU')
         alone(contexts)
         status |= complete(registry, records)

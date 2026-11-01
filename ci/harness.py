@@ -184,7 +184,8 @@ class Registry:
         result = []
         for suite in self.suites.values():
             row = dict(source=source, configuration=CONFIGURATION, suite=suite['name'],
-                       implementation=suite.get('implementation') or None, tier=suite['tier'])
+                       implementation=suite.get('implementation') or None, tier=suite['tier'],
+                       contract_edition=suite.get('contract_edition'))
             if 'observation' in suite:
                 row['observation'] = suite['observation']
                 row['property_observations'] = [dict(operation=r['operation'], seed=r['seed'], consumer=r.get('seed_consumer'))
@@ -199,7 +200,7 @@ class Registry:
         for tier in self.tiers.values():
             if tier['status'] == 'held':
                 result.append(dict(source=source, configuration=CONFIGURATION, suite=None, implementation=None,
-                                   tier=tier['name'], status='held', reason=tier['reason']))
+                                   contract_edition=None, tier=tier['name'], status='held', reason=tier['reason']))
         return result
 
 
@@ -220,7 +221,8 @@ def main():
             matrix = registry.matrix(records, source_id())
             Path('.lane/harness-matrix.json').write_text(json.dumps({'schema': 1, 'rows': matrix}, indent=2)+'\n')
             counts = Counter(row['status'] for row in matrix)
-            print(f'HARNESS-MATRIX cases={len(registry.cases)} passed={counts["passed"]} failed={counts["failed"]} held={counts["held"]} artifact=.lane/harness-matrix.json')
+            editions = Counter(row['contract_edition'] for row in matrix if row['status']=='passed' and row['contract_edition'])
+            print(f'HARNESS-MATRIX cases={len(registry.cases)} passed={counts["passed"]} failed={counts["failed"]} held={counts["held"]} passed_by_edition={json.dumps(editions, sort_keys=True, separators=(",", ":"))} artifact=.lane/harness-matrix.json')
             return int(bool(counts['failed']))
         print(f'HARNESS-REGISTRY levels={len(registry.levels)} suites={len(registry.suites)} implementations={len(registry.implementations)} cases={len(registry.cases)}')
         return 0

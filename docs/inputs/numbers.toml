@@ -6420,3 +6420,11 @@ value = "2.487646"
 unit = "seconds"
 display = "exact"
 exact_digits = 24
+
+# Calibration resource-counter probe.
+[[rows]]
+id = "num:numbers:calibration-fixture-resource-events"
+value = "7"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

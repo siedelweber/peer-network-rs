@@ -1769,9 +1769,11 @@ pub enum NumberId {
     NumbersBurnSwitchFloorWallSeconds,
     /// Registry id: num:numbers:burn-switch-floor-cpu-seconds.
     NumbersBurnSwitchFloorCpuSeconds,
+    /// Registry id: num:numbers:calibration-fixture-resource-events.
+    NumbersCalibrationFixtureResourceEvents,
 }
 
-const OFFSETS: [(usize, usize); 883] = [
+const OFFSETS: [(usize, usize); 884] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2655,6 +2657,7 @@ const OFFSETS: [(usize, usize); 883] = [
     (136_695, 136_703),
     (136_827, 136_835),
     (136_958, 136_966),
+    (137_133, 137_134),
 ];
 
 impl NumberId {

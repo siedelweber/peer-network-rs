@@ -40,28 +40,31 @@ class Harness(unittest.TestCase):
         import tempfile
         from types import SimpleNamespace
         from unittest.mock import patch
-        from calibrate import case_runner, case_cpu, join_cpu, comparison
+        from calibrate import case_runner, case_cpu, join_cpu, comparison, USAGE_FIELDS
         import tomllib
         inputs = tomllib.loads((Path(__file__).resolve().parent.parent/'docs/inputs/numbers.toml').read_text())['rows']
         values = {row['id']: row['value'] for row in inputs}
         def pin(name):
             return int(values['num:numbers:calibration-fixture-'+name])
-        before = (pin('user-before-seconds'), pin('system-before-seconds'))
-        after = (pin('user-after-seconds'), pin('system-after-seconds'))
+        events = pin('resource-events')
+        before = (pin('user-before-seconds'), pin('system-before-seconds'), *([0]*len(USAGE_FIELDS[2:])))
+        after = (pin('user-after-seconds'), pin('system-after-seconds'), *([events]*len(USAGE_FIELDS[2:])))
         delta = (pin('user-delta-seconds'), pin('system-delta-seconds'))
         self.assertEqual(case_cpu(before, after), dict(own_user_s=delta[0], own_sys_s=delta[1],
+                         **{key:events for key in USAGE_FIELDS[2:]},
                          cpu_scope='case-process-and-reaped-descendants'))
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)
             for status in (0, pin('refusal-status')):
                 env = dict(PN_CALIBRATION_CASE_CPU=directory, PN_HARNESS_SOURCE='current',
                            NEXTEST_BINARY_ID='example', NEXTEST_TEST_NAME='case')
-                usage = [SimpleNamespace(ru_utime=user, ru_stime=system) for user, system in (before, after)]
+                usage = [SimpleNamespace(**dict(zip(USAGE_FIELDS, values))) for values in (before, after)]
                 with patch.dict(os.environ, env), patch('calibrate.resource.getrusage', side_effect=usage):
                     self.assertEqual(case_runner([sys.executable, '-c', f'raise SystemExit({status})']), status)
                 record = dict(operation='example::case', outcome='passed' if status == 0 else 'failed', duration_ms=0)
                 join_cpu([record], path, 'current')
                 self.assertEqual((record['own_user_s'], record['own_sys_s']), delta)
+                self.assertTrue(all(record[key] == events for key in USAGE_FIELDS[2:]))
                 self.assertGreaterEqual(record['duration_ms'], 0)
                 with self.assertRaisesRegex(StructuralError, 'identity'):
                     join_cpu([record], path, 'other')
@@ -80,7 +83,10 @@ class Harness(unittest.TestCase):
                     join_cpu([record], path, 'current')
         record = dict(operation='pn-epoch::solve::fixture', scope='case')
         before, after = [dict(source=source, records=[record]) for source in ('before', 'after')]
-        for paths, changed in ((['packages/epoch/tests/common/joined.rs'], True), (['docs/inputs/numbers.toml'], False)):
+        for paths, changed in ((['packages/epoch/tests/common/joined.rs'], True),
+                               (['packages/graph/src/numeric.rs'], True),
+                               (['packages/documents/src/pins.rs'], True),
+                               (['docs/inputs/numbers.toml'], True), (['README.md'], False)):
             result = comparison(before, after, paths)
             self.assertEqual(result['source_range'], 'before..after')
             self.assertEqual(result['cases'][0]['code_changed'], changed)
@@ -522,9 +528,12 @@ assert (root/'payload').read_text() == 'committed'
         ´test:integration:test-service-hold´
         """
         registry = fixture()
+        registry.suites['example']['contract_edition'] = 'example-contract'
         matrix = registry.matrix([result(registry)], 'current')
         self.assertEqual([r['status'] for r in matrix], ['passed', 'held'])
         self.assertIsNone(matrix[-1]['implementation'])
+        self.assertEqual(matrix[0]['contract_edition'], 'example-contract')
+        self.assertIsNone(matrix[-1]['contract_edition'])
 
     def test_doctest_inventory(self):
         """A never-started or unfinished doctest remains missing, preventing a partial run from passing.
