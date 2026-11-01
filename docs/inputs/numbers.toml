@@ -3903,3 +3903,457 @@ value = "3"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Accepted-act response quantities.
+
+[[rows]]
+id = "num:numbers:act-response-wall"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-burn"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-burn"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-burn"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-burn"
+value = "18"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raised-target-burn"
+value = "7/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-target-burn"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-upstream-burn"
+value = "10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-product-ceiling"
+value = "10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-precision"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-endpoint-grid"
+value = "1/65536"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-proposal-cap"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-work-ceiling"
+value = "1000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-arithmetic-ceiling"
+value = "5000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-actor-count"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-reference-acts-before"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-reference-acts-after"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-acts-before"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-acts-after"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-standing-before-lower"
+value = "481427456800854791540192409521/209300296793325055170024767488"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-standing-before-upper"
+value = "34072554954833777789/14739024609199063040"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-standing-after-lower"
+value = "1707021884920154857767041/1283989994469393130782720"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-standing-after-upper"
+value = "4981279546450593187709242681/3724387947531543904701972480"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-response-lower"
+value = "-1080003223631/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-response-upper"
+value = "-1058499499471/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-displacement-upper"
+value = "11077395887/8321499136"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-target-loss-upper"
+value = "11077395887/8321499136"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-solve-before-work"
+value = "115391099"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-solve-after-work"
+value = "113212330"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-standing-before-lower"
+value = "2"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-standing-before-upper"
+value = "2"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-standing-after-lower"
+value = "40782331749/22601101312"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-standing-after-upper"
+value = "25149839204704227/13922843435724800"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-response-lower"
+value = "-107510234861/549755813888"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-response-upper"
+value = "-106447934647/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-displacement-upper"
+value = "1280/491"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-target-loss-upper"
+value = "20440961043817/67482526154752"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-solve-before-work"
+value = "74545773"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-lower-solve-after-work"
+value = "121523154"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-standing-before-lower"
+value = "5/2"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-standing-before-upper"
+value = "5/2"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-standing-after-lower"
+value = "13020411971973/4835092889600"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-standing-after-upper"
+value = "682245954760980383/252725470246502400"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-response-lower"
+value = "212093593919/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-response-upper"
+value = "109705755579/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-displacement-upper"
+value = "2048/491"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-solve-before-work"
+value = "67480024"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-raise-solve-after-work"
+value = "100155642"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-standing-before-lower"
+value = "2"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-standing-before-upper"
+value = "2"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-standing-after-lower"
+value = "22/5"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-standing-after-upper"
+value = "22/5"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-response-lower"
+value = "1319413953331/549755813888"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-response-upper"
+value = "2638827906663/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-displacement-upper"
+value = "9"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-solve-before-work"
+value = "79900765"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-switch-solve-after-work"
+value = "121000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-directions-contraction-upper"
+value = "21/512"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-emission-contraction-upper"
+value = "35/128"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:act-response-supported-depth-count"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

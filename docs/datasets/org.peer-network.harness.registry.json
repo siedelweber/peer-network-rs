@@ -4298,7 +4298,10 @@
         "pn-epoch::solve::burn_sibling",
         "pn-epoch::solve::burn_depleted",
         "pn-epoch::solve::burn_switch",
-        "pn-epoch::solve::burn_monotone"
+        "pn-epoch::solve::burn_monotone",
+        "pn-epoch::solve::act_directions",
+        "pn-epoch::solve::act_emission",
+        "pn-epoch::solve::act_switch"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",

@@ -1079,9 +1079,129 @@ pub enum NumberId {
     NumbersFrozenDeclaredDepthCount,
     /// Registry id: num:numbers:frozen-supported-depth-count.
     NumbersFrozenSupportedDepthCount,
+    /// Registry id: num:numbers:act-response-wall.
+    NumbersActResponseWall,
+    /// Registry id: num:numbers:act-response-raise-burn.
+    NumbersActResponseRaiseBurn,
+    /// Registry id: num:numbers:act-response-lower-burn.
+    NumbersActResponseLowerBurn,
+    /// Registry id: num:numbers:act-response-emission-burn.
+    NumbersActResponseEmissionBurn,
+    /// Registry id: num:numbers:act-response-switch-burn.
+    NumbersActResponseSwitchBurn,
+    /// Registry id: num:numbers:act-response-raised-target-burn.
+    NumbersActResponseRaisedTargetBurn,
+    /// Registry id: num:numbers:act-response-target-burn.
+    NumbersActResponseTargetBurn,
+    /// Registry id: num:numbers:act-response-upstream-burn.
+    NumbersActResponseUpstreamBurn,
+    /// Registry id: num:numbers:act-response-product-ceiling.
+    NumbersActResponseProductCeiling,
+    /// Registry id: num:numbers:act-response-precision.
+    NumbersActResponsePrecision,
+    /// Registry id: num:numbers:act-response-endpoint-grid.
+    NumbersActResponseEndpointGrid,
+    /// Registry id: num:numbers:act-response-proposal-cap.
+    NumbersActResponseProposalCap,
+    /// Registry id: num:numbers:act-response-work-ceiling.
+    NumbersActResponseWorkCeiling,
+    /// Registry id: num:numbers:act-response-arithmetic-ceiling.
+    NumbersActResponseArithmeticCeiling,
+    /// Registry id: num:numbers:act-response-actor-count.
+    NumbersActResponseActorCount,
+    /// Registry id: num:numbers:act-response-reference-acts-before.
+    NumbersActResponseReferenceActsBefore,
+    /// Registry id: num:numbers:act-response-reference-acts-after.
+    NumbersActResponseReferenceActsAfter,
+    /// Registry id: num:numbers:act-response-emission-acts-before.
+    NumbersActResponseEmissionActsBefore,
+    /// Registry id: num:numbers:act-response-emission-acts-after.
+    NumbersActResponseEmissionActsAfter,
+    /// Registry id: num:numbers:act-response-emission-standing-before-lower.
+    NumbersActResponseEmissionStandingBeforeLower,
+    /// Registry id: num:numbers:act-response-emission-standing-before-upper.
+    NumbersActResponseEmissionStandingBeforeUpper,
+    /// Registry id: num:numbers:act-response-emission-standing-after-lower.
+    NumbersActResponseEmissionStandingAfterLower,
+    /// Registry id: num:numbers:act-response-emission-standing-after-upper.
+    NumbersActResponseEmissionStandingAfterUpper,
+    /// Registry id: num:numbers:act-response-emission-response-lower.
+    NumbersActResponseEmissionResponseLower,
+    /// Registry id: num:numbers:act-response-emission-response-upper.
+    NumbersActResponseEmissionResponseUpper,
+    /// Registry id: num:numbers:act-response-emission-displacement-upper.
+    NumbersActResponseEmissionDisplacementUpper,
+    /// Registry id: num:numbers:act-response-emission-target-loss-upper.
+    NumbersActResponseEmissionTargetLossUpper,
+    /// Registry id: num:numbers:act-response-emission-solve-before-work.
+    NumbersActResponseEmissionSolveBeforeWork,
+    /// Registry id: num:numbers:act-response-emission-solve-after-work.
+    NumbersActResponseEmissionSolveAfterWork,
+    /// Registry id: num:numbers:act-response-lower-standing-before-lower.
+    NumbersActResponseLowerStandingBeforeLower,
+    /// Registry id: num:numbers:act-response-lower-standing-before-upper.
+    NumbersActResponseLowerStandingBeforeUpper,
+    /// Registry id: num:numbers:act-response-lower-standing-after-lower.
+    NumbersActResponseLowerStandingAfterLower,
+    /// Registry id: num:numbers:act-response-lower-standing-after-upper.
+    NumbersActResponseLowerStandingAfterUpper,
+    /// Registry id: num:numbers:act-response-lower-response-lower.
+    NumbersActResponseLowerResponseLower,
+    /// Registry id: num:numbers:act-response-lower-response-upper.
+    NumbersActResponseLowerResponseUpper,
+    /// Registry id: num:numbers:act-response-lower-displacement-upper.
+    NumbersActResponseLowerDisplacementUpper,
+    /// Registry id: num:numbers:act-response-lower-target-loss-upper.
+    NumbersActResponseLowerTargetLossUpper,
+    /// Registry id: num:numbers:act-response-lower-solve-before-work.
+    NumbersActResponseLowerSolveBeforeWork,
+    /// Registry id: num:numbers:act-response-lower-solve-after-work.
+    NumbersActResponseLowerSolveAfterWork,
+    /// Registry id: num:numbers:act-response-raise-standing-before-lower.
+    NumbersActResponseRaiseStandingBeforeLower,
+    /// Registry id: num:numbers:act-response-raise-standing-before-upper.
+    NumbersActResponseRaiseStandingBeforeUpper,
+    /// Registry id: num:numbers:act-response-raise-standing-after-lower.
+    NumbersActResponseRaiseStandingAfterLower,
+    /// Registry id: num:numbers:act-response-raise-standing-after-upper.
+    NumbersActResponseRaiseStandingAfterUpper,
+    /// Registry id: num:numbers:act-response-raise-response-lower.
+    NumbersActResponseRaiseResponseLower,
+    /// Registry id: num:numbers:act-response-raise-response-upper.
+    NumbersActResponseRaiseResponseUpper,
+    /// Registry id: num:numbers:act-response-raise-displacement-upper.
+    NumbersActResponseRaiseDisplacementUpper,
+    /// Registry id: num:numbers:act-response-raise-solve-before-work.
+    NumbersActResponseRaiseSolveBeforeWork,
+    /// Registry id: num:numbers:act-response-raise-solve-after-work.
+    NumbersActResponseRaiseSolveAfterWork,
+    /// Registry id: num:numbers:act-response-switch-standing-before-lower.
+    NumbersActResponseSwitchStandingBeforeLower,
+    /// Registry id: num:numbers:act-response-switch-standing-before-upper.
+    NumbersActResponseSwitchStandingBeforeUpper,
+    /// Registry id: num:numbers:act-response-switch-standing-after-lower.
+    NumbersActResponseSwitchStandingAfterLower,
+    /// Registry id: num:numbers:act-response-switch-standing-after-upper.
+    NumbersActResponseSwitchStandingAfterUpper,
+    /// Registry id: num:numbers:act-response-switch-response-lower.
+    NumbersActResponseSwitchResponseLower,
+    /// Registry id: num:numbers:act-response-switch-response-upper.
+    NumbersActResponseSwitchResponseUpper,
+    /// Registry id: num:numbers:act-response-switch-displacement-upper.
+    NumbersActResponseSwitchDisplacementUpper,
+    /// Registry id: num:numbers:act-response-switch-solve-before-work.
+    NumbersActResponseSwitchSolveBeforeWork,
+    /// Registry id: num:numbers:act-response-switch-solve-after-work.
+    NumbersActResponseSwitchSolveAfterWork,
+    /// Registry id: num:numbers:act-response-directions-contraction-upper.
+    NumbersActResponseDirectionsContractionUpper,
+    /// Registry id: num:numbers:act-response-emission-contraction-upper.
+    NumbersActResponseEmissionContractionUpper,
+    /// Registry id: num:numbers:act-response-supported-depth-count.
+    NumbersActResponseSupportedDepthCount,
 }
 
-const OFFSETS: [(usize, usize); 538] = [
+const OFFSETS: [(usize, usize); 598] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -1620,6 +1740,66 @@ const OFFSETS: [(usize, usize); 538] = [
     (80135, 80136),
     (80263, 80264),
     (80392, 80393),
+    (80547, 80548),
+    (80671, 80672),
+    (80795, 80796),
+    (80922, 80923),
+    (81047, 81049),
+    (81180, 81183),
+    (81307, 81308),
+    (81434, 81436),
+    (81564, 81569),
+    (81691, 81692),
+    (81818, 81825),
+    (81950, 81951),
+    (82076, 82086),
+    (82217, 82224),
+    (82348, 82349),
+    (82483, 82484),
+    (82617, 82618),
+    (82751, 82752),
+    (82884, 82885),
+    (83028, 83089),
+    (83248, 83289),
+    (83449, 83500),
+    (83658, 83715),
+    (83869, 83897),
+    (84049, 84077),
+    (84235, 84257),
+    (84414, 84436),
+    (84593, 84602),
+    (84740, 84749),
+    (84889, 84890),
+    (85046, 85047),
+    (85204, 85227),
+    (85382, 85417),
+    (85568, 85594),
+    (85743, 85769),
+    (85924, 85932),
+    (86086, 86115),
+    (86269, 86277),
+    (86412, 86421),
+    (86561, 86564),
+    (86720, 86723),
+    (86880, 86908),
+    (87063, 87100),
+    (87251, 87277),
+    (87426, 87451),
+    (87606, 87614),
+    (87768, 87776),
+    (87911, 87920),
+    (88061, 88062),
+    (88219, 88220),
+    (88378, 88382),
+    (88538, 88542),
+    (88694, 88720),
+    (88870, 88897),
+    (89053, 89054),
+    (89209, 89217),
+    (89353, 89359),
+    (89500, 89506),
+    (89663, 89669),
+    (89821, 89822),
 ];
 
 impl NumberId {

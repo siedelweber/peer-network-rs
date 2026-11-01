@@ -1674,6 +1674,30 @@
       "review": "All eleven independent settlement event cases explicitly assert distinct validator-retained identity vectors before and after reversal. Recipient results remain equal without sorting either presentation; expected event outcomes share no production title or routing code."
     },
     {
+      "operation": "pn-epoch::solve::act_directions",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:standing:accepted-acts-have-opposite-certified-responses",
+      "before": "",
+      "after": "Claim: Matched unsorted complete histories with fixed burn and one added Reference give opposite certified reached-standing responses. The two comparisons have identical evaluated contraction bounds but different signs; counts, debits, base allocation, saturated emission and common passing full rungs are checked. Replayed box transport bounds each complete finite shock. No universal act direction follows from contraction.",
+      "review": "Complete accepted histories preserve recognized burn markers, shared acts, prices and published parameters; the added act changes the independently checked count and debit. Both certified solves self-replay, rung verdicts and final wall clearance are checked, and independently rebuilt activation queries replay before interval transport encloses the full new-map shock. Positive and negative Reference pairs assert equal contraction bounds. This finite declared-verifier scope establishes no deployment authentication, universal act direction or unrestricted history coverage."
+    },
+    {
+      "operation": "pn-epoch::solve::act_emission",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:standing:accepted-act-emission-change-retains-finite-response",
+      "before": "",
+      "after": "Claim: An unsorted complete-history pair with fixed burn differs by one accepted Registration. Its count and debit change the source emission; both histories select the full passing rung and certified standing decreases. The complete new map at the old equilibrium enclosure supplies the finite response and loss bounds, without a fixed-emission forcing substitution.",
+      "review": "Complete accepted histories preserve recognized burn markers, shared acts, prices and published parameters; the added act changes the independently checked count and debit. Both certified solves self-replay, rung verdicts and final wall clearance are checked, and independently rebuilt activation queries replay before interval transport encloses the full new-map shock. Positive and negative Reference pairs assert equal contraction bounds. This finite declared-verifier scope establishes no deployment authentication, universal act direction or unrestricted history coverage."
+    },
+    {
+      "operation": "pn-epoch::solve::act_switch",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:standing:accepted-act-rung-switch-retains-finite-response",
+      "before": "",
+      "after": "Claim: An unsorted complete-history pair with fixed burn differs by one accepted Reference. The new base, debit and count change the contributing width and selected rung from full strength to the anchor after a full-rung failure. Certified reached standing increases, with the complete signed shock enclosing the finite response. No response sign is inferred from the rung switch alone.",
+      "review": "Complete accepted histories preserve recognized burn markers, shared acts, prices and published parameters; the added act changes the independently checked count and debit. Both certified solves self-replay, rung verdicts and final wall clearance are checked, and independently rebuilt activation queries replay before interval transport encloses the full new-map shock. Positive and negative Reference pairs assert equal contraction bounds. This finite declared-verifier scope establishes no deployment authentication, universal act direction or unrestricted history coverage."
+    },
+    {
       "operation": "pn-epoch::solve::anchor_tables",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:zero-tilt-anchor-keeps-ledger-and-irrational-holds",

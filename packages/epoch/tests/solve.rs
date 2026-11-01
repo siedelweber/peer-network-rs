@@ -3777,3 +3777,308 @@ fn check_prefix_pins() {
         }
     }
 }
+
+fn act_response_state(case: &str, after: bool) -> pn_epoch::compiler::CompiledState {
+    use NumberId as N;
+    let names: &[&str] = if case == "emission" { &["b", "u"] } else { &["i", "b"] };
+    let mut acts: Vec<_> = names
+        .iter()
+        .enumerate()
+        .map(|(i, name)| joined::act("Registration", name, u64::try_from(i).unwrap() + 1, 1))
+        .collect();
+    if case == "emission" {
+        burn_reference(&mut acts, "u", "b", 1);
+        burn_reference(&mut acts, "b", "u", 1);
+    }
+    if after {
+        if case == "emission" {
+            acts.push(joined::act("Registration", "b", u64::try_from(acts.len()).unwrap() + 1, 1));
+        } else {
+            burn_reference(&mut acts, "b", "i", 1);
+        }
+    }
+    acts.reverse();
+    let source_burn = match case {
+        "raise" => N::NumbersActResponseRaiseBurn,
+        "lower" => N::NumbersActResponseLowerBurn,
+        "emission" => N::NumbersActResponseEmissionBurn,
+        "switch" => N::NumbersActResponseSwitchBurn,
+        _ => unreachable!(),
+    };
+    let target_burn = if case == "raise" {
+        N::NumbersActResponseRaisedTargetBurn
+    } else {
+        N::NumbersActResponseTargetBurn
+    };
+    let mut amounts = vec![("b", source_burn.value())];
+    if case != "emission" {
+        amounts.push(("i", target_burn.value()));
+    }
+    if case == "emission" {
+        amounts.push(("u", N::NumbersActResponseUpstreamBurn.value()));
+    }
+    compile_final_state(
+        &joined::package_at_wall(&acts, 1, &amounts, N::NumbersActResponseWall.value()),
+        &joined::Verifier,
+        &mut joined::numeric(),
+        Limits::default(),
+        N::NumbersActResponseProductCeiling.integer(),
+    )
+    .unwrap()
+}
+
+fn act_response_policy(state: &pn_epoch::compiler::CompiledState) -> Procedure {
+    use NumberId as N;
+    let mut p = fence_procedure(state);
+    let bits = u32::try_from(N::NumbersActResponsePrecision.integer()).unwrap();
+    p.precision = Precision::AbsoluteWidthBits(vec![bits]);
+    p.grid = vec!["1".into(), "0".into()];
+    p.endpoint_grid = N::NumbersActResponseEndpointGrid.value().into();
+    p.maximum_iterations = N::NumbersActResponseProposalCap.integer();
+    p.maximum_work = N::NumbersActResponseWorkCeiling.integer();
+    p.maximum_solve_work = p.maximum_work;
+    p.maximum_replay_work = p.maximum_work;
+    let e = p.enclosure.as_mut().unwrap();
+    e.operation.work = p.maximum_work;
+    e.operation.arithmetic_steps = N::NumbersActResponseArithmeticCeiling.integer();
+    e.store = e.operation.clone();
+    e.refinement.precision = bits;
+    p
+}
+
+fn act_response_premises(before: &pn_epoch::compiler::CompiledState, after: &pn_epoch::compiler::CompiledState, case: &str) {
+    let old = before.package().input();
+    let new = after.package().input();
+    assert_eq!(
+        u64::try_from(old.inputs[0].parameters().depth_mass.len()).unwrap(),
+        NumberId::NumbersActResponseSupportedDepthCount.integer()
+    );
+    assert_eq!(old.markers, new.markers);
+    assert_eq!(old.prices, new.prices);
+    assert_eq!(old.inputs[0].parameters(), new.inputs[0].parameters());
+    assert_eq!(new.history.acts().len(), old.history.acts().len() + 1);
+    for act in old.history.acts() {
+        assert!(new.history.acts().contains(act));
+    }
+    let added: Vec<_> = new
+        .history
+        .acts()
+        .iter()
+        .filter(|act| !old.history.acts().contains(act))
+        .collect();
+    assert_eq!(added.len(), 1);
+    assert_eq!(added[0].id().author, "b");
+    assert_eq!(
+        u64::try_from(before.view().base.rows.len()).unwrap(),
+        NumberId::NumbersActResponseActorCount.integer()
+    );
+    let (old_count, new_count) = if case == "emission" {
+        (
+            NumberId::NumbersActResponseEmissionActsBefore,
+            NumberId::NumbersActResponseEmissionActsAfter,
+        )
+    } else {
+        (
+            NumberId::NumbersActResponseReferenceActsBefore,
+            NumberId::NumbersActResponseReferenceActsAfter,
+        )
+    };
+    assert_eq!(u64::try_from(old.history.acts().len()).unwrap(), old_count.integer());
+    assert_eq!(u64::try_from(new.history.acts().len()).unwrap(), new_count.integer());
+    let wall = Fraction::parse(NumberId::NumbersActResponseWall.value());
+    for (address, count) in &before.view().ledger.counts {
+        let next = after.view().ledger.counts[address].0;
+        let balance = Fraction::parse(before.view().ledger.balances[address].exact());
+        let next_balance = Fraction::parse(after.view().ledger.balances[address].exact());
+        if address.0 == "b" {
+            assert_eq!(next, count.0 + 1);
+            assert_eq!(balance.minus(next_balance), wall);
+        } else {
+            assert_eq!(next, count.0);
+            assert_eq!(balance, next_balance);
+        }
+    }
+    assert_ne!(before.view().base, after.view().base);
+    assert_eq!(
+        before.view().base.rows.keys().collect::<Vec<_>>(),
+        after.view().base.rows.keys().collect::<Vec<_>>()
+    );
+    if case == "emission" {
+        assert_eq!(before.view().support.sources["b"].emission, "1");
+        assert!(
+            Fraction::parse(&after.view().support.sources["b"].emission)
+                .order(Fraction(1, 1))
+                .is_lt()
+        );
+        assert!(after.view().support.contributors["b"].contains("u"));
+    } else {
+        assert!(after.view().support.contributors["i"].contains("b"));
+        for state in [before, after] {
+            assert!(state.view().support.sources.values().all(|s| s.emission == "1"));
+        }
+    }
+}
+
+fn act_response_case(case: &str) -> String {
+    let before = act_response_state(case, false);
+    let after = act_response_state(case, true);
+    act_response_premises(&before, &after, case);
+    let p = act_response_policy(&before);
+    let a = bind_procedure(&before, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+    let b = bind_procedure(&after, p.clone(), &Published(p), Limits::default()).unwrap();
+    let fa = pn_epoch::fence::search(&a, None).unwrap();
+    let fb = pn_epoch::fence::search(&b, None).unwrap();
+    burn_rungs(&fa, false);
+    burn_rungs(&fb, case == "switch");
+    let ra = pn_epoch::conserved::solve(&a, &fa).unwrap();
+    let rb = pn_epoch::conserved::solve(&b, &fb).unwrap();
+    let old = ra.rounds.last().unwrap();
+    let new = rb.rounds.last().unwrap();
+    let target = if case == "emission" { "b" } else { "i" };
+    let mut budget = nrz_cas::limits::Budget::new(a.inputs().1.enclosure.as_ref().unwrap().operation.clone()).unwrap();
+    let response = burn_sub(
+        &burn_range(&new.standing[target], &mut budget),
+        &burn_range(&old.standing[target], &mut budget),
+        &mut budget,
+    );
+    if matches!(case, "raise" | "switch") {
+        assert!(!response.lower().is_negative() && !response.lower().is_zero());
+    } else {
+        assert!(response.upper().is_negative());
+    }
+    let transported = burn_box_transport(&after, b.inputs().1, &new.certified, &old.standing, &mut budget);
+    let names: Vec<_> = after.view().base.rows.keys().collect();
+    let shock: Vec<_> = names
+        .iter()
+        .zip(&transported.standing)
+        .map(|(name, image)| burn_sub(image, &burn_range(&old.standing[*name], &mut budget), &mut budget))
+        .collect();
+    let (q, _, displacement, losses) = burn_finite_bounds(b.inputs().1, &fb, &names, (old, new), &shock, &mut budget);
+    let index = names.iter().position(|name| name.as_str() == target).unwrap();
+    if case == "emission" {
+        let source = names.iter().position(|name| name.as_str() == "b").unwrap();
+        let recipient = names.iter().position(|name| name.as_str() == "u").unwrap();
+        assert!(
+            transported.emitted[source][&recipient]
+                .upper()
+                .compare(transported.raw[source][&recipient].lower(), &mut budget)
+                .unwrap()
+                .is_lt()
+        );
+    }
+    let [old_lo, old_hi, new_lo, new_hi, delta_lo, delta_hi, bound, old_work, new_work] = act_response_pins(case);
+    burn_pin_interval(&burn_range(&old.standing[target], &mut budget), old_lo, old_hi, &mut budget);
+    burn_pin_interval(&burn_range(&new.standing[target], &mut budget), new_lo, new_hi, &mut budget);
+    burn_pin_interval(&response, delta_lo, delta_hi, &mut budget);
+    burn_pin_upper(&displacement, bound, &mut budget);
+    if case == "emission" {
+        burn_pin_upper(
+            &losses[index],
+            NumberId::NumbersActResponseEmissionTargetLossUpper,
+            &mut budget,
+        );
+    } else if case == "lower" {
+        burn_pin_upper(&losses[index], NumberId::NumbersActResponseLowerTargetLossUpper, &mut budget);
+    } else {
+        assert!(losses[index].is_zero());
+    }
+    assert_eq!((ra.work, rb.work), (old_work.integer(), new_work.integer()));
+    let q = q.exact_string(&mut budget).unwrap();
+    assert_eq!(
+        q,
+        if case == "switch" {
+            "0"
+        } else if case == "emission" {
+            NumberId::NumbersActResponseEmissionContractionUpper.value()
+        } else {
+            NumberId::NumbersActResponseDirectionsContractionUpper.value()
+        }
+    );
+    let wall = nrz_cas::Rational::parse(NumberId::NumbersActResponseWall.value(), &mut budget).unwrap();
+    for round in [old, new] {
+        for standing in round.standing.values() {
+            assert!(
+                burn_range(standing, &mut budget)
+                    .lower()
+                    .compare(&wall, &mut budget)
+                    .unwrap()
+                    .is_gt()
+            );
+        }
+    }
+    q
+}
+
+fn act_response_pins(case: &str) -> [NumberId; 9] {
+    match case {
+        "emission" => [
+            NumberId::NumbersActResponseEmissionStandingBeforeLower,
+            NumberId::NumbersActResponseEmissionStandingBeforeUpper,
+            NumberId::NumbersActResponseEmissionStandingAfterLower,
+            NumberId::NumbersActResponseEmissionStandingAfterUpper,
+            NumberId::NumbersActResponseEmissionResponseLower,
+            NumberId::NumbersActResponseEmissionResponseUpper,
+            NumberId::NumbersActResponseEmissionDisplacementUpper,
+            NumberId::NumbersActResponseEmissionSolveBeforeWork,
+            NumberId::NumbersActResponseEmissionSolveAfterWork,
+        ],
+        "lower" => [
+            NumberId::NumbersActResponseLowerStandingBeforeLower,
+            NumberId::NumbersActResponseLowerStandingBeforeUpper,
+            NumberId::NumbersActResponseLowerStandingAfterLower,
+            NumberId::NumbersActResponseLowerStandingAfterUpper,
+            NumberId::NumbersActResponseLowerResponseLower,
+            NumberId::NumbersActResponseLowerResponseUpper,
+            NumberId::NumbersActResponseLowerDisplacementUpper,
+            NumberId::NumbersActResponseLowerSolveBeforeWork,
+            NumberId::NumbersActResponseLowerSolveAfterWork,
+        ],
+        "raise" => [
+            NumberId::NumbersActResponseRaiseStandingBeforeLower,
+            NumberId::NumbersActResponseRaiseStandingBeforeUpper,
+            NumberId::NumbersActResponseRaiseStandingAfterLower,
+            NumberId::NumbersActResponseRaiseStandingAfterUpper,
+            NumberId::NumbersActResponseRaiseResponseLower,
+            NumberId::NumbersActResponseRaiseResponseUpper,
+            NumberId::NumbersActResponseRaiseDisplacementUpper,
+            NumberId::NumbersActResponseRaiseSolveBeforeWork,
+            NumberId::NumbersActResponseRaiseSolveAfterWork,
+        ],
+        "switch" => [
+            NumberId::NumbersActResponseSwitchStandingBeforeLower,
+            NumberId::NumbersActResponseSwitchStandingBeforeUpper,
+            NumberId::NumbersActResponseSwitchStandingAfterLower,
+            NumberId::NumbersActResponseSwitchStandingAfterUpper,
+            NumberId::NumbersActResponseSwitchResponseLower,
+            NumberId::NumbersActResponseSwitchResponseUpper,
+            NumberId::NumbersActResponseSwitchDisplacementUpper,
+            NumberId::NumbersActResponseSwitchSolveBeforeWork,
+            NumberId::NumbersActResponseSwitchSolveAfterWork,
+        ],
+        _ => unreachable!(),
+    }
+}
+
+/// Claim: Matched unsorted complete histories with fixed burn and one added Reference give opposite certified reached-standing responses. The two comparisons have identical evaluated contraction bounds but different signs; counts, debits, base allocation, saturated emission and common passing full rungs are checked. Replayed box transport bounds each complete finite shock. No universal act direction follows from contraction.
+/// ´claim:standing:accepted-acts-have-opposite-certified-responses´
+/// ´test:integration:act-directions´
+#[test]
+fn act_directions() {
+    assert_eq!(act_response_case("raise"), act_response_case("lower"));
+}
+
+/// Claim: An unsorted complete-history pair with fixed burn differs by one accepted Registration. Its count and debit change the source emission; both histories select the full passing rung and certified standing decreases. The complete new map at the old equilibrium enclosure supplies the finite response and loss bounds, without a fixed-emission forcing substitution.
+/// ´claim:standing:accepted-act-emission-change-retains-finite-response´
+/// ´test:integration:act-emission´
+#[test]
+fn act_emission() {
+    act_response_case("emission");
+}
+
+/// Claim: An unsorted complete-history pair with fixed burn differs by one accepted Reference. The new base, debit and count change the contributing width and selected rung from full strength to the anchor after a full-rung failure. Certified reached standing increases, with the complete signed shock enclosing the finite response. No response sign is inferred from the rung switch alone.
+/// ´claim:standing:accepted-act-rung-switch-retains-finite-response´
+/// ´test:integration:act-switch´
+#[test]
+fn act_switch() {
+    act_response_case("switch");
+}
