@@ -12,7 +12,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from design import PAPER_EDITION_FIXTURES, PAPER_TAG, bare_mint_pattern, validate
+from design import PAPER_EDITION_FIXTURES, PAPER_TAG, bare_mint_pattern, check_rendered_spacing, validate
 
 
 REPOSITORY = Path(__file__).resolve().parent.parent
@@ -198,6 +198,35 @@ class Correspondence(unittest.TestCase):
             result = self.check()
             self.assertNotEqual(result.returncode, 0, source)
             self.assertIn('literal U+202F', result.stderr)
+
+    def test_rendered_spacing(self):
+        """First-party rendered Markdown accepts one blank line, refuses empty or whitespace-only repeated blanks outside the cleanup list, excludes vendor text, and refuses a stale cleanup exception.
+        ´claim:design:rendered-spacing-refuses-new-or-stale-debt´
+        ´test:integration:test-rendered-spacing´
+        """
+        path = self.root / 'packages/epoch/README.md'
+        path.parent.mkdir(parents=True)
+        git(self.root, 'add', '.')
+        for source, accepted in [('a\n\nb\n', True), ('a\n\n\nb\n', False),
+                                 ('a\n \n\t\nb\n', False), ('a\nb\n', True)]:
+            path.write_text(source)
+            git(self.root, 'add', 'packages/epoch/README.md')
+            result = self.check()
+            self.assertEqual(result.returncode == 0, accepted, result.stderr)
+            if not accepted:
+                self.assertIn('packages/epoch/README.md: repeated blank lines', result.stderr)
+        vendor = self.root / 'vendor/example/README.md'
+        vendor.parent.mkdir(parents=True)
+        vendor.write_text('a\n\n\nb\n')
+        git(self.root, 'add', 'vendor/example/README.md')
+        self.assertEqual(self.check().returncode, 0)
+        pending = self.root / 'README.md'
+        pending.write_text('a\n\n\nb\n')
+        git(self.root, 'add', 'README.md')
+        self.assertEqual(self.check().returncode, 0)
+        with patch('pathlib.Path.read_text', return_value='a\n\nb\n'):
+            with self.assertRaisesRegex(ValueError, 'remove resolved rendered-spacing exception'):
+                check_rendered_spacing([Path('README.md')], pending={'README.md'})
 
     def test_release_tags(self):
         """Release identities are pinned, and tracked UTF-8 text without NUL bytes refuses other paper editions regardless of case; only the two named source fixtures are exempt.

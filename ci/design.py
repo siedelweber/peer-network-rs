@@ -108,11 +108,44 @@ def check_numeric_word_fragments(paths):
         raise ValueError('\n'.join(findings))
 
 
-def check_rendered_spacing(paths):
-    """Rendered Markdown separates blocks with one blank line."""
+# Cleanup debt only: remove a path as its template is repaired; never add one.
+# Clean pending paths are refused, so a repair must retire its exception.
+PENDING_RENDERED_SPACING = frozenset({
+    'README.md',
+    'adr/002-environment-kinds.md',
+    'adr/006-identity-adjudication.md',
+    'adr/015-durable-storage.md',
+    'adr/016-observability.md',
+    'adr/019-development-network.md',
+    'adr/021-development-performance.md',
+    'adr/023-cryptographic-base.md',
+    'adr/024-build-graph.md',
+    'docs/design/inventory.md',
+    'packages/act-profile/README.md',
+    'packages/host/README.md',
+    'packages/interchange/README.md',
+})
+
+
+def check_rendered_spacing(paths, pending=PENDING_RENDERED_SPACING):
+    """Check first-party Markdown; the explicit cleanup debt may only shrink."""
+    findings = []
+    checked = deferred = 0
+    complete = pending <= {path.as_posix() for path in paths}
     for path in paths:
-        if path.suffix == '.md' and re.search(r'\n[ \t]*\n[ \t]*\n', path.read_text()):
-            raise ValueError(f'{path}: repeated blank lines in rendered Markdown')
+        if path.suffix != '.md' or path.is_relative_to('vendor'):
+            continue
+        checked += 1
+        repeated = re.search(r'\n[ \t]*\n[ \t]*\n', path.read_text())
+        if path.as_posix() in pending:
+            if complete and not repeated:
+                findings.append(f'{path}: remove resolved rendered-spacing exception')
+            deferred += 1
+        elif repeated:
+            findings.append(f'{path}: repeated blank lines in rendered Markdown')
+    print(f'RENDERED-SPACING files={checked} pending={deferred} refused={len(findings)}')
+    if findings:
+        raise ValueError('\n'.join(findings))
 
 
 def validate():
@@ -353,8 +386,7 @@ def numeric_correspondence():
 if __name__ == '__main__':
     validate()
     numeric_correspondence()
-    check_rendered_spacing([path for path in tracked_paths()
-                            if path.as_posix() == 'docs/design/implementation.md'])
+    check_rendered_spacing(tracked_paths())
     check_numeric_word_fragments([path for path in tracked_paths()
                                   if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md'}
                                   or path.is_relative_to('docs/templates') and path.suffix == '.j2'])
