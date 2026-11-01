@@ -254,6 +254,16 @@ pub(crate) fn package_at_wall(
     burns: &[(&str, &str)],
     wall_text: &str,
 ) -> pn_epoch::package::VerifiedPackage {
+    package_at_numeraires(acts, boundary, burns, wall_text, &[])
+}
+
+pub(crate) fn package_at_numeraires(
+    acts: &[CandidateAct],
+    boundary: u64,
+    burns: &[(&str, &str)],
+    wall_text: &str,
+    numeraires: &[&str],
+) -> pn_epoch::package::VerifiedPackage {
     use pn_records::{
         burn::{AcceptedSet, Address},
         test_support::burn,
@@ -294,7 +304,14 @@ pub(crate) fn package_at_wall(
     let mut prices = Vec::new();
     let mut bindings = Vec::new();
     for epoch in 1..=boundary {
-        let (declaration, edition, mut parameters) = crate::common::fixture();
+        let (declaration, mut edition, mut parameters) = crate::common::fixture();
+        if let Some(value) = numeraires.get(usize::try_from(epoch - 1).unwrap()) {
+            let literal = numeric.literal(value).unwrap();
+            let amount = numeric.burn_per_action(&literal, "burn").unwrap();
+            let numeraire = numeric.numeraire("nu", &amount).unwrap();
+            edition.numeraire = numeraire.clone();
+            parameters.numeraire = numeraire;
+        }
         parameters.boundary = epoch;
         // The literal compiler oracle uses unit domain weights and one hop.
         for name in parameters.domain_weights.values_mut() {

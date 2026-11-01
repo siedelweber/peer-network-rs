@@ -376,6 +376,13 @@
       "owner": "GRAPH",
       "register": "GRAPH::sec:certificate:area-certificate",
       "stake": "A residual radius detached from its centre, map or contraction can falsely enclose the selected equilibrium."
+    },
+    {
+      "area": "numerics",
+      "contract": "EPOCH::amend:compiler:fence-evidence",
+      "owner": "EPOCH",
+      "register": "EPOCH::sec:numerics:area-numerics",
+      "stake": "Inferring a fence from a price-scaling shortcut rather than the compiled contributing width can certify a different boundary question."
     }
   ]
 }

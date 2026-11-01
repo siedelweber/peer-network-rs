@@ -5228,3 +5228,117 @@ value = "73179/1048576"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 200
+
+# Complete-ledger evaluated scaling controls.
+
+[[rows]]
+id = "num:numbers:scaling-base-numeraire"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-repriced-numeraire"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-wall"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-seller-burn"
+value = "12"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-buyer-burn"
+value = "7"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-factor"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-precision"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-width-tolerance"
+value = "1/64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-failed-precision"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-base-fence-lower"
+value = "1/16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-base-fence-upper"
+value = "5/64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-repriced-fence-lower"
+value = "1/32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-repriced-fence-upper"
+value = "3/64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-degraded-fence-lower"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-degraded-fence-upper"
+value = "9/64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:scaling-product-ceiling"
+value = "10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200

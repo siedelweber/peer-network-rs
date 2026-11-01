@@ -1439,9 +1439,41 @@ pub enum NumberId {
     NumbersActFamilyRetainedChangeLower,
     /// Registry id: num:numbers:act-family-retained-change-upper.
     NumbersActFamilyRetainedChangeUpper,
+    /// Registry id: num:numbers:scaling-base-numeraire.
+    NumbersScalingBaseNumeraire,
+    /// Registry id: num:numbers:scaling-repriced-numeraire.
+    NumbersScalingRepricedNumeraire,
+    /// Registry id: num:numbers:scaling-wall.
+    NumbersScalingWall,
+    /// Registry id: num:numbers:scaling-seller-burn.
+    NumbersScalingSellerBurn,
+    /// Registry id: num:numbers:scaling-buyer-burn.
+    NumbersScalingBuyerBurn,
+    /// Registry id: num:numbers:scaling-factor.
+    NumbersScalingFactor,
+    /// Registry id: num:numbers:scaling-precision.
+    NumbersScalingPrecision,
+    /// Registry id: num:numbers:scaling-width-tolerance.
+    NumbersScalingWidthTolerance,
+    /// Registry id: num:numbers:scaling-failed-precision.
+    NumbersScalingFailedPrecision,
+    /// Registry id: num:numbers:scaling-base-fence-lower.
+    NumbersScalingBaseFenceLower,
+    /// Registry id: num:numbers:scaling-base-fence-upper.
+    NumbersScalingBaseFenceUpper,
+    /// Registry id: num:numbers:scaling-repriced-fence-lower.
+    NumbersScalingRepricedFenceLower,
+    /// Registry id: num:numbers:scaling-repriced-fence-upper.
+    NumbersScalingRepricedFenceUpper,
+    /// Registry id: num:numbers:scaling-degraded-fence-lower.
+    NumbersScalingDegradedFenceLower,
+    /// Registry id: num:numbers:scaling-degraded-fence-upper.
+    NumbersScalingDegradedFenceUpper,
+    /// Registry id: num:numbers:scaling-product-ceiling.
+    NumbersScalingProductCeiling,
 }
 
-const OFFSETS: [(usize, usize); 718] = [
+const OFFSETS: [(usize, usize); 734] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2160,6 +2192,22 @@ const OFFSETS: [(usize, usize); 718] = [
     (113_003, 113_019),
     (113_152, 113_161),
     (113_294, 113_307),
+    (113_477, 113_478),
+    (113_605, 113_606),
+    (113_719, 113_720),
+    (113_840, 113_842),
+    (113_961, 113_962),
+    (114_077, 114_078),
+    (114_196, 114_197),
+    (114_321, 114_325),
+    (114_450, 114_451),
+    (114_576, 114_580),
+    (114_705, 114_709),
+    (114_838, 114_842),
+    (114_971, 114_975),
+    (115_104, 115_107),
+    (115_236, 115_240),
+    (115_364, 115_369),
 ];
 
 impl NumberId {

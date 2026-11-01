@@ -2534,6 +2534,164 @@ fn fence_state(reaction: i64, buyer: &str) -> pn_epoch::compiler::CompiledState 
     .unwrap()
 }
 
+fn scaling_state(case: &str) -> pn_epoch::compiler::CompiledState {
+    use NumberId as N;
+    let acts = vec![
+        joined::act("Opinion", "seller", 3, 2),
+        joined::act("Registration", "buyer", 2, 1),
+        joined::act("Registration", "seller", 1, 1),
+    ];
+    let factor = if matches!(case, "recoinage" | "degradation") {
+        Fraction::parse(N::NumbersScalingFactor.value())
+    } else {
+        Fraction(1, 1)
+    };
+    let burns: Vec<_> = [("seller", N::NumbersScalingSellerBurn), ("buyer", N::NumbersScalingBuyerBurn)]
+        .into_iter()
+        .map(|(actor, pin)| {
+            let value = Fraction::parse(pin.value()).times(factor);
+            (actor, format!("{}/{}", value.0, value.1))
+        })
+        .collect();
+    let burns: Vec<_> = burns.iter().map(|(actor, value)| (*actor, value.as_str())).collect();
+    let base = N::NumbersScalingBaseNumeraire.value();
+    let changed = N::NumbersScalingRepricedNumeraire.value();
+    let numeraires = match case {
+        "recoinage" | "repricing" => [changed, changed],
+        "vintage" => [base, changed],
+        _ => [base, base],
+    };
+    let package = joined::package_at_numeraires(&acts, 2, &burns, N::NumbersScalingWall.value(), &numeraires);
+    let state = compile_final_state(
+        &package,
+        &joined::Verifier,
+        &mut joined::numeric(),
+        Limits::default(),
+        N::NumbersScalingProductCeiling.integer(),
+    )
+    .unwrap();
+    let wall = Fraction::parse(N::NumbersScalingWall.value());
+    let nu = Fraction::parse(numeraires[1]);
+    for (actor, pin) in [("buyer", N::NumbersScalingBuyerBurn), ("seller", N::NumbersScalingSellerBurn)] {
+        let own: Vec<_> = acts.iter().filter(|act| act.id.author == actor).collect();
+        let count = Fraction(i128::try_from(own.len()).unwrap(), 1);
+        let debit = own.iter().fold(Fraction(0, 1), |sum, act| {
+            let expected = wall.times(Fraction::parse(
+                numeraires[usize::try_from(act.finalization_epoch - 1).unwrap()],
+            ));
+            assert_eq!(
+                Fraction::parse(state.view().ledger.debits[&act.id].charged().exact()),
+                expected
+            );
+            sum.plus(expected)
+        });
+        let balance = Fraction::parse(pin.value()).times(factor).minus(debit);
+        let address = pn_records::burn::Address(actor.into());
+        assert_eq!(state.view().ledger.counts[&address].0, u64::try_from(own.len()).unwrap());
+        assert_eq!(Fraction::parse(state.view().ledger.balances[&address].exact()), balance);
+        assert_eq!(
+            Fraction::parse(&state.view().support.sources[actor].reduced_rate),
+            balance.over(nu.times(count))
+        );
+    }
+    for price in &state.package().input().prices {
+        assert_eq!(Fraction::parse(price.wall().exact()), wall);
+    }
+    state
+}
+
+fn scaling_fence(state: &pn_epoch::compiler::CompiledState, bits: u32) -> pn_epoch::fence::Search {
+    let mut p = fence_procedure(state);
+    p.grid = vec!["1".into(), "0".into()];
+    p.precision = Precision::AbsoluteWidthBits(vec![bits]);
+    p.enclosure.as_mut().unwrap().refinement.precision = bits;
+    let result = search(state, &p);
+    let bound = bind_procedure(state, p.clone(), &Published(p), Limits::default()).unwrap();
+    for record in &result.evidence.primitives {
+        assert_eq!(
+            pn_epoch::fence::replay(&bound, "1", record).unwrap().bounds,
+            record.evidence.bounds
+        );
+    }
+    check_width_factor(state, &result);
+    result
+}
+
+/// Claim: Complete reversed histories under uniform recoinage preserve the evaluated fence, uniform repricing supplies the checked inverse-width instance, and doubled burns supply the proportional-width instance at fixed wall, profile and rung. Retaining an older debit vintage violates the inferred inverse-width premise; independently replayed fence queries use the actual compiled widths instead.
+/// ´claim:numerics:compiled-scaling-retains-width-premises´
+/// ´test:integration:evaluated-scaling´
+#[test]
+fn evaluated_scaling() {
+    use NumberId as N;
+    let bits = u32::try_from(N::NumbersScalingPrecision.integer()).unwrap();
+    let cases = ["vintage", "degradation", "repricing", "base", "recoinage"];
+    let mut widths = BTreeMap::new();
+    let mut bounds = BTreeMap::new();
+    let mut queries = Vec::new();
+    for case in cases {
+        let state = scaling_state(case);
+        let width = state.view().support.ranges.values().fold(Fraction(0, 1), |old, range| {
+            let value = Fraction::parse(&range.width);
+            if value.order(old).is_gt() { value } else { old }
+        });
+        assert_eq!(
+            state.view().support.contributors["buyer"],
+            ["seller".into(), "buyer".into()].into_iter().collect()
+        );
+        assert_eq!(
+            width,
+            Fraction::parse(&state.view().support.sources["buyer"].reduced_rate)
+                .minus(Fraction::parse(&state.view().support.sources["seller"].reduced_rate))
+        );
+        widths.insert(case, width);
+        let result = scaling_fence(&state, bits);
+        let fence = &result.evidence.attempts[0].margined_fence;
+        let lo = Fraction::parse(&fence.lower);
+        let hi = Fraction::parse(&fence.upper);
+        assert!(
+            hi.minus(lo)
+                .order(Fraction::parse(N::NumbersScalingWidthTolerance.value()))
+                .is_le()
+        );
+        assert_eq!(result.selected.as_deref(), Some("1"));
+        let pins = match case {
+            "repricing" => [N::NumbersScalingRepricedFenceLower, N::NumbersScalingRepricedFenceUpper],
+            "degradation" => [N::NumbersScalingDegradedFenceLower, N::NumbersScalingDegradedFenceUpper],
+            _ => [N::NumbersScalingBaseFenceLower, N::NumbersScalingBaseFenceUpper],
+        };
+        assert_eq!((lo, hi), (Fraction::parse(pins[0].value()), Fraction::parse(pins[1].value())));
+        bounds.insert(case, (lo, hi));
+        let mut question = result.evidence.primitives[0].query.clone();
+        question.nodes[question.target - 3] = pn_records::primitive::Node::Rational("1".into());
+        queries.push(question);
+    }
+    let factor = Fraction::parse(N::NumbersScalingFactor.value());
+    assert_eq!(widths["recoinage"], widths["base"]);
+    assert_eq!(bounds["recoinage"], bounds["base"]);
+    assert_eq!(widths["repricing"].times(factor), widths["base"]);
+    assert_eq!(widths["degradation"], widths["base"].times(factor));
+    assert_ne!(widths["vintage"].times(factor), widths["base"]);
+    assert!(bounds["repricing"].1.order(bounds["base"].0).is_lt());
+    assert!(bounds["base"].1.order(bounds["degradation"].0).is_lt());
+    for (case, multiplier) in [("repricing", Fraction(1, 1).over(factor)), ("degradation", factor)] {
+        assert!(bounds[case].0.order(bounds["base"].1.times(multiplier)).is_le());
+        assert!(bounds["base"].0.times(multiplier).order(bounds[case].1).is_le());
+    }
+    assert!(queries.windows(2).all(|pair| pair[0] == pair[1]));
+    let coarse = u32::try_from(N::NumbersScalingFailedPrecision.integer()).unwrap();
+    let a = scaling_fence(&scaling_state("base"), coarse);
+    let b = scaling_fence(&scaling_state("repricing"), coarse);
+    let a = &a.evidence.attempts[0].margined_fence;
+    let b = &b.evidence.attempts[0].margined_fence;
+    assert!(!Fraction::parse(&b.upper).order(Fraction::parse(&a.lower)).is_lt());
+    assert!(
+        Fraction::parse(&a.upper)
+            .minus(Fraction::parse(&a.lower))
+            .order(Fraction::parse(N::NumbersScalingWidthTolerance.value()))
+            .is_gt()
+    );
+}
+
 fn search(state: &pn_epoch::compiler::CompiledState, p: &Procedure) -> pn_epoch::fence::Search {
     let bound = bind_procedure(state, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
     pn_epoch::fence::search(&bound, None).unwrap()

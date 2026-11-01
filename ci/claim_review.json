@@ -1850,6 +1850,14 @@
       "review": "Thirteen inputs: the twelve seed/width cases and one three-Actor three-hop sparse case. Dense independent rational normalization, products, mixture and mediants agree; omitted entries and zero emission are explicit, and exact cases remain singleton."
     },
     {
+      "operation": "pn-epoch::solve::evaluated_scaling",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:numerics:compiled-scaling-retains-width-premises",
+      "before": "",
+      "after": "Claim: Complete reversed histories under uniform recoinage preserve the evaluated fence, uniform repricing supplies the checked inverse-width instance, and doubled burns supply the proportional-width instance at fixed wall, profile and rung. Retaining an older debit vintage violates the inferred inverse-width premise; independently replayed fence queries use the actual compiled widths instead.",
+      "review": "Five complete reversed histories recompute each vintage debit, count, balance and source rate independently. Actual support widths and independently replayed fences establish the declared recoinage and uniform repricing instances, fixed-profile proportional width change, and the historical-debit counterexample. Query equality after removing only the width factor checks the fixed wall/profile/rung premise. Strict disjointness and a declared width tolerance set the measured precision; the coarser control refuses both. No universal market-repricing law or deployment authentication follows."
+    },
+    {
       "operation": "pn-epoch::solve::evidence_records",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:solve-transcripts-separate-verdicts-from-interruption",
