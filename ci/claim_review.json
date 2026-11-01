@@ -230,8 +230,8 @@
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:storage-restart-preserves-committed-bytes",
       "before": "",
-      "after": "Claim: A real PostgreSQL restart preserves the committed public version byte for byte; the second probe reads without appending, so successful replay cannot hide lost durability by recreating the row.",
-      "review": "Read pg_ctl restart between separate binary invocations; the second sets the read-only probe flag and must find the existing version."
+      "after": "Claim: A real PostgreSQL restart preserves the committed public version byte for byte; the second probe reads without appending, so successful replay cannot hide lost durability by recreating the row. A competing listener takes the released port before startup; fresh allocation preserves the database and updates the fixture endpoints without a launch retry.",
+      "review": "Read the real-service persistence probe and read-only second probe, with a listening socket taking the old port after acknowledged shutdown. Exactly one stop and one successful start use fresh allocation; all endpoints are updated and committed bytes remain unchanged."
     },
     {
       "operation": "ci::test_host_runtime.HostRuntime.test_storage_statements",

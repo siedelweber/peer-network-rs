@@ -12,14 +12,14 @@ import time
 from contextlib import contextmanager
 
 @contextmanager
-def port_selection():
+def port_selection(deadline=None):
     """Serialize allocation until PostgreSQL owns its reserved TCP port.
 
     The Linux abstract socket is common to this user's gate processes, without
     relying on their checkout or TMPDIR. The kernel releases it on process exit.
     """
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as lock:
-        deadline = time.monotonic() + 60
+        if deadline is None: deadline = time.monotonic() + 60
         while True:
             try:
                 lock.bind('\0pn-host-postgresql-ports-' + str(os.getuid()))
@@ -30,6 +30,7 @@ def port_selection():
                 time.sleep(0.05)
         for port in range(42100, 42120):
             with socket.socket() as reservation:
+                reservation.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 try:
                     reservation.bind(('127.0.0.1', port))
                 except OSError:
@@ -91,15 +92,41 @@ def dependency_pins(packages, reviewed):
         raise ValueError('host dependency closure differs from reviewed archive pins')
     return len(actual)
 
-def command(args, log, env=None):
-    result = subprocess.run([str(v) for v in args], stdout=log, stderr=log, env=env, check=False)
+def command(args, log, env=None, timeout=None):
+    result = subprocess.run([str(v) for v in args], stdout=log, stderr=log, env=env, check=False, timeout=timeout)
     if result.returncode:
         raise RuntimeError('PostgreSQL fixture command failed; private fixture log retained')
+    return result
 
 def stop(root):
     if (root/'data'/'postmaster.pid').exists():
         with (root/'fixture.log').open('ab') as log:
             command([binary_directory()/'pg_ctl', '-D', root/'data', '-m', 'immediate', '-w', 'stop'], log)
+
+def restart(root):
+    """Stop once, select an available port, and start once without replaying a failure."""
+    deadline = time.monotonic() + 60
+    with (root/'fixture.log').open('ab') as log:
+        command([binary_directory()/'pg_ctl', '-D', root/'data', '-m', 'fast', '-w', 'stop'], log,
+                timeout=max(0, deadline-time.monotonic()))
+        with port_selection(deadline) as port:
+            # The previous listener is gone; another fixture may now own that
+            # port. A fresh selection does not retry a failed service launch.
+            with (root/'data'/'postgresql.conf').open('a') as config:
+                config.write('\nport='+str(port)+'\n')
+            result = command([binary_directory()/'pg_ctl', '-D', root/'data', '-l', root/'server.log', '-w', 'start'], log,
+                             timeout=max(0, deadline-time.monotonic()))
+        for path in root.glob('*.json'):
+            data = json.loads(path.read_text())
+            old = data['port']
+            data['port'] = str(port)
+            if data['transport'] == 'unix' and data['endpoint'].endswith('.s.PGSQL.'+old):
+                data['endpoint'] = str(root/'socket'/('.s.PGSQL.'+str(port)))
+            temporary = path.with_suffix('.json.tmp')
+            temporary.write_text(json.dumps(data))
+            temporary.chmod(0o600)
+            os.replace(temporary, path)
+    return result
 
 def start(root):
     count=dependency_pins(tomllib.loads(Path('Cargo.lock').read_text())['package'],tomllib.loads(Path('docs/inputs/host-dependencies.toml').read_text())['rows'])

@@ -560,22 +560,37 @@ class HostRuntime(unittest.TestCase):
         print(f'STORAGE-SENSITIVE-CONTROL status=detected path=DataRow attempt={attempt} wall_seconds={wall:.6f}')
 
     def test_storage_restart(self):
-        """Claim: A real PostgreSQL restart preserves the committed public version byte for byte; the second probe reads without appending, so successful replay cannot hide lost durability by recreating the row.
+        """Claim: A real PostgreSQL restart preserves the committed public version byte for byte; the second probe reads without appending, so successful replay cannot hide lost durability by recreating the row. A competing listener takes the released port before startup; fresh allocation preserves the database and updates the fixture endpoints without a launch retry.
         ´claim:discipline:storage-restart-preserves-committed-bytes´
         ´test:integration:test-storage-restart´
         """
-        from host_postgresql import binary_directory
+        import host_postgresql
+        import socket
         root=Path(os.environ['PN_HOST_TEST_ROOT'])
         target=Path('.lane/host-test-binary.txt').read_text().strip()
         result=subprocess.run([target,'storage::tests::storage_restart','--exact'],capture_output=True,check=False,timeout=60)
         self.assertEqual(result.returncode,0)
-        with (root/'fixture.log').open('ab') as log:
-            result=subprocess.run([str(binary_directory()/'pg_ctl'),'-D',str(root/'data'),'-m','fast','-w','restart'],stdout=log,stderr=log,check=False,timeout=60)
+        old_port = int(json.loads((root/'tcp.json').read_text())['port'])
+        command = host_postgresql.command
+        launches = []
+        with socket.socket() as competitor:
+            competitor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            def takeover(args, log, env=None, timeout=None):
+                outcome = command(args, log, env, timeout)
+                launches.append(args[-1])
+                if args[-1] == 'stop':
+                    competitor.bind(('127.0.0.1', old_port))
+                    competitor.listen()
+                return outcome
+            with patch.object(host_postgresql, 'command', side_effect=takeover):
+                result = host_postgresql.restart(root)
+            self.assertNotEqual(int(json.loads((root/'tcp.json').read_text())['port']), old_port)
+            self.assertEqual(launches, ['stop', 'start'])
         self.assertEqual(result.returncode,0)
         env=dict(os.environ,PN_HOST_STORAGE_READ_ONLY_PROBE='1')
         result=subprocess.run([target,'storage::tests::storage_restart','--exact'],env=env,capture_output=True,check=False,timeout=60)
         self.assertEqual(result.returncode,0)
-        print('STORAGE-RESTART real_service=True read_without_append=True')
+        print('STORAGE-RESTART real_service=True read_without_append=True occupied_old_port=skipped launches=1')
 
     def test_independent_instances(self):
         """Claim: Two gate-owned PostgreSQL instances coexist on distinct reserved ports and answer independently while a third gate may already be running, so fixture allocation does not depend on gate serialization.

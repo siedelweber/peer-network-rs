@@ -79,7 +79,16 @@ def isolated_runtime(module, name, marker, logs):
     env[marker] = '1'
     if module == 'test_host_runtime':
         env['PN_HOST_TEST_ROOT'] = str(tree/'.lane/pg')
-    result = cancellable([sys.executable, '-B', 'ci/run_ci.py', module], cwd=tree, env=env)
+    try:
+        result = cancellable([sys.executable, '-B', 'ci/run_ci.py', module], cwd=tree, env=env)
+    finally:
+        if module == 'test_host_runtime' and (Path(env['PN_HOST_TEST_ROOT'])/'data/postmaster.pid').exists():
+            # The adapter reaps an interrupted child before returning. A daemon
+            # can outlive that child, so cleanup is owned by this outer boundary.
+            stopped = cancellable([sys.executable, '-B', 'ci/host_postgresql.py', 'stop',
+                                   '--root', env['PN_HOST_TEST_ROOT']], cwd=tree, env=env)
+            if stopped.returncode:
+                raise StructuralError('isolated host service cleanup failed')
     outputs = (f'harness-ci-{module}.jsonl', *logs)
     for filename, destination in (*((item,item) for item in outputs),
                                   ('performance-findings.jsonl', name+'-findings.jsonl')):
