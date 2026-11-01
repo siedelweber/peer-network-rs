@@ -423,70 +423,110 @@ fn expand_artifacts(value: &mut serde_json::Value) {
     }
 }
 
-/// Claim: Secrecy-typed commitment inputs produce the three fixed residues in complete default and trace runs; bare dependency Debug is redacted. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.
-/// ´claim:profile:protected-inputs-retain-fixed-commitments´
-/// ´test:unit:commitment-trace-privacy´
-#[test]
-fn commitment_trace_privacy() {
-    assert_eq!(
-        format!("{:?}", DependencyIds(vec![id(1, "Registration")])),
-        "DependencyIds([REDACTED])"
-    );
+fn capture_timing(name: &str, value: &serde_json::Value) {
+    if let Some(directory) = std::env::var_os("PN_PROFILE_TIMING_DIR") {
+        let path = std::path::Path::new(&directory).join(format!("{name}.json"));
+        std::fs::write(path, serde_json::to_vec(value).unwrap()).unwrap();
+    }
+}
+
+fn captured_recipe(recipe: &str) {
+    let total_started = std::time::Instant::now();
     let proposal_body = body("Registration");
     let proposal_nonce = nonce(2);
     let payload = secret(b"fixture private aggregate");
     let dependency_ids = list(vec![id(1, "Registration")]);
     let sy = salt(1, 32);
     let sd = salt(2, 64);
+    // Prepare the supplied anchor before capture; each child captures one
+    // complete recipe so its burst fits even when the writer is not scheduled.
+    let anchor =
+        (recipe != "proposal").then(|| proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids).unwrap());
+    let prepared = total_started.elapsed();
+    let capture_started = std::time::Instant::now();
+    let guard = cli_common::init_json_tracing(tracing::Level::TRACE).unwrap();
+    let bytes = match recipe {
+        "proposal" => {
+            proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids)
+                .unwrap()
+                .bytes
+        }
+        "content" => {
+            content_commitment(&proposal_body.id, anchor.as_ref().unwrap(), &sy, &payload)
+                .unwrap()
+                .bytes
+        }
+        "dependency" => {
+            dependency_commitment(&proposal_body.id, anchor.as_ref().unwrap(), &sd, &dependency_ids)
+                .unwrap()
+                .bytes
+        }
+        _ => panic!("unknown capture recipe"),
+    };
+    let vectors: serde_json::Value = serde_json::from_str(include_str!("../tests/fixtures/commitments.json")).unwrap();
+    let row = vectors["vectors"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["name"] == recipe)
+        .unwrap();
+    assert_eq!(hex(&bytes), row["digest"].as_str().unwrap());
+    let computed = capture_started.elapsed();
+    let drain_started = std::time::Instant::now();
+    drop(guard);
+    capture_timing(
+        &format!("{}-{recipe}", std::env::var("PN_OBSERVE_LEVEL").unwrap()),
+        &serde_json::json!({
+            "recipe":recipe, "prepare_s":prepared.as_secs_f64(), "compute_s":computed.as_secs_f64(), "drain_s":drain_started.elapsed().as_secs_f64()
+        }),
+    );
+}
+
+/// Claim: Secrecy-typed commitment inputs produce the three fixed residues in complete default and trace runs; bare dependency Debug is redacted. Privacy rests on typed carriage and labelled census-counted exits, not trace absence searches.
+/// ´claim:profile:protected-inputs-retain-fixed-commitments´
+/// ´test:unit:commitment-trace-privacy´
+#[test]
+fn commitment_trace_privacy() {
+    let total_started = std::time::Instant::now();
+    assert_eq!(
+        format!("{:?}", DependencyIds(vec![id(1, "Registration")])),
+        "DependencyIds([REDACTED])"
+    );
     if let Ok(recipe) = std::env::var("PN_PROFILE_TRACE_CHILD") {
-        // Prepare the supplied anchor before capture; each child captures one
-        // complete recipe so its burst fits even when the writer is not scheduled.
-        let anchor = (recipe != "proposal")
-            .then(|| proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids).unwrap());
-        let _guard = cli_common::init_json_tracing(tracing::Level::TRACE).unwrap();
-        let bytes = match recipe.as_str() {
-            "proposal" => {
-                proposal_commitment(&proposal_body, &proposal_nonce, &payload, &dependency_ids)
-                    .unwrap()
-                    .bytes
-            }
-            "content" => {
-                content_commitment(&proposal_body.id, anchor.as_ref().unwrap(), &sy, &payload)
-                    .unwrap()
-                    .bytes
-            }
-            "dependency" => {
-                dependency_commitment(&proposal_body.id, anchor.as_ref().unwrap(), &sd, &dependency_ids)
-                    .unwrap()
-                    .bytes
-            }
-            _ => panic!("unknown capture recipe"),
-        };
-        let vectors: serde_json::Value = serde_json::from_str(include_str!("../tests/fixtures/commitments.json")).unwrap();
-        let row = vectors["vectors"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|row| row["name"] == recipe)
-            .unwrap();
-        assert_eq!(hex(&bytes), row["digest"].as_str().unwrap());
+        captured_recipe(&recipe);
         return;
     }
+    let spawn_started = std::time::Instant::now();
+    let mut children = Vec::new();
     for (level, recipe) in ["default", "trace"]
         .into_iter()
         .flat_map(|level| ["proposal", "content", "dependency"].map(|recipe| (level, recipe)))
     {
         let artifacts = std::env::temp_dir().join(format!("pn-act-profile-trace-{}-{level}-{recipe}", std::process::id()));
         std::fs::create_dir(&artifacts).unwrap();
-        let output = std::process::Command::new(std::env::current_exe().unwrap())
+        let sink = artifacts.join("stderr.jsonl");
+        let child = std::process::Command::new(std::env::current_exe().unwrap())
             .args(["--exact", "tests::commitment_trace_privacy", "--nocapture"])
             .env("PN_PROFILE_TRACE_CHILD", recipe)
             .env("PN_OBSERVE_LEVEL", level)
             .env("PN_OBSERVE_ARTIFACT_DIR", &artifacts)
-            .output()
+            .stderr(std::fs::File::create(&sink).unwrap())
+            .stdout(std::process::Stdio::piped())
+            .spawn()
             .unwrap();
-        assert!(output.status.success(), "{output:?}");
-        let mut records: Vec<serde_json::Value> = String::from_utf8(output.stderr)
+        children.push((level, recipe, artifacts, sink, child));
+    }
+    let spawn = spawn_started.elapsed();
+    let mut wait = std::time::Duration::ZERO;
+    let mut decode = std::time::Duration::ZERO;
+    for (level, recipe, artifacts, sink, child) in children {
+        let wait_started = std::time::Instant::now();
+        let output = child.wait_with_output().unwrap();
+        wait += wait_started.elapsed();
+        let decode_started = std::time::Instant::now();
+        let stderr = std::fs::read(sink).unwrap();
+        assert!(output.status.success(), "{output:?} {}", String::from_utf8_lossy(&stderr));
+        let mut records: Vec<serde_json::Value> = String::from_utf8(stderr)
             .unwrap()
             .lines()
             .map(|line| serde_json::from_str(line).unwrap())
@@ -500,6 +540,10 @@ fn commitment_trace_privacy() {
             "{level}/{recipe}: {}",
             status[0]
         );
+        capture_timing(
+            &format!("volume-{level}-{recipe}"),
+            &serde_json::json!({"attempted":status[0]["attempted_records"], "capacity":cli_common::observation::QUEUE_RECORDS}),
+        );
         assert_eq!(status[0]["lost_records"], 0, "{level}/{recipe}: {}", status[0]);
         assert_eq!(status[0]["undelivered_records"], 0);
         assert!(status[0]["delivered_records"].as_u64().unwrap() > 0);
@@ -511,7 +555,12 @@ fn commitment_trace_privacy() {
             .find(|row| row["name"] == "actprofile__root__amend__decomposition__act_profile__started_operations")
             .unwrap();
         assert_eq!(started["counter"], 1);
+        decode += decode_started.elapsed();
     }
+    capture_timing(
+        "parent",
+        &serde_json::json!({"spawn_s":spawn.as_secs_f64(), "wait_s":wait.as_secs_f64(), "decode_s":decode.as_secs_f64(), "total_s":total_started.elapsed().as_secs_f64()}),
+    );
 }
 
 #[derive(Debug)]

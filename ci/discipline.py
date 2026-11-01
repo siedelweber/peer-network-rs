@@ -183,9 +183,29 @@ def exposure_sites(path, source):
     return rows, findings
 
 
+def redirected_streams(code):
+    """Recognize explicit child sinks; unknown sinks and inheritance fail closed."""
+    for match in reversed(list(re.finditer(r'\.(stdout|stderr)\s*\(', code))):
+        depth = 1
+        end = match.end()
+        while end < len(code) and depth:
+            depth += (code[end] == '(') - (code[end] == ')')
+            end += 1
+        argument = code[match.end():end-1].strip()
+        pipe = r'(?:std\s*::\s*process\s*::\s*)?Stdio\s*::\s*(?:piped|null)\s*\(\s*\)'
+        file = r'(?:std\s*::\s*fs\s*::\s*)?File\s*::\s*(?:create|open)\s*\(.*\)\s*(?:\.\s*unwrap\s*\(\s*\)|\?)'
+        if depth == 0 and re.fullmatch(pipe+'|'+file, argument, re.S):
+            # Leave the argument visible: a forbidden parent-stream access or
+            # print nested inside a file expression must still be rejected.
+            start, stop = match.span(1)
+            code = code[:start] + ' '*(stop-start) + code[stop:]
+    return code
+
+
 def source_findings(path, source, mode, forced_test=False):
     code = rust_code(source)
     if mode == "printing":
+        code = redirected_streams(code)
         # Record 004 assigns these exact stream/exit boundaries to the shared
         # emitter and child-byte relay. Other calls, imports and print macros
         # remain prohibited even inside these items.
@@ -197,7 +217,7 @@ def source_findings(path, source, mode, forced_test=False):
                 "locked_stderr": r"io\s*::\s*stderr",
                 "try_locked_stderr": r"io\s*::\s*stderr",
             },
-            "packages/execwrap/src/lib.rs": {"run_observed": r"(?:io\s*::\s*(?:stdout|stderr)|(?<=\.)(?:stdout|stderr))"},
+            "packages/execwrap/src/lib.rs": {"run_observed": r"io\s*::\s*(?:stdout|stderr)"},
         }
         for match in reversed(list(re.finditer(r"\bfn\s+(\w+)\b", code))):
             allowed = boundaries.get(path.as_posix(), {}).get(match.group(1))
@@ -206,7 +226,7 @@ def source_findings(path, source, mode, forced_test=False):
                 item = re.sub(allowed + r"(?=\s*\()", lambda found: " " * len(found.group()), code[match.end():end])
                 code = code[:match.end()] + item + code[end:]
         # Reject the imported names as well as calls, so aliases cannot hide them.
-        pattern = r"\b(?:print|println|eprint|eprintln|dbg)\s*!|\b(?:exit|stdout|stderr)\s*(?:\(|\bas\b)|\b(?:process|io)\s*::\s*(?:exit|stdout|stderr)\b"
+        pattern = r"\b(?:print|println|eprint|eprintln|dbg)\s*!|\b(?:exit|stdout|stderr|inherit)\s*(?:\(|\bas\b)|\b(?:process|io)\s*::\s*(?:exit|stdout|stderr)\b"
         imports = re.finditer(r"\buse\s+[^;]+;", code)
         forbidden_import = any(re.search(r"\b(?:exit|stdout|stderr|print|println|eprint|eprintln|dbg)\b|\b(?:process|io)\s*::\s*\*", item.group()) for item in imports)
         return ["uncontrolled printing, stream handle or exit"] if forbidden_import or re.search(pattern, code) else []

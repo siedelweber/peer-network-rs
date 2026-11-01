@@ -625,6 +625,18 @@ class SourceDiscipline(unittest.TestCase):
         ´claim:discipline:uncontrolled-output-is-refused´
         ´test:integration:test-printing´
         """
+        for stream in ('stdout', 'stderr'):
+            for sink in ('Stdio::piped()', 'std::process::Stdio::null()',
+                         'std::fs::File::create("capture").unwrap()', 'File::open("input")?'):
+                source = f'fn f() {{ Command::new("child").{stream}({sink}); }}'
+                with self.subTest(source=source):
+                    self.assertFalse(source_findings(Path('src/any.rs'), source, 'printing'))
+            for sink in ('Stdio::inherit()', 'std::process::Stdio::inherit()',
+                         'io::stdout()', 'io::stderr()', 'unknown_sink',
+                         'File::create({ println!("x"); "capture" }).unwrap()'):
+                source = f'fn f() {{ Command::new("child").{stream}({sink}); }}'
+                with self.subTest(source=source):
+                    self.assertTrue(source_findings(Path('src/any.rs'), source, 'printing'))
         for source in [
             'fn main() { process::exit(3); }',
             'use std::process::exit; fn main() { exit(3); }',
