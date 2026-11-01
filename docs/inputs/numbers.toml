@@ -5405,3 +5405,281 @@ value = "7"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+[[rows]]
+id = "num:numbers:buildgraph-runtime-reused-setup-wall"
+value = "21.935"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-services-reused-setup-wall"
+value = "21.304"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-runtime-prior-wall"
+value = "24.347"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-services-prior-wall"
+value = "24.028"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-reused-setup-wall"
+value = "61.631"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-reused-setup-user"
+value = "34.403"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-reused-setup-system"
+value = "19.582"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-prior-wall"
+value = "64.159"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-prior-user"
+value = "36.298"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-prior-system"
+value = "21.227"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-runtime-baseline-user"
+value = "14.693"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-runtime-baseline-system"
+value = "5.023"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-runtime-baseline-wall"
+value = "31.779"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-services-baseline-user"
+value = "7.072"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-services-baseline-system"
+value = "5.604"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-services-baseline-wall"
+value = "27.083"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-first-entry-user"
+value = "32.863"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-second-entry-user"
+value = "34.182"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-first-entry-system"
+value = "18.926"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-second-entry-system"
+value = "19.830"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-before-selection-user"
+value = "31.774"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-before-selection-system"
+value = "16.642"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-before-selection-wall"
+value = "55.078"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-held-services-user"
+value = "25.545"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-held-services-system"
+value = "10.902"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-held-services-wall"
+value = "39.121"
+unit = "seconds"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-reused-setup-busy-cores"
+value = "34.751"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-entry-prior-busy-cores"
+value = "3.621"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-selection-before-start-load"
+value = "189.99"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-selection-between-load"
+value = "166.52"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-selection-after-end-load"
+value = "139.39"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-user-increase-lower"
+value = "1.089"
+unit = "seconds"
+display = "floor"
+magnitude = -1
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-user-increase-upper"
+value = "2.408"
+unit = "seconds"
+display = "ceiling"
+magnitude = -1
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-system-increase-lower"
+value = "2.284"
+unit = "seconds"
+display = "floor"
+magnitude = -1
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-admission-system-increase-upper"
+value = "3.188"
+unit = "seconds"
+display = "ceiling"
+magnitude = -1
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-rustdoc-fixture-index-file-count"
+value = "12"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-rustdoc-fixture-run-count"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-rustdoc-fresh-serial-build-count"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+
+[[rows]]
+id = "num:numbers:buildgraph-rustdoc-fresh-parallel-build-count"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 30
+

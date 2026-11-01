@@ -199,6 +199,7 @@ class Correspondence(unittest.TestCase):
                                 ('projected-solve-fast-seconds', '59.1'),
                                 ('projected-solve-slow-seconds', '61.5'),
                                 ('enclosed-wall-mandatory-work', '993'),
+                                ('buildgraph-admission-user-increase-lower', '1.1'),
                                 ('epoch-recipient-history-count', '21'),
                                 ('epoch-invitation-radicand', '0.56' + '1'),
                                 ('epoch-family-presentation-count', '23'),
@@ -254,6 +255,14 @@ class Correspondence(unittest.TestCase):
         git(self.root, 'add', 'packages/records/README.md')
         self.assertNotEqual(self.check().returncode, 0)
         readme.write_text('three-marker')
+        self.assertEqual(self.check().returncode, 0)
+        record = self.root / 'adr/024-build-graph.md'
+        record.parent.mkdir(parents=True, exist_ok=True)
+        original = record.read_text()
+        record.write_text(original + '\n1-minute\n')
+        git(self.root, 'add', 'adr/024-build-graph.md')
+        self.assertNotEqual(self.check().returncode, 0)
+        record.write_text(original + '\none-minute\n')
         self.assertEqual(self.check().returncode, 0)
         template = self.root / 'docs/templates/fixture.md.j2'
         template.parent.mkdir(parents=True)

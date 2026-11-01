@@ -467,6 +467,11 @@ def numeric_correspondence():
     equal(value('records-dag-proposal-epoch'), value('records-dag-history-epoch') + 1)
     equal(value('records-dag-proposal-maximum'), value('records-dag-proposal-minimum')
           + value('records-dag-word-capacity'))
+    for kind in ('user', 'system'):
+        changes = [value(f'buildgraph-admission-{sample}-entry-{kind}')
+                   - value(f'buildgraph-entry-before-selection-{kind}') for sample in ('first', 'second')]
+        equal(value(f'buildgraph-admission-{kind}-increase-lower'), min(changes))
+        equal(value(f'buildgraph-admission-{kind}-increase-upper'), max(changes))
     properties = json.loads(Path('docs/datasets/org.peer-network.harness.properties.json').read_text())['rows']
     compiler = next(row for row in properties if row.get('name') == 'pn-epoch::compiler::compiler_generated')
     equal(value('epoch-property-draw-count'), compiler['cases'])
@@ -509,5 +514,5 @@ if __name__ == '__main__':
     numeric_correspondence()
     check_rendered_spacing(tracked_paths(), whole_tree=True, parent=parent_rendered_spacing())
     check_numeric_word_fragments([path for path in tracked_paths()
-                                  if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md'}
+                                  if path.as_posix() in {'docs/design/implementation.md', 'packages/epoch/README.md', 'packages/records/README.md', 'adr/024-build-graph.md'}
                                   or path.is_relative_to('docs/templates') and path.suffix == '.j2'])

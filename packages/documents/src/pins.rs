@@ -1481,9 +1481,87 @@ pub enum NumberId {
     NumbersCalibrationFixtureSystemDeltaSeconds,
     /// Registry id: num:numbers:calibration-fixture-refusal-status.
     NumbersCalibrationFixtureRefusalStatus,
+    /// Registry id: num:numbers:buildgraph-runtime-reused-setup-wall.
+    NumbersBuildgraphRuntimeReusedSetupWall,
+    /// Registry id: num:numbers:buildgraph-services-reused-setup-wall.
+    NumbersBuildgraphServicesReusedSetupWall,
+    /// Registry id: num:numbers:buildgraph-runtime-prior-wall.
+    NumbersBuildgraphRuntimePriorWall,
+    /// Registry id: num:numbers:buildgraph-services-prior-wall.
+    NumbersBuildgraphServicesPriorWall,
+    /// Registry id: num:numbers:buildgraph-entry-reused-setup-wall.
+    NumbersBuildgraphEntryReusedSetupWall,
+    /// Registry id: num:numbers:buildgraph-entry-reused-setup-user.
+    NumbersBuildgraphEntryReusedSetupUser,
+    /// Registry id: num:numbers:buildgraph-entry-reused-setup-system.
+    NumbersBuildgraphEntryReusedSetupSystem,
+    /// Registry id: num:numbers:buildgraph-entry-prior-wall.
+    NumbersBuildgraphEntryPriorWall,
+    /// Registry id: num:numbers:buildgraph-entry-prior-user.
+    NumbersBuildgraphEntryPriorUser,
+    /// Registry id: num:numbers:buildgraph-entry-prior-system.
+    NumbersBuildgraphEntryPriorSystem,
+    /// Registry id: num:numbers:buildgraph-runtime-baseline-user.
+    NumbersBuildgraphRuntimeBaselineUser,
+    /// Registry id: num:numbers:buildgraph-runtime-baseline-system.
+    NumbersBuildgraphRuntimeBaselineSystem,
+    /// Registry id: num:numbers:buildgraph-runtime-baseline-wall.
+    NumbersBuildgraphRuntimeBaselineWall,
+    /// Registry id: num:numbers:buildgraph-services-baseline-user.
+    NumbersBuildgraphServicesBaselineUser,
+    /// Registry id: num:numbers:buildgraph-services-baseline-system.
+    NumbersBuildgraphServicesBaselineSystem,
+    /// Registry id: num:numbers:buildgraph-services-baseline-wall.
+    NumbersBuildgraphServicesBaselineWall,
+    /// Registry id: num:numbers:buildgraph-admission-first-entry-user.
+    NumbersBuildgraphAdmissionFirstEntryUser,
+    /// Registry id: num:numbers:buildgraph-admission-second-entry-user.
+    NumbersBuildgraphAdmissionSecondEntryUser,
+    /// Registry id: num:numbers:buildgraph-admission-first-entry-system.
+    NumbersBuildgraphAdmissionFirstEntrySystem,
+    /// Registry id: num:numbers:buildgraph-admission-second-entry-system.
+    NumbersBuildgraphAdmissionSecondEntrySystem,
+    /// Registry id: num:numbers:buildgraph-entry-before-selection-user.
+    NumbersBuildgraphEntryBeforeSelectionUser,
+    /// Registry id: num:numbers:buildgraph-entry-before-selection-system.
+    NumbersBuildgraphEntryBeforeSelectionSystem,
+    /// Registry id: num:numbers:buildgraph-entry-before-selection-wall.
+    NumbersBuildgraphEntryBeforeSelectionWall,
+    /// Registry id: num:numbers:buildgraph-entry-held-services-user.
+    NumbersBuildgraphEntryHeldServicesUser,
+    /// Registry id: num:numbers:buildgraph-entry-held-services-system.
+    NumbersBuildgraphEntryHeldServicesSystem,
+    /// Registry id: num:numbers:buildgraph-entry-held-services-wall.
+    NumbersBuildgraphEntryHeldServicesWall,
+    /// Registry id: num:numbers:buildgraph-entry-reused-setup-busy-cores.
+    NumbersBuildgraphEntryReusedSetupBusyCores,
+    /// Registry id: num:numbers:buildgraph-entry-prior-busy-cores.
+    NumbersBuildgraphEntryPriorBusyCores,
+    /// Registry id: num:numbers:buildgraph-selection-before-start-load.
+    NumbersBuildgraphSelectionBeforeStartLoad,
+    /// Registry id: num:numbers:buildgraph-selection-between-load.
+    NumbersBuildgraphSelectionBetweenLoad,
+    /// Registry id: num:numbers:buildgraph-selection-after-end-load.
+    NumbersBuildgraphSelectionAfterEndLoad,
+    /// Registry id: num:numbers:buildgraph-admission-user-increase-lower.
+    NumbersBuildgraphAdmissionUserIncreaseLower,
+    /// Registry id: num:numbers:buildgraph-admission-user-increase-upper.
+    NumbersBuildgraphAdmissionUserIncreaseUpper,
+    /// Registry id: num:numbers:buildgraph-admission-system-increase-lower.
+    NumbersBuildgraphAdmissionSystemIncreaseLower,
+    /// Registry id: num:numbers:buildgraph-admission-system-increase-upper.
+    NumbersBuildgraphAdmissionSystemIncreaseUpper,
+    /// Registry id: num:numbers:buildgraph-rustdoc-fixture-index-file-count.
+    NumbersBuildgraphRustdocFixtureIndexFileCount,
+    /// Registry id: num:numbers:buildgraph-rustdoc-fixture-run-count.
+    NumbersBuildgraphRustdocFixtureRunCount,
+    /// Registry id: num:numbers:buildgraph-rustdoc-fresh-serial-build-count.
+    NumbersBuildgraphRustdocFreshSerialBuildCount,
+    /// Registry id: num:numbers:buildgraph-rustdoc-fresh-parallel-build-count.
+    NumbersBuildgraphRustdocFreshParallelBuildCount,
 }
 
-const OFFSETS: [(usize, usize); 739] = [
+const OFFSETS: [(usize, usize); 778] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2223,6 +2301,45 @@ const OFFSETS: [(usize, usize); 739] = [
     (116_984, 116_985),
     (117_119, 117_120),
     (117_248, 117_249),
+    (117_385, 117_391),
+    (117_522, 117_528),
+    (117_651, 117_657),
+    (117_781, 117_787),
+    (117_915, 117_921),
+    (118_049, 118_055),
+    (118_185, 118_191),
+    (118_312, 118_318),
+    (118_439, 118_445),
+    (118_568, 118_574),
+    (118_700, 118_706),
+    (118_834, 118_839),
+    (118_965, 118_971),
+    (119_098, 119_103),
+    (119_232, 119_237),
+    (119_364, 119_370),
+    (119_501, 119_507),
+    (119_639, 119_645),
+    (119_778, 119_784),
+    (119_918, 119_924),
+    (120_056, 120_062),
+    (120_196, 120_202),
+    (120_334, 120_340),
+    (120_469, 120_475),
+    (120_606, 120_612),
+    (120_741, 120_747),
+    (120_881, 120_887),
+    (121_020, 121_025),
+    (121_163, 121_169),
+    (121_302, 121_308),
+    (121_443, 121_449),
+    (121_589, 121_594),
+    (121_743, 121_748),
+    (121_901, 121_906),
+    (122_057, 122_062),
+    (122_216, 122_218),
+    (122_354, 122_355),
+    (122_498, 122_499),
+    (122_644, 122_645),
 ];
 
 impl NumberId {
