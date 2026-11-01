@@ -193,7 +193,7 @@ fn verification_reference() -> pn_records::conserved::VerificationInput {
         .map(|id| id.value().to_owned())
         .to_vec(),
         retention: N::NumbersPublishedRetention.value().into(),
-        strength: N::NumbersPublishedStrength.value().into(),
+        strength: "1".into(),
         endpoint_bits: u32::try_from(N::NumbersVerificationCompositionBits.integer()).unwrap(),
     }
 }

@@ -23,20 +23,6 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:authored-family-count"
-value = "19"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:projection-row-count"
-value = "27"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
 id = "num:numbers:publish-stage-unimplemented-family-count"
 value = "16"
 unit = "dimensionless"
@@ -2074,22 +2060,8 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-rejected-rung"
-value = "1"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
 id = "num:numbers:enclosed-accepted-rung"
 value = "1/2"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:enclosed-zero-rung"
-value = "0"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
@@ -2147,13 +2119,6 @@ exact_digits = 24
 id = "num:numbers:enclosed-work-ceiling"
 value = "2000000000"
 unit = "Work"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:rational-wall-accepted-rung"
-value = "1"
-unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
@@ -2298,13 +2263,6 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:published-strength"
-value = "1"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
 id = "num:numbers:verification-scalar-precision"
 value = "16"
 unit = "dimensionless"
@@ -2371,20 +2329,6 @@ exact_digits = 24
 id = "num:numbers:touching-trial-work-ceiling"
 value = "20000000000"
 unit = "Work"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-fence-lower"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:published-accepted-rung"
-value = "1"
-unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
@@ -2893,20 +2837,6 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:split-full-rung"
-value = "1"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:split-anchor-rung"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
 id = "num:numbers:split-coarse-receiving-standing"
 value = "73"
 unit = "dimensionless"
@@ -2970,13 +2900,6 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:split-zero-response"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
 id = "num:numbers:split-compiler-product-ceiling"
 value = "10000"
 unit = "dimensionless"
@@ -2994,13 +2917,6 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:burn-wall"
-value = "1"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:burn-unit-coefficient"
 value = "1"
 unit = "dimensionless"
 display = "exact"
@@ -3331,14 +3247,6 @@ exact_digits = 24
 [[rows]]
 id = "num:numbers:burn-monotone-displacement-upper"
 value = "54975581389/549755813888"
-unit = "dimensionless"
-display = "ceiling"
-magnitude = -12
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:burn-monotone-target-loss-upper"
-value = "0"
 unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
@@ -3717,22 +3625,6 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:burn-full-emission"
-value = "1"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:burn-singleton-width"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-# Epoch README quantities.
-
-[[rows]]
 id = "num:numbers:epoch-ledger-address-count"
 value = "2"
 unit = "dimensionless"
@@ -3791,20 +3683,6 @@ exact_digits = 24
 [[rows]]
 id = "num:numbers:epoch-support-partial-emission"
 value = "1/2"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:epoch-support-empty-emission"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:epoch-support-saturated-emission"
-value = "1"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
@@ -3929,29 +3807,6 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:epoch-support-omitted-depth-mass"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:epoch-support-refused-count"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:epoch-transport-empty-emission"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-# Records README quantities.
-
-[[rows]]
 id = "num:numbers:records-dag-history-count"
 value = "2"
 unit = "dimensionless"
@@ -4024,6 +3879,27 @@ exact_digits = 24
 [[rows]]
 id = "num:numbers:records-burn-corruption-count"
 value = "39"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-depth-mass-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:frozen-declared-depth-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:frozen-supported-depth-count"
+value = "3"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24

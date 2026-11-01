@@ -85,8 +85,8 @@ pub(super) fn check(residual: &TwoMapRecord, local: &LocalRecord) {
     assert!(number(&fence.upper, &mut budget).compare(&one, &mut budget).unwrap().is_lt());
     assert_eq!(residual.first.input.strength, "1");
     // Full strength is the first declared rung, so this passing fence accepts one.
-    let published_rung = NumberId::NumbersPublishedAcceptedRung.value();
-    let published_strength = NumberId::NumbersPublishedStrength.value();
+    let published_rung = "1";
+    let published_strength = "1";
     let published_fence_verdict = PublishedVerdict::Pass;
     assert_eq!(p.grid.first().map(String::as_str), Some(published_rung));
     assert_eq!(published_rung, residual.first.input.strength);

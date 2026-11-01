@@ -176,10 +176,7 @@ fn burn_policy(state: &pn_epoch::compiler::CompiledState, case: &str) -> Procedu
         N::NumbersBurnSaturatedPrecision
     };
     p.precision = Precision::AbsoluteWidthBits(vec![u32::try_from(precision.integer()).unwrap()]);
-    p.grid = vec![
-        N::NumbersSplitFullRung.value().into(),
-        N::NumbersSplitAnchorRung.value().into(),
-    ];
+    p.grid = vec!["1".into(), "0".into()];
     p.endpoint_grid = N::NumbersBurnEndpointGrid.value().into();
     p.maximum_iterations = N::NumbersBurnProposalCap.integer();
     p.maximum_work = N::NumbersBurnWorkCeiling.integer();
@@ -397,7 +394,7 @@ fn burn_premises(before: &pn_epoch::compiler::CompiledState, after: &pn_epoch::c
                 assert_eq!(Fraction::parse(&source.emission), rate.over(wall));
             } else {
                 assert!(rate.order(wall).is_gt());
-                assert_eq!(source.emission, N::NumbersBurnFullEmission.value());
+                assert_eq!(source.emission, "1");
             }
         }
         if case == "monotone" {
@@ -405,7 +402,7 @@ fn burn_premises(before: &pn_epoch::compiler::CompiledState, after: &pn_epoch::c
             // on the entire burn segment, not just at sampled interior points.
             for (name, sources) in &state.view().support.contributors {
                 assert_eq!(sources, &std::collections::BTreeSet::from([name.clone()]));
-                assert_eq!(state.view().support.ranges[name].width, N::NumbersBurnSingletonWidth.value());
+                assert_eq!(state.view().support.ranges[name].width, "0");
                 assert_eq!(state.view().base.rows[name].len(), 1);
             }
         }
@@ -454,19 +451,12 @@ fn burn_rungs(search: &pn_epoch::fence::Search, anchor: bool) {
             .collect::<Vec<_>>(),
         expected
     );
-    assert_eq!(
-        search.selected.as_deref(),
-        Some(if anchor {
-            NumberId::NumbersSplitAnchorRung.value()
-        } else {
-            NumberId::NumbersSplitFullRung.value()
-        })
-    );
+    assert_eq!(search.selected.as_deref(), Some(if anchor { "0" } else { "1" }));
     assert_eq!(search.operational_stop, None);
 }
 
-fn burn_pins(case: &str) -> [NumberId; 10] {
-    match case {
+fn burn_pins(case: &str) -> ([NumberId; 9], Option<NumberId>) {
+    let values = match case {
         "depleted" => [
             NumberId::NumbersBurnDepletedStandingBeforeLower,
             NumberId::NumbersBurnDepletedStandingBeforeUpper,
@@ -477,7 +467,6 @@ fn burn_pins(case: &str) -> [NumberId; 10] {
             NumberId::NumbersBurnDepletedSolveBeforeWork,
             NumberId::NumbersBurnDepletedSolveAfterWork,
             NumberId::NumbersBurnDepletedDisplacementUpper,
-            NumberId::NumbersBurnDepletedTargetLossUpper,
         ],
         "monotone" => [
             NumberId::NumbersBurnMonotoneStandingBeforeLower,
@@ -489,7 +478,6 @@ fn burn_pins(case: &str) -> [NumberId; 10] {
             NumberId::NumbersBurnMonotoneSolveBeforeWork,
             NumberId::NumbersBurnMonotoneSolveAfterWork,
             NumberId::NumbersBurnMonotoneDisplacementUpper,
-            NumberId::NumbersBurnMonotoneTargetLossUpper,
         ],
         "own" => [
             NumberId::NumbersBurnOwnStandingBeforeLower,
@@ -501,7 +489,6 @@ fn burn_pins(case: &str) -> [NumberId; 10] {
             NumberId::NumbersBurnOwnSolveBeforeWork,
             NumberId::NumbersBurnOwnSolveAfterWork,
             NumberId::NumbersBurnOwnDisplacementUpper,
-            NumberId::NumbersBurnOwnTargetLossUpper,
         ],
         "sibling" => [
             NumberId::NumbersBurnSiblingStandingBeforeLower,
@@ -513,7 +500,6 @@ fn burn_pins(case: &str) -> [NumberId; 10] {
             NumberId::NumbersBurnSiblingSolveBeforeWork,
             NumberId::NumbersBurnSiblingSolveAfterWork,
             NumberId::NumbersBurnSiblingDisplacementUpper,
-            NumberId::NumbersBurnSiblingTargetLossUpper,
         ],
         "switch" => [
             NumberId::NumbersBurnSwitchStandingBeforeLower,
@@ -525,10 +511,17 @@ fn burn_pins(case: &str) -> [NumberId; 10] {
             NumberId::NumbersBurnSwitchSolveBeforeWork,
             NumberId::NumbersBurnSwitchSolveAfterWork,
             NumberId::NumbersBurnSwitchDisplacementUpper,
-            NumberId::NumbersBurnSwitchTargetLossUpper,
         ],
         _ => panic!("unknown burn fixture"),
-    }
+    };
+    let loss = match case {
+        "depleted" => Some(NumberId::NumbersBurnDepletedTargetLossUpper),
+        "own" => Some(NumberId::NumbersBurnOwnTargetLossUpper),
+        "sibling" => Some(NumberId::NumbersBurnSiblingTargetLossUpper),
+        "switch" => Some(NumberId::NumbersBurnSwitchTargetLossUpper),
+        _ => None,
+    };
+    (values, loss)
 }
 
 fn burn_finite_bounds(
@@ -686,18 +679,20 @@ fn burn_history_size(before: &pn_epoch::compiler::CompiledState, case: &str) {
 
 fn burn_case(case: &str) {
     use NumberId as N;
-    let [
-        old_lo,
-        old_hi,
-        new_lo,
-        new_hi,
-        delta_lo,
-        delta_hi,
-        old_work,
-        new_work,
-        displacement_pin,
+    let (
+        [
+            old_lo,
+            old_hi,
+            new_lo,
+            new_hi,
+            delta_lo,
+            delta_hi,
+            old_work,
+            new_work,
+            displacement_pin,
+        ],
         loss_pin,
-    ] = burn_pins(case);
+    ) = burn_pins(case);
     let before = burn_state(case, false);
     let after = burn_state(case, true);
     burn_premises(&before, &after, case);
@@ -757,7 +752,11 @@ fn burn_case(case: &str) {
     assert_eq!((ra.work, rb.work), (old_work.integer(), new_work.integer()));
     burn_pin_upper(&displacement, displacement_pin, &mut budget);
     let target_index = names.iter().position(|name| name.as_str() == target).unwrap();
-    burn_pin_upper(&loss_bounds[target_index], loss_pin, &mut budget);
+    if let Some(pin) = loss_pin {
+        burn_pin_upper(&loss_bounds[target_index], pin, &mut budget);
+    } else {
+        assert!(loss_bounds[target_index].is_zero());
+    }
     burn_history_size(&before, case);
 }
 
@@ -832,10 +831,7 @@ fn split_state(refined: bool, exporting: bool) -> pn_epoch::compiler::CompiledSt
 fn split_policy(state: &pn_epoch::compiler::CompiledState) -> Procedure {
     use NumberId as N;
     let mut p = conserved_policy(state, N::NumbersSplitEndpointGrid.value());
-    p.grid = vec![
-        N::NumbersSplitFullRung.value().into(),
-        N::NumbersSplitAnchorRung.value().into(),
-    ];
+    p.grid = vec!["1".into(), "0".into()];
     p.maximum_iterations = N::NumbersSplitProposalCap.integer();
     p.precision = Precision::AbsoluteWidthBits(vec![u32::try_from(N::NumbersSplitPrecision.integer()).unwrap()]);
     p
@@ -937,7 +933,7 @@ fn split_hops(state: &pn_epoch::compiler::CompiledState, record: &pn_records::co
     // Either the accepted anchor makes all off-diagonal powers zero, or every
     // row is self-only. These structural premises make the matrix state-independent.
     assert!(
-        record.rung == NumberId::NumbersSplitAnchorRung.value()
+        record.rung == "0"
             || state
                 .view()
                 .base
@@ -1114,11 +1110,11 @@ fn split_projected_bound(
     assert_eq!(q, zero);
     let radius = delta.over(Fraction(1, 1).minus(q));
     let expected = if exporting {
-        N::NumbersSplitReceivingDisplacement
+        N::NumbersSplitReceivingDisplacement.value()
     } else {
-        N::NumbersSplitZeroResponse
+        "0"
     };
-    assert_eq!(radius, Fraction::parse(expected.value()));
+    assert_eq!(radius, Fraction::parse(expected));
     for (name, y) in &lifted {
         let current = &new.standing[name];
         assert_eq!(current.lower, current.upper);
@@ -1156,12 +1152,8 @@ fn certified_splits() {
         let bound_refined = bind_procedure(&refined, p_refined.clone(), &Published(p_refined), Limits::default()).unwrap();
         let accepted = pn_epoch::fence::search(&bound, None).unwrap();
         let accepted_refined = pn_epoch::fence::search(&bound_refined, None).unwrap();
-        let expected_rung = if exporting {
-            N::NumbersSplitAnchorRung
-        } else {
-            N::NumbersSplitFullRung
-        };
-        assert_eq!(accepted.selected.as_deref(), Some(expected_rung.value()));
+        let expected_rung = if exporting { "0" } else { "1" };
+        assert_eq!(accepted.selected.as_deref(), Some(expected_rung));
         assert_eq!(accepted.selected, accepted_refined.selected);
         for evidence in [&accepted.evidence, &accepted_refined.evidence] {
             validate_evidence(&p, evidence, Limits::default()).unwrap();
@@ -1258,14 +1250,17 @@ fn enclosed_state() -> pn_epoch::compiler::CompiledState {
     let constants = pn_records::constants::bind_constants(&record, vec![edition]).unwrap();
     let mut package = original.input().clone();
     let mut parameters = package.inputs[0].parameters().clone();
-    parameters.depth_mass = vec!["quarter".into(); 4];
+    parameters.depth_mass = vec!["quarter".into(); usize::try_from(NumberId::NumbersEnclosedDepthMassCount.integer()).unwrap()];
     let input = pn_epoch::bind_inputs(&constants, parameters, Limits::default()).unwrap();
     package.inputs[0] = input.clone();
     package.bindings[0].inputs = input;
     let publication = FencePublication(package.bindings.clone());
     let verified = pn_epoch::package::verify_package(package, &publication).unwrap();
     let state = compile_final_state(&verified, &joined::Verifier, &mut numeric, Limits::default(), 10000).unwrap();
-    assert_eq!(state.view().support.by_depth.keys().next_back(), Some(&4));
+    assert_eq!(
+        state.view().support.by_depth.keys().next_back(),
+        Some(&usize::try_from(NumberId::NumbersEnclosedDepthMassCount.integer()).unwrap())
+    );
     assert!(state.view().support.ranges.values().all(|r| r.width == "1"));
     state
 }
@@ -1994,11 +1989,7 @@ fn transport_oracle() {
     let h2 = vec![vec![o, z, z], vec![o, o, z], vec![z, z, o]];
     let hops = vec![h1, h2];
     let mass = vec![half, half];
-    let emission = vec![
-        half,
-        Fraction(i128::from(NumberId::NumbersEpochTransportEmptyEmission.integer()), 1),
-        o,
-    ];
+    let emission = vec![half, Fraction(0, 1), o];
     let expected = dense_operator(&hops, &mass, &emission);
     assert_ne!(
         expected,
@@ -2745,7 +2736,17 @@ fn conserved_state() -> pn_epoch::compiler::CompiledState {
         10000,
     )
     .unwrap();
-    depths(&state, &["third", "third", "third", "zero"])
+    let masses = ["third", "third", "third", "zero"];
+    assert_eq!(
+        masses.len(),
+        usize::try_from(NumberId::NumbersFrozenDeclaredDepthCount.integer()).unwrap()
+    );
+    let state = depths(&state, &masses);
+    assert_eq!(
+        state.view().support.by_depth.len(),
+        usize::try_from(NumberId::NumbersFrozenSupportedDepthCount.integer()).unwrap()
+    );
+    state
 }
 
 /// Claim: The separate full-emission box verification of the four-Actor frozen fixture independently replays two maps and their image-first residual. The finite witness pins point and box Work and both residual radii, including success and refusal at adjacent box Work allowances.
@@ -3159,7 +3160,17 @@ fn singleton_hull_state() -> pn_epoch::compiler::CompiledState {
         10000,
     )
     .unwrap();
-    depths(&state, &["third", "third", "third", "zero"])
+    let masses = ["third", "third", "third", "zero"];
+    assert_eq!(
+        masses.len(),
+        usize::try_from(NumberId::NumbersFrozenDeclaredDepthCount.integer()).unwrap()
+    );
+    let state = depths(&state, &masses);
+    assert_eq!(
+        state.view().support.by_depth.len(),
+        usize::try_from(NumberId::NumbersFrozenSupportedDepthCount.integer()).unwrap()
+    );
+    state
 }
 
 fn conserved_policy(state: &pn_epoch::compiler::CompiledState, grid: &str) -> Procedure {

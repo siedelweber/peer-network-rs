@@ -37,8 +37,8 @@ fn support_tables() {
     );
     for (actor, rate, emission, retained) in [
         ("address-2", "1", N::NumbersEpochSupportPartialEmission.value(), "1/2"),
-        ("address-3", "0", N::NumbersEpochSupportEmptyEmission.value(), "1"),
-        ("address-4", "4", N::NumbersEpochSupportSaturatedEmission.value(), "0"),
+        ("address-3", "0", "0", "1"),
+        ("address-4", "4", "1", "0"),
     ] {
         let row = &result.sources[actor];
         assert_eq!(
@@ -108,7 +108,7 @@ fn support_tables() {
             _ => None,
         })
         .unwrap();
-    assert_eq!(omitted, N::NumbersEpochSupportOmittedDepthMass.value());
+    assert_eq!(omitted, "0");
     let sparse = compile_support(&depth_two, &price, &ledger, &base, &mut numeric, ExactLimits::default(), 1000).unwrap();
     assert_eq!(
         sparse.by_depth.keys().copied().collect::<Vec<_>>(),
@@ -148,7 +148,7 @@ fn support_refusals() {
         .counts
         .get_mut(&pn_records::burn::Address("address-2".into()))
         .unwrap()
-        .0 = N::NumbersEpochSupportRefusedCount.integer();
+        .0 = 0;
     assert_eq!(
         compile_support(&inputs, &price, &missing, &base, &mut numeric, ExactLimits::default(), 1000),
         Err(SupportError::Ledger)

@@ -47,32 +47,6 @@
     },
     {
       "display": "exact",
-      "exact": "19",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:authored-family-count",
-      "num": "19",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "19"
-    },
-    {
-      "display": "exact",
-      "exact": "27",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:projection-row-count",
-      "num": "27",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "27"
-    },
-    {
-      "display": "exact",
       "exact": "16",
       "exact_digits": 24,
       "exact_exact": true,
@@ -3565,19 +3539,6 @@
     },
     {
       "display": "exact",
-      "exact": "1",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:enclosed-rejected-rung",
-      "num": "1",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "1"
-    },
-    {
-      "display": "exact",
       "exact": "1/2",
       "exact_digits": 24,
       "exact_exact": true,
@@ -3588,19 +3549,6 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "1/2"
-    },
-    {
-      "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:enclosed-zero-rung",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
     },
     {
       "display": "exact",
@@ -3705,19 +3653,6 @@
       "num_relation": "=",
       "unit": "Work",
       "value": "2000000000"
-    },
-    {
-      "display": "exact",
-      "exact": "1",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:rational-wall-accepted-rung",
-      "num": "1",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "1"
     },
     {
       "display": "exact",
@@ -3981,19 +3916,6 @@
     },
     {
       "display": "exact",
-      "exact": "1",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:published-strength",
-      "num": "1",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "1"
-    },
-    {
-      "display": "exact",
       "exact": "16",
       "exact_digits": 24,
       "exact_exact": true,
@@ -4121,32 +4043,6 @@
       "num_relation": "=",
       "unit": "Work",
       "value": "20000000000"
-    },
-    {
-      "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:reference-fence-lower",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
-    },
-    {
-      "display": "exact",
-      "exact": "1",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:published-accepted-rung",
-      "num": "1",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "1"
     },
     {
       "display": "exact",
@@ -5086,32 +4982,6 @@
     },
     {
       "display": "exact",
-      "exact": "1",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:split-full-rung",
-      "num": "1",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "1"
-    },
-    {
-      "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:split-anchor-rung",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
-    },
-    {
-      "display": "exact",
       "exact": "73",
       "exact_digits": 24,
       "exact_exact": true,
@@ -5229,19 +5099,6 @@
     },
     {
       "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:split-zero-response",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
-    },
-    {
-      "display": "exact",
       "exact": "10 000",
       "exact_digits": 24,
       "exact_exact": true,
@@ -5273,19 +5130,6 @@
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:burn-wall",
-      "num": "1",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "1"
-    },
-    {
-      "display": "exact",
-      "exact": "1",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:burn-unit-coefficient",
       "num": "1",
       "num_exact": true,
       "num_relation": "=",
@@ -5870,20 +5714,6 @@
       "num_relation": "≤",
       "unit": "dimensionless",
       "value": "54975581389/549755813888"
-    },
-    {
-      "display": "ceiling",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:burn-monotone-target-loss-upper",
-      "magnitude": -12,
-      "num": "0.000 000 000 000",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
     },
     {
       "display": "floor",
@@ -6490,32 +6320,6 @@
     },
     {
       "display": "exact",
-      "exact": "1",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:burn-full-emission",
-      "num": "1",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "1"
-    },
-    {
-      "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:burn-singleton-width",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
-    },
-    {
-      "display": "exact",
       "exact": "2",
       "exact_digits": 24,
       "exact_exact": true,
@@ -6630,32 +6434,6 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "1/2"
-    },
-    {
-      "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:epoch-support-empty-emission",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
-    },
-    {
-      "display": "exact",
-      "exact": "1",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:epoch-support-saturated-emission",
-      "num": "1",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "1"
     },
     {
       "display": "exact",
@@ -6880,45 +6658,6 @@
     },
     {
       "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:epoch-support-omitted-depth-mass",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
-    },
-    {
-      "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:epoch-support-refused-count",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
-    },
-    {
-      "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:epoch-transport-empty-emission",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
-    },
-    {
-      "display": "exact",
       "exact": "2",
       "exact_digits": 24,
       "exact_exact": true,
@@ -7059,6 +6798,45 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "39"
+    },
+    {
+      "display": "exact",
+      "exact": "4",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:enclosed-depth-mass-count",
+      "num": "4",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "4"
+    },
+    {
+      "display": "exact",
+      "exact": "4",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:frozen-declared-depth-count",
+      "num": "4",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "4"
+    },
+    {
+      "display": "exact",
+      "exact": "3",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:frozen-supported-depth-count",
+      "num": "3",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "3"
     }
   ]
 }
