@@ -773,9 +773,67 @@ pub enum NumberId {
     NumbersPublishedVouchBobEveCoordinateSecond,
     /// Registry id: num:numbers:published-vouch-bob-eve-radicand.
     NumbersPublishedVouchBobEveRadicand,
+    /// Registry id: num:numbers:split-coarse-burn.
+    NumbersSplitCoarseBurn,
+    /// Registry id: num:numbers:split-member-burn.
+    NumbersSplitMemberBurn,
+    /// Registry id: num:numbers:split-outsider-burn.
+    NumbersSplitOutsiderBurn,
+    /// Registry id: num:numbers:split-writing-wall.
+    NumbersSplitWritingWall,
+    /// Registry id: num:numbers:split-member-proportion.
+    NumbersSplitMemberProportion,
+    /// Registry id: num:numbers:split-source-rate.
+    NumbersSplitSourceRate,
+    /// Registry id: num:numbers:split-outsider-rate.
+    NumbersSplitOutsiderRate,
+    /// Registry id: num:numbers:split-coarse-count.
+    NumbersSplitCoarseCount,
+    /// Registry id: num:numbers:split-member-count.
+    NumbersSplitMemberCount,
+    /// Registry id: num:numbers:split-outsider-count.
+    NumbersSplitOutsiderCount,
+    /// Registry id: num:numbers:split-coarse-balance.
+    NumbersSplitCoarseBalance,
+    /// Registry id: num:numbers:split-member-balance.
+    NumbersSplitMemberBalance,
+    /// Registry id: num:numbers:split-outsider-balance.
+    NumbersSplitOutsiderBalance,
+    /// Registry id: num:numbers:split-endpoint-grid.
+    NumbersSplitEndpointGrid,
+    /// Registry id: num:numbers:split-precision.
+    NumbersSplitPrecision,
+    /// Registry id: num:numbers:split-proposal-cap.
+    NumbersSplitProposalCap,
+    /// Registry id: num:numbers:split-full-rung.
+    NumbersSplitFullRung,
+    /// Registry id: num:numbers:split-anchor-rung.
+    NumbersSplitAnchorRung,
+    /// Registry id: num:numbers:split-coarse-receiving-standing.
+    NumbersSplitCoarseReceivingStanding,
+    /// Registry id: num:numbers:split-refined-receiving-standing.
+    NumbersSplitRefinedReceivingStanding,
+    /// Registry id: num:numbers:split-receiving-displacement.
+    NumbersSplitReceivingDisplacement,
+    /// Registry id: num:numbers:split-receiving-variation.
+    NumbersSplitReceivingVariation,
+    /// Registry id: num:numbers:split-contributing-width.
+    NumbersSplitContributingWidth,
+    /// Registry id: num:numbers:split-coarse-export.
+    NumbersSplitCoarseExport,
+    /// Registry id: num:numbers:split-refined-export.
+    NumbersSplitRefinedExport,
+    /// Registry id: num:numbers:split-coarse-self-hop.
+    NumbersSplitCoarseSelfHop,
+    /// Registry id: num:numbers:split-refined-self-hop.
+    NumbersSplitRefinedSelfHop,
+    /// Registry id: num:numbers:split-zero-response.
+    NumbersSplitZeroResponse,
+    /// Registry id: num:numbers:split-compiler-product-ceiling.
+    NumbersSplitCompilerProductCeiling,
 }
 
-const OFFSETS: [(usize, usize); 385] = [
+const OFFSETS: [(usize, usize); 414] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -1161,6 +1219,35 @@ const OFFSETS: [(usize, usize); 385] = [
     (58307, 58312),
     (58453, 58459),
     (58591, 58601),
+    (58718, 58721),
+    (58838, 58841),
+    (58960, 58963),
+    (59081, 59082),
+    (59205, 59208),
+    (59325, 59327),
+    (59446, 59448),
+    (59566, 59567),
+    (59685, 59686),
+    (59806, 59807),
+    (59927, 59930),
+    (60050, 60052),
+    (60174, 60176),
+    (60295, 60299),
+    (60414, 60415),
+    (60533, 60534),
+    (60649, 60650),
+    (60767, 60768),
+    (60899, 60901),
+    (61033, 61038),
+    (61166, 61170),
+    (61295, 61299),
+    (61423, 61425),
+    (61544, 61545),
+    (61665, 61668),
+    (61789, 61792),
+    (61914, 61917),
+    (62036, 62037),
+    (62167, 62172),
 ];
 
 impl NumberId {

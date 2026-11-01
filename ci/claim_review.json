@@ -1682,6 +1682,14 @@
       "review": "Checks the exact anchor against an independent rational oracle on equal-rate, zero-balance, mixed-balance, settlement and empty fixtures, with the compiled view unchanged. Its helpers compare normalized, raw and emitted entries, export ceilings, numerator and denominator pairs, direct mediants, contributor hulls and total count. An irrational reaction fixture retains its original held base score and radicands. These one-hop cases establish the exact supported subset, not noncommuting hop order or nonlinear evaluation."
     },
     {
+      "operation": "pn-epoch::solve::certified_splits",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:certified-splits-retain-hop-premises-and-displacement",
+      "before": "",
+      "after": "Claim: Two unsorted proportional complete-history splits are certified and replayed under a common declared policy per comparison. The self-only pair selects full strength and satisfies the all-state compiled hop refinement, preserving each member and the outside coordinate. The fold/export pair selects the anchor, fails that identity and strictly lowers the outside coordinate. Independent exact hop normalization and projected residual bounds retain their premises; unconditional split equality is rejected. These finite cases establish no burn, annotation or general funded-partition guarantee.",
+      "review": "Four distinct compiled histories form two proportional comparisons. Self-only support proves the hop identity for every hull state at the common full rung; the second pair has exact anchor hops with different normalized export and fails the identity. Full certified solves and replay retain the frozen publication premises. Exact lifted old solutions already lie in the refined hulls; the trial map checks both projected residual bounds with zero contraction. An independent finite rational normalization and paired-sum calculation checks the attained mixture bound. The outside decrease rejects unconditional equality. These cases do not cover positive-tilt nonconstant split maps, receiving concentration, private purpose or burn responses."
+    },
+    {
       "operation": "pn-epoch::solve::conserved_map",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:conserved-map-replays-frozen-point-scopes",

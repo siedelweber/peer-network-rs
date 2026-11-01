@@ -6,6 +6,412 @@ mod common;
 #[path = "common/joined.rs"]
 mod joined;
 
+fn split_state(refined: bool, exporting: bool) -> pn_epoch::compiler::CompiledState {
+    use NumberId as N;
+    let member = if refined { "third" } else { "seller" };
+    let last_family = if exporting { "Opinion" } else { "Registration" };
+    // Presentation is deliberately not authoritative or Actor order.
+    let acts = [
+        joined::act(last_family, member, 5, 1),
+        joined::act("Registration", "buyer", 3, 1),
+        joined::act("Registration", "seller", 1, 1),
+        joined::act(last_family, "seller", 4, 1),
+        joined::act("Registration", member, 2, 1),
+    ];
+    let mut burns = vec![("buyer", N::NumbersSplitOutsiderBurn.value())];
+    if refined {
+        burns.extend([
+            ("third", N::NumbersSplitMemberBurn.value()),
+            ("seller", N::NumbersSplitMemberBurn.value()),
+        ]);
+    } else {
+        burns.push(("seller", N::NumbersSplitCoarseBurn.value()));
+    }
+    let package = joined::package_at_wall(&acts, 1, &burns, N::NumbersSplitWritingWall.value());
+    compile_final_state(
+        &package,
+        &joined::Verifier,
+        &mut joined::numeric(),
+        Limits::default(),
+        N::NumbersSplitCompilerProductCeiling.integer(),
+    )
+    .unwrap()
+}
+
+fn split_policy(state: &pn_epoch::compiler::CompiledState) -> Procedure {
+    use NumberId as N;
+    let mut p = conserved_policy(state, N::NumbersSplitEndpointGrid.value());
+    p.grid = vec![
+        N::NumbersSplitFullRung.value().into(),
+        N::NumbersSplitAnchorRung.value().into(),
+    ];
+    p.maximum_iterations = N::NumbersSplitProposalCap.integer();
+    p.precision = Precision::AbsoluteWidthBits(vec![u32::try_from(N::NumbersSplitPrecision.integer()).unwrap()]);
+    p
+}
+
+fn split_premises(coarse: &pn_epoch::compiler::CompiledState, refined: &pn_epoch::compiler::CompiledState) {
+    use NumberId as N;
+    use pn_records::burn::Address;
+    let old = coarse.package().input();
+    let new = refined.package().input();
+    assert_eq!(old.prices, new.prices);
+    assert_eq!(old.inputs[0].parameters(), new.inputs[0].parameters());
+    assert_eq!(old.history.acts().len(), new.history.acts().len());
+    for original in old.history.acts() {
+        let counterpart = new
+            .history
+            .acts()
+            .iter()
+            .find(|act| act.id().sequence == original.id().sequence)
+            .unwrap();
+        assert_eq!(original.id().family, counterpart.id().family);
+        if original.id().author == "buyer" {
+            assert_eq!(original, counterpart);
+        }
+        // Only the participant author and its own Registration profile change.
+        assert_eq!(original.body(), counterpart.body());
+        if original.id().family == "Opinion" {
+            assert_eq!(original.legs()[0].target(), counterpart.legs()[0].target());
+        }
+    }
+    for (state, actor, count, balance, rate) in [
+        (
+            coarse,
+            "seller",
+            N::NumbersSplitCoarseCount,
+            N::NumbersSplitCoarseBalance,
+            N::NumbersSplitSourceRate,
+        ),
+        (
+            refined,
+            "third",
+            N::NumbersSplitMemberCount,
+            N::NumbersSplitMemberBalance,
+            N::NumbersSplitSourceRate,
+        ),
+        (
+            refined,
+            "seller",
+            N::NumbersSplitMemberCount,
+            N::NumbersSplitMemberBalance,
+            N::NumbersSplitSourceRate,
+        ),
+        (
+            coarse,
+            "buyer",
+            N::NumbersSplitOutsiderCount,
+            N::NumbersSplitOutsiderBalance,
+            N::NumbersSplitOutsiderRate,
+        ),
+        (
+            refined,
+            "buyer",
+            N::NumbersSplitOutsiderCount,
+            N::NumbersSplitOutsiderBalance,
+            N::NumbersSplitOutsiderRate,
+        ),
+    ] {
+        let address = Address(actor.into());
+        assert_eq!(state.view().ledger.counts[&address].0, count.integer());
+        assert_eq!(state.view().ledger.balances[&address].exact(), balance.value());
+        assert_eq!(state.view().support.sources[actor].reduced_rate, rate.value());
+        assert!(
+            Fraction::parse(rate.value())
+                .order(Fraction::parse(N::NumbersSplitWritingWall.value()))
+                .is_gt()
+        );
+    }
+    let proportion = Fraction::parse(N::NumbersSplitMemberProportion.value());
+    assert_eq!(proportion.plus(proportion), Fraction(1, 1));
+    assert_eq!(
+        Fraction::parse(N::NumbersSplitCoarseCount.value()).times(proportion),
+        Fraction::parse(N::NumbersSplitMemberCount.value())
+    );
+    assert_eq!(
+        Fraction::parse(N::NumbersSplitCoarseBalance.value()).times(proportion),
+        Fraction::parse(N::NumbersSplitMemberBalance.value())
+    );
+}
+
+fn split_exact(value: &nrz_cas::enclosure::Interval) -> Fraction {
+    let mut budget = nrz_cas::limits::Budget::new(Limits::default()).unwrap();
+    assert_eq!(value.lower(), value.upper());
+    Fraction::parse(&value.lower().exact_string(&mut budget).unwrap())
+}
+
+fn split_hops(state: &pn_epoch::compiler::CompiledState, record: &pn_records::conserved::MapRecord) -> Vec<Vec<Fraction>> {
+    let names: Vec<_> = state.view().base.rows.keys().collect();
+    assert_eq!(record.transport.normalized.len(), 1);
+    // Either the accepted anchor makes all off-diagonal powers zero, or every
+    // row is self-only. These structural premises make the matrix state-independent.
+    assert!(
+        record.rung == NumberId::NumbersSplitAnchorRung.value()
+            || state
+                .view()
+                .base
+                .rows
+                .iter()
+                .all(|(source, row)| row.keys().all(|target| target == source))
+    );
+    names
+        .iter()
+        .enumerate()
+        .map(|(i, source)| {
+            let base: Vec<_> = names
+                .iter()
+                .map(|target| {
+                    state.view().base.rows[*source].get(*target).map_or(Fraction(0, 1), |entry| {
+                        let pn_epoch::base::BaseScore::Exact(value) = &entry.score else {
+                            panic!("exact split base");
+                        };
+                        Fraction::parse(value)
+                    })
+                })
+                .collect();
+            let sum = base.iter().copied().fold(Fraction(0, 1), Fraction::plus);
+            base.iter()
+                .enumerate()
+                .map(|(j, value)| {
+                    let expected = value.over(sum);
+                    let actual = record.transport.normalized[0][i].get(&j).map_or(Fraction(0, 1), split_exact);
+                    assert_eq!(actual, expected);
+                    actual
+                })
+                .collect()
+        })
+        .collect()
+}
+
+fn split_intertwines(coarse: &[Vec<Fraction>], refined: &[Vec<Fraction>]) -> bool {
+    let zero = Fraction(0, 1);
+    let half = Fraction::parse(NumberId::NumbersSplitMemberProportion.value());
+    // Sorted compiled order is buyer, seller, then third in the refinement.
+    let refinement = [vec![Fraction(1, 1), zero, zero], vec![zero, half, half]];
+    refinement.iter().enumerate().all(|(u, row)| {
+        refined.iter().enumerate().all(|(a, _)| {
+            let left = row.iter().zip(refined).map(|(r, p)| r.times(p[a])).fold(zero, Fraction::plus);
+            let right = coarse[u]
+                .iter()
+                .zip(&refinement)
+                .map(|(p, r)| p.times(r[a]))
+                .fold(zero, Fraction::plus);
+            left == right
+        })
+    })
+}
+
+fn split_pair_bound(old: &pn_records::conserved::MapRecord, new: &pn_records::conserved::MapRecord) {
+    use NumberId as N;
+    let zero = Fraction(0, 1);
+    let old_count = split_exact(&old.transport.denominator[0]);
+    let new_count = split_exact(&new.transport.denominator[0]);
+    let old_amount = split_exact(&old.transport.numerator[0]);
+    let new_amount = split_exact(&new.transport.numerator[0]);
+    let old_standing = old_amount.over(old_count);
+    let delta_count = new_count.minus(old_count);
+    let delta_amount = new_amount.minus(old_amount);
+    let displacement = new_amount.over(new_count).minus(old_standing);
+    assert_eq!(
+        displacement,
+        delta_amount.minus(old_standing.times(delta_count)).over(new_count)
+    );
+    let counts = [
+        N::NumbersSplitOutsiderCount,
+        N::NumbersSplitMemberCount,
+        N::NumbersSplitMemberCount,
+    ];
+    let rates = [
+        N::NumbersSplitOutsiderRate,
+        N::NumbersSplitSourceRate,
+        N::NumbersSplitSourceRate,
+    ];
+    let weights: Vec<_> = counts
+        .iter()
+        .enumerate()
+        .map(|(a, count)| {
+            let old_source = usize::from(a != 0);
+            let p = old.transport.normalized[0][old_source].get(&0).map_or(zero, split_exact);
+            let next = new.transport.normalized[0][a].get(&0).map_or(zero, split_exact);
+            (
+                Fraction::parse(count.value()).times(p),
+                Fraction::parse(count.value()).times(next),
+            )
+        })
+        .collect();
+    let old_oracle = weights
+        .iter()
+        .zip(rates)
+        .map(|((w, _), rate)| w.times(Fraction::parse(rate.value())))
+        .fold(zero, Fraction::plus);
+    let new_oracle = weights
+        .iter()
+        .zip(rates)
+        .map(|((_, w), rate)| w.times(Fraction::parse(rate.value())))
+        .fold(zero, Fraction::plus);
+    assert_eq!(old_amount, old_oracle);
+    assert_eq!(new_amount, new_oracle);
+    assert_eq!(old_count, weights.iter().map(|(w, _)| *w).fold(zero, Fraction::plus));
+    assert_eq!(new_count, weights.iter().map(|(_, w)| *w).fold(zero, Fraction::plus));
+    let variation = weights
+        .iter()
+        .map(|(w, next)| {
+            let difference = next.over(new_count).minus(w.over(old_count));
+            Fraction::new(difference.0.abs(), difference.1)
+        })
+        .fold(zero, Fraction::plus)
+        .over(Fraction(2, 1));
+    assert_eq!(variation, Fraction::parse(N::NumbersSplitReceivingVariation.value()));
+    let bound = Fraction::parse(N::NumbersSplitContributingWidth.value()).times(variation);
+    assert_eq!(Fraction::new(displacement.0.abs(), displacement.1), bound);
+    let outside_count = Fraction::parse(N::NumbersSplitOutsiderCount.value());
+    assert_eq!(
+        old_count.minus(outside_count),
+        Fraction::parse(N::NumbersSplitCoarseExport.value())
+    );
+    assert_eq!(
+        new_count.minus(outside_count),
+        Fraction::parse(N::NumbersSplitRefinedExport.value())
+    );
+    assert_eq!(
+        split_exact(&old.transport.normalized[0][1][&1]),
+        Fraction::parse(N::NumbersSplitCoarseSelfHop.value())
+    );
+    assert_eq!(
+        split_exact(&new.transport.normalized[0][1][&1]),
+        Fraction::parse(N::NumbersSplitRefinedSelfHop.value())
+    );
+}
+
+fn split_projected_bound(
+    bound: &pn_epoch::solve::BoundProcedure<'_>,
+    old: &pn_records::conserved::ResidualRound,
+    new: &pn_records::conserved::ResidualRound,
+    exporting: bool,
+) {
+    use NumberId as N;
+    let zero = Fraction(0, 1);
+    let lifted: BTreeMap<_, _> = new
+        .standing
+        .keys()
+        .map(|name| {
+            let source = if name == "third" { "seller" } else { name };
+            let value = &old.standing[source];
+            assert_eq!(value.lower, value.upper);
+            (name.clone(), value.lower.clone())
+        })
+        .collect();
+    // In these two cases the lifted point is already in every refined hull.
+    for (name, value) in &lifted {
+        let hull = &bound.inputs().0.view().support.ranges[name];
+        assert!(!Fraction::parse(value).order(Fraction::parse(&hull.minimum)).is_lt());
+        assert!(!Fraction::parse(value).order(Fraction::parse(&hull.maximum)).is_gt());
+    }
+    let trial = pn_epoch::conserved::evaluate_map(bound, &new.certified.rung, &lifted, new.certified.precision).unwrap();
+    pn_epoch::conserved::replay_map(bound, &trial).unwrap();
+    let residuals: BTreeMap<_, _> = lifted
+        .iter()
+        .map(|(name, y)| {
+            let image = &trial.image[name];
+            assert_eq!(image.lower, image.upper);
+            let delta = Fraction::parse(&image.lower).minus(Fraction::parse(y));
+            (name, Fraction::new(delta.0.abs(), delta.1))
+        })
+        .collect();
+    let delta = residuals.values().copied().max_by(|a, b| a.order(*b)).unwrap();
+    let q = Fraction::parse(&new.contraction);
+    assert_eq!(q, zero);
+    let radius = delta.over(Fraction(1, 1).minus(q));
+    let expected = if exporting {
+        N::NumbersSplitReceivingDisplacement
+    } else {
+        N::NumbersSplitZeroResponse
+    };
+    assert_eq!(radius, Fraction::parse(expected.value()));
+    for (name, y) in &lifted {
+        let current = &new.standing[name];
+        assert_eq!(current.lower, current.upper);
+        let difference = Fraction::parse(&current.lower).minus(Fraction::parse(y));
+        let displacement = Fraction::new(difference.0.abs(), difference.1);
+        assert!(!displacement.order(radius).is_gt());
+        assert!(!displacement.order(residuals[name].plus(q.times(radius))).is_gt());
+        if exporting && name == "buyer" {
+            assert!(difference.0 < 0);
+            assert_eq!(
+                displacement,
+                Fraction::parse(N::NumbersSplitContributingWidth.value())
+                    .times(Fraction::parse(N::NumbersSplitReceivingVariation.value()))
+            );
+        } else {
+            assert_eq!(displacement, zero);
+        }
+    }
+}
+
+/// Claim: Two unsorted proportional complete-history splits are certified and replayed under a common declared policy per comparison. The self-only pair selects full strength and satisfies the all-state compiled hop refinement, preserving each member and the outside coordinate. The fold/export pair selects the anchor, fails that identity and strictly lowers the outside coordinate. Independent exact hop normalization and projected residual bounds retain their premises; unconditional split equality is rejected. These finite cases establish no burn, annotation or general funded-partition guarantee.
+/// ´claim:compiler:certified-splits-retain-hop-premises-and-displacement´
+/// ´test:integration:certified-splits´
+#[test]
+fn certified_splits() {
+    use NumberId as N;
+    for exporting in [true, false] {
+        let coarse = split_state(false, exporting);
+        let refined = split_state(true, exporting);
+        split_premises(&coarse, &refined);
+        let p = split_policy(&coarse);
+        let p_refined = split_policy(&refined);
+        assert_eq!(p, p_refined);
+        let bound = bind_procedure(&coarse, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+        let bound_refined = bind_procedure(&refined, p_refined.clone(), &Published(p_refined), Limits::default()).unwrap();
+        let accepted = pn_epoch::fence::search(&bound, None).unwrap();
+        let accepted_refined = pn_epoch::fence::search(&bound_refined, None).unwrap();
+        let expected_rung = if exporting {
+            N::NumbersSplitAnchorRung
+        } else {
+            N::NumbersSplitFullRung
+        };
+        assert_eq!(accepted.selected.as_deref(), Some(expected_rung.value()));
+        assert_eq!(accepted.selected, accepted_refined.selected);
+        for evidence in [&accepted.evidence, &accepted_refined.evidence] {
+            validate_evidence(&p, evidence, Limits::default()).unwrap();
+            assert_eq!(evidence.attempts.last().unwrap().completion, Completion::Pass);
+            if exporting {
+                assert_eq!(evidence.attempts[0].completion, Completion::Fail);
+            } else {
+                assert_eq!(evidence.attempts.len(), 1);
+            }
+        }
+        let old = pn_epoch::conserved::solve(&bound, &accepted).unwrap();
+        let new = pn_epoch::conserved::solve(&bound_refined, &accepted_refined).unwrap();
+        pn_epoch::conserved::replay(&bound, &old).unwrap();
+        pn_epoch::conserved::replay(&bound_refined, &new).unwrap();
+        let old = old.rounds.last().unwrap();
+        let new = new.rounds.last().unwrap();
+        assert_eq!(
+            split_intertwines(&split_hops(&coarse, &old.certified), &split_hops(&refined, &new.certified)),
+            !exporting
+        );
+        let old_outside = if exporting {
+            N::NumbersSplitCoarseReceivingStanding
+        } else {
+            N::NumbersSplitOutsiderRate
+        };
+        let new_outside = if exporting {
+            N::NumbersSplitRefinedReceivingStanding
+        } else {
+            N::NumbersSplitOutsiderRate
+        };
+        assert_eq!(old.standing["buyer"].lower, old_outside.value());
+        assert_eq!(new.standing["buyer"].lower, new_outside.value());
+        split_projected_bound(&bound_refined, old, new, exporting);
+        if exporting {
+            split_pair_bound(&old.certified, &new.certified);
+        }
+        // The positive residual counterexample refuses an unconditional equality claim.
+        assert_eq!(old.standing["buyer"] == new.standing["buyer"], !exporting);
+    }
+}
+
 use nrz_cas::limits::Limits;
 use pn_epoch::{
     compiler::compile_final_state,

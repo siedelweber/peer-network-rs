@@ -4292,7 +4292,8 @@
         "pn-epoch::solve::conserved_projection",
         "pn-epoch::solve::reference_wall_binding",
         "pn-epoch::solve::enclosed_wall_solve",
-        "pn-epoch::solve::two_map_box"
+        "pn-epoch::solve::two_map_box",
+        "pn-epoch::solve::certified_splits"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
