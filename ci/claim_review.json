@@ -154,6 +154,14 @@
       "review": "The synthetic fast and reference groups share a binary while preserving their case identities and implementation. The test checks explicit budget selection, unchanged fast scope, refusal of missing policy or budget and a wrong budget category, rejection of changed result budgets, independently measured group spans and refusal of dropped or duplicated completions. It does not establish a performance target or permit skipping a required case."
     },
     {
+      "operation": "ci::test_harness.Harness.test_wallet_commit_isolation",
+      "path": "ci/test_harness.py",
+      "claim": "ROOT::claim:harness:wallet-inputs-are-commit-scoped",
+      "before": "",
+      "after": "Claim: Wallet conformance reads a clean checkout of its source commit even when its parent is dirty before cloning and changes during execution; identical committed inputs yield identical result artifacts, each published by atomic replacement to a distinct step-owned path without modifying shared findings.",
+      "review": "The witness executes the real isolation adapter against committed fixture objects. A socket barrier admits the parent mutation only while the child is executing, without sleeps or scheduling assumptions. Dirty-before-clone and changed-during-run bytes remain outside the isolated input; clean and moving executions return identical artifacts. The publication hook checks that each destination keeps its previous complete bytes until replacement and contains the completed temporary bytes afterwards, with sibling findings unchanged. Existing wallet assertions are untouched."
+    },
+    {
       "operation": "ci::test_host_runtime.HostRuntime.test_binary_reachability_control",
       "path": "ci/test_host_runtime.py",
       "claim": "ROOT::claim:discipline:binary-endpoint-results-are-detected",

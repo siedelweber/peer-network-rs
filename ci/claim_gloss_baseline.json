@@ -91,6 +91,7 @@
     "ci::test_harness.Harness.test_service_hold": "An unavailable service tier remains visibly held even when all fast cases pass.",
     "ci::test_harness.Harness.test_stale_source": "A result for another source cannot certify the current tree.",
     "ci::test_harness.Harness.test_unregistered_implementation": "An unknown implementation cannot supply evidence under an admitted identity.",
+    "ci::test_harness.Harness.test_wallet_commit_isolation": "",
     "ci::test_host_runtime.HostRuntime.test_binary_reachability_control": "",
     "ci::test_host_runtime.HostRuntime.test_dependency_pins": "",
     "ci::test_host_runtime.HostRuntime.test_independent_instances": "",

@@ -4,7 +4,9 @@ import json
 import os
 import shutil
 from pathlib import Path
+import subprocess
 import sys
+import tempfile
 import time
 import tomllib
 import unittest
@@ -22,40 +24,51 @@ def flatten(suite):
             yield test
 
 
+def publish_wallet(source, destination):
+    """Publish a complete step-owned artifact without exposing partial bytes."""
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=destination.parent, prefix=destination.name+'.', suffix='.tmp', delete=False) as output:
+            temporary = Path(output.name)
+            with source.open('rb') as input_stream:
+                shutil.copyfileobj(input_stream, output)
+        os.replace(temporary, destination)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
 def isolated_wallet(module):
-    """Mutation and compile-failure witnesses own a checkout and a Cargo target."""
-    from build_graph import cancellable, tracked
-    import hashlib
+    """Commit objects supply the whole input; the moving parent is not an input."""
+    from build_graph import cancellable
     root = Path.cwd()
     tree = root/'.lane/wallet-conformance-tree'
     if tree.exists(): shutil.rmtree(tree)
-    source = source_id()
-    inputs = tracked(root)
-    def digests(directory):
-        return {name: hashlib.sha256((directory/name).read_bytes()).hexdigest() for name in inputs}
-    before = digests(root)
+    source = os.environ.get('PN_GATE_SOURCE') or source_id()
     for argv in (['git', 'clone', '--quiet', '--shared', '--no-hardlinks', '--no-checkout', str(root), str(tree)],
-                 ['git', '-C', str(tree), 'checkout', '--quiet', source]):
+                 ['git', '-C', str(tree), 'checkout', '--quiet', '--detach', source]):
         started = time.monotonic()
         result = cancellable(argv)
         print(f'WALLET-ISOLATION tool=git wall={time.monotonic()-started:.6f}s status={result.returncode}', flush=True)
         if result.returncode: return result.returncode
-    if digests(tree) != before:
-        raise StructuralError('isolated wallet input differs from the gate checkout')
+    for argv, expected in ((['rev-parse', 'HEAD'], source),
+                           (['status', '--porcelain', '--untracked-files=no'], '')):
+        started = time.monotonic()
+        checked = cancellable(['git', '-C', str(tree), *argv], stdout=subprocess.PIPE, text=True)
+        print(f'WALLET-ISOLATION tool=git verify={argv[0]} wall={time.monotonic()-started:.6f}s status={checked.returncode}', flush=True)
+        if checked.returncode or checked.stdout.strip() != expected:
+            raise StructuralError('isolated wallet checkout is not clean at the source commit')
     (tree/'.lane').mkdir()
-    target = Path(os.environ['CARGO_TARGET_DIR']).resolve()
-    env = dict(os.environ, PN_WALLET_CONFORMANCE_ISOLATED='1', CARGO_TARGET_DIR=str(target/'wallet-conformance'),
+    target = Path(os.environ['CARGO_TARGET_DIR']).resolve()/'wallet-conformance'
+    env = dict(os.environ, PN_WALLET_CONFORMANCE_ISOLATED='1', CARGO_TARGET_DIR=str(target),
                PN_FLAKE_LEDGER=str(target/'gate-flakes.jsonl'))
     result = cancellable([sys.executable, '-B', 'ci/run_ci.py', module], cwd=tree, env=env)
-    if digests(root) != before:
-        raise StructuralError('wallet invocation changed the gate checkout')
-    print('WALLET-ISOLATION inputs=equal parent=unchanged target=separate', flush=True)
-    for name in ('harness-ci-test_wallet_boundary.jsonl', 'wallet-rpc-compile-fail.log'):
+    for name, destination in (('harness-ci-test_wallet_boundary.jsonl', 'harness-ci-test_wallet_boundary.jsonl'),
+                              ('wallet-rpc-compile-fail.log', 'wallet-rpc-compile-fail.log'),
+                              ('performance-findings.jsonl', 'wallet-conformance-findings.jsonl')):
         path = tree/'.lane'/name
-        if path.exists(): shutil.copyfile(path, root/'.lane'/name)
-    findings = tree/'.lane/performance-findings.jsonl'
-    if findings.exists():
-        with (root/'.lane/performance-findings.jsonl').open('a') as output: output.write(findings.read_text())
+        if path.exists(): publish_wallet(path, root/'.lane'/destination)
+    print(f'WALLET-ISOLATION source={source} inputs=commit clean=true target=separate handback=atomic', flush=True)
     return result.returncode
 
 

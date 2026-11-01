@@ -32,6 +32,109 @@ def result(registry):
 
 
 class Harness(unittest.TestCase):
+    def test_wallet_commit_isolation(self):
+        """Claim: Wallet conformance reads a clean checkout of its source commit even when its parent is dirty before cloning and changes during execution; identical committed inputs yield identical result artifacts, each published by atomic replacement to a distinct step-owned path without modifying shared findings.
+        ´claim:harness:wallet-inputs-are-commit-scoped´
+        ´test:integration:test-wallet-commit-isolation´
+        """
+        import json
+        import os
+        from pathlib import Path
+        import socket
+        import subprocess
+        import tempfile
+        import threading
+        import time
+        from unittest.mock import patch
+        from run_ci import isolated_wallet
+        driver = '''import json, os, pathlib, socket
+root = pathlib.Path.cwd()
+assert (root/'payload').read_text() == 'committed'
+assert pathlib.Path(os.environ['PN_FLAKE_LEDGER']).parent == pathlib.Path(os.environ['CARGO_TARGET_DIR'])
+with socket.socket(socket.AF_UNIX) as connection:
+    connection.settimeout(30)
+    connection.connect(os.environ['WALLET_WITNESS_SOCKET'])
+    connection.sendall(b'ready')
+    assert connection.recv(1) == b'R'
+assert (root/'payload').read_text() == 'committed'
+(root/'.lane/harness-ci-test_wallet_boundary.jsonl').write_text(json.dumps({'operation':'fixture::wallet', 'source':os.environ['PN_GATE_SOURCE'], 'outcome':'passed'})+'\\n')
+(root/'.lane/wallet-rpc-compile-fail.log').write_text('expected compile refusal\\n')
+(root/'.lane/performance-findings.jsonl').write_text('fixture finding\\n')
+'''
+        original = Path.cwd()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'ci').mkdir()
+            (root/'ci/run_ci.py').write_text(driver)
+            (root/'payload').write_text('committed')
+            (root/'.gitignore').write_text('.lane/\n')
+            def git(*args):
+                started = time.monotonic()
+                result = subprocess.run(['git', '-C', str(root), *args], capture_output=True, text=True, check=True)
+                print(f'WALLET-WITNESS tool=git wall={time.monotonic()-started:.6f}s status={result.returncode}')
+                return result.stdout.strip()
+            git('init', '--quiet')
+            git('add', '.')
+            git('-c', 'commit.gpgsign=false', '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--quiet', '-m', 'fixture')
+            source = git('rev-parse', 'HEAD')
+            lane = root/'.lane'
+            lane.mkdir()
+            shared = lane/'performance-findings.jsonl'
+            shared.write_bytes(b'sibling findings\n')
+            names = ('harness-ci-test_wallet_boundary.jsonl', 'wallet-rpc-compile-fail.log', 'wallet-conformance-findings.jsonl')
+            snapshots = []
+            try:
+                os.chdir(root)
+                for moving in (False, True):
+                    (root/'payload').write_text('dirty before clone' if moving else 'committed')
+                    for name in names:
+                        (lane/name).write_bytes(b'previous complete artifact')
+                    address = root/'barrier.sock'
+                    errors = []
+                    with socket.socket(socket.AF_UNIX) as server:
+                        server.bind(str(address))
+                        server.listen()
+                        server.settimeout(30)
+                        def mutate():
+                            try:
+                                with server.accept()[0] as connection:
+                                    connection.settimeout(30)
+                                    self.assertEqual(connection.recv(5), b'ready')
+                                    if moving:
+                                        (root/'payload').write_text('changed during wallet execution')
+                                    connection.sendall(b'R')
+                            except BaseException as error:
+                                errors.append(error)
+                        worker = threading.Thread(target=mutate)
+                        worker.start()
+                        replacements = []
+                        replace = os.replace
+                        def publish(temporary, destination):
+                            self.assertEqual(destination.parent, lane)
+                            self.assertIn(destination.name, names)
+                            self.assertEqual(destination.read_bytes(), b'previous complete artifact')
+                            expected = temporary.read_bytes()
+                            replace(temporary, destination)
+                            self.assertEqual(destination.read_bytes(), expected)
+                            replacements.append(destination.name)
+                        try:
+                            with patch.dict(os.environ, {'PN_GATE_SOURCE':source, 'CARGO_TARGET_DIR':str(lane/'target'), 'WALLET_WITNESS_SOCKET':str(address)}), patch('run_ci.os.replace', side_effect=publish):
+                                self.assertEqual(isolated_wallet('test_wallet_boundary'), 0)
+                        finally:
+                            worker.join(timeout=30)
+                        self.assertFalse(worker.is_alive())
+                        self.assertEqual(errors, [])
+                    address.unlink()
+                    self.assertCountEqual(replacements, names)
+                    self.assertEqual(list(lane.glob('*.tmp')), [])
+                    self.assertEqual(shared.read_bytes(), b'sibling findings\n')
+                    self.assertEqual((root/'payload').read_text(), 'changed during wallet execution' if moving else 'committed')
+                    snapshots.append({name:(lane/name).read_bytes() for name in names})
+                self.assertEqual(snapshots[0], snapshots[1])
+            finally:
+                os.chdir(original)
+        print('WALLET-COMMIT-WITNESS clean=passed moving=passed results=identical handback=atomic sibling-findings=unchanged')
+
     def test_flake_ledger(self):
         """Claim: Required failures retain commit, case, error and node load; a later required execution reports its retry and result, a repeated failure is a recurrence, and a passing slow call remains a finding without becoming a failed test.
         ´claim:harness:flake-ledger-retains-recurrences´
