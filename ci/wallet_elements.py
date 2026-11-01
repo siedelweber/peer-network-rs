@@ -94,12 +94,22 @@ def installed_version(root):
 
 
 RPC_TIMEOUT = 10
+# Setup may wait for trusted wallet database I/O; steady-state exchanges keep
+# their existing socket bound. Neither class retries a failed operation.
+RPC_ADMIN_TIMEOUT = 60
+ADMIN_METHODS = frozenset(('createwallet', 'importprivkey'))
+# Each sequential fixture address request can replenish this small reserve.
+# Pre-generating the default legacy wallet pool does no useful fixture work.
+PRODUCER_KEYPOOL = 16
 
 
 def rpc(config, method, params=None, credential=None, refusal=False, detail=False):
-    connection = http.client.HTTPConnection('127.0.0.1', config['port'], timeout=RPC_TIMEOUT)
+    administrative = method in ADMIN_METHODS
+    timeout = RPC_ADMIN_TIMEOUT if administrative else RPC_TIMEOUT
+    connection = http.client.HTTPConnection('127.0.0.1', config['port'], timeout=timeout)
     credential = credential if credential is not None else config['producer']
     started = time.monotonic()
+    outcome = 'error'
     try:
         connection.request('POST', '/', json.dumps(dict(jsonrpc='2.0', id=1, method=method, params=params or [])), {
             'Authorization': 'Basic ' + base64.b64encode(credential.encode()).decode(),
@@ -115,16 +125,22 @@ def rpc(config, method, params=None, credential=None, refusal=False, detail=Fals
             if not isinstance(value.get('error', {}).get('code'), int):
                 raise RuntimeError('Elements expected refusal absent')
             # The node's own public verdict text, when a witness names its reason.
+            outcome = 'expected-refusal'
             return dict(code=value['error']['code'], message=value['error'].get('message')) if detail else value['error']['code']
         if 'error' in value:
             raise RuntimeError('Elements harness RPC refused: '+method)
+        outcome = 'success'
         return value['result']
     except TimeoutError:
         # The bound applies to each socket operation, so a timeout names the
         # public method it stalled and the exchange's elapsed time against it.
-        raise TimeoutError(f'{method} exceeded the {RPC_TIMEOUT} s socket bound after {time.monotonic() - started:.3f} s') from None
+        outcome = 'timeout'
+        raise TimeoutError(f'{method} exceeded the {timeout} s socket bound after {time.monotonic() - started:.3f} s') from None
     finally:
         connection.close()
+        if administrative:
+            print(f'WALLET-RPC class=administrative method={method} outcome={outcome} '
+                  f'wall_s={time.monotonic() - started:.6f} socket_bound_s={timeout}', file=sys.stderr, flush=True)
 
 
 def write_private(path, value):
@@ -170,7 +186,8 @@ def start(root):
             config = dict(port=port, producer=producer)
             write_private(root/'producer.json', config)
             lines = ['chain=' + profile['chain'], 'server=1', 'rpcauth=' + auth, 'rpcwhitelistdefault=0',
-                     'signblockscript=' + bytes(profile['challenge']).hex(), 'rpccookiefile=' + str(root/'cookie')]
+                     'signblockscript=' + bytes(profile['challenge']).hex(), 'rpccookiefile=' + str(root/'cookie'),
+                     'keypool=' + str(PRODUCER_KEYPOOL)]
             lines += [name+'='+value for name, value in profile['parameters'].items()]
             lines += ['[elementsregtest]', 'rpcport='+str(port), 'rpcbind=127.0.0.1', 'rpcallowip=127.0.0.1']
             (root/'elements.conf').write_text('\n'.join(lines)+'\n')

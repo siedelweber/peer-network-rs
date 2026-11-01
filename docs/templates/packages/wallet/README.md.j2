@@ -52,6 +52,8 @@
 
 **Definition (RPC limits)** · `def:wallet:rpc-limits` Positive caller limits may lower the finite transport, JSON, chain-byte and deadline maxima in (`[ROOT-amend:devnet:rpc-bounds]`).
 
+The separate fixture producer configures the legacy wallet's `keypool` from `PRODUCER_KEYPOOL` in `ci/wallet_elements.py`. Its sequential address requests use a small reserve that Elements replenishes as keys are consumed; pre-generating the upstream default pool adds wallet database work without strengthening the fixture. The legacy signing and issuance path still runs unchanged. Wallet creation and private-key import use the producer's `RPC_ADMIN_TIMEOUT` socket bound because setup can wait for trusted wallet database I/O under shared-node contention. This finite administrative allowance supplies stall headroom, not a measured latency guarantee. Other producer calls retain `RPC_TIMEOUT`; the Rust reader's whole-operation deadline is unchanged. Each administrative call reports its method, outcome, elapsed wall and socket bound on stderr, including failures, without parameters, credentials or response data. There is no retry.
+
 **Definition (RPC refusal)** · `def:wallet:rpc-refusal` Typed local causes contain no private error payload. Trusted service diagnostics remain public and complete. A decoder limit retains the block locator and exact limit and holds subsequent reads.
 
 **Definition (RPC configuration)** · `def:wallet:rpc-config` Secret endpoint, port, relative cookie path and UID carriers accompany an operator-supplied trusted root descriptor. The configuration has role-only Debug and no Display implementation.

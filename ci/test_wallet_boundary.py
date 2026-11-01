@@ -69,7 +69,7 @@ class WalletBoundary(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'build-script field'):
                 check_build_scripts([bad], [package])
     def test_fixture_ports(self):
-        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound.
+        """Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay.
         ´claim:discipline:wallet-fixture-ports-survive-time-wait´
         ´test:integration:test-fixture-ports´
         """
@@ -113,7 +113,13 @@ class WalletBoundary(unittest.TestCase):
             wallet_elements.free = lambda candidate: candidate == held or (candidate > held and probe(candidate))
             try:
                 wallet_elements.start(root)
-                started = json.loads((root/'producer.json').read_text())['port']
+                config = json.loads((root/'producer.json').read_text())
+                started = config['port']
+                wallet_elements.rpc(config, 'createwallet', ['producer', False, False, '', False, False])
+                wallet = wallet_elements.rpc(config, 'getwalletinfo')
+                self.assertFalse(wallet['descriptors'])
+                self.assertEqual(wallet['keypoolsize'], wallet_elements.PRODUCER_KEYPOOL)
+                self.assertEqual(wallet['keypoolsize_hd_internal'], wallet_elements.PRODUCER_KEYPOOL)
             finally:
                 wallet_elements.free = probe
                 wallet_elements.secrets = draw
@@ -150,6 +156,45 @@ class WalletBoundary(unittest.TestCase):
                     wallet_elements.rpc(dict(port=silent.getsockname()[1], producer='fixture:fixture'), 'getblockcount')
             finally:
                 wallet_elements.RPC_TIMEOUT = bound
+
+        # Method-selected bounds and public timing survive success, RPC errors
+        # and transport timeouts; no outcome replays the request.
+        from unittest.mock import patch, MagicMock
+        from contextlib import redirect_stderr
+        import io
+        self.assertGreater(wallet_elements.RPC_ADMIN_TIMEOUT, wallet_elements.RPC_TIMEOUT)
+        for method in ['createwallet', 'importprivkey', 'getblockcount', 'getnewaddress', 'invalidateblock']:
+            administrative = method in ('createwallet', 'importprivkey')
+            expected = wallet_elements.RPC_ADMIN_TIMEOUT if administrative else wallet_elements.RPC_TIMEOUT
+            for outcome in ['success', 'error', 'timeout']:
+                connection = MagicMock()
+                response = connection.getresponse.return_value
+                response.status = 200
+                response.read.return_value = json.dumps(dict(jsonrpc='2.0', id=1, result='fixture')).encode()
+                if outcome == 'error':
+                    response.read.return_value = json.dumps(dict(jsonrpc='2.0', id=1, error=dict(code=-1))).encode()
+                elif outcome == 'timeout':
+                    connection.getresponse.side_effect = TimeoutError('private transport sentinel')
+                diagnostic = io.StringIO()
+                ticks = [100, 100.25, 100.5] if outcome == 'timeout' else [100, 100.25]
+                with patch.object(wallet_elements.http.client, 'HTTPConnection', return_value=connection) as factory, \
+                     patch.object(wallet_elements.time, 'monotonic', side_effect=ticks), redirect_stderr(diagnostic):
+                    if outcome == 'success':
+                        self.assertEqual(wallet_elements.rpc(dict(port=1, producer='private credential sentinel'), method), 'fixture')
+                    else:
+                        error = TimeoutError if outcome == 'timeout' else RuntimeError
+                        with self.assertRaises(error):
+                            wallet_elements.rpc(dict(port=1, producer='private credential sentinel'), method)
+                factory.assert_called_once_with('127.0.0.1', 1, timeout=expected)
+                connection.request.assert_called_once()
+                connection.close.assert_called_once()
+                if administrative:
+                    elapsed = '0.500000' if outcome == 'timeout' else '0.250000'
+                    self.assertEqual(diagnostic.getvalue(),
+                                     f'WALLET-RPC class=administrative method={method} outcome={outcome} '
+                                     f'wall_s={elapsed} socket_bound_s={expected}\n')
+                else:
+                    self.assertEqual(diagnostic.getvalue(), '')
 
     def test_codec_pins(self):
         """Claim: Every registry package of the wallet's normal and build closure carries its reviewed archive checksum in the lockfile, and both built C archives export exactly the reviewed module families, with ECDH, SCHNORRSIG, EXTRAKEYS and ELLSWIFT in secp256k1-sys and SURJECTIONPROOF, GENERATOR, RANGEPROOF, ECDSA_ADAPTOR and WHITELIST in secp256k1-zkp-sys; a changed checksum, a missing module, an unreviewed module or an unknown family refuses.
