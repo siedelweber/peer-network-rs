@@ -2529,6 +2529,7 @@
         "ci::test_devperf.Performance.test_budget_category",
         "ci::test_devperf.Performance.test_cold_cache",
         "ci::test_devperf.Performance.test_missing",
+        "ci::test_devperf.Performance.test_distinct_excess_ledger",
         "ci::test_devperf.Performance.test_noisy_clock",
         "ci::test_devperf.Performance.test_overlapping_spans",
         "ci::test_devperf.Performance.test_predicates",

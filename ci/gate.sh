@@ -56,7 +56,7 @@ source_id=$(time git rev-parse HEAD)
 export PN_GATE_SOURCE="$source_id"
 export CARGO_NET_OFFLINE=true
 unset PN_WALLET_CONFORMANCE_ISOLATED PN_HOST_RUNTIME_ISOLATED
-rm -f .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json
+rm -f .lane/performance-findings.jsonl .lane/performance-assessments.jsonl .lane/wallet-conformance-findings.jsonl .lane/host-observation-runtime-findings.jsonl .lane/over-budget-ledger.json .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json
 run_step() {
     local name=$1
     shift
@@ -152,5 +152,6 @@ fi
 python3 -B ci/devperf.py --operation gate --duration-s "$budget_wall" --outcome "exit:$failed" \
     --source "$source_id" --budget gate --findings .lane/performance-findings.jsonl
 if [ "$?" -ne 0 ]; then failed=1; fi
+python3 -B ci/devperf.py --ledger .lane --source "$source_id" || failed=1
 printf 'GATE-EXIT=%s\n' "$failed"
 exit "$failed"

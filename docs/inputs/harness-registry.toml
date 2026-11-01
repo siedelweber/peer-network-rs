@@ -503,7 +503,7 @@ level = "unit"
 implementation = "ci-python"
 tier = "fast"
 budget = "pure-suite"
-cases = ["ci::test_devperf.Performance.test_admitted_budget", "ci::test_devperf.Performance.test_budget_category", "ci::test_devperf.Performance.test_cold_cache", "ci::test_devperf.Performance.test_missing", "ci::test_devperf.Performance.test_noisy_clock", "ci::test_devperf.Performance.test_overlapping_spans", "ci::test_devperf.Performance.test_predicates", "ci::test_devperf.Performance.test_raw_duration", "ci::test_devperf.Performance.test_result_accounting", "ci::test_devperf.Performance.test_roster", "ci::test_devperf.Performance.test_runner_policy", "ci::test_devperf.Performance.test_structural", "ci::test_devperf.Performance.test_utc", "ci::test_devperf.Performance.test_version_mismatch"]
+cases = ["ci::test_devperf.Performance.test_admitted_budget", "ci::test_devperf.Performance.test_budget_category", "ci::test_devperf.Performance.test_cold_cache", "ci::test_devperf.Performance.test_missing", "ci::test_devperf.Performance.test_distinct_excess_ledger", "ci::test_devperf.Performance.test_noisy_clock", "ci::test_devperf.Performance.test_overlapping_spans", "ci::test_devperf.Performance.test_predicates", "ci::test_devperf.Performance.test_raw_duration", "ci::test_devperf.Performance.test_result_accounting", "ci::test_devperf.Performance.test_roster", "ci::test_devperf.Performance.test_runner_policy", "ci::test_devperf.Performance.test_structural", "ci::test_devperf.Performance.test_utc", "ci::test_devperf.Performance.test_version_mismatch"]
 
 [[rows]]
 kind = "suite"

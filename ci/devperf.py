@@ -153,6 +153,35 @@ def report_loss(record, output, warnings=sys.stderr):
     return 0
 
 
+def excess_ledger(paths, source, declared):
+    """Retain distinct current-run excesses; repeated reporting is not new work."""
+    entries = {}
+    for path in paths:
+        if not path.exists(): continue
+        for line in path.read_text().splitlines():
+            record = json.loads(line)
+            if record.get('source') != source or record.get('kind') != 'budget-excess': continue
+            key = (record['configuration'], record['operation'], record['budget'], record['tier'])
+            if key not in entries or entries[key]['duration_ms'] < record['duration_ms']:
+                entries[key] = record
+    rows = [entries[key] for key in sorted(entries)]
+    cases = [row for row in rows if declared[row['budget']]['category'] == 'case']
+    def counts(field):
+        return {value: sum(row[field] == value for row in cases) for value in sorted({row[field] for row in cases})}
+    return dict(source=source, distinct_cases=len(cases), by_budget=counts('budget'),
+                by_tier=counts('tier'), distinct_excesses=len(rows), entries=rows,
+                identity='configuration,operation,budget,tier', verdict_effect='none')
+
+
+def print_ledger(source, declared, root):
+    paths = [root/name for name in ('performance-findings.jsonl', 'wallet-conformance-findings.jsonl',
+                                   'host-observation-runtime-findings.jsonl')]
+    ledger = excess_ledger(paths, source, declared)
+    output = root/'over-budget-ledger.json'
+    output.write_text(json.dumps(ledger, sort_keys=True, indent=2)+'\n')
+    print('BUDGET-LEDGER '+json.dumps({key:value for key,value in ledger.items() if key != 'entries'} | {'artifact':str(output)}, sort_keys=True))
+    return 0
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--budgets', default='docs/inputs/devperf-budgets.toml')
@@ -162,10 +191,14 @@ def main():
     parser.add_argument('--outcome')
     parser.add_argument('--source', default='working tree')
     parser.add_argument('--budget', default='ordinary-check')
-    parser.add_argument('--findings', required=True)
+    parser.add_argument('--findings')
+    parser.add_argument('--ledger', type=Path)
     parser.add_argument('--registry', default='docs/inputs/devperf-registry.toml')
     args = parser.parse_args()
     try:
+        if args.ledger:
+            return print_ledger(args.source, budgets(args.budgets), args.ledger)
+        if not args.findings: raise StructuralError('findings output is required')
         if bool(args.input) == bool(args.operation):
             raise StructuralError('choose one input file or operation')
         if args.input:

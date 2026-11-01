@@ -74,6 +74,14 @@
       "review": "Publication pin mutations still refuse. Tracked Markdown, templates, Rust and JSON refuse capitalized stale editions and accept the current edition in uppercase. Both tracked allow-listed source fixtures pass with stale text; identical bytes at an unlisted text path refuse. Non-UTF-8 and NUL-containing files exercise the binary boundary."
     },
     {
+      "operation": "ci::test_devperf.Performance.test_distinct_excess_ledger",
+      "path": "ci/test_devperf.py",
+      "claim": "ROOT::claim:devperf:distinct-excess-ledger-is-gate-evidence",
+      "before": "",
+      "after": "Claim: The gate ledger counts each current-source case excess once by configuration, operation, budget and tier across owned files, retains the largest repeated measurement, and excludes stale evidence and non-budget findings while reporting other scope excesses separately.",
+      "review": "Read repeated measurements split between parent and child files, a stale source, a regression-only row and a suite row. Counts retain only distinct current case excesses by budget and tier; all-scope entries retain the maximum repeated duration without changing verdicts."
+    },
+    {
       "operation": "ci::test_discipline.HashCitations.test_act_profile_vector_corruptions",
       "path": "ci/test_discipline.py",
       "claim": "ROOT::claim:hashcitations:act-profile-vector-corruptions-refuse",

@@ -36,6 +36,28 @@ def inventory_fixture(kind='lib', location='src/lib.rs'):
 
 
 class Performance(unittest.TestCase):
+    def test_distinct_excess_ledger(self):
+        """Claim: The gate ledger counts each current-source case excess once by configuration, operation, budget and tier across owned files, retains the largest repeated measurement, and excludes stale evidence and non-budget findings while reporting other scope excesses separately.
+        ´claim:devperf:distinct-excess-ledger-is-gate-evidence´
+        ´test:integration:test-distinct-excess-ledger´
+        """
+        from devperf import excess_ledger
+        declaration = declarations()
+        declaration['suite'] = dict(category='suite')
+        first = dict(execution(200), kind='budget-excess', tier='fast')
+        second = dict(first, operation='other', tier='service')
+        with tempfile.TemporaryDirectory() as directory:
+            paths = [Path(directory)/name for name in ('parent.jsonl','child.jsonl')]
+            paths[0].write_text('\n'.join(json.dumps(row) for row in [first, dict(first,source='stale'), dict(first,kind='regression'), dict(first,budget='suite')]))
+            paths[1].write_text('\n'.join(json.dumps(row) for row in [dict(first,duration_ms=300), second]))
+            result = excess_ledger(paths, first['source'], declaration)
+            self.assertEqual(result['distinct_cases'], 2)
+            self.assertEqual(result['by_budget'], {'unit':2})
+            self.assertEqual(result['by_tier'], {'fast':1, 'service':1})
+            self.assertEqual(result['distinct_excesses'], 3)
+            self.assertEqual(next(row for row in result['entries'] if row['operation']=='probe' and row['budget']=='unit')['duration_ms'], 300)
+            self.assertEqual(result['verdict_effect'], 'none')
+
     def test_noisy_clock(self):
         """The reporter contract keeps injected noisy evidence inconclusive without changing a predicate or hiding an excess.
         ´claim:devperf:noisy-clock-is-nonverdict´
