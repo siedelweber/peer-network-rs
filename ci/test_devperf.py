@@ -57,6 +57,40 @@ class Performance(unittest.TestCase):
             self.assertEqual(result['distinct_excesses'], 3)
             self.assertEqual(next(row for row in result['entries'] if row['operation']=='probe' and row['budget']=='unit')['duration_ms'], 300)
             self.assertEqual(result['verdict_effect'], 'none')
+        self.tier_overrun()
+
+    def tier_overrun(self):
+        from contextlib import redirect_stdout
+        from build_graph import tier_summary
+        tiers = {name: dict(steps=[name], invocation_budget='fixture')
+                 for name in ('fast', 'service', 'reference-certificate')}
+        tiers['fast']['finalize_steps'] = ['finalize']
+        names = [*tiers, 'finalize']
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            lane = root/'.lane'
+            lane.mkdir()
+            for name in names:
+                (lane/f'gate-{name}.log').write_text('fixture')
+            for wall, expected in ((1, False), (2, False), (3, True)):
+                for status in (0, 1):
+                    (lane/'gate-steps.tsv').write_text(''.join(f'{name}\t{status}\t0\t{wall}\n' for name in names))
+                    output = io.StringIO()
+                    with patch('devperf.budgets', return_value={'fixture': dict(budget_ms=2000)}), patch('gate_resources.raw_sample', return_value={'epoch_seconds':0}), patch('gate_resources.joined', return_value={}), patch('gate_resources.compact', return_value='busy=fixture stall=fixture'), patch('gate_resources.cpu_from_log', return_value=(1, 0)), patch('build_graph.subprocess.run', return_value=SimpleNamespace(returncode=0)), patch.dict(os.environ, PN_GATE_SOURCE='fixture'), redirect_stdout(output):
+                        tier_summary(root, SimpleNamespace(tiers=tiers), dict.fromkeys(names, 0))
+                    measured = json.loads((lane/'gate-tiers.json').read_text())
+                    for name in tiers:
+                        self.assertEqual(measured[name]['status'], status)
+                        self.assertEqual(measured[name]['over_budget'], expected)
+                        self.assertEqual(measured[name]['excess_s'], max(0, wall-2))
+                    self.assertFalse(measured['finalize']['over_budget'])
+                    self.assertIsNone(measured['finalize']['excess_s'])
+                    self.assertIn('verdict='+('red' if status else 'green'), output.getvalue())
+                    self.assertIn('over_budget='+str(expected).lower(), output.getvalue())
+                    self.assertIn('own_user_s=1 own_sys_s=0', output.getvalue())
+                    fast = next(line for line in output.getvalue().splitlines() if line.startswith('GATE-TIER tier=fast '))
+                    self.assertIn('over_budget='+str(expected).lower(), fast)
+                    self.assertIn('excess_s='+str(max(0.0, wall-2.0)), fast)
 
     def test_noisy_clock(self):
         """The reporter contract keeps injected noisy evidence inconclusive without changing a predicate or hiding an excess.

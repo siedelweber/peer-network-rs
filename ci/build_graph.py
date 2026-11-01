@@ -557,8 +557,11 @@ def tier_summary(root, registry, worker_statuses):
         reports[tier] = dict(wall=wall, started=start['epoch_seconds'], ended=end['epoch_seconds'], status=status,
             budget=budget, own_user_s=own[0], own_sys_s=own[1], steps=names, resources=measurement)
         limit = declared[budget]['budget_ms']/1000 if budget else None
+        excess = max(0.0, wall-limit) if limit is not None else None
+        over_budget = excess is not None and excess > 0
+        reports[tier].update(over_budget=over_budget, excess_s=excess)
         print(f'GATE-TIER tier={tier} WALL={wall:.6f}s budget_s={limit} verdict={"green" if not status else "red"} '
-              f'own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
+              f'over_budget={str(over_budget).lower()} excess_s={excess} own_user_s={own[0]} own_sys_s={own[1]} interval_scope=gate '+compact(measurement), flush=True)
         if budget:
             result = subprocess.run([sys.executable, '-B', 'ci/devperf.py', '--operation', 'tier::'+tier,
                 '--duration-s', str(wall), '--outcome', f'exit:{status}', '--source', os.environ['PN_GATE_SOURCE'],
