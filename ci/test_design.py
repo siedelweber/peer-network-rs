@@ -17,6 +17,28 @@ from design import PAPER_EDITION_FIXTURES, PAPER_TAG, bare_mint_pattern, validat
 
 REPOSITORY = Path(__file__).resolve().parent.parent
 
+# Reuse the optimized interpreter, not validation results or parsed datasets.
+# Each request executes the complete command in a fresh module namespace and
+# rereads the fixture tree. Mutations still cross the real optimized boundary.
+CHECKER = r'''
+import contextlib, io, json, sys, traceback
+path = sys.argv[1]
+with open(path) as source:
+    command = compile(source.read(), path, 'exec')
+for request in sys.stdin:
+    output, errors = io.StringIO(), io.StringIO()
+    status = 0
+    with contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
+        try:
+            exec(command, {'__name__': '__main__', '__file__': path})
+        except SystemExit as error:
+            status = error.code
+        except Exception:
+            status = 1
+            traceback.print_exc()
+    print(json.dumps([status, output.getvalue(), errors.getvalue()]), flush=True)
+'''
+
 
 def git(root, *args):
     started = time.monotonic()
@@ -61,9 +83,27 @@ class Correspondence(unittest.TestCase):
         shutil.copy(REPOSITORY / '.linter/environments.toml', self.root / '.linter/environments.toml')
         (self.root / 'Cargo.toml').write_text('[workspace]\nmembers = ["vendor/example"]\n')
         git(self.root, 'init', '--quiet')
+        self.checker = None
+
+    def close_checker(self):
+        self.checker.stdin.close()
+        self.checker.wait(timeout=10)
+        self.checker.stdout.close()
+        self.checker.stderr.close()
 
     def check(self):
-        return subprocess.run([sys.executable, '-B', '-O', str(REPOSITORY / 'ci/design.py')], cwd=self.root, capture_output=True, text=True)
+        command = [sys.executable, '-B', '-O', '-u', '-c', CHECKER, str(REPOSITORY / 'ci/design.py')]
+        if self.checker is None:
+            self.checker = subprocess.Popen(command, cwd=self.root, stdin=subprocess.PIPE,
+                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            self.addCleanup(self.close_checker)
+        self.checker.stdin.write('check\n')
+        self.checker.stdin.flush()
+        response = self.checker.stdout.readline()
+        if not response:
+            raise RuntimeError(self.checker.stderr.read())
+        status, output, errors = json.loads(response)
+        return subprocess.CompletedProcess(command, status, output, errors)
 
     def test_numeric_correspondence(self):
         """Independent rational checks refuse changed rate operands, rounded display values, exactness flags and omitted-form budgets under optimized Python.
