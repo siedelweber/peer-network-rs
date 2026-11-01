@@ -2989,3 +2989,743 @@ value = "24"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Burn-response fixture quantities.
+
+[[rows]]
+id = "num:numbers:burn-wall"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-unit-coefficient"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-zero-coefficient"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-upstream-count"
+value = "3000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-path-multiplicity"
+value = "100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-side-multiplicity"
+value = "50"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-export-multiplicity"
+value = "3000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-high-rate"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-low-rate"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-raised-rate"
+value = "21/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-weak-denominator"
+value = "10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-weak-denominator"
+value = "1000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-upstream-count"
+value = "10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-rate-before"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-rate-after"
+value = "51/100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-rate-before"
+value = "230078123/50000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-rate-after"
+value = "460156247/100000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-saturated-precision"
+value = "40"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-anchor-precision"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-proposal-cap"
+value = "16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-endpoint-grid"
+value = "1/4294967296"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-work-ceiling"
+value = "1000000000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-arithmetic-ceiling"
+value = "1000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-literal-bytes"
+value = "4096"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-output-bytes"
+value = "33554432"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-compiler-work-ceiling"
+value = "200000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-product-ceiling"
+value = "100000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-feedback-cap"
+value = "2/3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-standing-before-lower"
+value = "3668512729641/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-standing-before-upper"
+value = "1834256364821/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-standing-after-lower"
+value = "3658850761801/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-standing-after-upper"
+value = "1829425380901/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-response-lower"
+value = "-9661967841/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-response-upper"
+value = "-9661967839/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-solve-before-work"
+value = "400719"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-solve-after-work"
+value = "461085"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-displacement-upper"
+value = "9661967841/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-target-loss-upper"
+value = "9661967841/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-standing-before-lower"
+value = "2"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-standing-before-upper"
+value = "2"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-standing-after-lower"
+value = "2308974418329/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-standing-after-upper"
+value = "1154487209165/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-response-lower"
+value = "109951162777/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-response-upper"
+value = "54975581389/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-solve-before-work"
+value = "39696995"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-solve-after-work"
+value = "55353108"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-displacement-upper"
+value = "54975581389/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-target-loss-upper"
+value = "0"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-standing-before-lower"
+value = "2965940535357/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-standing-before-upper"
+value = "2965940567481/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-standing-after-lower"
+value = "2965900268499/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-standing-after-upper"
+value = "2965900290825/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-response-lower"
+value = "-20149491/549755813888"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-response-upper"
+value = "-10061133/274877906944"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-solve-before-work"
+value = "1722522363"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-solve-after-work"
+value = "1703120348"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-displacement-upper"
+value = "116826840419/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-target-loss-upper"
+value = "17875863759/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-feedback-upper"
+value = "59855253/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-direct-own-lower"
+value = "18059/34359738368"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-direct-own-upper"
+value = "577889/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-direct-maximum-lower"
+value = "269582439/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-direct-maximum-upper"
+value = "269582441/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-standing-before-lower"
+value = "822544904377/274877906944"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-standing-before-upper"
+value = "51409056657/17179869184"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-standing-after-lower"
+value = "3290025730245/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-standing-after-upper"
+value = "3290025753681/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-response-lower"
+value = "-153895803/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-response-upper"
+value = "-153863827/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-solve-before-work"
+value = "553118857"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-solve-after-work"
+value = "574714880"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-displacement-upper"
+value = "106524490305/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-target-loss-upper"
+value = "8186752527/274877906944"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-feedback-upper"
+value = "163785395019/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-direct-own-lower"
+value = "368837024049/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-direct-own-upper"
+value = "368837024071/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-direct-maximum-lower"
+value = "368837024049/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-direct-maximum-upper"
+value = "368837024071/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-standing-before-lower"
+value = "2420122155561/549755813888"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-standing-before-upper"
+value = "4840244411645/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-standing-after-lower"
+value = "4839494208325/1099511627776"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-standing-after-upper"
+value = "2419747104163/549755813888"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-response-lower"
+value = "-93775415/137438953472"
+unit = "dimensionless"
+display = "floor"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-response-upper"
+value = "-187525699/274877906944"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-solve-before-work"
+value = "493431623"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-solve-after-work"
+value = "967732"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-displacement-upper"
+value = "8895814271/1099511627776"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-target-loss-upper"
+value = "93775415/137438953472"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-saturated-contraction-upper"
+value = "3381080852557/10995116277760"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-saturated-feedback-factor-upper"
+value = "3381080852557/7614035425203"
+unit = "dimensionless"
+display = "ceiling"
+magnitude = -12
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-own-act-count"
+value = "9305"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-sibling-act-count"
+value = "6"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-switch-act-count"
+value = "6"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-depleted-act-count"
+value = "13"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-monotone-act-count"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-numeraire"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-full-emission"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:burn-singleton-width"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24

@@ -833,9 +833,205 @@ pub enum NumberId {
     NumbersSplitCompilerProductCeiling,
     /// Registry id: num:numbers:residual-comparison-precision-final.
     NumbersResidualComparisonPrecisionFinal,
+    /// Registry id: num:numbers:burn-wall.
+    NumbersBurnWall,
+    /// Registry id: num:numbers:burn-unit-coefficient.
+    NumbersBurnUnitCoefficient,
+    /// Registry id: num:numbers:burn-zero-coefficient.
+    NumbersBurnZeroCoefficient,
+    /// Registry id: num:numbers:burn-own-upstream-count.
+    NumbersBurnOwnUpstreamCount,
+    /// Registry id: num:numbers:burn-own-path-multiplicity.
+    NumbersBurnOwnPathMultiplicity,
+    /// Registry id: num:numbers:burn-own-side-multiplicity.
+    NumbersBurnOwnSideMultiplicity,
+    /// Registry id: num:numbers:burn-own-export-multiplicity.
+    NumbersBurnOwnExportMultiplicity,
+    /// Registry id: num:numbers:burn-high-rate.
+    NumbersBurnHighRate,
+    /// Registry id: num:numbers:burn-low-rate.
+    NumbersBurnLowRate,
+    /// Registry id: num:numbers:burn-raised-rate.
+    NumbersBurnRaisedRate,
+    /// Registry id: num:numbers:burn-sibling-weak-denominator.
+    NumbersBurnSiblingWeakDenominator,
+    /// Registry id: num:numbers:burn-switch-weak-denominator.
+    NumbersBurnSwitchWeakDenominator,
+    /// Registry id: num:numbers:burn-depleted-upstream-count.
+    NumbersBurnDepletedUpstreamCount,
+    /// Registry id: num:numbers:burn-depleted-rate-before.
+    NumbersBurnDepletedRateBefore,
+    /// Registry id: num:numbers:burn-depleted-rate-after.
+    NumbersBurnDepletedRateAfter,
+    /// Registry id: num:numbers:burn-switch-rate-before.
+    NumbersBurnSwitchRateBefore,
+    /// Registry id: num:numbers:burn-switch-rate-after.
+    NumbersBurnSwitchRateAfter,
+    /// Registry id: num:numbers:burn-saturated-precision.
+    NumbersBurnSaturatedPrecision,
+    /// Registry id: num:numbers:burn-anchor-precision.
+    NumbersBurnAnchorPrecision,
+    /// Registry id: num:numbers:burn-proposal-cap.
+    NumbersBurnProposalCap,
+    /// Registry id: num:numbers:burn-endpoint-grid.
+    NumbersBurnEndpointGrid,
+    /// Registry id: num:numbers:burn-work-ceiling.
+    NumbersBurnWorkCeiling,
+    /// Registry id: num:numbers:burn-arithmetic-ceiling.
+    NumbersBurnArithmeticCeiling,
+    /// Registry id: num:numbers:burn-literal-bytes.
+    NumbersBurnLiteralBytes,
+    /// Registry id: num:numbers:burn-output-bytes.
+    NumbersBurnOutputBytes,
+    /// Registry id: num:numbers:burn-compiler-work-ceiling.
+    NumbersBurnCompilerWorkCeiling,
+    /// Registry id: num:numbers:burn-product-ceiling.
+    NumbersBurnProductCeiling,
+    /// Registry id: num:numbers:burn-feedback-cap.
+    NumbersBurnFeedbackCap,
+    /// Registry id: num:numbers:burn-depleted-standing-before-lower.
+    NumbersBurnDepletedStandingBeforeLower,
+    /// Registry id: num:numbers:burn-depleted-standing-before-upper.
+    NumbersBurnDepletedStandingBeforeUpper,
+    /// Registry id: num:numbers:burn-depleted-standing-after-lower.
+    NumbersBurnDepletedStandingAfterLower,
+    /// Registry id: num:numbers:burn-depleted-standing-after-upper.
+    NumbersBurnDepletedStandingAfterUpper,
+    /// Registry id: num:numbers:burn-depleted-response-lower.
+    NumbersBurnDepletedResponseLower,
+    /// Registry id: num:numbers:burn-depleted-response-upper.
+    NumbersBurnDepletedResponseUpper,
+    /// Registry id: num:numbers:burn-depleted-solve-before-work.
+    NumbersBurnDepletedSolveBeforeWork,
+    /// Registry id: num:numbers:burn-depleted-solve-after-work.
+    NumbersBurnDepletedSolveAfterWork,
+    /// Registry id: num:numbers:burn-depleted-displacement-upper.
+    NumbersBurnDepletedDisplacementUpper,
+    /// Registry id: num:numbers:burn-depleted-target-loss-upper.
+    NumbersBurnDepletedTargetLossUpper,
+    /// Registry id: num:numbers:burn-monotone-standing-before-lower.
+    NumbersBurnMonotoneStandingBeforeLower,
+    /// Registry id: num:numbers:burn-monotone-standing-before-upper.
+    NumbersBurnMonotoneStandingBeforeUpper,
+    /// Registry id: num:numbers:burn-monotone-standing-after-lower.
+    NumbersBurnMonotoneStandingAfterLower,
+    /// Registry id: num:numbers:burn-monotone-standing-after-upper.
+    NumbersBurnMonotoneStandingAfterUpper,
+    /// Registry id: num:numbers:burn-monotone-response-lower.
+    NumbersBurnMonotoneResponseLower,
+    /// Registry id: num:numbers:burn-monotone-response-upper.
+    NumbersBurnMonotoneResponseUpper,
+    /// Registry id: num:numbers:burn-monotone-solve-before-work.
+    NumbersBurnMonotoneSolveBeforeWork,
+    /// Registry id: num:numbers:burn-monotone-solve-after-work.
+    NumbersBurnMonotoneSolveAfterWork,
+    /// Registry id: num:numbers:burn-monotone-displacement-upper.
+    NumbersBurnMonotoneDisplacementUpper,
+    /// Registry id: num:numbers:burn-monotone-target-loss-upper.
+    NumbersBurnMonotoneTargetLossUpper,
+    /// Registry id: num:numbers:burn-own-standing-before-lower.
+    NumbersBurnOwnStandingBeforeLower,
+    /// Registry id: num:numbers:burn-own-standing-before-upper.
+    NumbersBurnOwnStandingBeforeUpper,
+    /// Registry id: num:numbers:burn-own-standing-after-lower.
+    NumbersBurnOwnStandingAfterLower,
+    /// Registry id: num:numbers:burn-own-standing-after-upper.
+    NumbersBurnOwnStandingAfterUpper,
+    /// Registry id: num:numbers:burn-own-response-lower.
+    NumbersBurnOwnResponseLower,
+    /// Registry id: num:numbers:burn-own-response-upper.
+    NumbersBurnOwnResponseUpper,
+    /// Registry id: num:numbers:burn-own-solve-before-work.
+    NumbersBurnOwnSolveBeforeWork,
+    /// Registry id: num:numbers:burn-own-solve-after-work.
+    NumbersBurnOwnSolveAfterWork,
+    /// Registry id: num:numbers:burn-own-displacement-upper.
+    NumbersBurnOwnDisplacementUpper,
+    /// Registry id: num:numbers:burn-own-target-loss-upper.
+    NumbersBurnOwnTargetLossUpper,
+    /// Registry id: num:numbers:burn-own-feedback-upper.
+    NumbersBurnOwnFeedbackUpper,
+    /// Registry id: num:numbers:burn-own-direct-own-lower.
+    NumbersBurnOwnDirectOwnLower,
+    /// Registry id: num:numbers:burn-own-direct-own-upper.
+    NumbersBurnOwnDirectOwnUpper,
+    /// Registry id: num:numbers:burn-own-direct-maximum-lower.
+    NumbersBurnOwnDirectMaximumLower,
+    /// Registry id: num:numbers:burn-own-direct-maximum-upper.
+    NumbersBurnOwnDirectMaximumUpper,
+    /// Registry id: num:numbers:burn-sibling-standing-before-lower.
+    NumbersBurnSiblingStandingBeforeLower,
+    /// Registry id: num:numbers:burn-sibling-standing-before-upper.
+    NumbersBurnSiblingStandingBeforeUpper,
+    /// Registry id: num:numbers:burn-sibling-standing-after-lower.
+    NumbersBurnSiblingStandingAfterLower,
+    /// Registry id: num:numbers:burn-sibling-standing-after-upper.
+    NumbersBurnSiblingStandingAfterUpper,
+    /// Registry id: num:numbers:burn-sibling-response-lower.
+    NumbersBurnSiblingResponseLower,
+    /// Registry id: num:numbers:burn-sibling-response-upper.
+    NumbersBurnSiblingResponseUpper,
+    /// Registry id: num:numbers:burn-sibling-solve-before-work.
+    NumbersBurnSiblingSolveBeforeWork,
+    /// Registry id: num:numbers:burn-sibling-solve-after-work.
+    NumbersBurnSiblingSolveAfterWork,
+    /// Registry id: num:numbers:burn-sibling-displacement-upper.
+    NumbersBurnSiblingDisplacementUpper,
+    /// Registry id: num:numbers:burn-sibling-target-loss-upper.
+    NumbersBurnSiblingTargetLossUpper,
+    /// Registry id: num:numbers:burn-sibling-feedback-upper.
+    NumbersBurnSiblingFeedbackUpper,
+    /// Registry id: num:numbers:burn-sibling-direct-own-lower.
+    NumbersBurnSiblingDirectOwnLower,
+    /// Registry id: num:numbers:burn-sibling-direct-own-upper.
+    NumbersBurnSiblingDirectOwnUpper,
+    /// Registry id: num:numbers:burn-sibling-direct-maximum-lower.
+    NumbersBurnSiblingDirectMaximumLower,
+    /// Registry id: num:numbers:burn-sibling-direct-maximum-upper.
+    NumbersBurnSiblingDirectMaximumUpper,
+    /// Registry id: num:numbers:burn-switch-standing-before-lower.
+    NumbersBurnSwitchStandingBeforeLower,
+    /// Registry id: num:numbers:burn-switch-standing-before-upper.
+    NumbersBurnSwitchStandingBeforeUpper,
+    /// Registry id: num:numbers:burn-switch-standing-after-lower.
+    NumbersBurnSwitchStandingAfterLower,
+    /// Registry id: num:numbers:burn-switch-standing-after-upper.
+    NumbersBurnSwitchStandingAfterUpper,
+    /// Registry id: num:numbers:burn-switch-response-lower.
+    NumbersBurnSwitchResponseLower,
+    /// Registry id: num:numbers:burn-switch-response-upper.
+    NumbersBurnSwitchResponseUpper,
+    /// Registry id: num:numbers:burn-switch-solve-before-work.
+    NumbersBurnSwitchSolveBeforeWork,
+    /// Registry id: num:numbers:burn-switch-solve-after-work.
+    NumbersBurnSwitchSolveAfterWork,
+    /// Registry id: num:numbers:burn-switch-displacement-upper.
+    NumbersBurnSwitchDisplacementUpper,
+    /// Registry id: num:numbers:burn-switch-target-loss-upper.
+    NumbersBurnSwitchTargetLossUpper,
+    /// Registry id: num:numbers:burn-saturated-contraction-upper.
+    NumbersBurnSaturatedContractionUpper,
+    /// Registry id: num:numbers:burn-saturated-feedback-factor-upper.
+    NumbersBurnSaturatedFeedbackFactorUpper,
+    /// Registry id: num:numbers:burn-own-act-count.
+    NumbersBurnOwnActCount,
+    /// Registry id: num:numbers:burn-sibling-act-count.
+    NumbersBurnSiblingActCount,
+    /// Registry id: num:numbers:burn-switch-act-count.
+    NumbersBurnSwitchActCount,
+    /// Registry id: num:numbers:burn-depleted-act-count.
+    NumbersBurnDepletedActCount,
+    /// Registry id: num:numbers:burn-monotone-act-count.
+    NumbersBurnMonotoneActCount,
+    /// Registry id: num:numbers:burn-numeraire.
+    NumbersBurnNumeraire,
+    /// Registry id: num:numbers:burn-full-emission.
+    NumbersBurnFullEmission,
+    /// Registry id: num:numbers:burn-singleton-width.
+    NumbersBurnSingletonWidth,
 }
 
-const OFFSETS: [(usize, usize); 415] = [
+const OFFSETS: [(usize, usize); 513] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -1251,6 +1447,104 @@ const OFFSETS: [(usize, usize); 415] = [
     (62100, 62101),
     (62231, 62236),
     (62371, 62373),
+    (62519, 62520),
+    (62641, 62642),
+    (62763, 62764),
+    (62887, 62891),
+    (63017, 63020),
+    (63146, 63148),
+    (63276, 63280),
+    (63394, 63395),
+    (63508, 63509),
+    (63625, 63630),
+    (63759, 63764),
+    (63892, 63896),
+    (64024, 64026),
+    (64151, 64154),
+    (64278, 64284),
+    (64407, 64425),
+    (64547, 64566),
+    (64690, 64692),
+    (64813, 64814),
+    (64931, 64933),
+    (65051, 65063),
+    (65180, 65193),
+    (65307, 65317),
+    (65435, 65439),
+    (65556, 65564),
+    (65690, 65699),
+    (65810, 65816),
+    (65933, 65936),
+    (66071, 66098),
+    (66249, 66275),
+    (66427, 66454),
+    (66604, 66630),
+    (66776, 66801),
+    (66945, 66970),
+    (67119, 67125),
+    (67246, 67252),
+    (67375, 67399),
+    (67548, 67572),
+    (67725, 67726),
+    (67877, 67878),
+    (68030, 68057),
+    (68207, 68233),
+    (68379, 68405),
+    (68549, 68573),
+    (68722, 68730),
+    (68851, 68859),
+    (68982, 69006),
+    (69155, 69156),
+    (69304, 69331),
+    (69477, 69504),
+    (69651, 69678),
+    (69823, 69850),
+    (69991, 70013),
+    (70152, 70174),
+    (70318, 70328),
+    (70444, 70454),
+    (70572, 70598),
+    (70742, 70766),
+    (70907, 70928),
+    (71071, 71088),
+    (71229, 71249),
+    (71396, 71419),
+    (71564, 71587),
+    (71739, 71764),
+    (71914, 71937),
+    (72088, 72115),
+    (72264, 72291),
+    (72436, 72460),
+    (72603, 72627),
+    (72775, 72784),
+    (72904, 72913),
+    (73035, 73061),
+    (73209, 73232),
+    (73377, 73403),
+    (73550, 73576),
+    (73721, 73747),
+    (73898, 73924),
+    (74073, 74099),
+    (74250, 74276),
+    (74425, 74452),
+    (74602, 74629),
+    (74777, 74803),
+    (74947, 74969),
+    (75111, 75134),
+    (75281, 75290),
+    (75409, 75415),
+    (75536, 75560),
+    (75707, 75728),
+    (75878, 75906),
+    (76060, 76087),
+    (76223, 76227),
+    (76349, 76350),
+    (76471, 76472),
+    (76595, 76597),
+    (76720, 76721),
+    (76835, 76836),
+    (76954, 76955),
+    (77075, 77076),
 ];
 
 impl NumberId {

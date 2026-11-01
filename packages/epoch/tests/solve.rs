@@ -6,6 +6,798 @@ mod common;
 #[path = "common/joined.rs"]
 mod joined;
 
+fn burn_reference(acts: &mut Vec<pn_records::CandidateAct>, source: &str, target: &str, count: u64) {
+    for _ in 0..count {
+        let sequence = u64::try_from(acts.len()).unwrap() + 1;
+        let mut act = joined::act("Reference", source, sequence, 1);
+        let middle = joined::named("name", &format!("object-{sequence}"));
+        act.legs[0].target = middle.clone();
+        act.legs[1].source = middle;
+        act.legs[1].target = joined::named("prof", target);
+        acts.push(act);
+    }
+}
+
+fn burn_padding(acts: &mut Vec<pn_records::CandidateAct>, source: &str, count: u64) {
+    while u64::try_from(acts.iter().filter(|act| act.id.author == source).count()).unwrap() < count {
+        let sequence = u64::try_from(acts.len()).unwrap() + 1;
+        let mut act = joined::act("Publish", source, sequence, 1);
+        joined::coordinates(
+            &mut act,
+            &["attachment"],
+            i64::try_from(NumberId::NumbersBurnZeroCoefficient.integer()).unwrap(),
+        );
+        acts.push(act);
+    }
+}
+
+fn burn_acts(case: &str) -> Vec<pn_records::CandidateAct> {
+    use NumberId as N;
+    let actors: &[&str] = if case == "own" {
+        &["j", "d", "u", "b", "a", "v", "c"]
+    } else {
+        &["i", "b", "u"]
+    };
+    let mut acts: Vec<_> = actors
+        .iter()
+        .enumerate()
+        .map(|(i, name)| joined::act("Registration", name, u64::try_from(i).unwrap() + 1, 1))
+        .collect();
+    if case == "own" {
+        for (source, target) in [("u", "a"), ("v", "a"), ("a", "c"), ("c", "d"), ("d", "b")] {
+            burn_reference(&mut acts, source, target, N::NumbersBurnOwnPathMultiplicity.integer());
+        }
+        burn_reference(&mut acts, "u", "j", N::NumbersBurnOwnSideMultiplicity.integer());
+        burn_reference(&mut acts, "b", "j", N::NumbersBurnOwnExportMultiplicity.integer());
+        for source in ["v", "u"] {
+            burn_padding(&mut acts, source, N::NumbersBurnOwnUpstreamCount.integer());
+        }
+    } else if case == "depleted" {
+        burn_reference(&mut acts, "u", "b", 1);
+        burn_reference(&mut acts, "b", "i", 1);
+        burn_padding(&mut acts, "u", N::NumbersBurnDepletedUpstreamCount.integer());
+    } else if case != "monotone" {
+        burn_reference(&mut acts, "u", "b", 1);
+        burn_reference(&mut acts, "u", "i", 1);
+        let sequence = u64::try_from(acts.len()).unwrap() + 1;
+        let mut act = joined::act("Opinion", "b", sequence, 1);
+        act.legs[0].target = joined::named("prof", "i");
+        let denominator = if case == "switch" {
+            N::NumbersBurnSwitchWeakDenominator
+        } else {
+            N::NumbersBurnSiblingWeakDenominator
+        };
+        for (name, quantity) in &mut act.body.quantities {
+            if name.ends_with("denominator") {
+                quantity.value = i64::try_from(denominator.integer()).unwrap();
+            }
+        }
+        acts.push(act);
+    }
+    acts.reverse();
+    acts
+}
+
+fn burn_state(case: &str, after: bool) -> pn_epoch::compiler::CompiledState {
+    use NumberId as N;
+    let acts = burn_acts(case);
+    let mut counts = BTreeMap::<String, u64>::new();
+    for act in &acts {
+        *counts.entry(act.id.author.clone()).or_default() += 1;
+    }
+    let wall = Fraction::parse(N::NumbersBurnWall.value());
+    let amounts: Vec<_> = counts
+        .iter()
+        .rev()
+        .map(|(name, count)| {
+            let rate = if name == "b" {
+                match (case, after) {
+                    ("depleted", false) => N::NumbersBurnDepletedRateBefore,
+                    ("depleted", true) => N::NumbersBurnDepletedRateAfter,
+                    ("switch", false) => N::NumbersBurnSwitchRateBefore,
+                    ("switch", true) => N::NumbersBurnSwitchRateAfter,
+                    (_, true) => N::NumbersBurnRaisedRate,
+                    (_, false) => N::NumbersBurnLowRate,
+                }
+            } else if name == "u" || case == "depleted" {
+                N::NumbersBurnHighRate
+            } else {
+                N::NumbersBurnLowRate
+            };
+            let amount = Fraction::parse(rate.value())
+                .plus(wall)
+                .times(Fraction(i128::from(*count), 1));
+            (name.clone(), format!("{}/{}", amount.0, amount.1))
+        })
+        .collect();
+    let amounts: Vec<_> = amounts.iter().map(|(name, value)| (name.as_str(), value.as_str())).collect();
+    let original = joined::package_at_wall(&acts, 1, &amounts, N::NumbersBurnWall.value());
+    let (declaration, mut edition, _) = common::fixture();
+    let mut numeric = pn_records::numerics::NumericContext::new(
+        Limits {
+            work: N::NumbersBurnCompilerWorkCeiling.integer(),
+            arithmetic_steps: N::NumbersBurnArithmeticCeiling.integer(),
+            ..Limits::default()
+        },
+        pn_records::numerics::ComparisonLimits::new(
+            u32::try_from(N::NumbersBurnProductCeiling.integer()).unwrap(),
+            N::NumbersBurnProductCeiling.integer(),
+        ),
+    )
+    .unwrap();
+    for (name, value) in [
+        ("burn-shape-first", N::NumbersPublishedShapeFirst),
+        ("burn-shape-second", N::NumbersPublishedShapeSecond),
+        ("burn-shape-third", N::NumbersPublishedShapeThird),
+        ("burn-shape-fourth", N::NumbersPublishedShapeFourth),
+        ("burn-mass-first", N::NumbersPublishedMassFirst),
+        ("burn-mass-second", N::NumbersPublishedMassSecond),
+        ("burn-mass-third", N::NumbersPublishedMassThird),
+        ("burn-mass-fourth", N::NumbersPublishedMassFourth),
+    ] {
+        edition.constants.push(pn_records::constants::ConstantDefinition::Literal {
+            name: name.into(),
+            value: numeric.literal(value.value()).unwrap(),
+        });
+    }
+    let history = pn_records::validate_history(&[], &[]).unwrap();
+    let record = pn_records::validate_record(&[], &history, &[declaration]).unwrap();
+    let constants = pn_records::constants::bind_constants(&record, vec![edition]).unwrap();
+    let mut package = original.input().clone();
+    let mut parameters = package.inputs[0].parameters().clone();
+    parameters.depth_mass = ["burn-mass-first", "burn-mass-second", "burn-mass-third", "burn-mass-fourth"]
+        .map(str::to_owned)
+        .to_vec();
+    let limits = Limits {
+        work: N::NumbersBurnCompilerWorkCeiling.integer(),
+        arithmetic_steps: N::NumbersBurnArithmeticCeiling.integer(),
+        ..Limits::default()
+    };
+    let input = pn_epoch::bind_inputs(&constants, parameters, limits.clone()).unwrap();
+    package.inputs[0] = input.clone();
+    package.bindings[0].inputs = input;
+    let publication = FencePublication(package.bindings.clone());
+    let verified = pn_epoch::package::verify_package(package, &publication).unwrap();
+    compile_final_state(
+        &verified,
+        &joined::Verifier,
+        &mut numeric,
+        limits,
+        N::NumbersBurnProductCeiling.integer(),
+    )
+    .unwrap()
+}
+
+fn burn_policy(state: &pn_epoch::compiler::CompiledState, case: &str) -> Procedure {
+    use NumberId as N;
+    let mut p = fence_procedure(state);
+    let precision = if matches!(case, "depleted" | "monotone") {
+        N::NumbersBurnAnchorPrecision
+    } else {
+        N::NumbersBurnSaturatedPrecision
+    };
+    p.precision = Precision::AbsoluteWidthBits(vec![u32::try_from(precision.integer()).unwrap()]);
+    p.grid = vec![
+        N::NumbersSplitFullRung.value().into(),
+        N::NumbersSplitAnchorRung.value().into(),
+    ];
+    p.endpoint_grid = N::NumbersBurnEndpointGrid.value().into();
+    p.maximum_iterations = N::NumbersBurnProposalCap.integer();
+    p.maximum_work = N::NumbersBurnWorkCeiling.integer();
+    p.maximum_solve_work = p.maximum_work;
+    p.maximum_replay_work = p.maximum_work;
+    let e = p.enclosure.as_mut().unwrap();
+    e.operation.work = p.maximum_work;
+    e.operation.arithmetic_steps = N::NumbersBurnArithmeticCeiling.integer();
+    e.operation.literal_bytes = N::NumbersBurnLiteralBytes.integer();
+    e.operation.output_bytes = N::NumbersBurnOutputBytes.integer();
+    e.store = e.operation.clone();
+    e.refinement.precision = u32::try_from(precision.integer()).unwrap();
+    e.refinement.reduction_ceiling = u32::try_from(N::NumbersReferenceReductionCeiling.integer()).unwrap();
+    p.fence.as_mut().unwrap().shape = [
+        "burn-shape-first",
+        "burn-shape-second",
+        "burn-shape-third",
+        "burn-shape-fourth",
+    ]
+    .map(str::to_owned)
+    .to_vec();
+    p
+}
+
+fn burn_range(value: &Bounds, budget: &mut nrz_cas::limits::Budget) -> nrz_cas::enclosure::Interval {
+    nrz_cas::enclosure::Interval::new(
+        nrz_cas::Rational::parse(&value.lower, budget).unwrap(),
+        nrz_cas::Rational::parse(&value.upper, budget).unwrap(),
+        budget,
+    )
+    .unwrap()
+}
+
+fn burn_sub(
+    a: &nrz_cas::enclosure::Interval,
+    b: &nrz_cas::enclosure::Interval,
+    budget: &mut nrz_cas::limits::Budget,
+) -> nrz_cas::enclosure::Interval {
+    let bits = u32::try_from(NumberId::NumbersBurnSaturatedPrecision.integer()).unwrap();
+    let a = a.coarsen(bits, budget).unwrap();
+    let b = b.coarsen(bits, budget).unwrap();
+    nrz_cas::enclosure::Interval::new(
+        a.lower().sub(b.upper(), budget).unwrap(),
+        a.upper().sub(b.lower(), budget).unwrap(),
+        budget,
+    )
+    .unwrap()
+}
+
+fn burn_pin_upper(value: &nrz_cas::Rational, pin: NumberId, budget: &mut nrz_cas::limits::Budget) {
+    assert!(
+        !value
+            .compare(&nrz_cas::Rational::parse(pin.value(), budget).unwrap(), budget)
+            .unwrap()
+            .is_gt()
+    );
+}
+
+fn burn_pin_interval(
+    value: &nrz_cas::enclosure::Interval,
+    lower: NumberId,
+    upper: NumberId,
+    budget: &mut nrz_cas::limits::Budget,
+) {
+    assert!(
+        !value
+            .lower()
+            .compare(&nrz_cas::Rational::parse(lower.value(), budget).unwrap(), budget)
+            .unwrap()
+            .is_lt()
+    );
+    burn_pin_upper(value.upper(), upper, budget);
+}
+
+fn burn_box_transport(
+    state: &pn_epoch::compiler::CompiledState,
+    policy: &Procedure,
+    template: &pn_records::conserved::MapRecord,
+    coordinates: &BTreeMap<String, Bounds>,
+    budget: &mut nrz_cas::limits::Budget,
+) -> pn_records::transport::TransportOutput<nrz_cas::enclosure::Interval> {
+    use nrz_cas::{Rational, enclosure::Interval};
+    use pn_graph::numeric::activation::{self, Quantity, Request};
+    use pn_records::primitive::Range;
+    let names: Vec<_> = state.view().base.rows.keys().collect();
+    let mut input = template.transport_input.clone();
+    for (hop, shape) in input.hops.iter_mut().zip([
+        NumberId::NumbersPublishedShapeFirst,
+        NumberId::NumbersPublishedShapeSecond,
+        NumberId::NumbersPublishedShapeThird,
+        NumberId::NumbersPublishedShapeFourth,
+    ]) {
+        let factors: Vec<_> = names
+            .iter()
+            .map(|name| {
+                let coordinate = burn_range(&coordinates[*name], budget)
+                    .coarsen(
+                        u32::try_from(NumberId::NumbersBurnSaturatedPrecision.integer()).unwrap(),
+                        budget,
+                    )
+                    .unwrap();
+                let request = Request {
+                    standing: Range {
+                        lower: coordinate.lower().exact_string(budget).unwrap(),
+                        upper: coordinate.upper().exact_string(budget).unwrap(),
+                    },
+                    bleed_squared: NumberId::NumbersReferenceSquaredBleed.value().into(),
+                    wall: Some(NumberId::NumbersBurnWall.value().into()),
+                    wall_enclosure: None,
+                    quantity: Quantity::Hop {
+                        strength: template.rung.clone(),
+                        shape: shape.value().into(),
+                    },
+                };
+                let result = activation::evaluate(policy, &request, None).unwrap();
+                let evidence = &result.primitive.evidence;
+                let replay = activation::replay(policy, &request, evidence.attachment.as_ref().unwrap(), None).unwrap();
+                assert_eq!(evidence.bounds, replay.primitive.evidence.bounds);
+                evidence
+                    .bounds
+                    .as_ref()
+                    .unwrap()
+                    .coarsen(
+                        u32::try_from(NumberId::NumbersBurnSaturatedPrecision.integer()).unwrap(),
+                        budget,
+                    )
+                    .unwrap()
+            })
+            .collect();
+        for (i, row) in hop.iter_mut().enumerate() {
+            for (j, entry) in row {
+                let pn_epoch::base::BaseScore::Exact(score) = &state.view().base.rows[names[i]][names[*j]].score else {
+                    panic!("rational burn base");
+                };
+                let score = Rational::parse(score, budget).unwrap();
+                *entry = if i == *j {
+                    Interval::singleton(&score, budget).unwrap()
+                } else {
+                    Interval::new(
+                        score.mul(factors[*j].lower(), budget).unwrap(),
+                        score.mul(factors[*j].upper(), budget).unwrap(),
+                        budget,
+                    )
+                    .unwrap()
+                };
+            }
+        }
+    }
+    pn_graph::transport::enclosed::evaluate(
+        &input,
+        budget,
+        usize::try_from(NumberId::NumbersBurnProductCeiling.integer()).unwrap(),
+    )
+    .unwrap()
+}
+
+fn burn_magnitude(value: &nrz_cas::enclosure::Interval, budget: &mut nrz_cas::limits::Budget) -> nrz_cas::Rational {
+    let lo = if value.lower().is_negative() {
+        value.lower().negated(budget).unwrap()
+    } else {
+        value.lower().clone()
+    };
+    let hi = if value.upper().is_negative() {
+        value.upper().negated(budget).unwrap()
+    } else {
+        value.upper().clone()
+    };
+    if lo.compare(&hi, budget).unwrap().is_gt() { lo } else { hi }
+}
+
+fn burn_maximum(values: &[nrz_cas::enclosure::Interval], budget: &mut nrz_cas::limits::Budget) -> nrz_cas::Rational {
+    values
+        .iter()
+        .fold(nrz_cas::Rational::parse("0", budget).unwrap(), |old, value| {
+            let next = burn_magnitude(value, budget);
+            if next.compare(&old, budget).unwrap().is_gt() {
+                next
+            } else {
+                old
+            }
+        })
+}
+
+fn burn_premises(before: &pn_epoch::compiler::CompiledState, after: &pn_epoch::compiler::CompiledState, case: &str) {
+    use NumberId as N;
+    assert_eq!(
+        before.package().input().history.acts(),
+        after.package().input().history.acts()
+    );
+    assert_eq!(before.package().input().prices, after.package().input().prices);
+    assert_eq!(
+        before.package().input().inputs[0].parameters(),
+        after.package().input().inputs[0].parameters()
+    );
+    assert_eq!(before.view().base, after.view().base);
+    assert_eq!(before.view().ledger.counts, after.view().ledger.counts);
+    for (address, amount) in &before.view().ledger.balances {
+        let next = &after.view().ledger.balances[address];
+        if address.0 == "b" {
+            assert!(Fraction::parse(next.exact()).order(Fraction::parse(amount.exact())).is_gt());
+        } else {
+            assert_eq!(amount, next);
+        }
+    }
+    for state in [before, after] {
+        assert_eq!(
+            state.package().input().inputs[0].parameters().numeraire.amount().exact(),
+            N::NumbersBurnNumeraire.value()
+        );
+        for (name, source) in &state.view().support.sources {
+            let rate = Fraction::parse(&source.reduced_rate);
+            let wall = Fraction::parse(N::NumbersBurnWall.value());
+            if case == "depleted" && name == "b" {
+                assert!(rate.order(wall).is_lt());
+                assert_eq!(Fraction::parse(&source.emission), rate.over(wall));
+            } else {
+                assert!(rate.order(wall).is_gt());
+                assert_eq!(source.emission, N::NumbersBurnFullEmission.value());
+            }
+        }
+        if case == "monotone" {
+            // The support identity and affine rate interval prove the premise
+            // on the entire burn segment, not just at sampled interior points.
+            for (name, sources) in &state.view().support.contributors {
+                assert_eq!(sources, &std::collections::BTreeSet::from([name.clone()]));
+                assert_eq!(state.view().support.ranges[name].width, N::NumbersBurnSingletonWidth.value());
+                assert_eq!(state.view().base.rows[name].len(), 1);
+            }
+        }
+    }
+    if matches!(case, "sibling" | "depleted") {
+        assert!(before.view().support.contributors["i"].contains("b"));
+    }
+    if case == "depleted" {
+        assert_ne!(
+            before.view().support.sources["b"].emission,
+            after.view().support.sources["b"].emission
+        );
+        let incoming = before
+            .package()
+            .input()
+            .history
+            .acts()
+            .iter()
+            .find(|a| a.id().family == "Reference" && a.id().author == "u")
+            .unwrap();
+        let debit = before
+            .package()
+            .input()
+            .history
+            .acts()
+            .iter()
+            .find(|a| a.id().family == "Reference" && a.id().author == "b")
+            .unwrap();
+        assert!(incoming.id().sequence < debit.id().sequence);
+    }
+}
+
+fn burn_rungs(search: &pn_epoch::fence::Search, anchor: bool) {
+    use pn_records::solve::Completion;
+    let expected = if anchor {
+        vec![Completion::Fail, Completion::Pass]
+    } else {
+        vec![Completion::Pass]
+    };
+    assert_eq!(
+        search
+            .evidence
+            .attempts
+            .iter()
+            .map(|a| a.completion.clone())
+            .collect::<Vec<_>>(),
+        expected
+    );
+    assert_eq!(
+        search.selected.as_deref(),
+        Some(if anchor {
+            NumberId::NumbersSplitAnchorRung.value()
+        } else {
+            NumberId::NumbersSplitFullRung.value()
+        })
+    );
+    assert_eq!(search.operational_stop, None);
+}
+
+fn burn_pins(case: &str) -> [NumberId; 10] {
+    match case {
+        "depleted" => [
+            NumberId::NumbersBurnDepletedStandingBeforeLower,
+            NumberId::NumbersBurnDepletedStandingBeforeUpper,
+            NumberId::NumbersBurnDepletedStandingAfterLower,
+            NumberId::NumbersBurnDepletedStandingAfterUpper,
+            NumberId::NumbersBurnDepletedResponseLower,
+            NumberId::NumbersBurnDepletedResponseUpper,
+            NumberId::NumbersBurnDepletedSolveBeforeWork,
+            NumberId::NumbersBurnDepletedSolveAfterWork,
+            NumberId::NumbersBurnDepletedDisplacementUpper,
+            NumberId::NumbersBurnDepletedTargetLossUpper,
+        ],
+        "monotone" => [
+            NumberId::NumbersBurnMonotoneStandingBeforeLower,
+            NumberId::NumbersBurnMonotoneStandingBeforeUpper,
+            NumberId::NumbersBurnMonotoneStandingAfterLower,
+            NumberId::NumbersBurnMonotoneStandingAfterUpper,
+            NumberId::NumbersBurnMonotoneResponseLower,
+            NumberId::NumbersBurnMonotoneResponseUpper,
+            NumberId::NumbersBurnMonotoneSolveBeforeWork,
+            NumberId::NumbersBurnMonotoneSolveAfterWork,
+            NumberId::NumbersBurnMonotoneDisplacementUpper,
+            NumberId::NumbersBurnMonotoneTargetLossUpper,
+        ],
+        "own" => [
+            NumberId::NumbersBurnOwnStandingBeforeLower,
+            NumberId::NumbersBurnOwnStandingBeforeUpper,
+            NumberId::NumbersBurnOwnStandingAfterLower,
+            NumberId::NumbersBurnOwnStandingAfterUpper,
+            NumberId::NumbersBurnOwnResponseLower,
+            NumberId::NumbersBurnOwnResponseUpper,
+            NumberId::NumbersBurnOwnSolveBeforeWork,
+            NumberId::NumbersBurnOwnSolveAfterWork,
+            NumberId::NumbersBurnOwnDisplacementUpper,
+            NumberId::NumbersBurnOwnTargetLossUpper,
+        ],
+        "sibling" => [
+            NumberId::NumbersBurnSiblingStandingBeforeLower,
+            NumberId::NumbersBurnSiblingStandingBeforeUpper,
+            NumberId::NumbersBurnSiblingStandingAfterLower,
+            NumberId::NumbersBurnSiblingStandingAfterUpper,
+            NumberId::NumbersBurnSiblingResponseLower,
+            NumberId::NumbersBurnSiblingResponseUpper,
+            NumberId::NumbersBurnSiblingSolveBeforeWork,
+            NumberId::NumbersBurnSiblingSolveAfterWork,
+            NumberId::NumbersBurnSiblingDisplacementUpper,
+            NumberId::NumbersBurnSiblingTargetLossUpper,
+        ],
+        "switch" => [
+            NumberId::NumbersBurnSwitchStandingBeforeLower,
+            NumberId::NumbersBurnSwitchStandingBeforeUpper,
+            NumberId::NumbersBurnSwitchStandingAfterLower,
+            NumberId::NumbersBurnSwitchStandingAfterUpper,
+            NumberId::NumbersBurnSwitchResponseLower,
+            NumberId::NumbersBurnSwitchResponseUpper,
+            NumberId::NumbersBurnSwitchSolveBeforeWork,
+            NumberId::NumbersBurnSwitchSolveAfterWork,
+            NumberId::NumbersBurnSwitchDisplacementUpper,
+            NumberId::NumbersBurnSwitchTargetLossUpper,
+        ],
+        _ => panic!("unknown burn fixture"),
+    }
+}
+
+fn burn_finite_bounds(
+    p: &Procedure,
+    fb: &pn_epoch::fence::Search,
+    names: &[&String],
+    rounds: (&pn_records::conserved::ResidualRound, &pn_records::conserved::ResidualRound),
+    shock: &[nrz_cas::enclosure::Interval],
+    budget: &mut nrz_cas::limits::Budget,
+) -> (
+    nrz_cas::Rational,
+    nrz_cas::Rational,
+    nrz_cas::Rational,
+    Vec<nrz_cas::Rational>,
+) {
+    let (old, new) = rounds;
+    let one = nrz_cas::Rational::parse("1", budget).unwrap();
+    let two = one.add(&one, budget).unwrap();
+    let margin = nrz_cas::Rational::parse(&p.margin, budget).unwrap();
+    let q = nrz_cas::Rational::parse(&fb.evidence.attempts.last().unwrap().margined_fence.upper, budget)
+        .unwrap()
+        .div(&margin, budget)
+        .unwrap()
+        .div(&two, budget)
+        .unwrap();
+    let remaining = one.sub(&q, budget).unwrap();
+    let factor = q.div(&remaining, budget).unwrap();
+    let cap = nrz_cas::Rational::parse(NumberId::NumbersBurnFeedbackCap.value(), budget).unwrap();
+    assert!(!factor.compare(&cap, budget).unwrap().is_gt());
+    let norm = burn_maximum(shock, budget);
+    let displacement = norm.div(&remaining, budget).unwrap();
+    let mut loss_bounds = Vec::new();
+    for (name, forcing) in names.iter().zip(shock) {
+        let delta = burn_sub(
+            &burn_range(&new.standing[*name], budget),
+            &burn_range(&old.standing[*name], budget),
+            budget,
+        );
+        assert!(!burn_magnitude(&delta, budget).compare(&displacement, budget).unwrap().is_gt());
+        let loss = factor.mul(&norm, budget).unwrap().sub(forcing.lower(), budget).unwrap();
+        let loss = if loss.is_negative() {
+            nrz_cas::Rational::parse("0", budget).unwrap()
+        } else {
+            loss
+        };
+        if delta.lower().is_negative() {
+            assert!(!delta.lower().negated(budget).unwrap().compare(&loss, budget).unwrap().is_gt());
+        }
+        loss_bounds.push(loss);
+    }
+    (q, factor, displacement, loss_bounds)
+}
+
+fn burn_direct_forcing(
+    before: &pn_epoch::compiler::CompiledState,
+    p: &Procedure,
+    old: &pn_records::conserved::ResidualRound,
+    budget: &mut nrz_cas::limits::Budget,
+) -> Vec<nrz_cas::enclosure::Interval> {
+    let names: Vec<_> = before.view().base.rows.keys().collect();
+    let old_transport = burn_box_transport(before, p, &old.certified, &old.standing, budget);
+    let burner = names.iter().position(|v| v.as_str() == "b").unwrap();
+    names
+        .iter()
+        .enumerate()
+        .map(|(i, _)| {
+            let zero = nrz_cas::Rational::parse("0", budget).unwrap();
+            let zero = nrz_cas::enclosure::Interval::singleton(&zero, budget).unwrap();
+            let numerator = old_transport.emitted[burner].get(&i).unwrap_or(&zero);
+            let denominator = &old_transport.denominator[i];
+            nrz_cas::enclosure::Interval::new(
+                numerator.lower().div(denominator.upper(), budget).unwrap(),
+                numerator.upper().div(denominator.lower(), budget).unwrap(),
+                budget,
+            )
+            .unwrap()
+        })
+        .collect()
+}
+
+fn burn_feedback_cap(
+    case: &str,
+    before: &pn_epoch::compiler::CompiledState,
+    direct: &[nrz_cas::enclosure::Interval],
+    factor: &nrz_cas::Rational,
+    budget: &mut nrz_cas::limits::Budget,
+) {
+    use NumberId as N;
+    let names: Vec<_> = before.view().base.rows.keys().collect();
+    let one = nrz_cas::Rational::parse("1", budget).unwrap();
+    let cap = nrz_cas::Rational::parse(N::NumbersBurnFeedbackCap.value(), budget).unwrap();
+    let burner = names.iter().position(|v| v.as_str() == "b").unwrap();
+    let largest = if case == "own" { "j" } else { "b" };
+    let largest = names.iter().position(|v| v.as_str() == largest).unwrap();
+    for (i, forcing) in direct.iter().enumerate() {
+        assert!(!forcing.lower().is_negative());
+        if i != largest {
+            assert!(direct[largest].lower().compare(forcing.upper(), budget).unwrap().is_gt());
+        }
+    }
+    assert!(!direct[burner].lower().is_zero());
+    let maximum = burn_maximum(direct, budget);
+    let feedback_upper = factor.mul(&maximum, budget).unwrap();
+    assert!(
+        !feedback_upper
+            .compare(&cap.mul(&maximum, budget).unwrap(), budget)
+            .unwrap()
+            .is_gt()
+    );
+    let count = nrz_cas::Rational::parse(
+        &before.view().ledger.counts[&pn_records::burn::Address("b".into())]
+            .0
+            .to_string(),
+        budget,
+    )
+    .unwrap();
+    assert!(!maximum.compare(&one.div(&count, budget).unwrap(), budget).unwrap().is_gt());
+    let pins = if case == "own" {
+        [
+            N::NumbersBurnOwnDirectOwnLower,
+            N::NumbersBurnOwnDirectOwnUpper,
+            N::NumbersBurnOwnDirectMaximumLower,
+            N::NumbersBurnOwnDirectMaximumUpper,
+            N::NumbersBurnOwnFeedbackUpper,
+        ]
+    } else {
+        [
+            N::NumbersBurnSiblingDirectOwnLower,
+            N::NumbersBurnSiblingDirectOwnUpper,
+            N::NumbersBurnSiblingDirectMaximumLower,
+            N::NumbersBurnSiblingDirectMaximumUpper,
+            N::NumbersBurnSiblingFeedbackUpper,
+        ]
+    };
+    burn_pin_interval(&direct[burner], pins[0], pins[1], budget);
+    burn_pin_interval(&direct[largest], pins[2], pins[3], budget);
+    burn_pin_upper(&feedback_upper, pins[4], budget);
+}
+
+fn burn_history_size(before: &pn_epoch::compiler::CompiledState, case: &str) {
+    use NumberId as N;
+    let count_pin = match case {
+        "own" => N::NumbersBurnOwnActCount,
+        "sibling" => N::NumbersBurnSiblingActCount,
+        "switch" => N::NumbersBurnSwitchActCount,
+        "depleted" => N::NumbersBurnDepletedActCount,
+        "monotone" => N::NumbersBurnMonotoneActCount,
+        _ => unreachable!(),
+    };
+    assert_eq!(
+        u64::try_from(before.package().input().history.acts().len()).unwrap(),
+        count_pin.integer()
+    );
+}
+
+fn burn_case(case: &str) {
+    use NumberId as N;
+    let [
+        old_lo,
+        old_hi,
+        new_lo,
+        new_hi,
+        delta_lo,
+        delta_hi,
+        old_work,
+        new_work,
+        displacement_pin,
+        loss_pin,
+    ] = burn_pins(case);
+    let before = burn_state(case, false);
+    let after = burn_state(case, true);
+    burn_premises(&before, &after, case);
+    let p = burn_policy(&before, case);
+    let a = bind_procedure(&before, p.clone(), &Published(p.clone()), Limits::default()).unwrap();
+    let b = bind_procedure(&after, p.clone(), &Published(p), Limits::default()).unwrap();
+    let fa = pn_epoch::fence::search(&a, None).unwrap();
+    let fb = pn_epoch::fence::search(&b, None).unwrap();
+    burn_rungs(&fa, case == "depleted");
+    burn_rungs(&fb, matches!(case, "depleted" | "switch"));
+    let ra = pn_epoch::conserved::solve(&a, &fa).unwrap();
+    let rb = pn_epoch::conserved::solve(&b, &fb).unwrap();
+    let target = if case == "sibling" || case == "depleted" { "i" } else { "b" };
+    let old = ra.rounds.last().unwrap();
+    let new = rb.rounds.last().unwrap();
+    let mut budget = nrz_cas::limits::Budget::new(a.inputs().1.enclosure.as_ref().unwrap().operation.clone()).unwrap();
+    let old_value = burn_range(&old.standing[target], &mut budget);
+    let new_value = burn_range(&new.standing[target], &mut budget);
+    let response = burn_sub(&new_value, &old_value, &mut budget);
+    if case == "monotone" {
+        assert!(!response.lower().is_negative() && !response.lower().is_zero());
+        assert_eq!(old.standing[target].lower, before.view().support.sources[target].reduced_rate);
+        assert_eq!(new.standing[target].lower, after.view().support.sources[target].reduced_rate);
+        assert_eq!(old.standing[target].lower, old.standing[target].upper);
+        assert_eq!(new.standing[target].lower, new.standing[target].upper);
+    } else {
+        // Counterexamples refuse an unconditional monotonicity or recovery claim.
+        assert!(response.upper().is_negative());
+    }
+    let transported = burn_box_transport(&after, b.inputs().1, &new.certified, &old.standing, &mut budget);
+    let names: Vec<_> = after.view().base.rows.keys().collect();
+    let shock: Vec<_> = names
+        .iter()
+        .zip(&transported.standing)
+        .map(|(name, image)| burn_sub(image, &burn_range(&old.standing[*name], &mut budget), &mut budget))
+        .collect();
+    let (q, factor, displacement, loss_bounds) = burn_finite_bounds(a.inputs().1, &fb, &names, (old, new), &shock, &mut budget);
+    if matches!(case, "own" | "sibling") {
+        assert_eq!(
+            fa.evidence.attempts.last().unwrap().margined_fence,
+            fb.evidence.attempts.last().unwrap().margined_fence
+        );
+        assert_eq!(
+            q.exact_string(&mut budget).unwrap(),
+            N::NumbersBurnSaturatedContractionUpper.value()
+        );
+        assert_eq!(
+            factor.exact_string(&mut budget).unwrap(),
+            N::NumbersBurnSaturatedFeedbackFactorUpper.value()
+        );
+        let direct = burn_direct_forcing(&before, a.inputs().1, old, &mut budget);
+        burn_feedback_cap(case, &before, &direct, &factor, &mut budget);
+    }
+    burn_pin_interval(&old_value, old_lo, old_hi, &mut budget);
+    burn_pin_interval(&new_value, new_lo, new_hi, &mut budget);
+    burn_pin_interval(&response, delta_lo, delta_hi, &mut budget);
+    assert_eq!((ra.work, rb.work), (old_work.integer(), new_work.integer()));
+    burn_pin_upper(&displacement, displacement_pin, &mut budget);
+    let target_index = names.iter().position(|name| name.as_str() == target).unwrap();
+    burn_pin_upper(&loss_bounds[target_index], loss_pin, &mut budget);
+    burn_history_size(&before, case);
+}
+
+/// Claim: The unsorted complete-history own-burn pair preserves counts, base, publication and full emission at the same positive passing rung, yet certified standing decreases. Replayed box transport bounds its finite shock and displacement; the declared smooth-regime feedback majorant uses the certified largest direct forcing at another Actor, not the own forcing.
+/// ´claim:compiler:saturated-burn-can-lower-own-standing´
+/// ´test:integration:burn-own´
+#[test]
+fn burn_own() {
+    burn_case("own");
+}
+/// Claim: The unsorted complete-history sibling pair changes only one accepted burn and preserves counts, base, publication and saturated emission at the same positive passing rung. Certified reached standing decreases; replayed box transport checks the finite response bounds and the largest-direct-forcing feedback majorant.
+/// ´claim:compiler:saturated-burn-can-lower-reached-standing´
+/// ´test:integration:burn-sibling´
+#[test]
+fn burn_sibling() {
+    burn_case("sibling");
+}
+/// Claim: The unsorted complete-history depleted-source pair changes only one accepted burn. Both full rungs fail and both anchors pass; emission changes and the certified reached recipient decreases. The complete signed shock, not fixed-emission direct forcing, bounds the finite response.
+/// ´claim:compiler:depleted-burn-can-lower-anchor-recipient´
+/// ´test:integration:burn-depleted´
+#[test]
+fn burn_depleted() {
+    burn_case("depleted");
+}
+/// Claim: The unsorted complete-history positive-burn pair preserves counts, base and saturated emission but changes the selected rung from a passing full rung to a passing anchor after a full-rung failure. Certified own standing decreases, and replayed transport checks the complete shock and finite response bound.
+/// ´claim:compiler:burn-rung-switch-retains-finite-loss-bound´
+/// ´test:integration:burn-switch´
+#[test]
+fn burn_switch() {
+    burn_case("switch");
+}
+/// Claim: The unsorted complete-history sole-contributor pair changes only one accepted burn. Fixed self-only support and an affine source-rate segment strictly above the wall establish the premise throughout the path; both full rungs pass and exact own standing increases with its rate. No positive direction is asserted outside that regime.
+/// ´claim:compiler:sole-contributor-burn-increases-throughout-path´
+/// ´test:integration:burn-monotone´
+#[test]
+fn burn_monotone() {
+    burn_case("monotone");
+}
+
 fn split_state(refined: bool, exporting: bool) -> pn_epoch::compiler::CompiledState {
     use NumberId as N;
     let member = if refined { "third" } else { "seller" };

@@ -1682,6 +1682,46 @@
       "review": "Checks the exact anchor against an independent rational oracle on equal-rate, zero-balance, mixed-balance, settlement and empty fixtures, with the compiled view unchanged. Its helpers compare normalized, raw and emitted entries, export ceilings, numerator and denominator pairs, direct mediants, contributor hulls and total count. An irrational reaction fixture retains its original held base score and radicands. These one-hop cases establish the exact supported subset, not noncommuting hop order or nonlinear evaluation."
     },
     {
+      "operation": "pn-epoch::solve::burn_depleted",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:depleted-burn-can-lower-anchor-recipient",
+      "before": "",
+      "after": "Claim: The unsorted complete-history depleted-source pair changes only one accepted burn. Both full rungs fail and both anchors pass; emission changes and the certified reached recipient decreases. The complete signed shock, not fixed-emission direct forcing, bounds the finite response.",
+      "review": "A pair of unsorted complete accepted histories differs only in one burn. Compilation retains equal acts, counts, base, writing prices and published parameters; certified solves self-replay. The source emission, contributing support and full rung verdict sequence are checked. Independently rebuilt scalar requests over the old standing box are replayed before interval transport bounds the full finite shock. The direct-forcing cap is an application of the tagged theorem at checked smooth saturated premises, not a finite-difference derivative estimate. Singleton support proves the monotone path structurally. Scope excludes arbitrary ledgers, universal recovery, guild policy and act responses."
+    },
+    {
+      "operation": "pn-epoch::solve::burn_monotone",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:sole-contributor-burn-increases-throughout-path",
+      "before": "",
+      "after": "Claim: The unsorted complete-history sole-contributor pair changes only one accepted burn. Fixed self-only support and an affine source-rate segment strictly above the wall establish the premise throughout the path; both full rungs pass and exact own standing increases with its rate. No positive direction is asserted outside that regime.",
+      "review": "A pair of unsorted complete accepted histories differs only in one burn. Compilation retains equal acts, counts, base, writing prices and published parameters; certified solves self-replay. The source emission, contributing support and full rung verdict sequence are checked. Independently rebuilt scalar requests over the old standing box are replayed before interval transport bounds the full finite shock. The direct-forcing cap is an application of the tagged theorem at checked smooth saturated premises, not a finite-difference derivative estimate. Singleton support proves the monotone path structurally. Scope excludes arbitrary ledgers, universal recovery, guild policy and act responses."
+    },
+    {
+      "operation": "pn-epoch::solve::burn_own",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:saturated-burn-can-lower-own-standing",
+      "before": "",
+      "after": "Claim: The unsorted complete-history own-burn pair preserves counts, base, publication and full emission at the same positive passing rung, yet certified standing decreases. Replayed box transport bounds its finite shock and displacement; the declared smooth-regime feedback majorant uses the certified largest direct forcing at another Actor, not the own forcing.",
+      "review": "A pair of unsorted complete accepted histories differs only in one burn. Compilation retains equal acts, counts, base, writing prices and published parameters; certified solves self-replay. The source emission, contributing support and full rung verdict sequence are checked. Independently rebuilt scalar requests over the old standing box are replayed before interval transport bounds the full finite shock. The direct-forcing cap is an application of the tagged theorem at checked smooth saturated premises, not a finite-difference derivative estimate. Singleton support proves the monotone path structurally. Scope excludes arbitrary ledgers, universal recovery, guild policy and act responses."
+    },
+    {
+      "operation": "pn-epoch::solve::burn_sibling",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:saturated-burn-can-lower-reached-standing",
+      "before": "",
+      "after": "Claim: The unsorted complete-history sibling pair changes only one accepted burn and preserves counts, base, publication and saturated emission at the same positive passing rung. Certified reached standing decreases; replayed box transport checks the finite response bounds and the largest-direct-forcing feedback majorant.",
+      "review": "A pair of unsorted complete accepted histories differs only in one burn. Compilation retains equal acts, counts, base, writing prices and published parameters; certified solves self-replay. The source emission, contributing support and full rung verdict sequence are checked. Independently rebuilt scalar requests over the old standing box are replayed before interval transport bounds the full finite shock. The direct-forcing cap is an application of the tagged theorem at checked smooth saturated premises, not a finite-difference derivative estimate. Singleton support proves the monotone path structurally. Scope excludes arbitrary ledgers, universal recovery, guild policy and act responses."
+    },
+    {
+      "operation": "pn-epoch::solve::burn_switch",
+      "path": "packages/epoch/tests/solve.rs",
+      "claim": "EPOCH::claim:compiler:burn-rung-switch-retains-finite-loss-bound",
+      "before": "",
+      "after": "Claim: The unsorted complete-history positive-burn pair preserves counts, base and saturated emission but changes the selected rung from a passing full rung to a passing anchor after a full-rung failure. Certified own standing decreases, and replayed transport checks the complete shock and finite response bound.",
+      "review": "A pair of unsorted complete accepted histories differs only in one burn. Compilation retains equal acts, counts, base, writing prices and published parameters; certified solves self-replay. The source emission, contributing support and full rung verdict sequence are checked. Independently rebuilt scalar requests over the old standing box are replayed before interval transport bounds the full finite shock. The direct-forcing cap is an application of the tagged theorem at checked smooth saturated premises, not a finite-difference derivative estimate. Singleton support proves the monotone path structurally. Scope excludes arbitrary ledgers, universal recovery, guild policy and act responses."
+    },
+    {
       "operation": "pn-epoch::solve::certified_splits",
       "path": "packages/epoch/tests/solve.rs",
       "claim": "EPOCH::claim:compiler:certified-splits-retain-hop-premises-and-displacement",

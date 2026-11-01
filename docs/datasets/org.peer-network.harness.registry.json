@@ -4293,7 +4293,12 @@
         "pn-epoch::solve::reference_wall_binding",
         "pn-epoch::solve::enclosed_wall_solve",
         "pn-epoch::solve::two_map_box",
-        "pn-epoch::solve::certified_splits"
+        "pn-epoch::solve::certified_splits",
+        "pn-epoch::solve::burn_own",
+        "pn-epoch::solve::burn_sibling",
+        "pn-epoch::solve::burn_depleted",
+        "pn-epoch::solve::burn_switch",
+        "pn-epoch::solve::burn_monotone"
       ],
       "implementation": "pn-epoch-rust",
       "kind": "suite",
