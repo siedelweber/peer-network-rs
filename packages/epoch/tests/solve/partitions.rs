@@ -217,10 +217,85 @@ fn policy(state: &CompiledState) -> Procedure {
     p
 }
 
-fn solve(state: &CompiledState, anchor: bool) -> SolveRecord {
-    let p = policy(state);
+fn anchor_policy(state: &CompiledState) -> Procedure {
+    let mut p = policy(state);
+    let bits = u32::try_from(N::NumbersPartitionAnchorPrecision.integer()).unwrap();
+    p.precision = Precision::AbsoluteWidthBits(vec![bits]);
+    p.enclosure.as_mut().unwrap().refinement.precision = bits;
+    p
+}
+
+fn positive_policy(state: &CompiledState) -> Procedure {
+    let mut p = policy(state);
+    let bits = u32::try_from(N::NumbersPartitionPositivePrecision.integer()).unwrap();
+    p.precision = Precision::AbsoluteWidthBits(vec![bits]);
+    p.enclosure.as_mut().unwrap().refinement.precision = bits;
+    p
+}
+
+#[derive(Clone, PartialEq, Eq)]
+struct FenceKey {
+    policy: Procedure,
+    constants: pn_records::constants::ConstantsEdition,
+    depth: usize,
+    width: String,
+    wall: String,
+}
+
+#[derive(Default)]
+struct FenceMemo(Vec<(FenceKey, pn_epoch::fence::Search)>);
+
+impl FenceMemo {
+    fn search(&mut self, state: &CompiledState, p: &Procedure) -> pn_epoch::fence::Search {
+        assert!(!p.fence.as_ref().unwrap().inverse_wall);
+        let input = state.package().input();
+        let key = FenceKey {
+            policy: p.clone(),
+            constants: input.inputs.last().unwrap().constants().clone(),
+            depth: *state.view().support.by_depth.keys().next_back().unwrap_or(&0),
+            width: state
+                .view()
+                .support
+                .ranges
+                .values()
+                .map(|r| &r.width)
+                .max_by(|a, b| Fraction::parse(a).order(Fraction::parse(b)))
+                .cloned()
+                .unwrap_or_else(|| "0".into()),
+            wall: input.prices.last().unwrap().wall().exact().into(),
+        };
+        let bound = bind_procedure(state, p.clone(), &Published(p.clone()), limits()).unwrap();
+        if let Some((_, previous)) = self.0.iter().find(|(saved, _)| saved == &key) {
+            let mut result = previous.clone();
+            result.evidence.hull = state
+                .view()
+                .support
+                .ranges
+                .iter()
+                .map(|(name, r)| {
+                    (
+                        name.clone(),
+                        Bounds {
+                            lower: r.minimum.clone(),
+                            upper: r.maximum.clone(),
+                        },
+                    )
+                })
+                .collect();
+            // The subsequent solve and explicit replay each independently rebuild
+            // and check every fence question against this frozen compilation.
+            validate_evidence(p, &result.evidence, limits()).unwrap();
+            return result;
+        }
+        let result = pn_epoch::fence::search(&bound, None).unwrap();
+        self.0.push((key, result.clone()));
+        result
+    }
+}
+
+fn solve(state: &CompiledState, p: &Procedure, anchor: bool, memo: &mut FenceMemo) -> SolveRecord {
     let bound = bind_procedure(state, p.clone(), &Published(p.clone()), limits()).unwrap();
-    let accepted = pn_epoch::fence::search(&bound, None).unwrap();
+    let accepted = memo.search(state, p);
     let expected = if anchor {
         vec![Completion::Fail, Completion::Fail, Completion::Fail, Completion::Pass]
     } else {
@@ -237,7 +312,7 @@ fn solve(state: &CompiledState, anchor: bool) -> SolveRecord {
     );
     assert_eq!(accepted.selected.as_deref(), Some(if anchor { "0" } else { "1" }));
     assert_eq!(accepted.operational_stop, None);
-    validate_evidence(&p, &accepted.evidence, limits()).unwrap();
+    validate_evidence(p, &accepted.evidence, limits()).unwrap();
     let record = pn_epoch::conserved::solve(&bound, &accepted).unwrap();
     pn_epoch::conserved::replay(&bound, &record).unwrap();
     record
@@ -269,7 +344,7 @@ fn identical_public(a: &CompiledState, b: &CompiledState) {
     assert_eq!(a.view(), b.view());
 }
 
-fn annotation_run(acts: &[CandidateAct]) -> (CompiledState, SolveRecord) {
+fn annotation_run(acts: &[CandidateAct], memo: &mut FenceMemo) -> (CompiledState, SolveRecord) {
     let legitimate = CompletionNote {
         purpose: Purpose::SeparateRoles,
         public: acts,
@@ -282,13 +357,12 @@ fn annotation_run(acts: &[CandidateAct]) -> (CompiledState, SolveRecord) {
     let a = compile(legitimate.public, &receiving_rates(legitimate.public));
     let b = compile(strategic.public, &receiving_rates(strategic.public));
     identical_public(&a, &b);
-    let old = solve(&a, true);
-    let new = solve(&b, true);
-    assert_eq!(old, new);
+    let old = solve(&a, &anchor_policy(&a), true, memo);
     // Independent replay under the other completion has exactly the same result.
-    let p = policy(&b);
+    let p = anchor_policy(&b);
     let bound = bind_procedure(&b, p.clone(), &Published(p), limits()).unwrap();
-    pn_epoch::conserved::replay(&bound, &old).unwrap();
+    let new = pn_epoch::conserved::replay(&bound, &old).unwrap();
+    assert_eq!(old, new);
     (a, old)
 }
 
@@ -511,14 +585,15 @@ fn completion_probes() {
 }
 
 fn receiving(showcase: bool) {
+    let mut memo = FenceMemo::default();
     let f = receiving_fixture(showcase);
     let pooled = receiving_acts(f, false);
     let partitioned = receiving_acts(f, true);
     assert!(role_completion_allowed(&pooled, true, true));
     assert!(role_completion_allowed(&partitioned, true, true));
     assert_ne!(pooled, partitioned);
-    let (a, old) = annotation_run(&pooled);
-    let (b, new) = annotation_run(&partitioned);
+    let (a, old) = annotation_run(&pooled, &mut memo);
+    let (b, new) = annotation_run(&partitioned, &mut memo);
     receiving_premises(f, &a, &b);
     admitted(&a, &old);
     admitted(&b, &new);
@@ -742,14 +817,19 @@ fn distinct_bound(old_state: &CompiledState, new_state: &CompiledState, old: &So
     assert!(old_export.minus(new_export).order(capacity).is_le());
 }
 
-fn exporting(case: ExportCase) -> (CompiledState, CompiledState, SolveRecord, SolveRecord) {
+fn exporting(case: ExportCase, memo: &mut FenceMemo) -> (CompiledState, CompiledState, SolveRecord, SolveRecord) {
     let before = exporting_acts(case, false);
     let after = exporting_acts(case, true);
     let old_state = compile(&before, &exporting_rates(&before, case));
     let new_state = compile(&after, &exporting_rates(&after, case));
     exporting_premises(&old_state, &new_state);
-    let old = solve(&old_state, matches!(case, ExportCase::Distinct));
-    let new = solve(&new_state, matches!(case, ExportCase::Distinct));
+    let declared = match case {
+        ExportCase::Raise | ExportCase::Lower => positive_policy,
+        ExportCase::Distinct => anchor_policy,
+        ExportCase::Matched => policy,
+    };
+    let old = solve(&old_state, &declared(&old_state), matches!(case, ExportCase::Distinct), memo);
+    let new = solve(&new_state, &declared(&new_state), matches!(case, ExportCase::Distinct), memo);
     admitted(&old_state, &old);
     admitted(&new_state, &new);
     (old_state, new_state, old, new)
@@ -760,20 +840,28 @@ fn exporting(case: ExportCase) -> (CompiledState, CompiledState, SolveRecord, So
 /// ´test:integration:distinct-target-split´
 #[test]
 fn distinct_target_split() {
-    let (before, after, old, new) = exporting(ExportCase::Distinct);
+    let (before, after, old, new) = exporting(ExportCase::Distinct, &mut FenceMemo::default());
     distinct_bound(&before, &after, &old, &new);
 }
+
+type BoxFactors = Vec<(
+    Procedure,
+    pn_graph::numeric::activation::Request,
+    nrz_cas::enclosure::Interval,
+)>;
 
 fn partition_box_transport(
     state: &pn_epoch::compiler::CompiledState,
     policy: &Procedure,
     template: &pn_records::conserved::MapRecord,
     coordinates: &BTreeMap<String, Bounds>,
+    retained: &mut BoxFactors,
     budget: &mut nrz_cas::limits::Budget,
 ) -> pn_records::transport::TransportOutput<nrz_cas::enclosure::Interval> {
     use nrz_cas::{Rational, enclosure::Interval};
     use pn_graph::numeric::activation::{self, Quantity, Request};
     use pn_records::primitive::Range;
+    assert_eq!(policy.enclosure.as_ref().unwrap().refinement.precision, template.precision);
     let names: Vec<_> = state.view().base.rows.keys().collect();
     let mut input = template.transport_input.clone();
     for (hop, shape) in input.hops.iter_mut().zip([
@@ -782,11 +870,18 @@ fn partition_box_transport(
         NumberId::NumbersPublishedShapeThird,
         NumberId::NumbersPublishedShapeFourth,
     ]) {
-        let factors: Vec<_> = names
+        let needed: BTreeSet<_> = hop
             .iter()
-            .map(|name| {
+            .enumerate()
+            .flat_map(|(i, row)| row.keys().filter(move |j| **j != i).copied())
+            .collect();
+        let factors: BTreeMap<_, _> = names
+            .iter()
+            .enumerate()
+            .filter(|(index, _)| needed.contains(index))
+            .map(|(index, name)| {
                 let coordinate = burn_range(&coordinates[*name], budget)
-                    .coarsen(u32::try_from(N::NumbersPartitionPrecision.integer()).unwrap(), budget)
+                    .coarsen(template.precision, budget)
                     .unwrap();
                 let request = Request {
                     standing: Range {
@@ -801,16 +896,16 @@ fn partition_box_transport(
                         shape: shape.value().into(),
                     },
                 };
+                if let Some((_, _, value)) = retained.iter().find(|(p, key, _)| p == policy && key == &request) {
+                    return (index, value.clone());
+                }
                 let result = activation::evaluate(policy, &request, None).unwrap();
                 let evidence = &result.primitive.evidence;
                 let replay = activation::replay(policy, &request, evidence.attachment.as_ref().unwrap(), None).unwrap();
                 assert_eq!(evidence.bounds, replay.primitive.evidence.bounds);
-                evidence
-                    .bounds
-                    .as_ref()
-                    .unwrap()
-                    .coarsen(u32::try_from(N::NumbersPartitionPrecision.integer()).unwrap(), budget)
-                    .unwrap()
+                let value = evidence.bounds.as_ref().unwrap().coarsen(template.precision, budget).unwrap();
+                retained.push((policy.clone(), request, value.clone()));
+                (index, value)
             })
             .collect();
         for (i, row) in hop.iter_mut().enumerate() {
@@ -823,8 +918,8 @@ fn partition_box_transport(
                     Interval::singleton(&score, budget).unwrap()
                 } else {
                     Interval::new(
-                        score.mul(factors[*j].lower(), budget).unwrap(),
-                        score.mul(factors[*j].upper(), budget).unwrap(),
+                        score.mul(factors[j].lower(), budget).unwrap(),
+                        score.mul(factors[j].upper(), budget).unwrap(),
                         budget,
                     )
                     .unwrap()
@@ -861,6 +956,7 @@ fn partition_projected_bound(
     after: &CompiledState,
     old: &pn_records::conserved::ResidualRound,
     new: &pn_records::conserved::ResidualRound,
+    factors: &mut BoxFactors,
     budget: &mut Budget,
 ) -> Rational {
     let one = Rational::parse("1", budget).unwrap();
@@ -892,7 +988,7 @@ fn partition_projected_bound(
                 .is_le()
         );
     }
-    let trial = partition_box_transport(after, &policy(after), &new.certified, &lifted, budget);
+    let trial = partition_box_transport(after, &positive_policy(after), &new.certified, &lifted, factors, budget);
     let shocks: Vec<_> = new_names
         .iter()
         .zip(&trial.standing)
@@ -922,8 +1018,23 @@ fn positive_displacement(before: &CompiledState, after: &CompiledState, old: &So
     let mut budget = Budget::new(limits()).unwrap();
     let old = old.rounds.last().unwrap();
     let new = new.rounds.last().unwrap();
-    let old_transport = partition_box_transport(before, &policy(before), &old.certified, &old.standing, &mut budget);
-    let new_transport = partition_box_transport(after, &policy(after), &new.certified, &new.standing, &mut budget);
+    let mut factors = Vec::new();
+    let old_transport = partition_box_transport(
+        before,
+        &positive_policy(before),
+        &old.certified,
+        &old.standing,
+        &mut factors,
+        &mut budget,
+    );
+    let new_transport = partition_box_transport(
+        after,
+        &positive_policy(after),
+        &new.certified,
+        &new.standing,
+        &mut factors,
+        &mut budget,
+    );
     let old_names: Vec<_> = old.standing.keys().collect();
     let new_names: Vec<_> = new.standing.keys().collect();
     let old_target = old_names.iter().position(|name| *name == "target").unwrap();
@@ -986,8 +1097,17 @@ fn positive_displacement(before: &CompiledState, after: &CompiledState, old: &So
     // Both enclose the true response; the difference of outer boxes may be wider.
     let pair_box = Interval::new(bound.negated(&mut budget).unwrap(), bound.clone(), &mut budget).unwrap();
     let scoped_delta = delta.intersection(&pair_box, &mut budget).unwrap();
-    let residual_bound = partition_projected_bound(after, old, new, &mut budget);
-    let pins = if raise {
+    let residual_bound = partition_projected_bound(after, old, new, &mut factors, &mut budget);
+    let pins = positive_pins(raise);
+    burn_pin_interval(&scoped_delta, pins[0], pins[1], &mut budget);
+    assert_eq!(partition_upper(&bound, &mut budget), pins[2].value());
+    assert_eq!(partition_upper(&residual_bound, &mut budget), pins[3].value());
+    assert_eq!(old.work, pins[4].integer());
+    assert_eq!(new.work, pins[5].integer());
+}
+
+fn positive_pins(raise: bool) -> [NumberId; 6] {
+    if raise {
         [
             N::NumbersPartitionPositiveRaiseResponseLower,
             N::NumbersPartitionPositiveRaiseResponseUpper,
@@ -1005,12 +1125,7 @@ fn positive_displacement(before: &CompiledState, after: &CompiledState, old: &So
             N::NumbersPartitionPositiveLowerOldRoundWork,
             N::NumbersPartitionPositiveLowerNewRoundWork,
         ]
-    };
-    burn_pin_interval(&scoped_delta, pins[0], pins[1], &mut budget);
-    assert_eq!(partition_upper(&bound, &mut budget), pins[2].value());
-    assert_eq!(partition_upper(&residual_bound, &mut budget), pins[3].value());
-    assert_eq!(old.work, pins[4].integer());
-    assert_eq!(new.work, pins[5].integer());
+    }
 }
 
 /// Claim: The complete fold-and-export split with close heterogeneous source rates passes the full rung in both orientations and both histories. Certified target responses have opposite signs; replayed transport over equilibrium boxes bounds common-source total variation and projected residual displacement under matched source pairs, fixed recipients, saturated emission and absorbing targets. No unconditional split equality or response direction is inferred.
@@ -1018,8 +1133,9 @@ fn positive_displacement(before: &CompiledState, after: &CompiledState, old: &So
 /// ´test:integration:positive-rung-split´
 #[test]
 fn positive_rung_split() {
+    let mut memo = FenceMemo::default();
     for case in [ExportCase::Raise, ExportCase::Lower] {
-        let (before, after, old, new) = exporting(case);
+        let (before, after, old, new) = exporting(case, &mut memo);
         positive_displacement(&before, &after, &old, &new, matches!(case, ExportCase::Raise));
     }
 }
@@ -1094,7 +1210,7 @@ fn matched_coefficients(before: &CompiledState, after: &CompiledState) {
 /// ´test:integration:nonconstant-matched-split´
 #[test]
 fn nonconstant_matched_split() {
-    let (before, after, old, new) = exporting(ExportCase::Matched);
+    let (before, after, old, new) = exporting(ExportCase::Matched, &mut FenceMemo::default());
     matched_coefficients(&before, &after);
     let old = old.rounds.last().unwrap();
     let new = new.rounds.last().unwrap();
@@ -1426,7 +1542,7 @@ fn sibling_state(after: bool, coupled: bool) -> CompiledState {
     )
 }
 
-fn sibling_solve(state: &CompiledState) -> (Procedure, SolveRecord) {
+fn sibling_solve(state: &CompiledState, memo: &mut FenceMemo) -> (Procedure, SolveRecord) {
     let mut p = policy(state);
     p.grid = vec![N::NumbersSiblingStrength.value().into(), "0".into()];
     let precision = u32::try_from(N::NumbersSiblingPrecision.integer()).unwrap();
@@ -1435,7 +1551,7 @@ fn sibling_solve(state: &CompiledState) -> (Procedure, SolveRecord) {
     p.endpoint_grid = N::NumbersSiblingEndpointGrid.value().into();
     p.maximum_iterations = N::NumbersPartitionPositiveProposalCap.integer();
     let bound = bind_procedure(state, p.clone(), &Published(p.clone()), limits()).unwrap();
-    let search = pn_epoch::fence::search(&bound, None).unwrap();
+    let search = memo.search(state, &p);
     assert_eq!(search.selected.as_deref(), Some(N::NumbersSiblingStrength.value()));
     assert_eq!(search.evidence.attempts.len(), 1);
     assert_eq!(search.evidence.attempts[0].completion, Completion::Pass);
@@ -1450,6 +1566,7 @@ fn sibling_solve(state: &CompiledState) -> (Procedure, SolveRecord) {
 /// ´test:integration:sibling-outside-paths´
 #[test]
 fn sibling_outside_paths() {
+    let mut memo = FenceMemo::default();
     let before = sibling_state(false, true);
     let after = sibling_state(true, true);
     sibling_pair_premises(&before, &after);
@@ -1475,8 +1592,8 @@ fn sibling_outside_paths() {
                 .is_gt()
         );
     }
-    let (p, old) = sibling_solve(&before);
-    let (_, new) = sibling_solve(&after);
+    let (p, old) = sibling_solve(&before, &mut memo);
+    let (_, new) = sibling_solve(&after, &mut memo);
     let old = old.rounds.last().unwrap();
     let new = new.rounds.last().unwrap();
     let mut budget = Budget::new(limits()).unwrap();
@@ -1515,10 +1632,10 @@ fn sibling_outside_paths() {
     for name in ["u", "i"] {
         assert_eq!(low.point[name], high.point[name]);
     }
-    sibling_isolated_control();
+    sibling_isolated_control(&mut memo);
 }
 
-fn sibling_isolated_control() {
+fn sibling_isolated_control(memo: &mut FenceMemo) {
     let before = sibling_state(false, false);
     let after = sibling_state(true, false);
     sibling_pair_premises(&before, &after);
@@ -1531,8 +1648,8 @@ fn sibling_isolated_control() {
         assert_eq!(state.view().base.rows["j"].len(), 1);
         assert!(state.view().base.rows["j"].contains_key("j"));
     }
-    let (_, old) = sibling_solve(&before);
-    let (_, new) = sibling_solve(&after);
+    let (_, old) = sibling_solve(&before, memo);
+    let (_, new) = sibling_solve(&after, memo);
     for (record, rate) in [(&old, N::NumbersPartitionLowRate), (&new, N::NumbersSiblingRaisedRate)] {
         let standing = &record.rounds.last().unwrap().standing["j"];
         assert_eq!(standing.lower, rate.value());

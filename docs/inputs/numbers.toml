@@ -4441,7 +4441,7 @@ exact_digits = 100
 
 [[rows]]
 id = "num:numbers:partition-precision"
-value = "24"
+value = "22"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 100
@@ -4686,7 +4686,7 @@ exact_digits = 100
 
 [[rows]]
 id = "num:numbers:partition-positive-raise-response-lower"
-value = "4571/8388608"
+value = "289/2097152"
 unit = "dimensionless"
 display = "floor"
 exact_digits = 100
@@ -4694,7 +4694,7 @@ magnitude = -8
 
 [[rows]]
 id = "num:numbers:partition-positive-raise-response-upper"
-value = "915807/1677721600"
+value = "9179/16777216"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
@@ -4702,7 +4702,7 @@ magnitude = -8
 
 [[rows]]
 id = "num:numbers:partition-positive-raise-pair-upper"
-value = "9159/16777216"
+value = "2295/4194304"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
@@ -4710,7 +4710,7 @@ magnitude = -8
 
 [[rows]]
 id = "num:numbers:partition-positive-raise-projected-upper"
-value = "2435/4194304"
+value = "4417/4194304"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
@@ -4718,21 +4718,21 @@ magnitude = -8
 
 [[rows]]
 id = "num:numbers:partition-positive-raise-old-round-work"
-value = "218678951"
+value = "113142732"
 unit = "Work"
 display = "exact"
 exact_digits = 100
 
 [[rows]]
 id = "num:numbers:partition-positive-raise-new-round-work"
-value = "219194103"
+value = "113611794"
 unit = "Work"
 display = "exact"
 exact_digits = 100
 
 [[rows]]
 id = "num:numbers:partition-positive-lower-response-lower"
-value = "-915781/1677721600"
+value = "-4589/8388608"
 unit = "dimensionless"
 display = "floor"
 exact_digits = 100
@@ -4740,7 +4740,7 @@ magnitude = -8
 
 [[rows]]
 id = "num:numbers:partition-positive-lower-response-upper"
-value = "-143/262144"
+value = "-9/65536"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
@@ -4748,7 +4748,7 @@ magnitude = -8
 
 [[rows]]
 id = "num:numbers:partition-positive-lower-pair-upper"
-value = "4579/8388608"
+value = "2295/4194304"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
@@ -4756,7 +4756,7 @@ magnitude = -8
 
 [[rows]]
 id = "num:numbers:partition-positive-lower-projected-upper"
-value = "1217/2097152"
+value = "1083/1048576"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
@@ -4764,35 +4764,35 @@ magnitude = -8
 
 [[rows]]
 id = "num:numbers:partition-positive-lower-old-round-work"
-value = "199497637"
+value = "104364472"
 unit = "Work"
 display = "exact"
 exact_digits = 100
 
 [[rows]]
 id = "num:numbers:partition-positive-lower-new-round-work"
-value = "201811355"
+value = "104796522"
 unit = "Work"
 display = "exact"
 exact_digits = 100
 
 [[rows]]
 id = "num:numbers:partition-matched-old-round-work"
-value = "199497637"
+value = "192074295"
 unit = "Work"
 display = "exact"
 exact_digits = 100
 
 [[rows]]
 id = "num:numbers:partition-matched-new-round-work"
-value = "200759104"
+value = "193199002"
 unit = "Work"
 display = "exact"
 exact_digits = 100
 
 [[rows]]
 id = "num:numbers:partition-matched-old-radius-upper"
-value = "65/16777216"
+value = "17/4194304"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
@@ -4800,7 +4800,7 @@ magnitude = -8
 
 [[rows]]
 id = "num:numbers:partition-matched-new-radius-upper"
-value = "65/16777216"
+value = "17/4194304"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
@@ -4861,7 +4861,7 @@ exact_digits = 100
 
 [[rows]]
 id = "num:numbers:conservation-precision"
-value = "12"
+value = "2"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 100
@@ -4889,21 +4889,21 @@ exact_digits = 100
 
 [[rows]]
 id = "num:numbers:sibling-precision"
-value = "32"
+value = "30"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 100
 
 [[rows]]
 id = "num:numbers:sibling-endpoint-grid"
-value = "1/16777216"
+value = "1/262144"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 100
 
 [[rows]]
 id = "num:numbers:sibling-response-lower"
-value = "-1205409/1099511627776"
+value = "-933/1073741824"
 unit = "dimensionless"
 display = "floor"
 exact_digits = 100
@@ -4911,8 +4911,22 @@ magnitude = -12
 
 [[rows]]
 id = "num:numbers:sibling-response-upper"
-value = "-963/4294967296"
+value = "-243/536870912"
 unit = "dimensionless"
 display = "ceiling"
 exact_digits = 100
 magnitude = -12
+
+[[rows]]
+id = "num:numbers:partition-positive-precision"
+value = "13"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-anchor-precision"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
