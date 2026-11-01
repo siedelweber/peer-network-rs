@@ -1309,16 +1309,18 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:solve-rate-lower-milliseconds-per-million"
-value = "1.895"
+value = "217242000/114618499"
 unit = "dimensionless"
-display = "exact"
+display = "floor"
+magnitude = -3
 exact_digits = 24
 
 [[rows]]
 id = "num:numbers:solve-rate-upper-milliseconds-per-million"
-value = "1.969"
+value = "17679500/8977487"
 unit = "dimensionless"
-display = "exact"
+display = "ceiling"
+magnitude = -3
 exact_digits = 24
 
 [[rows]]
@@ -1344,7 +1346,7 @@ exact_digits = 24
 
 [[rows]]
 id = "num:numbers:projected-solve-fast-seconds"
-value = "2957555611369/50000000000"
+value = "847632316787631/14327312375000"
 unit = "seconds"
 display = "floor"
 exact_digits = 24
@@ -1352,7 +1354,7 @@ magnitude = -1
 
 [[rows]]
 id = "num:numbers:projected-solve-slow-seconds"
-value = "15365242740859/250000000000"
+value = "275926672460149/4488743500000"
 unit = "seconds"
 display = "ceiling"
 exact_digits = 24
@@ -2977,6 +2979,13 @@ exact_digits = 24
 [[rows]]
 id = "num:numbers:split-compiler-product-ceiling"
 value = "10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:residual-comparison-precision-final"
+value = "24"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24

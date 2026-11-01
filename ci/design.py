@@ -86,9 +86,19 @@ def bare_mint_pattern(labels):
 def check_numeric_word_fragments(paths):
     """Keep structural number-word compounds intact in migrated rendered prose."""
     pattern = re.compile(r'\b(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)-[0-9]+\b'
-                         r'|\b[0-9]+-(?:map|Actor|capable)\b', re.IGNORECASE)
+                         r'|\b[0-9]+-(?:map|Actor|capable|unit|endpoint|proposal|width|minute)\b'
+                         r'|(?<![\w\u202f.])1-Work\b'
+                         r'|\b(?:precision|wall|minus)-[0-9]+\b'
+                         r'|\b[0-9]+ (?:half|quarter)\b|\bx=\s+[0-9]+\b', re.IGNORECASE)
     findings = []
     for path in paths:
+        if path.suffix == '.j2':
+            # Quoted strings may contain expression delimiters; keep their boundaries intact.
+            expression = r'''\{\{(?:[^'"}]|}(?!})|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*")*\}\}'''
+            literal = re.sub(expression, lambda match: '\n' * match.group().count('\n'), path.read_text())
+            findings.extend(f'{path}:{line}: literal U+202F outside template expression'
+                            for line, text in enumerate(literal.splitlines(), 1) if '\u202f' in text)
+            continue
         for line, text in enumerate(path.read_text().splitlines(), 1):
             findings.extend(f'{path}:{line}: numeric word fragment {match.group()}'
                             for match in pattern.finditer(text))
@@ -247,9 +257,13 @@ def numeric_correspondence():
                 quantity = f'{route}-{size}-{grid}'
                 for speed in ('fast', 'slow'):
                     equal(value(f'{quantity}-{speed}-seconds'), value(f'{quantity}-work') * rates[speed])
-    for bound, speed in (('lower', 'fast'), ('upper', 'slow')):
+    solve_rates = [value(f'solve-{denominator}-{cap}-seconds') * 10**9
+                   / value(f'solve-{denominator}-{cap}-work')
+                   for denominator in ('quarter', 'sixteenth') for cap in ('one', 'two')]
+    for bound, speed, rate in (('lower', 'fast', min(solve_rates)), ('upper', 'slow', max(solve_rates))):
+        equal(value(f'solve-rate-{bound}-milliseconds-per-million'), rate)
         equal(value(f'projected-solve-{speed}-seconds'), value('projected-solve-work')
-              * value(f'solve-rate-{bound}-milliseconds-per-million') / 10**9)
+              * rate / 10**9)
     equal(value('projected-solve-work'),
           2 * (value('proposal-prefix-work') + value('projection-actor-scale')
                * (value('second-proposal-work') - value('proposal-prefix-work')))
@@ -288,11 +302,12 @@ def numeric_correspondence():
         if admitted and (Fraction(view['exact'].replace('\u202f', '')) != number
                          or view['exact_exact'] is not True or view.get('exact_relation') != '='):
             raise ValueError('numeric registry: exact form differs')
-    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=22 displays={len(projected)}')
+    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=24 displays={len(projected)}')
 
 
 if __name__ == '__main__':
     validate()
     numeric_correspondence()
     check_numeric_word_fragments([path for path in tracked_paths()
-                                  if path.as_posix() == 'docs/design/implementation.md'])
+                                  if path.as_posix() == 'docs/design/implementation.md'
+                                  or path.is_relative_to('docs/templates') and path.suffix == '.j2'])

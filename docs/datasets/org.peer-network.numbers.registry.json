@@ -2318,30 +2318,32 @@
       "value": "0.217242"
     },
     {
-      "display": "exact",
-      "exact": "1.895",
+      "display": "floor",
+      "exact": "217 242 000/114 618 499",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:solve-rate-lower-milliseconds-per-million",
+      "magnitude": -3,
       "num": "1.895",
-      "num_exact": true,
-      "num_relation": "=",
+      "num_exact": false,
+      "num_relation": "≥",
       "unit": "dimensionless",
-      "value": "1.895"
+      "value": "217242000/114618499"
     },
     {
-      "display": "exact",
-      "exact": "1.969",
+      "display": "ceiling",
+      "exact": "17 679 500/8 977 487",
       "exact_digits": 24,
       "exact_exact": true,
       "exact_relation": "=",
       "id": "num:numbers:solve-rate-upper-milliseconds-per-million",
-      "num": "1.969",
-      "num_exact": true,
-      "num_relation": "=",
+      "magnitude": -3,
+      "num": "1.970",
+      "num_exact": false,
+      "num_relation": "≤",
       "unit": "dimensionless",
-      "value": "1.969"
+      "value": "17679500/8977487"
     },
     {
       "display": "exact",
@@ -2384,17 +2386,14 @@
     },
     {
       "display": "floor",
-      "exact": "2 957 555 611 369/50 000 000 000",
       "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
       "id": "num:numbers:projected-solve-fast-seconds",
       "magnitude": -1,
       "num": "59.1",
       "num_exact": false,
       "num_relation": "≥",
       "unit": "seconds",
-      "value": "2957555611369/50000000000"
+      "value": "847632316787631/14327312375000"
     },
     {
       "display": "ceiling",
@@ -2405,7 +2404,7 @@
       "num_exact": false,
       "num_relation": "≤",
       "unit": "seconds",
-      "value": "15365242740859/250000000000"
+      "value": "275926672460149/4488743500000"
     },
     {
       "display": "exact",
@@ -5253,6 +5252,19 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "10000"
+    },
+    {
+      "display": "exact",
+      "exact": "24",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:residual-comparison-precision-final",
+      "num": "24",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "dimensionless",
+      "value": "24"
     }
   ]
 }

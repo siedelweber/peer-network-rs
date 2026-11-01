@@ -84,6 +84,19 @@ class Correspondence(unittest.TestCase):
             self.assertIn('numeric registry:', result.stderr)
         path.write_text(json.dumps(original))
         source = self.root / 'docs/inputs/numbers.toml'
+        source_original = source.read_text()
+        for name, truncated in [('solve-rate-lower-milliseconds-per-million', '1.895'),
+                                ('solve-rate-upper-milliseconds-per-million', '1.969'),
+                                ('projected-solve-fast-seconds', '59.1'),
+                                ('projected-solve-slow-seconds', '61.5')]:
+            changed = re.sub(r'(id = "num:numbers:' + name + r'"\nvalue = ")[^"]+',
+                             lambda match: match[1] + truncated, source_original)
+            self.assertNotEqual(changed, source_original)
+            source.write_text(changed)
+            result = self.check()
+            self.assertNotEqual(result.returncode, 0, name)
+            self.assertIn('derived rate differs', result.stderr)
+        source.write_text(source_original)
         sample = next(row['value'] for row in original['rows'] if row['id'] == 'num:numbers:rate-fast-sample-seconds')
         source.write_text(source.read_text().replace('value = '+json.dumps(sample), 'value = "1"'))
         result = self.check()
@@ -97,14 +110,28 @@ class Correspondence(unittest.TestCase):
         """
         path = self.root / 'docs/design/implementation.md'
         path.parent.mkdir(parents=True)
-        path.write_text('two-map four-Actor twenty-four one half x = 1 wall 2 256-byte\n')
+        path.write_text('two-map four-Actor twenty-four one half x = 1 wall 2 256-byte 2000000-Work 2\N{NARROW NO-BREAK SPACE}000\N{NARROW NO-BREAK SPACE}000-Work\n')
         git(self.root, 'add', 'docs/design/implementation.md')
         self.assertEqual(self.check().returncode, 0)
-        for fragment in ('twenty-4', '1-map', '4-Actor', '0-capable'):
+        for fragment in ('twenty-4', '1-map', '2-map', '4-Actor', '5-Actor', '0-capable',
+                         '1 half', '1 quarter', 'N/N-minus-1', 'precision-4', '1-Work',
+                         '8-unit', '2-endpoint', '2-proposal', '0-width', '1-minute', 'wall-2', 'x= 1'):
             path.write_text(fragment + '\n')
             result = self.check()
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('numeric word fragment', result.stderr)
+        path.write_text('precision-four one-Work eight-unit two-endpoint two-proposal zero-width one-minute\n')
+        template = self.root / 'docs/templates/fixture.md.j2'
+        template.parent.mkdir(parents=True)
+        template.write_text('{{ "1\N{NARROW NO-BREAK SPACE}024" }} {{ "}}\N{NARROW NO-BREAK SPACE}" }}\n')
+        git(self.root, 'add', 'docs/templates/fixture.md.j2')
+        self.assertEqual(self.check().returncode, 0)
+        for source in ('1\N{NARROW NO-BREAK SPACE}024', '{{ "safe" }}1\N{NARROW NO-BREAK SPACE}024',
+                       '{# 1\N{NARROW NO-BREAK SPACE}024 #}', '{% set number = "1\N{NARROW NO-BREAK SPACE}024" %}'):
+            template.write_text(source + '\n')
+            result = self.check()
+            self.assertNotEqual(result.returncode, 0, source)
+            self.assertIn('literal U+202F', result.stderr)
 
     def test_release_tags(self):
         """Release identities are pinned, and tracked UTF-8 text without NUL bytes refuses other paper editions regardless of case; only the two named source fixtures are exempt.
