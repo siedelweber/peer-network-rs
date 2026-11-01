@@ -14,7 +14,7 @@ from devperf import StructuralError, budgets, excess_ledger, report
 from gate_resources import joined, raw_sample
 from flake_ledger import Session
 from harness import CONFIGURATION, load, source_id
-from isolation import workspace
+from isolation import import_base, workspace
 from run_ci import publish_wallet
 from run_tests import contract_events, doctest_events, instant, nextest_events, split_main
 from properties import environment as property_environment
@@ -313,6 +313,8 @@ def main():
         raise StructuralError('calibration takes no arguments')
     root = Path.cwd()
     source = source_id()
+    if 'PN_IMPORT_BASE' in os.environ:
+        os.environ['PN_IMPORT_BASE'] = import_base(root, source, os.environ['PN_IMPORT_BASE'])
     with workspace(root, 'calibration', source) as (tree, target):
         env = dict(os.environ, CARGO_TARGET_DIR=str(target), PN_GATE_SOURCE=source,
                    PN_FLAKE_LEDGER=str(target/'gate-flakes.jsonl'))

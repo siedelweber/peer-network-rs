@@ -6,11 +6,25 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import time
 
 from build_graph import cancellable
+
+
+def import_base(root, source, base):
+    """Resolve a parent-local name once, requiring a commit in source history."""
+    resolved = cancellable(['git', '-C', str(root), 'rev-parse', '--verify', '--end-of-options', base+'^{commit}'],
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if resolved.returncode:
+        raise ValueError('import base does not resolve to a commit: '+base)
+    commit = resolved.stdout.strip()
+    ancestor = cancellable(['git', '-C', str(root), 'merge-base', '--is-ancestor', commit, source])
+    if ancestor.returncode:
+        raise ValueError('import base is not an ancestor of source: '+base)
+    return commit
 
 
 @contextmanager
@@ -30,9 +44,12 @@ def workspace(root, name, source):
             raise ValueError('isolation owner key collision')
         binding.write_text(name)
         tree = base/'s'
+        # Older shared clones borrow objects that the parent may prune.
+        if (tree/'.git/objects/info/alternates').exists():
+            shutil.rmtree(tree)
         commands = []
         if not tree.exists():
-            commands.append(['git', 'clone', '--quiet', '--shared', '--no-hardlinks', '--no-checkout', str(root), str(tree)])
+            commands.append(['git', 'clone', '--quiet', '--no-hardlinks', '--no-checkout', str(root), str(tree)])
         commands += [['git', '-C', str(tree), 'fetch', '--quiet', 'origin', source],
                      ['git', '-C', str(tree), 'checkout', '--quiet', '--force', '--detach', source],
                      ['git', '-C', str(tree), 'clean', '--quiet', '-fdx']]
@@ -75,6 +92,12 @@ def generate(action):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) == 2 and sys.argv[1] == 'import-base':
+        try:
+            print(import_base(Path.cwd(), os.environ['PN_GATE_SOURCE'], os.environ['PN_IMPORT_BASE']))
+        except ValueError as error:
+            raise SystemExit('GATE-STRUCTURAL-ERROR: '+str(error))
+        raise SystemExit(0)
     if len(sys.argv) != 2 or sys.argv[1] not in {'generate', 'write'}:
         raise SystemExit('expected generate or write')
     raise SystemExit(generate(sys.argv[1]))

@@ -54,6 +54,10 @@ times > .lane/gate-cpu-start.raw
 : > .lane/gate-steps.tsv
 source_id=$(time git rev-parse HEAD)
 export PN_GATE_SOURCE="$source_id"
+if [ "${PN_IMPORT_BASE+x}" = x ]; then
+    PN_IMPORT_BASE=$(python3 -B ci/isolation.py import-base) || exit 2
+    export PN_IMPORT_BASE
+fi
 export CARGO_NET_OFFLINE=true
 unset PN_WALLET_CONFORMANCE_ISOLATED PN_HOST_RUNTIME_ISOLATED PN_CI_ISOLATED PN_GATE_BUILD_TARGET
 rm -f .lane/ci-test_*-findings.jsonl .lane/performance-findings.jsonl .lane/performance-assessments.jsonl .lane/wallet-conformance-findings.jsonl .lane/host-observation-runtime-findings.jsonl .lane/over-budget-ledger.json .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json

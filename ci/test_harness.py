@@ -123,6 +123,8 @@ class Harness(unittest.TestCase):
         driver = '''import json, os, pathlib, socket
 root = pathlib.Path.cwd()
 assert (root/'payload').read_text() == 'committed'
+assert os.environ['PN_IMPORT_BASE'] == os.environ['PN_GATE_SOURCE']
+assert not (root/'.git/objects/info/alternates').exists()
 assert pathlib.Path(os.environ['PN_FLAKE_LEDGER']).parent == pathlib.Path(os.environ['CARGO_TARGET_DIR'])
 pathlib.Path(os.environ['CARGO_TARGET_DIR']).joinpath('retained').write_text('owned cache')
 with socket.socket(socket.AF_UNIX) as connection:
@@ -154,6 +156,18 @@ assert (root/'payload').read_text() == 'committed'
             git('add', '.')
             git('-c', 'commit.gpgsign=false', '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--quiet', '-m', 'fixture')
             source = git('rev-parse', 'HEAD')
+            from isolation import import_base
+            git('update-ref', 'refs/import/base', source)
+            self.assertEqual(import_base(root, source, 'refs/import/base'), source)
+            self.assertEqual(import_base(root, source, source), source)
+            with self.assertRaisesRegex(ValueError, 'does not resolve to a commit'):
+                import_base(root, source, 'refs/import/absent')
+            with self.assertRaisesRegex(ValueError, 'does not resolve to a commit'):
+                import_base(root, source, source+':payload')
+            unrelated = git('-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+                            'commit-tree', source+'^{tree}', '-m', 'unrelated')
+            with self.assertRaisesRegex(ValueError, 'not an ancestor'):
+                import_base(root, source, unrelated)
             lane = root/'.lane'
             lane.mkdir()
             shared = lane/'performance-findings.jsonl'
@@ -196,7 +210,7 @@ assert (root/'payload').read_text() == 'committed'
                             self.assertEqual(destination.read_bytes(), expected)
                             replacements.append(destination.name)
                         try:
-                            with patch.dict(os.environ, {'PN_GATE_SOURCE':source, 'CARGO_TARGET_DIR':str(lane/'target'), 'WALLET_WITNESS_SOCKET':str(address)}), patch('run_ci.os.replace', side_effect=publish):
+                            with patch.dict(os.environ, {'PN_GATE_SOURCE':source, 'PN_IMPORT_BASE':'refs/import/base' if moving else source, 'CARGO_TARGET_DIR':str(lane/'target'), 'WALLET_WITNESS_SOCKET':str(address)}), patch('run_ci.os.replace', side_effect=publish):
                                 self.assertEqual(operation(module), 0)
                         finally:
                             worker.join(timeout=30)
@@ -217,6 +231,17 @@ assert (root/'payload').read_text() == 'committed'
                 self.assertEqual(snapshots[0], snapshots[1])
                 from isolation import workspace
                 original_target = retained.parent
+                owner = 'host-observation-runtime' if host else 'wallet-conformance'
+                with workspace(root, owner, unrelated) as (isolated, target):
+                    self.assertEqual(target, original_target)
+                git('reflog', 'expire', '--expire=now', '--all')
+                git('gc', '--prune=now')
+                missing = subprocess.run(['git', '-C', str(root), 'cat-file', '-e', unrelated], capture_output=True)
+                self.assertNotEqual(missing.returncode, 0)
+                present = subprocess.run(['git', '-C', str(isolated), 'cat-file', '-e', unrelated], capture_output=True)
+                self.assertEqual(present.returncode, 0)
+                with workspace(root, owner, source) as (_, target):
+                    self.assertEqual((target/'retained').read_text(), 'owned cache')
                 with patch.dict(os.environ, RUSTFLAGS='--cfg isolation_key_witness'):
                     with workspace(root, 'host-observation-runtime' if host else 'wallet-conformance', source) as (_, target):
                         self.assertNotEqual(target, original_target)

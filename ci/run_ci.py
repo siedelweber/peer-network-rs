@@ -52,9 +52,11 @@ def isolated_host(module):
 
 def isolated_runtime(module, name, marker, logs):
     """Run a required suite from commit objects and publish its owned outputs."""
-    from isolation import workspace
+    from isolation import import_base, workspace
     root = Path.cwd()
     source = os.environ.get('PN_GATE_SOURCE') or source_id()
+    if 'PN_IMPORT_BASE' in os.environ:
+        os.environ['PN_IMPORT_BASE'] = import_base(root, source, os.environ['PN_IMPORT_BASE'])
     with workspace(root, name, source) as (tree, target):
         return isolated_suite(module, name, marker, logs, root, source, tree, target)
 
