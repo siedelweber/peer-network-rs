@@ -74,7 +74,10 @@ fn floor_decisions() {
     let mut c = context();
     for (text, expected) in [
         ("2999999999999999999/37000000000000000000", FloorComparison::Below),
-        ("3/37", FloorComparison::Equal),
+        (
+            crate::pins::NumberId::NumbersReferenceRationalFloor.value(),
+            FloorComparison::Equal,
+        ),
         ("3000000000000000001/37000000000000000000", FloorComparison::Above),
     ] {
         let literal = c.literal(text).unwrap();
@@ -197,7 +200,7 @@ fn historical_constants() {
         constants.resolve("numeric", "constants", 10).unwrap().floor_source(),
         &ConstantDefinition::Expression {
             name: "structural-floor".into(),
-            expression: "3/37".into(),
+            expression: crate::pins::NumberId::NumbersReferenceRationalFloor.value().into(),
             source_label: "case:epoch:safety-wall-floor-rational-floor".into()
         }
     );
@@ -237,7 +240,10 @@ fn constant_correspondence() {
     .unwrap();
     let rows = data["rows"].as_array().unwrap();
     let rational = rows.iter().find(|r| r["id"] == "const.epoch.wall_floor_rational").unwrap();
-    assert_eq!(rational["definition"]["expr"], "3/37");
+    assert_eq!(
+        rational["definition"]["expr"],
+        crate::pins::NumberId::NumbersReferenceRationalFloor.value()
+    );
     let ridge = rows.iter().find(|r| r["id"] == "const.epoch.wall_floor_ridge").unwrap();
     assert_eq!(ridge["definition"]["func"], "wall_floor_ridge");
     assert_ne!(Floor::RidgeImage, Floor::RationalThreeThirtySevenths);

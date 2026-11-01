@@ -1,3 +1,6 @@
+#[path = "../../documents/src/pins.rs"]
+pub mod pins;
+
 mod common;
 #[path = "public/minted.rs"]
 mod minted;

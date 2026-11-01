@@ -96,7 +96,9 @@ class Correspondence(unittest.TestCase):
                                 ('epoch-family-history-count', '455'),
                                 ('epoch-settlement-interleaving-count', '19'),
                                 ('epoch-aggregate-case-count', '26'),
-                                ('epoch-property-draw-count', '255')]:
+                                ('epoch-property-draw-count', '255'),
+                                ('records-dag-proposal-maximum', '9'),
+                                ('records-dag-proposal-epoch', '3')]:
             changed = re.sub(r'(id = "num:numbers:' + name + r'"\nvalue = ")[^"]+',
                              lambda match: match[1] + truncated, source_original)
             self.assertNotEqual(changed, source_original)
@@ -123,7 +125,7 @@ class Correspondence(unittest.TestCase):
         self.assertEqual(self.check().returncode, 0)
         for fragment in ('twenty-4', '1-map', '2-map', '4-Actor', '5-Actor', '0-capable',
                          '1 half', '1 quarter', 'N/N-minus-1', 'precision-4', '1-Work',
-                         '8-unit', '2-endpoint', '2-proposal', '0-width', '1-minute', 'wall-2', 'x= 1', '1-half', '3-source', '1-hop', '0-mass'):
+                         '8-unit', '2-endpoint', '2-proposal', '0-width', '1-minute', 'wall-2', 'x= 1', '1-half', '3-source', '1-hop', '0-mass', '3-marker'):
             path.write_text(fragment + '\n')
             result = self.check()
             self.assertNotEqual(result.returncode, 0)
@@ -135,6 +137,13 @@ class Correspondence(unittest.TestCase):
         git(self.root, 'add', 'packages/epoch/README.md')
         self.assertNotEqual(self.check().returncode, 0)
         readme.write_text('twenty-four one-half two-map')
+        self.assertEqual(self.check().returncode, 0)
+        readme = self.root / 'packages/records/README.md'
+        readme.parent.mkdir(parents=True)
+        readme.write_text('3-marker')
+        git(self.root, 'add', 'packages/records/README.md')
+        self.assertNotEqual(self.check().returncode, 0)
+        readme.write_text('three-marker')
         self.assertEqual(self.check().returncode, 0)
         template = self.root / 'docs/templates/fixture.md.j2'
         template.parent.mkdir(parents=True)

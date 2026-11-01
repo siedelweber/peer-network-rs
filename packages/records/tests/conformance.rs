@@ -1,11 +1,57 @@
+#[path = "../../documents/src/pins.rs"]
+pub mod pins;
+use pins::NumberId as N;
+
 #[path = "common/checks.rs"]
 mod checks;
+
+fn fixture_quantities() {
+    assert_eq!(
+        pn_records::test_support::CORRUPTIONS.len(),
+        usize::try_from(N::NumbersRecordsDagCorruptionCount.integer()).unwrap()
+    );
+    assert_eq!(
+        pn_records::test_support::CORRUPTIONS
+            .iter()
+            .filter(|name| name.ends_with("-bound"))
+            .count(),
+        usize::try_from(N::NumbersRecordsDagOverBoundCount.integer()).unwrap()
+    );
+    let capacity = usize::try_from(N::NumbersRecordsDagWordCapacity.integer()).unwrap();
+    for (words, expected) in [
+        (vec![], N::NumbersRecordsDagProposalMinimum),
+        (vec![u64::MAX; capacity], N::NumbersRecordsDagProposalMaximum),
+        (vec![u64::MAX; capacity + 1], N::NumbersRecordsDagProposalMaximum),
+    ] {
+        let scenario = pn_records::test_support::generate(&words);
+        assert_eq!(
+            scenario.history.len(),
+            usize::try_from(N::NumbersRecordsDagHistoryCount.integer()).unwrap()
+        );
+        assert_eq!(scenario.proposals.len(), usize::try_from(expected.integer()).unwrap());
+        assert!(
+            scenario
+                .history
+                .iter()
+                .all(|act| act.finalization_epoch == N::NumbersRecordsDagHistoryEpoch.integer())
+        );
+        assert!(
+            scenario
+                .proposals
+                .iter()
+                .all(|act| act.finalization_epoch == N::NumbersRecordsDagProposalEpoch.integer())
+        );
+        assert_eq!(scenario.boundary.0, N::NumbersRecordsDagProposalEpoch.integer());
+    }
+}
 
 /// Claim: The declared conformance roster executes whole-act overlap and every typed corruption through the public surface, retaining a result per case and implementation rather than counting legs as acts.
 /// ´claim:acts:shared-conformance-preserves-whole-acts´
 /// ´test:integration:shared-cases´
 #[test]
 fn shared_cases() {
+    fixture_quantities();
+    let words = vec![u64::MAX; usize::try_from(N::NumbersRecordsDagWordCapacity.integer()).unwrap()];
     let mut cases: Vec<_> = pn_records::test_support::CORRUPTIONS
         .iter()
         .map(|name| pn_testkit::Case {
@@ -20,9 +66,9 @@ fn shared_cases() {
     let results = pn_testkit::run("records-records", "records-dag-1", &cases, &["pn-records-rust"], |_, name| {
         std::panic::catch_unwind(|| {
             if *name == "overlapping-closures" {
-                checks::closures(&[u64::MAX; 8]);
+                checks::closures(&words);
             } else {
-                checks::refusal(&[u64::MAX; 8], name);
+                checks::refusal(&words, name);
             }
         })
         .map_err(|payload| {
@@ -67,6 +113,10 @@ fn shared_cases() {
 /// ´test:integration:numeric-cases´
 #[test]
 fn numeric_cases() {
+    assert_eq!(
+        pn_records::test_support::NUMERIC_CASES.len(),
+        usize::try_from(N::NumbersRecordsNumericCaseCount.integer()).unwrap()
+    );
     let cases: Vec<_> = pn_records::test_support::NUMERIC_CASES
         .iter()
         .map(|(id, words)| pn_testkit::Case {
@@ -129,6 +179,14 @@ mod burn_checks;
 /// ´test:integration:burn-cases´
 #[test]
 fn burn_cases() {
+    assert_eq!(
+        pn_records::test_support::burn::CORRUPTIONS.len(),
+        usize::try_from(N::NumbersRecordsBurnCorruptionCount.integer()).unwrap()
+    );
+    assert_eq!(
+        pn_records::test_support::burn::generate(&[7]).history.markers.len(),
+        usize::try_from(N::NumbersRecordsBurnMarkerCount.integer()).unwrap()
+    );
     let cases: Vec<_> = pn_records::test_support::burn::CORRUPTIONS
         .iter()
         .copied()

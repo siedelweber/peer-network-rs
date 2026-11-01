@@ -1091,9 +1091,31 @@ pub enum NumberId {
     NumbersEpochSupportRefusedCount,
     /// Registry id: num:numbers:epoch-transport-empty-emission.
     NumbersEpochTransportEmptyEmission,
+    /// Registry id: num:numbers:records-dag-history-count.
+    NumbersRecordsDagHistoryCount,
+    /// Registry id: num:numbers:records-dag-history-epoch.
+    NumbersRecordsDagHistoryEpoch,
+    /// Registry id: num:numbers:records-dag-proposal-minimum.
+    NumbersRecordsDagProposalMinimum,
+    /// Registry id: num:numbers:records-dag-proposal-maximum.
+    NumbersRecordsDagProposalMaximum,
+    /// Registry id: num:numbers:records-dag-proposal-epoch.
+    NumbersRecordsDagProposalEpoch,
+    /// Registry id: num:numbers:records-dag-word-capacity.
+    NumbersRecordsDagWordCapacity,
+    /// Registry id: num:numbers:records-dag-corruption-count.
+    NumbersRecordsDagCorruptionCount,
+    /// Registry id: num:numbers:records-dag-over-bound-count.
+    NumbersRecordsDagOverBoundCount,
+    /// Registry id: num:numbers:records-numeric-case-count.
+    NumbersRecordsNumericCaseCount,
+    /// Registry id: num:numbers:records-burn-marker-count.
+    NumbersRecordsBurnMarkerCount,
+    /// Registry id: num:numbers:records-burn-corruption-count.
+    NumbersRecordsBurnCorruptionCount,
 }
 
-const OFFSETS: [(usize, usize); 544] = [
+const OFFSETS: [(usize, usize); 555] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -1638,6 +1660,17 @@ const OFFSETS: [(usize, usize); 544] = [
     (80871, 80872),
     (80999, 81000),
     (81130, 81131),
+    (81286, 81287),
+    (81412, 81413),
+    (81541, 81542),
+    (81670, 81672),
+    (81798, 81799),
+    (81924, 81925),
+    (82053, 82055),
+    (82183, 82184),
+    (82310, 82311),
+    (82436, 82437),
+    (82566, 82568),
 ];
 
 impl NumberId {

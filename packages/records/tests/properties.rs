@@ -1,3 +1,7 @@
+#[path = "../../documents/src/pins.rs"]
+pub mod pins;
+use pins::NumberId as N;
+
 #[path = "common/checks.rs"]
 mod checks;
 use pn_testkit::proptest::{self, prelude::*};
@@ -8,7 +12,7 @@ proptest! {
     /// ´claim:acts:generated-closures-match-independent-search´
     /// ´test:integration:closure-model´
     #[test]
-    fn closure_model(words in proptest::collection::vec(any::<u64>(), 0..9)) {
+    fn closure_model(words in proptest::collection::vec(any::<u64>(), 0..=usize::try_from(N::NumbersRecordsDagWordCapacity.integer()).unwrap())) {
         checks::closures(&words);
     }
 
@@ -16,7 +20,7 @@ proptest! {
     /// ´claim:acts:single-corruptions-retain-typed-causes´
     /// ´test:integration:typed-corruptions´
     #[test]
-    fn typed_corruptions(words in proptest::collection::vec(any::<u64>(), 0..9)) {
+    fn typed_corruptions(words in proptest::collection::vec(any::<u64>(), 0..=usize::try_from(N::NumbersRecordsDagWordCapacity.integer()).unwrap())) {
         for mutation in pn_records::test_support::CORRUPTIONS {
             checks::refusal(&words, mutation);
         }
