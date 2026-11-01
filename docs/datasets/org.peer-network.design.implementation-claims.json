@@ -164,7 +164,7 @@
       "requirements": [
         "conservation"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in exact sparse transport scope at bite 6; the dense oracle checks paired closed-cluster totals, retained diagonal and emission on the finite fixture; integrated compiled nonlinear conservation and unrestricted cases remain held",
       "suite": "numeric"
     },
     {
@@ -182,11 +182,11 @@
         "property"
       ],
       "name": "fence-residual-cases",
-      "owner": "pn-epoch",
+      "owner": "pn-graph",
       "requirements": [
         "certificate"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in pn-graph reference-fixture scope at bite 6; the two-map residual encloses the independently certified equilibrium and local inclusion corroborates it; unrestricted inputs and public certificate authentication remain held",
       "suite": "numeric"
     },
     {
@@ -207,7 +207,7 @@
       "requirements": [
         "rung-verdicts"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "minted in declared rung-refinement scope at bite 6; precision- and Work-limited straddles pass over to the anchor and interruption selects no rung; arbitrary deployment profiles remain held",
       "suite": "numeric"
     },
     {
@@ -408,7 +408,7 @@
         "certificate",
         "rung-verdicts"
       ],
-      "status": "minted in carrier scope at bite 2 (pn-records); graph comparisons held for pn-graph, bite 3; fence comparisons held for pn-epoch, bite 6",
+      "status": "existing pn-records rational-carrier mint remains unchanged; scoped nonlinear wall signs and rung straddles have separate graph and epoch claims; no universal nonlinear boundary claim is inferred",
       "suite": "numeric"
     },
     {
@@ -549,7 +549,7 @@
         "conservation",
         "certificate"
       ],
-      "status": "held; no test-site mint or execution yet",
+      "status": "held: compiler-only split fixtures do not establish matched certified standing responses, burn and act counterexamples, private-purpose annotation invariance or their negative probes",
       "suite": "numeric"
     }
   ]

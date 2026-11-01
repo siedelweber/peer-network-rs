@@ -210,8 +210,8 @@ fn verification_box() {
     }
 }
 
-/// Claim: The tagged reference wall and all five slack-free equilibrium intervals are contained by our exact enclosures; the fence and four active local root intervals intersect, with matching full-strength fence and inclusion verdicts. Both global contraction bounds are below one. Method-specific radii, local norms and iteration counts retain separate scopes without comparison.
-/// ´claim:numerics:reference-corpus-enclosures-agree´
+/// Claim: On the tagged reference fixture, the certified two-map residual enclosure contains every published slack-free equilibrium interval. The wall is contained, the fence and active local root intervals intersect, and computed full-strength fence and inclusion verdicts agree with the published verdicts. Both global contraction bounds are below one. Method-specific bounds retain separate scopes; this finite witness establishes neither arbitrary-input coverage nor certificate authentication.
+/// ´claim:certificate:certified-residuals-enclose-the-selected-solution´
 /// ´test:integration:verification-corpus´
 #[test]
 fn verification_corpus() {

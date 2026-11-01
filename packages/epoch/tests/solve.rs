@@ -784,7 +784,7 @@ fn sparse(rows: &[Vec<Fraction>]) -> pn_records::transport::Matrix<Fraction> {
 }
 
 /// Claim: Exact sparse transport agrees with an independent dense rational operator on noncommuting source-adjacent hops, applies emission once, retains zero-balance identity rows and conserves each closed cluster's paired sums and equal rates; malformed premises and finite cell exhaustion refuse without a mathematical verdict.
-/// ´claim:compiler:exact-transport-agrees-with-dense-rational-oracle´
+/// ´claim:transport:transport-preserves-balance-and-count-mass´
 /// ´test:integration:transport-oracle´
 #[test]
 fn transport_oracle() {
@@ -1396,7 +1396,7 @@ fn check_fence_replay(state: &pn_epoch::compiler::CompiledState, p: &Procedure, 
 }
 
 /// Claim: A rung's fixed precision sequence uses fresh stores and retains actual Work and original queries; a straddle at sequence exhaustion and a straddle stopped before the next unaffordable operation are INDECISIVE and passed over, while interruption supplies no selected rung. A private starting precision cannot replace the declared sequence or alter its choice.
-/// ´claim:compiler:rung-search-keeps-declared-stops-and-precision´
+/// ´claim:rungs:rung-selection-respects-certified-verdicts´
 /// ´test:integration:fence-refinement´
 #[test]
 fn fence_refinement() {

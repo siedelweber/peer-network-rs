@@ -1716,10 +1716,10 @@
     {
       "operation": "pn-epoch::solve::fence_refinement",
       "path": "packages/epoch/tests/solve.rs",
-      "claim": "EPOCH::claim:compiler:rung-search-keeps-declared-stops-and-precision",
+      "claim": "EPOCH::claim:rungs:rung-selection-respects-certified-verdicts",
       "before": "",
       "after": "Claim: A rung's fixed precision sequence uses fresh stores and retains actual Work and original queries; a straddle at sequence exhaustion and a straddle stopped before the next unaffordable operation are INDECISIVE and passed over, while interruption supplies no selected rung. A private starting precision cannot replace the declared sequence or alter its choice.",
-      "review": "An exact declared rung built from a preliminary coarse bracket straddles at precision four and is passed over after sequence exhaustion. Adding precision eight with one million remaining Work units retains the actual exhaustion before a multi-unit arithmetic charge and passes over with WorkLimit. Structural evidence validation checks both. Changing the starting-precision field cannot skip the sequence; full-payload publication rejects substitution, and deterministic interruption selects nothing."
+      "review": "An exact declared rung built from a preliminary coarse bracket straddles at precision four and is passed over after sequence exhaustion. Adding precision eight with one million remaining Work units retains the actual exhaustion before a multi-unit arithmetic charge and passes over with WorkLimit. Structural evidence validation checks both. Changing the starting-precision field cannot skip the sequence; full-payload publication rejects substitution, and deterministic interruption selects nothing. The existing test-site mint is promoted into its planned claim area without broadening the finite gloss or duplicating the execution."
     },
     {
       "operation": "pn-epoch::solve::fence_shapes",
@@ -1764,10 +1764,10 @@
     {
       "operation": "pn-epoch::solve::transport_oracle",
       "path": "packages/epoch/tests/solve.rs",
-      "claim": "EPOCH::claim:compiler:exact-transport-agrees-with-dense-rational-oracle",
+      "claim": "EPOCH::claim:transport:transport-preserves-balance-and-count-mass",
       "before": "",
       "after": "Claim: Exact sparse transport agrees with an independent dense rational operator on noncommuting source-adjacent hops, applies emission once, retains zero-balance identity rows and conserves each closed cluster's paired sums and equal rates; malformed premises and finite cell exhaustion refuse without a mathematical verdict.",
-      "review": "Compares sparse emitted transport with an independent dense rational operator on two noncommuting hops and proves reversing the hops changes the oracle. It checks one emission application, a zero-emission identity row, equal standing rates and paired sums in two closed clusters. Seven malformed-input controls refuse, as does a finite cell limit of one. Export ceilings, empty domains and irrational holds are not exercised here."
+      "review": "Compares sparse emitted transport with an independent dense rational operator on two noncommuting hops and proves reversing the hops changes the oracle. It checks one emission application, a zero-emission identity row, equal standing rates and paired sums in two closed clusters. Seven malformed-input controls refuse, as does a finite cell limit of one. Export ceilings, empty domains and irrational holds are not exercised here. The existing test-site mint is promoted into its planned claim area without broadening the finite gloss or duplicating the execution."
     },
     {
       "operation": "pn-epoch::solve::two_map_box",
@@ -2284,10 +2284,10 @@
     {
       "operation": "pn-graph::numeric::verification_corpus",
       "path": "packages/graph/tests/numeric.rs",
-      "claim": "GRAPH::claim:numerics:reference-corpus-enclosures-agree",
+      "claim": "GRAPH::claim:certificate:certified-residuals-enclose-the-selected-solution",
       "before": "",
-      "after": "Claim: The tagged reference wall and all five slack-free equilibrium intervals are contained by our exact enclosures; the fence and four active local root intervals intersect, with matching full-strength fence and inclusion verdicts. Both global contraction bounds are below one. Method-specific radii, local norms and iteration counts retain separate scopes without comparison.",
-      "review": "The paper own build at network-v0.31.1 supplies exact transcribed rational figures. Five unsorted Actor equilibrium intervals, stripped of display comparison slack by using the first image and exact radius, are contained by our two-map intervals. Wall containment, conservative fence intersection, four active local-root intersections and matching verdicts are asserted. The two global bounds are below one; the method-specific bounds have separate centres, boxes and preconditioners and carry no ordering claim."
+      "after": "Claim: On the tagged reference fixture, the certified two-map residual enclosure contains every published slack-free equilibrium interval. The wall is contained, the fence and active local root intervals intersect, and computed full-strength fence and inclusion verdicts agree with the published verdicts. Both global contraction bounds are below one. Method-specific bounds retain separate scopes; this finite witness establishes neither arbitrary-input coverage nor certificate authentication.",
+      "review": "The planned certificate claim is minted at the existing graph corpus site, where the two-map residual and tagged independent equilibrium intervals are actually compared. Typed strict-fence and Included comparisons, supports, exact counts, affine rates, hulls and width additionally bind the finite reference declaration. No arbitrary-input or authentication claim follows."
     },
     {
       "operation": "pn-graph::numeric::verification_local",

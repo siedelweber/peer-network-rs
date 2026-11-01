@@ -344,3 +344,24 @@ area = "numerics"
 stake = "A primitive adapter that changes the original question, loses checked bounds or treats resource exhaustion as a verdict can falsely certify a numerical boundary."
 register = "GRAPH::sec:numerics:area-numerics"
 contract = "GRAPH::def:numerics:primitive-adapter"
+
+[[rows]]
+owner = "EPOCH"
+area = "transport"
+stake = "Losing source-adjacent order or applying emission more than once can destroy conserved balance and count mass."
+register = "EPOCH::sec:transport:area-transport"
+contract = "EPOCH::amend:compiler:exact-anchor-evidence"
+
+[[rows]]
+owner = "EPOCH"
+area = "rungs"
+stake = "Treating an unresolved comparison or operational interruption as a passing fence can select an uncertified rung."
+register = "EPOCH::sec:rungs:area-rungs"
+contract = "EPOCH::amend:compiler:fence-evidence"
+
+[[rows]]
+owner = "GRAPH"
+area = "certificate"
+stake = "A residual radius detached from its centre, map or contraction can falsely enclose the selected equilibrium."
+register = "GRAPH::sec:certificate:area-certificate"
+contract = "GRAPH::sec:certificate:area-certificate"

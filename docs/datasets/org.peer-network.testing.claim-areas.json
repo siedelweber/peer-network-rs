@@ -348,6 +348,27 @@
       "owner": "GRAPH",
       "register": "GRAPH::sec:numerics:area-numerics",
       "stake": "A primitive adapter that changes the original question, loses checked bounds or treats resource exhaustion as a verdict can falsely certify a numerical boundary."
+    },
+    {
+      "area": "transport",
+      "contract": "EPOCH::amend:compiler:exact-anchor-evidence",
+      "owner": "EPOCH",
+      "register": "EPOCH::sec:transport:area-transport",
+      "stake": "Losing source-adjacent order or applying emission more than once can destroy conserved balance and count mass."
+    },
+    {
+      "area": "rungs",
+      "contract": "EPOCH::amend:compiler:fence-evidence",
+      "owner": "EPOCH",
+      "register": "EPOCH::sec:rungs:area-rungs",
+      "stake": "Treating an unresolved comparison or operational interruption as a passing fence can select an uncertified rung."
+    },
+    {
+      "area": "certificate",
+      "contract": "GRAPH::sec:certificate:area-certificate",
+      "owner": "GRAPH",
+      "register": "GRAPH::sec:certificate:area-certificate",
+      "stake": "A residual radius detached from its centre, map or contraction can falsely enclose the selected equilibrium."
     }
   ]
 }
