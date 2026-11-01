@@ -457,5 +457,21 @@ name = "calibrated-reference-wall-work-case"
 category = "case"
 budget_ms = 5500
 scope = "one pn-graph::numeric::reference_wall_work case"
-reason = "The stopping-width family retains cumulative cold Work pins and all adjacent success/refusal boundaries; sharing completed inversions would invalidate those measurements."
+reason = "The stopping-width family takes each successful record from its exact Work cap and retains the adjacent refusal, bisection and per-query pins; each distinct width still runs independently."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-epoch-numeric-suite"
+category = "suite"
+budget_ms = 60000
+scope = "complete planned-numeric suite"
+reason = "Serial compiled histories, certified solves, independent replays, strict lower controls and exact Work boundaries retain the complete registered mechanism roster; the allowance includes runner overhead and headroom above the measured serial cost."
+numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }
+
+[[rows]]
+name = "calibrated-graph-numeric-suite"
+category = "suite"
+budget_ms = 15000
+scope = "complete pn-graph::numeric suite"
+reason = "The remaining scalar, activation, clamp and replay controls retain cold resource boundaries; tagged full-production inverse-wall cases execute separately in the reference tier. The allowance includes serial runner overhead and measured headroom."
 numeric_display = { budget_ms = { display = "exact", exact_digits = 32 } }

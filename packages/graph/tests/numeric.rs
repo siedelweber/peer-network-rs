@@ -481,6 +481,7 @@ fn reference_wall_work() {
     ] {
         let mut input = wall_input();
         input.stopping_width = width.into();
+        input.maximum_work = work;
         let record = pn_graph::numeric::wall::evaluate(&p, &input).unwrap();
         assert_eq!(record.work, work);
         assert_eq!(record.bisections, count);
@@ -490,11 +491,9 @@ fn reference_wall_work() {
         );
         assert!(record.steps.iter().all(|s| s.primitive.precision == 8));
         assert_eq!(record.bisection_work, bisections[..record.bisection_work.len()]);
-        for (cap, succeeds) in [(work - 1, false), (work, true)] {
-            input.maximum_work = cap;
-            let result = pn_graph::numeric::wall::evaluate(&p, &input);
-            assert_eq!(result.is_ok(), succeeds, "{width} cap={cap}: {result:?}");
-        }
+        input.maximum_work = work - 1;
+        let result = pn_graph::numeric::wall::evaluate(&p, &input);
+        assert!(result.is_err(), "{width} cap={}: {result:?}", work - 1);
         if count == 6 {
             assert_eq!(record.target, Some(range("1/2", "65/128")));
         }

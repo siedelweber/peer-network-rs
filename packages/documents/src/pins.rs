@@ -1771,9 +1771,21 @@ pub enum NumberId {
     NumbersBurnSwitchFloorCpuSeconds,
     /// Registry id: num:numbers:calibration-fixture-resource-events.
     NumbersCalibrationFixtureResourceEvents,
+    /// Registry id: num:numbers:calibration-epoch-numeric-suite-wall-seconds.
+    NumbersCalibrationEpochNumericSuiteWallSeconds,
+    /// Registry id: num:numbers:calibration-epoch-numeric-suite-cpu-seconds.
+    NumbersCalibrationEpochNumericSuiteCpuSeconds,
+    /// Registry id: num:numbers:calibration-graph-numeric-suite-wall-seconds.
+    NumbersCalibrationGraphNumericSuiteWallSeconds,
+    /// Registry id: num:numbers:calibration-graph-numeric-suite-cpu-seconds.
+    NumbersCalibrationGraphNumericSuiteCpuSeconds,
+    /// Registry id: num:numbers:calibration-records-properties-suite-wall-seconds.
+    NumbersCalibrationRecordsPropertiesSuiteWallSeconds,
+    /// Registry id: num:numbers:calibration-records-properties-suite-cpu-seconds.
+    NumbersCalibrationRecordsPropertiesSuiteCpuSeconds,
 }
 
-const OFFSETS: [(usize, usize); 884] = [
+const OFFSETS: [(usize, usize); 890] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2658,6 +2670,12 @@ const OFFSETS: [(usize, usize); 884] = [
     (136_827, 136_835),
     (136_958, 136_966),
     (137_133, 137_134),
+    (137_352, 137_361),
+    (137_498, 137_507),
+    (137_645, 137_654),
+    (137_791, 137_799),
+    (137_942, 137_950),
+    (138_092, 138_100),
 ];
 
 impl NumberId {

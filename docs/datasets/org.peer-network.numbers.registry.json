@@ -11401,6 +11401,84 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "7"
+    },
+    {
+      "display": "exact",
+      "exact": "45.085 418",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-epoch-numeric-suite-wall-seconds",
+      "num": "45.085 418",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "45.085418"
+    },
+    {
+      "display": "exact",
+      "exact": "44.204 498",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-epoch-numeric-suite-cpu-seconds",
+      "num": "44.204 498",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "44.204498"
+    },
+    {
+      "display": "exact",
+      "exact": "11.206 342",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-graph-numeric-suite-wall-seconds",
+      "num": "11.206 342",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "11.206342"
+    },
+    {
+      "display": "exact",
+      "exact": "9.195 566",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-graph-numeric-suite-cpu-seconds",
+      "num": "9.195 566",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "9.195566"
+    },
+    {
+      "display": "exact",
+      "exact": "2.686 175",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-records-properties-suite-wall-seconds",
+      "num": "2.686 175",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "2.686175"
+    },
+    {
+      "display": "exact",
+      "exact": "2.226 368",
+      "exact_digits": 24,
+      "exact_exact": true,
+      "exact_relation": "=",
+      "id": "num:numbers:calibration-records-properties-suite-cpu-seconds",
+      "num": "2.226 368",
+      "num_exact": true,
+      "num_relation": "=",
+      "unit": "seconds",
+      "value": "2.226368"
     }
   ]
 }

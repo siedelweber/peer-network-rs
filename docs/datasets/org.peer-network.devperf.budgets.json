@@ -1382,8 +1382,54 @@
           "exact_digits": 32
         }
       },
-      "reason": "The stopping-width family retains cumulative cold Work pins and all adjacent success/refusal boundaries; sharing completed inversions would invalidate those measurements.",
+      "reason": "The stopping-width family takes each successful record from its exact Work cap and retains the adjacent refusal, bisection and per-query pins; each distinct width still runs independently.",
       "scope": "one pn-graph::numeric::reference_wall_work case"
+    },
+    {
+      "budget_ms": 60000,
+      "category": "suite",
+      "name": "calibrated-epoch-numeric-suite",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "60 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "60 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "Serial compiled histories, certified solves, independent replays, strict lower controls and exact Work boundaries retain the complete registered mechanism roster; the allowance includes runner overhead and headroom above the measured serial cost.",
+      "scope": "complete planned-numeric suite"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "suite",
+      "name": "calibrated-graph-numeric-suite",
+      "number_forms": {
+        "budget_ms": {
+          "exact": "15 000",
+          "exact_exact": true,
+          "exact_relation": "=",
+          "num": "15 000",
+          "num_exact": true,
+          "num_relation": "="
+        }
+      },
+      "numeric_display": {
+        "budget_ms": {
+          "display": "exact",
+          "exact_digits": 32
+        }
+      },
+      "reason": "The remaining scalar, activation, clamp and replay controls retain cold resource boundaries; tagged full-production inverse-wall cases execute separately in the reference tier. The allowance includes serial runner overhead and measured headroom.",
+      "scope": "complete pn-graph::numeric suite"
     }
   ]
 }

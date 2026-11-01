@@ -6428,3 +6428,47 @@ value = "7"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
+
+# Serial suite calibration, after separating the tagged wall controller.
+
+[[rows]]
+id = "num:numbers:calibration-epoch-numeric-suite-wall-seconds"
+value = "45.085418"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-epoch-numeric-suite-cpu-seconds"
+value = "44.204498"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-graph-numeric-suite-wall-seconds"
+value = "11.206342"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-graph-numeric-suite-cpu-seconds"
+value = "9.195566"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-records-properties-suite-wall-seconds"
+value = "2.686175"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:calibration-records-properties-suite-cpu-seconds"
+value = "2.226368"
+unit = "seconds"
+display = "exact"
+exact_digits = 24
