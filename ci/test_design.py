@@ -84,7 +84,7 @@ class Correspondence(unittest.TestCase):
             self.assertIn('numeric registry:', result.stderr)
         path.write_text(json.dumps(original))
         source = self.root / 'docs/inputs/numbers.toml'
-        sample = next(row['value'] for row in original['rows'] if row['id'] == 'num:numbers:solve-work-rate-value-2')
+        sample = next(row['value'] for row in original['rows'] if row['id'] == 'num:numbers:rate-fast-sample-seconds')
         source.write_text(source.read_text().replace('value = '+json.dumps(sample), 'value = "1"'))
         result = self.check()
         self.assertNotEqual(result.returncode, 0)

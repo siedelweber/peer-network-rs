@@ -3,825 +3,1083 @@
 /// A declared numeric pin; removing an id removes its variant.
 #[derive(Clone, Copy, Debug)]
 pub enum NumberId {
-    /// Registry id: num:numbers:refinement-value-1.
-    NumbersRefinementValue1,
-    /// Registry id: num:numbers:refinement-value-2.
-    NumbersRefinementValue2,
-    /// Registry id: num:numbers:provisional-carriage-bounds-value-1.
-    NumbersProvisionalCarriageBoundsValue1,
-    /// Registry id: num:numbers:recognition-value-1.
-    NumbersRecognitionValue1,
-    /// Registry id: num:numbers:affinity-formation-scope-value-1.
-    NumbersAffinityFormationScopeValue1,
-    /// Registry id: num:numbers:affinity-formation-scope-value-2.
-    NumbersAffinityFormationScopeValue2,
-    /// Registry id: num:numbers:affinity-formation-scope-value-3.
-    NumbersAffinityFormationScopeValue3,
-    /// Registry id: num:numbers:affinity-formation-scope-value-4.
-    NumbersAffinityFormationScopeValue4,
-    /// Registry id: num:numbers:publish-formation-scope-value-1.
-    NumbersPublishFormationScopeValue1,
-    /// Registry id: num:numbers:participant-formation-scope-value-1.
-    NumbersParticipantFormationScopeValue1,
-    /// Registry id: num:numbers:bite-four-close-value-1.
-    NumbersBiteFourCloseValue1,
-    /// Registry id: num:numbers:bite-five-close-value-1.
-    NumbersBiteFiveCloseValue1,
-    /// Registry id: num:numbers:bite-five-close-value-2.
-    NumbersBiteFiveCloseValue2,
-    /// Registry id: num:numbers:reference-wall-value-1.
-    NumbersReferenceWallValue1,
-    /// Registry id: num:numbers:reference-wall-branches-value-1.
-    NumbersReferenceWallBranchesValue1,
-    /// Registry id: num:numbers:reference-wall-branches-value-2.
-    NumbersReferenceWallBranchesValue2,
-    /// Registry id: num:numbers:reference-wall-branches-value-3.
-    NumbersReferenceWallBranchesValue3,
-    /// Registry id: num:numbers:reference-wall-branches-value-4.
-    NumbersReferenceWallBranchesValue4,
-    /// Registry id: num:numbers:reference-wall-branches-value-5.
-    NumbersReferenceWallBranchesValue5,
-    /// Registry id: num:numbers:reference-wall-branches-value-6.
-    NumbersReferenceWallBranchesValue6,
-    /// Registry id: num:numbers:reference-wall-branches-value-7.
-    NumbersReferenceWallBranchesValue7,
-    /// Registry id: num:numbers:reference-wall-measurements-value-1.
-    NumbersReferenceWallMeasurementsValue1,
-    /// Registry id: num:numbers:reference-wall-measurements-value-2.
-    NumbersReferenceWallMeasurementsValue2,
-    /// Registry id: num:numbers:reference-wall-measurements-value-3.
-    NumbersReferenceWallMeasurementsValue3,
-    /// Registry id: num:numbers:reference-wall-measurements-value-4.
-    NumbersReferenceWallMeasurementsValue4,
-    /// Registry id: num:numbers:reference-wall-measurements-value-5.
-    NumbersReferenceWallMeasurementsValue5,
-    /// Registry id: num:numbers:reference-wall-measurements-value-6.
-    NumbersReferenceWallMeasurementsValue6,
-    /// Registry id: num:numbers:reference-wall-measurements-value-7.
-    NumbersReferenceWallMeasurementsValue7,
-    /// Registry id: num:numbers:reference-wall-measurements-value-8.
-    NumbersReferenceWallMeasurementsValue8,
-    /// Registry id: num:numbers:reference-wall-measurements-value-9.
-    NumbersReferenceWallMeasurementsValue9,
-    /// Registry id: num:numbers:reference-wall-measurements-value-10.
-    NumbersReferenceWallMeasurementsValue10,
-    /// Registry id: num:numbers:reference-wall-measurements-value-11.
-    NumbersReferenceWallMeasurementsValue11,
-    /// Registry id: num:numbers:reference-wall-measurements-value-12.
-    NumbersReferenceWallMeasurementsValue12,
-    /// Registry id: num:numbers:reference-wall-measurements-value-13.
-    NumbersReferenceWallMeasurementsValue13,
-    /// Registry id: num:numbers:reference-wall-measurements-value-14.
-    NumbersReferenceWallMeasurementsValue14,
-    /// Registry id: num:numbers:reference-wall-measurements-value-15.
-    NumbersReferenceWallMeasurementsValue15,
-    /// Registry id: num:numbers:reference-wall-measurements-value-16.
-    NumbersReferenceWallMeasurementsValue16,
-    /// Registry id: num:numbers:reference-wall-measurements-value-17.
-    NumbersReferenceWallMeasurementsValue17,
-    /// Registry id: num:numbers:reference-wall-measurements-value-18.
-    NumbersReferenceWallMeasurementsValue18,
-    /// Registry id: num:numbers:reference-wall-measurements-value-19.
-    NumbersReferenceWallMeasurementsValue19,
-    /// Registry id: num:numbers:reference-wall-measurements-value-20.
-    NumbersReferenceWallMeasurementsValue20,
-    /// Registry id: num:numbers:reference-wall-measurements-value-21.
-    NumbersReferenceWallMeasurementsValue21,
-    /// Registry id: num:numbers:reference-wall-measurements-value-22.
-    NumbersReferenceWallMeasurementsValue22,
-    /// Registry id: num:numbers:reference-wall-measurements-value-23.
-    NumbersReferenceWallMeasurementsValue23,
-    /// Registry id: num:numbers:reference-wall-measurements-value-24.
-    NumbersReferenceWallMeasurementsValue24,
-    /// Registry id: num:numbers:reference-wall-measurements-value-25.
-    NumbersReferenceWallMeasurementsValue25,
-    /// Registry id: num:numbers:reference-wall-measurements-value-26.
-    NumbersReferenceWallMeasurementsValue26,
-    /// Registry id: num:numbers:reference-wall-measurements-value-27.
-    NumbersReferenceWallMeasurementsValue27,
-    /// Registry id: num:numbers:reference-wall-measurements-value-28.
-    NumbersReferenceWallMeasurementsValue28,
-    /// Registry id: num:numbers:reference-wall-measurements-value-29.
-    NumbersReferenceWallMeasurementsValue29,
-    /// Registry id: num:numbers:reference-wall-measurements-value-30.
-    NumbersReferenceWallMeasurementsValue30,
-    /// Registry id: num:numbers:reference-wall-measurements-value-31.
-    NumbersReferenceWallMeasurementsValue31,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-1.
-    NumbersEnclosedWallMeasurementsValue1,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-2.
-    NumbersEnclosedWallMeasurementsValue2,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-3.
-    NumbersEnclosedWallMeasurementsValue3,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-4.
-    NumbersEnclosedWallMeasurementsValue4,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-5.
-    NumbersEnclosedWallMeasurementsValue5,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-6.
-    NumbersEnclosedWallMeasurementsValue6,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-7.
-    NumbersEnclosedWallMeasurementsValue7,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-8.
-    NumbersEnclosedWallMeasurementsValue8,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-9.
-    NumbersEnclosedWallMeasurementsValue9,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-10.
-    NumbersEnclosedWallMeasurementsValue10,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-11.
-    NumbersEnclosedWallMeasurementsValue11,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-12.
-    NumbersEnclosedWallMeasurementsValue12,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-13.
-    NumbersEnclosedWallMeasurementsValue13,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-14.
-    NumbersEnclosedWallMeasurementsValue14,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-15.
-    NumbersEnclosedWallMeasurementsValue15,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-16.
-    NumbersEnclosedWallMeasurementsValue16,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-17.
-    NumbersEnclosedWallMeasurementsValue17,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-18.
-    NumbersEnclosedWallMeasurementsValue18,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-19.
-    NumbersEnclosedWallMeasurementsValue19,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-20.
-    NumbersEnclosedWallMeasurementsValue20,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-21.
-    NumbersEnclosedWallMeasurementsValue21,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-22.
-    NumbersEnclosedWallMeasurementsValue22,
-    /// Registry id: num:numbers:enclosed-wall-measurements-value-23.
-    NumbersEnclosedWallMeasurementsValue23,
-    /// Registry id: num:numbers:two-map-measurements-value-1.
-    NumbersTwoMapMeasurementsValue1,
-    /// Registry id: num:numbers:two-map-measurements-value-2.
-    NumbersTwoMapMeasurementsValue2,
-    /// Registry id: num:numbers:two-map-measurements-value-3.
-    NumbersTwoMapMeasurementsValue3,
-    /// Registry id: num:numbers:two-map-measurements-value-4.
-    NumbersTwoMapMeasurementsValue4,
-    /// Registry id: num:numbers:two-map-measurements-value-5.
-    NumbersTwoMapMeasurementsValue5,
-    /// Registry id: num:numbers:two-map-measurements-value-6.
-    NumbersTwoMapMeasurementsValue6,
-    /// Registry id: num:numbers:two-map-measurements-value-7.
-    NumbersTwoMapMeasurementsValue7,
-    /// Registry id: num:numbers:two-map-measurements-value-8.
-    NumbersTwoMapMeasurementsValue8,
-    /// Registry id: num:numbers:two-map-measurements-value-9.
-    NumbersTwoMapMeasurementsValue9,
-    /// Registry id: num:numbers:two-map-measurements-value-10.
-    NumbersTwoMapMeasurementsValue10,
-    /// Registry id: num:numbers:two-map-measurements-value-11.
-    NumbersTwoMapMeasurementsValue11,
-    /// Registry id: num:numbers:two-map-measurements-value-12.
-    NumbersTwoMapMeasurementsValue12,
-    /// Registry id: num:numbers:two-map-measurements-value-13.
-    NumbersTwoMapMeasurementsValue13,
-    /// Registry id: num:numbers:two-map-measurements-value-14.
-    NumbersTwoMapMeasurementsValue14,
-    /// Registry id: num:numbers:two-map-measurements-value-15.
-    NumbersTwoMapMeasurementsValue15,
-    /// Registry id: num:numbers:two-map-measurements-value-16.
-    NumbersTwoMapMeasurementsValue16,
-    /// Registry id: num:numbers:two-map-measurements-value-17.
-    NumbersTwoMapMeasurementsValue17,
-    /// Registry id: num:numbers:two-map-measurements-value-18.
-    NumbersTwoMapMeasurementsValue18,
-    /// Registry id: num:numbers:two-map-measurements-value-19.
-    NumbersTwoMapMeasurementsValue19,
-    /// Registry id: num:numbers:two-map-measurements-value-20.
-    NumbersTwoMapMeasurementsValue20,
-    /// Registry id: num:numbers:two-map-measurements-value-21.
-    NumbersTwoMapMeasurementsValue21,
-    /// Registry id: num:numbers:local-measurements-value-1.
-    NumbersLocalMeasurementsValue1,
-    /// Registry id: num:numbers:local-measurements-value-2.
-    NumbersLocalMeasurementsValue2,
-    /// Registry id: num:numbers:local-measurements-value-3.
-    NumbersLocalMeasurementsValue3,
-    /// Registry id: num:numbers:local-measurements-value-4.
-    NumbersLocalMeasurementsValue4,
-    /// Registry id: num:numbers:local-measurements-value-5.
-    NumbersLocalMeasurementsValue5,
-    /// Registry id: num:numbers:pending-reference-corpus-value-1.
-    NumbersPendingReferenceCorpusValue1,
-    /// Registry id: num:numbers:pending-reference-corpus-value-2.
-    NumbersPendingReferenceCorpusValue2,
-    /// Registry id: num:numbers:pending-reference-corpus-value-3.
-    NumbersPendingReferenceCorpusValue3,
-    /// Registry id: num:numbers:bite-six-costs-value-1.
-    NumbersBiteSixCostsValue1,
-    /// Registry id: num:numbers:bite-six-costs-value-2.
-    NumbersBiteSixCostsValue2,
-    /// Registry id: num:numbers:bite-six-costs-value-3.
-    NumbersBiteSixCostsValue3,
-    /// Registry id: num:numbers:bite-six-costs-value-4.
-    NumbersBiteSixCostsValue4,
-    /// Registry id: num:numbers:bite-six-costs-value-5.
-    NumbersBiteSixCostsValue5,
-    /// Registry id: num:numbers:bite-six-costs-value-6.
-    NumbersBiteSixCostsValue6,
-    /// Registry id: num:numbers:bite-six-costs-value-7.
-    NumbersBiteSixCostsValue7,
-    /// Registry id: num:numbers:solve-cost-measurements-value-1.
-    NumbersSolveCostMeasurementsValue1,
-    /// Registry id: num:numbers:solve-cost-measurements-value-2.
-    NumbersSolveCostMeasurementsValue2,
-    /// Registry id: num:numbers:solve-cost-measurements-value-3.
-    NumbersSolveCostMeasurementsValue3,
-    /// Registry id: num:numbers:solve-cost-measurements-value-4.
-    NumbersSolveCostMeasurementsValue4,
-    /// Registry id: num:numbers:solve-cost-measurements-value-5.
-    NumbersSolveCostMeasurementsValue5,
-    /// Registry id: num:numbers:solve-cost-measurements-value-6.
-    NumbersSolveCostMeasurementsValue6,
-    /// Registry id: num:numbers:solve-cost-measurements-value-7.
-    NumbersSolveCostMeasurementsValue7,
-    /// Registry id: num:numbers:solve-cost-measurements-value-8.
-    NumbersSolveCostMeasurementsValue8,
-    /// Registry id: num:numbers:solve-cost-measurements-value-9.
-    NumbersSolveCostMeasurementsValue9,
-    /// Registry id: num:numbers:solve-cost-measurements-value-10.
-    NumbersSolveCostMeasurementsValue10,
-    /// Registry id: num:numbers:solve-cost-measurements-value-11.
-    NumbersSolveCostMeasurementsValue11,
-    /// Registry id: num:numbers:solve-cost-measurements-value-12.
-    NumbersSolveCostMeasurementsValue12,
-    /// Registry id: num:numbers:solve-cost-measurements-value-13.
-    NumbersSolveCostMeasurementsValue13,
-    /// Registry id: num:numbers:solve-cost-measurements-value-14.
-    NumbersSolveCostMeasurementsValue14,
-    /// Registry id: num:numbers:solve-cost-measurements-value-15.
-    NumbersSolveCostMeasurementsValue15,
-    /// Registry id: num:numbers:solve-cost-measurements-value-16.
-    NumbersSolveCostMeasurementsValue16,
-    /// Registry id: num:numbers:solve-cost-measurements-value-17.
-    NumbersSolveCostMeasurementsValue17,
-    /// Registry id: num:numbers:solve-cost-measurements-value-18.
-    NumbersSolveCostMeasurementsValue18,
-    /// Registry id: num:numbers:solve-cost-measurements-value-19.
-    NumbersSolveCostMeasurementsValue19,
-    /// Registry id: num:numbers:solve-cost-measurements-value-20.
-    NumbersSolveCostMeasurementsValue20,
-    /// Registry id: num:numbers:solve-cost-measurements-value-21.
-    NumbersSolveCostMeasurementsValue21,
-    /// Registry id: num:numbers:solve-cost-measurements-value-22.
-    NumbersSolveCostMeasurementsValue22,
-    /// Registry id: num:numbers:solve-cost-measurements-value-23.
-    NumbersSolveCostMeasurementsValue23,
-    /// Registry id: num:numbers:solve-cost-measurements-value-24.
-    NumbersSolveCostMeasurementsValue24,
-    /// Registry id: num:numbers:solve-cost-measurements-value-25.
-    NumbersSolveCostMeasurementsValue25,
-    /// Registry id: num:numbers:solve-cost-measurements-value-26.
-    NumbersSolveCostMeasurementsValue26,
-    /// Registry id: num:numbers:solve-cost-measurements-value-27.
-    NumbersSolveCostMeasurementsValue27,
-    /// Registry id: num:numbers:solve-work-rate-value-1.
-    NumbersSolveWorkRateValue1,
-    /// Registry id: num:numbers:solve-work-rate-value-2.
-    NumbersSolveWorkRateValue2,
-    /// Registry id: num:numbers:solve-work-rate-value-3.
-    NumbersSolveWorkRateValue3,
-    /// Registry id: num:numbers:solve-work-rate-value-4.
-    NumbersSolveWorkRateValue4,
-    /// Registry id: num:numbers:solve-work-rate-value-5.
-    NumbersSolveWorkRateValue5,
-    /// Registry id: num:numbers:solve-work-rate-value-6.
-    NumbersSolveWorkRateValue6,
-    /// Registry id: num:numbers:solve-work-rate-value-7.
-    NumbersSolveWorkRateValue7,
-    /// Registry id: num:numbers:solve-work-rate-value-8.
-    NumbersSolveWorkRateValue8,
-    /// Registry id: num:numbers:solve-work-rate-value-9.
-    NumbersSolveWorkRateValue9,
-    /// Registry id: num:numbers:solve-work-rate-value-10.
-    NumbersSolveWorkRateValue10,
-    /// Registry id: num:numbers:solve-work-rate-value-11.
-    NumbersSolveWorkRateValue11,
-    /// Registry id: num:numbers:solve-work-rate-value-12.
-    NumbersSolveWorkRateValue12,
-    /// Registry id: num:numbers:solve-work-rate-value-13.
-    NumbersSolveWorkRateValue13,
-    /// Registry id: num:numbers:solve-work-rate-value-14.
-    NumbersSolveWorkRateValue14,
-    /// Registry id: num:numbers:solve-work-rate-value-15.
-    NumbersSolveWorkRateValue15,
-    /// Registry id: num:numbers:solve-work-rate-value-16.
-    NumbersSolveWorkRateValue16,
-    /// Registry id: num:numbers:solve-work-rate-value-17.
-    NumbersSolveWorkRateValue17,
-    /// Registry id: num:numbers:solve-work-rate-value-18.
-    NumbersSolveWorkRateValue18,
-    /// Registry id: num:numbers:solve-work-rate-value-19.
-    NumbersSolveWorkRateValue19,
-    /// Registry id: num:numbers:solve-work-rate-value-20.
-    NumbersSolveWorkRateValue20,
-    /// Registry id: num:numbers:solve-work-rate-value-21.
-    NumbersSolveWorkRateValue21,
-    /// Registry id: num:numbers:solve-work-rate-value-22.
-    NumbersSolveWorkRateValue22,
-    /// Registry id: num:numbers:solve-work-rate-value-23.
-    NumbersSolveWorkRateValue23,
-    /// Registry id: num:numbers:solve-work-rate-value-24.
-    NumbersSolveWorkRateValue24,
-    /// Registry id: num:numbers:solve-work-rate-value-25.
-    NumbersSolveWorkRateValue25,
-    /// Registry id: num:numbers:activation-evaluation-policy-value-1.
-    NumbersActivationEvaluationPolicyValue1,
-    /// Registry id: num:numbers:activation-evaluation-policy-value-2.
-    NumbersActivationEvaluationPolicyValue2,
-    /// Registry id: num:numbers:activation-evaluation-policy-value-3.
-    NumbersActivationEvaluationPolicyValue3,
-    /// Registry id: num:numbers:activation-evaluation-policy-value-4.
-    NumbersActivationEvaluationPolicyValue4,
-    /// Registry id: num:numbers:activation-evaluation-policy-value-5.
-    NumbersActivationEvaluationPolicyValue5,
-    /// Registry id: num:numbers:activation-evaluation-policy-value-6.
-    NumbersActivationEvaluationPolicyValue6,
-    /// Registry id: num:numbers:bite-six-conserved-solve-value-1.
-    NumbersBiteSixConservedSolveValue1,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-1.
-    NumbersBiteSixSolveMeasurementsValue1,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-2.
-    NumbersBiteSixSolveMeasurementsValue2,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-3.
-    NumbersBiteSixSolveMeasurementsValue3,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-4.
-    NumbersBiteSixSolveMeasurementsValue4,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-5.
-    NumbersBiteSixSolveMeasurementsValue5,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-6.
-    NumbersBiteSixSolveMeasurementsValue6,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-7.
-    NumbersBiteSixSolveMeasurementsValue7,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-8.
-    NumbersBiteSixSolveMeasurementsValue8,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-9.
-    NumbersBiteSixSolveMeasurementsValue9,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-10.
-    NumbersBiteSixSolveMeasurementsValue10,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-11.
-    NumbersBiteSixSolveMeasurementsValue11,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-12.
-    NumbersBiteSixSolveMeasurementsValue12,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-13.
-    NumbersBiteSixSolveMeasurementsValue13,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-14.
-    NumbersBiteSixSolveMeasurementsValue14,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-15.
-    NumbersBiteSixSolveMeasurementsValue15,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-16.
-    NumbersBiteSixSolveMeasurementsValue16,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-17.
-    NumbersBiteSixSolveMeasurementsValue17,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-18.
-    NumbersBiteSixSolveMeasurementsValue18,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-19.
-    NumbersBiteSixSolveMeasurementsValue19,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-20.
-    NumbersBiteSixSolveMeasurementsValue20,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-21.
-    NumbersBiteSixSolveMeasurementsValue21,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-22.
-    NumbersBiteSixSolveMeasurementsValue22,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-23.
-    NumbersBiteSixSolveMeasurementsValue23,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-24.
-    NumbersBiteSixSolveMeasurementsValue24,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-25.
-    NumbersBiteSixSolveMeasurementsValue25,
-    /// Registry id: num:numbers:bite-six-solve-measurements-value-26.
-    NumbersBiteSixSolveMeasurementsValue26,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-1.
-    NumbersConservedSolveCostScopeValue1,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-2.
-    NumbersConservedSolveCostScopeValue2,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-3.
-    NumbersConservedSolveCostScopeValue3,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-4.
-    NumbersConservedSolveCostScopeValue4,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-5.
-    NumbersConservedSolveCostScopeValue5,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-6.
-    NumbersConservedSolveCostScopeValue6,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-7.
-    NumbersConservedSolveCostScopeValue7,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-8.
-    NumbersConservedSolveCostScopeValue8,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-9.
-    NumbersConservedSolveCostScopeValue9,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-10.
-    NumbersConservedSolveCostScopeValue10,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-11.
-    NumbersConservedSolveCostScopeValue11,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-12.
-    NumbersConservedSolveCostScopeValue12,
-    /// Registry id: num:numbers:conserved-solve-cost-scope-value-13.
-    NumbersConservedSolveCostScopeValue13,
-    /// Registry id: num:numbers:reference-slope-negative-10.
-    NumbersReferenceSlopeNegative10,
-    /// Registry id: num:numbers:reference-slope-negative-6.
-    NumbersReferenceSlopeNegative6,
-    /// Registry id: num:numbers:reference-slope-negative-11.
-    NumbersReferenceSlopeNegative11,
-    /// Registry id: num:numbers:reference-local-padding.
-    NumbersReferenceLocalPadding,
-    /// Registry id: num:numbers:enclosure-exponent-bits.
-    NumbersEnclosureExponentBits,
-    /// Registry id: num:numbers:enclosure-denominator-bits.
-    NumbersEnclosureDenominatorBits,
-    /// Registry id: num:numbers:root-request-exponent.
-    NumbersRootRequestExponent,
-    /// Registry id: num:numbers:fixture-count-eighteen.
-    NumbersFixtureCountEighteen,
-    /// Registry id: num:numbers:fixture-count-sixty.
-    NumbersFixtureCountSixty,
-    /// Registry id: num:numbers:fixture-count-thirty.
-    NumbersFixtureCountThirty,
-    /// Registry id: num:numbers:corpus-published-1.
-    NumbersCorpusPublished1,
-    /// Registry id: num:numbers:corpus-published-2.
-    NumbersCorpusPublished2,
-    /// Registry id: num:numbers:corpus-published-3.
-    NumbersCorpusPublished3,
-    /// Registry id: num:numbers:corpus-published-4.
-    NumbersCorpusPublished4,
-    /// Registry id: num:numbers:corpus-published-5.
-    NumbersCorpusPublished5,
-    /// Registry id: num:numbers:corpus-published-6.
-    NumbersCorpusPublished6,
-    /// Registry id: num:numbers:corpus-published-7.
-    NumbersCorpusPublished7,
-    /// Registry id: num:numbers:corpus-published-8.
-    NumbersCorpusPublished8,
-    /// Registry id: num:numbers:corpus-published-9.
-    NumbersCorpusPublished9,
-    /// Registry id: num:numbers:corpus-published-10.
-    NumbersCorpusPublished10,
-    /// Registry id: num:numbers:corpus-published-11.
-    NumbersCorpusPublished11,
-    /// Registry id: num:numbers:corpus-published-12.
-    NumbersCorpusPublished12,
-    /// Registry id: num:numbers:corpus-published-13.
-    NumbersCorpusPublished13,
-    /// Registry id: num:numbers:corpus-published-14.
-    NumbersCorpusPublished14,
-    /// Registry id: num:numbers:corpus-published-15.
-    NumbersCorpusPublished15,
-    /// Registry id: num:numbers:corpus-published-16.
-    NumbersCorpusPublished16,
-    /// Registry id: num:numbers:corpus-published-17.
-    NumbersCorpusPublished17,
-    /// Registry id: num:numbers:corpus-published-18.
-    NumbersCorpusPublished18,
-    /// Registry id: num:numbers:corpus-published-19.
-    NumbersCorpusPublished19,
-    /// Registry id: num:numbers:corpus-published-20.
-    NumbersCorpusPublished20,
-    /// Registry id: num:numbers:corpus-published-21.
-    NumbersCorpusPublished21,
-    /// Registry id: num:numbers:corpus-published-22.
-    NumbersCorpusPublished22,
-    /// Registry id: num:numbers:corpus-published-23.
-    NumbersCorpusPublished23,
-    /// Registry id: num:numbers:corpus-published-24.
-    NumbersCorpusPublished24,
-    /// Registry id: num:numbers:corpus-rate-carol-lo.
-    NumbersCorpusRateCarolLo,
-    /// Registry id: num:numbers:corpus-rate-carol-hi.
-    NumbersCorpusRateCarolHi,
-    /// Registry id: num:numbers:corpus-hull-carol-lo.
-    NumbersCorpusHullCarolLo,
-    /// Registry id: num:numbers:corpus-hull-carol-hi.
-    NumbersCorpusHullCarolHi,
-    /// Registry id: num:numbers:corpus-count-carol.
-    NumbersCorpusCountCarol,
-    /// Registry id: num:numbers:corpus-rate-alice-lo.
-    NumbersCorpusRateAliceLo,
-    /// Registry id: num:numbers:corpus-rate-alice-hi.
-    NumbersCorpusRateAliceHi,
-    /// Registry id: num:numbers:corpus-hull-alice-lo.
-    NumbersCorpusHullAliceLo,
-    /// Registry id: num:numbers:corpus-hull-alice-hi.
-    NumbersCorpusHullAliceHi,
-    /// Registry id: num:numbers:corpus-count-alice.
-    NumbersCorpusCountAlice,
-    /// Registry id: num:numbers:corpus-rate-eve-lo.
-    NumbersCorpusRateEveLo,
-    /// Registry id: num:numbers:corpus-rate-eve-hi.
-    NumbersCorpusRateEveHi,
-    /// Registry id: num:numbers:corpus-hull-eve-lo.
-    NumbersCorpusHullEveLo,
-    /// Registry id: num:numbers:corpus-hull-eve-hi.
-    NumbersCorpusHullEveHi,
-    /// Registry id: num:numbers:corpus-count-eve.
-    NumbersCorpusCountEve,
-    /// Registry id: num:numbers:corpus-rate-bob-lo.
-    NumbersCorpusRateBobLo,
-    /// Registry id: num:numbers:corpus-rate-bob-hi.
-    NumbersCorpusRateBobHi,
-    /// Registry id: num:numbers:corpus-hull-bob-lo.
-    NumbersCorpusHullBobLo,
-    /// Registry id: num:numbers:corpus-hull-bob-hi.
-    NumbersCorpusHullBobHi,
-    /// Registry id: num:numbers:corpus-count-bob.
-    NumbersCorpusCountBob,
-    /// Registry id: num:numbers:corpus-rate-dave-lo.
-    NumbersCorpusRateDaveLo,
-    /// Registry id: num:numbers:corpus-rate-dave-hi.
-    NumbersCorpusRateDaveHi,
-    /// Registry id: num:numbers:corpus-hull-dave-lo.
-    NumbersCorpusHullDaveLo,
-    /// Registry id: num:numbers:corpus-hull-dave-hi.
-    NumbersCorpusHullDaveHi,
-    /// Registry id: num:numbers:corpus-count-dave.
-    NumbersCorpusCountDave,
-    /// Registry id: num:numbers:corpus-width-lo.
-    NumbersCorpusWidthLo,
-    /// Registry id: num:numbers:corpus-width-hi.
-    NumbersCorpusWidthHi,
-    /// Registry id: num:numbers:corpus-residual-radius-upper.
-    NumbersCorpusResidualRadiusUpper,
-    /// Registry id: num:numbers:corpus-local-radius-upper.
-    NumbersCorpusLocalRadiusUpper,
+    /// Registry id: num:numbers:cube-root-request-work.
+    NumbersCubeRootRequestWork,
+    /// Registry id: num:numbers:nrz-default-store-work.
+    NumbersNrzDefaultStoreWork,
+    /// Registry id: num:numbers:released-time-fixture-field-count.
+    NumbersReleasedTimeFixtureFieldCount,
+    /// Registry id: num:numbers:authored-family-count.
+    NumbersAuthoredFamilyCount,
+    /// Registry id: num:numbers:projection-row-count.
+    NumbersProjectionRowCount,
+    /// Registry id: num:numbers:publish-stage-unimplemented-family-count.
+    NumbersPublishStageUnimplementedFamilyCount,
+    /// Registry id: num:numbers:participant-stage-unimplemented-family-count.
+    NumbersParticipantStageUnimplementedFamilyCount,
+    /// Registry id: num:numbers:title-two-boundary-word-count.
+    NumbersTitleTwoBoundaryWordCount,
+    /// Registry id: num:numbers:compiler-family-presentation-count.
+    NumbersCompilerFamilyPresentationCount,
+    /// Registry id: num:numbers:compiler-mixed-placement-count.
+    NumbersCompilerMixedPlacementCount,
+    /// Registry id: num:numbers:reference-squared-bleed.
+    NumbersReferenceSquaredBleed,
+    /// Registry id: num:numbers:reference-rational-floor.
+    NumbersReferenceRationalFloor,
+    /// Registry id: num:numbers:reference-cumulative-shape.
+    NumbersReferenceCumulativeShape,
+    /// Registry id: num:numbers:reference-margin.
+    NumbersReferenceMargin,
+    /// Registry id: num:numbers:reference-stopping-width.
+    NumbersReferenceStoppingWidth,
+    /// Registry id: num:numbers:controller-absolute-cap.
+    NumbersControllerAbsoluteCap,
+    /// Registry id: num:numbers:controller-relative-cap.
+    NumbersControllerRelativeCap,
+    /// Registry id: num:numbers:controller-deadband.
+    NumbersControllerDeadband,
+    /// Registry id: num:numbers:reference-term-ceiling.
+    NumbersReferenceTermCeiling,
+    /// Registry id: num:numbers:reference-grid-ceiling.
+    NumbersReferenceGridCeiling,
+    /// Registry id: num:numbers:reference-wall-upper.
+    NumbersReferenceWallUpper,
+    /// Registry id: num:numbers:reference-work-ceiling.
+    NumbersReferenceWorkCeiling,
+    /// Registry id: num:numbers:reference-lower-sign-work.
+    NumbersReferenceLowerSignWork,
+    /// Registry id: num:numbers:reference-upper-sign-work.
+    NumbersReferenceUpperSignWork,
+    /// Registry id: num:numbers:reference-bisection-first-work.
+    NumbersReferenceBisectionFirstWork,
+    /// Registry id: num:numbers:reference-bisection-second-work.
+    NumbersReferenceBisectionSecondWork,
+    /// Registry id: num:numbers:reference-bisection-third-work.
+    NumbersReferenceBisectionThirdWork,
+    /// Registry id: num:numbers:reference-bisection-fourth-work.
+    NumbersReferenceBisectionFourthWork,
+    /// Registry id: num:numbers:reference-bisection-fifth-work.
+    NumbersReferenceBisectionFifthWork,
+    /// Registry id: num:numbers:reference-bisection-sixth-work.
+    NumbersReferenceBisectionSixthWork,
+    /// Registry id: num:numbers:reference-production-work.
+    NumbersReferenceProductionWork,
+    /// Registry id: num:numbers:reference-sixteenth-prefix-work.
+    NumbersReferenceSixteenthPrefixWork,
+    /// Registry id: num:numbers:reference-half-prefix-work.
+    NumbersReferenceHalfPrefixWork,
+    /// Registry id: num:numbers:reference-quarter-prefix-work.
+    NumbersReferenceQuarterPrefixWork,
+    /// Registry id: num:numbers:reference-thirty-second-prefix-work.
+    NumbersReferenceThirtySecondPrefixWork,
+    /// Registry id: num:numbers:reference-eighth-prefix-work.
+    NumbersReferenceEighthPrefixWork,
+    /// Registry id: num:numbers:reference-sixty-fourth-prefix-work.
+    NumbersReferenceSixtyFourthPrefixWork,
+    /// Registry id: num:numbers:enclosed-wall-arithmetic-ceiling.
+    NumbersEnclosedWallArithmeticCeiling,
+    /// Registry id: num:numbers:enclosed-wall-output-mib.
+    NumbersEnclosedWallOutputMib,
+    /// Registry id: num:numbers:enclosed-wall-literal-bytes.
+    NumbersEnclosedWallLiteralBytes,
+    /// Registry id: num:numbers:nrz-default-literal-bytes.
+    NumbersNrzDefaultLiteralBytes,
+    /// Registry id: num:numbers:enclosed-wall-endpoint-bytes.
+    NumbersEnclosedWallEndpointBytes,
+    /// Registry id: num:numbers:enclosed-wall-production-work.
+    NumbersEnclosedWallProductionWork,
+    /// Registry id: num:numbers:enclosed-wall-replay-work.
+    NumbersEnclosedWallReplayWork,
+    /// Registry id: num:numbers:rational-wall-production-work.
+    NumbersRationalWallProductionWork,
+    /// Registry id: num:numbers:rational-wall-replay-work.
+    NumbersRationalWallReplayWork,
+    /// Registry id: num:numbers:enclosed-wall-mandatory-work.
+    NumbersEnclosedWallMandatoryWork,
+    /// Registry id: num:numbers:rational-wall-mandatory-work.
+    NumbersRationalWallMandatoryWork,
+    /// Registry id: num:numbers:enclosed-residual-eight-lower-billionths.
+    NumbersEnclosedResidualEightLowerBillionths,
+    /// Registry id: num:numbers:enclosed-residual-eight-upper-billionths.
+    NumbersEnclosedResidualEightUpperBillionths,
+    /// Registry id: num:numbers:enclosed-residual-sixteen-lower-billionths.
+    NumbersEnclosedResidualSixteenLowerBillionths,
+    /// Registry id: num:numbers:enclosed-residual-sixteen-upper-billionths.
+    NumbersEnclosedResidualSixteenUpperBillionths,
+    /// Registry id: num:numbers:enclosed-residual-twenty-four-lower-billionths.
+    NumbersEnclosedResidualTwentyFourLowerBillionths,
+    /// Registry id: num:numbers:enclosed-residual-twenty-four-upper-billionths.
+    NumbersEnclosedResidualTwentyFourUpperBillionths,
+    /// Registry id: num:numbers:rational-residual-eight-lower-billionths.
+    NumbersRationalResidualEightLowerBillionths,
+    /// Registry id: num:numbers:rational-residual-eight-upper-billionths.
+    NumbersRationalResidualEightUpperBillionths,
+    /// Registry id: num:numbers:rational-residual-sixteen-lower-billionths.
+    NumbersRationalResidualSixteenLowerBillionths,
+    /// Registry id: num:numbers:rational-residual-sixteen-upper-billionths.
+    NumbersRationalResidualSixteenUpperBillionths,
+    /// Registry id: num:numbers:rational-residual-twenty-four-lower-billionths.
+    NumbersRationalResidualTwentyFourLowerBillionths,
+    /// Registry id: num:numbers:rational-residual-twenty-four-upper-billionths.
+    NumbersRationalResidualTwentyFourUpperBillionths,
+    /// Registry id: num:numbers:published-carol-count.
+    NumbersPublishedCarolCount,
+    /// Registry id: num:numbers:published-alice-count.
+    NumbersPublishedAliceCount,
+    /// Registry id: num:numbers:published-bob-count.
+    NumbersPublishedBobCount,
+    /// Registry id: num:numbers:published-carol-intercept.
+    NumbersPublishedCarolIntercept,
+    /// Registry id: num:numbers:published-alice-intercept.
+    NumbersPublishedAliceIntercept,
+    /// Registry id: num:numbers:published-eve-intercept.
+    NumbersPublishedEveIntercept,
+    /// Registry id: num:numbers:published-bob-intercept.
+    NumbersPublishedBobIntercept,
+    /// Registry id: num:numbers:reference-candidate-coordinate.
+    NumbersReferenceCandidateCoordinate,
+    /// Registry id: num:numbers:frozen-candidate-coordinate.
+    NumbersFrozenCandidateCoordinate,
+    /// Registry id: num:numbers:reference-point-map-work.
+    NumbersReferencePointMapWork,
+    /// Registry id: num:numbers:reference-box-map-work.
+    NumbersReferenceBoxMapWork,
+    /// Registry id: num:numbers:frozen-point-map-work.
+    NumbersFrozenPointMapWork,
+    /// Registry id: num:numbers:frozen-box-map-work.
+    NumbersFrozenBoxMapWork,
+    /// Registry id: num:numbers:reference-one-map-radius.
+    NumbersReferenceOneMapRadius,
+    /// Registry id: num:numbers:reference-image-first-radius.
+    NumbersReferenceImageFirstRadius,
+    /// Registry id: num:numbers:frozen-one-map-radius.
+    NumbersFrozenOneMapRadius,
+    /// Registry id: num:numbers:frozen-image-first-radius.
+    NumbersFrozenImageFirstRadius,
+    /// Registry id: num:numbers:verification-trial-work-ceiling.
+    NumbersVerificationTrialWorkCeiling,
+    /// Registry id: num:numbers:verification-arithmetic-ceiling.
+    NumbersVerificationArithmeticCeiling,
+    /// Registry id: num:numbers:local-box-radius.
+    NumbersLocalBoxRadius,
+    /// Registry id: num:numbers:local-check-work.
+    NumbersLocalCheckWork,
+    /// Registry id: num:numbers:local-reference-residual-radius.
+    NumbersLocalReferenceResidualRadius,
+    /// Registry id: num:numbers:local-jacobian-norm-upper.
+    NumbersLocalJacobianNormUpper,
+    /// Registry id: num:numbers:local-image-radius-upper.
+    NumbersLocalImageRadiusUpper,
+    /// Registry id: num:numbers:reference-fence-upper.
+    NumbersReferenceFenceUpper,
+    /// Registry id: num:numbers:published-global-contraction-upper.
+    NumbersPublishedGlobalContractionUpper,
+    /// Registry id: num:numbers:reference-global-contraction-upper.
+    NumbersReferenceGlobalContractionUpper,
+    /// Registry id: num:numbers:baseline-activation-work.
+    NumbersBaselineActivationWork,
+    /// Registry id: num:numbers:baseline-hop-pair-work.
+    NumbersBaselineHopPairWork,
+    /// Registry id: num:numbers:baseline-four-actor-work.
+    NumbersBaselineFourActorWork,
+    /// Registry id: num:numbers:baseline-four-actor-requests.
+    NumbersBaselineFourActorRequests,
+    /// Registry id: num:numbers:baseline-thousand-actor-work.
+    NumbersBaselineThousandActorWork,
+    /// Registry id: num:numbers:baseline-thousand-actor-requests.
+    NumbersBaselineThousandActorRequests,
+    /// Registry id: num:numbers:certifying-prefix-work.
+    NumbersCertifyingPrefixWork,
+    /// Registry id: num:numbers:shared-activation-work.
+    NumbersSharedActivationWork,
+    /// Registry id: num:numbers:repeated-activation-lookup-work.
+    NumbersRepeatedActivationLookupWork,
+    /// Registry id: num:numbers:second-activation-session-work.
+    NumbersSecondActivationSessionWork,
+    /// Registry id: num:numbers:direct-activation-work.
+    NumbersDirectActivationWork,
+    /// Registry id: num:numbers:quarter-hop-pair-work.
+    NumbersQuarterHopPairWork,
+    /// Registry id: num:numbers:third-hop-pair-work.
+    NumbersThirdHopPairWork,
+    /// Registry id: num:numbers:half-hop-pair-work.
+    NumbersHalfHopPairWork,
+    /// Registry id: num:numbers:eighth-hop-pair-work.
+    NumbersEighthHopPairWork,
+    /// Registry id: num:numbers:point-four-dyadic-work.
+    NumbersPointFourDyadicWork,
+    /// Registry id: num:numbers:point-four-nondyadic-work.
+    NumbersPointFourNondyadicWork,
+    /// Registry id: num:numbers:point-thousand-dyadic-work.
+    NumbersPointThousandDyadicWork,
+    /// Registry id: num:numbers:point-thousand-nondyadic-work.
+    NumbersPointThousandNondyadicWork,
+    /// Registry id: num:numbers:point-four-requests.
+    NumbersPointFourRequests,
+    /// Registry id: num:numbers:point-thousand-requests.
+    NumbersPointThousandRequests,
+    /// Registry id: num:numbers:evaluation-work-ceiling.
+    NumbersEvaluationWorkCeiling,
+    /// Registry id: num:numbers:box-four-dyadic-work.
+    NumbersBoxFourDyadicWork,
+    /// Registry id: num:numbers:box-four-nondyadic-work.
+    NumbersBoxFourNondyadicWork,
+    /// Registry id: num:numbers:box-thousand-dyadic-work.
+    NumbersBoxThousandDyadicWork,
+    /// Registry id: num:numbers:box-thousand-nondyadic-work.
+    NumbersBoxThousandNondyadicWork,
+    /// Registry id: num:numbers:pair-four-requests.
+    NumbersPairFourRequests,
+    /// Registry id: num:numbers:pair-thousand-requests.
+    NumbersPairThousandRequests,
+    /// Registry id: num:numbers:pair-four-dyadic-work.
+    NumbersPairFourDyadicWork,
+    /// Registry id: num:numbers:pair-four-nondyadic-work.
+    NumbersPairFourNondyadicWork,
+    /// Registry id: num:numbers:pair-thousand-dyadic-work.
+    NumbersPairThousandDyadicWork,
+    /// Registry id: num:numbers:pair-thousand-nondyadic-work.
+    NumbersPairThousandNondyadicWork,
+    /// Registry id: num:numbers:wall-gain-request-work.
+    NumbersWallGainRequestWork,
+    /// Registry id: num:numbers:rate-sample-work.
+    NumbersRateSampleWork,
+    /// Registry id: num:numbers:rate-fast-sample-seconds.
+    NumbersRateFastSampleSeconds,
+    /// Registry id: num:numbers:rate-middle-sample-seconds.
+    NumbersRateMiddleSampleSeconds,
+    /// Registry id: num:numbers:rate-slow-sample-seconds.
+    NumbersRateSlowSampleSeconds,
+    /// Registry id: num:numbers:rate-fast-seconds-per-million.
+    NumbersRateFastSecondsPerMillion,
+    /// Registry id: num:numbers:rate-middle-seconds-per-million.
+    NumbersRateMiddleSecondsPerMillion,
+    /// Registry id: num:numbers:rate-slow-seconds-per-million.
+    NumbersRateSlowSecondsPerMillion,
+    /// Registry id: num:numbers:rate-load-before.
+    NumbersRateLoadBefore,
+    /// Registry id: num:numbers:rate-load-after.
+    NumbersRateLoadAfter,
+    /// Registry id: num:numbers:point-four-dyadic-fast-seconds.
+    NumbersPointFourDyadicFastSeconds,
+    /// Registry id: num:numbers:point-four-dyadic-slow-seconds.
+    NumbersPointFourDyadicSlowSeconds,
+    /// Registry id: num:numbers:point-four-nondyadic-fast-seconds.
+    NumbersPointFourNondyadicFastSeconds,
+    /// Registry id: num:numbers:point-four-nondyadic-slow-seconds.
+    NumbersPointFourNondyadicSlowSeconds,
+    /// Registry id: num:numbers:point-thousand-dyadic-fast-seconds.
+    NumbersPointThousandDyadicFastSeconds,
+    /// Registry id: num:numbers:point-thousand-dyadic-slow-seconds.
+    NumbersPointThousandDyadicSlowSeconds,
+    /// Registry id: num:numbers:point-thousand-nondyadic-fast-seconds.
+    NumbersPointThousandNondyadicFastSeconds,
+    /// Registry id: num:numbers:point-thousand-nondyadic-slow-seconds.
+    NumbersPointThousandNondyadicSlowSeconds,
+    /// Registry id: num:numbers:pair-four-dyadic-fast-seconds.
+    NumbersPairFourDyadicFastSeconds,
+    /// Registry id: num:numbers:pair-four-dyadic-slow-seconds.
+    NumbersPairFourDyadicSlowSeconds,
+    /// Registry id: num:numbers:pair-four-nondyadic-fast-seconds.
+    NumbersPairFourNondyadicFastSeconds,
+    /// Registry id: num:numbers:pair-four-nondyadic-slow-seconds.
+    NumbersPairFourNondyadicSlowSeconds,
+    /// Registry id: num:numbers:pair-thousand-dyadic-fast-seconds.
+    NumbersPairThousandDyadicFastSeconds,
+    /// Registry id: num:numbers:pair-thousand-dyadic-slow-seconds.
+    NumbersPairThousandDyadicSlowSeconds,
+    /// Registry id: num:numbers:pair-thousand-nondyadic-fast-seconds.
+    NumbersPairThousandNondyadicFastSeconds,
+    /// Registry id: num:numbers:pair-thousand-nondyadic-slow-seconds.
+    NumbersPairThousandNondyadicSlowSeconds,
+    /// Registry id: num:numbers:nested-root-request-work.
+    NumbersNestedRootRequestWork,
+    /// Registry id: num:numbers:quarter-power-request-work.
+    NumbersQuarterPowerRequestWork,
+    /// Registry id: num:numbers:nested-root-output-ceiling-bytes.
+    NumbersNestedRootOutputCeilingBytes,
+    /// Registry id: num:numbers:quarter-power-output-ceiling-bytes.
+    NumbersQuarterPowerOutputCeilingBytes,
+    /// Registry id: num:numbers:nested-root-certificate-bytes.
+    NumbersNestedRootCertificateBytes,
+    /// Registry id: num:numbers:quarter-power-certificate-bytes.
+    NumbersQuarterPowerCertificateBytes,
+    /// Registry id: num:numbers:repeated-activation-occurrences.
+    NumbersRepeatedActivationOccurrences,
+    /// Registry id: num:numbers:frozen-rate-hull-lower.
+    NumbersFrozenRateHullLower,
+    /// Registry id: num:numbers:frozen-rate-hull-upper.
+    NumbersFrozenRateHullUpper,
+    /// Registry id: num:numbers:first-proposal-work.
+    NumbersFirstProposalWork,
+    /// Registry id: num:numbers:second-proposal-work.
+    NumbersSecondProposalWork,
+    /// Registry id: num:numbers:candidate-total-work.
+    NumbersCandidateTotalWork,
+    /// Registry id: num:numbers:certified-map-work.
+    NumbersCertifiedMapWork,
+    /// Registry id: num:numbers:residual-arithmetic-work.
+    NumbersResidualArithmeticWork,
+    /// Registry id: num:numbers:solve-sixteenth-two-work.
+    NumbersSolveSixteenthTwoWork,
+    /// Registry id: num:numbers:certified-transport-work.
+    NumbersCertifiedTransportWork,
+    /// Registry id: num:numbers:certified-rendering-work.
+    NumbersCertifiedRenderingWork,
+    /// Registry id: num:numbers:proposal-prefix-work.
+    NumbersProposalPrefixWork,
+    /// Registry id: num:numbers:solve-sixteenth-residual.
+    NumbersSolveSixteenthResidual,
+    /// Registry id: num:numbers:solve-sixteenth-radius.
+    NumbersSolveSixteenthRadius,
+    /// Registry id: num:numbers:solve-sixteenth-alice-width.
+    NumbersSolveSixteenthAliceWidth,
+    /// Registry id: num:numbers:solve-sixteenth-bob-width.
+    NumbersSolveSixteenthBobWidth,
+    /// Registry id: num:numbers:solve-sixteenth-carol-width.
+    NumbersSolveSixteenthCarolWidth,
+    /// Registry id: num:numbers:solve-sixteenth-dave-width.
+    NumbersSolveSixteenthDaveWidth,
+    /// Registry id: num:numbers:solve-quarter-one-work.
+    NumbersSolveQuarterOneWork,
+    /// Registry id: num:numbers:solve-quarter-residual.
+    NumbersSolveQuarterResidual,
+    /// Registry id: num:numbers:solve-quarter-radius.
+    NumbersSolveQuarterRadius,
+    /// Registry id: num:numbers:solve-quarter-alice-width.
+    NumbersSolveQuarterAliceWidth,
+    /// Registry id: num:numbers:solve-quarter-bob-width.
+    NumbersSolveQuarterBobWidth,
+    /// Registry id: num:numbers:solve-quarter-carol-width.
+    NumbersSolveQuarterCarolWidth,
+    /// Registry id: num:numbers:solve-quarter-dave-width.
+    NumbersSolveQuarterDaveWidth,
+    /// Registry id: num:numbers:solve-sixteenth-one-work.
+    NumbersSolveSixteenthOneWork,
+    /// Registry id: num:numbers:solve-quarter-two-work.
+    NumbersSolveQuarterTwoWork,
+    /// Registry id: num:numbers:solve-sixteenth-two-seconds.
+    NumbersSolveSixteenthTwoSeconds,
+    /// Registry id: num:numbers:solve-quarter-one-seconds.
+    NumbersSolveQuarterOneSeconds,
+    /// Registry id: num:numbers:solve-sixteenth-one-seconds.
+    NumbersSolveSixteenthOneSeconds,
+    /// Registry id: num:numbers:solve-quarter-two-seconds.
+    NumbersSolveQuarterTwoSeconds,
+    /// Registry id: num:numbers:solve-rate-lower-milliseconds-per-million.
+    NumbersSolveRateLowerMillisecondsPerMillion,
+    /// Registry id: num:numbers:solve-rate-upper-milliseconds-per-million.
+    NumbersSolveRateUpperMillisecondsPerMillion,
+    /// Registry id: num:numbers:projection-actor-scale.
+    NumbersProjectionActorScale,
+    /// Registry id: num:numbers:proposal-arithmetic-work.
+    NumbersProposalArithmeticWork,
+    /// Registry id: num:numbers:projected-solve-work.
+    NumbersProjectedSolveWork,
+    /// Registry id: num:numbers:projected-solve-fast-seconds.
+    NumbersProjectedSolveFastSeconds,
+    /// Registry id: num:numbers:projected-solve-slow-seconds.
+    NumbersProjectedSolveSlowSeconds,
+    /// Registry id: num:numbers:projected-supported-cell-count.
+    NumbersProjectedSupportedCellCount,
+    /// Registry id: num:numbers:projected-chartered-cell-count.
+    NumbersProjectedCharteredCellCount,
+    /// Registry id: num:numbers:published-carol-slope.
+    NumbersPublishedCarolSlope,
+    /// Registry id: num:numbers:published-alice-slope.
+    NumbersPublishedAliceSlope,
+    /// Registry id: num:numbers:published-bob-slope.
+    NumbersPublishedBobSlope,
+    /// Registry id: num:numbers:published-local-padding.
+    NumbersPublishedLocalPadding,
+    /// Registry id: num:numbers:nrz-power-numerator-bits.
+    NumbersNrzPowerNumeratorBits,
+    /// Registry id: num:numbers:nrz-power-denominator-bits.
+    NumbersNrzPowerDenominatorBits,
+    /// Registry id: num:numbers:published-candidate-iterations.
+    NumbersPublishedCandidateIterations,
+    /// Registry id: num:numbers:rate-sample-requests.
+    NumbersRateSampleRequests,
+    /// Registry id: num:numbers:frozen-hull-width.
+    NumbersFrozenHullWidth,
+    /// Registry id: num:numbers:published-wall-lower.
+    NumbersPublishedWallLower,
+    /// Registry id: num:numbers:published-wall-upper.
+    NumbersPublishedWallUpper,
+    /// Registry id: num:numbers:published-fence-lower.
+    NumbersPublishedFenceLower,
+    /// Registry id: num:numbers:published-fence-upper.
+    NumbersPublishedFenceUpper,
+    /// Registry id: num:numbers:published-local-contraction-upper.
+    NumbersPublishedLocalContractionUpper,
+    /// Registry id: num:numbers:published-standing-inflation-radius.
+    NumbersPublishedStandingInflationRadius,
+    /// Registry id: num:numbers:published-image-carol-lower.
+    NumbersPublishedImageCarolLower,
+    /// Registry id: num:numbers:published-image-carol-upper.
+    NumbersPublishedImageCarolUpper,
+    /// Registry id: num:numbers:published-image-alice-lower.
+    NumbersPublishedImageAliceLower,
+    /// Registry id: num:numbers:published-image-alice-upper.
+    NumbersPublishedImageAliceUpper,
+    /// Registry id: num:numbers:published-image-eve-lower.
+    NumbersPublishedImageEveLower,
+    /// Registry id: num:numbers:published-image-eve-upper.
+    NumbersPublishedImageEveUpper,
+    /// Registry id: num:numbers:published-image-bob-lower.
+    NumbersPublishedImageBobLower,
+    /// Registry id: num:numbers:published-image-bob-upper.
+    NumbersPublishedImageBobUpper,
+    /// Registry id: num:numbers:published-image-dave-lower.
+    NumbersPublishedImageDaveLower,
+    /// Registry id: num:numbers:published-image-dave-upper.
+    NumbersPublishedImageDaveUpper,
+    /// Registry id: num:numbers:published-root-eve-lower.
+    NumbersPublishedRootEveLower,
+    /// Registry id: num:numbers:published-root-eve-upper.
+    NumbersPublishedRootEveUpper,
+    /// Registry id: num:numbers:published-root-bob-lower.
+    NumbersPublishedRootBobLower,
+    /// Registry id: num:numbers:published-root-bob-upper.
+    NumbersPublishedRootBobUpper,
+    /// Registry id: num:numbers:published-root-dave-lower.
+    NumbersPublishedRootDaveLower,
+    /// Registry id: num:numbers:published-root-dave-upper.
+    NumbersPublishedRootDaveUpper,
+    /// Registry id: num:numbers:published-root-carol-lower.
+    NumbersPublishedRootCarolLower,
+    /// Registry id: num:numbers:published-root-carol-upper.
+    NumbersPublishedRootCarolUpper,
+    /// Registry id: num:numbers:published-carol-rate-lower.
+    NumbersPublishedCarolRateLower,
+    /// Registry id: num:numbers:published-carol-rate-upper.
+    NumbersPublishedCarolRateUpper,
+    /// Registry id: num:numbers:published-carol-hull-lower.
+    NumbersPublishedCarolHullLower,
+    /// Registry id: num:numbers:published-carol-hull-upper.
+    NumbersPublishedCarolHullUpper,
+    /// Registry id: num:numbers:published-alice-rate-lower.
+    NumbersPublishedAliceRateLower,
+    /// Registry id: num:numbers:published-alice-rate-upper.
+    NumbersPublishedAliceRateUpper,
+    /// Registry id: num:numbers:published-alice-hull-lower.
+    NumbersPublishedAliceHullLower,
+    /// Registry id: num:numbers:published-alice-hull-upper.
+    NumbersPublishedAliceHullUpper,
+    /// Registry id: num:numbers:published-eve-rate-lower.
+    NumbersPublishedEveRateLower,
+    /// Registry id: num:numbers:published-eve-rate-upper.
+    NumbersPublishedEveRateUpper,
+    /// Registry id: num:numbers:published-eve-hull-lower.
+    NumbersPublishedEveHullLower,
+    /// Registry id: num:numbers:published-eve-hull-upper.
+    NumbersPublishedEveHullUpper,
+    /// Registry id: num:numbers:published-eve-count.
+    NumbersPublishedEveCount,
+    /// Registry id: num:numbers:published-bob-rate-lower.
+    NumbersPublishedBobRateLower,
+    /// Registry id: num:numbers:published-bob-rate-upper.
+    NumbersPublishedBobRateUpper,
+    /// Registry id: num:numbers:published-bob-hull-lower.
+    NumbersPublishedBobHullLower,
+    /// Registry id: num:numbers:published-bob-hull-upper.
+    NumbersPublishedBobHullUpper,
+    /// Registry id: num:numbers:published-dave-rate-lower.
+    NumbersPublishedDaveRateLower,
+    /// Registry id: num:numbers:published-dave-rate-upper.
+    NumbersPublishedDaveRateUpper,
+    /// Registry id: num:numbers:published-dave-hull-lower.
+    NumbersPublishedDaveHullLower,
+    /// Registry id: num:numbers:published-dave-hull-upper.
+    NumbersPublishedDaveHullUpper,
+    /// Registry id: num:numbers:published-dave-count.
+    NumbersPublishedDaveCount,
+    /// Registry id: num:numbers:published-width-lower.
+    NumbersPublishedWidthLower,
+    /// Registry id: num:numbers:published-width-upper.
+    NumbersPublishedWidthUpper,
+    /// Registry id: num:numbers:published-residual-radius-upper.
+    NumbersPublishedResidualRadiusUpper,
+    /// Registry id: num:numbers:published-local-radius-upper.
+    NumbersPublishedLocalRadiusUpper,
+    /// Registry id: num:numbers:reference-contributing-width.
+    NumbersReferenceContributingWidth,
+    /// Registry id: num:numbers:reference-bracket-lower.
+    NumbersReferenceBracketLower,
+    /// Registry id: num:numbers:reference-bracket-upper.
+    NumbersReferenceBracketUpper,
+    /// Registry id: num:numbers:reference-precision-start.
+    NumbersReferencePrecisionStart,
+    /// Registry id: num:numbers:reference-precision-middle.
+    NumbersReferencePrecisionMiddle,
+    /// Registry id: num:numbers:reference-precision-final.
+    NumbersReferencePrecisionFinal,
+    /// Registry id: num:numbers:reference-reduction-ceiling.
+    NumbersReferenceReductionCeiling,
+    /// Registry id: num:numbers:reference-refinement-rounds.
+    NumbersReferenceRefinementRounds,
+    /// Registry id: num:numbers:reference-wall-lower.
+    NumbersReferenceWallLower,
+    /// Registry id: num:numbers:reference-bisection-count.
+    NumbersReferenceBisectionCount,
+    /// Registry id: num:numbers:reference-sign-precision.
+    NumbersReferenceSignPrecision,
+    /// Registry id: num:numbers:reference-checking-reservation.
+    NumbersReferenceCheckingReservation,
+    /// Registry id: num:numbers:reference-positive-width-control-count.
+    NumbersReferencePositiveWidthControlCount,
+    /// Registry id: num:numbers:reference-zero-width-control-count.
+    NumbersReferenceZeroWidthControlCount,
+    /// Registry id: num:numbers:binding-floor-stopping-width.
+    NumbersBindingFloorStoppingWidth,
+    /// Registry id: num:numbers:binding-floor-bracket-lower.
+    NumbersBindingFloorBracketLower,
+    /// Registry id: num:numbers:binding-floor-bracket-upper.
+    NumbersBindingFloorBracketUpper,
+    /// Registry id: num:numbers:binding-floor-reduction-ceiling.
+    NumbersBindingFloorReductionCeiling,
+    /// Registry id: num:numbers:reference-sixteenth-stopping-width.
+    NumbersReferenceSixteenthStoppingWidth,
+    /// Registry id: num:numbers:reference-sixteenth-bisection-count.
+    NumbersReferenceSixteenthBisectionCount,
+    /// Registry id: num:numbers:reference-half-stopping-width.
+    NumbersReferenceHalfStoppingWidth,
+    /// Registry id: num:numbers:reference-half-bisection-count.
+    NumbersReferenceHalfBisectionCount,
+    /// Registry id: num:numbers:reference-one-hundred-twenty-eighth-stopping-width.
+    NumbersReferenceOneHundredTwentyEighthStoppingWidth,
+    /// Registry id: num:numbers:reference-quarter-stopping-width.
+    NumbersReferenceQuarterStoppingWidth,
+    /// Registry id: num:numbers:reference-quarter-bisection-count.
+    NumbersReferenceQuarterBisectionCount,
+    /// Registry id: num:numbers:reference-thirty-second-stopping-width.
+    NumbersReferenceThirtySecondStoppingWidth,
+    /// Registry id: num:numbers:reference-thirty-second-bisection-count.
+    NumbersReferenceThirtySecondBisectionCount,
+    /// Registry id: num:numbers:reference-eighth-stopping-width.
+    NumbersReferenceEighthStoppingWidth,
+    /// Registry id: num:numbers:reference-eighth-bisection-count.
+    NumbersReferenceEighthBisectionCount,
+    /// Registry id: num:numbers:reference-sixty-fourth-stopping-width.
+    NumbersReferenceSixtyFourthStoppingWidth,
+    /// Registry id: num:numbers:reference-sixty-fourth-bisection-count.
+    NumbersReferenceSixtyFourthBisectionCount,
+    /// Registry id: num:numbers:enclosed-contributing-width.
+    NumbersEnclosedContributingWidth,
+    /// Registry id: num:numbers:enclosed-cumulative-shape.
+    NumbersEnclosedCumulativeShape,
+    /// Registry id: num:numbers:enclosed-margin.
+    NumbersEnclosedMargin,
+    /// Registry id: num:numbers:enclosed-rejected-rung.
+    NumbersEnclosedRejectedRung,
+    /// Registry id: num:numbers:enclosed-accepted-rung.
+    NumbersEnclosedAcceptedRung,
+    /// Registry id: num:numbers:enclosed-zero-rung.
+    NumbersEnclosedZeroRung,
+    /// Registry id: num:numbers:enclosed-endpoint-grid.
+    NumbersEnclosedEndpointGrid,
+    /// Registry id: num:numbers:enclosed-proposal-cap.
+    NumbersEnclosedProposalCap,
+    /// Registry id: num:numbers:enclosed-reduction-ceiling.
+    NumbersEnclosedReductionCeiling,
+    /// Registry id: num:numbers:enclosed-term-ceiling.
+    NumbersEnclosedTermCeiling,
+    /// Registry id: num:numbers:enclosed-grid-ceiling.
+    NumbersEnclosedGridCeiling,
+    /// Registry id: num:numbers:enclosed-refinement-rounds.
+    NumbersEnclosedRefinementRounds,
+    /// Registry id: num:numbers:enclosed-checking-reservation.
+    NumbersEnclosedCheckingReservation,
+    /// Registry id: num:numbers:enclosed-work-ceiling.
+    NumbersEnclosedWorkCeiling,
+    /// Registry id: num:numbers:rational-wall-accepted-rung.
+    NumbersRationalWallAcceptedRung,
+    /// Registry id: num:numbers:residual-comparison-precision-start.
+    NumbersResidualComparisonPrecisionStart,
+    /// Registry id: num:numbers:residual-comparison-precision-middle.
+    NumbersResidualComparisonPrecisionMiddle,
+    /// Registry id: num:numbers:enclosed-certified-map-count.
+    NumbersEnclosedCertifiedMapCount,
+    /// Registry id: num:numbers:enclosed-session-query-count.
+    NumbersEnclosedSessionQueryCount,
+    /// Registry id: num:numbers:enclosed-standing-box-count.
+    NumbersEnclosedStandingBoxCount,
+    /// Registry id: num:numbers:enclosed-wall-control-count.
+    NumbersEnclosedWallControlCount,
+    /// Registry id: num:numbers:bleed-mismatch-value.
+    NumbersBleedMismatchValue,
+    /// Registry id: num:numbers:published-dave-intercept.
+    NumbersPublishedDaveIntercept,
+    /// Registry id: num:numbers:published-eve-slope.
+    NumbersPublishedEveSlope,
+    /// Registry id: num:numbers:published-dave-slope.
+    NumbersPublishedDaveSlope,
+    /// Registry id: num:numbers:published-numeraire.
+    NumbersPublishedNumeraire,
+    /// Registry id: num:numbers:published-retention.
+    NumbersPublishedRetention,
+    /// Registry id: num:numbers:published-shape-first.
+    NumbersPublishedShapeFirst,
+    /// Registry id: num:numbers:published-shape-second.
+    NumbersPublishedShapeSecond,
+    /// Registry id: num:numbers:published-shape-third.
+    NumbersPublishedShapeThird,
+    /// Registry id: num:numbers:published-shape-fourth.
+    NumbersPublishedShapeFourth,
+    /// Registry id: num:numbers:published-mass-first.
+    NumbersPublishedMassFirst,
+    /// Registry id: num:numbers:published-mass-second.
+    NumbersPublishedMassSecond,
+    /// Registry id: num:numbers:published-mass-third.
+    NumbersPublishedMassThird,
+    /// Registry id: num:numbers:published-mass-fourth.
+    NumbersPublishedMassFourth,
+    /// Registry id: num:numbers:published-strength.
+    NumbersPublishedStrength,
+    /// Registry id: num:numbers:verification-scalar-precision.
+    NumbersVerificationScalarPrecision,
+    /// Registry id: num:numbers:verification-composition-bits.
+    NumbersVerificationCompositionBits,
+    /// Registry id: num:numbers:frozen-selected-strength.
+    NumbersFrozenSelectedStrength,
+    /// Registry id: num:numbers:verification-literal-bytes.
+    NumbersVerificationLiteralBytes,
+    /// Registry id: num:numbers:verification-output-mib.
+    NumbersVerificationOutputMib,
+    /// Registry id: num:numbers:local-inflation.
+    NumbersLocalInflation,
+    /// Registry id: num:numbers:local-scalar-precision.
+    NumbersLocalScalarPrecision,
+    /// Registry id: num:numbers:local-composition-bits.
+    NumbersLocalCompositionBits,
+    /// Registry id: num:numbers:local-trial-work-ceiling.
+    NumbersLocalTrialWorkCeiling,
+    /// Registry id: num:numbers:touching-trial-work-ceiling.
+    NumbersTouchingTrialWorkCeiling,
+    /// Registry id: num:numbers:reference-fence-lower.
+    NumbersReferenceFenceLower,
+    /// Registry id: num:numbers:published-accepted-rung.
+    NumbersPublishedAcceptedRung,
+    /// Registry id: num:numbers:reference-corpus-actor-count.
+    NumbersReferenceCorpusActorCount,
+    /// Registry id: num:numbers:reference-corpus-active-count.
+    NumbersReferenceCorpusActiveCount,
+    /// Registry id: num:numbers:reference-candidate-iterations.
+    NumbersReferenceCandidateIterations,
+    /// Registry id: num:numbers:published-local-inflation.
+    NumbersPublishedLocalInflation,
+    /// Registry id: num:numbers:baseline-hop-count.
+    NumbersBaselineHopCount,
+    /// Registry id: num:numbers:baseline-projection-actor-count.
+    NumbersBaselineProjectionActorCount,
+    /// Registry id: num:numbers:activation-sample-precision.
+    NumbersActivationSamplePrecision,
+    /// Registry id: num:numbers:dyadic-hop-exponent.
+    NumbersDyadicHopExponent,
+    /// Registry id: num:numbers:nondyadic-hop-exponent.
+    NumbersNondyadicHopExponent,
+    /// Registry id: num:numbers:activation-sample-count.
+    NumbersActivationSampleCount,
+    /// Registry id: num:numbers:scaling-hop-count.
+    NumbersScalingHopCount,
+    /// Registry id: num:numbers:scaling-reference-actor-count.
+    NumbersScalingReferenceActorCount,
+    /// Registry id: num:numbers:scaling-projection-actor-count.
+    NumbersScalingProjectionActorCount,
+    /// Registry id: num:numbers:wall-gain-reduction-ceiling.
+    NumbersWallGainReductionCeiling,
+    /// Registry id: num:numbers:rate-sample-count.
+    NumbersRateSampleCount,
+    /// Registry id: num:numbers:quarter-power-reduction-ceiling.
+    NumbersQuarterPowerReductionCeiling,
+    /// Registry id: num:numbers:solve-declaration-count.
+    NumbersSolveDeclarationCount,
+    /// Registry id: num:numbers:frozen-margin.
+    NumbersFrozenMargin,
+    /// Registry id: num:numbers:solve-certifying-precision.
+    NumbersSolveCertifyingPrecision,
+    /// Registry id: num:numbers:solve-proposal-precision.
+    NumbersSolveProposalPrecision,
+    /// Registry id: num:numbers:solve-sixteenth-denominator.
+    NumbersSolveSixteenthDenominator,
+    /// Registry id: num:numbers:solve-two-proposal-cap.
+    NumbersSolveTwoProposalCap,
+    /// Registry id: num:numbers:solve-certifying-prefix-work.
+    NumbersSolveCertifyingPrefixWork,
+    /// Registry id: num:numbers:solve-distinct-input-count.
+    NumbersSolveDistinctInputCount,
+    /// Registry id: num:numbers:solve-one-proposal-cap.
+    NumbersSolveOneProposalCap,
+    /// Registry id: num:numbers:solve-work-ceiling.
+    NumbersSolveWorkCeiling,
+    /// Registry id: num:numbers:solve-quarter-denominator.
+    NumbersSolveQuarterDenominator,
+    /// Registry id: num:numbers:solve-projection-actor-count.
+    NumbersSolveProjectionActorCount,
+    /// Registry id: num:numbers:zero-width-reference-work-ceiling.
+    NumbersZeroWidthReferenceWorkCeiling,
 }
 
-const OFFSETS: [(usize, usize); 272] = [
-    (125, 132),
-    (241, 248),
-    (374, 378),
-    (497, 499),
-    (631, 633),
-    (765, 767),
-    (899, 902),
-    (1034, 1037),
-    (1168, 1170),
-    (1305, 1307),
-    (1430, 1433),
-    (1556, 1559),
-    (1682, 1684),
-    (1806, 1811),
-    (1942, 1946),
-    (2077, 2078),
-    (2209, 2213),
-    (2344, 2347),
-    (2478, 2483),
-    (2614, 2615),
-    (2746, 2747),
-    (2882, 2886),
-    (3021, 3024),
-    (3159, 3163),
-    (3298, 3300),
-    (3435, 3437),
-    (3572, 3578),
-    (3713, 3723),
-    (3849, 3857),
-    (3983, 3991),
-    (4118, 4126),
-    (4253, 4261),
-    (4388, 4396),
-    (4523, 4531),
-    (4658, 4666),
-    (4793, 4801),
-    (4928, 4937),
-    (5064, 5067),
-    (5203, 5207),
-    (5343, 5344),
-    (5480, 5488),
-    (5615, 5616),
-    (5752, 5760),
-    (5887, 5888),
-    (6024, 6032),
-    (6159, 6163),
-    (6299, 6300),
-    (6436, 6445),
-    (6572, 6580),
-    (6707, 6711),
-    (6847, 6848),
-    (6984, 6993),
-    (7118, 7127),
-    (7261, 7263),
-    (7397, 7401),
-    (7527, 7530),
-    (7656, 7659),
-    (7785, 7794),
-    (7919, 7928),
-    (8053, 8062),
-    (8187, 8196),
-    (8322, 8331),
-    (8457, 8466),
-    (8592, 8599),
-    (8734, 8741),
-    (8876, 8883),
-    (9018, 9025),
-    (9160, 9167),
-    (9302, 9309),
-    (9444, 9451),
-    (9586, 9593),
-    (9728, 9735),
-    (9870, 9877),
-    (10012, 10019),
-    (10154, 10161),
-    (10289, 10291),
-    (10419, 10421),
-    (10549, 10551),
-    (10679, 10682),
-    (10810, 10813),
-    (10941, 10944),
-    (11072, 11077),
-    (11205, 11208),
-    (11336, 11340),
-    (11469, 11474),
-    (11603, 11605),
-    (11734, 11743),
-    (11863, 11873),
-    (11993, 12002),
-    (12122, 12131),
-    (12251, 12271),
-    (12400, 12420),
-    (12549, 12572),
-    (12701, 12720),
-    (12849, 12860),
-    (12980, 12990),
-    (13116, 13122),
-    (13248, 13258),
-    (13375, 13402),
-    (13528, 13547),
-    (13673, 13690),
-    (13822, 13832),
-    (13964, 14112),
-    (14262, 14272),
-    (14394, 14402),
-    (14515, 14523),
-    (14636, 14645),
-    (14758, 14760),
-    (14882, 14893),
-    (15006, 15010),
-    (15132, 15136),
-    (15267, 15274),
-    (15396, 15403),
-    (15525, 15527),
-    (15649, 15657),
-    (15779, 15786),
-    (15908, 15914),
-    (16036, 16043),
-    (16165, 16172),
-    (16294, 16301),
-    (16424, 16432),
-    (16555, 16564),
-    (16687, 16697),
-    (16820, 16831),
-    (16954, 16956),
-    (17088, 17092),
-    (17224, 17233),
-    (17356, 17364),
-    (17487, 17496),
-    (17619, 17629),
-    (17752, 17763),
-    (17886, 17888),
-    (18020, 18025),
-    (18157, 18165),
-    (18288, 18297),
-    (18420, 18431),
-    (18554, 18565),
-    (18688, 18696),
-    (18810, 18819),
-    (18933, 18944),
-    (19061, 19072),
-    (19189, 19200),
-    (19317, 19340),
-    (19474, 19496),
-    (19630, 19652),
-    (19786, 19791),
-    (19914, 19919),
-    (20043, 20079),
-    (20214, 20249),
-    (20384, 20420),
-    (20555, 20591),
-    (20726, 20764),
-    (20899, 20936),
-    (21071, 21110),
-    (21245, 21283),
-    (21418, 21454),
-    (21589, 21623),
-    (21758, 21794),
-    (21929, 21964),
-    (22099, 22137),
-    (22272, 22309),
-    (22444, 22483),
-    (22618, 22655),
-    (22802, 22810),
-    (22937, 22945),
-    (23072, 23080),
-    (23208, 23215),
-    (23343, 23347),
-    (23475, 23479),
-    (23603, 23605),
-    (23740, 23742),
-    (23877, 23879),
-    (24014, 24022),
-    (24148, 24156),
-    (24282, 24290),
-    (24416, 24424),
-    (24550, 24556),
-    (24682, 24691),
-    (24817, 24823),
-    (24950, 24953),
-    (25080, 25087),
-    (25214, 25245),
-    (25398, 25430),
-    (25583, 25634),
-    (25787, 25837),
-    (25990, 26040),
-    (26193, 26243),
-    (26396, 26404),
-    (26531, 26561),
-    (26714, 26744),
-    (26897, 26947),
-    (27100, 27150),
-    (27303, 27353),
-    (27506, 27556),
-    (27709, 27717),
-    (27844, 27853),
-    (27978, 27986),
-    (28114, 28122),
-    (28250, 28258),
-    (28386, 28394),
-    (28522, 28527),
-    (28661, 28666),
-    (28800, 28803),
-    (28937, 28943),
-    (29068, 29079),
-    (29205, 29230),
-    (29376, 29403),
-    (29549, 29556),
-    (29691, 29698),
-    (29825, 29830),
-    (29956, 29960),
-    (30087, 30092),
-    (30215, 30252),
-    (30375, 30377),
-    (30503, 30505),
-    (30626, 30629),
-    (30751, 30753),
-    (30872, 30874),
-    (30994, 30996),
-    (31114, 31265),
-    (31401, 31552),
-    (31688, 31838),
-    (31974, 32122),
-    (32258, 32375),
-    (32511, 32654),
-    (32790, 32941),
-    (33077, 33230),
-    (33366, 33517),
-    (33654, 33805),
-    (33942, 34093),
-    (34230, 34381),
-    (34518, 34669),
-    (34806, 34959),
-    (35096, 35247),
-    (35384, 35533),
-    (35670, 35823),
-    (35960, 36109),
-    (36246, 36399),
-    (36536, 36687),
-    (36824, 36975),
-    (37112, 37261),
-    (37398, 37549),
-    (37686, 37837),
-    (37975, 38128),
-    (38266, 38419),
-    (38557, 38708),
-    (38846, 38999),
-    (39135, 39137),
-    (39275, 39426),
-    (39564, 39715),
-    (39853, 40004),
-    (40142, 40293),
-    (40429, 40431),
-    (40567, 40570),
-    (40706, 40709),
-    (40845, 40846),
-    (40982, 41135),
-    (41269, 41270),
-    (41406, 41557),
-    (41693, 41844),
-    (41980, 42131),
-    (42267, 42418),
-    (42552, 42554),
-    (42691, 42692),
-    (42829, 42830),
-    (42967, 42968),
-    (43105, 43258),
-    (43393, 43394),
-    (43527, 43679),
-    (43812, 43964),
-    (44110, 44201),
-    (44344, 44433),
+const OFFSETS: [(usize, usize); 358] = [
+    (129, 136),
+    (249, 256),
+    (380, 382),
+    (503, 505),
+    (625, 627),
+    (767, 769),
+    (913, 915),
+    (1044, 1047),
+    (1181, 1184),
+    (1314, 1316),
+    (1439, 1444),
+    (1568, 1572),
+    (1698, 1702),
+    (1818, 1821),
+    (1945, 1950),
+    (2073, 2077),
+    (2200, 2203),
+    (2322, 2326),
+    (2448, 2450),
+    (2572, 2574),
+    (2694, 2700),
+    (2822, 2832),
+    (2948, 2956),
+    (3072, 3080),
+    (3201, 3209),
+    (3331, 3339),
+    (3460, 3468),
+    (3590, 3598),
+    (3719, 3727),
+    (3848, 3856),
+    (3972, 3981),
+    (4103, 4111),
+    (4228, 4236),
+    (4356, 4364),
+    (4490, 4499),
+    (4618, 4626),
+    (4751, 4760),
+    (4883, 4892),
+    (5016, 5018),
+    (5145, 5149),
+    (5266, 5269),
+    (5389, 5392),
+    (5513, 5522),
+    (5638, 5647),
+    (5767, 5776),
+    (5892, 5901),
+    (6020, 6029),
+    (6148, 6157),
+    (6288, 6295),
+    (6435, 6442),
+    (6584, 6591),
+    (6733, 6740),
+    (6886, 6893),
+    (7039, 7046),
+    (7186, 7193),
+    (7333, 7340),
+    (7482, 7489),
+    (7631, 7638),
+    (7784, 7791),
+    (7937, 7944),
+    (8065, 8067),
+    (8188, 8190),
+    (8309, 8311),
+    (8436, 8439),
+    (8564, 8567),
+    (8690, 8693),
+    (8816, 8821),
+    (8951, 8956),
+    (9083, 9085),
+    (9209, 9218),
+    (9331, 9341),
+    (9453, 9462),
+    (9572, 9581),
+    (9696, 9716),
+    (9844, 9864),
+    (9985, 10008),
+    (10133, 10152),
+    (10283, 10294),
+    (10416, 10426),
+    (10542, 10548),
+    (10664, 10674),
+    (10796, 10823),
+    (10948, 10967),
+    (11091, 11108),
+    (11229, 11239),
+    (11373, 11521),
+    (11673, 11683),
+    (11807, 11815),
+    (11928, 11936),
+    (12051, 12060),
+    (12179, 12181),
+    (12309, 12320),
+    (12443, 12447),
+    (12569, 12576),
+    (12689, 12696),
+    (12818, 12820),
+    (12941, 12949),
+    (13062, 13069),
+    (13181, 13187),
+    (13297, 13304),
+    (13413, 13420),
+    (13531, 13538),
+    (13651, 13659),
+    (13775, 13784),
+    (13901, 13911),
+    (14031, 14042),
+    (14152, 14154),
+    (14277, 14281),
+    (14404, 14413),
+    (14524, 14532),
+    (14646, 14655),
+    (14770, 14780),
+    (14898, 14909),
+    (15018, 15020),
+    (15142, 15147),
+    (15268, 15276),
+    (15391, 15400),
+    (15516, 15527),
+    (15646, 15657),
+    (15770, 15778),
+    (15885, 15894),
+    (16009, 16020),
+    (16140, 16151),
+    (16269, 16280),
+    (16403, 16426),
+    (16568, 16590),
+    (16730, 16752),
+    (16879, 16884),
+    (16999, 17004),
+    (17134, 17170),
+    (17311, 17346),
+    (17490, 17526),
+    (17670, 17706),
+    (17851, 17889),
+    (18034, 18071),
+    (18219, 18258),
+    (18406, 18444),
+    (18584, 18620),
+    (18760, 18794),
+    (18937, 18973),
+    (19116, 19151),
+    (19295, 19333),
+    (19477, 19514),
+    (19661, 19700),
+    (19847, 19884),
+    (20019, 20027),
+    (20144, 20152),
+    (20275, 20283),
+    (20409, 20416),
+    (20537, 20541),
+    (20664, 20668),
+    (20791, 20793),
+    (20915, 20917),
+    (21039, 21041),
+    (21160, 21168),
+    (21279, 21287),
+    (21398, 21406),
+    (21515, 21523),
+    (21638, 21644),
+    (21759, 21768),
+    (21883, 21889),
+    (22004, 22007),
+    (22118, 22125),
+    (22240, 22271),
+    (22410, 22442),
+    (22586, 22637),
+    (22779, 22829),
+    (22973, 23023),
+    (23166, 23216),
+    (23355, 23363),
+    (23476, 23506),
+    (23643, 23673),
+    (23815, 23865),
+    (24005, 24055),
+    (24197, 24247),
+    (24388, 24438),
+    (24579, 24587),
+    (24700, 24709),
+    (24827, 24835),
+    (24954, 24962),
+    (25083, 25091),
+    (25210, 25218),
+    (25353, 25358),
+    (25499, 25504),
+    (25626, 25629),
+    (25753, 25759),
+    (25870, 25881),
+    (26000, 26025),
+    (26164, 26191),
+    (26332, 26339),
+    (26469, 26476),
+    (26597, 26602),
+    (26723, 26727),
+    (26846, 26851),
+    (26974, 27011),
+    (27135, 27137),
+    (27263, 27265),
+    (27395, 27397),
+    (27517, 27519),
+    (27636, 27638),
+    (27758, 27909),
+    (28047, 28198),
+    (28337, 28487),
+    (28626, 28774),
+    (28925, 29042),
+    (29195, 29338),
+    (29483, 29634),
+    (29779, 29932),
+    (30077, 30228),
+    (30373, 30524),
+    (30667, 30818),
+    (30961, 31112),
+    (31255, 31406),
+    (31549, 31702),
+    (31846, 31997),
+    (32141, 32290),
+    (32432, 32585),
+    (32727, 32876),
+    (33018, 33171),
+    (33313, 33464),
+    (33607, 33758),
+    (33901, 34050),
+    (34194, 34345),
+    (34489, 34640),
+    (34784, 34937),
+    (35081, 35234),
+    (35378, 35529),
+    (35673, 35826),
+    (35970, 36121),
+    (36265, 36416),
+    (36560, 36711),
+    (36855, 37006),
+    (37148, 37151),
+    (37293, 37296),
+    (37438, 37439),
+    (37581, 37734),
+    (37871, 37872),
+    (37996, 38147),
+    (38289, 38440),
+    (38582, 38733),
+    (38875, 39026),
+    (39169, 39170),
+    (39313, 39314),
+    (39457, 39458),
+    (39601, 39754),
+    (39892, 39893),
+    (40014, 40166),
+    (40305, 40457),
+    (40606, 40697),
+    (40843, 40932),
+    (41078, 41079),
+    (41202, 41205),
+    (41328, 41329),
+    (41454, 41455),
+    (41581, 41583),
+    (41708, 41710),
+    (41837, 41838),
+    (41965, 41966),
+    (42086, 42089),
+    (42214, 42215),
+    (42339, 42340),
+    (42470, 42471),
+    (42609, 42610),
+    (42744, 42745),
+    (42873, 42876),
+    (43003, 43007),
+    (43134, 43137),
+    (43268, 43269),
+    (43403, 43407),
+    (43542, 43543),
+    (43672, 43675),
+    (43805, 43806),
+    (43956, 43961),
+    (44093, 44096),
+    (44229, 44230),
+    (44368, 44372),
+    (44511, 44512),
+    (44643, 44646),
+    (44778, 44779),
+    (44916, 44920),
+    (45058, 45059),
+    (45186, 45187),
+    (45312, 45316),
+    (45431, 45434),
+    (45556, 45557),
+    (45679, 45682),
+    (45800, 45801),
+    (45923, 45928),
+    (46049, 46050),
+    (46176, 46177),
+    (46298, 46300),
+    (46421, 46423),
+    (46549, 46550),
+    (46679, 46680),
+    (46801, 46811),
+    (46929, 46930),
+    (47065, 47066),
+    (47202, 47204),
+    (47332, 47333),
+    (47461, 47462),
+    (47589, 47590),
+    (47717, 47718),
+    (47838, 47839),
+    (47963, 47964),
+    (48083, 48084),
+    (48204, 48205),
+    (48324, 48328),
+    (48447, 48448),
+    (48569, 48570),
+    (48692, 48695),
+    (48816, 48819),
+    (48941, 48944),
+    (49064, 49067),
+    (49188, 49191),
+    (49311, 49314),
+    (49435, 49438),
+    (49556, 49557),
+    (49686, 49688),
+    (49817, 49819),
+    (49943, 49946),
+    (50072, 50076),
+    (50191, 50193),
+    (50308, 50309),
+    (50431, 50433),
+    (50555, 50557),
+    (50681, 50692),
+    (50810, 50821),
+    (50933, 50934),
+    (51057, 51058),
+    (51186, 51187),
+    (51316, 51317),
+    (51447, 51448),
+    (51573, 51574),
+    (51692, 51693),
+    (51824, 51828),
+    (51955, 51956),
+    (52075, 52078),
+    (52200, 52203),
+    (52326, 52327),
+    (52444, 52445),
+    (52574, 52575),
+    (52705, 52709),
+    (52836, 52837),
+    (52954, 52955),
+    (53086, 53087),
+    (53210, 53211),
+    (53324, 53327),
+    (53453, 53454),
+    (53578, 53579),
+    (53706, 53708),
+    (53830, 53831),
+    (53959, 53966),
+    (54083, 54084),
+    (54206, 54207),
+    (54325, 54334),
+    (54450, 54451),
+    (54579, 54583),
+    (54716, 54725),
 ];
 
 impl NumberId {

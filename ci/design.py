@@ -218,27 +218,31 @@ def numeric_correspondence():
     """Derived rate pins retain the recorded samples' full rational precision."""
     rows = tomllib.loads(Path('docs/inputs/numbers.toml').read_text())['rows']
     values = {row['id']: Fraction(row['value']) for row in rows}
-    def value(section, index):
-        return values[f'num:numbers:{section}-value-{index}']
+    def value(name):
+        return values['num:numbers:' + name]
     def equal(actual, expected):
         if actual != expected:
             raise ValueError('numeric registry: derived rate differs from recorded operands')
-    rates = [value('solve-work-rate', index) / value('solve-work-rate', 1) for index in (2, 3, 4)]
-    for index, rate in enumerate(rates, 5):
-        equal(value('solve-work-rate', index), rate * 10**6)
-    for offset, cost_index in enumerate((10, 11, 12, 13, 23, 24, 25, 26)):
-        for side, rate in enumerate((rates[0], rates[-1])):
-            equal(value('solve-work-rate', 10 + 2*offset + side), value('solve-cost-measurements', cost_index) * rate)
-    for rate_index, seconds_index in ((5, 10), (6, 11)):
-        equal(value('conserved-solve-cost-scope', seconds_index),
-              value('conserved-solve-cost-scope', 9) * value('conserved-solve-cost-scope', rate_index) / 10**9)
-    equal(value('conserved-solve-cost-scope', 9),
-          2 * (value('bite-six-solve-measurements', 11) + value('conserved-solve-cost-scope', 7)
-               * (value('bite-six-solve-measurements', 4) - value('bite-six-solve-measurements', 11)))
-          + value('solve-cost-measurements', 1) + value('conserved-solve-cost-scope', 7)
-          * (value('bite-six-solve-measurements', 6) - value('solve-cost-measurements', 1))
-          + value('conserved-solve-cost-scope', 7)
-          * (value('conserved-solve-cost-scope', 8) + value('bite-six-solve-measurements', 7)))
+    rates = {speed: value(f'rate-{speed}-sample-seconds') / value('rate-sample-work')
+             for speed in ('fast', 'middle', 'slow')}
+    for speed, rate in rates.items():
+        equal(value(f'rate-{speed}-seconds-per-million'), rate * 10**6)
+    for route in ('point', 'pair'):
+        for size in ('four', 'thousand'):
+            for grid in ('dyadic', 'nondyadic'):
+                quantity = f'{route}-{size}-{grid}'
+                for speed in ('fast', 'slow'):
+                    equal(value(f'{quantity}-{speed}-seconds'), value(f'{quantity}-work') * rates[speed])
+    for bound, speed in (('lower', 'fast'), ('upper', 'slow')):
+        equal(value(f'projected-solve-{speed}-seconds'), value('projected-solve-work')
+              * value(f'solve-rate-{bound}-milliseconds-per-million') / 10**9)
+    equal(value('projected-solve-work'),
+          2 * (value('proposal-prefix-work') + value('projection-actor-scale')
+               * (value('second-proposal-work') - value('proposal-prefix-work')))
+          + value('solve-certifying-prefix-work') + value('projection-actor-scale')
+          * (value('certified-map-work') - value('solve-certifying-prefix-work'))
+          + value('projection-actor-scale')
+          * (value('proposal-arithmetic-work') + value('residual-arithmetic-work')))
     projected = json.loads(Path('docs/datasets/org.peer-network.numbers.registry.json').read_text())['rows']
     if len(projected) != len(rows):
         raise ValueError('numeric registry: projection census differs')

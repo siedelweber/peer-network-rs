@@ -2,721 +2,602 @@ namespace = "org.peer-network.numbers.registry"
 version = [1, 0, 0]
 
 [[rows]]
-id = "num:numbers:refinement-value-1"
+id = "num:numbers:cube-root-request-work"
 value = "2146333"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:refinement-value-2"
+id = "num:numbers:nrz-default-store-work"
 value = "2000000"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:provisional-carriage-bounds-value-1"
-value = "1024"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:recognition-value-1"
+id = "num:numbers:released-time-fixture-field-count"
 value = "31"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:affinity-formation-scope-value-1"
+id = "num:numbers:authored-family-count"
 value = "19"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:affinity-formation-scope-value-2"
+id = "num:numbers:projection-row-count"
 value = "27"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:affinity-formation-scope-value-3"
-value = "1/2"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:affinity-formation-scope-value-4"
-value = "2/4"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:publish-formation-scope-value-1"
+id = "num:numbers:publish-stage-unimplemented-family-count"
 value = "16"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:participant-formation-scope-value-1"
+id = "num:numbers:participant-stage-unimplemented-family-count"
 value = "14"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-four-close-value-1"
+id = "num:numbers:title-two-boundary-word-count"
 value = "512"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-five-close-value-1"
+id = "num:numbers:compiler-family-presentation-count"
 value = "456"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-five-close-value-2"
+id = "num:numbers:compiler-mixed-placement-count"
 value = "24"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-value-1"
+id = "num:numbers:reference-squared-bleed"
 value = "1/400"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-branches-value-1"
+id = "num:numbers:reference-rational-floor"
 value = "3/37"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-branches-value-2"
-value = "1"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-branches-value-3"
+id = "num:numbers:reference-cumulative-shape"
 value = "15/8"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-branches-value-4"
+id = "num:numbers:reference-margin"
 value = "5/4"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-branches-value-5"
+id = "num:numbers:reference-stopping-width"
 value = "1/128"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-branches-value-6"
-value = "8"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-branches-value-7"
-value = "2"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-1"
+id = "num:numbers:controller-absolute-cap"
 value = "1/10"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-2"
+id = "num:numbers:controller-relative-cap"
 value = "1/4"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-3"
+id = "num:numbers:controller-deadband"
 value = "1/20"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-4"
+id = "num:numbers:reference-term-ceiling"
 value = "64"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-5"
+id = "num:numbers:reference-grid-ceiling"
 value = "96"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-6"
+id = "num:numbers:reference-wall-upper"
 value = "65/128"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-7"
+id = "num:numbers:reference-work-ceiling"
 value = "2000000000"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-8"
+id = "num:numbers:reference-lower-sign-work"
 value = "18691604"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-9"
+id = "num:numbers:reference-upper-sign-work"
 value = "16223174"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-10"
+id = "num:numbers:reference-bisection-first-work"
 value = "19867093"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-11"
+id = "num:numbers:reference-bisection-second-work"
 value = "20284573"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-12"
+id = "num:numbers:reference-bisection-third-work"
 value = "20007742"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-13"
+id = "num:numbers:reference-bisection-fourth-work"
 value = "20078015"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-14"
+id = "num:numbers:reference-bisection-fifth-work"
 value = "20292810"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-15"
+id = "num:numbers:reference-bisection-sixth-work"
 value = "20466889"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-16"
+id = "num:numbers:reference-production-work"
 value = "155927977"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-17"
-value = "1/8"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-18"
-value = "1/16"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-19"
-value = "3"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-20"
+id = "num:numbers:reference-sixteenth-prefix-work"
 value = "95089873"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-21"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-22"
+id = "num:numbers:reference-half-prefix-work"
 value = "34929785"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-23"
-value = "6"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-24"
+id = "num:numbers:reference-quarter-prefix-work"
 value = "54797106"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-25"
-value = "1/32"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-26"
-value = "4"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-27"
+id = "num:numbers:reference-thirty-second-prefix-work"
 value = "115168018"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-28"
+id = "num:numbers:reference-eighth-prefix-work"
 value = "75081871"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-wall-measurements-value-29"
-value = "1/64"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-30"
-value = "5"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:reference-wall-measurements-value-31"
+id = "num:numbers:reference-sixty-fourth-prefix-work"
 value = "135460828"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-1"
+id = "num:numbers:enclosed-wall-arithmetic-ceiling"
 value = "100000000"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-2"
+id = "num:numbers:enclosed-wall-output-mib"
 value = "32"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-3"
+id = "num:numbers:enclosed-wall-literal-bytes"
 value = "4096"
 unit = "bytes"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-4"
+id = "num:numbers:nrz-default-literal-bytes"
 value = "256"
 unit = "bytes"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-5"
+id = "num:numbers:enclosed-wall-endpoint-bytes"
 value = "267"
 unit = "bytes"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-6"
+id = "num:numbers:enclosed-wall-production-work"
 value = "612584299"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-7"
+id = "num:numbers:enclosed-wall-replay-work"
 value = "380980787"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-8"
+id = "num:numbers:rational-wall-production-work"
 value = "455927402"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-9"
+id = "num:numbers:rational-wall-replay-work"
 value = "252822503"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-10"
+id = "num:numbers:enclosed-wall-mandatory-work"
 value = "993565086"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-11"
+id = "num:numbers:rational-wall-mandatory-work"
 value = "708749905"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-12"
+id = "num:numbers:enclosed-residual-eight-lower-billionths"
 value = "5779896"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-13"
+id = "num:numbers:enclosed-residual-eight-upper-billionths"
 value = "5779897"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-14"
+id = "num:numbers:enclosed-residual-sixteen-lower-billionths"
 value = "3800123"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-15"
+id = "num:numbers:enclosed-residual-sixteen-upper-billionths"
 value = "3800124"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-16"
+id = "num:numbers:enclosed-residual-twenty-four-lower-billionths"
 value = "3795364"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-17"
+id = "num:numbers:enclosed-residual-twenty-four-upper-billionths"
 value = "3795365"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-18"
+id = "num:numbers:rational-residual-eight-lower-billionths"
 value = "5452089"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-19"
+id = "num:numbers:rational-residual-eight-upper-billionths"
 value = "5452090"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-20"
+id = "num:numbers:rational-residual-sixteen-lower-billionths"
 value = "3600972"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-21"
+id = "num:numbers:rational-residual-sixteen-upper-billionths"
 value = "3600973"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-22"
+id = "num:numbers:rational-residual-twenty-four-lower-billionths"
 value = "3592852"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosed-wall-measurements-value-23"
+id = "num:numbers:rational-residual-twenty-four-upper-billionths"
 value = "3592853"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-1"
+id = "num:numbers:published-carol-count"
 value = "10"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-2"
+id = "num:numbers:published-alice-count"
 value = "12"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-3"
+id = "num:numbers:published-bob-count"
 value = "11"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-4"
+id = "num:numbers:published-carol-intercept"
 value = "6/5"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-5"
+id = "num:numbers:published-alice-intercept"
 value = "7/6"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-6"
+id = "num:numbers:published-eve-intercept"
 value = "9/8"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-7"
+id = "num:numbers:published-bob-intercept"
 value = "13/11"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-8"
-value = "1/6"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:two-map-measurements-value-9"
-value = "1/11"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:two-map-measurements-value-10"
+id = "num:numbers:reference-candidate-coordinate"
 value = "11/10"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-11"
+id = "num:numbers:frozen-candidate-coordinate"
 value = "43"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-12"
+id = "num:numbers:reference-point-map-work"
 value = "528817445"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-13"
+id = "num:numbers:reference-box-map-work"
 value = "1347009880"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-14"
+id = "num:numbers:frozen-point-map-work"
 value = "394358227"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-15"
+id = "num:numbers:frozen-box-map-work"
 value = "411904756"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-16"
+id = "num:numbers:reference-one-map-radius"
 value = "252865445/9442820096"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-17"
+id = "num:numbers:reference-image-first-radius"
 value = "27962035/18885640192"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-18"
+id = "num:numbers:frozen-one-map-radius"
 value = "115395727595/4302372864"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-19"
+id = "num:numbers:frozen-image-first-radius"
 value = "12934495/4302372864"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-20"
+id = "num:numbers:verification-trial-work-ceiling"
 value = "20000000000"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:two-map-measurements-value-21"
+id = "num:numbers:verification-arithmetic-ceiling"
 value = "1000000000"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:local-measurements-value-1"
+id = "num:numbers:local-box-radius"
 value = "1/1024"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:local-measurements-value-2"
+id = "num:numbers:local-check-work"
 value = "3954534051"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:local-measurements-value-3"
+id = "num:numbers:local-reference-residual-radius"
 value = "385543179193/77355582226432"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 26
 
 [[rows]]
-id = "num:numbers:local-measurements-value-4"
+id = "num:numbers:local-jacobian-norm-upper"
 value = "16690803/4294967296"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:local-measurements-value-5"
+id = "num:numbers:local-image-radius-upper"
 value = "587447/1073741824"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:pending-reference-corpus-value-1"
+id = "num:numbers:reference-fence-upper"
 value = "9877/65536"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:pending-reference-corpus-value-2"
+id = "num:numbers:published-global-contraction-upper"
 value = "2996290297046104444553034524118716120045412699703842014195286071395248231/25000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -724,280 +605,273 @@ exact_digits = 24
 magnitude = -75
 
 [[rows]]
-id = "num:numbers:pending-reference-corpus-value-3"
+id = "num:numbers:reference-global-contraction-upper"
 value = "9877/81920"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-costs-value-1"
+id = "num:numbers:baseline-activation-work"
 value = "18143864"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-costs-value-2"
+id = "num:numbers:baseline-hop-pair-work"
 value = "10057772"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-costs-value-3"
+id = "num:numbers:baseline-four-actor-work"
 value = "233499808"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-costs-value-4"
+id = "num:numbers:baseline-four-actor-requests"
 value = "36"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-costs-value-5"
+id = "num:numbers:baseline-thousand-actor-work"
 value = "58374952000"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-costs-value-6"
+id = "num:numbers:baseline-thousand-actor-requests"
 value = "9000"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-costs-value-7"
-value = "1000"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:solve-cost-measurements-value-1"
+id = "num:numbers:certifying-prefix-work"
 value = "4924286"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-2"
+id = "num:numbers:shared-activation-work"
 value = "4458756"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-3"
+id = "num:numbers:repeated-activation-lookup-work"
 value = "16"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-4"
+id = "num:numbers:second-activation-session-work"
 value = "10685294"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-5"
+id = "num:numbers:direct-activation-work"
 value = "9383042"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-6"
+id = "num:numbers:quarter-hop-pair-work"
 value = "218608"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-7"
+id = "num:numbers:third-hop-pair-work"
 value = "6182071"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-8"
+id = "num:numbers:half-hop-pair-work"
 value = "6846626"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-9"
+id = "num:numbers:eighth-hop-pair-work"
 value = "7422108"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-10"
+id = "num:numbers:point-four-dyadic-work"
 value = "26257086"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-11"
+id = "num:numbers:point-four-nondyadic-work"
 value = "121672494"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-12"
+id = "num:numbers:point-thousand-dyadic-work"
 value = "5342108286"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-13"
+id = "num:numbers:point-thousand-nondyadic-work"
 value = "29195960286"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-14"
+id = "num:numbers:point-four-requests"
 value = "38"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-15"
+id = "num:numbers:point-thousand-requests"
 value = "9002"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-16"
+id = "num:numbers:evaluation-work-ceiling"
 value = "200000000"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-17"
+id = "num:numbers:box-four-dyadic-work"
 value = "44092286"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-18"
+id = "num:numbers:box-four-nondyadic-work"
 value = "139507694"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-19"
+id = "num:numbers:box-thousand-dyadic-work"
 value = "9812860286"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-20"
+id = "num:numbers:box-thousand-nondyadic-work"
 value = "33666712286"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-21"
+id = "num:numbers:pair-four-requests"
 value = "80"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-22"
+id = "num:numbers:pair-thousand-requests"
 value = "19004"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-23"
+id = "num:numbers:pair-four-dyadic-work"
 value = "70349372"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-24"
+id = "num:numbers:pair-four-nondyadic-work"
 value = "261180188"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-25"
+id = "num:numbers:pair-thousand-dyadic-work"
 value = "15154968572"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-26"
+id = "num:numbers:pair-thousand-nondyadic-work"
 value = "62862672572"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-cost-measurements-value-27"
+id = "num:numbers:wall-gain-request-work"
 value = "15858856"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-1"
+id = "num:numbers:rate-sample-work"
 value = "820620700"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-2"
+id = "num:numbers:rate-fast-sample-seconds"
 value = "1.310209327"
 unit = "seconds"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-3"
+id = "num:numbers:rate-middle-sample-seconds"
 value = "1.356119654"
 unit = "seconds"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-4"
+id = "num:numbers:rate-slow-sample-seconds"
 value = "1.453050684"
 unit = "seconds"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-5"
+id = "num:numbers:rate-fast-seconds-per-million"
 value = "1310209327/820620700000"
 unit = "seconds"
 display = "rounded"
@@ -1005,7 +879,7 @@ exact_digits = 24
 magnitude = -9
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-6"
+id = "num:numbers:rate-middle-seconds-per-million"
 value = "678059827/410310350000"
 unit = "seconds"
 display = "rounded"
@@ -1013,7 +887,7 @@ exact_digits = 24
 magnitude = -9
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-7"
+id = "num:numbers:rate-slow-seconds-per-million"
 value = "363262671/205155175000"
 unit = "seconds"
 display = "rounded"
@@ -1021,21 +895,21 @@ exact_digits = 24
 magnitude = -9
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-8"
+id = "num:numbers:rate-load-before"
 value = "34.82"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-9"
+id = "num:numbers:rate-load-after"
 value = "38.51"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-10"
+id = "num:numbers:point-four-dyadic-fast-seconds"
 value = "17201139488520561/410310350000000000"
 unit = "seconds"
 display = "rounded"
@@ -1043,7 +917,7 @@ exact_digits = 24
 magnitude = -3
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-11"
+id = "num:numbers:point-four-dyadic-slow-seconds"
 value = "4769109596518353/102577587500000000"
 unit = "seconds"
 display = "rounded"
@@ -1051,7 +925,7 @@ exact_digits = 24
 magnitude = -3
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-12"
+id = "num:numbers:point-four-nondyadic-fast-seconds"
 value = "79708218239075769/410310350000000000"
 unit = "seconds"
 display = "rounded"
@@ -1059,7 +933,7 @@ exact_digits = 24
 magnitude = -3
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-13"
+id = "num:numbers:point-four-nondyadic-slow-seconds"
 value = "22099537578835737/102577587500000000"
 unit = "seconds"
 display = "rounded"
@@ -1067,7 +941,7 @@ exact_digits = 24
 magnitude = -3
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-14"
+id = "num:numbers:point-thousand-dyadic-fast-seconds"
 value = "3499640051080591761/410310350000000000"
 unit = "seconds"
 display = "rounded"
@@ -1075,7 +949,7 @@ exact_digits = 24
 magnitude = -2
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-15"
+id = "num:numbers:point-thousand-dyadic-slow-seconds"
 value = "970294262371795953/102577587500000000"
 unit = "seconds"
 display = "rounded"
@@ -1083,7 +957,7 @@ exact_digits = 24
 magnitude = -2
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-16"
+id = "num:numbers:point-thousand-nondyadic-fast-seconds"
 value = "19126409738719393761/410310350000000000"
 unit = "seconds"
 display = "rounded"
@@ -1091,7 +965,7 @@ exact_digits = 24
 magnitude = -2
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-17"
+id = "num:numbers:point-thousand-nondyadic-slow-seconds"
 value = "5302901257951141953/102577587500000000"
 unit = "seconds"
 display = "rounded"
@@ -1099,7 +973,7 @@ exact_digits = 24
 magnitude = -2
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-18"
+id = "num:numbers:pair-four-dyadic-fast-seconds"
 value = "23043100835748161/205155175000000000"
 unit = "seconds"
 display = "rounded"
@@ -1107,7 +981,7 @@ exact_digits = 24
 magnitude = -3
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-19"
+id = "num:numbers:pair-four-dyadic-slow-seconds"
 value = "6388825193973153/51288793750000000"
 unit = "seconds"
 display = "rounded"
@@ -1115,7 +989,7 @@ exact_digits = 24
 magnitude = -3
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-20"
+id = "num:numbers:pair-four-nondyadic-fast-seconds"
 value = "85550179586303369/205155175000000000"
 unit = "seconds"
 display = "rounded"
@@ -1123,7 +997,7 @@ exact_digits = 24
 magnitude = -3
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-21"
+id = "num:numbers:pair-four-nondyadic-slow-seconds"
 value = "23719253176290537/51288793750000000"
 unit = "seconds"
 display = "rounded"
@@ -1131,7 +1005,7 @@ exact_digits = 24
 magnitude = -3
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-22"
+id = "num:numbers:pair-thousand-dyadic-fast-seconds"
 value = "4964045293356567761/205155175000000000"
 unit = "seconds"
 display = "rounded"
@@ -1139,7 +1013,7 @@ exact_digits = 24
 magnitude = -2
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-23"
+id = "num:numbers:pair-thousand-dyadic-slow-seconds"
 value = "1376308590596443953/51288793750000000"
 unit = "seconds"
 display = "rounded"
@@ -1147,7 +1021,7 @@ exact_digits = 24
 magnitude = -2
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-24"
+id = "num:numbers:pair-thousand-nondyadic-fast-seconds"
 value = "20590814980995369761/205155175000000000"
 unit = "seconds"
 display = "rounded"
@@ -1155,7 +1029,7 @@ exact_digits = 24
 magnitude = -2
 
 [[rows]]
-id = "num:numbers:solve-work-rate-value-25"
+id = "num:numbers:pair-thousand-nondyadic-slow-seconds"
 value = "5708915586175789953/51288793750000000"
 unit = "seconds"
 display = "rounded"
@@ -1163,133 +1037,133 @@ exact_digits = 24
 magnitude = -2
 
 [[rows]]
-id = "num:numbers:activation-evaluation-policy-value-1"
+id = "num:numbers:nested-root-request-work"
 value = "22122299"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:activation-evaluation-policy-value-2"
+id = "num:numbers:quarter-power-request-work"
 value = "22147931"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:activation-evaluation-policy-value-3"
+id = "num:numbers:nested-root-output-ceiling-bytes"
 value = "12191733"
 unit = "bytes"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:activation-evaluation-policy-value-4"
+id = "num:numbers:quarter-power-output-ceiling-bytes"
 value = "1924854"
 unit = "bytes"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:activation-evaluation-policy-value-5"
+id = "num:numbers:nested-root-certificate-bytes"
 value = "6250"
 unit = "bytes"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:activation-evaluation-policy-value-6"
+id = "num:numbers:quarter-power-certificate-bytes"
 value = "6349"
 unit = "bytes"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-conserved-solve-value-1"
+id = "num:numbers:repeated-activation-occurrences"
 value = "65"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-1"
+id = "num:numbers:frozen-rate-hull-lower"
 value = "28"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-2"
+id = "num:numbers:frozen-rate-hull-upper"
 value = "58"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-3"
+id = "num:numbers:first-proposal-work"
 value = "20450944"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-4"
+id = "num:numbers:second-proposal-work"
 value = "43330725"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-5"
+id = "num:numbers:candidate-total-work"
 value = "64097175"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-6"
+id = "num:numbers:certified-map-work"
 value = "51033270"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-7"
+id = "num:numbers:residual-arithmetic-work"
 value = "157292"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-8"
+id = "num:numbers:solve-sixteenth-two-work"
 value = "115287737"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-9"
+id = "num:numbers:certified-transport-work"
 value = "583937"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-10"
+id = "num:numbers:certified-rendering-work"
 value = "512"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-11"
+id = "num:numbers:proposal-prefix-work"
 value = "4219729"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-12"
+id = "num:numbers:solve-sixteenth-residual"
 value = "883609435249115/350734766844784"
 unit = "dimensionless"
 display = "rounded"
@@ -1297,7 +1171,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-13"
+id = "num:numbers:solve-sixteenth-radius"
 value = "4418047176245575/350734766844784"
 unit = "dimensionless"
 display = "rounded"
@@ -1305,7 +1179,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-14"
+id = "num:numbers:solve-sixteenth-alice-width"
 value = "17480737461808201588044445/816865088589551049228292"
 unit = "dimensionless"
 display = "rounded"
@@ -1313,7 +1187,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-15"
+id = "num:numbers:solve-sixteenth-bob-width"
 value = "9789239633016473196927485/408432544294775524614146"
 unit = "dimensionless"
 display = "rounded"
@@ -1321,7 +1195,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-16"
+id = "num:numbers:solve-sixteenth-carol-width"
 value = "9751430014794363498347005/408432544294775524614146"
 unit = "dimensionless"
 display = "rounded"
@@ -1329,7 +1203,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-17"
+id = "num:numbers:solve-sixteenth-dave-width"
 value = "9656833631773836919198205/408432544294775524614146"
 unit = "dimensionless"
 display = "rounded"
@@ -1337,14 +1211,14 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-18"
+id = "num:numbers:solve-quarter-one-work"
 value = "71352757"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-19"
+id = "num:numbers:solve-quarter-residual"
 value = "110976068652445/43841845855598"
 unit = "dimensionless"
 display = "rounded"
@@ -1352,7 +1226,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-20"
+id = "num:numbers:solve-quarter-radius"
 value = "554880343262225/43841845855598"
 unit = "dimensionless"
 display = "rounded"
@@ -1360,7 +1234,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-21"
+id = "num:numbers:solve-quarter-alice-width"
 value = "4379964147582925249900990/204216272147387762307073"
 unit = "dimensionless"
 display = "rounded"
@@ -1368,7 +1242,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-22"
+id = "num:numbers:solve-quarter-bob-width"
 value = "4914179380769986304243500/204216272147387762307073"
 unit = "dimensionless"
 display = "rounded"
@@ -1376,7 +1250,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-23"
+id = "num:numbers:solve-quarter-carol-width"
 value = "4895274571658931454953260/204216272147387762307073"
 unit = "dimensionless"
 display = "rounded"
@@ -1384,7 +1258,7 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-24"
+id = "num:numbers:solve-quarter-dave-width"
 value = "4847976380148668165378860/204216272147387762307073"
 unit = "dimensionless"
 display = "rounded"
@@ -1392,84 +1266,84 @@ exact_digits = 24
 magnitude = -6
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-25"
+id = "num:numbers:solve-sixteenth-one-work"
 value = "71819896"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:bite-six-solve-measurements-value-26"
+id = "num:numbers:solve-quarter-two-work"
 value = "114618499"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-1"
+id = "num:numbers:solve-sixteenth-two-seconds"
 value = "0.219798"
 unit = "seconds"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-2"
+id = "num:numbers:solve-quarter-one-seconds"
 value = "0.140376"
 unit = "seconds"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-3"
+id = "num:numbers:solve-sixteenth-one-seconds"
 value = "0.141436"
 unit = "seconds"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-4"
+id = "num:numbers:solve-quarter-two-seconds"
 value = "0.217242"
 unit = "seconds"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-5"
+id = "num:numbers:solve-rate-lower-milliseconds-per-million"
 value = "1.895"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-6"
+id = "num:numbers:solve-rate-upper-milliseconds-per-million"
 value = "1.969"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-7"
+id = "num:numbers:projection-actor-scale"
 value = "250"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-8"
+id = "num:numbers:proposal-arithmetic-work"
 value = "315506"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-9"
+id = "num:numbers:projected-solve-work"
 value = "31214307244"
 unit = "Work"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-10"
+id = "num:numbers:projected-solve-fast-seconds"
 value = "2957555611369/50000000000"
 unit = "seconds"
 display = "rounded"
@@ -1477,7 +1351,7 @@ exact_digits = 24
 magnitude = -1
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-11"
+id = "num:numbers:projected-solve-slow-seconds"
 value = "15365242740859/250000000000"
 unit = "seconds"
 display = "rounded"
@@ -1485,91 +1359,84 @@ exact_digits = 24
 magnitude = -1
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-12"
+id = "num:numbers:projected-supported-cell-count"
 value = "6000000"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:conserved-solve-cost-scope-value-13"
+id = "num:numbers:projected-chartered-cell-count"
 value = "7000000"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-slope-negative-10"
+id = "num:numbers:published-carol-slope"
 value = "-1/10"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-slope-negative-6"
+id = "num:numbers:published-alice-slope"
 value = "-1/6"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-slope-negative-11"
+id = "num:numbers:published-bob-slope"
 value = "-1/11"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:reference-local-padding"
+id = "num:numbers:published-local-padding"
 value = "0.00000000000000000000000000000000001"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 36
 
 [[rows]]
-id = "num:numbers:enclosure-exponent-bits"
+id = "num:numbers:nrz-power-numerator-bits"
 value = "63"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:enclosure-denominator-bits"
+id = "num:numbers:nrz-power-denominator-bits"
 value = "64"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:root-request-exponent"
-value = "1/3"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:fixture-count-eighteen"
+id = "num:numbers:published-candidate-iterations"
 value = "18"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:fixture-count-sixty"
+id = "num:numbers:rate-sample-requests"
 value = "60"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:fixture-count-thirty"
+id = "num:numbers:frozen-hull-width"
 value = "30"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-1"
+id = "num:numbers:published-wall-lower"
 value = "250927425738473888861741368970320969988646825074039496451178482151187942819/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1577,7 +1444,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-2"
+id = "num:numbers:published-wall-upper"
 value = "250927425738473888861741368970320969988646825074039496451178482151187942961/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1585,7 +1452,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-3"
+id = "num:numbers:published-fence-lower"
 value = "74907257426152611113825863102967903001135317492596050354882151784881205653/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1593,7 +1460,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-4"
+id = "num:numbers:published-fence-upper"
 value = "2996290297046104444553034524118716120045412699703842014195286071395248231/20000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1601,7 +1468,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-5"
+id = "num:numbers:published-local-contraction-upper"
 value = "14529966121662466844609137066561219529377/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1609,7 +1476,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-6"
+id = "num:numbers:published-standing-inflation-radius"
 value = "3066254181021229128478478673909297559195/154008415986242880224369876774687554472119026646131473486596719276728986968474460503806170769353943212"
 unit = "dimensionless"
 display = "rounded"
@@ -1617,7 +1484,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-7"
+id = "num:numbers:published-image-carol-lower"
 value = "280824332079934064151629193278089535287868642768639427334871742037467162257/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1625,7 +1492,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-8"
+id = "num:numbers:published-image-carol-upper"
 value = "1123297328319736256606516773112358141151474571074557709339486968149868649063/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1633,7 +1500,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-9"
+id = "num:numbers:published-image-alice-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1641,7 +1508,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-10"
+id = "num:numbers:published-image-alice-upper"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1649,7 +1516,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-11"
+id = "num:numbers:published-image-eve-lower"
 value = "559442753720072326272561844025180458771772376060791094447332114059563492423/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1657,7 +1524,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-12"
+id = "num:numbers:published-image-eve-upper"
 value = "223777101488028930509024737610072183508708950424316437778932845623825396973/200000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1665,7 +1532,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-13"
+id = "num:numbers:published-image-bob-lower"
 value = "221718985746048721368645652815925026799241993646055823424105839322877941327/200000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1673,7 +1540,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-14"
+id = "num:numbers:published-image-bob-upper"
 value = "1108594928730243606843228264079625133996209968230279117120529196614389706673/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1681,7 +1548,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-15"
+id = "num:numbers:published-image-dave-lower"
 value = "279611668024175928092197991827989438471414042619796953345452392906209879683/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1689,7 +1556,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-16"
+id = "num:numbers:published-image-dave-upper"
 value = "27961166802417592809219799182798943847141404261979695334545239290620987969/25000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1697,7 +1564,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-17"
+id = "num:numbers:published-root-eve-lower"
 value = "1118885507440144652545123688050360917543544752121582188894664226286468435717/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1705,7 +1572,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-18"
+id = "num:numbers:published-root-eve-upper"
 value = "22377710148802893050902473761007218350870895042431643777893284525729383973/20000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1713,7 +1580,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-19"
+id = "num:numbers:published-root-bob-lower"
 value = "1108594928730243606843228264079625133996209968230279117120529193608892122323/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1721,7 +1588,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-20"
+id = "num:numbers:published-root-bob-upper"
 value = "554297464365121803421614132039812566998104984115139558560264596804446477867/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1729,7 +1596,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-21"
+id = "num:numbers:published-root-dave-lower"
 value = "223689334419340742473758393462391550777131234095837562676361917831851797043/200000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1737,7 +1604,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-22"
+id = "num:numbers:published-root-dave-upper"
 value = "27961166802417592809219799182798943847141404261979695334545239728981503691/25000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1745,7 +1612,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-23"
+id = "num:numbers:published-root-carol-lower"
 value = "224659465663947251321303354622471628230294914214911541867897392641136444739/200000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1753,7 +1620,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-published-24"
+id = "num:numbers:published-root-carol-upper"
 value = "561648664159868128303258386556179070575737285537278854669743481602841580933/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1761,7 +1628,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-rate-carol-lo"
+id = "num:numbers:published-carol-rate-lower"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411407/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1769,7 +1636,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-rate-carol-hi"
+id = "num:numbers:published-carol-rate-upper"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1777,7 +1644,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-carol-lo"
+id = "num:numbers:published-carol-hull-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1785,7 +1652,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-carol-hi"
+id = "num:numbers:published-carol-hull-upper"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1793,15 +1660,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-count-carol"
-value = "10"
-unit = "dimensionless"
-display = "rounded"
-magnitude = -12
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:corpus-rate-alice-lo"
+id = "num:numbers:published-alice-rate-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1809,7 +1668,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-rate-alice-hi"
+id = "num:numbers:published-alice-rate-upper"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1817,7 +1676,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-alice-lo"
+id = "num:numbers:published-alice-hull-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1825,7 +1684,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-alice-hi"
+id = "num:numbers:published-alice-hull-upper"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1833,15 +1692,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-count-alice"
-value = "12"
-unit = "dimensionless"
-display = "rounded"
-magnitude = -12
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:corpus-rate-eve-lo"
+id = "num:numbers:published-eve-rate-lower"
 value = "9/8"
 unit = "dimensionless"
 display = "rounded"
@@ -1849,7 +1700,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-rate-eve-hi"
+id = "num:numbers:published-eve-rate-upper"
 value = "9/8"
 unit = "dimensionless"
 display = "rounded"
@@ -1857,7 +1708,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-eve-lo"
+id = "num:numbers:published-eve-hull-lower"
 value = "1"
 unit = "dimensionless"
 display = "rounded"
@@ -1865,7 +1716,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-eve-hi"
+id = "num:numbers:published-eve-hull-upper"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1873,15 +1724,14 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-count-eve"
+id = "num:numbers:published-eve-count"
 value = "8"
 unit = "dimensionless"
-display = "rounded"
-magnitude = -12
+display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-rate-bob-lo"
+id = "num:numbers:published-bob-rate-lower"
 value = "568097506751047828285296239184516275455577561356905500322620137986255641549/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1889,7 +1739,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-rate-bob-hi"
+id = "num:numbers:published-bob-rate-upper"
 value = "284048753375523914142648119592258137727788780678452750161310068993127820781/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1897,7 +1747,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-bob-lo"
+id = "num:numbers:published-bob-hull-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1905,7 +1755,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-bob-hi"
+id = "num:numbers:published-bob-hull-upper"
 value = "284048753375523914142648119592258137727788780678452750161310068993127820781/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1913,15 +1763,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-count-bob"
-value = "11"
-unit = "dimensionless"
-display = "rounded"
-magnitude = -12
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:corpus-rate-dave-lo"
+id = "num:numbers:published-dave-rate-lower"
 value = "1"
 unit = "dimensionless"
 display = "rounded"
@@ -1929,7 +1771,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-rate-dave-hi"
+id = "num:numbers:published-dave-rate-upper"
 value = "1"
 unit = "dimensionless"
 display = "rounded"
@@ -1937,7 +1779,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-dave-lo"
+id = "num:numbers:published-dave-hull-lower"
 value = "1"
 unit = "dimensionless"
 display = "rounded"
@@ -1945,7 +1787,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-hull-dave-hi"
+id = "num:numbers:published-dave-hull-upper"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1953,15 +1795,14 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-count-dave"
+id = "num:numbers:published-dave-count"
 value = "2"
 unit = "dimensionless"
-display = "rounded"
-magnitude = -12
+display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-width-lo"
+id = "num:numbers:published-width-lower"
 value = "149814514852305222227651726205935806002270634985192100709764303569762411407/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1969,7 +1810,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-width-hi"
+id = "num:numbers:published-width-upper"
 value = "149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1977,7 +1818,7 @@ magnitude = -12
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-residual-radius-upper"
+id = "num:numbers:published-residual-radius-upper"
 value = "19909653387353/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
@@ -1985,9 +1826,766 @@ magnitude = -70
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:corpus-local-radius-upper"
+id = "num:numbers:published-local-radius-upper"
 value = "8767210314447/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "rounded"
 magnitude = -70
 exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-contributing-width"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-bracket-lower"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-bracket-upper"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-precision-start"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-precision-middle"
+value = "16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-precision-final"
+value = "24"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-reduction-ceiling"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-refinement-rounds"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-wall-lower"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-bisection-count"
+value = "6"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-sign-precision"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-checking-reservation"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-positive-width-control-count"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-zero-width-control-count"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:binding-floor-stopping-width"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:binding-floor-bracket-lower"
+value = "1/16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:binding-floor-bracket-upper"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:binding-floor-reduction-ceiling"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-sixteenth-stopping-width"
+value = "1/16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-sixteenth-bisection-count"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-half-stopping-width"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-half-bisection-count"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-one-hundred-twenty-eighth-stopping-width"
+value = "1/128"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-quarter-stopping-width"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-quarter-bisection-count"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-thirty-second-stopping-width"
+value = "1/32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-thirty-second-bisection-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-eighth-stopping-width"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-eighth-bisection-count"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-sixty-fourth-stopping-width"
+value = "1/64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-sixty-fourth-bisection-count"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-contributing-width"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-cumulative-shape"
+value = "15/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-margin"
+value = "5/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-rejected-rung"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-accepted-rung"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-zero-rung"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-endpoint-grid"
+value = "1/128"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-proposal-cap"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-reduction-ceiling"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-term-ceiling"
+value = "64"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-grid-ceiling"
+value = "96"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-refinement-rounds"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-checking-reservation"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-work-ceiling"
+value = "2000000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:rational-wall-accepted-rung"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:residual-comparison-precision-start"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:residual-comparison-precision-middle"
+value = "16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-certified-map-count"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-session-query-count"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-standing-box-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:enclosed-wall-control-count"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:bleed-mismatch-value"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-dave-intercept"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-eve-slope"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-dave-slope"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-numeraire"
+value = "1/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-retention"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-shape-first"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-shape-second"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-shape-third"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-shape-fourth"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-mass-first"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-mass-second"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-mass-third"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-mass-fourth"
+value = "1/8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-strength"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:verification-scalar-precision"
+value = "16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:verification-composition-bits"
+value = "32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:frozen-selected-strength"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:verification-literal-bytes"
+value = "4096"
+unit = "bytes"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:verification-output-mib"
+value = "32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:local-inflation"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:local-scalar-precision"
+value = "16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:local-composition-bits"
+value = "32"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:local-trial-work-ceiling"
+value = "20000000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:touching-trial-work-ceiling"
+value = "20000000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-fence-lower"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-accepted-rung"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-corpus-actor-count"
+value = "5"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-corpus-active-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:reference-candidate-iterations"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:published-local-inflation"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:baseline-hop-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:baseline-projection-actor-count"
+value = "1000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:activation-sample-precision"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:dyadic-hop-exponent"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:nondyadic-hop-exponent"
+value = "1/3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:activation-sample-count"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:scaling-hop-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:scaling-reference-actor-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:scaling-projection-actor-count"
+value = "1000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:wall-gain-reduction-ceiling"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:rate-sample-count"
+value = "3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:quarter-power-reduction-ceiling"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-declaration-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:frozen-margin"
+value = "5/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-certifying-precision"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-proposal-precision"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-sixteenth-denominator"
+value = "16"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-two-proposal-cap"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-certifying-prefix-work"
+value = "4924286"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-distinct-input-count"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-one-proposal-cap"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-work-ceiling"
+value = "200000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-quarter-denominator"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:solve-projection-actor-count"
+value = "1000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 24
+
+[[rows]]
+id = "num:numbers:zero-width-reference-work-ceiling"
+value = "200000000"
+unit = "Work"
+display = "exact"
+exact_digits = 24
+

@@ -68,7 +68,7 @@ fn procedure() -> Procedure {
 fn wall_policy() -> Procedure {
     let mut p = activation_policy();
     p.precision = Precision::AbsoluteWidthBits(vec![8, 16, 24]);
-    p.maximum_work = NumberId::NumbersReferenceWallMeasurementsValue7.integer();
+    p.maximum_work = NumberId::NumbersReferenceWorkCeiling.integer();
     p.maximum_iterations = 64;
     let policy = p.enclosure.as_mut().unwrap();
     policy.operation.work = p.maximum_work;
@@ -88,8 +88,8 @@ fn wall_input() -> pn_records::wall::Inputs {
         bracket: range("1/2", "1"),
         stopping_width: "1/128".into(),
         maximum_steps: 64,
-        maximum_work: NumberId::NumbersReferenceWallMeasurementsValue7.integer(),
-        maximum_replay_work: NumberId::NumbersReferenceWallMeasurementsValue7.integer(),
+        maximum_work: NumberId::NumbersReferenceWorkCeiling.integer(),
+        maximum_replay_work: NumberId::NumbersReferenceWorkCeiling.integer(),
         floor: pn_records::wall::Floor::Rational,
         previous: pn_records::wall::Previous::Target,
         door: "1".into(),
@@ -102,7 +102,7 @@ fn wall_input() -> pn_records::wall::Inputs {
 fn verification_policy() -> Procedure {
     let mut p = wall_policy();
     p.precision = Precision::AbsoluteWidthBits(vec![16]);
-    p.maximum_work = NumberId::NumbersTwoMapMeasurementsValue20.integer();
+    p.maximum_work = NumberId::NumbersVerificationTrialWorkCeiling.integer();
     let policy = p.enclosure.as_mut().unwrap();
     policy.refinement.precision = 16;
     policy.operation.work = p.maximum_work;
@@ -181,23 +181,23 @@ fn verification_box() {
             result.radius.as_str()
         ),
         (
-            NumberId::NumbersTwoMapMeasurementsValue12.integer(),
-            NumberId::NumbersTwoMapMeasurementsValue13.integer(),
-            NumberId::NumbersTwoMapMeasurementsValue16.value(),
-            NumberId::NumbersTwoMapMeasurementsValue17.value()
+            NumberId::NumbersReferencePointMapWork.integer(),
+            NumberId::NumbersReferenceBoxMapWork.integer(),
+            NumberId::NumbersReferenceOneMapRadius.value(),
+            NumberId::NumbersReferenceImageFirstRadius.value()
         )
     );
     let wall = pn_graph::numeric::wall::evaluate(&wall_policy(), &wall_input()).unwrap();
     assert_eq!(wall.target.as_ref(), Some(&input.wall));
     for cap in [
-        NumberId::NumbersTwoMapMeasurementsValue13.integer() - 1,
-        NumberId::NumbersTwoMapMeasurementsValue13.integer(),
+        NumberId::NumbersReferenceBoxMapWork.integer() - 1,
+        NumberId::NumbersReferenceBoxMapWork.integer(),
     ] {
         let mut limited = p.clone();
         limited.maximum_work = cap;
         limited.enclosure.as_mut().unwrap().operation.work = cap;
         let actual = verification::evaluate_box(&limited, &input, &result.first.image);
-        assert_eq!(actual.is_ok(), cap == NumberId::NumbersTwoMapMeasurementsValue13.integer());
+        assert_eq!(actual.is_ok(), cap == NumberId::NumbersReferenceBoxMapWork.integer());
     }
     for mutation in [1, 0] {
         let mut changed = result.clone();
@@ -223,7 +223,7 @@ fn verification_corpus() {
     let declaration = pn_records::conserved::LocalDeclaration {
         inflation: "2".into(),
         padding: "1/1024".into(),
-        maximum_work: NumberId::NumbersLocalMeasurementsValue2.integer(),
+        maximum_work: NumberId::NumbersLocalCheckWork.integer(),
     };
     let local = verification::local_check(&p, &input, &candidate, &residual, &declaration).unwrap();
     corpus::check(&residual, &local);
@@ -275,7 +275,7 @@ fn verification_local() {
     let declaration = LocalDeclaration {
         inflation: "2".into(),
         padding: "1/1024".into(),
-        maximum_work: NumberId::NumbersLocalMeasurementsValue2.integer(),
+        maximum_work: NumberId::NumbersLocalCheckWork.integer(),
     };
     let result = verification::local_check(&p, &input, &candidate, &residual, &declaration).unwrap();
     assert_eq!(
@@ -294,15 +294,15 @@ fn verification_local() {
             result.jacobian_norm.as_str()
         ),
         (
-            NumberId::NumbersLocalMeasurementsValue2.integer(),
-            NumberId::NumbersLocalMeasurementsValue3.value(),
-            NumberId::NumbersLocalMeasurementsValue5.value(),
-            NumberId::NumbersLocalMeasurementsValue4.value()
+            NumberId::NumbersLocalCheckWork.integer(),
+            NumberId::NumbersLocalReferenceResidualRadius.value(),
+            NumberId::NumbersLocalImageRadiusUpper.value(),
+            NumberId::NumbersLocalJacobianNormUpper.value()
         )
     );
     for cap in [
-        NumberId::NumbersLocalMeasurementsValue2.integer(),
-        NumberId::NumbersLocalMeasurementsValue2.integer() - 1,
+        NumberId::NumbersLocalCheckWork.integer(),
+        NumberId::NumbersLocalCheckWork.integer() - 1,
     ] {
         let limited = LocalDeclaration {
             maximum_work: cap,
@@ -310,7 +310,7 @@ fn verification_local() {
         };
         assert_eq!(
             verification::local_check(&p, &input, &candidate, &residual, &limited).is_ok(),
-            cap == NumberId::NumbersLocalMeasurementsValue2.integer()
+            cap == NumberId::NumbersLocalCheckWork.integer()
         );
     }
     let replayed = verification::replay_local(&p, &input, &candidate, &residual, &declaration, &result).unwrap();
@@ -407,8 +407,8 @@ fn reference_wall_oracle() {
 fn reference_wall_work() {
     let p = wall_policy();
     let queries = [
-        NumberId::NumbersReferenceWallMeasurementsValue8.integer(),
-        NumberId::NumbersReferenceWallMeasurementsValue9.integer(),
+        NumberId::NumbersReferenceLowerSignWork.integer(),
+        NumberId::NumbersReferenceUpperSignWork.integer(),
         19_865_237,
         20_282_653,
         20_005_822,
@@ -417,21 +417,21 @@ fn reference_wall_work() {
         20_464_969,
     ];
     let bisections = [
-        NumberId::NumbersReferenceWallMeasurementsValue10.integer(),
-        NumberId::NumbersReferenceWallMeasurementsValue11.integer(),
-        NumberId::NumbersReferenceWallMeasurementsValue12.integer(),
-        NumberId::NumbersReferenceWallMeasurementsValue13.integer(),
-        NumberId::NumbersReferenceWallMeasurementsValue14.integer(),
-        NumberId::NumbersReferenceWallMeasurementsValue15.integer(),
+        NumberId::NumbersReferenceBisectionFirstWork.integer(),
+        NumberId::NumbersReferenceBisectionSecondWork.integer(),
+        NumberId::NumbersReferenceBisectionThirdWork.integer(),
+        NumberId::NumbersReferenceBisectionFourthWork.integer(),
+        NumberId::NumbersReferenceBisectionFifthWork.integer(),
+        NumberId::NumbersReferenceBisectionSixthWork.integer(),
     ];
     for (width, count, work) in [
-        ("1/16", 3, NumberId::NumbersReferenceWallMeasurementsValue20.integer()),
-        ("1/2", 0, NumberId::NumbersReferenceWallMeasurementsValue22.integer()),
-        ("1/128", 6, NumberId::NumbersReferenceWallMeasurementsValue16.integer()),
-        ("1/4", 1, NumberId::NumbersReferenceWallMeasurementsValue24.integer()),
-        ("1/32", 4, NumberId::NumbersReferenceWallMeasurementsValue27.integer()),
-        ("1/8", 2, NumberId::NumbersReferenceWallMeasurementsValue28.integer()),
-        ("1/64", 5, NumberId::NumbersReferenceWallMeasurementsValue31.integer()),
+        ("1/16", 3, NumberId::NumbersReferenceSixteenthPrefixWork.integer()),
+        ("1/2", 0, NumberId::NumbersReferenceHalfPrefixWork.integer()),
+        ("1/128", 6, NumberId::NumbersReferenceProductionWork.integer()),
+        ("1/4", 1, NumberId::NumbersReferenceQuarterPrefixWork.integer()),
+        ("1/32", 4, NumberId::NumbersReferenceThirtySecondPrefixWork.integer()),
+        ("1/8", 2, NumberId::NumbersReferenceEighthPrefixWork.integer()),
+        ("1/64", 5, NumberId::NumbersReferenceSixtyFourthPrefixWork.integer()),
     ] {
         let mut input = wall_input();
         input.stopping_width = width.into();
@@ -1134,7 +1134,7 @@ fn activation_request(text: &str, quantity: pn_graph::numeric::activation::Quant
 
 fn activation_policy() -> Procedure {
     let mut p = procedure();
-    p.maximum_work = NumberId::NumbersSolveCostMeasurementsValue16.integer();
+    p.maximum_work = NumberId::NumbersEvaluationWorkCeiling.integer();
     let policy = p.enclosure.as_mut().unwrap();
     policy.store.work = p.maximum_work;
     policy.operation.work = p.maximum_work;
@@ -1342,14 +1342,14 @@ fn activation_costs() {
     let pins = [
         (20_986_736, 20_955_085, 558_565, 7_015, 1_791_495),
         (
-            NumberId::NumbersActivationEvaluationPolicyValue2.integer(),
+            NumberId::NumbersQuarterPowerRequestWork.integer(),
             22_108_551,
             579_066,
-            NumberId::NumbersActivationEvaluationPolicyValue6
+            NumberId::NumbersQuarterPowerCertificateBytes
                 .value()
                 .parse::<usize>()
                 .unwrap(),
-            NumberId::NumbersActivationEvaluationPolicyValue4.integer(),
+            NumberId::NumbersQuarterPowerOutputCeilingBytes.integer(),
         ),
         (25_112_350, 25_067_131, 670_962, 7_507, 2_340_998),
         (102_500_767, 102_466_631, 2_044_492, 8_500, 1_891_382),
@@ -1549,7 +1549,7 @@ fn reduction_boundaries() {
         (
             3,
             [
-                NumberId::NumbersSolveCostMeasurementsValue27.integer(),
+                NumberId::NumbersWallGainRequestWork.integer(),
                 15_514_999,
                 18_011_396,
                 64_092_367,
@@ -1592,8 +1592,8 @@ fn power_boundaries() {
         assert_eq!(got.as_ref().is_ok_and(|v| v.bounds() == base.bounds()), succeeds);
     }
     for (exponent, work) in [
-        ("1/4", NumberId::NumbersSolveCostMeasurementsValue6.integer()),
-        ("1/3", NumberId::NumbersSolveCostMeasurementsValue7.integer()),
+        ("1/4", NumberId::NumbersQuarterHopPairWork.integer()),
+        ("1/3", NumberId::NumbersThirdHopPairWork.integer()),
     ] {
         let expected = monotone::power(&p, &base, exponent).unwrap();
         assert_eq!(expected.work(), work);
@@ -1633,11 +1633,11 @@ fn sharing_cost_comparison() {
     let direct = activation::evaluate(&p, &input, None).unwrap();
     assert_eq!(
         direct.primitive.evidence.work,
-        NumberId::NumbersSolveCostMeasurementsValue4.integer()
+        NumberId::NumbersSecondActivationSessionWork.integer()
     );
     for (cap, succeeds) in [
-        (NumberId::NumbersSolveCostMeasurementsValue4.integer(), true),
-        (NumberId::NumbersSolveCostMeasurementsValue4.integer() - 1, false),
+        (NumberId::NumbersSecondActivationSessionWork.integer(), true),
+        (NumberId::NumbersSecondActivationSessionWork.integer() - 1, false),
     ] {
         let mut limited = p.clone();
         set_cost_limit(&mut limited, 0, cap);
@@ -1676,8 +1676,8 @@ fn evaluation_costs() {
     endpoint_cost_boundaries();
     sharing_cost_comparison();
     for (count, work) in [
-        NumberId::NumbersSolveCostMeasurementsValue1.integer(),
-        NumberId::NumbersSolveCostMeasurementsValue5.integer(),
+        NumberId::NumbersCertifyingPrefixWork.integer(),
+        NumberId::NumbersDirectActivationWork.integer(),
         16_229_668,
         23_651_776,
         23_651_792,

@@ -47,10 +47,10 @@ fn number_registry() -> Result<()> {
     let rows = input["rows"].as_array().ok_or("registry rows")?;
     let pin = rows
         .iter()
-        .find(|row| row["id"].as_str() == Some("num:numbers:bite-six-solve-measurements-value-8"))
+        .find(|row| row["id"].as_str() == Some("num:numbers:solve-sixteenth-two-work"))
         .ok_or("typed pin")?;
     assert_eq!(
-        pins::NumberId::NumbersBiteSixSolveMeasurementsValue8.value(),
+        pins::NumberId::NumbersSolveSixteenthTwoWork.value(),
         pin["value"].as_str().ok_or("exact pin")?
     );
     assert!(!include_str!("../src/pins.rs").contains(pin["value"].as_str().ok_or("exact pin")?));

@@ -63,8 +63,8 @@ pub(super) fn check(residual: &TwoMapRecord, local: &LocalRecord) {
     let mut budget = Budget::new(p.enclosure.unwrap().operation).unwrap();
     let standing_label = "ver:standing:conserved-equilibrium-enclosure";
     let wall = super::range(
-        NumberId::NumbersCorpusPublished1.value(),
-        NumberId::NumbersCorpusPublished2.value(),
+        NumberId::NumbersPublishedWallLower.value(),
+        NumberId::NumbersPublishedWallUpper.value(),
     );
     compare(
         "ver:floor:fixture-regime",
@@ -74,8 +74,8 @@ pub(super) fn check(residual: &TwoMapRecord, local: &LocalRecord) {
         &mut budget,
     );
     let fence = super::range(
-        NumberId::NumbersCorpusPublished3.value(),
-        NumberId::NumbersCorpusPublished4.value(),
+        NumberId::NumbersPublishedFenceLower.value(),
+        NumberId::NumbersPublishedFenceUpper.value(),
     );
     // Positivity and strict decrease extend the lower-wall upper bound to
     // the defining wall. This enclosure is not the lower-wall scalar interval.
@@ -85,8 +85,8 @@ pub(super) fn check(residual: &TwoMapRecord, local: &LocalRecord) {
     assert!(number(&fence.upper, &mut budget).compare(&one, &mut budget).unwrap().is_lt());
     assert_eq!(residual.first.input.strength, "1");
     // Full strength is the first declared rung, so this passing fence accepts one.
-    let published_rung = NumberId::NumbersReferenceWallBranchesValue2.value();
-    let published_strength = NumberId::NumbersReferenceWallBranchesValue2.value();
+    let published_rung = NumberId::NumbersPublishedAcceptedRung.value();
+    let published_strength = NumberId::NumbersPublishedStrength.value();
     let published_fence_verdict = PublishedVerdict::Pass;
     assert_eq!(p.grid.first().map(String::as_str), Some(published_rung));
     assert_eq!(published_rung, residual.first.input.strength);
@@ -100,11 +100,12 @@ pub(super) fn check(residual: &TwoMapRecord, local: &LocalRecord) {
                 .is_lt()
         )
     );
-    let global = number(super::NumberId::NumbersPendingReferenceCorpusValue2.value(), &mut budget);
+    let global = number(super::NumberId::NumbersPublishedGlobalContractionUpper.value(), &mut budget);
     let our_global = number(&residual.first.contraction, &mut budget);
     assert!(global.compare(&one, &mut budget).unwrap().is_lt());
     assert!(our_global.compare(&one, &mut budget).unwrap().is_lt());
     fixture(residual, &mut budget);
+    parameters(residual, local, &mut budget);
     standing(residual, &mut budget);
     roots(residual, local, &mut budget);
     // These bounds are properties of distinct centres, operators and boxes.
@@ -112,23 +113,23 @@ pub(super) fn check(residual: &TwoMapRecord, local: &LocalRecord) {
     let separate = [
         (
             "residual-radius",
-            NumberId::NumbersCorpusResidualRadiusUpper.value(),
+            NumberId::NumbersPublishedResidualRadiusUpper.value(),
             residual.radius.as_str(),
         ),
         (
             "local-contraction",
-            NumberId::NumbersCorpusPublished5.value(),
+            NumberId::NumbersPublishedLocalContractionUpper.value(),
             local.jacobian_norm.as_str(),
         ),
         (
             "local-radius",
-            NumberId::NumbersCorpusLocalRadiusUpper.value(),
+            NumberId::NumbersPublishedLocalRadiusUpper.value(),
             local.image_radius.as_str(),
         ),
         (
             "candidate-iterations",
-            NumberId::NumbersFixtureCountEighteen.value(),
-            NumberId::NumbersReferenceWallMeasurementsValue21.value(),
+            NumberId::NumbersPublishedCandidateIterations.value(),
+            NumberId::NumbersReferenceCandidateIterations.value(),
         ),
     ];
     assert_eq!(separate.len(), 4);
@@ -138,43 +139,108 @@ pub(super) fn check(residual: &TwoMapRecord, local: &LocalRecord) {
     }
 }
 
+fn parameters(residual: &TwoMapRecord, local: &LocalRecord, budget: &mut Budget) {
+    use NumberId as N;
+    let input = &residual.first.input;
+    for (actor, intercept, slope) in [
+        ("carol", N::NumbersPublishedCarolIntercept, N::NumbersPublishedCarolSlope),
+        ("alice", N::NumbersPublishedAliceIntercept, N::NumbersPublishedAliceSlope),
+        ("eve", N::NumbersPublishedEveIntercept, N::NumbersPublishedEveSlope),
+        ("bob", N::NumbersPublishedBobIntercept, N::NumbersPublishedBobSlope),
+        ("dave", N::NumbersPublishedDaveIntercept, N::NumbersPublishedDaveSlope),
+    ] {
+        let source = input.sources.iter().find(|source| source.name == actor).unwrap();
+        assert_eq!(number(&source.intercept, budget), number(intercept.value(), budget));
+        assert_eq!(number(&source.slope, budget), number(slope.value(), budget));
+    }
+    for (actual, declared) in [
+        (
+            &input.shape,
+            [
+                N::NumbersPublishedShapeFirst,
+                N::NumbersPublishedShapeSecond,
+                N::NumbersPublishedShapeThird,
+                N::NumbersPublishedShapeFourth,
+            ],
+        ),
+        (
+            &input.depth_mass,
+            [
+                N::NumbersPublishedMassFirst,
+                N::NumbersPublishedMassSecond,
+                N::NumbersPublishedMassThird,
+                N::NumbersPublishedMassFourth,
+            ],
+        ),
+    ] {
+        assert_eq!(actual.len(), declared.len());
+        for (actual, declared) in actual.iter().zip(declared) {
+            assert_eq!(number(actual, budget), number(declared.value(), budget));
+        }
+    }
+    assert_eq!(
+        number(&input.retention, budget),
+        number(N::NumbersPublishedRetention.value(), budget)
+    );
+    // The reduced coordinate removes the positive numeraire before comparison.
+    assert!(
+        number(N::NumbersPublishedNumeraire.value(), budget)
+            .compare(&number("0", budget), budget)
+            .unwrap()
+            .is_gt()
+    );
+    // Distinct local boxes retain their own construction parameters.
+    for (published, ours) in [
+        (N::NumbersPublishedLocalInflation, &local.declaration.inflation),
+        (N::NumbersPublishedLocalPadding, &local.declaration.padding),
+    ] {
+        assert!(
+            number(published.value(), budget)
+                .compare(&number("0", budget), budget)
+                .unwrap()
+                .is_gt()
+        );
+        assert!(number(ours, budget).compare(&number("0", budget), budget).unwrap().is_gt());
+    }
+}
+
 fn standing(residual: &TwoMapRecord, budget: &mut Budget) {
     let standing_label = "ver:standing:conserved-equilibrium-enclosure";
-    let radius = number(NumberId::NumbersCorpusPublished6.value(), budget);
+    let radius = number(NumberId::NumbersPublishedStandingInflationRadius.value(), budget);
     let coordinates = [
         (
             "carol",
             super::range(
-                NumberId::NumbersCorpusPublished7.value(),
-                NumberId::NumbersCorpusPublished8.value(),
+                NumberId::NumbersPublishedImageCarolLower.value(),
+                NumberId::NumbersPublishedImageCarolUpper.value(),
             ),
         ),
         (
             "alice",
             super::range(
-                NumberId::NumbersCorpusPublished9.value(),
-                NumberId::NumbersCorpusPublished10.value(),
+                NumberId::NumbersPublishedImageAliceLower.value(),
+                NumberId::NumbersPublishedImageAliceUpper.value(),
             ),
         ),
         (
             "eve",
             super::range(
-                NumberId::NumbersCorpusPublished11.value(),
-                NumberId::NumbersCorpusPublished12.value(),
+                NumberId::NumbersPublishedImageEveLower.value(),
+                NumberId::NumbersPublishedImageEveUpper.value(),
             ),
         ),
         (
             "bob",
             super::range(
-                NumberId::NumbersCorpusPublished13.value(),
-                NumberId::NumbersCorpusPublished14.value(),
+                NumberId::NumbersPublishedImageBobLower.value(),
+                NumberId::NumbersPublishedImageBobUpper.value(),
             ),
         ),
         (
             "dave",
             super::range(
-                NumberId::NumbersCorpusPublished15.value(),
-                NumberId::NumbersCorpusPublished16.value(),
+                NumberId::NumbersPublishedImageDaveLower.value(),
+                NumberId::NumbersPublishedImageDaveUpper.value(),
             ),
         ),
     ];
@@ -197,29 +263,29 @@ fn roots(residual: &TwoMapRecord, local: &LocalRecord, budget: &mut Budget) {
         (
             "eve",
             super::range(
-                NumberId::NumbersCorpusPublished17.value(),
-                NumberId::NumbersCorpusPublished18.value(),
+                NumberId::NumbersPublishedRootEveLower.value(),
+                NumberId::NumbersPublishedRootEveUpper.value(),
             ),
         ),
         (
             "bob",
             super::range(
-                NumberId::NumbersCorpusPublished19.value(),
-                NumberId::NumbersCorpusPublished20.value(),
+                NumberId::NumbersPublishedRootBobLower.value(),
+                NumberId::NumbersPublishedRootBobUpper.value(),
             ),
         ),
         (
             "dave",
             super::range(
-                NumberId::NumbersCorpusPublished21.value(),
-                NumberId::NumbersCorpusPublished22.value(),
+                NumberId::NumbersPublishedRootDaveLower.value(),
+                NumberId::NumbersPublishedRootDaveUpper.value(),
             ),
         ),
         (
             "carol",
             super::range(
-                NumberId::NumbersCorpusPublished23.value(),
-                NumberId::NumbersCorpusPublished24.value(),
+                NumberId::NumbersPublishedRootCarolLower.value(),
+                NumberId::NumbersPublishedRootCarolUpper.value(),
             ),
         ),
     ];
@@ -249,67 +315,67 @@ fn fixture_rows() -> [FixtureRow; 5] {
     [
         (
             "carol",
-            NumberId::NumbersCorpusCountCarol.value(),
+            NumberId::NumbersPublishedCarolCount.value(),
             &["alice", "bob", "carol"][..],
             super::range(
-                NumberId::NumbersCorpusRateCarolLo.value(),
-                NumberId::NumbersCorpusRateCarolHi.value(),
+                NumberId::NumbersPublishedCarolRateLower.value(),
+                NumberId::NumbersPublishedCarolRateUpper.value(),
             ),
             super::range(
-                NumberId::NumbersCorpusHullCarolLo.value(),
-                NumberId::NumbersCorpusHullCarolHi.value(),
+                NumberId::NumbersPublishedCarolHullLower.value(),
+                NumberId::NumbersPublishedCarolHullUpper.value(),
             ),
         ),
         (
             "alice",
-            NumberId::NumbersCorpusCountAlice.value(),
+            NumberId::NumbersPublishedAliceCount.value(),
             &["alice"][..],
             super::range(
-                NumberId::NumbersCorpusRateAliceLo.value(),
-                NumberId::NumbersCorpusRateAliceHi.value(),
+                NumberId::NumbersPublishedAliceRateLower.value(),
+                NumberId::NumbersPublishedAliceRateUpper.value(),
             ),
             super::range(
-                NumberId::NumbersCorpusHullAliceLo.value(),
-                NumberId::NumbersCorpusHullAliceHi.value(),
+                NumberId::NumbersPublishedAliceHullLower.value(),
+                NumberId::NumbersPublishedAliceHullUpper.value(),
             ),
         ),
         (
             "eve",
-            NumberId::NumbersCorpusCountEve.value(),
+            NumberId::NumbersPublishedEveCount.value(),
             &["alice", "bob", "carol", "dave", "eve"][..],
             super::range(
-                NumberId::NumbersCorpusRateEveLo.value(),
-                NumberId::NumbersCorpusRateEveHi.value(),
+                NumberId::NumbersPublishedEveRateLower.value(),
+                NumberId::NumbersPublishedEveRateUpper.value(),
             ),
             super::range(
-                NumberId::NumbersCorpusHullEveLo.value(),
-                NumberId::NumbersCorpusHullEveHi.value(),
+                NumberId::NumbersPublishedEveHullLower.value(),
+                NumberId::NumbersPublishedEveHullUpper.value(),
             ),
         ),
         (
             "bob",
-            NumberId::NumbersCorpusCountBob.value(),
+            NumberId::NumbersPublishedBobCount.value(),
             &["alice", "bob"][..],
             super::range(
-                NumberId::NumbersCorpusRateBobLo.value(),
-                NumberId::NumbersCorpusRateBobHi.value(),
+                NumberId::NumbersPublishedBobRateLower.value(),
+                NumberId::NumbersPublishedBobRateUpper.value(),
             ),
             super::range(
-                NumberId::NumbersCorpusHullBobLo.value(),
-                NumberId::NumbersCorpusHullBobHi.value(),
+                NumberId::NumbersPublishedBobHullLower.value(),
+                NumberId::NumbersPublishedBobHullUpper.value(),
             ),
         ),
         (
             "dave",
-            NumberId::NumbersCorpusCountDave.value(),
+            NumberId::NumbersPublishedDaveCount.value(),
             &["alice", "bob", "carol", "dave"][..],
             super::range(
-                NumberId::NumbersCorpusRateDaveLo.value(),
-                NumberId::NumbersCorpusRateDaveHi.value(),
+                NumberId::NumbersPublishedDaveRateLower.value(),
+                NumberId::NumbersPublishedDaveRateUpper.value(),
             ),
             super::range(
-                NumberId::NumbersCorpusHullDaveLo.value(),
-                NumberId::NumbersCorpusHullDaveHi.value(),
+                NumberId::NumbersPublishedDaveHullLower.value(),
+                NumberId::NumbersPublishedDaveHullUpper.value(),
             ),
         ),
     ]
@@ -360,7 +426,10 @@ fn fixture(residual: &TwoMapRecord, budget: &mut Budget) {
     let right = contributing_width(record, &record.input.wall.upper, budget);
     assert!(right.compare(&left, budget).unwrap().is_lt());
     let ours = super::range(&right.exact_string(budget).unwrap(), &left.exact_string(budget).unwrap());
-    let published = super::range(NumberId::NumbersCorpusWidthLo.value(), NumberId::NumbersCorpusWidthHi.value());
+    let published = super::range(
+        NumberId::NumbersPublishedWidthLower.value(),
+        NumberId::NumbersPublishedWidthUpper.value(),
+    );
     compare(
         "ver:standing:conserved-equilibrium-enclosure:width",
         &published,
