@@ -40,41 +40,60 @@ def publish_wallet(source, destination):
 
 def isolated_wallet(module):
     """Commit objects supply the whole input; the moving parent is not an input."""
+    return isolated_runtime(module, 'wallet-conformance', 'PN_WALLET_CONFORMANCE_ISOLATED',
+                            ('wallet-rpc-compile-fail.log',))
+
+
+def isolated_host(module):
+    """Host refusal probes own their source tree, compiler and service instance."""
+    return isolated_runtime(module, 'host-observation-runtime', 'PN_HOST_RUNTIME_ISOLATED',
+                            ('host-statement-compile-fail.log',))
+
+
+def isolated_runtime(module, name, marker, logs):
+    """Run a required suite from commit objects and publish its owned outputs."""
     from build_graph import cancellable
     root = Path.cwd()
-    tree = root/'.lane/wallet-conformance-tree'
+    prefix = 'WALLET-ISOLATION' if module == 'test_wallet_boundary' else 'HOST-ISOLATION'
+    tree = root/'.lane'/('host-tree' if module == 'test_host_runtime' else name+'-tree')
     if tree.exists(): shutil.rmtree(tree)
     source = os.environ.get('PN_GATE_SOURCE') or source_id()
     for argv in (['git', 'clone', '--quiet', '--shared', '--no-hardlinks', '--no-checkout', str(root), str(tree)],
                  ['git', '-C', str(tree), 'checkout', '--quiet', '--detach', source]):
         started = time.monotonic()
         result = cancellable(argv)
-        print(f'WALLET-ISOLATION tool=git wall={time.monotonic()-started:.6f}s status={result.returncode}', flush=True)
+        print(f'{prefix} tool=git wall={time.monotonic()-started:.6f}s status={result.returncode}', flush=True)
         if result.returncode: return result.returncode
     for argv, expected in ((['rev-parse', 'HEAD'], source),
                            (['status', '--porcelain', '--untracked-files=no'], '')):
         started = time.monotonic()
         checked = cancellable(['git', '-C', str(tree), *argv], stdout=subprocess.PIPE, text=True)
-        print(f'WALLET-ISOLATION tool=git verify={argv[0]} wall={time.monotonic()-started:.6f}s status={checked.returncode}', flush=True)
+        print(f'{prefix} tool=git verify={argv[0]} wall={time.monotonic()-started:.6f}s status={checked.returncode}', flush=True)
         if checked.returncode or checked.stdout.strip() != expected:
             raise StructuralError('isolated wallet checkout is not clean at the source commit')
     (tree/'.lane').mkdir()
-    target = Path(os.environ['CARGO_TARGET_DIR']).resolve()/'wallet-conformance'
-    env = dict(os.environ, PN_WALLET_CONFORMANCE_ISOLATED='1', CARGO_TARGET_DIR=str(target),
-               PN_FLAKE_LEDGER=str(target/'gate-flakes.jsonl'))
+    target = Path(os.environ['CARGO_TARGET_DIR']).resolve()/name
+    env = dict(os.environ, CARGO_TARGET_DIR=str(target),
+               PN_FLAKE_LEDGER=str(target/'gate-flakes.jsonl'),
+               PN_OBSERVE_ARTIFACT_DIR=str(tree/'.lane/observations'))
+    env[marker] = '1'
+    if module == 'test_host_runtime':
+        env['PN_HOST_TEST_ROOT'] = str(tree/'.lane/pg')
     result = cancellable([sys.executable, '-B', 'ci/run_ci.py', module], cwd=tree, env=env)
-    for name, destination in (('harness-ci-test_wallet_boundary.jsonl', 'harness-ci-test_wallet_boundary.jsonl'),
-                              ('wallet-rpc-compile-fail.log', 'wallet-rpc-compile-fail.log'),
-                              ('performance-findings.jsonl', 'wallet-conformance-findings.jsonl')):
-        path = tree/'.lane'/name
+    outputs = (f'harness-ci-{module}.jsonl', *logs)
+    for filename, destination in (*((item,item) for item in outputs),
+                                  ('performance-findings.jsonl', name+'-findings.jsonl')):
+        path = tree/'.lane'/filename
         if path.exists(): publish_wallet(path, root/'.lane'/destination)
-    print(f'WALLET-ISOLATION source={source} inputs=commit clean=true target=separate handback=atomic', flush=True)
+    print(f'{prefix} source={source} inputs=commit clean=true target=separate handback=atomic', flush=True)
     return result.returncode
 
 
 def main(module):
     if module == 'test_wallet_boundary' and os.environ.get('PN_GATE_PARALLEL') == '1' and os.environ.get('PN_WALLET_CONFORMANCE_ISOLATED') != '1':
         return isolated_wallet(module)
+    if module == 'test_host_runtime' and os.environ.get('PN_GATE_PARALLEL') == '1' and os.environ.get('PN_HOST_RUNTIME_ISOLATED') != '1':
+        return isolated_host(module)
     registry = load()
     source = source_id()
     suite_name = 'ci::' + module
@@ -162,7 +181,19 @@ def main(module):
 
 if __name__ == '__main__':
     try:
-        sys.exit(main(sys.argv[1]))
+        if sys.argv[1] == 'test_host_runtime' and os.environ.get('PN_HOST_RUNTIME_ISOLATED') == '1':
+            from host_postgresql import start, stop
+            from build_graph import cancellable
+            fixture = Path(os.environ['PN_HOST_TEST_ROOT'])
+            try:
+                built = cancellable([sys.executable, '-B', 'ci/host_evidence_build.py'])
+                if built.returncode: sys.exit(built.returncode)
+                start(fixture)
+                sys.exit(main(sys.argv[1]))
+            finally:
+                stop(fixture)
+        else:
+            sys.exit(main(sys.argv[1]))
     except (ValueError, KeyError, TypeError, OSError) as error:
         print(f'HARNESS-STRUCTURAL-ERROR {error}', file=sys.stderr)
         sys.exit(2)

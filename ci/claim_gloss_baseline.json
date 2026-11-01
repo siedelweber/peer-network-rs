@@ -83,6 +83,7 @@
     "ci::test_harness.Harness.test_doctest_inventory": "A never-started or unfinished doctest remains missing, preventing a partial run from passing.",
     "ci::test_harness.Harness.test_dropped_case": "Both inventory and result joins refuse a missing case, preserving the whole suite contract.",
     "ci::test_harness.Harness.test_flake_ledger": "",
+    "ci::test_harness.Harness.test_host_commit_isolation": "",
     "ci::test_harness.Harness.test_ignored_case": "An ignored required case cannot make its suite pass without executing its predicate.",
     "ci::test_harness.Harness.test_interchange_manifest": "Claim: The current shared interchange library has no feature or binary branch and no unreviewed production dependency; its source-bound Value enum remains exhaustive, keeping one declared public configuration.",
     "ci::test_harness.Harness.test_missing_level": "A missing level is structural, preventing an undeclared scope from borrowing evidence.",

@@ -55,7 +55,7 @@ times > .lane/gate-cpu-start.raw
 source_id=$(time git rev-parse HEAD)
 export PN_GATE_SOURCE="$source_id"
 export CARGO_NET_OFFLINE=true
-unset PN_WALLET_CONFORMANCE_ISOLATED
+unset PN_WALLET_CONFORMANCE_ISOLATED PN_HOST_RUNTIME_ISOLATED
 rm -f .lane/performance-events.jsonl .lane/harness-ci-*.jsonl .lane/harness-matrix.json .lane/harness-benchmarks.jsonl .lane/observation-coverage.json .lane/observation-syntax.json
 run_step() {
     local name=$1

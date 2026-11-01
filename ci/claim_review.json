@@ -138,6 +138,14 @@
       "review": "Read durable failure, retry, recurring failure, later success and slow-success rows across fresh ledger sessions. The witness checks exact commit, case, error and node-load fields and retains successful outcomes."
     },
     {
+      "operation": "ci::test_harness.Harness.test_host_commit_isolation",
+      "path": "ci/test_harness.py",
+      "claim": "ROOT::claim:harness:host-inputs-are-commit-scoped",
+      "before": "",
+      "after": "Claim: Host observation uses a clean checkout of its source commit, its own target and service root, and atomic owned artifacts even while a tracked parent file changes; clean and moving parents produce identical evidence.",
+      "review": "Read the barrier-controlled clean and dirty parent executions: both use committed payloads, distinct target and service paths, and identical atomically published artifacts while preserving sibling findings."
+    },
+    {
       "operation": "ci::test_harness.Harness.test_interchange_manifest",
       "path": "ci/test_harness.py",
       "claim": "ROOT::claim:harness:interchange-structure-is-declared",

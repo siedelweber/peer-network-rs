@@ -37,6 +37,16 @@ class Harness(unittest.TestCase):
         ´claim:harness:wallet-inputs-are-commit-scoped´
         ´test:integration:test-wallet-commit-isolation´
         """
+        self.commit_isolation(False)
+
+    def test_host_commit_isolation(self):
+        """Claim: Host observation uses a clean checkout of its source commit, its own target and service root, and atomic owned artifacts even while a tracked parent file changes; clean and moving parents produce identical evidence.
+        ´claim:harness:host-inputs-are-commit-scoped´
+        ´test:integration:test-host-commit-isolation´
+        """
+        self.commit_isolation(True)
+
+    def commit_isolation(self, host):
         import json
         import os
         from pathlib import Path
@@ -46,7 +56,11 @@ class Harness(unittest.TestCase):
         import threading
         import time
         from unittest.mock import patch
-        from run_ci import isolated_wallet
+        from run_ci import isolated_wallet, isolated_host
+        operation = isolated_host if host else isolated_wallet
+        module = "test_host_runtime" if host else "test_wallet_boundary"
+        name = "host-observation-runtime" if host else "wallet-conformance"
+        compile_log = "host-statement-compile-fail.log" if host else "wallet-rpc-compile-fail.log"
         driver = '''import json, os, pathlib, socket
 root = pathlib.Path.cwd()
 assert (root/'payload').read_text() == 'committed'
@@ -61,6 +75,9 @@ assert (root/'payload').read_text() == 'committed'
 (root/'.lane/wallet-rpc-compile-fail.log').write_text('expected compile refusal\\n')
 (root/'.lane/performance-findings.jsonl').write_text('fixture finding\\n')
 '''
+        driver = driver.replace('test_wallet_boundary', module).replace('wallet-rpc-compile-fail.log', compile_log)
+        if host:
+            driver += "assert pathlib.Path(os.environ['PN_HOST_TEST_ROOT']).parent == root/'.lane'\n"
         original = Path.cwd()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -81,7 +98,7 @@ assert (root/'payload').read_text() == 'committed'
             lane.mkdir()
             shared = lane/'performance-findings.jsonl'
             shared.write_bytes(b'sibling findings\n')
-            names = ('harness-ci-test_wallet_boundary.jsonl', 'wallet-rpc-compile-fail.log', 'wallet-conformance-findings.jsonl')
+            names = (f'harness-ci-{module}.jsonl', compile_log, name+'-findings.jsonl')
             snapshots = []
             try:
                 os.chdir(root)
@@ -119,7 +136,7 @@ assert (root/'payload').read_text() == 'committed'
                             replacements.append(destination.name)
                         try:
                             with patch.dict(os.environ, {'PN_GATE_SOURCE':source, 'CARGO_TARGET_DIR':str(lane/'target'), 'WALLET_WITNESS_SOCKET':str(address)}), patch('run_ci.os.replace', side_effect=publish):
-                                self.assertEqual(isolated_wallet('test_wallet_boundary'), 0)
+                                self.assertEqual(operation(module), 0)
                         finally:
                             worker.join(timeout=30)
                         self.assertFalse(worker.is_alive())
@@ -133,7 +150,7 @@ assert (root/'payload').read_text() == 'committed'
                 self.assertEqual(snapshots[0], snapshots[1])
             finally:
                 os.chdir(original)
-        print('WALLET-COMMIT-WITNESS clean=passed moving=passed results=identical handback=atomic sibling-findings=unchanged')
+        print(f'COMMIT-ISOLATION-WITNESS suite={module} clean=passed moving=passed results=identical handback=atomic sibling-findings=unchanged')
 
     def test_flake_ledger(self):
         """Claim: Required failures retain commit, case, error and node load; a later required execution reports its retry and result, a repeated failure is a recurrence, and a passing slow call remains a finding without becoming a failed test.

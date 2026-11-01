@@ -2594,6 +2594,7 @@
       "budget": "pure-suite",
       "cases": [
         "ci::test_harness.Harness.test_wallet_commit_isolation",
+        "ci::test_harness.Harness.test_host_commit_isolation",
         "ci::test_harness.Harness.test_flake_ledger",
         "ci::test_harness.Harness.test_reference_tier",
         "ci::test_harness.Harness.test_case_level_declaration",
