@@ -304,8 +304,16 @@ pub(crate) fn package_at_numeraires(
     let mut prices = Vec::new();
     let mut bindings = Vec::new();
     for epoch in 1..=boundary {
-        let (declaration, mut edition, mut parameters) = crate::common::fixture();
+        let (mut declaration, mut edition, mut parameters) = crate::common::fixture();
         if let Some(value) = numeraires.get(usize::try_from(epoch - 1).unwrap()) {
+            declaration.id.edition = epoch;
+            declaration.announced_at = epoch - 1;
+            declaration.effective_at = epoch;
+            edition.id = declaration.id.clone();
+            parameters.edition = declaration.id.clone();
+            for profile in &mut parameters.profiles {
+                profile.edition = declaration.id.clone();
+            }
             let literal = numeric.literal(value).unwrap();
             let amount = numeric.burn_per_action(&literal, "burn").unwrap();
             let numeraire = numeric.numeraire("nu", &amount).unwrap();

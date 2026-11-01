@@ -79,9 +79,9 @@
 | ci::test_harness | active | unit | ci-python | fast | 16 |
 | planned-burn | held | held | none | service | 0 |
 | planned-graph | held | held | none | fast | 0 |
-| planned-ledger | held | held | none | fast | 0 |
-| planned-compiler | held | held | none | fast | 0 |
-| planned-numeric | held | held | none | fast | 0 |
+| planned-ledger-outer | held | held | none | fast | 0 |
+| planned-compiler-outer | held | held | none | fast | 0 |
+| planned-numeric-outer | held | held | none | fast | 0 |
 | planned-admission | held | held | none | fast | 0 |
 | planned-publication | held | held | none | service | 0 |
 | planned-replay | held | held | none | service | 0 |
@@ -150,7 +150,7 @@
 | pn-verification::title | active | public-surface | pn-graph-rust | fast | 3 |
 | graph-title-verification | active | integration | pn-graph-rust | fast | 8 |
 | pn-epoch::inputs | active | public-surface | pn-epoch-rust | fast | 1 |
-| pn-epoch::ledger | active | public-surface | pn-epoch-rust | fast | 4 |
+| planned-ledger | active | public-surface | pn-epoch-rust | fast | 5 |
 | pn-act-profile | active | unit | pn-act-profile-rust | fast | 4 |
 | pn-epoch::cells | active | public-surface | pn-epoch-rust | fast | 4 |
 | pn-epoch::coefficients | active | public-surface | pn-epoch-rust | fast | 3 |
@@ -158,8 +158,8 @@
 | pn-epoch::base | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::support | active | public-surface | pn-epoch-rust | fast | 2 |
 | pn-epoch::package | active | public-surface | pn-epoch-rust | fast | 1 |
-| pn-epoch::compiler | active | public-surface | pn-epoch-rust | fast | 4 |
-| pn-epoch::solve | active | public-surface | pn-epoch-rust | fast | 31 |
+| planned-compiler | active | public-surface | pn-epoch-rust | fast | 5 |
+| planned-numeric | active | public-surface | pn-epoch-rust | fast | 31 |
 | pn-graph::numeric | active | public-surface | pn-graph-rust | fast | 15 |
 | pn-graph::reference-maps | active | public-surface | pn-graph-rust | reference-certificate | 2 |
 | pn-graph::reference-local | active | public-surface | pn-graph-rust | reference-certificate | 1 |
@@ -167,7 +167,7 @@
 | pn-epoch::reference-receiving | active | public-surface | pn-epoch-rust | reference-certificate | 1 |
 | pn-epoch::own-burn | active | public-surface | pn-epoch-rust | mechanism-certificate | 1 |
 
-**Amendment (Matrix and remaining support)** · `amend:harness:matrix-evidence` The untracked .lane/harness-matrix.json artifact and HARNESS-MATRIX gate summary publish source/configuration/implementation/tier results and explicit holds under (`rule:harness:tiers`). The service tier has no provisioned worker and remains held, never passed by fast evidence. Planned storage, burn and API suites remain held with no implementation, as do the other unimplemented domain contracts in (`model:design:harness-suites`). The support step has completed pn-testkit and its own four registered tests under the level and claim discipline, applicable dependency reviews, property seed/replay and missing-seed probes, benchmark correctness/smoke and regression probes, and all four packages' unit/public-surface/integration levels. The existing conformance cases of documents, cli-common and execwrap and the canonical vectors and properties of pn-interchange are preserved under (`conv:xchg:metatheorems-as-tests`); the support step routes all 93 interchange vector rows through the contract runner. The claims step owns the complete four-package conformance/obligation audit and any missing canonical-vector witnesses it identifies. Item-local lint discipline without test suppressions is met by the current clippy, member-lint and suppression checks; the claims step still audits each site's claim and obligation. Internal-module public-surface declarations were corrected to unit by the support step, with external public-surface witnesses added. Tracing in the observation step is a co-closure condition alongside the claims step; (`gate:harness:foundation`) and (`gate:design:harness-foundation`) remain open. The performance tier awaits reviewed comparable baseline campaigns, and the service, domain and client implementation steps own their respective held conformance evidence. Registry declaration and successful rendering do not create service conformance or executed claims.
+**Amendment (Matrix and remaining support)** · `amend:harness:matrix-evidence` The untracked .lane/harness-matrix.json artifact and HARNESS-MATRIX gate summary publish source/configuration/implementation/tier results and explicit holds under (`rule:harness:tiers`). The service tier executes its registered PostgreSQL and Elements cases on provisioned workers; fast evidence never substitutes for those executions. Planned storage, burn and API rows retain only their stated missing integration scopes, alongside separately executed storage-library and wallet contracts. The implemented ledger, compiler and numeric portions and their outer-corpus holds are separated under (`amend:design:implemented-contract-joins`); a held remainder does not erase an executed scoped contract, and an executed scoped contract does not close that remainder. The support step has completed pn-testkit and its own four registered tests under the level and claim discipline, applicable dependency reviews, property seed/replay and missing-seed probes, benchmark correctness/smoke and regression probes, and all four packages' unit/public-surface/integration levels. The existing conformance cases of documents, cli-common and execwrap and the canonical vectors and properties of pn-interchange are preserved under (`conv:xchg:metatheorems-as-tests`); the support step routes all 93 interchange vector rows through the contract runner. The claims step owns the complete four-package conformance/obligation audit and any missing canonical-vector witnesses it identifies. Item-local lint discipline without test suppressions is met by the current clippy, member-lint and suppression checks; the claims step still audits each site's claim and obligation. Internal-module public-surface declarations were corrected to unit by the support step, with external public-surface witnesses added. Tracing in the observation step is a co-closure condition alongside the claims step; (`gate:harness:foundation`) and (`gate:design:harness-foundation`) remain open. The performance tier awaits reviewed comparable baseline campaigns, and the service, domain and client implementation steps own their respective held conformance evidence. Registry declaration and successful rendering do not create service conformance or executed claims.
 
 **Decision (Client packages)** · `dec:harness:client-packages` pn-wallet is the development wallet crate and owns test-asset funding and spending, permanent-target burn construction, signing, broadcast and wallet-backed recovery. pn-client is the GraphQL counterpart of pn, depending on pn-wallet, pn-records and pn-interchange; its sole caller protocol and its node protocol are CBOR-native GraphQL. pn-command depends on pn-client and pn's library surface and presents both through the command output contract. The node's library and executable are named pn; its schema, service and lifecycle responsibilities remain outside domain computation. pn-wallet depends on the Elements RPC client and receives a narrowly scoped node GraphQL transport supplied by its caller for faucet funding; it has no dependency on pn-client or pn, so this callback creates no package cycle. Funding chooses and retains the wallet recipient and request association in pn-wallet while pn-client transports the GraphQL exchange. Ordinary node reads need not contact a wallet. These boundaries concentrate spend authority in one place and keep the node independent of its clients; placement is accepted in (`proposal:harness:packages`). pn-wallet also supplies the host's development burn inspection, settlement and faucet spending through the single admitted Elements integration (`amend:devnet:wallet-authority`); neither host nor client acquires another RPC client.
 

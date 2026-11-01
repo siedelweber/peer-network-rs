@@ -2646,8 +2646,8 @@
       "contract": "exact charged values and retained vintages",
       "implementation": "",
       "kind": "suite",
-      "name": "planned-ledger",
-      "reason": "contract not implemented; first contributing domain bite 2",
+      "name": "planned-ledger-outer",
+      "reason": "Implemented scope runs under epoch-ledger-1; unrestricted outer-corpus coverage remains bite 11. Real-chain realization belongs to the devnet owners; persistent admitted results remain bite 8.",
       "status": "held",
       "tier": "fast"
     },
@@ -2656,8 +2656,8 @@
       "contract": "fixed-input cells, recipients and emission",
       "implementation": "",
       "kind": "suite",
-      "name": "planned-compiler",
-      "reason": "contract not implemented; first contributing domain bite 5",
+      "name": "planned-compiler-outer",
+      "reason": "Implemented scope runs under epoch-compiler-1; unrestricted outer-corpus coverage remains bite 11. Authenticated dependency reopening and real-chain verification retain their named owners.",
       "status": "held",
       "tier": "fast"
     },
@@ -2666,8 +2666,8 @@
       "contract": "representation, certified bounds and deterministic refinement",
       "implementation": "",
       "kind": "suite",
-      "name": "planned-numeric",
-      "reason": "contract not implemented; first contributing domain bite 2",
+      "name": "planned-numeric-outer",
+      "reason": "Implemented scope runs under epoch-numeric-1; unrestricted outer-corpus coverage remains bite 11. Additional platforms and production ridge/controller admission retain their named holds.",
       "status": "held",
       "tier": "fast"
     },
@@ -3897,7 +3897,7 @@
       "tier": "service"
     },
     {
-      "contract": "records-level dependent-act partition and scoped Registration formation",
+      "contract": "records-level dependent-act partition, scoped Registration formation and the declared rational-endpoint numeric fragment",
       "edition": "0.1",
       "evidence": "pure",
       "kind": "implementation",
@@ -4186,7 +4186,7 @@
       "tier": "fast"
     },
     {
-      "contract": "boundary compiler parameters and final ledger",
+      "contract": "boundary compiler parameters, final ledger and declared conserved numeric procedures",
       "edition": "0.1",
       "evidence": "pure",
       "kind": "implementation",
@@ -4208,15 +4208,18 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-epoch::compiler::ledger_contract",
         "pn-epoch::ledger::ledger_derivation",
         "pn-epoch::ledger::whole_act_ledger",
         "pn-epoch::ledger::ledger_vintages",
         "pn-epoch::ledger::ledger_aliases"
       ],
+      "contract": "Complete recognized-prefix ledger, exact writing-price debits and retained vintages under the declared verifier; no chain finality or admitted-result storage.",
+      "contract_edition": "epoch-ledger-1",
       "implementation": "pn-epoch-rust",
       "kind": "suite",
       "level": "public-surface",
-      "name": "pn-epoch::ledger",
+      "name": "planned-ledger",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
@@ -4335,15 +4338,18 @@
     {
       "budget": "pure-suite",
       "cases": [
+        "pn-epoch::compiler::compiler_contract",
         "pn-epoch::compiler::compiler_tables",
         "pn-epoch::compiler::compiler_splits",
         "pn-epoch::compiler::compiler_properties",
         "pn-epoch::compiler::compiler_generated"
       ],
+      "contract": "Fixed complete-input compilation, cells, recipients, coefficients and emission under declared verifiers; no deployment authentication.",
+      "contract_edition": "epoch-compiler-1",
       "implementation": "pn-epoch-rust",
       "kind": "suite",
       "level": "public-surface",
-      "name": "pn-epoch::compiler",
+      "name": "planned-compiler",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
@@ -4384,10 +4390,12 @@
         "pn-epoch::solve::act_emission",
         "pn-epoch::solve::act_switch"
       ],
+      "contract": "Declared rational-endpoint procedure, evaluated fence, deterministic refusal, conserved solve and replay on the finite fixtures; no unrestricted grammar or production controller admission.",
+      "contract_edition": "epoch-numeric-1",
       "implementation": "pn-epoch-rust",
       "kind": "suite",
       "level": "public-surface",
-      "name": "pn-epoch::solve",
+      "name": "planned-numeric",
       "runner": "nextest",
       "status": "active",
       "tier": "fast"
@@ -4412,6 +4420,7 @@
         "pn-graph::numeric::reference_wall_branches",
         "pn-graph::numeric::enclosed_wall_clamp"
       ],
+      "contract_edition": "graph-numeric-1",
       "implementation": "pn-graph-rust",
       "kind": "suite",
       "level": "public-surface",
@@ -4439,6 +4448,7 @@
         "pn-graph::numeric::verification_box",
         "pn-graph::numeric::verification_corpus"
       ],
+      "contract_edition": "graph-numeric-1",
       "implementation": "pn-graph-rust",
       "kind": "suite",
       "level": "public-surface",
@@ -4454,6 +4464,7 @@
       "cases": [
         "pn-graph::numeric::verification_local"
       ],
+      "contract_edition": "graph-numeric-1",
       "implementation": "pn-graph-rust",
       "kind": "suite",
       "level": "public-surface",
@@ -4469,6 +4480,7 @@
       "cases": [
         "pn-epoch::solve::enclosed_wall_solve"
       ],
+      "contract_edition": "epoch-numeric-1",
       "implementation": "pn-epoch-rust",
       "kind": "suite",
       "level": "public-surface",
@@ -4484,6 +4496,7 @@
       "cases": [
         "pn-epoch::solve::partitions::receiving_showcase"
       ],
+      "contract_edition": "epoch-numeric-1",
       "implementation": "pn-epoch-rust",
       "kind": "suite",
       "level": "public-surface",
@@ -4506,6 +4519,7 @@
       "cases": [
         "pn-epoch::solve::burn_own"
       ],
+      "contract_edition": "epoch-numeric-1",
       "implementation": "pn-epoch-rust",
       "kind": "suite",
       "level": "public-surface",

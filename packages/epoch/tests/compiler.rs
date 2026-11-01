@@ -1,5 +1,7 @@
 use common::pins::NumberId as N;
 
+#[path = "common/boundary.rs"]
+mod boundary;
 mod common;
 pub use common::pins;
 #[path = "common/joined.rs"]
@@ -705,5 +707,238 @@ proptest! {
         let result = compile(&acts, 1);
         assert_ne!(history_key(&result), history_key(&expected));
         assert_eq!(result.view(), expected.view());
+    }
+}
+
+/// Claim: The shared complete-boundary inputs yield the literal singleton cells, recipients and base coefficients, independently recomputed emission and retained fractions, and identical compiled views after input reversal. A verifier that rejects the Opinion refuses the entire compile; the declared verifier is not an authenticated deployment realization.
+/// ´claim:compiler:shared-boundary-compiles-retain-fixed-inputs´
+/// ´test:integration:compiler-contract´
+#[test]
+fn compiler_contract() {
+    for case in boundary::BOUNDARY_CASES {
+        let mut fixture = boundary::boundary_fixture(case);
+        let package = boundary::boundary_package(&fixture);
+        for (offset, input) in package.input().inputs.iter().enumerate() {
+            assert_eq!(input.parameters().edition.edition, u64::try_from(offset).unwrap() + 1);
+            assert_eq!(input.parameters().numeraire.amount().exact(), fixture.numeraires[offset]);
+        }
+        let compile = |package: &pn_epoch::package::VerifiedPackage| {
+            compile_final_state(
+                package,
+                &Verifier,
+                &mut numeric(),
+                Limits::default(),
+                N::NumbersScalingProductCeiling.integer(),
+            )
+            .unwrap()
+        };
+        let state = compile(&package);
+        compiler_contract_view(&state, &fixture);
+        let view = state.view();
+        fixture.acts.reverse();
+        assert_eq!(compile(&boundary::boundary_package(&fixture)).view(), view);
+        assert!(matches!(
+            compile_final_state(
+                &package,
+                &RejectOpinion,
+                &mut numeric(),
+                Limits::default(),
+                N::NumbersScalingProductCeiling.integer()
+            ),
+            Err(CompileError::Ledger(pn_epoch::ledger::LedgerError::Formation(
+                pn_graph::registration::RegistrationError::Unapproved
+            )))
+        ));
+    }
+}
+
+#[derive(Debug)]
+struct RejectOpinion;
+impl pn_graph::registration::RegistrationVerifier for RejectOpinion {
+    fn approval(&self, act: &pn_records::ValidatedAct) -> bool {
+        act.id().family != "Opinion"
+    }
+    fn removal(&self, _: &pn_records::ValidatedAct, _: pn_graph::registration::OpeningKind, _: pn_records::Position) -> bool {
+        true
+    }
+}
+
+fn compiler_contract_view(state: &CompiledState, fixture: &boundary::BoundaryFixture) {
+    use nrz_cas::{Rational, limits::Budget};
+    let view = state.view();
+    assert_eq!(view.cells.len(), fixture.acts.len());
+    for act in &fixture.acts {
+        let cell = view.cells.iter().find(|cell| cell.members.contains(&act.id)).unwrap();
+        assert_eq!(cell.members, [act.id.clone()].into_iter().collect());
+        assert_eq!(view.coefficients[&cell.identity], CoefficientEvidence::Exact("1".into()));
+        let coordinates = if act.id.family == "Opinion" {
+            [("polarity".into(), "1".into()), ("reaction".into(), "1".into())]
+                .into_iter()
+                .collect()
+        } else {
+            BTreeMap::new()
+        };
+        assert_eq!(cell.coordinates, coordinates);
+        let resolved = view.recipients.iter().find(|row| row.cell.identity == cell.identity).unwrap();
+        assert_eq!(
+            resolved.recipient,
+            if act.id.family == "Opinion" {
+                "buyer"
+            } else {
+                act.id.author.as_str()
+            }
+        );
+    }
+    let expected_pairs: BTreeSet<_> = fixture
+        .acts
+        .iter()
+        .map(|act| {
+            (
+                act.id.author.clone(),
+                if act.id.family == "Opinion" {
+                    "buyer".into()
+                } else {
+                    act.id.author.clone()
+                },
+            )
+        })
+        .collect();
+    let actual_pairs: BTreeSet<_> = view
+        .base
+        .rows
+        .iter()
+        .flat_map(|(source, row)| row.keys().map(move |target| (source.clone(), target.clone())))
+        .collect();
+    assert_eq!(actual_pairs, expected_pairs);
+    for (source, row) in &view.base.rows {
+        for (target, entry) in row {
+            let acts = fixture
+                .acts
+                .iter()
+                .filter(|act| {
+                    act.id.author == *source
+                        && if act.id.family == "Opinion" {
+                            target == "buyer"
+                        } else {
+                            target == source
+                        }
+                })
+                .count();
+            let coefficient = usize::from(source == target) + acts;
+            assert_eq!(entry.score, BaseScore::Exact(coefficient.to_string()));
+        }
+    }
+    let mut budget = Budget::new(Limits::default()).unwrap();
+    let one = Rational::parse("1", &mut budget).unwrap();
+    let price = Rational::parse(state.package().input().prices.last().unwrap().price().exact(), &mut budget).unwrap();
+    for (source, emission) in &view.support.sources {
+        let address = Address(source.clone());
+        let balance = Rational::parse(view.ledger.balances[&address].exact(), &mut budget).unwrap();
+        let count = Rational::parse(&view.ledger.counts[&address].0.to_string(), &mut budget).unwrap();
+        let outlay = price.mul(&count, &mut budget).unwrap();
+        let ratio = balance.div(&outlay, &mut budget).unwrap();
+        let expected = if ratio.compare(&one, &mut budget).unwrap().is_gt() {
+            one.clone()
+        } else {
+            ratio
+        };
+        assert_eq!(emission.emission, expected.exact_string(&mut budget).unwrap());
+        assert_eq!(
+            emission.retained,
+            one.sub(&expected, &mut budget).unwrap().exact_string(&mut budget).unwrap()
+        );
+    }
+}
+
+/// Claim: The shared complete-boundary cases reproduce every writing-price debit, count and final balance through direct ledger compilation, retain the earlier prefix's debit vintages, and reject an unapproved complete act. The fixture verifier checks its declared evidence byte, not deployment authentication.
+/// ´claim:compiler:shared-boundary-ledgers-retain-vintages´
+/// ´test:integration:ledger-contract´
+#[test]
+fn ledger_contract() {
+    use nrz_cas::{Rational, limits::Budget};
+    use pn_epoch::ledger::{LedgerError, compile_ledger};
+    use pn_records::numerics::ExactLimits;
+    for case in boundary::BOUNDARY_CASES {
+        let mut fixture = boundary::boundary_fixture(case);
+        let package = boundary::boundary_package(&fixture);
+        let input = package.input();
+        let ledger = compile_ledger(
+            &input.inputs,
+            &input.prices,
+            &input.markers,
+            &input.history,
+            &EvidenceByteVerifier,
+            &mut numeric(),
+            ExactLimits::default(),
+        )
+        .unwrap();
+        let mut budget = Budget::new(ExactLimits::default()).unwrap();
+        let wall = Rational::parse(N::NumbersScalingWall.value(), &mut budget).unwrap();
+        for (actor, gross) in &fixture.burns {
+            let own: Vec<_> = fixture.acts.iter().filter(|act| act.id.author == *actor).collect();
+            let mut balance = Rational::parse(gross, &mut budget).unwrap();
+            for act in &own {
+                let nu = Rational::parse(
+                    fixture.numeraires[usize::try_from(act.finalization_epoch - 1).unwrap()],
+                    &mut budget,
+                )
+                .unwrap();
+                let debit = wall.mul(&nu, &mut budget).unwrap();
+                assert_eq!(
+                    ledger.debits[&act.id].charged().exact(),
+                    debit.exact_string(&mut budget).unwrap()
+                );
+                balance = balance.sub(&debit, &mut budget).unwrap();
+            }
+            let address = Address((*actor).into());
+            assert_eq!(ledger.counts[&address].0, u64::try_from(own.len()).unwrap());
+            assert_eq!(ledger.balances[&address].exact(), balance.exact_string(&mut budget).unwrap());
+        }
+        let prefix: Vec<_> = fixture
+            .acts
+            .iter()
+            .filter(|act| act.finalization_epoch == 1)
+            .cloned()
+            .collect();
+        let prefix = joined::history(&prefix);
+        let old = compile_ledger(
+            &input.inputs[..1],
+            &input.prices[..1],
+            &input.markers,
+            &prefix,
+            &EvidenceByteVerifier,
+            &mut numeric(),
+            ExactLimits::default(),
+        )
+        .unwrap();
+        for (act, debit) in old.debits {
+            assert_eq!(ledger.debits[&act], debit);
+        }
+        fixture.acts[0].authentication_evidence = vec![2];
+        let refused = boundary::boundary_package(&fixture);
+        let input = refused.input();
+        assert_eq!(
+            compile_ledger(
+                &input.inputs,
+                &input.prices,
+                &input.markers,
+                &input.history,
+                &EvidenceByteVerifier,
+                &mut numeric(),
+                ExactLimits::default()
+            ),
+            Err(LedgerError::Formation(pn_graph::registration::RegistrationError::Unapproved))
+        );
+    }
+}
+
+#[derive(Debug)]
+struct EvidenceByteVerifier;
+impl pn_graph::registration::RegistrationVerifier for EvidenceByteVerifier {
+    fn approval(&self, act: &pn_records::ValidatedAct) -> bool {
+        act.authentication_evidence() == [1]
+    }
+    fn removal(&self, _: &pn_records::ValidatedAct, _: pn_graph::registration::OpeningKind, _: pn_records::Position) -> bool {
+        true
     }
 }

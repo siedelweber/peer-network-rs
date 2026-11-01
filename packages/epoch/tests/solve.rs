@@ -1,6 +1,8 @@
 pub use common::pins;
 use pins::NumberId;
 
+#[path = "common/boundary.rs"]
+mod boundary;
 mod common;
 #[path = "common/joined.rs"]
 mod joined;
@@ -2536,32 +2538,15 @@ fn fence_state(reaction: i64, buyer: &str) -> pn_epoch::compiler::CompiledState 
 
 fn scaling_state(case: &str) -> pn_epoch::compiler::CompiledState {
     use NumberId as N;
-    let acts = vec![
-        joined::act("Opinion", "seller", 3, 2),
-        joined::act("Registration", "buyer", 2, 1),
-        joined::act("Registration", "seller", 1, 1),
-    ];
+    let fixture = boundary::boundary_fixture(case);
+    let acts = &fixture.acts;
+    let numeraires = fixture.numeraires;
     let factor = if matches!(case, "recoinage" | "degradation") {
         Fraction::parse(N::NumbersScalingFactor.value())
     } else {
         Fraction(1, 1)
     };
-    let burns: Vec<_> = [("seller", N::NumbersScalingSellerBurn), ("buyer", N::NumbersScalingBuyerBurn)]
-        .into_iter()
-        .map(|(actor, pin)| {
-            let value = Fraction::parse(pin.value()).times(factor);
-            (actor, format!("{}/{}", value.0, value.1))
-        })
-        .collect();
-    let burns: Vec<_> = burns.iter().map(|(actor, value)| (*actor, value.as_str())).collect();
-    let base = N::NumbersScalingBaseNumeraire.value();
-    let changed = N::NumbersScalingRepricedNumeraire.value();
-    let numeraires = match case {
-        "recoinage" | "repricing" => [changed, changed],
-        "vintage" => [base, changed],
-        _ => [base, base],
-    };
-    let package = joined::package_at_numeraires(&acts, 2, &burns, N::NumbersScalingWall.value(), &numeraires);
+    let package = boundary::boundary_package(&fixture);
     let state = compile_final_state(
         &package,
         &joined::Verifier,
@@ -2624,7 +2609,7 @@ fn scaling_fence(state: &pn_epoch::compiler::CompiledState, bits: u32) -> pn_epo
 fn evaluated_scaling() {
     use NumberId as N;
     let bits = u32::try_from(N::NumbersScalingPrecision.integer()).unwrap();
-    let cases = ["vintage", "degradation", "repricing", "base", "recoinage"];
+    let cases = boundary::BOUNDARY_CASES.iter().copied();
     let mut widths = BTreeMap::new();
     let mut bounds = BTreeMap::new();
     let mut queries = Vec::new();

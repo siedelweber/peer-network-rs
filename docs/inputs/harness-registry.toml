@@ -549,32 +549,32 @@ contract = "formation, title folds and dependency closure"
 
 [[rows]]
 kind = "suite"
-name = "planned-ledger"
+name = "planned-ledger-outer"
 status = "held"
 tier = "fast"
 implementation = ""
 cases = []
-reason = "contract not implemented; first contributing domain bite 2"
+reason = "Implemented scope runs under epoch-ledger-1; unrestricted outer-corpus coverage remains bite 11. Real-chain realization belongs to the devnet owners; persistent admitted results remain bite 8."
 contract = "exact charged values and retained vintages"
 
 [[rows]]
 kind = "suite"
-name = "planned-compiler"
+name = "planned-compiler-outer"
 status = "held"
 tier = "fast"
 implementation = ""
 cases = []
-reason = "contract not implemented; first contributing domain bite 5"
+reason = "Implemented scope runs under epoch-compiler-1; unrestricted outer-corpus coverage remains bite 11. Authenticated dependency reopening and real-chain verification retain their named owners."
 contract = "fixed-input cells, recipients and emission"
 
 [[rows]]
 kind = "suite"
-name = "planned-numeric"
+name = "planned-numeric-outer"
 status = "held"
 tier = "fast"
 implementation = ""
 cases = []
-reason = "contract not implemented; first contributing domain bite 2"
+reason = "Implemented scope runs under epoch-numeric-1; unrestricted outer-corpus coverage remains bite 11. Additional platforms and production ridge/controller admission retain their named holds."
 contract = "representation, certified bounds and deterministic refinement"
 
 [[rows]]
@@ -1241,7 +1241,7 @@ cases = ["pn-wallet::rpc::genesis_reads", "pn-wallet::rpc::provisioning_refusals
 kind = "implementation"
 name = "pn-graph-rust"
 evidence = "pure"
-contract = "records-level dependent-act partition and scoped Registration formation"
+contract = "records-level dependent-act partition, scoped Registration formation and the declared rational-endpoint numeric fragment"
 edition = "0.1"
 
 [[rows]]
@@ -1418,7 +1418,7 @@ claim = "claim:verification:shared-title-cases-retain-complete-results"
 kind = "implementation"
 name = "pn-epoch-rust"
 evidence = "pure"
-contract = "boundary compiler parameters and final ledger"
+contract = "boundary compiler parameters, final ledger and declared conserved numeric procedures"
 edition = "0.1"
 
 [[rows]]
@@ -1434,14 +1434,16 @@ cases = ["pn-epoch::inputs::parameter_binding"]
 
 [[rows]]
 kind = "suite"
-name = "pn-epoch::ledger"
+name = "planned-ledger"
+contract_edition = "epoch-ledger-1"
+contract = "Complete recognized-prefix ledger, exact writing-price debits and retained vintages under the declared verifier; no chain finality or admitted-result storage."
 status = "active"
 runner = "nextest"
 level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::ledger::ledger_derivation", "pn-epoch::ledger::whole_act_ledger", "pn-epoch::ledger::ledger_vintages", "pn-epoch::ledger::ledger_aliases"]
+cases = ["pn-epoch::compiler::ledger_contract", "pn-epoch::ledger::ledger_derivation", "pn-epoch::ledger::whole_act_ledger", "pn-epoch::ledger::ledger_vintages", "pn-epoch::ledger::ledger_aliases"]
 
 [[rows]]
 kind = "implementation"
@@ -1529,18 +1531,22 @@ cases = ["pn-epoch::package::package_bindings"]
 
 [[rows]]
 kind = "suite"
-name = "pn-epoch::compiler"
+name = "planned-compiler"
+contract_edition = "epoch-compiler-1"
+contract = "Fixed complete-input compilation, cells, recipients, coefficients and emission under declared verifiers; no deployment authentication."
 status = "active"
 runner = "nextest"
 level = "public-surface"
 implementation = "pn-epoch-rust"
 tier = "fast"
 budget = "pure-suite"
-cases = ["pn-epoch::compiler::compiler_tables", "pn-epoch::compiler::compiler_splits", "pn-epoch::compiler::compiler_properties", "pn-epoch::compiler::compiler_generated"]
+cases = ["pn-epoch::compiler::compiler_contract", "pn-epoch::compiler::compiler_tables", "pn-epoch::compiler::compiler_splits", "pn-epoch::compiler::compiler_properties", "pn-epoch::compiler::compiler_generated"]
 
 [[rows]]
 kind = "suite"
-name = "pn-epoch::solve"
+name = "planned-numeric"
+contract_edition = "epoch-numeric-1"
+contract = "Declared rational-endpoint procedure, evaluated fence, deterministic refusal, conserved solve and replay on the finite fixtures; no unrestricted grammar or production controller admission."
 case_span = true
 status = "active"
 runner = "nextest"
@@ -1553,6 +1559,7 @@ cases = ["pn-epoch::solve::evaluated_scaling", "pn-epoch::solve::partitions::pub
 [[rows]]
 kind = "suite"
 name = "pn-graph::numeric"
+contract_edition = "graph-numeric-1"
 case_span = true
 status = "active"
 runner = "nextest"
@@ -1574,6 +1581,7 @@ reason = "Full-size exact reference declarations and certificate controls retain
 [[rows]]
 kind = "suite"
 name = "pn-graph::reference-maps"
+contract_edition = "graph-numeric-1"
 status = "active"
 runner = "nextest"
 level = "public-surface"
@@ -1587,6 +1595,7 @@ cases = ["pn-graph::numeric::verification_box", "pn-graph::numeric::verification
 [[rows]]
 kind = "suite"
 name = "pn-graph::reference-local"
+contract_edition = "graph-numeric-1"
 status = "active"
 runner = "nextest"
 level = "public-surface"
@@ -1600,6 +1609,7 @@ cases = ["pn-graph::numeric::verification_local"]
 [[rows]]
 kind = "suite"
 name = "pn-epoch::reference-wall"
+contract_edition = "epoch-numeric-1"
 status = "active"
 runner = "nextest"
 level = "public-surface"
@@ -1613,6 +1623,7 @@ cases = ["pn-epoch::solve::enclosed_wall_solve"]
 [[rows]]
 kind = "suite"
 name = "pn-epoch::reference-receiving"
+contract_edition = "epoch-numeric-1"
 status = "active"
 runner = "nextest"
 level = "public-surface"
@@ -1633,6 +1644,7 @@ reason = "The smallest certified own-loss mechanism requires complete histories,
 [[rows]]
 kind = "suite"
 name = "pn-epoch::own-burn"
+contract_edition = "epoch-numeric-1"
 status = "active"
 runner = "nextest"
 level = "public-surface"
