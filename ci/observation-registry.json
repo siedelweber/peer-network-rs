@@ -15039,7 +15039,7 @@
       "operation": "documents::packages/documents/src/numbers.rs::numbers::project",
       "body": "{ if dataset . namespace != NAMESPACE { return Ok (()) ; } let mut ids = BTreeSet :: new () ; for row in & mut dataset . rows { let entry : Entry = serde_json :: from_value (serde_json :: to_value (& row) ?) ? ; validate (& entry) ? ; if ! ids . insert (entry . id . clone ()) { return Err (format ! (\"number: duplicate id {}\" , entry . id) . into ()) ; } let exact = group (& entry . value) ; let (display , is_exact) = match (entry . display . as_str () , entry . magnitude) { (\"exact\" , None) => (exact . clone () , true) , (\"rounded\" | \"floor\" | \"ceiling\" , Some (magnitude)) => rounded (& entry . value , magnitude , & entry . display) ? , _ => return Err (format ! (\"number: invalid display rule for {}\" , entry . id) . into ()) , } ; let digits = entry . value . bytes () . filter (u8 :: is_ascii_digit) . count () ; if entry . display == \"exact\" && digits > entry . exact_digits { return Err (format ! (\"number: exact display exceeds budget for {}\" , entry . id) . into ()) ; } row . insert (\"num\" . to_owned () , json ! (display)) ; row . insert (\"num_exact\" . to_owned () , json ! (is_exact)) ; let relation = if is_exact { \"=\" } else { match entry . display . as_str () { \"floor\" => \"≥\" , \"ceiling\" => \"≤\" , _ => \"≈\" , } } ; row . insert (\"num_relation\" . to_owned () , json ! (relation)) ; if digits <= entry . exact_digits { row . insert (\"exact\" . to_owned () , json ! (exact)) ; row . insert (\"exact_exact\" . to_owned () , json ! (true)) ; row . insert (\"exact_relation\" . to_owned () , json ! (\"=\")) ; } } Ok (()) }",
       "class_decision": "public-documents",
-      "item_premise": "Registry exact inputs, generated display forms and source spans are public documentation facts, with no private or secret carrier.",
+      "item_premise": "Registry exact inputs, generated display forms and source spans are public documentation facts, with no private or secret carrier. Optional paper keys and tags are public published-result identifiers retained in the projection; validation requires both fields together. External build data is compared by the separate correspondence check and is not an observation payload or registry copy.",
       "assessments": {
         "full_recording": "numeric-projection",
         "secret_flow": "review-002",
@@ -19889,7 +19889,7 @@
       "item": "numbers::Entry",
       "package": "documents",
       "path": "packages/documents/src/numbers.rs",
-      "syntax": "# [derive (Debug , Deserialize)] # [serde (deny_unknown_fields)] struct Entry { id : String , value : String , unit : String , display : String , magnitude : Option < i32 > , exact_digits : usize , }"
+      "syntax": "# [derive (Debug , Deserialize)] # [serde (deny_unknown_fields)] struct Entry { id : String , value : String , unit : String , display : String , magnitude : Option < i32 > , exact_digits : usize , paper_key : Option < String > , paper_tag : Option < String > , }"
     },
     {
       "item": "Operation",

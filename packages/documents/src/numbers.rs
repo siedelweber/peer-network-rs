@@ -20,6 +20,8 @@ struct Entry {
     display: String,
     magnitude: Option<i32>,
     exact_digits: usize,
+    paper_key: Option<String>,
+    paper_tag: Option<String>,
 }
 
 fn natural(text: &str) -> Result<String> {
@@ -192,6 +194,11 @@ fn validate(entry: &Entry) -> Result<()> {
         return Err(format!("number: display bound exceeded for {}", entry.id).into());
     }
     ratio(&entry.value)?;
+    match (&entry.paper_key, &entry.paper_tag) {
+        (None, None) => {}
+        (Some(key), Some(tag)) if !key.is_empty() && !tag.is_empty() => {}
+        _ => return Err(format!("number: incomplete published authority for {}", entry.id).into()),
+    }
     Ok(())
 }
 

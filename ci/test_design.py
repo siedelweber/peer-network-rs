@@ -2,6 +2,7 @@
 
 import json
 import itertools
+import os
 from pathlib import Path
 import re
 import shutil
@@ -47,6 +48,67 @@ def git(root, *args):
 
 
 class Correspondence(unittest.TestCase):
+    def published_registry(self):
+        import tomllib
+        from design import published_correspondence
+        rows = tomllib.loads((self.root/'docs/inputs/numbers.toml').read_text())['rows']
+        selected = [row for row in rows if 'paper_key' in row]
+        supplied = dict(schema='peer-values-1', values=[dict(id=row['paper_key'], computed=row['value']) for row in selected])
+        path = self.root/'supplied-values.json'
+        path.write_text(json.dumps(supplied))
+        published_correspondence(rows)
+        published_correspondence(rows, path)
+        for field in ('paper_key', 'paper_tag'):
+            changed = json.loads(json.dumps(rows))
+            selected_row = next(row for row in changed if 'paper_key' in row)
+            selected_row[field] = 'changed'
+            with self.assertRaisesRegex(ValueError, 'key/tag'):
+                published_correspondence(changed)
+            selected_row.pop(field)
+            with self.assertRaisesRegex(ValueError, 'key/tag'):
+                published_correspondence(changed)
+        for mutation in ('value', 'missing', 'duplicate'):
+            changed = json.loads(json.dumps(supplied))
+            if mutation == 'value': changed['values'][0]['computed'] = '0'
+            elif mutation == 'missing': changed['values'].pop(0)
+            else: changed['values'].append(changed['values'][0])
+            path.write_text(json.dumps(changed))
+            with self.assertRaisesRegex(ValueError, 'published registry:'):
+                published_correspondence(rows, path)
+
+    def spacing_import_base(self):
+        from design import parent_rendered_spacing
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root/'ci').mkdir()
+            git(root, 'init', '--quiet')
+            def commit(value, subject):
+                (root/'ci/design.py').write_text('PENDING_RENDERED_SPACING = '+repr(value)+'\n')
+                git(root, 'add', '.')
+                git(root, '-c', 'commit.gpgsign=false', '-c', 'user.name=Fixture', '-c',
+                    'user.email=fixture@example.invalid', 'commit', '--quiet', '--allow-empty', '-m', subject)
+            commit({}, 'base')
+            git(root, 'branch', 'import-base')
+            debt = {'README.md': (1, 0)}
+            commit(debt, 'earlier growth')
+            commit(debt, 'final slice')
+            with patch.dict(os.environ, {}, clear=True):
+                self.assertEqual(parent_rendered_spacing(root=root), debt)
+            with patch.dict(os.environ, PN_IMPORT_BASE='import-base'):
+                base = parent_rendered_spacing(root=root)
+                with self.assertRaisesRegex(ValueError, 'new rendered-spacing'):
+                    check_rendered_spacing([], pending=debt, parent=base)
+            with self.assertRaises(subprocess.CalledProcessError):
+                parent_rendered_spacing(base='missing-base', root=root)
+            git(root, 'branch', 'ceiling-base')
+            raised = {'README.md': (2, 0)}
+            commit(raised, 'earlier ceiling growth')
+            commit(raised, 'final ceiling slice')
+            self.assertEqual(parent_rendered_spacing(base='HEAD^', root=root), raised)
+            with self.assertRaisesRegex(ValueError, 'increased'):
+                check_rendered_spacing([], pending=raised, parent=parent_rendered_spacing(base='ceiling-base', root=root))
+            check_rendered_spacing([], pending={}, parent=debt)
+
     def test_empty_selections(self):
         """Empty label and pin selections refuse vacuous correspondence evidence.
         ´claim:design:nonempty-correspondence-evidence´
@@ -111,10 +173,11 @@ class Correspondence(unittest.TestCase):
         return subprocess.CompletedProcess(command, status, output, errors)
 
     def test_numeric_correspondence(self):
-        """Independent rational checks refuse changed rate operands, rounded display values, exactness flags and omitted-form budgets under optimized Python.
+        """Independent rational checks refuse changed rate operands, rounded display values, exactness flags and omitted-form budgets under optimized Python. Published act rows require their tagged keys and match supplied external values exactly; missing, duplicate and changed values refuse.
         ´claim:design:numeric-displays-match-rational-operands´
         ´test:integration:test-numeric-correspondence´
         """
+        self.published_registry()
         path = self.root / 'docs/datasets/org.peer-network.numbers.registry.json'
         original = json.loads(path.read_text())
         self.assertEqual(self.check().returncode, 0)
@@ -205,7 +268,7 @@ class Correspondence(unittest.TestCase):
             self.assertIn('literal U+202F', result.stderr)
 
     def test_rendered_spacing(self):
-        """First-party rendered Markdown accepts one blank line, refuses empty or whitespace-only repeated blanks outside the cleanup list, excludes vendor text, and refuses a stale cleanup exception.
+        """First-party rendered Markdown accepts one blank line, refuses empty or whitespace-only repeated blanks outside the cleanup list, excludes vendor text, and refuses a stale cleanup exception. Import-base comparison detects debt added before the final slice commit; an absent base alone falls back to the parent, and an invalid base refuses.
         ´claim:design:rendered-spacing-refuses-new-or-stale-debt´
         ´test:integration:test-rendered-spacing´
         """
@@ -250,6 +313,7 @@ class Correspondence(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'increased rendered-spacing ceiling'):
             check_rendered_spacing([], pending={'README.md': (2, 0)}, parent=debt)
         check_rendered_spacing([], pending={}, parent=debt)
+        self.spacing_import_base()
 
     def test_rendered_continuations(self):
         """Rendered paragraphs and list items refuse continuation lines while separate blocks, table rows, fenced code and front matter retain their Markdown boundaries.

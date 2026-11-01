@@ -5007,6 +5007,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-isolated-standing-before"
+paper_key = "result.tilt_act_isolated.standing_before"
+paper_tag = "network-v0.31.1"
 value = "4"
 unit = "dimensionless"
 display = "exact"
@@ -5014,6 +5016,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-isolated-standing-after"
+paper_key = "result.tilt_act_isolated.standing_after"
+paper_tag = "network-v0.31.1"
 value = "3/2"
 unit = "dimensionless"
 display = "exact"
@@ -5021,6 +5025,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-isolated-finite-change"
+paper_key = "result.tilt_act_isolated.finite_change"
+paper_tag = "network-v0.31.1"
 value = "-5/2"
 unit = "dimensionless"
 display = "exact"
@@ -5028,6 +5034,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-isolated-certificate-before"
+paper_key = "result.tilt_act_isolated.certificate_before"
+paper_tag = "network-v0.31.1"
 value = "0"
 unit = "dimensionless"
 display = "exact"
@@ -5035,6 +5043,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-isolated-certificate-after"
+paper_key = "result.tilt_act_isolated.certificate_after"
+paper_tag = "network-v0.31.1"
 value = "0"
 unit = "dimensionless"
 display = "exact"
@@ -5042,6 +5052,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-isolated-fence-before"
+paper_key = "result.tilt_act_isolated.fence_before"
+paper_tag = "network-v0.31.1"
 value = "0"
 unit = "dimensionless"
 display = "exact"
@@ -5049,6 +5061,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-isolated-fence-after"
+paper_key = "result.tilt_act_isolated.fence_after"
+paper_tag = "network-v0.31.1"
 value = "0"
 unit = "dimensionless"
 display = "exact"
@@ -5056,6 +5070,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-retained-standing-before"
+paper_key = "result.tilt_act_retained.standing_before"
+paper_tag = "network-v0.31.1"
 value = "1606439650939056906317857529521436266068428990840796940110475845239436778379877/500000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "exact"
@@ -5063,6 +5079,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-retained-standing-after"
+paper_key = "result.tilt_act_retained.standing_after"
+paper_tag = "network-v0.31.1"
 value = "16239714561407135131057768613472734952507888325320338370544072226191515243340563/5000000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "exact"
@@ -5070,6 +5088,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-retained-finite-change"
+paper_key = "result.tilt_act_retained.finite_change"
+paper_tag = "network-v0.31.1"
 value = "7012722080662642715167732730334891672943936676494758777572550951885898381671727/200000000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "exact"
@@ -5077,6 +5097,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-retained-certificate-before"
+paper_key = "result.tilt_act_retained.certificate_before"
+paper_tag = "network-v0.31.1"
 value = "61501502433326067968641458297979282191721815610504498618190857714155939415449549/100000000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "exact"
@@ -5084,6 +5106,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-retained-certificate-after"
+paper_key = "result.tilt_act_retained.certificate_after"
+paper_tag = "network-v0.31.1"
 value = "30673951138699340093250997058207948685531584858685685249881903809982370382780407/50000000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "exact"
@@ -5091,6 +5115,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-retained-fence-before"
+paper_key = "result.tilt_act_retained.fence_before"
+paper_tag = "network-v0.31.1"
 value = "1201201219400899765012528482382407855307066711142665988636540189729608191707999/1562500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "exact"
@@ -5098,6 +5124,8 @@ exact_digits = 200
 
 [[rows]]
 id = "num:numbers:published-act-retained-fence-after"
+paper_key = "result.tilt_act_retained.fence_after"
+paper_tag = "network-v0.31.1"
 value = "76684877846748350233127492645519871713828962146714213124704759524955925956951017/100000000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
 display = "exact"

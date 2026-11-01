@@ -5,6 +5,7 @@ import hashlib
 import ast
 import json
 import math
+import os
 from fractions import Fraction
 from pathlib import Path
 import re
@@ -179,10 +180,15 @@ def rendered_continuations(source):
     return result
 
 
-def parent_rendered_spacing():
-    """Read the source commit's parent declaration without executing its code."""
-    root = Path(__file__).resolve().parent.parent
-    result = subprocess.run(['git', '-C', str(root), 'show', 'HEAD^:ci/design.py'],
+def parent_rendered_spacing(base=None, root=None):
+    """Read the declared import base; absent that interface, use the parent."""
+    root = root or Path(__file__).resolve().parent.parent
+    base = os.environ.get('PN_IMPORT_BASE', 'HEAD^') if base is None else base
+    resolved = subprocess.run(['git', '-C', str(root), 'rev-parse', '--verify', base+'^{commit}'],
+                              capture_output=True, text=True, check=True).stdout.strip()
+    subprocess.run(['git', '-C', str(root), 'merge-base', '--is-ancestor', resolved, 'HEAD'],
+                   capture_output=True, check=True)
+    result = subprocess.run(['git', '-C', str(root), 'show', resolved+':ci/design.py'],
                             capture_output=True, text=True, check=True)
     for node in ast.parse(result.stdout).body:
         if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name)
@@ -192,22 +198,22 @@ def parent_rendered_spacing():
             if isinstance(value, ast.Call) and isinstance(value.func, ast.Name) and value.func.id == 'frozenset':
                 value = value.args[0]
             return ast.literal_eval(value)
-    raise ValueError('parent lacks rendered-spacing declaration')
+    raise ValueError('import base lacks rendered-spacing declaration')
 
 
 def check_rendered_spacing(paths, pending=PENDING_RENDERED_SPACING, *, whole_tree=False, parent=None):
-    """Check per-path debt ceilings, retirement and parent-relative growth."""
+    """Check per-path debt ceilings, retirement and import-base-relative growth."""
     findings = []
     checked = deferred = 0
     paths = list(paths)
     present = {path.as_posix() for path in paths if path.exists()}
     if parent is not None:
         for name in sorted(set(pending) - set(parent)):
-            findings.append(f'{name}: new rendered-spacing exception against source parent')
+            findings.append(f'{name}: new rendered-spacing exception against source base')
         if isinstance(parent, dict):
             for name in sorted(set(pending) & set(parent)):
                 if any(now > before for now, before in zip(pending[name], parent[name])):
-                    findings.append(f'{name}: increased rendered-spacing ceiling against source parent')
+                    findings.append(f'{name}: increased rendered-spacing ceiling against source base')
     if whole_tree:
         findings.extend(f'{name}: missing rendered-spacing pending path' for name in sorted(set(pending) - present))
     for path in paths:
@@ -366,9 +372,37 @@ CRATES_PIN = '779ad51bb7a4a5d2047c0307a7bea589e3add012f8b1ceb5c79a2be3ddb1f5d5'
 BITES_PIN = '98bcd0533748b432a783e89676629088bb627f633d1009b0c2dcd5f954b191fb'
 QUESTIONS_PIN = '1aa56833a069fca9ea47fa9e902241033faed3670689a649e7fc577423eafa95'
 
+def published_correspondence(rows, path=None):
+    """Join tagged published quantities to supplied external build values exactly."""
+    suffixes = ('standing-before', 'standing-after', 'finite-change', 'certificate-before',
+                'certificate-after', 'fence-before', 'fence-after')
+    expected = {f'num:numbers:published-act-{family}-{suffix}':
+                f'result.tilt_act_{family}.'+suffix.replace('-', '_')
+                for family in ('isolated', 'retained') for suffix in suffixes}
+    selected = {row['id']:row for row in rows if row['id'] in expected}
+    if set(selected) != set(expected):
+        raise ValueError('published registry: missing declared row')
+    for name, row in selected.items():
+        if row.get('paper_key') != expected[name] or row.get('paper_tag') != PAPER_TAG:
+            raise ValueError('published registry: missing or mismatched paper key/tag')
+    if path is not None:
+        supplied = json.loads(Path(path).read_text())
+        if supplied.get('schema') != 'peer-values-1':
+            raise ValueError('published registry: unsupported external values schema')
+        values = {row['id']:row for row in supplied['values']}
+        if len(values) != len(supplied['values']):
+            raise ValueError('published registry: duplicate external key')
+        for row in selected.values():
+            entry = values.get(row['paper_key'])
+            if entry is None or 'computed' not in entry or Fraction(entry['computed']) != Fraction(row['value']):
+                raise ValueError('published registry: external exact value differs or is missing: '+row['paper_key'])
+    print(f'PUBLISHED-CORRESPONDENCE rows={len(selected)} tag={PAPER_TAG} mode={"external-exact" if path is not None else "metadata-only"}')
+
+
 def numeric_correspondence():
     """Derived rate pins retain the recorded samples' full rational precision."""
     rows = tomllib.loads(Path('docs/inputs/numbers.toml').read_text())['rows']
+    published_correspondence(rows, os.environ.get('PN_PAPER_VALUES'))
     values = {row['id']: Fraction(row['value']) for row in rows}
     def value(name):
         return values['num:numbers:' + name]

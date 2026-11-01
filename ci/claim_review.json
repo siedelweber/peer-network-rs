@@ -46,8 +46,8 @@
       "path": "ci/test_design.py",
       "claim": "ROOT::claim:design:numeric-displays-match-rational-operands",
       "before": "",
-      "after": "Independent rational checks refuse changed rate operands, rounded display values, exactness flags and omitted-form budgets under optimized Python.",
-      "review": "Read the scoped registry acceptance and refusal controls; these establish presentation and field-local accounting, not numerical certification of the declared values."
+      "after": "Independent rational checks refuse changed rate operands, rounded display values, exactness flags and omitted-form budgets under optimized Python. Published act rows require their tagged keys and match supplied external values exactly; missing, duplicate and changed values refuse.",
+      "review": "Published-row controls accept exact external values, require both tagged-key fields without external data, and refuse changed, missing or duplicate external values."
     },
     {
       "operation": "ci::test_design.Correspondence.test_numeric_word_fragments",
@@ -72,6 +72,14 @@
       "before": "Release identities are pinned, and tracked Markdown and templates refuse other paper editions regardless of case; deliberate source fixtures remain exempt.",
       "after": "Release identities are pinned, and tracked UTF-8 text without NUL bytes refuses other paper editions regardless of case; only the two named source fixtures are exempt.",
       "review": "Publication pin mutations still refuse. Tracked Markdown, templates, Rust and JSON refuse capitalized stale editions and accept the current edition in uppercase. Both tracked allow-listed source fixtures pass with stale text; identical bytes at an unlisted text path refuse. Non-UTF-8 and NUL-containing files exercise the binary boundary."
+    },
+    {
+      "operation": "ci::test_design.Correspondence.test_rendered_spacing",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:rendered-spacing-refuses-new-or-stale-debt",
+      "before": "First-party rendered Markdown accepts one blank line, refuses empty or whitespace-only repeated blanks outside the cleanup list, excludes vendor text, and refuses a stale cleanup exception.",
+      "after": "First-party rendered Markdown accepts one blank line, refuses empty or whitespace-only repeated blanks outside the cleanup list, excludes vendor text, and refuses a stale cleanup exception. Import-base comparison detects debt added before the final slice commit; an absent base alone falls back to the parent, and an invalid base refuses.",
+      "review": "A three-commit fixture shows the final parent accepting an earlier addition while the explicit import base refuses it; invalid bases and ceiling growth refuse, while retirement passes."
     },
     {
       "operation": "ci::test_devperf.Performance.test_distinct_excess_ledger",
