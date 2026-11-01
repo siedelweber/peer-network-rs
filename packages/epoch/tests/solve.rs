@@ -25,11 +25,7 @@ fn burn_padding(acts: &mut Vec<pn_records::CandidateAct>, source: &str, count: u
     while u64::try_from(acts.iter().filter(|act| act.id.author == source).count()).unwrap() < count {
         let sequence = u64::try_from(acts.len()).unwrap() + 1;
         let mut act = joined::act("Publish", source, sequence, 1);
-        joined::coordinates(
-            &mut act,
-            &["attachment"],
-            i64::try_from(NumberId::NumbersBurnZeroCoefficient.integer()).unwrap(),
-        );
+        joined::coordinates(&mut act, &["attachment"], 0);
         acts.push(act);
     }
 }
@@ -596,7 +592,7 @@ fn burn_finite_bounds(
         .unwrap();
     let remaining = one.sub(&q, budget).unwrap();
     let factor = q.div(&remaining, budget).unwrap();
-    let cap = nrz_cas::Rational::parse(NumberId::NumbersBurnFeedbackCap.value(), budget).unwrap();
+    let cap = nrz_cas::Rational::parse("2/3", budget).unwrap();
     assert!(!factor.compare(&cap, budget).unwrap().is_gt());
     let norm = burn_maximum(shock, budget);
     let displacement = norm.div(&remaining, budget).unwrap();
@@ -660,7 +656,7 @@ fn burn_feedback_cap(
     use NumberId as N;
     let names: Vec<_> = before.view().base.rows.keys().collect();
     let one = nrz_cas::Rational::parse("1", budget).unwrap();
-    let cap = nrz_cas::Rational::parse(N::NumbersBurnFeedbackCap.value(), budget).unwrap();
+    let cap = nrz_cas::Rational::parse("2/3", budget).unwrap();
     let burner = names.iter().position(|v| v.as_str() == "b").unwrap();
     let largest = if case == "own" { "j" } else { "b" };
     let largest = names.iter().position(|v| v.as_str() == largest).unwrap();

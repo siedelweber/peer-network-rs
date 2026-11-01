@@ -2923,13 +2923,6 @@ display = "exact"
 exact_digits = 24
 
 [[rows]]
-id = "num:numbers:burn-zero-coefficient"
-value = "0"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
 id = "num:numbers:burn-own-upstream-count"
 value = "2500"
 unit = "dimensionless"
@@ -3093,13 +3086,6 @@ exact_digits = 24
 [[rows]]
 id = "num:numbers:burn-product-ceiling"
 value = "100000"
-unit = "dimensionless"
-display = "exact"
-exact_digits = 24
-
-[[rows]]
-id = "num:numbers:burn-feedback-cap"
-value = "2/3"
 unit = "dimensionless"
 display = "exact"
 exact_digits = 24

@@ -5138,19 +5138,6 @@
     },
     {
       "display": "exact",
-      "exact": "0",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:burn-zero-coefficient",
-      "num": "0",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "0"
-    },
-    {
-      "display": "exact",
       "exact": "2 500",
       "exact_digits": 24,
       "exact_exact": true,
@@ -5460,19 +5447,6 @@
       "num_relation": "=",
       "unit": "dimensionless",
       "value": "100000"
-    },
-    {
-      "display": "exact",
-      "exact": "2/3",
-      "exact_digits": 24,
-      "exact_exact": true,
-      "exact_relation": "=",
-      "id": "num:numbers:burn-feedback-cap",
-      "num": "2/3",
-      "num_exact": true,
-      "num_relation": "=",
-      "unit": "dimensionless",
-      "value": "2/3"
     },
     {
       "display": "floor",
