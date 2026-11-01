@@ -616,6 +616,75 @@ fn trace_burst_capacity() {
     assert_eq!(status["delivered_records"], rows.len() - 1);
 }
 
+/// Claim: With the writer held by rendezvous, an ordinary queue filled beyond its slot capacity returns from every producer call before release, counts exactly the excess as queue-full loss, and reconciles delivered plus lost with attempted records after drain.
+/// ´claim:cli:ordinary-overflow-counts-exact-loss´
+/// ´test:unit:ordinary-queue-overflow´
+#[test]
+fn ordinary_queue_overflow() {
+    struct Stalled {
+        capture: Capture,
+        entered: mpsc::SyncSender<()>,
+        release: mpsc::Receiver<()>,
+        first: bool,
+    }
+    impl Write for Stalled {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            if self.first {
+                self.first = false;
+                self.entered.send(()).unwrap();
+                self.release.recv().unwrap();
+            }
+            let result = self.capture.write(bytes)?;
+            Ok(result)
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+    let capture = Capture::default();
+    let (entered, entry) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
+    let mut observation = Observation::with_writer(
+        Stalled {
+            capture: capture.clone(),
+            entered,
+            release: released,
+            first: true,
+        },
+        Arc::new(ManualClock(AtomicU64::new(0))),
+    )
+    .unwrap();
+    observation.full_trace = true;
+    observation.final_writer = Arc::new(Mutex::new(Box::new(capture.clone())));
+    observation.emit(json!({"kind":"trace","public":0}));
+    entry.recv_timeout(Duration::from_secs(30)).unwrap();
+    let excess = 7;
+    for index in 0..QUEUE_RECORDS + excess {
+        observation.emit(json!({"kind":"trace","public":index}));
+    }
+    assert_eq!(observation.lost.load(Ordering::Relaxed), u64::try_from(excess).unwrap());
+    release.send(()).unwrap();
+    drop(BootstrapGuard(Some(observation.clone())));
+    let bytes = capture.0.lock().unwrap();
+    let rows: Vec<Value> = bytes
+        .split(|byte| *byte == b'\n')
+        .filter(|row| !row.is_empty())
+        .map(|row| serde_json::from_slice(row).unwrap())
+        .collect();
+    assert_eq!(rows.len(), QUEUE_RECORDS + 3);
+    let status = rows.last().unwrap();
+    assert_eq!(status["kind"], "observation_status");
+    assert_eq!(status["delivered_records"], QUEUE_RECORDS + 2);
+    assert_eq!(status["lost_records"], excess);
+    assert_eq!(status["loss_causes"]["queue_full"], excess);
+    assert_eq!(status["attempted_records"], QUEUE_RECORDS + excess + 2);
+    assert_eq!(
+        status["delivered_records"].as_u64().unwrap() + status["lost_records"].as_u64().unwrap(),
+        status["attempted_records"].as_u64().unwrap()
+    );
+    assert_eq!(status["delivered_records"], rows.len() - 1);
+}
+
 /// Claim: An injected drain timeout and an occupied drain-request slot report counters without inventing loss; an acknowledged drain or guard close delivers every record queued before a request arriving after the worker batch ends, including a full queue.
 /// ´claim:cli:drain-timeouts-are-not-record-loss´
 /// ´test:unit:drain-timeout-preserves-loss´

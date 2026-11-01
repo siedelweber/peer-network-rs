@@ -27,8 +27,8 @@ mod content;
 
 const RECORD_LIMIT: usize = 1024 * 1024;
 const CAPTURE_LIMIT: usize = 64 * 1024 * 1024;
-// Burst capacity is bounded by both slots and the existing 64 MiB byte charge.
-const QUEUE_RECORDS: usize = 1024;
+/// Ordinary delivery slots; the independent queued-byte limit also applies.
+pub const QUEUE_RECORDS: usize = 1024;
 static GLOBAL: OnceLock<Observation> = OnceLock::new();
 
 /// Preserve public bytes as tagged UTF-8 or base64 for observation.

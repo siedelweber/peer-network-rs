@@ -38,7 +38,7 @@
 
 | Suite | Status | Level | Implementation | Tier | Cases |
 | --- | --- | --- | --- | --- | --- |
-| cli-common | active | unit | cli-common-rust | fast | 100 |
+| cli-common | active | unit | cli-common-rust | fast | 101 |
 | cli-common::integration | active | integration | cli-common-rust | fast | 5 |
 | documents::integration | active | integration | documents-rust | fast | 30 |
 | documents::panic_contract | active | integration | documents-rust | fast | 1 |

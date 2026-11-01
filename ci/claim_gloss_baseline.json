@@ -203,6 +203,7 @@
     "cli-common::observation::tests::host_owner_accounting": "",
     "cli-common::observation::tests::inclusive_metering": "Claim: Injected entry and terminal instants include a wait and a nested child's interval in the parent, while each operation retains its own bytes and explicit resource accuracy.",
     "cli-common::observation::tests::metric_registry": "Claim: Unknown metric names, arbitrary attributes and wrong instrument kinds cannot allocate series; a declared counter is shared by handles and the snapshot and loss is explicit.",
+    "cli-common::observation::tests::ordinary_queue_overflow": "",
     "cli-common::observation::tests::private_configuration": "Claim: A private connection aggregate stays secret-owned during acquisition and a failed parse, including its host and numeric port; diagnostics retain only its marker, and SecretBox zeroizes the entire aggregate before its destructor observes it.",
     "cli-common::observation::tests::provider_bridge": "Claim: The JSON recorder forwards the same admitted byte increments into the SDK counter; the local OTLP transport receives metric and span payloads with no credential in the request, and controlled transport failure only increments export loss.",
     "cli-common::observation::tests::public_content_encoding": "Claim: Public byte representations preserve UTF-8, NUL and invalid UTF-8 exactly, and structural values retain constructors, field keys and escaped string contents rather than nesting Debug text.",

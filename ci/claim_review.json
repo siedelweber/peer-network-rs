@@ -495,7 +495,7 @@
       "claim": "ROOT::claim:discipline:wallet-fixture-ports-survive-time-wait",
       "before": "",
       "after": "Claim: The Elements fixture allocator draws from ports disjoint from PostgreSQL's 42100 to 42119, accepts a port whose closed connections linger in TIME_WAIT, skips a port another process listens on, and starts the daemon on another port when its probed port is taken before launch, and keeps concurrent binary version checks each in its own data directory; a harness failure prints its error type and message, including a missing binary's path, and a stalled producer exchange names its method and elapsed time against the socket bound. The real legacy wallet uses the declared producer keypool; only wallet creation and private-key import select the administrative socket bound, and each administrative success, RPC error or timeout emits public timing without replay.",
-      "review": "Read the allocator over real sockets: a server-closed connection left in TIME_WAIT, a live listener, a port taken before a real daemon launch, and the harness entry's public cause line. This witnesses allocation and launch retry for this account's fixtures, not a lock shared with other accounts. Read the retained port and ownership assertions, legacy keypool and method-selected socket bounds, and one-call outcomes without retries. A mocked slow success is written in its fixture root, published on success, and joined to the persistent ledger without private credentials."
+      "review": "Read real-socket allocation, TIME_WAIT and occupied-port controls, isolated concurrent version checks, and typed failure diagnostics. The real unencrypted legacy wallet confirms descriptors are disabled and both keypool sizes equal PRODUCER_KEYPOOL; mocked exchanges assert administrative versus steady-state socket bounds, one connection/request/close, and credential-free timing for success, error and timeout."
     },
     {
       "operation": "ci::test_wallet_boundary.WalletBoundary.test_rpc_type_boundary",
@@ -640,6 +640,14 @@
       "before": "",
       "after": "Claim: A HOST-labelled store operation is counted and timed under its own registered stem at default and trace, and never charged to a different owner.",
       "review": "Read both configured levels and the source owner dispatch: the HOST stem receives its own exact started/completed series, without borrowing another owner; compacted trace roster is expanded before comparison."
+    },
+    {
+      "operation": "cli-common::observation::tests::ordinary_queue_overflow",
+      "path": "packages/cli-common/src/observation/tests.rs",
+      "claim": "CLICOMMON::claim:cli:ordinary-overflow-counts-exact-loss",
+      "before": "",
+      "after": "Claim: With the writer held by rendezvous, an ordinary queue filled beyond its slot capacity returns from every producer call before release, counts exactly the excess as queue-full loss, and reconciles delivered plus lost with attempted records after drain.",
+      "review": "Read the writer entry/release rendezvous: producer calls finish before release with capacity plus excess queued attempts. The final status asserts exact excess loss, its queue-full cause, and complete accounting including the reserved summary."
     },
     {
       "operation": "cli-common::observation::tests::private_configuration",
