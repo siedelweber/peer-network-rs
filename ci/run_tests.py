@@ -95,9 +95,13 @@ def join_case(registry, record, source, configuration):
     return registry.join(record, source, configuration)
 
 
-def doctest_events(text, source, configuration, registry=None):
+def doctest_events(text, source, configuration, registry=None, selected=None):
     registry = registry or load_registry()
     expected = registry.expected('doctest')
+    if selected is not None:
+        if not selected <= expected or not selected:
+            raise StructuralError('calibration doctest selection exceeds inventory')
+        expected = selected
     records = []
     started = set()
     finished = set()

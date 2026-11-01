@@ -3202,6 +3202,7 @@
       "level": "integration",
       "name": "ci::test_linter_entry",
       "runner": "ci",
+      "scenario_jobs": 4,
       "status": "active",
       "tier": "service"
     },

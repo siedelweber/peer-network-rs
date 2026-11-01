@@ -178,6 +178,7 @@ def print_ledger(source, declared, root):
                                    'host-observation-runtime-findings.jsonl')]
     paths += sorted(root.glob('ci-test_*-findings.jsonl'))
     ledger = excess_ledger(paths, source, declared)
+    ledger['case_assessment'] = 'informational; judge case budgets in the separate calibration invocation'
     output = root/'over-budget-ledger.json'
     output.write_text(json.dumps(ledger, sort_keys=True, indent=2)+'\n')
     print('BUDGET-LEDGER '+json.dumps({key:value for key,value in ledger.items() if key != 'entries'} | {'artifact':str(output)}, sort_keys=True))

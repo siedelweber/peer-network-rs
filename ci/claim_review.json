@@ -167,7 +167,7 @@
       "claim": "ROOT::claim:harness:reference-tier-retains-required-case-evidence",
       "before": "",
       "after": "Claim: Explicit reference-tier groups retain case identity, level, implementation and outcome while applying declared case budgets. Fast budgets stay unchanged; absent policies, invalid budgets, changed result budgets and missing or duplicate grouped completions refuse. Interleaved case arrivals bound each group's own wall envelope.",
-      "review": "The synthetic fast and reference groups share a binary while preserving their case identities and implementation. The test checks explicit budget selection, unchanged fast scope, refusal of missing policy or budget and a wrong budget category, rejection of changed result budgets, independently measured group spans and refusal of dropped or duplicated completions. It does not establish a performance target or permit skipping a required case."
+      "review": "The synthetic fast and reference groups share a binary while preserving their case identities and implementation. The test checks explicit budget selection, unchanged fast scope, refusal of missing policy or budget and a wrong budget category, rejection of changed result budgets, independently measured group spans and refusal of dropped or duplicated completions. It does not establish a performance target or permit skipping a required case. Calibration selects an exact suite subset and refuses missing, duplicate or held case unions; existing tier and grouped-span assertions remain."
     },
     {
       "operation": "ci::test_harness.Harness.test_wallet_commit_isolation",
@@ -303,7 +303,7 @@
       "claim": "ROOT::claim:discipline:runtime-delegation-preserves-evidence",
       "before": "Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; interrupted or graph-refused execution still reaches the shell stop and exit cleanup, and all eleven runtime roster commands retain their text.",
       "after": "Claim: Serial runtime fixtures preserve command statuses, current-source and configuration refusals, sibling failures, held claims and nonverdict missing measurements through Meson; graph-refused execution still reaches shell stops, and SIGTERM during a Ninja command reaps its command tree and performs root-keyed exit cleanup without touching a sibling root; the runtime roster names each required invocation and retains explicit shutdown and evidence joins.",
-      "review": "The command roster now includes inventory construction and disjoint required invocations with an evidence merge; shutdown additionally publishes public RPC timings. The existing refusal, sibling failure, hold, measurement and interrupted cleanup assertions are unchanged."
+      "review": "The command roster now includes inventory construction and disjoint required invocations with an evidence merge; shutdown additionally publishes public RPC timings. The existing refusal, sibling failure, hold, measurement and interrupted cleanup assertions are unchanged. Independent scenario/route fixtures run under the declared job bound, join every result and preserve all outcome comparisons and the separate signal-cleanup witness."
     },
     {
       "operation": "ci::test_linter_entry.Conformance.test_service_ownership",

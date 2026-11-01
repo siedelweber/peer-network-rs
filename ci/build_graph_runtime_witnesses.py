@@ -128,45 +128,53 @@ sys.exit(status)
     scenarios=('clean','startup-refusal','interrupted-cleanup','failing-test','stale-case','stale-configuration','unavailable-measurement','graph-refusal')
     outcomes={}
     with tempfile.TemporaryDirectory() as directory:
-        for route in ('legacy','graph'):
-            root=Path(directory)/route;root.mkdir()
+        def exercise_route(pair):
+            route, scenario = pair
+            root=Path(directory)/(route+'-'+scenario);root.mkdir()
             (root/'fixture.py').write_text(driver);(root/'mode').write_text('clean')
             env=dict(os.environ,FIXTURE_CHECKERS=str(repository/'ci'),
                      PN_HOST_TEST_ROOT=str(root/'.lane/host'),PN_WALLET_TEST_ROOT=str(root/'.lane/wallet'))
             build=graph_tree(case,root,commands,{'stop'},checker,env,['fixture.py','mode'],setup=route=='graph')
             graph_text=(build/'gate-graph.json').read_text()
             (root/'ci/host_postgresql.py').write_text(cleanup);(root/'ci/wallet_elements.py').write_text(cleanup)
-            for scenario in scenarios:
-                env['PN_BUILDGRAPH_RUN']='runtime-'+scenario
-                (root/'mode').write_text(scenario)
-                (build/'gate-graph.json').write_text(graph_text)
-                for path in (root/'.lane').iterdir():
-                    if path != build:
-                        if path.is_dir():shutil.rmtree(path)
-                        else:path.unlink()
-                history=root/'.lane/gate-steps.tsv';history.write_text('');records=[]
-                for name,command in commands:
-                    if scenario=='graph-refusal' and name=='stop':
-                        (build/'gate-graph.json').unlink()
-                    # Configuration-refusal is a graph prerequisite, not an equivalent
-                    # command verdict. The cleanup control still executes on both routes.
-                    if scenario=='graph-refusal' and name in ('matrix','claims','measurement'):
-                        if route=='graph':
-                            refused=invoke(root,['python3','-B',str(checker),'delegate',name],env)
-                            case.assertEqual(refused.returncode,2,refused.stdout)
-                        continue
-                    argv=['bash','-c',command] if route=='legacy' or name=='stop' else ['python3','-B',str(checker),'delegate',name]
-                    result=invoke(root,argv,env);status=result.returncode if result.returncode>=0 else 128-result.returncode
-                    values=[json.loads(line[8:]) for line in result.stdout.decode().splitlines() if line.startswith('FIXTURE ')]
-                    case.assertEqual(len(values),1,result.stdout);value=values[0];case.assertEqual(value['status'],status)
-                    records.append(value)
-                    with history.open('a') as output:output.write(f'{name}\t{status}\t1\t2\n')
-                case.assertEqual((root/'.lane/alive').exists(),scenario=='interrupted-cleanup')
-                result=invoke(root,['bash','-c',trap+'\nexit 0\n'],env)
-                case.assertEqual(result.returncode,0,result.stdout);case.assertEqual(result.stdout.count(b'EXIT-CLEANUP'),2)
-                case.assertFalse((root/'.lane/alive').exists())
-                outcomes[route,scenario]=records
-                print('RUNTIME-DELEGATION scenario='+scenario+' route='+route+' statuses='+str([r['status'] for r in records])+' cleanup=complete')
+            env['PN_BUILDGRAPH_RUN']='runtime-'+scenario
+            (root/'mode').write_text(scenario)
+            (build/'gate-graph.json').write_text(graph_text)
+            for path in (root/'.lane').iterdir():
+                if path != build:
+                    if path.is_dir():shutil.rmtree(path)
+                    else:path.unlink()
+            history=root/'.lane/gate-steps.tsv';history.write_text('');records=[]
+            for name,command in commands:
+                if scenario=='graph-refusal' and name=='stop':
+                    (build/'gate-graph.json').unlink()
+                # Configuration-refusal is a graph prerequisite, not an equivalent
+                # command verdict. The cleanup control still executes on both routes.
+                if scenario=='graph-refusal' and name in ('matrix','claims','measurement'):
+                    if route=='graph':
+                        refused=invoke(root,['python3','-B',str(checker),'delegate',name],env)
+                        case.assertEqual(refused.returncode,2,refused.stdout)
+                    continue
+                argv=['bash','-c',command] if route=='legacy' or name=='stop' else ['python3','-B',str(checker),'delegate',name]
+                result=invoke(root,argv,env);status=result.returncode if result.returncode>=0 else 128-result.returncode
+                values=[json.loads(line[8:]) for line in result.stdout.decode().splitlines() if line.startswith('FIXTURE ')]
+                case.assertEqual(len(values),1,result.stdout);value=values[0];case.assertEqual(value['status'],status)
+                records.append(value)
+                with history.open('a') as output:output.write(f'{name}\t{status}\t1\t2\n')
+            case.assertEqual((root/'.lane/alive').exists(),scenario=='interrupted-cleanup')
+            result=invoke(root,['bash','-c',trap+'\nexit 0\n'],env)
+            case.assertEqual(result.returncode,0,result.stdout);case.assertEqual(result.stdout.count(b'EXIT-CLEANUP'),2)
+            case.assertFalse((root/'.lane/alive').exists())
+            print('RUNTIME-DELEGATION scenario='+scenario+' route='+route+' statuses='+str([r['status'] for r in records])+' cleanup=complete')
+            return (route, scenario), records
+        from concurrent.futures import ThreadPoolExecutor
+        from harness import load
+        jobs = load().suites['ci::test_linter_entry']['scenario_jobs']
+        if not isinstance(jobs, int) or isinstance(jobs, bool) or jobs < 1:
+            raise ValueError('invalid linter witness scenario job count')
+        pairs = [(route, scenario) for route in ('legacy', 'graph') for scenario in scenarios]
+        with ThreadPoolExecutor(max_workers=jobs) as pool:
+            outcomes.update(pool.map(exercise_route, pairs))
         for scenario in scenarios:
             case.assertEqual(outcomes['legacy',scenario],outcomes['graph',scenario])
             results={r['action']:r for r in outcomes['legacy',scenario]}
@@ -182,7 +190,7 @@ sys.exit(status)
                 case.assertEqual(results['measurement']['findings'][0]['kind'],'missing-measurement')
                 case.assertEqual(results['measurement']['findings'][0]['verdict_effect'],'none')
     interrupted_gate(case, repository)
-    print(f'RUNTIME-WITNESS-WALL seconds={time.monotonic()-started:.6f} scenario_setups=1 signal_setups=1 scenarios=8 routes=2')
+    print(f'RUNTIME-WITNESS-WALL seconds={time.monotonic()-started:.6f} scenario_setups=16 signal_setups=1 scenarios=8 routes=2 jobs={jobs}')
     print(f'RUNTIME-DELEGATION commands={len(expected)} delegated={len(expected)-len(stops)} cleanup=shell fixtures=equal sibling-failure=retained holds=retained')
 
 

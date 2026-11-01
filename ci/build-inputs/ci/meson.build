@@ -2,6 +2,7 @@
 # Add new files in the corresponding directory here; no globs or exemptions.
 local_inputs = [
   ['ci/isolation.py', 'build-graph,fixed-point-generate,fixed-point-write,harness-tests,discipline-tests,linter-entry-tests,design-tests,host-observation-runtime,wallet-conformance,observation-runtime,observation-parser', ''],
+  ['ci/calibrate.py', 'build-graph,fixed-point-generate,fixed-point-write,harness-tests,discipline-tests,linter-entry-tests,design-tests,host-observation-runtime,wallet-conformance,observation-runtime,observation-parser', ''],
   ['ci/flake_ledger.py', 'test-build,tests,reference-certificates,service-tests,test-evidence,harness-tests,discipline-tests,linter-entry-tests,wallet-conformance,build-graph', ''],
   ['ci/benchmarks.py', 'build-graph,toolchain,discipline-tests,harness-registry,harness-tests,testkit-guard,testkit-tests,claim-tests,linter-entry-tests,observation-tests,devperf-tests,build-policy,cargo-config,cargo-config-measurement,vendor-set,member-lints,fmt,clippy,nursery-advisory,host-postgresql-start,wallet-elements-start,test-build,reference-certificates,service-tests,test-evidence,tests,test-budgets,minimal,rustdoc,fixed-point-clean,design-correspondence,design-tests,benchmarks,observation-runtime,host-observation-build,host-observation-runtime,wallet-conformance,wallet-elements-stop,host-postgresql-stop,observation-parser,observation-syntax,harness-matrix,claim-evidence,token,hash-citations,suppressions,printing,finalize', ''],
   ['ci/build-inputs/ci/meson.build', 'build-graph', ''],

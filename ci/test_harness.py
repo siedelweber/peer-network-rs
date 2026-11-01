@@ -233,6 +233,25 @@ assert (root/'payload').read_text() == 'committed'
         inventory = {'rust-suites': {'example': {'package-name': 'example',
                      'binary-name': 'example', 'kind': 'lib',
                      'testcases': {'fast': {'ignored': False}, 'slow': {'ignored': False}}}}}
+        from calibrate import selection, complete, alone, owning_package
+        self.assertEqual(owning_package('example::slow', 'different-rust', inventory,
+                                        {'example': {}, 'different': {}}), 'example')
+        self.assertEqual(selection(inventory, {'example::slow'}),
+                         '(binary_id(=example) & test(=slow))')
+        with self.assertRaisesRegex(StructuralError, 'selection'):
+            selection(inventory, {'example::absent'})
+        calibrated = [registry.join(dict(operation=case, outcome='passed'), 'current')
+                      for case in ('example::fast', 'example::slow')]
+        self.assertEqual(complete(registry, calibrated), 0)
+        self.assertIsNone(alone([dict(name='a', start=1, end=2), dict(name='b', start=2, end=3)]))
+        for second in (dict(name='b', start=1, end=3), dict(name='a', start=2, end=3),
+                       dict(name='b', start=3, end=2)):
+            with self.assertRaisesRegex(StructuralError, 'calibration suites'):
+                alone([dict(name='a', start=1, end=2), second])
+        for invalid in (calibrated[:1], calibrated+calibrated[:1],
+                        [dict(calibrated[0], outcome='held'), calibrated[1]]):
+            with self.assertRaises(StructuralError):
+                complete(registry, invalid)
         thresholds = declarations()
         start = thresholds['unit']['budget_ms']
         fast_end = thresholds['crate']['budget_ms']
@@ -426,6 +445,11 @@ assert (root/'payload').read_text() == 'committed'
         """
         from run_tests import doctest_events
         registry = fixture('doctest', 'doctest::src/lib.rs - fixture [example 1]', 'doctest')
+        selected = {'doctest::src/lib.rs - fixture [example 1]'}
+        self.assertEqual(doctest_events('', 'current', CONFIGURATION, registry, selected)[0]['outcome'], 'incomplete')
+        for invalid in (set(), {'doctest::absent'}):
+            with self.assertRaisesRegex(StructuralError, 'selection'):
+                doctest_events('', 'current', CONFIGURATION, registry, invalid)
         for text in ['', '{"type":"test","event":"started","name":"src/lib.rs - fixture (line 1)"}']:
             records = doctest_events(text, 'current', CONFIGURATION, registry)
             self.assertEqual(records[0]['outcome'], 'incomplete')

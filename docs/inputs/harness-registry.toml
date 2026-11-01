@@ -862,6 +862,7 @@ cases = ["ci::test_observe_syntax.Syntax.test_parsed_boundaries"]
 [[rows]]
 kind = "suite"
 name = "ci::test_linter_entry"
+scenario_jobs = 4
 status = "active"
 runner = "ci"
 level = "integration"
