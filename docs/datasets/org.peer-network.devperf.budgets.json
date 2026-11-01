@@ -159,6 +159,13 @@
       "name": "reference-certificate-suite",
       "reason": "Allow the exact reference cases and their refusal controls as a separately measured group while preserving the unchanged fast and gate budgets.",
       "scope": "one required reference-certificate group"
+    },
+    {
+      "budget_ms": 15000,
+      "category": "case",
+      "name": "reference-receiving-case",
+      "reason": "The complete published Registration and donor multiplicities, both public histories and both annotation readings must survive compilation, solve and replay. A completed focused case took six seconds; the declared allowance also accounts for gate contention without changing any other case budget.",
+      "scope": "one full-size published receiving showcase comparison"
     }
   ]
 }

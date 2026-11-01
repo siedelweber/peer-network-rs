@@ -4387,3 +4387,243 @@ value = "90"
 unit = "seconds"
 display = "exact"
 exact_digits = 24
+
+# Receiving and partition comparison quantities.
+
+[[rows]]
+id = "num:numbers:partition-numeraire"
+value = "1/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-policy-floor"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-act-capacity"
+value = "10000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-low-rate"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-high-rate"
+value = "20"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-close-rate"
+value = "201/100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-half-rung"
+value = "1/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-quarter-rung"
+value = "1/4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-precision"
+value = "24"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-endpoint-grid"
+value = "1/65536"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-proposal-cap"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-work-ceiling"
+value = "100000000000"
+unit = "Work"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-arithmetic-ceiling"
+value = "100000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-output-ceiling"
+value = "134217728"
+unit = "bytes"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-product-ceiling"
+value = "1000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-small-registrations"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-small-retained-count"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-small-donors"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-small-standing-old"
+value = "962/121"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-small-standing-new"
+value = "1762/161"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-small-incoming-count"
+value = "80/81"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-small-gain"
+value = "58320/19481"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-showcase-registrations"
+value = "9800"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-showcase-retained-count"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-showcase-donors"
+value = "100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-showcase-standing-old"
+value = "8738/4009"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-showcase-standing-new"
+value = "160162/8081"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-showcase-incoming-count"
+value = "8000/81"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-showcase-gain"
+value = "571477680/32396729"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-reduction-ceiling"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:partition-proof-node-ceiling"
+value = "100000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-small-focused-seconds"
+value = "317/100"
+unit = "seconds"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-showcase-focused-seconds"
+value = "6"
+unit = "seconds"
+display = "exact"
+exact_digits = 100
+
+[[rows]]
+id = "num:numbers:receiving-showcase-case-budget-seconds"
+value = "15"
+unit = "seconds"
+display = "exact"
+exact_digits = 100

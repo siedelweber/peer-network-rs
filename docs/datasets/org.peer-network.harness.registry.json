@@ -4280,6 +4280,7 @@
       "budget": "pure-suite",
       "case_span": true,
       "cases": [
+        "pn-epoch::solve::partitions::receiving_small",
         "pn-epoch::solve::procedure_binding",
         "pn-epoch::solve::procedure_records",
         "pn-epoch::solve::evidence_records",
@@ -4389,6 +4390,21 @@
       "kind": "suite",
       "level": "public-surface",
       "name": "pn-epoch::reference-wall",
+      "runner": "nextest",
+      "status": "active",
+      "tier": "reference-certificate"
+    },
+    {
+      "budget": "reference-certificate-suite",
+      "case_budget": "reference-receiving-case",
+      "case_span": true,
+      "cases": [
+        "pn-epoch::solve::partitions::receiving_showcase"
+      ],
+      "implementation": "pn-epoch-rust",
+      "kind": "suite",
+      "level": "public-surface",
+      "name": "pn-epoch::reference-receiving",
       "runner": "nextest",
       "status": "active",
       "tier": "reference-certificate"

@@ -1207,9 +1207,77 @@ pub enum NumberId {
     NumbersReferenceWallCaseBudgetSeconds,
     /// Registry id: num:numbers:reference-certificate-suite-budget-seconds.
     NumbersReferenceCertificateSuiteBudgetSeconds,
+    /// Registry id: num:numbers:partition-numeraire.
+    NumbersPartitionNumeraire,
+    /// Registry id: num:numbers:partition-policy-floor.
+    NumbersPartitionPolicyFloor,
+    /// Registry id: num:numbers:partition-act-capacity.
+    NumbersPartitionActCapacity,
+    /// Registry id: num:numbers:partition-low-rate.
+    NumbersPartitionLowRate,
+    /// Registry id: num:numbers:partition-high-rate.
+    NumbersPartitionHighRate,
+    /// Registry id: num:numbers:partition-close-rate.
+    NumbersPartitionCloseRate,
+    /// Registry id: num:numbers:partition-half-rung.
+    NumbersPartitionHalfRung,
+    /// Registry id: num:numbers:partition-quarter-rung.
+    NumbersPartitionQuarterRung,
+    /// Registry id: num:numbers:partition-precision.
+    NumbersPartitionPrecision,
+    /// Registry id: num:numbers:partition-endpoint-grid.
+    NumbersPartitionEndpointGrid,
+    /// Registry id: num:numbers:partition-proposal-cap.
+    NumbersPartitionProposalCap,
+    /// Registry id: num:numbers:partition-work-ceiling.
+    NumbersPartitionWorkCeiling,
+    /// Registry id: num:numbers:partition-arithmetic-ceiling.
+    NumbersPartitionArithmeticCeiling,
+    /// Registry id: num:numbers:partition-output-ceiling.
+    NumbersPartitionOutputCeiling,
+    /// Registry id: num:numbers:partition-product-ceiling.
+    NumbersPartitionProductCeiling,
+    /// Registry id: num:numbers:receiving-small-registrations.
+    NumbersReceivingSmallRegistrations,
+    /// Registry id: num:numbers:receiving-small-retained-count.
+    NumbersReceivingSmallRetainedCount,
+    /// Registry id: num:numbers:receiving-small-donors.
+    NumbersReceivingSmallDonors,
+    /// Registry id: num:numbers:receiving-small-standing-old.
+    NumbersReceivingSmallStandingOld,
+    /// Registry id: num:numbers:receiving-small-standing-new.
+    NumbersReceivingSmallStandingNew,
+    /// Registry id: num:numbers:receiving-small-incoming-count.
+    NumbersReceivingSmallIncomingCount,
+    /// Registry id: num:numbers:receiving-small-gain.
+    NumbersReceivingSmallGain,
+    /// Registry id: num:numbers:receiving-showcase-registrations.
+    NumbersReceivingShowcaseRegistrations,
+    /// Registry id: num:numbers:receiving-showcase-retained-count.
+    NumbersReceivingShowcaseRetainedCount,
+    /// Registry id: num:numbers:receiving-showcase-donors.
+    NumbersReceivingShowcaseDonors,
+    /// Registry id: num:numbers:receiving-showcase-standing-old.
+    NumbersReceivingShowcaseStandingOld,
+    /// Registry id: num:numbers:receiving-showcase-standing-new.
+    NumbersReceivingShowcaseStandingNew,
+    /// Registry id: num:numbers:receiving-showcase-incoming-count.
+    NumbersReceivingShowcaseIncomingCount,
+    /// Registry id: num:numbers:receiving-showcase-gain.
+    NumbersReceivingShowcaseGain,
+    /// Registry id: num:numbers:partition-reduction-ceiling.
+    NumbersPartitionReductionCeiling,
+    /// Registry id: num:numbers:partition-proof-node-ceiling.
+    NumbersPartitionProofNodeCeiling,
+    /// Registry id: num:numbers:receiving-small-focused-seconds.
+    NumbersReceivingSmallFocusedSeconds,
+    /// Registry id: num:numbers:receiving-showcase-focused-seconds.
+    NumbersReceivingShowcaseFocusedSeconds,
+    /// Registry id: num:numbers:receiving-showcase-case-budget-seconds.
+    NumbersReceivingShowcaseCaseBudgetSeconds,
 }
 
-const OFFSETS: [(usize, usize); 602] = [
+const OFFSETS: [(usize, usize); 636] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -1812,6 +1880,40 @@ const OFFSETS: [(usize, usize); 602] = [
     (90131, 90133),
     (90261, 90263),
     (90399, 90401),
+    (90564, 90568),
+    (90691, 90692),
+    (90815, 90820),
+    (90939, 90940),
+    (91060, 91062),
+    (91183, 91190),
+    (91310, 91313),
+    (91436, 91439),
+    (91559, 91561),
+    (91685, 91692),
+    (91815, 91816),
+    (91939, 91951),
+    (92071, 92080),
+    (92205, 92214),
+    (92332, 92339),
+    (92469, 92470),
+    (92601, 92602),
+    (92725, 92726),
+    (92855, 92862),
+    (92991, 92999),
+    (93130, 93135),
+    (93256, 93267),
+    (93400, 93404),
+    (93538, 93539),
+    (93665, 93668),
+    (93800, 93809),
+    (93941, 93952),
+    (94086, 94093),
+    (94217, 94235),
+    (94363, 94364),
+    (94493, 94499),
+    (94631, 94638),
+    (94767, 94768),
+    (94901, 94903),
 ];
 
 impl NumberId {

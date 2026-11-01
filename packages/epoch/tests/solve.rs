@@ -4,6 +4,8 @@ use pins::NumberId;
 mod common;
 #[path = "common/joined.rs"]
 mod joined;
+#[path = "solve/partitions.rs"]
+mod partitions;
 
 fn burn_reference(acts: &mut Vec<pn_records::CandidateAct>, source: &str, target: &str, count: u64) {
     for _ in 0..count {
