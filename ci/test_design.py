@@ -89,6 +89,7 @@ class Correspondence(unittest.TestCase):
                                 ('solve-rate-upper-milliseconds-per-million', '1.969'),
                                 ('projected-solve-fast-seconds', '59.1'),
                                 ('projected-solve-slow-seconds', '61.5'),
+                                ('enclosed-wall-mandatory-work', '993'),
                                 ('epoch-recipient-history-count', '21'),
                                 ('epoch-invitation-radicand', '0.56' + '1'),
                                 ('epoch-family-presentation-count', '23'),

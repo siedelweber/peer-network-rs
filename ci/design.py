@@ -248,6 +248,15 @@ def numeric_correspondence():
     def equal(actual, expected):
         if actual != expected:
             raise ValueError('numeric registry: derived rate differs from recorded operands')
+    for wall in ('enclosed', 'rational'):
+        equal(value(f'{wall}-wall-mandatory-work'), value(f'{wall}-wall-production-work')
+              + value(f'{wall}-wall-replay-work'))
+    equal(value('solve-sixteenth-two-work'), value('candidate-total-work')
+          + value('certified-map-work') + value('residual-arithmetic-work'))
+    # The charter fixes four hops; the +3 term is structural in the cell envelope.
+    for regime, depths in (('supported', value('frozen-supported-depth-count')), ('chartered', 4)):
+        equal(value(f'projected-{regime}-cell-count'), value('solve-projection-actor-count') ** 2
+              * (depths + 3))
     rates = {speed: value(f'rate-{speed}-sample-seconds') / value('rate-sample-work')
              for speed in ('fast', 'middle', 'slow')}
     for speed, rate in rates.items():
@@ -327,7 +336,7 @@ def numeric_correspondence():
         if admitted and (Fraction(view['exact'].replace('\u202f', '')) != number
                          or view['exact_exact'] is not True or view.get('exact_relation') != '='):
             raise ValueError('numeric registry: exact form differs')
-    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=34 displays={len(projected)}')
+    print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=39 displays={len(projected)}')
 
 
 if __name__ == '__main__':
