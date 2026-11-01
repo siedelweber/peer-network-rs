@@ -1375,9 +1375,73 @@ pub enum NumberId {
     NumbersConservationBalanceTotalWidth,
     /// Registry id: num:numbers:conservation-failed-solvent-row-width.
     NumbersConservationFailedSolventRowWidth,
+    /// Registry id: num:numbers:published-act-isolated-standing-before.
+    NumbersPublishedActIsolatedStandingBefore,
+    /// Registry id: num:numbers:published-act-isolated-standing-after.
+    NumbersPublishedActIsolatedStandingAfter,
+    /// Registry id: num:numbers:published-act-isolated-finite-change.
+    NumbersPublishedActIsolatedFiniteChange,
+    /// Registry id: num:numbers:published-act-isolated-certificate-before.
+    NumbersPublishedActIsolatedCertificateBefore,
+    /// Registry id: num:numbers:published-act-isolated-certificate-after.
+    NumbersPublishedActIsolatedCertificateAfter,
+    /// Registry id: num:numbers:published-act-isolated-fence-before.
+    NumbersPublishedActIsolatedFenceBefore,
+    /// Registry id: num:numbers:published-act-isolated-fence-after.
+    NumbersPublishedActIsolatedFenceAfter,
+    /// Registry id: num:numbers:published-act-retained-standing-before.
+    NumbersPublishedActRetainedStandingBefore,
+    /// Registry id: num:numbers:published-act-retained-standing-after.
+    NumbersPublishedActRetainedStandingAfter,
+    /// Registry id: num:numbers:published-act-retained-finite-change.
+    NumbersPublishedActRetainedFiniteChange,
+    /// Registry id: num:numbers:published-act-retained-certificate-before.
+    NumbersPublishedActRetainedCertificateBefore,
+    /// Registry id: num:numbers:published-act-retained-certificate-after.
+    NumbersPublishedActRetainedCertificateAfter,
+    /// Registry id: num:numbers:published-act-retained-fence-before.
+    NumbersPublishedActRetainedFenceBefore,
+    /// Registry id: num:numbers:published-act-retained-fence-after.
+    NumbersPublishedActRetainedFenceAfter,
+    /// Registry id: num:numbers:published-act-numeraire.
+    NumbersPublishedActNumeraire,
+    /// Registry id: num:numbers:published-act-wall.
+    NumbersPublishedActWall,
+    /// Registry id: num:numbers:published-act-retained-count.
+    NumbersPublishedActRetainedCount,
+    /// Registry id: num:numbers:published-act-retained-high-rate.
+    NumbersPublishedActRetainedHighRate,
+    /// Registry id: num:numbers:published-act-retained-low-rate.
+    NumbersPublishedActRetainedLowRate,
+    /// Registry id: num:numbers:act-family-high-rate.
+    NumbersActFamilyHighRate,
+    /// Registry id: num:numbers:act-family-extreme-rate.
+    NumbersActFamilyExtremeRate,
+    /// Registry id: num:numbers:act-family-low-rational-rate.
+    NumbersActFamilyLowRationalRate,
+    /// Registry id: num:numbers:act-family-high-rational-rate.
+    NumbersActFamilyHighRationalRate,
+    /// Registry id: num:numbers:act-family-isolated-precision.
+    NumbersActFamilyIsolatedPrecision,
+    /// Registry id: num:numbers:act-family-retained-precision.
+    NumbersActFamilyRetainedPrecision,
+    /// Registry id: num:numbers:act-family-retained-failed-precision.
+    NumbersActFamilyRetainedFailedPrecision,
+    /// Registry id: num:numbers:act-family-retained-standing-before-lower.
+    NumbersActFamilyRetainedStandingBeforeLower,
+    /// Registry id: num:numbers:act-family-retained-standing-before-upper.
+    NumbersActFamilyRetainedStandingBeforeUpper,
+    /// Registry id: num:numbers:act-family-retained-standing-after-lower.
+    NumbersActFamilyRetainedStandingAfterLower,
+    /// Registry id: num:numbers:act-family-retained-standing-after-upper.
+    NumbersActFamilyRetainedStandingAfterUpper,
+    /// Registry id: num:numbers:act-family-retained-change-lower.
+    NumbersActFamilyRetainedChangeLower,
+    /// Registry id: num:numbers:act-family-retained-change-upper.
+    NumbersActFamilyRetainedChangeUpper,
 }
 
-const OFFSETS: [(usize, usize); 686] = [
+const OFFSETS: [(usize, usize); 718] = [
     (129, 136),
     (249, 256),
     (380, 382),
@@ -2064,6 +2128,38 @@ const OFFSETS: [(usize, usize); 686] = [
     (107_099, 107_205),
     (107_356, 107_465),
     (107_621, 107_673),
+    (107_888, 107_889),
+    (108_027, 108_030),
+    (108_167, 108_171),
+    (108_313, 108_314),
+    (108_455, 108_456),
+    (108_592, 108_593),
+    (108_728, 108_729),
+    (108_868, 109_026),
+    (109_164, 109_324),
+    (109_461, 109_622),
+    (109_764, 109_926),
+    (110_067, 110_228),
+    (110_364, 110_523),
+    (110_658, 110_820),
+    (110_944, 110_948),
+    (111_067, 111_068),
+    (111_197, 111_201),
+    (111_334, 111_335),
+    (111_467, 111_468),
+    (111_589, 111_592),
+    (111_716, 111_723),
+    (111_852, 111_855),
+    (111_985, 111_989),
+    (112_119, 112_120),
+    (112_250, 112_251),
+    (112_388, 112_389),
+    (112_531, 112_547),
+    (112_689, 112_705),
+    (112_846, 112_862),
+    (113_003, 113_019),
+    (113_152, 113_161),
+    (113_294, 113_307),
 ];
 
 impl NumberId {

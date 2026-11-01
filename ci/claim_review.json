@@ -1906,6 +1906,22 @@
       "review": "Both rate orientations independently compile, select the passing full rung, solve and replay. Independent replay of each distinct complete primitive request, exact-policy reuse of repeats, and interval transport on the equilibrium boxes bound total variation and the projected residual after lifting the coarse box into the refined hull. Separated response intervals supply the opposite signs; no intent or equality is inferred."
     },
     {
+      "operation": "pn-epoch::solve::partitions::published_isolated_acts",
+      "path": "packages/epoch/tests/solve/partitions.rs",
+      "claim": "EPOCH::claim:standing:published-isolated-act-samples-retain-exact-loss",
+      "before": "",
+      "after": "Claim: Five unsorted complete isolated histories, including the paper's three sampled rates, independently solve and replay before and after one self-resolved Publish with unchanged burn. The compiled count, diagonal and debit give exact loss (R + threshold/numeraire)/2, zero contributing width and certificates, passing full rungs and final gates. These finite samples witness decreases and the exact relation at their inputs, not an unbounded family proof.",
+      "review": "This site compiles five reversed isolated history pairs with fixed recognized burn and checks each new count, debit and diagonal. Exact singleton solves and independent replay give the sampled loss relation, zero widths and certificates, full passing rungs and final gates. The keyed isolated outputs agree exactly. Finite samples do not establish an unbounded family theorem or deployment authentication."
+    },
+    {
+      "operation": "pn-epoch::solve::partitions::published_retained_act",
+      "path": "packages/epoch/tests/solve/partitions.rs",
+      "claim": "EPOCH::claim:standing:published-retained-act-has-certified-own-increase",
+      "before": "",
+      "after": "Claim: The published retained-source complete-history pair adds one coefficient-one self-resolved Publish without additional burn. Recomputed counts, debit and diagonal, independently replayed full-rung solves and final gates enclose the published own standings, positive change, certificates and fences. Together with the separately checked isolated decreases this refuses a universal accepted-act direction; it asserts no unbounded family or general monotonicity.",
+      "review": "This site compiles the complete retained-source history pair with fixed recognized burn and checks each new count, debit and diagonal. Independent replay checks full passing rungs and final gates; the positive response and keyed standings, certificates and fences are enclosed. The lower-precision replayed control does not separate the sign. The opposite direction is supplied by the separately cited isolated site, not asserted here as a general monotonicity theorem."
+    },
+    {
       "operation": "pn-epoch::solve::partitions::receiving_showcase",
       "path": "packages/epoch/tests/solve/partitions.rs",
       "claim": "EPOCH::claim:standing:showcase-receiving-retains-scoped-concentration",

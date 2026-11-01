@@ -412,6 +412,8 @@
     "pn-epoch::solve::partitions::distinct_target_split": "",
     "pn-epoch::solve::partitions::nonconstant_matched_split": "",
     "pn-epoch::solve::partitions::positive_rung_split": "",
+    "pn-epoch::solve::partitions::published_isolated_acts": "",
+    "pn-epoch::solve::partitions::published_retained_act": "",
     "pn-epoch::solve::partitions::receiving_showcase": "",
     "pn-epoch::solve::partitions::receiving_small": "",
     "pn-epoch::solve::partitions::sibling_outside_paths": "",

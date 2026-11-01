@@ -5002,3 +5002,229 @@ unit = "dimensionless"
 display = "ceiling"
 magnitude = -12
 exact_digits = 200
+
+# Published accepted-act families and their calibration.
+
+[[rows]]
+id = "num:numbers:published-act-isolated-standing-before"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-isolated-standing-after"
+value = "3/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-isolated-finite-change"
+value = "-5/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-isolated-certificate-before"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-isolated-certificate-after"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-isolated-fence-before"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-isolated-fence-after"
+value = "0"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-standing-before"
+value = "1606439650939056906317857529521436266068428990840796940110475845239436778379877/500000000000000000000000000000000000000000000000000000000000000000000000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-standing-after"
+value = "16239714561407135131057768613472734952507888325320338370544072226191515243340563/5000000000000000000000000000000000000000000000000000000000000000000000000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-finite-change"
+value = "7012722080662642715167732730334891672943936676494758777572550951885898381671727/200000000000000000000000000000000000000000000000000000000000000000000000000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-certificate-before"
+value = "61501502433326067968641458297979282191721815610504498618190857714155939415449549/100000000000000000000000000000000000000000000000000000000000000000000000000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-certificate-after"
+value = "30673951138699340093250997058207948685531584858685685249881903809982370382780407/50000000000000000000000000000000000000000000000000000000000000000000000000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-fence-before"
+value = "1201201219400899765012528482382407855307066711142665988636540189729608191707999/1562500000000000000000000000000000000000000000000000000000000000000000000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-fence-after"
+value = "76684877846748350233127492645519871713828962146714213124704759524955925956951017/100000000000000000000000000000000000000000000000000000000000000000000000000000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-numeraire"
+value = "1/10"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-wall"
+value = "1"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-count"
+value = "1000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-high-rate"
+value = "4"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:published-act-retained-low-rate"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-high-rate"
+value = "100"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-extreme-rate"
+value = "1000000"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-low-rational-rate"
+value = "7/2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-high-rational-rate"
+value = "17/3"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-isolated-precision"
+value = "2"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-retained-precision"
+value = "8"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-retained-failed-precision"
+value = "7"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-retained-standing-before-lower"
+value = "13396519/4194304"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-retained-standing-before-upper"
+value = "13554823/4194304"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-retained-standing-after-lower"
+value = "13556199/4194304"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-retained-standing-after-upper"
+value = "13689235/4194304"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-retained-change-lower"
+value = "43/131072"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200
+
+[[rows]]
+id = "num:numbers:act-family-retained-change-upper"
+value = "73179/1048576"
+unit = "dimensionless"
+display = "exact"
+exact_digits = 200

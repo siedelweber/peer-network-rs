@@ -115,7 +115,11 @@ fn compile(acts: &[CandidateAct], rates: &BTreeMap<String, Fraction>) -> Compile
         })
         .collect();
     let borrowed: Vec<_> = burns.iter().map(|(name, amount)| (*name, amount.as_str())).collect();
-    let original = joined::package_at_wall(acts, 1, &borrowed, "3/37");
+    compile_funded(acts, &borrowed, "3/37")
+}
+
+fn compile_funded(acts: &[CandidateAct], borrowed: &[(&str, &str)], wall_text: &str) -> CompiledState {
+    let original = joined::package_at_wall(acts, 1, borrowed, wall_text);
     let (declaration, mut edition, mut parameters) = common::fixture();
     let mut n = numeric();
     let literal = n.literal(N::NumbersPartitionNumeraire.value()).unwrap();
@@ -153,7 +157,7 @@ fn compile(acts: &[CandidateAct], rates: &BTreeMap<String, Fraction>) -> Compile
     let declaration = pn_records::validate_record(&[], &empty, &[declaration]).unwrap();
     let constants = pn_records::constants::bind_constants(&declaration, vec![edition]).unwrap();
     let input = pn_epoch::bind_inputs(&constants, parameters, limits()).unwrap();
-    let literal = n.literal("3/37").unwrap();
+    let literal = n.literal(wall_text).unwrap();
     let wall = n.computed(&literal).unwrap();
     let price = n
         .charged_price(&wall, &input.parameters().numeraire, input.constants().content().floor)
@@ -1755,4 +1759,338 @@ fn sibling_pair_premises(before: &CompiledState, after: &CompiledState) {
             after.view().ledger.balances[&Address(name.into())]
         );
     }
+}
+
+fn published_act_state(retained: bool, rate: NumberId, after: bool) -> CompiledState {
+    let names: &[&str] = if retained { &["b", "a"] } else { &["b"] };
+    let count = if retained {
+        N::NumbersPublishedActRetainedCount.integer()
+    } else {
+        1
+    };
+    let mut acts = Vec::new();
+    for name in names {
+        append(&mut acts, "Registration", name, name);
+        if retained {
+            append(&mut acts, "Opinion", name, if *name == "a" { "b" } else { "a" });
+            while u64::try_from(acts.iter().filter(|act| act.id.author == *name).count()).unwrap() < count {
+                let mut act = joined::act("Publish", name, u64::try_from(acts.len()).unwrap() + 1, 1);
+                joined::coordinates(&mut act, &["attachment"], 0);
+                acts.push(act);
+            }
+        }
+    }
+    if after {
+        acts.push(joined::act(
+            "Publish",
+            if retained { "a" } else { "b" },
+            u64::try_from(acts.len()).unwrap() + 1,
+            1,
+        ));
+    }
+    acts.reverse();
+    let nu = Fraction::parse(N::NumbersPublishedActNumeraire.value());
+    assert!(
+        acts.len() == 1
+            || acts
+                .windows(2)
+                .any(|pair| pair[0].authoritative_position > pair[1].authoritative_position)
+    );
+    let wall = Fraction::parse(N::NumbersPublishedActWall.value());
+    let funds: Vec<_> = names
+        .iter()
+        .map(|name| {
+            let r = if retained {
+                if *name == "a" {
+                    N::NumbersPublishedActRetainedHighRate
+                } else {
+                    N::NumbersPublishedActRetainedLowRate
+                }
+            } else {
+                rate
+            };
+            let amount = Fraction::parse(r.value())
+                .plus(wall)
+                .times(nu)
+                .times(Fraction(i128::from(count), 1));
+            (*name, format!("{}/{}", amount.0, amount.1))
+        })
+        .collect();
+    let borrowed: Vec<_> = funds.iter().map(|(name, amount)| (*name, amount.as_str())).collect();
+    compile_funded(&acts, &borrowed, N::NumbersPublishedActWall.value())
+}
+
+fn published_act_policy(state: &CompiledState, bits: NumberId) -> Procedure {
+    let mut p = policy(state);
+    let precision = u32::try_from(bits.integer()).unwrap();
+    p.precision = Precision::AbsoluteWidthBits(vec![precision]);
+    p.enclosure.as_mut().unwrap().refinement.precision = precision;
+    p.grid = vec!["1".into(), "0".into()];
+    p.maximum_iterations = N::NumbersPartitionPositiveProposalCap.integer();
+    p
+}
+
+fn published_act_premises(old: &CompiledState, new: &CompiledState, target: &str) {
+    let a = old.package().input();
+    let b = new.package().input();
+    assert_eq!(a.markers, b.markers);
+    assert_eq!(a.prices, b.prices);
+    assert_eq!(a.inputs, b.inputs);
+    assert_eq!(a.history.acts().len() + 1, b.history.acts().len());
+    assert!(a.history.acts().iter().all(|act| b.history.acts().contains(act)));
+    let added: Vec<_> = b
+        .history
+        .acts()
+        .iter()
+        .filter(|act| !a.history.acts().contains(act))
+        .collect();
+    assert_eq!(added.len(), 1);
+    assert_eq!(added[0].id().author, target);
+    assert_eq!(added[0].id().family, "Publish");
+    let debit =
+        Fraction::parse(N::NumbersPublishedActWall.value()).times(Fraction::parse(N::NumbersPublishedActNumeraire.value()));
+    assert_eq!(Fraction::parse(a.prices[0].price().exact()), debit);
+    for (address, count) in &old.view().ledger.counts {
+        let is_target = address.0 == target;
+        let expected_count = if old.view().ledger.counts.len() == 1 {
+            1
+        } else {
+            N::NumbersPublishedActRetainedCount.integer()
+        };
+        assert_eq!(count.0, expected_count);
+        assert_eq!(new.view().ledger.counts[address].0, count.0 + u64::from(is_target));
+        let difference = Fraction::parse(old.view().ledger.balances[address].exact())
+            .minus(Fraction::parse(new.view().ledger.balances[address].exact()));
+        assert_eq!(difference, if is_target { debit } else { Fraction(0, 1) });
+        for (recipient, cell) in &old.view().base.rows[&address.0] {
+            let pn_epoch::base::BaseScore::Exact(score) = &cell.score else {
+                panic!("rational published base");
+            };
+            let pn_epoch::base::BaseScore::Exact(next) = &new.view().base.rows[&address.0][recipient].score else {
+                panic!("rational published base");
+            };
+            let expected = if recipient == &address.0 {
+                Fraction(2, 1)
+            } else {
+                Fraction(1, 1)
+            };
+            assert_eq!(Fraction::parse(score), expected);
+            assert_eq!(
+                Fraction::parse(next),
+                expected.plus(Fraction(i128::from(is_target && recipient == target), 1))
+            );
+        }
+    }
+}
+
+fn published_act_solve(state: &CompiledState, precision: NumberId) -> SolveRecord {
+    let p = published_act_policy(state, precision);
+    let bound = bind_procedure(state, p.clone(), &Published(p.clone()), limits()).unwrap();
+    let search = pn_epoch::fence::search(&bound, None).unwrap();
+    assert_eq!(search.selected.as_deref(), Some("1"));
+    assert_eq!(search.operational_stop, None);
+    assert_eq!(search.evidence.attempts.len(), 1);
+    assert_eq!(search.evidence.attempts[0].completion, Completion::Pass);
+    let record = pn_epoch::conserved::solve(&bound, &search).unwrap();
+    pn_epoch::conserved::replay(&bound, &record).unwrap();
+    let mut budget = Budget::new(limits()).unwrap();
+    let floor = Rational::parse(N::NumbersPublishedActWall.value(), &mut budget).unwrap();
+    let policy_floor = Rational::parse(N::NumbersPartitionPolicyFloor.value(), &mut budget).unwrap();
+    assert_eq!(floor, policy_floor);
+    // Every coordinate clears both the common wall and policy floor, hence so does their act-weighted mean.
+    for value in record.rounds.last().unwrap().standing.values() {
+        assert!(
+            Rational::parse(&value.lower, &mut budget)
+                .unwrap()
+                .compare(&floor, &mut budget)
+                .unwrap()
+                .is_ge()
+        );
+    }
+    assert!(state.view().ledger.balances.values().all(|b| !b.exact().starts_with('-')));
+    record
+}
+
+fn published_act_contains(value: &nrz_cas::enclosure::Interval, id: NumberId, budget: &mut Budget) {
+    contains_exact(value, &Rational::parse(id.value(), budget).unwrap(), budget);
+}
+
+/// Claim: Five unsorted complete isolated histories, including the paper's three sampled rates, independently solve and replay before and after one self-resolved Publish with unchanged burn. The compiled count, diagonal and debit give exact loss (R + threshold/numeraire)/2, zero contributing width and certificates, passing full rungs and final gates. These finite samples witness decreases and the exact relation at their inputs, not an unbounded family proof.
+/// ´claim:standing:published-isolated-act-samples-retain-exact-loss´
+/// ´test:integration:published-isolated-acts´
+#[test]
+fn published_isolated_acts() {
+    for rate in [
+        N::NumbersActFamilyExtremeRate,
+        N::NumbersActFamilyLowRationalRate,
+        N::NumbersPublishedActIsolatedStandingBefore,
+        N::NumbersActFamilyHighRate,
+        N::NumbersActFamilyHighRationalRate,
+    ] {
+        let old = published_act_state(false, rate, false);
+        let new = published_act_state(false, rate, true);
+        published_act_premises(&old, &new, "b");
+        let a = published_act_solve(&old, N::NumbersActFamilyIsolatedPrecision);
+        let b = published_act_solve(&new, N::NumbersActFamilyIsolatedPrecision);
+        let mut budget = Budget::new(limits()).unwrap();
+        let before = burn_range(&a.rounds.last().unwrap().standing["b"], &mut budget);
+        let after = burn_range(&b.rounds.last().unwrap().standing["b"], &mut budget);
+        let response = nrz_cas::enclosure::Interval::new(
+            after.lower().sub(before.upper(), &mut budget).unwrap(),
+            after.upper().sub(before.lower(), &mut budget).unwrap(),
+            &mut budget,
+        )
+        .unwrap();
+        let r = Fraction::parse(rate.value());
+        let theta_over_nu = Fraction::parse(old.package().input().prices[0].price().exact())
+            .over(Fraction::parse(N::NumbersPublishedActNumeraire.value()));
+        let loss = r.plus(theta_over_nu).over(Fraction(2, 1));
+        assert_eq!(before.lower(), before.upper());
+        assert_eq!(after.lower(), after.upper());
+        assert_eq!(Fraction::parse(&before.lower().exact_string(&mut budget).unwrap()), r);
+        assert_eq!(
+            Fraction::parse(&response.upper().exact_string(&mut budget).unwrap()),
+            Fraction(0, 1).minus(loss)
+        );
+        assert!(response.upper().is_negative());
+        for (state, record) in [(&old, &a), (&new, &b)] {
+            assert!(
+                state
+                    .view()
+                    .support
+                    .ranges
+                    .values()
+                    .all(|range| range.minimum == range.maximum && range.width == "0")
+            );
+            let fence = &record.fence.attempts[0].margined_fence;
+            assert_eq!(fence.lower, "0");
+            assert_eq!(fence.upper, "0");
+            assert_eq!(record.rounds.last().unwrap().contraction, "0");
+        }
+        if matches!(rate, N::NumbersPublishedActIsolatedStandingBefore) {
+            published_act_contains(&before, N::NumbersPublishedActIsolatedStandingBefore, &mut budget);
+            published_act_contains(&after, N::NumbersPublishedActIsolatedStandingAfter, &mut budget);
+            published_act_contains(&response, N::NumbersPublishedActIsolatedFiniteChange, &mut budget);
+            for (record, fence_id, certificate_id) in [
+                (
+                    &a,
+                    N::NumbersPublishedActIsolatedFenceBefore,
+                    N::NumbersPublishedActIsolatedCertificateBefore,
+                ),
+                (
+                    &b,
+                    N::NumbersPublishedActIsolatedFenceAfter,
+                    N::NumbersPublishedActIsolatedCertificateAfter,
+                ),
+            ] {
+                let fence = burn_range(&record.fence.attempts[0].margined_fence, &mut budget);
+                published_act_contains(&fence, fence_id, &mut budget);
+                let margin = Rational::parse(
+                    &published_act_policy(&old, N::NumbersActFamilyIsolatedPrecision).margin,
+                    &mut budget,
+                )
+                .unwrap();
+                let certificate = nrz_cas::enclosure::Interval::new(
+                    fence.lower().div(&margin, &mut budget).unwrap(),
+                    fence.upper().div(&margin, &mut budget).unwrap(),
+                    &mut budget,
+                )
+                .unwrap();
+                published_act_contains(&certificate, certificate_id, &mut budget);
+            }
+        }
+    }
+}
+
+/// Claim: The published retained-source complete-history pair adds one coefficient-one self-resolved Publish without additional burn. Recomputed counts, debit and diagonal, independently replayed full-rung solves and final gates enclose the published own standings, positive change, certificates and fences. Together with the separately checked isolated decreases this refuses a universal accepted-act direction; it asserts no unbounded family or general monotonicity.
+/// ´claim:standing:published-retained-act-has-certified-own-increase´
+/// ´test:integration:published-retained-act´
+#[test]
+fn published_retained_act() {
+    let old = published_act_state(true, N::NumbersPublishedActRetainedHighRate, false);
+    let new = published_act_state(true, N::NumbersPublishedActRetainedHighRate, true);
+    published_act_premises(&old, &new, "a");
+    let a = published_act_solve(&old, N::NumbersActFamilyRetainedPrecision);
+    let b = published_act_solve(&new, N::NumbersActFamilyRetainedPrecision);
+    let mut budget = Budget::new(limits()).unwrap();
+    let before = burn_range(&a.rounds.last().unwrap().standing["a"], &mut budget);
+    let after = burn_range(&b.rounds.last().unwrap().standing["a"], &mut budget);
+    let response = nrz_cas::enclosure::Interval::new(
+        after.lower().sub(before.upper(), &mut budget).unwrap(),
+        after.upper().sub(before.lower(), &mut budget).unwrap(),
+        &mut budget,
+    )
+    .unwrap();
+    assert!(
+        !response.lower().is_negative() && !response.lower().is_zero(),
+        "retained response separates strictly positive"
+    );
+    published_act_contains(&before, N::NumbersPublishedActRetainedStandingBefore, &mut budget);
+    published_act_contains(&after, N::NumbersPublishedActRetainedStandingAfter, &mut budget);
+    published_act_contains(&response, N::NumbersPublishedActRetainedFiniteChange, &mut budget);
+    let margin = Rational::parse(
+        &published_act_policy(&old, N::NumbersActFamilyRetainedPrecision).margin,
+        &mut budget,
+    )
+    .unwrap();
+    for (record, fence_id, certificate_id) in [
+        (
+            &a,
+            N::NumbersPublishedActRetainedFenceBefore,
+            N::NumbersPublishedActRetainedCertificateBefore,
+        ),
+        (
+            &b,
+            N::NumbersPublishedActRetainedFenceAfter,
+            N::NumbersPublishedActRetainedCertificateAfter,
+        ),
+    ] {
+        let fence = burn_range(&record.fence.attempts[0].margined_fence, &mut budget);
+        published_act_contains(&fence, fence_id, &mut budget);
+        let certificate = nrz_cas::enclosure::Interval::new(
+            fence.lower().div(&margin, &mut budget).unwrap(),
+            fence.upper().div(&margin, &mut budget).unwrap(),
+            &mut budget,
+        )
+        .unwrap();
+        published_act_contains(&certificate, certificate_id, &mut budget);
+    }
+    for (value, lower, upper) in [
+        (
+            &before,
+            N::NumbersActFamilyRetainedStandingBeforeLower,
+            N::NumbersActFamilyRetainedStandingBeforeUpper,
+        ),
+        (
+            &after,
+            N::NumbersActFamilyRetainedStandingAfterLower,
+            N::NumbersActFamilyRetainedStandingAfterUpper,
+        ),
+        (
+            &response,
+            N::NumbersActFamilyRetainedChangeLower,
+            N::NumbersActFamilyRetainedChangeUpper,
+        ),
+    ] {
+        let rounded = value
+            .coarsen(
+                u32::try_from(N::NumbersPartitionComparisonPrecision.integer()).unwrap(),
+                &mut budget,
+            )
+            .unwrap();
+        assert_eq!(rounded.lower(), &Rational::parse(lower.value(), &mut budget).unwrap());
+        assert_eq!(rounded.upper(), &Rational::parse(upper.value(), &mut budget).unwrap());
+    }
+    let coarse_old = published_act_solve(&old, N::NumbersActFamilyRetainedFailedPrecision);
+    let coarse_new = published_act_solve(&new, N::NumbersActFamilyRetainedFailedPrecision);
+    let coarse_before = burn_range(&coarse_old.rounds.last().unwrap().standing["a"], &mut budget);
+    let coarse_after = burn_range(&coarse_new.rounds.last().unwrap().standing["a"], &mut budget);
+    let coarse = nrz_cas::enclosure::Interval::new(
+        coarse_after.lower().sub(coarse_before.upper(), &mut budget).unwrap(),
+        coarse_after.upper().sub(coarse_before.lower(), &mut budget).unwrap(),
+        &mut budget,
+    )
+    .unwrap();
+    assert!(coarse.lower().is_negative() || coarse.lower().is_zero());
+    assert!(!coarse.upper().is_negative());
 }

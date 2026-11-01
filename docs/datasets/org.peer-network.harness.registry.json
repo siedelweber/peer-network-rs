@@ -4351,6 +4351,8 @@
       "budget": "pure-suite",
       "case_span": true,
       "cases": [
+        "pn-epoch::solve::partitions::published_isolated_acts",
+        "pn-epoch::solve::partitions::published_retained_act",
         "pn-epoch::solve::partitions::sibling_outside_paths",
         "pn-epoch::solve::partitions::compiled_conservation",
         "pn-epoch::solve::partitions::distinct_target_split",
