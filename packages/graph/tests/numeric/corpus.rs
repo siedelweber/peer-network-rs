@@ -475,12 +475,8 @@ fn contributing_width(record: &pn_records::conserved::BoxMapRecord, wall: &str, 
 
 // Exact declaration rows supplement the outward certificate rows.
 // network-v0.31.1, ver:standing:conserved-equilibrium-enclosure.
-fn declaration_matches(input: &pn_records::conserved::VerificationInput, budget: &mut Budget) -> bool {
+fn declaration_rows(input: &pn_records::conserved::VerificationInput, budget: &mut Budget) -> Result<(), &'static str> {
     use NumberId as N;
-    let expected = super::verification_reference();
-    if input != &expected {
-        return false;
-    }
     let coordinates = [
         (
             "carol",
@@ -537,7 +533,7 @@ fn declaration_matches(input: &pn_records::conserved::VerificationInput, budget:
             N::NumbersPublishedVouchBobEveCoordinateSecond,
         ),
     ];
-    input.edges.len() == coordinates.len()
+    let edges_match = input.edges.len() == coordinates.len()
         && coordinates.into_iter().all(|(source, target, first, second)| {
             let product = number(first.value(), budget)
                 .mul(&number(second.value(), budget), budget)
@@ -546,23 +542,78 @@ fn declaration_matches(input: &pn_records::conserved::VerificationInput, budget:
                 .edges
                 .iter()
                 .any(|edge| edge.source == source && edge.target == target && number(&edge.radicand, budget) == product)
-        })
+        });
+    if !edges_match {
+        return Err("edge coordinate product");
+    }
+    declaration_structure(input, budget)
 }
 
-/// Check the exact tagged declaration and separate single-field mutations.
+fn declaration_structure(input: &pn_records::conserved::VerificationInput, budget: &mut Budget) -> Result<(), &'static str> {
+    if input.shape.is_empty() || input.shape.len() != input.depth_mass.len() {
+        return Err("shape and mass dimensions");
+    }
+    let shapes: Vec<_> = input.shape.iter().map(|v| number(v, budget)).collect();
+    if shapes.iter().any(Rational::is_negative)
+        || shapes
+            .windows(2)
+            .any(|pair| pair[0].compare(&pair[1], budget).unwrap().is_lt())
+    {
+        return Err("nonnegative nonincreasing shape");
+    }
+    let masses: Vec<_> = input.depth_mass.iter().map(|v| number(v, budget)).collect();
+    if masses.iter().any(Rational::is_negative) {
+        return Err("nonnegative mass");
+    }
+    let total = masses.iter().fold(number("0", budget), |sum, v| sum.add(v, budget).unwrap());
+    if total != number("1", budget) {
+        return Err("unit total mass");
+    }
+    let retention = number(&input.retention, budget);
+    if retention.is_negative() || retention.is_zero() {
+        return Err("positive retention");
+    }
+    Ok(())
+}
+
+/// Check the independent edge row and definition's structural rows.
 /// # Panics
 /// Panics only if a declaration row disagrees or a changed field is accepted.
 pub(super) fn declaration_controls(input: &pn_records::conserved::VerificationInput) {
     let mut budget = Budget::new(super::verification_policy().enclosure.unwrap().operation).unwrap();
-    assert!(declaration_matches(input, &mut budget));
-    for field in [2, 0, 1] {
+    assert_eq!(declaration_rows(input, &mut budget), Ok(()));
+    for field in [2, 0, 5, 1, 4, 3] {
         let mut changed = input.clone();
-        // Each replacement is another declared quantity, distinct from this field.
-        match field {
-            0 => changed.edges[0].radicand.clone_from(&input.edges[1].radicand),
-            1 => changed.shape[0].clone_from(&input.shape[1]),
-            _ => changed.sources[0].intercept.clone_from(&input.sources[1].intercept),
-        }
-        assert!(!declaration_matches(&changed, &mut budget));
+        let row = match field {
+            0 => {
+                changed.edges[0].radicand.clone_from(&input.edges[1].radicand);
+                "edge coordinate product"
+            }
+            1 => {
+                changed.shape.swap(0, 1);
+                "nonnegative nonincreasing shape"
+            }
+            2 => {
+                changed.depth_mass[0].clone_from(&input.depth_mass[1]);
+                "unit total mass"
+            }
+            3 => {
+                changed.retention = "0".into();
+                "positive retention"
+            }
+            4 => {
+                changed.depth_mass.pop();
+                "shape and mass dimensions"
+            }
+            _ => {
+                changed.depth_mass[0] = number(&input.depth_mass[0], &mut budget)
+                    .negated(&mut budget)
+                    .unwrap()
+                    .exact_string(&mut budget)
+                    .unwrap();
+                "nonnegative mass"
+            }
+        };
+        assert_eq!(declaration_rows(&changed, &mut budget), Err(row));
     }
 }

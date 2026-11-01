@@ -258,12 +258,13 @@ fn verification_corpus() {
     use pn_graph::numeric::verification;
     let p = verification_policy();
     let input = verification_reference();
-    let candidate = vec![range("11/10", "11/10"); 5];
+    let coordinate = NumberId::NumbersReferenceCandidateCoordinate.value();
+    let candidate = vec![range(coordinate, coordinate); input.sources.len()];
     corpus::declaration_controls(&input);
     let residual = verification::two_map(&p, &input, &candidate).unwrap();
     let declaration = pn_records::conserved::LocalDeclaration {
-        inflation: "2".into(),
-        padding: "1/1024".into(),
+        inflation: NumberId::NumbersLocalInflation.value().into(),
+        padding: NumberId::NumbersLocalBoxRadius.value().into(),
         maximum_work: NumberId::NumbersLocalCheckWork.integer(),
     };
     let local = verification::local_check(&p, &input, &candidate, &residual, &declaration).unwrap();
