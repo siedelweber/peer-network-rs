@@ -253,6 +253,7 @@
         "documents::integration::release_premises",
         "documents::integration::repository_fixed_point",
         "documents::integration::number_registry",
+        "documents::integration::directed_number_displays",
         "documents::integration::runtime_error",
         "documents::integration::stale_rendering",
         "documents::integration::template_fragments",
@@ -2446,6 +2447,7 @@
         "ci::test_design.Correspondence.test_release_projections",
         "ci::test_design.Correspondence.test_release_tags",
         "ci::test_design.Correspondence.test_numeric_correspondence",
+        "ci::test_design.Correspondence.test_numeric_word_fragments",
         "ci::test_design.Correspondence.test_tracked_prose_boundaries"
       ],
       "implementation": "ci-python",

@@ -86,7 +86,18 @@ fn install_numbers(
                     .and_then(serde_json::Value::as_bool)
                     .ok_or_else(|| failure(format!("number: missing exactness {id}.{form}")))?;
                 Ok(if relation {
-                    format!("{} {value}", if exact { "=" } else { "≈" })
+                    let symbol = row
+                        .get(&format!("{form}_relation"))
+                        .and_then(serde_json::Value::as_str)
+                        .filter(|symbol| {
+                            if exact {
+                                *symbol == "="
+                            } else {
+                                ["≈", "≤", "≥"].contains(symbol)
+                            }
+                        })
+                        .ok_or_else(|| failure(format!("number: missing or invalid relation {id}.{form}")))?;
+                    format!("{symbol} {value}")
                 } else {
                     value.to_owned()
                 })

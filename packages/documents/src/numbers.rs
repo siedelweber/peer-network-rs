@@ -137,7 +137,7 @@ fn group(text: &str) -> String {
     result
 }
 
-fn rounded(value: &str, magnitude: i32) -> Result<(String, bool)> {
+fn rounded(value: &str, magnitude: i32, rule: &str) -> Result<(String, bool)> {
     let (negative, mut numerator, mut denominator) = ratio(value)?;
     let places = usize::try_from(magnitude.unsigned_abs())?;
     if magnitude < 0 {
@@ -149,7 +149,12 @@ fn rounded(value: &str, magnitude: i32) -> Result<(String, bool)> {
     let (mut quotient, remainder) = divide(&numerator, &denominator);
     let exact = remainder == "0";
     // r >= d-r is exactly the half comparison, without machine-size arithmetic.
-    if !compare(&remainder, &subtract(&denominator, &remainder)).is_lt() {
+    let increase = match rule {
+        "floor" => negative && !exact,
+        "ceiling" => !negative && !exact,
+        _ => !compare(&remainder, &subtract(&denominator, &remainder)).is_lt(),
+    };
+    if increase {
         quotient = increment(&quotient);
     }
     let nonzero = quotient != "0";
@@ -214,7 +219,7 @@ pub(super) fn project(dataset: &mut Dataset) -> Result<()> {
         let exact = group(&entry.value);
         let (display, is_exact) = match (entry.display.as_str(), entry.magnitude) {
             ("exact", None) => (exact.clone(), true),
-            ("rounded", Some(magnitude)) => rounded(&entry.value, magnitude)?,
+            ("rounded" | "floor" | "ceiling", Some(magnitude)) => rounded(&entry.value, magnitude, &entry.display)?,
             _ => return Err(format!("number: invalid display rule for {}", entry.id).into()),
         };
         let digits = entry.value.bytes().filter(u8::is_ascii_digit).count();
@@ -223,9 +228,20 @@ pub(super) fn project(dataset: &mut Dataset) -> Result<()> {
         }
         row.insert("num".to_owned(), json!(display));
         row.insert("num_exact".to_owned(), json!(is_exact));
+        let relation = if is_exact {
+            "="
+        } else {
+            match entry.display.as_str() {
+                "floor" => "≥",
+                "ceiling" => "≤",
+                _ => "≈",
+            }
+        };
+        row.insert("num_relation".to_owned(), json!(relation));
         if digits <= entry.exact_digits {
             row.insert("exact".to_owned(), json!(exact));
             row.insert("exact_exact".to_owned(), json!(true));
+            row.insert("exact_relation".to_owned(), json!("="));
         }
     }
     Ok(())

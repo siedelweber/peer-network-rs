@@ -3134,6 +3134,8 @@
     },
     {
       "claims": [
+        "DOCUMENTS::claim:render:directed-displays-enclose-exact-values",
+        "ROOT::claim:design:numeric-word-fragments-refuse",
         "ROOT::claim:design:numeric-displays-match-rational-operands",
         "DOCUMENTS::claim:render:number-forms-are-exactly-projected",
         "DOCUMENTS::claim:render:repository-fixed-point",
@@ -3147,7 +3149,7 @@
       "name": "ROOT::gate:render:numeric-correspondence",
       "owner": "Documents implementer and repository reviewer",
       "path": "adr/003-templated-documentation.md",
-      "premises": "Finite exact-rational rounding, grouping, omitted and unknown form refusals, typed input-backed pins, field-local scanner admission and repeated repository fixed points.",
+      "premises": "Finite nearest and directed exact-rational rounding, rendered number-word controls, grouping, omitted and unknown form refusals, typed input-backed pins, field-local scanner admission and repeated repository fixed points.",
       "realizers": [],
       "status": "scoped-supported"
     }

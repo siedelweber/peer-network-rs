@@ -50,6 +50,14 @@
       "review": "Read the scoped registry acceptance and refusal controls; these establish presentation and field-local accounting, not numerical certification of the declared values."
     },
     {
+      "operation": "ci::test_design.Correspondence.test_numeric_word_fragments",
+      "path": "ci/test_design.py",
+      "claim": "ROOT::claim:design:numeric-word-fragments-refuse",
+      "before": "",
+      "after": "Rendered numeric word fragments refuse while intact words, mathematical literals and measured units remain accepted.",
+      "review": "Read the finite directed-rounding and rendered-word controls; they establish outward presentation and scoped prose refusals, without certifying authored numeric facts."
+    },
+    {
       "operation": "ci::test_design.Correspondence.test_release_projections",
       "path": "ci/test_design.py",
       "claim": "ROOT::claim:design:release-fields-cannot-drift",
@@ -1104,6 +1112,14 @@
       "before": "Claim: changing a dataset byte is detected without repairing it.",
       "after": "Claim: Changing the fixture dataset count produces exactly stale-dataset and stale-document findings without repairing the changed bytes, preserving read-only diagnosis.",
       "review": "Reviewed each fixture assertion; stated its concrete scope without extending the evidence to untested inputs."
+    },
+    {
+      "operation": "documents::integration::directed_number_displays",
+      "path": "packages/documents/tests/integration.rs",
+      "claim": "DOCUMENTS::claim:render:directed-displays-enclose-exact-values",
+      "before": "",
+      "after": "Claim: Declared floor and ceiling displays round positive and negative rationals outward, retain equality when exact, and generate relations from the projected rule; missing or inconsistent relations refuse.",
+      "review": "Read the finite directed-rounding and rendered-word controls; they establish outward presentation and scoped prose refusals, without certifying authored numeric facts."
     },
     {
       "operation": "documents::integration::number_registry",

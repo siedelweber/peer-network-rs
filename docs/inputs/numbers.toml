@@ -600,7 +600,7 @@ exact_digits = 24
 id = "num:numbers:published-global-contraction-upper"
 value = "2996290297046104444553034524118716120045412699703842014195286071395248231/25000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -75
 
@@ -912,7 +912,7 @@ exact_digits = 24
 id = "num:numbers:point-four-dyadic-fast-seconds"
 value = "17201139488520561/410310350000000000"
 unit = "seconds"
-display = "rounded"
+display = "floor"
 exact_digits = 24
 magnitude = -3
 
@@ -920,7 +920,7 @@ magnitude = -3
 id = "num:numbers:point-four-dyadic-slow-seconds"
 value = "4769109596518353/102577587500000000"
 unit = "seconds"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -3
 
@@ -928,7 +928,7 @@ magnitude = -3
 id = "num:numbers:point-four-nondyadic-fast-seconds"
 value = "79708218239075769/410310350000000000"
 unit = "seconds"
-display = "rounded"
+display = "floor"
 exact_digits = 24
 magnitude = -3
 
@@ -936,7 +936,7 @@ magnitude = -3
 id = "num:numbers:point-four-nondyadic-slow-seconds"
 value = "22099537578835737/102577587500000000"
 unit = "seconds"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -3
 
@@ -944,7 +944,7 @@ magnitude = -3
 id = "num:numbers:point-thousand-dyadic-fast-seconds"
 value = "3499640051080591761/410310350000000000"
 unit = "seconds"
-display = "rounded"
+display = "floor"
 exact_digits = 24
 magnitude = -2
 
@@ -952,7 +952,7 @@ magnitude = -2
 id = "num:numbers:point-thousand-dyadic-slow-seconds"
 value = "970294262371795953/102577587500000000"
 unit = "seconds"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -2
 
@@ -960,7 +960,7 @@ magnitude = -2
 id = "num:numbers:point-thousand-nondyadic-fast-seconds"
 value = "19126409738719393761/410310350000000000"
 unit = "seconds"
-display = "rounded"
+display = "floor"
 exact_digits = 24
 magnitude = -2
 
@@ -968,7 +968,7 @@ magnitude = -2
 id = "num:numbers:point-thousand-nondyadic-slow-seconds"
 value = "5302901257951141953/102577587500000000"
 unit = "seconds"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -2
 
@@ -976,7 +976,7 @@ magnitude = -2
 id = "num:numbers:pair-four-dyadic-fast-seconds"
 value = "23043100835748161/205155175000000000"
 unit = "seconds"
-display = "rounded"
+display = "floor"
 exact_digits = 24
 magnitude = -3
 
@@ -984,7 +984,7 @@ magnitude = -3
 id = "num:numbers:pair-four-dyadic-slow-seconds"
 value = "6388825193973153/51288793750000000"
 unit = "seconds"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -3
 
@@ -992,7 +992,7 @@ magnitude = -3
 id = "num:numbers:pair-four-nondyadic-fast-seconds"
 value = "85550179586303369/205155175000000000"
 unit = "seconds"
-display = "rounded"
+display = "floor"
 exact_digits = 24
 magnitude = -3
 
@@ -1000,7 +1000,7 @@ magnitude = -3
 id = "num:numbers:pair-four-nondyadic-slow-seconds"
 value = "23719253176290537/51288793750000000"
 unit = "seconds"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -3
 
@@ -1008,7 +1008,7 @@ magnitude = -3
 id = "num:numbers:pair-thousand-dyadic-fast-seconds"
 value = "4964045293356567761/205155175000000000"
 unit = "seconds"
-display = "rounded"
+display = "floor"
 exact_digits = 24
 magnitude = -2
 
@@ -1016,7 +1016,7 @@ magnitude = -2
 id = "num:numbers:pair-thousand-dyadic-slow-seconds"
 value = "1376308590596443953/51288793750000000"
 unit = "seconds"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -2
 
@@ -1024,7 +1024,7 @@ magnitude = -2
 id = "num:numbers:pair-thousand-nondyadic-fast-seconds"
 value = "20590814980995369761/205155175000000000"
 unit = "seconds"
-display = "rounded"
+display = "floor"
 exact_digits = 24
 magnitude = -2
 
@@ -1032,7 +1032,7 @@ magnitude = -2
 id = "num:numbers:pair-thousand-nondyadic-slow-seconds"
 value = "5708915586175789953/51288793750000000"
 unit = "seconds"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -2
 
@@ -1166,7 +1166,7 @@ exact_digits = 24
 id = "num:numbers:solve-sixteenth-residual"
 value = "883609435249115/350734766844784"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1174,7 +1174,7 @@ magnitude = -6
 id = "num:numbers:solve-sixteenth-radius"
 value = "4418047176245575/350734766844784"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1182,7 +1182,7 @@ magnitude = -6
 id = "num:numbers:solve-sixteenth-alice-width"
 value = "17480737461808201588044445/816865088589551049228292"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1190,7 +1190,7 @@ magnitude = -6
 id = "num:numbers:solve-sixteenth-bob-width"
 value = "9789239633016473196927485/408432544294775524614146"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1198,7 +1198,7 @@ magnitude = -6
 id = "num:numbers:solve-sixteenth-carol-width"
 value = "9751430014794363498347005/408432544294775524614146"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1206,7 +1206,7 @@ magnitude = -6
 id = "num:numbers:solve-sixteenth-dave-width"
 value = "9656833631773836919198205/408432544294775524614146"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1221,7 +1221,7 @@ exact_digits = 24
 id = "num:numbers:solve-quarter-residual"
 value = "110976068652445/43841845855598"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1229,7 +1229,7 @@ magnitude = -6
 id = "num:numbers:solve-quarter-radius"
 value = "554880343262225/43841845855598"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1237,7 +1237,7 @@ magnitude = -6
 id = "num:numbers:solve-quarter-alice-width"
 value = "4379964147582925249900990/204216272147387762307073"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1245,7 +1245,7 @@ magnitude = -6
 id = "num:numbers:solve-quarter-bob-width"
 value = "4914179380769986304243500/204216272147387762307073"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1253,7 +1253,7 @@ magnitude = -6
 id = "num:numbers:solve-quarter-carol-width"
 value = "4895274571658931454953260/204216272147387762307073"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1261,7 +1261,7 @@ magnitude = -6
 id = "num:numbers:solve-quarter-dave-width"
 value = "4847976380148668165378860/204216272147387762307073"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -6
 
@@ -1346,7 +1346,7 @@ exact_digits = 24
 id = "num:numbers:projected-solve-fast-seconds"
 value = "2957555611369/50000000000"
 unit = "seconds"
-display = "rounded"
+display = "floor"
 exact_digits = 24
 magnitude = -1
 
@@ -1354,7 +1354,7 @@ magnitude = -1
 id = "num:numbers:projected-solve-slow-seconds"
 value = "15365242740859/250000000000"
 unit = "seconds"
-display = "rounded"
+display = "ceiling"
 exact_digits = 24
 magnitude = -1
 
@@ -1439,7 +1439,7 @@ exact_digits = 24
 id = "num:numbers:published-wall-lower"
 value = "250927425738473888861741368970320969988646825074039496451178482151187942819/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1447,7 +1447,7 @@ exact_digits = 24
 id = "num:numbers:published-wall-upper"
 value = "250927425738473888861741368970320969988646825074039496451178482151187942961/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1455,7 +1455,7 @@ exact_digits = 24
 id = "num:numbers:published-fence-lower"
 value = "74907257426152611113825863102967903001135317492596050354882151784881205653/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1463,7 +1463,7 @@ exact_digits = 24
 id = "num:numbers:published-fence-upper"
 value = "2996290297046104444553034524118716120045412699703842014195286071395248231/20000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1471,7 +1471,7 @@ exact_digits = 24
 id = "num:numbers:published-local-contraction-upper"
 value = "14529966121662466844609137066561219529377/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1479,7 +1479,7 @@ exact_digits = 24
 id = "num:numbers:published-standing-inflation-radius"
 value = "3066254181021229128478478673909297559195/154008415986242880224369876774687554472119026646131473486596719276728986968474460503806170769353943212"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1487,7 +1487,7 @@ exact_digits = 24
 id = "num:numbers:published-image-carol-lower"
 value = "280824332079934064151629193278089535287868642768639427334871742037467162257/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1495,7 +1495,7 @@ exact_digits = 24
 id = "num:numbers:published-image-carol-upper"
 value = "1123297328319736256606516773112358141151474571074557709339486968149868649063/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1503,7 +1503,7 @@ exact_digits = 24
 id = "num:numbers:published-image-alice-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1511,7 +1511,7 @@ exact_digits = 24
 id = "num:numbers:published-image-alice-upper"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1519,7 +1519,7 @@ exact_digits = 24
 id = "num:numbers:published-image-eve-lower"
 value = "559442753720072326272561844025180458771772376060791094447332114059563492423/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1527,7 +1527,7 @@ exact_digits = 24
 id = "num:numbers:published-image-eve-upper"
 value = "223777101488028930509024737610072183508708950424316437778932845623825396973/200000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1535,7 +1535,7 @@ exact_digits = 24
 id = "num:numbers:published-image-bob-lower"
 value = "221718985746048721368645652815925026799241993646055823424105839322877941327/200000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1543,7 +1543,7 @@ exact_digits = 24
 id = "num:numbers:published-image-bob-upper"
 value = "1108594928730243606843228264079625133996209968230279117120529196614389706673/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1551,7 +1551,7 @@ exact_digits = 24
 id = "num:numbers:published-image-dave-lower"
 value = "279611668024175928092197991827989438471414042619796953345452392906209879683/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1559,7 +1559,7 @@ exact_digits = 24
 id = "num:numbers:published-image-dave-upper"
 value = "27961166802417592809219799182798943847141404261979695334545239290620987969/25000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1567,7 +1567,7 @@ exact_digits = 24
 id = "num:numbers:published-root-eve-lower"
 value = "1118885507440144652545123688050360917543544752121582188894664226286468435717/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1575,7 +1575,7 @@ exact_digits = 24
 id = "num:numbers:published-root-eve-upper"
 value = "22377710148802893050902473761007218350870895042431643777893284525729383973/20000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1583,7 +1583,7 @@ exact_digits = 24
 id = "num:numbers:published-root-bob-lower"
 value = "1108594928730243606843228264079625133996209968230279117120529193608892122323/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1591,7 +1591,7 @@ exact_digits = 24
 id = "num:numbers:published-root-bob-upper"
 value = "554297464365121803421614132039812566998104984115139558560264596804446477867/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1599,7 +1599,7 @@ exact_digits = 24
 id = "num:numbers:published-root-dave-lower"
 value = "223689334419340742473758393462391550777131234095837562676361917831851797043/200000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1607,7 +1607,7 @@ exact_digits = 24
 id = "num:numbers:published-root-dave-upper"
 value = "27961166802417592809219799182798943847141404261979695334545239728981503691/25000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1615,7 +1615,7 @@ exact_digits = 24
 id = "num:numbers:published-root-carol-lower"
 value = "224659465663947251321303354622471628230294914214911541867897392641136444739/200000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1623,7 +1623,7 @@ exact_digits = 24
 id = "num:numbers:published-root-carol-upper"
 value = "561648664159868128303258386556179070575737285537278854669743481602841580933/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1631,7 +1631,7 @@ exact_digits = 24
 id = "num:numbers:published-carol-rate-lower"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411407/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1639,7 +1639,7 @@ exact_digits = 24
 id = "num:numbers:published-carol-rate-upper"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1647,7 +1647,7 @@ exact_digits = 24
 id = "num:numbers:published-carol-hull-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1655,7 +1655,7 @@ exact_digits = 24
 id = "num:numbers:published-carol-hull-upper"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1663,7 +1663,7 @@ exact_digits = 24
 id = "num:numbers:published-alice-rate-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1671,7 +1671,7 @@ exact_digits = 24
 id = "num:numbers:published-alice-rate-upper"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1679,7 +1679,7 @@ exact_digits = 24
 id = "num:numbers:published-alice-hull-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1687,7 +1687,7 @@ exact_digits = 24
 id = "num:numbers:published-alice-hull-upper"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676197/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1695,7 +1695,7 @@ exact_digits = 24
 id = "num:numbers:published-eve-rate-lower"
 value = "9/8"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1703,7 +1703,7 @@ exact_digits = 24
 id = "num:numbers:published-eve-rate-upper"
 value = "9/8"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1711,7 +1711,7 @@ exact_digits = 24
 id = "num:numbers:published-eve-hull-lower"
 value = "1"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1719,7 +1719,7 @@ exact_digits = 24
 id = "num:numbers:published-eve-hull-upper"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1734,7 +1734,7 @@ exact_digits = 24
 id = "num:numbers:published-bob-rate-lower"
 value = "568097506751047828285296239184516275455577561356905500322620137986255641549/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1742,7 +1742,7 @@ exact_digits = 24
 id = "num:numbers:published-bob-rate-upper"
 value = "284048753375523914142648119592258137727788780678452750161310068993127820781/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1750,7 +1750,7 @@ exact_digits = 24
 id = "num:numbers:published-bob-hull-lower"
 value = "541512095710254351856376438504946505001892195820993417258136919641468676173/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1758,7 +1758,7 @@ exact_digits = 24
 id = "num:numbers:published-bob-hull-upper"
 value = "284048753375523914142648119592258137727788780678452750161310068993127820781/250000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1766,7 +1766,7 @@ exact_digits = 24
 id = "num:numbers:published-dave-rate-lower"
 value = "1"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1774,7 +1774,7 @@ exact_digits = 24
 id = "num:numbers:published-dave-rate-upper"
 value = "1"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1782,7 +1782,7 @@ exact_digits = 24
 id = "num:numbers:published-dave-hull-lower"
 value = "1"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1790,7 +1790,7 @@ exact_digits = 24
 id = "num:numbers:published-dave-hull-upper"
 value = "1149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1805,7 +1805,7 @@ exact_digits = 24
 id = "num:numbers:published-width-lower"
 value = "149814514852305222227651726205935806002270634985192100709764303569762411407/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "floor"
 magnitude = -12
 exact_digits = 24
 
@@ -1813,7 +1813,7 @@ exact_digits = 24
 id = "num:numbers:published-width-upper"
 value = "149814514852305222227651726205935806002270634985192100709764303569762411437/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -12
 exact_digits = 24
 
@@ -1821,7 +1821,7 @@ exact_digits = 24
 id = "num:numbers:published-residual-radius-upper"
 value = "19909653387353/1000000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -70
 exact_digits = 24
 
@@ -1829,7 +1829,7 @@ exact_digits = 24
 id = "num:numbers:published-local-radius-upper"
 value = "8767210314447/500000000000000000000000000000000000000000000000000000000000000000000000000"
 unit = "dimensionless"
-display = "rounded"
+display = "ceiling"
 magnitude = -70
 exact_digits = 24
 
@@ -2588,4 +2588,3 @@ value = "200000000"
 unit = "Work"
 display = "exact"
 exact_digits = 24
-

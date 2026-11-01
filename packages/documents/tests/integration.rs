@@ -102,6 +102,59 @@ fn number_registry() -> Result<()> {
     Ok(())
 }
 
+/// Claim: Declared floor and ceiling displays round positive and negative rationals outward, retain equality when exact, and generate relations from the projected rule; missing or inconsistent relations refuse.
+/// ´claim:render:directed-displays-enclose-exact-values´
+/// ´test:integration:directed-number-displays´
+#[test]
+fn directed_number_displays() -> Result<()> {
+    use std::fmt::Write as _;
+    let directory = fixture()?;
+    let root = directory.path();
+    fs::create_dir_all(root.join("packages/documents/src"))?;
+    let cases = [
+        ("positive-floor", "1/3", "floor", -2, "≥ 0.33"),
+        ("positive-ceiling", "1/3", "ceiling", -2, "≤ 0.34"),
+        ("negative-floor", "-1/3", "floor", -2, "≥ -0.34"),
+        ("negative-ceiling", "-1/3", "ceiling", -2, "≤ -0.33"),
+        ("exact-floor", "-5/2", "floor", -1, "= -2.5"),
+        ("exact-ceiling", "5/2", "ceiling", -1, "= 2.5"),
+        ("negative-zero", "-1/3", "ceiling", 0, "≤ 0"),
+        ("positive-zero", "1/3", "floor", 0, "≥ 0"),
+        ("coarse-floor", "-101", "floor", 2, "≥ -200"),
+        ("coarse-ceiling", "101", "ceiling", 2, "≤ 200"),
+    ];
+    let mut input = "namespace = \"org.peer-network.numbers.registry\"\nversion = [1, 0, 0]\n".to_owned();
+    for (id, value, rule, magnitude, _) in cases {
+        writeln!(
+            input,
+            "[[rows]]\nid = \"num:test:{id}\"\nvalue = \"{value}\"\nunit = \"dimensionless\"\ndisplay = \"{rule}\"\nmagnitude = {magnitude}\nexact_digits = 8"
+        )?;
+    }
+    fs::write(root.join("docs/inputs/numbers.toml"), input)?;
+    documents::run(root, Operation::Generate { check: false })?;
+    let template = root.join("docs/templates/docs/result.md.j2");
+    for (id, _, _, _, expected) in cases {
+        fs::write(&template, format!("{{{{ numrel('num:test:{id}') }}}}"))?;
+        documents::run(root, Operation::Write)?;
+        assert_eq!(fs::read_to_string(root.join("docs/result.md"))?, expected);
+    }
+    let path = root.join("docs/datasets/org.peer-network.numbers.registry.json");
+    let original: serde_json::Value = serde_json::from_str(&fs::read_to_string(&path)?)?;
+    fs::write(&template, "{{ numrel('num:test:positive-floor') }}")?;
+    for relation in [serde_json::Value::Null, serde_json::json!("=")] {
+        let mut changed = original.clone();
+        changed["rows"][0]["num_relation"] = relation;
+        write_dataset(&path, &changed)?;
+        assert!(
+            documents::run(root, Operation::Write)
+                .unwrap_err()
+                .to_string()
+                .contains("relation")
+        );
+    }
+    Ok(())
+}
+
 /// Claim: Two consecutive generate-check and document-check passes report no findings on the repository, checking that committed inputs and outputs form a fixed point.
 /// ´claim:render:repository-fixed-point´
 /// ´test:integration:repository-fixed-point´

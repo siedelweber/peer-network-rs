@@ -90,6 +90,22 @@ class Correspondence(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('derived rate differs', result.stderr)
 
+    def test_numeric_word_fragments(self):
+        """Rendered numeric word fragments refuse while intact words, mathematical literals and measured units remain accepted.
+        ´claim:design:numeric-word-fragments-refuse´
+        ´test:integration:test-numeric-word-fragments´
+        """
+        path = self.root / 'docs/design/implementation.md'
+        path.parent.mkdir(parents=True)
+        path.write_text('two-map four-Actor twenty-four one half x = 1 wall 2 256-byte\n')
+        git(self.root, 'add', 'docs/design/implementation.md')
+        self.assertEqual(self.check().returncode, 0)
+        for fragment in ('twenty-4', '1-map', '4-Actor', '0-capable'):
+            path.write_text(fragment + '\n')
+            result = self.check()
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('numeric word fragment', result.stderr)
+
     def test_release_tags(self):
         """Release identities are pinned, and tracked UTF-8 text without NUL bytes refuses other paper editions regardless of case; only the two named source fixtures are exempt.
         ´claim:design:release-identities-are-pinned´

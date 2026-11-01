@@ -83,6 +83,20 @@ def bare_mint_pattern(labels):
     return re.compile('(?<!`)`(' + '|'.join(re.escape(label) for label in sorted(labels)) + ')`(?!`)')
 
 
+def check_numeric_word_fragments(paths):
+    """Keep structural number-word compounds intact in migrated rendered prose."""
+    pattern = re.compile(r'\b(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)-[0-9]+\b'
+                         r'|\b[0-9]+-(?:map|Actor|capable)\b', re.IGNORECASE)
+    findings = []
+    for path in paths:
+        for line, text in enumerate(path.read_text().splitlines(), 1):
+            findings.extend(f'{path}:{line}: numeric word fragment {match.group()}'
+                            for match in pattern.finditer(text))
+    print(f'NUMERIC-WORDS files={len(paths)} refused={len(findings)}')
+    if findings:
+        raise ValueError('\n'.join(findings))
+
+
 def validate():
     # Claim: nonempty release pins cover every current inventory and constants field.
     inventory = data('inventory')
@@ -254,15 +268,25 @@ def numeric_correspondence():
             whole, remainder = divmod(scaled.numerator, scaled.denominator)
             nearest = whole + (2 * remainder >= scaled.denominator)
             expected = nearest * quantum * (-1 if number < 0 else 1)
+        elif entry['display'] in {'floor', 'ceiling'}:
+            scaled = number / quantum
+            whole = scaled.numerator // scaled.denominator
+            if entry['display'] == 'ceiling' and scaled != whole:
+                whole += 1
+            expected = whole * quantum
         else:
             expected = number
         if (view['id'] != entry['id'] or Fraction(view['num'].replace('\u202f', '')) != expected
                 or view['num_exact'] != (expected == number)):
             raise ValueError('numeric registry: independent rational display comparison differs')
+        relation = '=' if expected == number else {'floor': '≥', 'ceiling': '≤', 'rounded': '≈'}[entry['display']]
+        if view.get('num_relation') != relation:
+            raise ValueError('numeric registry: generated relation differs')
         admitted = sum(c.isdigit() for c in entry['value']) <= entry['exact_digits']
         if ('exact' in view) != admitted:
             raise ValueError('numeric registry: exact digit budget differs')
-        if admitted and (Fraction(view['exact'].replace('\u202f', '')) != number or view['exact_exact'] is not True):
+        if admitted and (Fraction(view['exact'].replace('\u202f', '')) != number
+                         or view['exact_exact'] is not True or view.get('exact_relation') != '='):
             raise ValueError('numeric registry: exact form differs')
     print(f'NUMERIC-CORRESPONDENCE entries={len(rows)} derived=22 displays={len(projected)}')
 
@@ -270,3 +294,5 @@ def numeric_correspondence():
 if __name__ == '__main__':
     validate()
     numeric_correspondence()
+    check_numeric_word_fragments([path for path in tracked_paths()
+                                  if path.as_posix() == 'docs/design/implementation.md'])
