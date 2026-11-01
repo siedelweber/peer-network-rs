@@ -1,5 +1,6 @@
 namespace = "org.peer-network.linter.owners"
 version = [1, 0, 0]
+root_owner = "ROOT"
 
 owners = ["ROOT", "DOCUMENTS", "INTERCHANGE", "CLICOMMON", "EXECWRAP", "TESTKIT", "RECORDS", "VERIFICATION", "HOST", "WALLET", "GRAPH", "EPOCH", "VENDOR", "ACTPROFILE"]
 imports = []
